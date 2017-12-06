@@ -1,0 +1,14 @@
+---
+layout: archives
+---
+
+<h1>Course Notes</h1>
+
+<ul>
+    {% for cs in site.categories.course %}
+    <li>
+        <a href="">{{ cs.title }}</a>
+        <p>{{ cs.meta }}</p>
+    </li>
+    {% endfor %}
+</ul>
