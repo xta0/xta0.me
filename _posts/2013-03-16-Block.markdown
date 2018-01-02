@@ -1,0 +1,238 @@
+---
+layout: post
+title: 理解Objective-C的Block
+tag: Objective-C
+categories: 随笔
+
+---
+
+
+<em>所有文章均为作者原创，转载请注明出处</em>
+
+最近看了一篇很有趣文章，<a href="http://blog.parse.com/2013/02/05/objective-c-blocks-quiz/">关于block的quiz</a>，5道题答错了两道。之前理解block可以在heap和stack上alloc，看了这篇文章才发现原来还有global的block。想想也是，这种block不引用任何variable，在编译的时候就可以确定下来了。
+
+最开始用block的时候，感到很疑惑，原因是这种用法从编程思想上来讲属于<a href="http://en.wikipedia.org/wiki/Functional_programming">functional programming</a>。不符合面向对象的设计原则，但是万物无绝对，就像在面向对象的世界中同样有单独存在的函数一样，现代编程语言已经不拘泥于某种特定的形式。而熟悉Objective-C的人应该知道，这门语言是从<a href="http://zh.wikipedia.org/wiki/LISP">Lisp</a>演进过来，而Lisp是最早的函数型编程语言，这篇文章写的很不错：<a href="http://dave.fayr.am/posts/2011-08-19-lets-go-shopping.html">《Functional Programming Is Hard,
+That's Why It's Good》</a>。关于Lisp，一直没有精力来仔细研究一下，略感遗憾。后面的smallTalk保留了Lisp的这一特性，进而带到了Objective-C中，所以在OC中出现block也并不奇怪。
+
+matt Galloway关于block做了<a href="http://www.galloway.me.uk/2012/10/a-look-inside-blocks-episode-1/">很详细的分析</a>，并给出了LLVM中关于Block的<a href="https://llvm.org/svn/llvm-project/compiler-rt/trunk/BlocksRuntime/Block_private.h">定义</a>。但是纸上得来终觉浅，为了理解的更透彻，我们还是亲自来debug一下,我们就以ExampleA为例：
+
+
+<h3>Example A</h3>
+
+为了分析方便，我们把Example A稍微改写一下：
+
+```c
+#include <stdio.h>
+
+void exampleA() {
+  char a = 'A';
+
+  void(^block)() = 
+  ^{
+    printf("%c\n", a);
+  };
+
+  block();
+}
+
+int main(int argc, char *argv[]) {
+	
+	exampleA();
+	return 0;
+}
+```
+
+
+我们可以通过clang来<a href="http://clang-developers.42468.n3.nabble.com/rewrite-objc-C-and-blocks-td1614285.html">rewrite这段代码</a>：clang -rewrite-objc test.c
+
+```c
+#line 4 "test.c"
+struct __exampleA_block_impl_0 {
+  struct __block_impl impl;
+  struct __exampleA_block_desc_0* Desc;
+  char a;
+  __exampleA_block_impl_0(void *fp, struct __exampleA_block_desc_0 *desc, char _a, int flags=0) : a(_a) {
+    impl.isa = &_NSConcreteStackBlock;
+    impl.Flags = flags;
+    impl.FuncPtr = fp;
+    Desc = desc;
+  }
+};
+
+#line 8 "test.c"
+static void __exampleA_block_func_0(struct __exampleA_block_impl_0 *__cself) {
+  char a = __cself->a; // bound by copy
+
+    printf("%c\n", a);
+  }
+
+static struct __exampleA_block_desc_0 {
+  size_t reserved;
+  size_t Block_size;
+} __exampleA_block_desc_0_DATA = { 0, sizeof(struct __exampleA_block_impl_0)};
+
+#line 4 "test.c"
+void exampleA() {
+  char a = 'A';
+
+  void(*block)() =
+  (void (*)())&__exampleA_block_impl_0((void *)__exampleA_block_func_0, &__exampleA_block_desc_0_DATA, a);
+
+  ((void (*)(__block_impl *))((__block_impl *)block)->FuncPtr)((__block_impl *)block);
+}
+
+
+#line 15 "test.c"
+int main(int argc, char *argv[]) {
+
+ exampleA();
+ return 0;
+}
+}
+```
+
+需要指出的一点是，这个rewrite-objc的命令很诡异，我们的预期是将一个.c文件仅在语法层面将block展开，生成另一个.c文件。但是实际上这个命令生成的是一个.cpp的C++文件，这意味着它在block的结构体中插入了构造函数：
+
+
+```c
+__exampleA_block_impl_0(void *fp, struct __exampleA_block_desc_0 *desc, char _a, int flags=0) : a(_a) {
+    impl.isa = &_NSConcreteStackBlock;
+    impl.Flags = flags;
+    impl.FuncPtr = fp;
+    Desc = desc;
+  }
+```
+
+不知道clang为什么要把它rewrite成C++的。但这并不影响我们阅读代码:
+
+- main函数执行exampleA函数
+
+- 在exampleA函数中，首先通过构造函数创建一个block：由于这个block是在exampleA的stack中，所以block的isa类型为_NSConcreteStackBlock，那么当exampleA执行完毕后，block就会被销毁掉；block有自己的内存空间来保存传进来的参数a；block的回调函数指向了__exampleA_block_func_0
+
+- 执行block的回调函数：在__exampleA_block_func_0中，输出的a实际上是block结构体中的a，不是block外部的a，因此，如果在__exampleA_block_func_0内部改变a的值，改变不是外部的a值。
+
+
+<h3>__block</h3>
+
+如果我们想改变a的值，通常要把a声明成__block：
+
+```c
+void exampleA() {
+  
+  __block char a = 'A';
+
+  void(^block)() = 
+  ^{
+	a = 'B';
+    printf("%c\n", a);
+  };
+
+  block();
+}
+```
+
+这样我们就能改变a的值了
+
+why？
+
+我们再次使用：clang -rewrite-objc test.c，看看有什么不同的地方：
+
+```c
+struct __Block_byref_a_0 {
+  void *__isa;
+__Block_byref_a_0 *__forwarding;
+ int __flags;
+ int __size;
+ char a;
+};
+
+struct __exampleA_block_impl_0 {
+  struct __block_impl impl;
+  struct __exampleA_block_desc_0* Desc;
+  __Block_byref_a_0 *a; // by ref
+  __exampleA_block_impl_0(void *fp, struct __exampleA_block_desc_0 *desc, __Block_byref_a_0 *_a, int flags=0) : a(_a->__forwarding) {
+    impl.isa = &_NSConcreteStackBlock;
+    impl.Flags = flags;
+    impl.FuncPtr = fp;
+    Desc = desc;
+  }
+};
+
+#line 9 "test.c"
+static void __exampleA_block_func_0(struct __exampleA_block_impl_0 *__cself) {
+  __Block_byref_a_0 *a = __cself->a; // bound by ref
+
+ (a->__forwarding->a) = 'B';
+    printf("%c\n", (a->__forwarding->a));
+  }
+static void __exampleA_block_copy_0(struct __exampleA_block_impl_0*dst, struct __exampleA_block_impl_0*src) {_Block_object_assign((void*)&dst->a, (void*)src->a, 8/*BLOCK_FIELD_IS_BYREF*/);}
+
+static void __exampleA_block_dispose_0(struct __exampleA_block_impl_0*src) {_Block_object_dispose((void*)src->a, 8/*BLOCK_FIELD_IS_BYREF*/);}
+
+static struct __exampleA_block_desc_0 {
+  size_t reserved;
+  size_t Block_size;
+  void (*copy)(struct __exampleA_block_impl_0*, struct __exampleA_block_impl_0*);
+  void (*dispose)(struct __exampleA_block_impl_0*);
+} __exampleA_block_desc_0_DATA = { 0, sizeof(struct __exampleA_block_impl_0), __exampleA_block_copy_0, __exampleA_block_dispose_0};
+
+#line 4 "test.c"
+void exampleA() {
+
+  __attribute__((__blocks__(byref))) __Block_byref_a_0 a = {(void*)0,(__Block_byref_a_0 *)&a, 0, sizeof(__Block_byref_a_0), 'A'};
+
+  void(*block)() =
+  (void (*)())&__exampleA_block_impl_0((void *)__exampleA_block_func_0, &__exampleA_block_desc_0_DATA, (__Block_byref_a_0 *)&a, 570425344);
+
+  ((void (*)(__block_impl *))((__block_impl *)block)->FuncPtr)((__block_impl *)block);
+}
+}
+```
+
+- exampleA发生了变化，产生了一个新的结构体：__Block_byref_a_0
+
+- 原来是传a的值，现在变成了传a的引用。
+
+<h3>Closure</h3>
+
+实际应用中，我们并不需要了解block是如何实现的，但是理解block后面的思想却很关键。前面已经提到过Functional Programming的概念，Functional Programming中一个很重要的概念是Closure，翻译过来叫“闭包”。它有几个最基本的feature：
+
+（1）First-Class Value：函数也是一种变量，也可以像变量一样被赋值，被当做参数传递和返回。
+（2）High Order Function：高阶函数，即一个函数的参数也可以是另一个函数，并且这个函数可以是匿名函数。
+（3）Lexical Scoping:静态作用域，也叫词法作用域，解释起来很麻烦，感兴趣的可以看维基百科。
+
+这三条是不是很熟悉，没错，Objective-C中的block这几条都支持:
+
+
+```c
+void(^func)(int x, int y) = ^(int x,int y){ NSLog(@"%d,%d",x,y);};
+    func(100,100);
+```
+
+这说明block可以和普通变量一样，进行定义和赋值
+
+```c
+ __block int i = 0;    
+int a = newCounter( ^
+        i = i+1;
+        return i;        
+    });
+```
+
+
+这说明，block可以作为匿名函数直接作为参数传递，同时它还可以访问i，说明block也支持lexical scoping。
+
+其实所谓block仅仅是语法层面的东西，任何支持closure的语言都有它独特的一套语法和形式，尤其对于脚本语言，没有强类型的限制，使用起来更灵活，更好玩，例如,Lua的table.sort方法中第二个参数：
+
+```c 
+network = {
+	{name="jason",ip = "192.168.1.11"},
+	{name="kate",ip = "192.168.1.12"},
+	{name="candy",ip = "192.168.1.13"},
+	{name="carl",ip = "192.168.1.14"},
+}
+table.sort(network,function(a,b) return(a.name &gt; b.name) end)
+print(network[1].name,network[1].ip) --&gt;kate,192.168.1.12
+``` 
+
+因此，总结来说，对于block，仅仅是Objective-C实现Closure的一种途径，为的是在某些场合用起来更方便，使代码更简洁，更紧凑而已。

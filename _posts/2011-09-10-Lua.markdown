@@ -1,0 +1,171 @@
+---
+layout: post
+title: PL-Lua
+tag: Lua
+categories: PL
+
+---
+
+<em> 所有文章均为作者原创，转载请注明出处 </em>
+
+> "Programming in Lua" 读书笔记
+
+
+<h2> 目录 </h2>
+
+- [Chap2](#2)
+- [Chap3](#3)
+- [Chap4](#4)
+- [Chap5](#5)
+- [Chap6](#6)
+- [Chap7](#7)
+- [Chap8](#8)
+- [Chap9](#9)
+- [Chap10](#10)
+- [Chap24](#24)
+
+<h3 id="2"> Chap2: String </h3>
+
+
+todo..
+
+
+<h2 id="24">Chap24: An Overview of the C API</h2>
+
+lua是一种嵌入式语言。这意味着lua不是一个封闭的体系，它可以作为库和其它应用程序一起工作。
+也许你会奇怪：如果Lua不是一个封闭的独立的体系，为什么我们整本书都在单独使用Lua？这个问题的答案是Lua interpreter。这个解释器是一个不到四百行的应用程序，它用来处理和用户的交互，接收用户输入的文件和字符串并把它们解释执行。
+
+这种作为库供其它应用程序使用的特性使Lua成为了一种extension Language。同时，我们也可以在Lua中注册一些C函数，和C的模块，这使得Lua同时也成为了一种extensile Language。
+
+这两种特性决定了Lua和C的两种调用关系。第一种Lua作为库提供给C调用，C是应用程序代码。第二种是在Lua的环境中调用C，这时C代码变成了库。
+
+用来和Lua通信的C API包含了对Lua全局变量的读写，对Lua函数的调用以及注册一些函数供Lua以后使用等等。
+
+用C编程时，我们必须要注意类型检查，错误处理，内存的分配和回收和一些其它复杂的内容。你还需要检查函数的参数是否合法，如果你的函数出错，你会收到“segmentation fault”这种段错误，而不是带有描述性的错误信息。此外，C API更强调灵活性和简介，这会带来一些使用成本。要实现一些功能通常会需要多个C API调用，这看起来会很枯燥，但是却可以掌控很多细节。
+
+如标题所述，本章是一篇关于在C中使用Lua的综述。你现在不需要了解这其中的细节。后面我们会详细讨论这里面的用到的知识。此外，不要忘记你可以通过Lua手册来查看函数的细节。此外，Lua的发行版本中就包含了对C API使用的例子，比如lua.c提供了Lua的解释器程序，标准库如lmathlib.c,lstrlib.c等也提供了例子的代码。
+
+从现在开始我们进入C的世界。
+
+Lua和C通信最关键的媒介是virtual stack。几乎所有的C API都在这个stack中执行。所有Lua和C的数据交换也在这个stack中发生，此外你还可以通过这个stack来保存临时变量，等等。这个stack有两个作用：一个是为Lua提供回收C中对象的场所，另一个用来做动态类型和静态类型的转换。
+
+###24.1 A First Example
+
+lua.h定义了Lua中的基本函数，包含了创建lua环境，调用Lua函数（比如lua_pcall），读写全局变量，注册新函数等等。所有定义在Lua.h中得方法以lua_开头。
+
+luaxlib.h定义了auxlib库中提供的函数，里面的函数以luaL_开头。它没有权限访问到lua的内部结构，它只是lua.h中API得的封装
+lualib.h中定义了访问lib库的函数，luaL_openlibs开启所有lib库
+
+lua的lib中没有全局变量，它把所有的状态都保存到了lua_State中。
+
+luaL_newState用来创建一个lua环境，这个stack中不包含任何信息。
+
+luaL_loadbuffer 用来编译代码，如果没有错误，这个函数返回0，将结果push到stack中
+
+lua_pcall首先将compile后的stack中的代码pop出来，然后执行。如果没有错误返回0，如果有错误，两个函数都会将错误push到stack上
+
+###24.2 The Stack
+
+在C和Lua的通信中，有两个问题需要解决：
+
+1，动态类型和静态类型的转换
+2，内存回收问题
+
+在lua中，类似`a[k] = v`的代码很多，a,k,v均可为任意类型，那在C语言中如何实现它？我们可以利用Union定义一个lua_Value，然后定义一个类似这样的函数：
+
+```c
+void lua_settable(lua_Value a, lua_Value k, lua_Value v);
+```
+
+这样做有两个弊端：第一个弊端是无法将lua_Value这个结构映射到其他的语言中，比如Java，C#等。第二个弊端是lua无法确定是否该回收这个变量。
+
+因此lua并没有定义lua_Value这种类型，我们用abstract stack来实现。stack中得每个slot都可以存储任意类型的lua数据。
+
+赋值：`a=1`
+首先lua会把1 push到stack中，然后执行a=1，最后把1 pop出来
+
+访问：`print(a)`
+首先lua会把a push到stack中，然后执行`print(a)`,最后把a pop出来。
+
+向stack中push数据：
+
+```c
+void lua_pushnil (lua_State* L)
+void lua_pushboolean (lua_State* L, int bool)
+void lua_pushnumber  (lua_State* L, lua_Number n)
+void lua_pushinteger (lua_State* L, lua_Integer n)
+void lua_pushlstring (lua_State* L, const char* s, size_t len)
+void lua_pushstring (lua_State* L, const char* s)
+
+```
+
+`lua_Number`默认为double类型
+`lua_Integer`可存放大数据，被定义为`ptrdiff_t`类型
+
+lua中的字符串默认没有'\0'结尾，因此需要手动指定长度, 通过`lua_pushlstring`去push到stack中
+
+对于有'\0'结尾的字符串，可以用lua_pushstring，它会调用`strlen`来返回字符串长度。
+
+```c
+int lua_chackstack(lua_State* L, int sz)
+```
+
+用来查看stack的空间
+
+```c
+int lua_is* (lua_State* L, int index)`
+```
+
+用来检查stack某个index中的value是否是*类型
+
+通常我们不会用这个方法，我们先获取value，然后判断它是否为0或NULL
+
+取值的方法为：
+
+```c
+int lua_toboolean(lua_State* L, int index)
+lua_Number lua_tonumber(lua_State* L, int index)
+lua_Integer lua_tointeger(lua_State* L, int index)
+const char* lua_tolstring(lua_State* L, int index,size_t* len)
+size_t lua_objlen(lua_State* L, int index)
+
+```
+
+这些值取回后，在使用前，应先判断是否为0或NULL，对于lua_tolstring，返回的字符串是const的，因此不能修改，返回的字符串都是以'\0'结尾的。
+
+```c
+size_t l;
+const char* s = lua_tolstring(L,-1,&l);
+assert(s[l] == '\0'); //true
+assert(strlen(s) <= 1); //true
+```
+
+其它的关于操作stack的API：
+
+```c
+//number of elements in stack:index of the top element
+int lua_gettop (luaState* L);
+
+//用来设置top element的index
+void lua_settop(luaState* L, int index);
+
+
+```
+
+对于`void lua_settop(luaState* L, int index)`这个方法，如果index值大于当前stack的top值，则[top index]的部分填充为nil。如果index值小于当前stack的top值，则[index top]这个区间的值被discard掉。
+
+有些情况下使用：
+
+```c
+lua_settop(L,0)
+	
+```
+来清空这个stack，也可以通过下面的API，来pop n个elements
+
+```c
+define lua_pop(L,n) lua_settop(L, -(n)-1)
+
+```
+###24.3 Error Handling with C API
+
+

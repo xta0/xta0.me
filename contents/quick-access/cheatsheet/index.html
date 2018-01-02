@@ -1,0 +1,13 @@
+---
+layout: list
+---
+
+<h1>Cheat Sheet</h1>
+
+<ul>
+    {% for cs in site.categories.cheatsheet %}
+    <li>
+        <a href="">{{ cs.title }}</a>
+    </li>
+    {% endfor %}
+</ul>

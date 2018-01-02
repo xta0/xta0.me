@@ -1,0 +1,143 @@
+---
+title: 理解Lua的Coroutine
+layout: post
+tag: Lua
+categories: 随笔
+
+---
+
+<em>所有文章均为作者原创，转载请注明出处</em>
+
+最早接触Coroutine是在<a href="http://www.lua.org/pil/">Programming in Lua</a>中，如今这本书已经出到第三版了，第9章介绍了lua中Coroutine的API，读过一遍后，没不太明白，后来又读了一篇关于这方面的<a href="http://www.inf.puc-rio.br/~roberto/docs/corosblp.pdf">论文</a>，作者也是原书的作者，论文将Coroutine机制阐述的很详细，读完后也是似懂非懂，于是我决定将我明白的Coroutine的内容先整理一下列出来，日后如果还有机会用到再来不断完善它。
+
+##什么是Coroutine
+
+我们首先来看一下lua的作者对Coroutine是这样解释的：
+“Coroutine和线程类似，是一段可执行代码，它拥有自己的stack，自己的局部变量和自己的stack pointer，可以和其它Coroutine共享全局变量。和线程的重要区别是：线程可以并发执行，Coroutine只能协作执行，即CPU的某个时刻只会有一个Coroutine被执行，这个Coroutine终止的条件是自己执行完毕或者它自己明确的要求被停止（Coroutine是不允许从外部被终止的）。”
+
+Coroutine翻译过来叫做<a href="http://zh.wikipedia.org/wiki/%E5%8D%8F%E7%A8%8B">协程</a>，顾名思义是一种协同工作的概念。举个例子，就好比A,B要共同完成一项工作，A干了一半说：“我干完了，该你了”（注意是A自己说的）。B收到后，继续将剩下的工作干完。A,B就一种协同工作的方式。这个概念早在60年代就成型了，只是现代的主流编程语言都没有加入对它的实现。原因在论文中有提到：设计编程语言的人缺乏对Coroutine的有效理解，而提出Coroutine的作者（Marlin）也只是在Simula中实现了Coroutine而且实现的超复杂。后来，有两伙人开始重拾Coroutine，一伙人提出了用Coroutine来实现非抢占式（non-preemptive）多线程，还取了一个名字叫：collaborative multithreading——协作式多线程。和传统的抢占式多线程（preemptive）相比，这种方式开销很小（因为不涉及到内核，所以不存在context switching带来的开销），又能规避线程带来的很多问题，在某些场景很有用。其中最具代表性的是Windows中的Fiber机制，<a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682661(v=vs.85).aspx">在MSDN中有描述</a>。另一伙人将Coroutine用到了脚本语言中，包括Python，Perl和Lua等，Python中的Generator的实现采用的就是Coroutine机制。在脚本语言中实现它的目的在于：可以摆脱对操作系统（内核）的依赖，而又能使脚本语言具有多线程编程的能力。
+
+##lua中的Coroutine
+
+接着我们来看看如何用Lua的语法来描述它：
+
+```lua
+--learning lua--
+--chap9 : Coroutines--
+
+--创建一个coroutine任务
+
+co = coroutine.create(function() print("hi") end)
+print(co,type(co)) --&gt;thread: 0x1001082a0	thread
+
+--coroutine有四种状态：
+--suspend，dead，running，normal
+
+--suspend：当coroutine被创建时，是suspend状态
+print(coroutine.status(co)) --&gt;suspend
+--resume方法会执行coroutine任务，状态会变为running
+coroutine.resume(co) --&gt;hi
+--coroutine执行完成后，状态变为dead
+print(coroutine.status(co)) --&gt;dead
+--dead之后不能resume了
+print(coroutine.resume(co)) --&gt;false	cannot resume dead coroutine
+
+--coroutine的用法要搭配yield函数使用
+co = coroutine.create(function()
+	for i=1,10 do 
+		print("co",i)
+		print("yield",coroutine.yield())
+	end
+end)
+
+coroutine.resume(co) --&gt;co 1
+--这说明yield可以中断coroutine的执行
+--@important：
+--从coroutine的角度出发，当co suspend时，co在试行yield的操作，当yield执行完后，再会在执行co的操作
+--这意味着，当co被suspend时，stack上的参数传递给yield继续执行，yield执行完后，再将参数交给co的stack
+
+
+--传参:任何传递给yield/resume的参数，都会作为返回值返回给main function
+--考虑两种情况：
+--一种是coroutine function没有配对的yield，function自然dead
+--一种是有配对的yield
+
+--第一种情况--：
+--使用wrap
+co = coroutine.wrap(function(a) return 2*a end)
+b = co(20)
+print(b) -- 40
+
+--使用create
+co = coroutine.create(function(a) return 2*a end)
+b,v1 = coroutine.resume(co,20)
+print(b,v1) --true 40
+
+--第二种情况，resume有对应的yield
+co = coroutine.wrap(function(a) local c = coroutine.yield(a+1) print("main func a: ",a) return 2*a end)
+b = co(20)
+print(b) -- 21
+--从yield后面执行
+d = co(b+1)
+print(d) -- 40
+
+
+--使用create
+co = coroutine.create(function(a) return 2*a end)
+b,v = coroutine.resume(co,20)
+print(b,v) -- true，40
+
+--使用create
+co = coroutine.create(function(a) local c = coroutine.yield(a+1) print("main func c: ",c) return 2*a end)
+b,v = coroutine.resume(co,20)
+print(b,v) -- true，21
+b,v = coroutine.resume(co,20)
+print(b,v) -- true,40
+
+--生产者，消费者模式--
+--通过yield，resume配对实现，类似java的wait和notify
+
+function send(x)
+	coroutine.yield(x)
+end
+
+producer = coroutine.create(function() while true do 
+	local x = io.read()
+	print("producer get: ",x)
+	send(x)
+	end
+end)
+
+function receive()
+	local status,value = coroutine.resume(producer)
+	--print(status,value)
+	return value
+end
+
+function consumer ()
+	while(true) do
+		local x = receive()
+		
+		if x == "ok" then
+		print("consumer quit: ",x)
+		break
+	else
+		print("consumer get: ",x)
+		end
+	end
+end
+
+--consumer()
+
+--过程变为：
+--1，由消费者驱动数据：消费者首先需要一个x,调用receive，此时main coroutine停止running，进入normal状态，
+--2，此时创建一个coroutine：producer，它有自己的stack，自己的状态，resume后，执行send，发送一个x,此时yield，producer暂停
+--3, 消费者收到x，继续请求令一个x</pre> 
+
+```
+
+
+###Further Reading
+
+Programming in Lua : <a href="http://www.lua.org/pil/">http://www.lua.org/pil/</a>
+Coroutines in Lua  : <a href="http://www.inf.puc-rio.br/~roberto/docs/corosblp.pdf"> http://www.inf.puc-rio.br/~roberto/docs/corosblp.pdf</a>

@@ -1,0 +1,98 @@
+---
+title: Linode Setup CheetSheet
+categories: 随笔
+layout: post
+tag: UNIX
+
+---
+
+### Install Software Updates
+
+- `apt-get update && apt-get upgrade`
+- 设置hostname：`hostnamectl set-hostname example_hostname`
+- host文件在`/etc/hosts`
+- 关于host的命名:
+	- [Using Your System's hosts File](https://www.linode.com/docs/networking/dns/using-your-systems-hosts-file) 
+
+
+### Add User
+
+- 在/home下创建用户bob: `%adduser bob`
+- 为bob赋予临时root权限: `%gpasswd -a bob sudo`
+- 退出server: `%exit`
+
+### Add RSA key
+
+- 用bob登录: `ssh bob@123.456.78.9`
+- 创建空的rsa key: 
+
+```
+%cd ~/
+%mkdir .ssh
+%chmod 700 .ssh`
+//保存空的rsa key
+%vim .ssh/authorized_keys	
+```
+- 上传本地RSA公钥:`%scp ./id_rsa bob@123.456.78.9:~/`
+- 替换authorized_keys:`%mv id_rsa.pub .ssh/authorized_keys`
+- 限制权限:`%chmod 600 .ssh/authorized_keys`
+- 重新用bob登录验证: `%ssh bob@123.456.78.9`
+
+### Configure SSH
+
+- 修改ssh配置文件:`%sudo vim /etc/ssh/sshd_config`
+- 修改ssh默认端口22:`Port 445`，可选
+- 禁止root登录:`PermitRootLogin no`
+- 更新ssh配置:`%sudo service ssh restart`
+- 重新登录: `ssh -p 445 bob@123.456.78.9`
+- 修改了ssh的登录端口后，scp命令也要加上端口号: `scp -P 445 a.zip bob@123.456.78.9:~/`
+
+### Firewall Configuration
+
+- ubuntu自带防火墙工具`ufw`
+- 打开ssh:`sudo ufw allow ssh`
+	- 如果修改了ssh port，需要指定端口号:`sudo ufw allow 4444/tcp`
+- 打开HTTP,SSL/TLS: `sudo ufw allow 80/tcp`，`sudo ufw allow 443/tcp`
+- 查看ufw规则：`sudo ufw show added` 
+- 开启ufw：`sudo ufw enable`
+- 关闭ssh:`sudo ufw disable`
+
+
+### Configure Iptables
+
+
+
+### Config Fail2Ban
+
+- 安装fail2ban：`apt-get install fail2ban`
+- 配置`jail.conf`,修改要创建`jail.local`：`cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local`
+- 修改一些简单配置，比如重试时间，次数，开启`[sshd]`和`nginx`配置等
+- 更新fail2ban配置：`sudo fail2ban-client reload`
+- 查看fail2ban状态：`sudo fail2ban-client status`
+- 更多 [Fail2Ban](https://www.linode.com/docs/security/using-fail2ban-for-security)
+
+
+### Config DNS
+
+- 将linode提供给的name server关联到域名提供商(如godaday)，24~48小时生效  
+
+### Stup Nginx
+
+- install nginx: 
+	- `sudo apt-get update`
+	- `sudo  apt-get install nginx`
+	- `sudo service nginx start`
+- 配置fail2ban
+	- 找到`[nginx-http-auth]`, 增加`enabled=true` 
+
+
+### Install RVM
+
+- install rvm:
+	- `gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB`
+	- `\curl -sSL https://get.rvm.io | bash`
+	- `source ~/.rvm/scripts/rvm`
+
+- install ruby
+	- `rvm install ruby_version` 
+

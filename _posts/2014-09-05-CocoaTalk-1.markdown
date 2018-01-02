@@ -1,0 +1,21 @@
+---
+title: CocoaTalk#1
+layout: post
+tag: CocoaTalk
+categories: 随笔
+---
+
+<em>文章均为作者原创，转载请著名出处</em>
+
+
+今天在团队内部分享了一些最近在的思考，实践的东西：
+
+- UIKit Animation
+
+- UIKitDynamics
+
+- ReactiveCocoa
+
+- MVVM
+
+这里是分享的[PDF资料](https://github.com/akaDealloc/blog/tree/gh-pages/pdf)，删掉了一些公司内部的内容

@@ -1,7 +1,10 @@
 <nav>
-    <ul class="nav {{include.navclass}}">
-        <li><a href="{{site.baseurl}}/index.html" class="{% if page.url == '/' %}current{% endif %}" >Home</a></li>
-        <li><a href="{{site.baseurl}}/archives.html" class="{% if page.url == '/archives.html' %}current{% endif %}" >Archives</a></li>
-        <li><a href="{{site.baseurl}}/about.html" class="{% if page.url == '/about.html' %}current{% endif %}">About</a></li>
+    <ul class="nav">
+        <li><a href="{{site.baseurl}}/index.html">Home</a></li>
+        <li><a href="{{site.baseurl}}/contents/quick-access/">Quick Access</a></li>
+        <li><a href="{{site.baseurl}}/contents/tags/">Tags</a></li>
+        <li><a href="{{site.baseurl}}/contents/archives">Archives</a></li>
+        <li><a href="{{site.baseurl}}/contents/about">About</a></li>
+        <li>Search</li>
     </ul>
 </nav>

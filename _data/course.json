@@ -1,0 +1,25 @@
+{
+    "contents":[
+        {
+            "name": "Machine Learning",
+            "platform": "Coursera",
+            "key": "ml-stanford",
+            "contents": []
+        },
+        {
+            "name": "Programming Language",
+            "platform": "Coursera",
+            "key": "washington-pl",
+            "contents": []
+        },
+        {
+            "name": "Computer Graphics",
+            "platform": "Edx",
+            "contents": []
+        },
+        {
+            "name": "Learn How to Learn"
+        }
+    ]
+
+}

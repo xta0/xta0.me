@@ -1,0 +1,58 @@
+---
+
+layout: post
+title: 理解ReactiveCocoa
+tag: iOS
+
+---
+
+> 本文讨论的是ReactiveCocoa 2.x版本，3.0版本不在讨论的范围之内 
+ 
+最近一个月在看ReactiveCocoa，深深感受到它的魅力，但同时也发现它的局限性
+
+网上关于RAC入门的文章有很多，这里
+
+###理解Reactive
+
+参考文献[1]是一片不错的介绍Reactive Programming的文章。这个东西就
+
+###关于Signal
+
+
+###宏
+
+
+###Racify
+
+
+
+
+##Further Reading:
+
+1. [The introduction to Reactive Programming you've been missing](https://gist.github.com/staltz/868e7e9bc2a7b8c1f754)
+- [Is functional GUI programming possible](http://stackoverflow.com/questions/2672791/is-functional-gui-programming-possible)
+- [iOSFRP](https://leanpub.com/iosfrp/) 
+- [FRP in Haskell](https://vimeo.com/96744621)
+- [Haskell社区，新版很酷](https://www.haskell.org/)
+- [C41:一个ReactiveCocoa的demo](https://github.com/AshFurrow/C-41)
+- [理解FRP：input和output](http://blog.maybeapps.com/post/42894317939/input-and-output)
+- [ReactiveCocoa Github Page](https://github.com/ReactiveCocoa/ReactiveCocoa#introduction)
+- [InfoQ上网易架构师关于FPR的解释,写的很好](http://www.infoq.com/cn/articles/functional-reactive-programming)
+- [ELM](http://elm-lang.org/)
+- [微软的Reactive Extension](https://msdn.microsoft.com/en-us/data/gg577609.aspx)
+- [Eric Majier对Reactive的解释](https://www.youtube.com/watch?v=sTSQlYX5DU0)
+- [ReactiveCocoa 3.0 preview](https://www.youtube.com/watch?v=ICNjRS2X8WM)
+- [ReactiveCocoa Github conference Q&A](https://www.youtube.com/watch?v=NzKp2AjnMMM)
+- [ReactiveCocoa Tutorial – The Definitive Introduction](http://www.raywenderlich.com/62699/reactivecocoa-tutorial-pt1)
+- [Deconstructing Functional Programming](http://www.infoq.com/presentations/functional-pros-cons)
+- [FlattenMap,Map,SwitchLatest](http://rcdp.io/flattenMap-vs-map-switchToLatest.html)
+- [PromiseKit](http://promisekit.org/introduction/)
+- [关于RAC和PromiseKit的讨论](http://www.reddit.com/r/iOSProgramming/comments/26lrqw/promisekit_a_framework_for_async_cocoa_programming/)
+- [Taming Callbacks in iOS: Bolts Framework](http://www.dimroc.com/2014/12/17/bolt-framework-promisekit-or-reactive-cocoa-for-async/)
+- [Bolts](https://github.com/BoltsFramework/Bolts-iOS)
+- [How can i implement the promise pattern with ReactiveCocoa?](http://stackoverflow.com/questions/18827122/how-can-i-implement-the-promise-pattern-with-reactivecocoa)
+- [Pipes](http://codeplease.io/pipes/)
+- [Splitting an RACSignal to eliminate state](http://stackoverflow.com/questions/18852844/splitting-an-racsignal-to-eliminate-state/18860635#18860635)
+- [FRP on iOS](http://thoughtsdumping.blogspot.tw/2014/01/ios-fp-functional-programming-native.html)
+
+

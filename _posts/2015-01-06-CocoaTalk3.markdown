@@ -1,0 +1,39 @@
+---
+layout: post
+title: CocoaTalk#3
+tag: CocoaTalk
+categories: 随笔
+---
+
+<em>所有文章均为作者原创，转载请注明出处</em>
+
+今天在团队内部分享了Swift的一些内容，包含了自己这段时间以来的实践和思考，作为一个阶段性学习成果的总结，自己还是比较满意的。
+
+分享的内容主要有两点:
+
+- Swift的一些语言特性：
+
+	- optional
+	- tuple
+	- struct
+	- enum
+	- function/closure
+	- pattern matching
+	- generics
+	- ...
+	
+- Swift背后的一些实现机制：
+
+	- memory layout
+	- isa
+	- communication
+	- vtable
+	- name mangling
+	
+总的来说这段时间在Swift上的投入是轻松快乐的，但是我现在对自己的Swift水平还不是很满意，仅仅停留在语言特性和cocoa的API上，还未到达理想中“道”的境界。
+
+做技术的人要对技术抱有敬畏之心，因为你不知道的实在太多了，沾沾自喜，骄傲轻浮只会自己变得滑稽可笑。
+
+因为你眼里看到的是一棵树，而在别人眼里看到的却是一片森林。
+
+分享的PDF在-->[这里](https://github.com/vizlabxt/vizlabxt.github.io/blob/master/cocoatalk/cocoaTalk-3.pdf)

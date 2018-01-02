@@ -1,0 +1,132 @@
+---
+title: Vizzle下一步的进化方向 
+layout: post
+tag: VizLab
+categories: 随笔
+---
+
+<em>文章均为作者原创，转载请著名出处</em>
+
+
+##UIViewController的问题
+
+理论上来说，MVC的各个角色边界是清晰的，互不耦合。但Apple早期的设计显然违背了这个原则,UIKit中的UIViewController，自身就耦合了view的逻辑，比如：将View作为一个成员变量（self.view）；提供对View touch事件处理的API等等。因此它不能真正意义上去充当Controller的角色，就像它的名字一样，它是UIView的Controller。而现实中，我们通常把它作为Controller的角色在使用，这就会产生一个问题：我们可以在Controller里面创建和销毁View，进而会引出下面两个问题：
+
+- Controller负责提供view的数据源，并处理View的状态
+- Controller负责处理view产生的事件（响应callback）
+
+这两个问题又会带来两个坏处：
+
+- 当页面复杂时，大量的View代码耦合进来使得Controller代码不易阅读维护
+- Controller中需要处理业务逻辑，又要处理view相关的状态，而这两者多数时候又耦合在一起，使Controller难以测试
+
+
+##解决这个问题
+
+###Storyboard
+
+显然，Apple也已经意识到了这个问题，在iOS 5.0的时候推出了Storyboard，一种View的模板。它承担了View的创建和销毁,以及各种属性的配置：
+
+```objc
+@property (nonatomic, weak) IBOutlet UIImageView *imgV;
+
+```
+通过IBOutlet，imgV被编译成weak类型，说明UIViewController不再负责view的生命周期。
+
+使用Storyboard的优点是:
+
+- 减少了在UIViewController中创建各种View的代码。
+
+缺点是：
+
+- Controller依然会引用各个subview。
+
+- Controller依然要负责对view状态的维护和数据的传递。
+
+- 对于大的项目，多人维护Storyboard会带来不便。
+
+
+###MVVM
+
+既然UIViewController被设计成和view耦合，那么索性就直接使用MVVM，将UIViewController和UIView绑到一起统一视作View，摆脱MVC。关于MVVM这个模式，网上有很多资料，[这篇文章](http://www.objc.io/issue-13/mvvm.html)讲的比较清楚。
+
+MVVM的好处是：
+
+- UIViewController被当做View使用不处理具体业务逻辑
+
+- 业务代码集中在ViewModel里，ViewModel不耦合具体的View，是业务逻辑可做单元测试
+
+- ViewModel和View自动绑定
+
+缺点：
+
+- 对于项目中已有的业务代码和框架，迁移过去成本很高。
+
+###其它
+
+- [pureMVC](https://github.com/PureMVC/puremvc-objectivec-standard-framework/wiki):它是整个一套解决方案，也有OC的实现，代码风格上看，感觉是从Java迁移过去的。
+
+- [Bee](https://github.com/gavinkwoe/BeeFramework):实现了通过CSS生成View，很酷，但是上手有些慢，不适合项目迁移。
+
+- [Viper](http://www.objc.io/issue-13/viper.html):拆分的过于细致了
+
+
+### Vizzle
+
+所有这些都和我的设想不太一样，我希望能在现有框架([Vizzle](http://akadealloc.github.io/blog/2014/09/15/Vizzle.html))的支撑下，平滑的过度到一个新的框架，并且能解决UIViewController的问题。
+
+现在的[Vizzle](http://akadealloc.github.io/blog/2014/09/15/Vizzle.html)是一个MVC框架，其中Controller和Model已经做了较好的抽象，因此我不想破坏这部分的结构，那么现在的问题是如何处理：
+
+1. UIViewController和View之间的耦合
+2. View和业务代码的耦合。
+
+我的想法是引入ViewModel和ViewTemplate。于是便有了MVC+
+
+
+## MVC+
+
+<img src="/images/2014/11/new_mvc.png" alt="new_mvc"/>
+
+这个图大概能说明我的想法，我再来梳理一下Rules:
+
+1. Controller引用Model
+
+2. Controller引用ViewModel
+
+3. 只有基类的Controller引用Template，负责Template的创建和渲染。
+ 
+4. 通常情况下Controller中是不应该访问Template中具体的view的，如果想改变view的状态，需要通过viewmodel
+
+5. ViewModel不会知道任何view的存在，view也不会知道ViewModel的存在，view和viewModel会建立双向绑定，通过Channel（一种类似KVO的实现）。这也意味着ViewModel是干净的，它将是业务逻辑集中的地方，它的每一个方法都应该可以被单元测试。
+
+6. 关于数据流转（主动:M->C->VM->V）：Controller发起model请求（[self load]）--> 处理model的状态([self showmodel:model]) ---> 更新ViewModel ---> 当ViewModel中被View绑定的数据源发生变化时 --> View被更新
+
+7. 关于数据流转（被动:V->VM->C）：当view的状态因外界改变时（比如button点击）--> 更新ViewModel中绑定的keypath --> ViewModel如果能处理则处理（比如触发定位），如果不能处理则转交controller（如发起一个HTTP请求）--> controller处理
+
+
+这种代码设计的好处有下面几点：
+
+1. Controller会轻量，只负责处理model的状态和更新viewmodel
+
+2. ViewModel由于和View不耦合，里面的业务逻辑可单独测试
+
+3. View由于在template中创建，代码集中，便于管理
+
+4. Template由于负责View展现，可单独优化，比如使用AsyncDisplayKit
+
+5. 从Vizzle过度会比较平缓
+
+
+总的说来就是降低了模块间的耦合性，使它们各自独立，便于阅读，扩展和维护
+
+
+## 结论：
+
+这是Vizzle下一步的进化方向，路很长，一点点开始吧。
+
+
+##Further Reading
+
+- [MVVM](https://www.youtube.com/watch?v=dHlwC-UNkxs)
+
+
