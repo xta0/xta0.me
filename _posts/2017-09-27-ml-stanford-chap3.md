@@ -39,7 +39,7 @@ categories: [ml-stanford,course]
 - 得到函数：<math><mi>g</mi><mo stretchy="false">(</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mstyle><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow class="MJX-TeXAtom-ORD"><mo>−</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi></mrow></msup></mrow></mfrac></mstyle></math>
 函数曲线如下:
 
-![](/images/2017/09/ml-5-1.png)
+![](/assets/images/2017/09/ml-5-1.png)
 
 函数`g(z)`, 如上图将所有实数映射到了(0,1]空间内，这使他可以将任意一个h(x)的值空间转化为适合分类器取值的空间, `g(z)`也叫做**Sigmoid Function**`hθ(x)`的输出是结果是`1`的概率，比如`hθ(x)=0.7`表示70%的概率我们的输出结果为`1`，因此输出是`0`的概率则是30%：
 
@@ -169,7 +169,7 @@ categories: [ml-stanford,course]
 
 如下图所示：
 
-![](/images/2017/09/ml-5-2.png)
+![](/assets/images/2017/09/ml-5-2.png)
 
 由上图可看出：<math><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>x</mi><mn>2</mn></msub><mo>=</mo><mn>3</mn></math>可作为**Boundary Function**，也叫**Decision Boundary**
 
@@ -236,7 +236,7 @@ categories: [ml-stanford,course]
 
 假设`θ`值已经确定`[-1,0,0,1,1]`，同上，变为求如果要`y=1`，那么需要<math><mn>-1</mn><mo>+</mo><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>x</mi><mn>2</mn><mn>2</mn></msubsup><mo>≥</mo><mn>0</mn></math>，即找到<math><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><msub><mi>x</mi><mn>2</mn></msub></math>满足<math><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>x</mi><mn>2</mn><mn>2</mn></msubsup><mo>≥</mo><mn>0</mn></math>，则边界函数为<math><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>x</mi><mn>2</mn><mn>2</mn></msubsup><mo>=</mo><mn>0</mn></math>，如下图所示
 
-![](/images/2017/09/ml-5-3.png)
+![](/assets/images/2017/09/ml-5-3.png)
 
 则落在圈外的样本点，可以预测`y=1`
 
@@ -397,11 +397,11 @@ categories: [ml-stanford,course]
 
 当`y=1`的时候，`J(θ) = 0` -> `h(x)=1`；`J(θ) = ∞ ` -> `h(x)=0`，如下图所示
 
-![](/images/2017/09/ml-5-2.png)
+![](/assets/images/2017/09/ml-5-2.png)
 
 当`y=0`的时候，`J(θ) =0 ` -> `h(x)=0`，`J(θ) = ∞ ` -> `h(x)=1`，如下图所示
 
-![](/images/2017/09/ml-5-3.png)
+![](/assets/images/2017/09/ml-5-3.png)
 
 图上可以看出`J(θ)`有极值点，接下来的问题就是分别求解`h(x)=0`和`h(x)=1`两种情况下的`θ`值
 
@@ -887,7 +887,7 @@ initialTheta = zeros(2,1);
 
 即分类结果不只是0或1，而是多个 y = {0,1...n}，解决多个分类我们使用one-vs-all的方式，即选取某一个场景进行归类时，将其他场景合并为起对立的场景。如图：
 
-![](/images/2017/09/ml-5-4.png)
+![](/assets/images/2017/09/ml-5-4.png)
 
 
 上图可知我们先取一个class进行计算，将其他的归类为另一个class，这样就可以使用前面提到的binary regression model进行计算，即
@@ -1062,7 +1062,7 @@ On a new input <math><mi>x</mi></math>, to make a prediction, pick the class <ma
 
 以线性回归的预测房价为例，如下图所示：
 
-![](/images/2017/09/ml-5-5.png) 
+![](/assets/images/2017/09/ml-5-5.png) 
 
 可以看到:
 
@@ -1199,7 +1199,7 @@ On a new input <math><mi>x</mi></math>, to make a prediction, pick the class <ma
 
 我们在原来的cost function后面增加了两项，为了让cost function接近0，我们需要让<math><msub><mi>θ</mi><mn>3</mn></msub></math>,<math><msub><mi>θ</mi><mn>4</mn></msub></math>近似为0，这样即会极大的减少<math><msub><mi>θ</mi><mn>3</mn></msub><msup><mi>x</mi><mn>3</mn></msup></math>和<math><msub><mi>θ</mi><mn>4</mn></msub><msup><mi>x</mi><mn>4</mn></msup></math>的值，减少后的曲线如下图粉色曲线，更接近二次函数：
 
-![](/images/2017/09/ml-5-6.png)
+![](/assets/images/2017/09/ml-5-6.png)
 
 Small values for parameters <math><msub><mi>θ</mi><mn>0</mn></msub><mo>,</mo><msub><mi>θ</mi><mn>1</mn></msub><mo>,...,</mo><msub><mi>θ</mi><mn>n</mn></msub></math>
 
@@ -1667,7 +1667,7 @@ L是一个（n+1)x(n+1)的对单位阵，第一项是0。在引入λ.L之后<mat
 
 逻辑回归也有overfitting的问题，如图所示
 
-![](/images/2017/09/ml-5-7.png)
+![](/assets/images/2017/09/ml-5-7.png)
 
 处理方式和线性回归相同，之前知道逻辑回归的cost function 如下：
 
@@ -1875,7 +1875,7 @@ L是一个（n+1)x(n+1)的对单位阵，第一项是0。在引入λ.L之后<mat
 
 第二项：<math xmlns="http://www.w3.org/1998/Math/MathML"><munderover><mo>∑</mo><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msubsup><mi>θ</mi><mi>j</mi><mn>2</mn></msubsup></math>是排除了<math><msub><mi>θ</mi><mi>0</mi></msub></math>的，因此，计算梯度下降要对<math><msub><mi>θ</mi><mi>0</mi></msub></math>单独计算:
 
-![](/images/2017/09/ml-5-8.png)
+![](/assets/images/2017/09/ml-5-8.png)
 
 - Octave Demo
 

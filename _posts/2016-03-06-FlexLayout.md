@@ -15,7 +15,7 @@ FlexLayout提供一组声明式(declarative)的API来描述一个UI组件(Node�
 
 俗话说:"Talk is cheap, show me the code",我们以一个实际的应用场景来说明如何使用FlexLayout
 
-![](/images/2016/03/flex001.png)
+![](/assets/images/2016/03/flex001.png)
 
 如上图cell，要求高度根据内容动态变化，名字长度自适应，名字和时间两端对齐，但是评价星星始终跟在名字后面，同时又不能压缩它后面的时间label。
 
@@ -25,7 +25,7 @@ FlexLayout提供一组声明式(declarative)的API来描述一个UI组件(Node�
 
 接下来我们讨论如何使用FlexLayout来描述这个cell，就像React中的Component，第一步是思考如何将cell切分成若干个Component，以上面的布局为例，我们首将其先切成几个大的node,如下图所示
 
-![](/images/2016/03/flex002.png)
+![](/assets/images/2016/03/flex002.png)
 
 ### 用代码描述
 
@@ -91,7 +91,7 @@ using namespace o2o::flex;
 
 根据之前的约定，我们需要星星一直跟在名字的后面，当名字过长时，自身不被压缩，同时后面的时间node也不被压缩。实现这个规则，如果使用UIKit，计算会变得很复杂，要考虑名字的长度，星星的长度，时间的文字长度，以及他们之间的间隔，还要考虑最右边的padding，实现起来要定义一些局部变量来保存各种计算结果，还要通过复杂的过程性的语句来实现上面的规则，代码可读性和维护性都很糟糕。有了FlexLayout，只需要指定星星和时间的flexShrink为0，表示当总体宽度不够时，不压缩自身宽度，那么只有名字的长度会被压缩，如下图所示:
 
-![Alt text](/images/2016/03/flex003.png)
+![Alt text](/assets/images/2016/03/flex003.png)
 
 ### 定义Pure Function
 
@@ -147,7 +147,7 @@ using namespace o2o::flex;
 
 我们在支付宝口碑的业务中，很多地方都使用了FlexLayout，以商家中心券为例，对于如此复杂的页面，代码量比传统方式减少了20%，而且可读性和维护性都提升了，最为重要的是，作为程序员，看到这样的代码能让我们心情愉悦，高效率的coding
 
-![Alt text](/images/2016/03/flex004.png)
+![Alt text](/assets/images/2016/03/flex004.png)
 
 ## 附录
 

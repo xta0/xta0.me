@@ -92,7 +92,7 @@ POP通过这种方式是实现了它的动画引擎，接下来的问题是如�
 
 AS基本上就是做了这两方面的优化，这些和我们2年前做的优化工作差不多，但是AS以一种系统性，抽象的方式将异步绘制应用到了整个UIKit中，这一点非常了不起。
 
-![Alt text](/images/2015/01/ASNode.png)
+![Alt text](/assets/images/2015/01/ASNode.png)
 
 AS通过定义Node封装了UIView和CALayer，使用Node可以像使用UIView一样，但是Node是线程安全的，你可以在另一个线程中去创建，layout，绘制Node:
 

@@ -510,7 +510,7 @@ h2 {
 
 ### 盒子模型
 
-![](/images/2007/04/box-model.png)
+![](/assets/images/2007/04/box-model.png)
 
 - `margin`
 	- `margin: 20px 40px 500px 100px`：top,right,bottom,right
@@ -1020,7 +1020,7 @@ h2 {
 
 ### Overview
 
-![](/images/2007/04/dom.png)
+![](/assets/images/2007/04/dom.png)
 
 - 访问`document`对象
 	- `console.dir(document)`

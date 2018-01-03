@@ -41,7 +41,7 @@ void CFRunLoopRun(void) {	/* DOES CALLOUT */
 
 Runloop只检测两种类型的消息，一种是Input Sources，通常是来自其它线程或进程。另一种是同步事件，来自Timer。这两种事件都可以在app中被获取并做处理：
 
-<img src="/images/2012/11/runloop.png" width="496" height="262">
+<img src="/assets/images/2012/11/runloop.png" width="496" height="262">
 
 如果想要获取Runloop每一次扫描的回调，可以注册observer:
 
@@ -184,7 +184,7 @@ OSX提供了一种基于MachPort的线程或进程间的通信方式，这种方
 
 文档中给出的这张图已经说的很清楚了：
 
-<img src="/images/2012/11/runloop2.png" width="475" height="233">
+<img src="/assets/images/2012/11/runloop2.png" width="475" height="233">
 
 如果想使用自定义的Input Source向Runloop投递消息，需要使用CoreFoundation的API，Foundation的API不提供创建自定义的Input Source，根据文档，使用Input Source需要如下步骤：
 

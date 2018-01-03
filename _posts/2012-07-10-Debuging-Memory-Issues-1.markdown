@@ -40,7 +40,7 @@ iOS设备CPU是32位，因此寻址空间为：0x00000000 ~ 0xffffffff
 
 回忆我们以前学的微机原理，内存是按照4KB为一帧被划分开。虚拟内存同样按照4KB为一页来划分，每页的字节数与每帧的字节数始终相同。这样便可以将进程中的每页无缝映射到物理RAM中的每帧。WWDC的这张图说明了上面的过程：
 
-<a href="/images/2014/01/virtual_mem.png"><img src="/images/2014/01/virtual_mem.png" alt="virtual_mem" width="625" height="342"/></a>
+<a href="/assets/images/2014/01/virtual_mem.png"><img src="/assets/images/2014/01/virtual_mem.png" alt="virtual_mem" width="625" height="342"/></a>
 
 虚拟内存这么划分的好处是，可以将进程中连续的地址空间映射到物理RAM中不连续的地址空间中，这可以最大限度节省内存碎片的产生。因此，当一个进程启动时，OS会创建一张表，来保存虚拟内存到物理RAM的映射关系，这个表被成为“分页表”，类似windows中的HANDLE。然后我们讨论两种情况：
 

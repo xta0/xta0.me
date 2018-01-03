@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Understand Javascript
+title: Javascript Weird Parts
 categories: PL
 tag: Javascript
 
@@ -198,7 +198,7 @@ console.log (motocycle.numWheels) //2
 
 ### Prototypes
 
-![](/images/2010/04/proto-1.png)
+![](/assets/images/2010/04/proto-1.png)
 
 ```javascript
 /* ProtoType */
@@ -244,7 +244,7 @@ arr.__proto__ === Array.prototype; //true
 
 `Prototype Chain`类似继承链，当object调用一个方法，首先在自己的成员找，找不到则在`__proto__`对象中找，这个`__proto__`对象的类型是object的类型，也是构造函数的函数名；当在这个`__proto__`对象仍找不到方法时，会在`__proto__`对象的`__proto__`成员，这个`__proto__`对象的成员类型为`object`（类似基类）中继续寻找。
 
-![](/images/2010/04/proto-2.png)
+![](/assets/images/2010/04/proto-2.png)
 
 ```javascript
 arr. hasOwnProperty('length') //true

@@ -20,21 +20,21 @@ categories: 随笔
 
 <div>
 	<div style="width:48%; float:left; margin-right:10px">
-		<img src="/images/2014/03/ble-1.png" width="100%" height="150">
+		<img src="/assets/images/2014/03/ble-1.png" width="100%" height="150">
 	</div>
 	<div style="width:48%; float:left">
-		<img src="/images/2014/03/ble-1.png" width="100%" height="150">
+		<img src="/assets/images/2014/03/ble-1.png" width="100%" height="150">
 	</div>
 </div>
 
 <!--<div style="overflow: hidden; width: 100%;">
 
 <div style="display: block; width: 48%;">
-<a style="float: left;"href="/images/2014/03/ble-1.png"><img src="/images/2014/03/ble-1.png" alt="ble-1" width="400" height="150" class="alignnone size-full wp-image-1047"/></a>
+<a style="float: left;"href="/assets/images/2014/03/ble-1.png"><img src="/assets/images/2014/03/ble-1.png" alt="ble-1" width="400" height="150" class="alignnone size-full wp-image-1047"/></a>
 </div>
 
 <div style="float: left; display: block; width: 48%;">
-<a style="margin-left: 4%; href="/images/2014/03/ble-2.png"><img src="/images/2014/03/ble-2.png" alt="ble-2" width="400" height="150" class="alignnone size-full wp-image-1050"/></a>
+<a style="margin-left: 4%; href="/assets/images/2014/03/ble-2.png"><img src="/assets/images/2014/03/ble-2.png" alt="ble-2" width="400" height="150" class="alignnone size-full wp-image-1050"/></a>
 </div>
 
 </div>-->
@@ -61,7 +61,7 @@ Session703还列出了BLE的几种使用场景：医疗，运动，安全，自�
 
 在讨论BLE工作方式之前，有必要先了解它的包格式。根据参考文献3，包格式为：
 
-<a href="/images/2014/03/ble-3.png"><img src="/images/2014/03/ble-3.png" alt="ble-3" width="340" height="146" class="alignnone size-full wp-image-1086" /></a>
+<a href="/assets/images/2014/03/ble-3.png"><img src="/assets/images/2014/03/ble-3.png" alt="ble-3" width="340" height="146" class="alignnone size-full wp-image-1086" /></a>
 
 包含8bit前缀
 32bit的跳频信道地址，对于广播包，这个值永远是0x8E89BED
@@ -94,7 +94,7 @@ C5: 2’s complement of measured TX power
 
 也就是说对于31字节的payload，从第6字节开始后的四字节是：4C 00 02 15的advertising packet都属于Apple的iBeacon设备。并且iBeacon不提供service也就不支持peripheral的connection，下面是iBeacon的包格式：
 
-<a href="/images/2014/03/ble-4.png"><img src="/images/2014/03/ble-4.png" alt="ble-4" width="322" height="169" class="alignnone size-full wp-image-1093" /></a>
+<a href="/assets/images/2014/03/ble-4.png"><img src="/assets/images/2014/03/ble-4.png" alt="ble-4" width="322" height="169" class="alignnone size-full wp-image-1093" /></a>
 
 由于iBeacon设计的场景就是室内购物，因此它规定了一些字段来应对这种场景：
 
@@ -116,7 +116,7 @@ BLE工作在2.4GHZ-2.4835GHZ频段范围内，一共有40信道用来跳频通�
 
 首先广播数据，BLE设备（peripheral）会在37，38，39信道上间歇性的广播数据，选择这三个信道是为了避开和wifi AP的干扰。同时iphone（central）在37，38，39信道上间歇性的扫描数据：
 
-<a href="/images/2014/03/ble-5.png"><img src="/images/2014/03/ble-5.png" alt="ble-5" width="443" height="158" class="alignnone size-full wp-image-1109" /></a>
+<a href="/assets/images/2014/03/ble-5.png"><img src="/assets/images/2014/03/ble-5.png" alt="ble-5" width="443" height="158" class="alignnone size-full wp-image-1109" /></a>
 
 在广播阶段，BLE设备可以广播四种格式的packet：
 
@@ -132,7 +132,7 @@ BLE工作在2.4GHZ-2.4835GHZ频段范围内，一共有40信道用来跳频通�
 
 一旦iPhone找到了要连接的BLE设备，它会向BLE设备发送connection的request，如果BLE设备支持链接（iBeacon就不支持），则会通知iPhone链接成功：
 
-<a href="/images/2014/03/ble-6.png"><img src="/images/2014/03/ble-6.png" alt="ble-6" width="446" height="195" class="alignnone size-full wp-image-1112" /></a>
+<a href="/assets/images/2014/03/ble-6.png"><img src="/assets/images/2014/03/ble-6.png" alt="ble-6" width="446" height="195" class="alignnone size-full wp-image-1112" /></a>
 
 值得注意的是，这种链接不需要配对的过程，这可能会很奇怪，如果A先链接了BLE设备，那么B则无法链接，这无疑存在着很大的安全隐患，我们后面再来探讨这个问题。
 
@@ -140,7 +140,7 @@ BLE工作在2.4GHZ-2.4835GHZ频段范围内，一共有40信道用来跳频通�
 
 链接建立起来后，就可以传数据，值得注意的是，由于前面已经降到BLE是low energy的，它在传数据的时候（比如peripheral向central发送一副很大图片）带宽其实很小的，一次最多发30个byte，而且还不是一次性传完，传输的过程也是有时间间隔的，这意味着传输的时间也会变长。
 
-<a href="/images/2014/03/ble-7.png"><img src="/images/2014/03/ble-7.png" alt="ble-7" width="434" height="185" class="alignnone size-full wp-image-1115" /></a>
+<a href="/assets/images/2014/03/ble-7.png"><img src="/assets/images/2014/03/ble-7.png" alt="ble-7" width="434" height="185" class="alignnone size-full wp-image-1115" /></a>
 
 ###Topology
 
@@ -163,11 +163,11 @@ BLE工作在2.4GHZ-2.4835GHZ频段范围内，一共有40信道用来跳频通�
 <div style="overflow: hidden; width: 100%;">
 
 <div style="display: block; width: 33%;">
-<a style="display: block; float: left;" href="/images/2014/03/ble-11.png"><img src="/images/2014/03/ble-11.png" alt="ble-11" width="138" height="192" class="alignnone size-full wp-image-1161"/></a>
+<a style="display: block; float: left;" href="/assets/images/2014/03/ble-11.png"><img src="/assets/images/2014/03/ble-11.png" alt="ble-11" width="138" height="192" class="alignnone size-full wp-image-1161"/></a>
 </div>
 
 <div style="float: left; display: block; width: 63%;">
-<a style="display: block; float: left; margin-left:4%;" href="/images/2014/03/ble-12.png"><img src="/images/2014/03/ble-12.png" alt="ble-12" width="480" height="136" class="alignnone size-full wp-image-1164"/></a>
+<a style="display: block; float: left; margin-left:4%;" href="/assets/images/2014/03/ble-12.png"><img src="/assets/images/2014/03/ble-12.png" alt="ble-12" width="480" height="136" class="alignnone size-full wp-image-1164"/></a>
 </div>
 
 </div>
@@ -178,11 +178,11 @@ BLE工作在2.4GHZ-2.4835GHZ频段范围内，一共有40信道用来跳频通�
 
 由前一节的讨论我们知道，建立通信的第一步是Advertising,我们抓取一个Advertising的packet：
 
-<a href="/images/2014/03/ble-131.png"><img src="/images/2014/03/ble-131.png" alt="ble-13" width="453" height="253" class="alignnone size-full wp-image-1178" /></a>
+<a href="/assets/images/2014/03/ble-131.png"><img src="/assets/images/2014/03/ble-131.png" alt="ble-13" width="453" height="253" class="alignnone size-full wp-image-1178" /></a>
 
 EventType标识了这个Advertising packet是前一节提到的第三种，可支持连接的设备。关于EventType的值是不会定义到payload中的（见第二节，关于EventType更多内容，可以参考文献11）。Peer_Address是这个设备的MAC地址，通常这个值能被sniffer抓到，但是在程序中是无法获取的。16bit的UUID是目前来看是service的UUID；Data是packet的payload，第一个字节0x02：后面有两个字节内容，然后是0x03标识后面有三个字节内容。
 
-<a href="/images/2014/03/ble-14.png"><img src="/images/2014/03/ble-14.png" alt="ble-14" width="692" height="239" class="alignnone size-full wp-image-1180" /></a>
+<a href="/assets/images/2014/03/ble-14.png"><img src="/assets/images/2014/03/ble-14.png" alt="ble-14" width="692" height="239" class="alignnone size-full wp-image-1180" /></a>
 
 当BLE谁被被scan后，会发一个response的packet给client，里面包含了一些信息：
 LocalName标识了这个设备的name存到了payload中，Data中的字段解析后就是这个localName的名称
@@ -192,7 +192,7 @@ LocalName标识了这个设备的name存到了payload中，Data中的字段解�
 - 在lightBlue中看到的device的UUID:34EE-....是哪里来的？
 - 在lightBlue中看到的device的name:ZBModule01是哪里来的？
 
-<a href="/images/2014/03/ble-13.png"><img src="/images/2014/03/ble-13.png" alt="ble-13" width="389" height="188" class="alignnone size-full wp-image-1166" /></a>
+<a href="/assets/images/2014/03/ble-13.png"><img src="/assets/images/2014/03/ble-13.png" alt="ble-13" width="389" height="188" class="alignnone size-full wp-image-1166" /></a>
 
 关于这两点的讨论，分别对应参考文献的8和9，从目前搜集到的资料来看，没有答案，又找不到官方的解释，只能猜测，我谈谈自己的看法：
 第一点是device UUID这个值，应该是iOS自己根据某种规则生成的Unique值，然后cache到了系统中的，原因是你是没办法指定设备的UUID的（至少我没找到方法）。而且在不同的iOS设备上看到同一个BLE设备的UUID值是不同的。第二点是ZBModule这个name是怎么读到的呢？Advertising packet的local name和这个值不同，关于这点我还没有线索。
@@ -204,7 +204,7 @@ LocalName标识了这个设备的name存到了payload中，Data中的字段解�
 
 Apple在iPhone4s之后的终端设备开始支持BLE，并提供了一套API叫做CoreBluetooth：
 
-<a href="/images/2014/03/ble-8.png"><img src="/images/2014/03/ble-8.png" alt="ble-8" width="242" height="213" class="alignnone size-full wp-image-1120" /></a>
+<a href="/assets/images/2014/03/ble-8.png"><img src="/assets/images/2014/03/ble-8.png" alt="ble-8" width="242" height="213" class="alignnone size-full wp-image-1120" /></a>
 
 CoreBluetooth完整的实现了GATT，但是我个人的观点是CoreBluetooth这个framework设计的不是一般的差：
 
@@ -217,7 +217,7 @@ CoreBluetooth完整的实现了GATT，但是我个人的观点是CoreBluetooth�
 
 2011年iOS 5.0率先引入CoreBluetooth,只提供Central端的API，这意味着你只能作为client链接别人，接受广播。但是，如果你想作为Peripheral和client交换数据，就要用到iOS 6.0的API了：
 
-<a href="/images/2014/03/ble-9.png"><img src="/images/2014/03/ble-9.png" alt="ble-9" width="443" height="156" class="alignnone size-full wp-image-1130" /></a>
+<a href="/assets/images/2014/03/ble-9.png"><img src="/assets/images/2014/03/ble-9.png" alt="ble-9" width="443" height="156" class="alignnone size-full wp-image-1130" /></a>
 
 iOS 6.0之后CoreBluetooth的API框架就基本定型了，到了iOS 7.0，Apple对它又进行了一些优化，包括API的重新设计，一些方便的状态判断等。
 在性能上，iOS 6.0先引入了caching机制，这个缓存机制只做到了Central端，也就是说系统会自动cache你扫描到的BLE设备，并且记住它提供的service和characteristic。iOS 7.0在这个基础上增加了更多cache的内容，但是iOS7对BLE最大的优化在传数据上，它提高了20%的传输带宽，此外在支持后台运行上，iOS7做了较大的改动：
@@ -226,7 +226,7 @@ iOS 6.0之后CoreBluetooth的API框架就基本定型了，到了iOS 7.0，Apple
 
 根据WWDC2013 session703的内容，我们的程序因为系统内存不足要被kill掉，这时候，系统会接管我们的BLE任务，然后让它持续运行。这一点我还没来的及验证，如果真的可行，那确实很cool。想要实现它，首先要修改info.plist：
 
-<a href="/images/2014/03/ble-10.png"><img src="/images/2014/03/ble-10.png" alt="ble-10" width="548" height="42" class="alignnone size-full wp-image-1150" /></a>
+<a href="/assets/images/2014/03/ble-10.png"><img src="/assets/images/2014/03/ble-10.png" alt="ble-10" width="548" height="42" class="alignnone size-full wp-image-1150" /></a>
 
 然后在构造CentralManager时，要对指定option:
  
@@ -268,7 +268,7 @@ _cbManager = [[CBCentralManager alloc]initWithDelegate:self queue:_queue options
 
 - 在packet的Header中，要指定Event_Type为：
 
-<a href="/images/2014/03/ble-15.png"><img src="/images/2014/03/ble-15.png" alt="ble-15" width="472" height="25" class="alignnone size-full wp-image-1187" /></a>
+<a href="/assets/images/2014/03/ble-15.png"><img src="/assets/images/2014/03/ble-15.png" alt="ble-15" width="472" height="25" class="alignnone size-full wp-image-1187" /></a>
 
 
 - 它packet的payload中，要符合第三节中提到的规范。

@@ -4,21 +4,10 @@
     <meta charset="utf-8">
     <title>{{page.title}}</title>
     <link rel="stylesheet" href="{{site.baseurl}}/css/main.css">
-    <link rel="stylesheet" href="/css/default.css">  
-    <link rel="stylesheet" href="/css/syntax-highlight/prism.css">
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            jax:["input/MathML","output/HTML-CSS"],
-            MathML: {
-                useMathMLspacing: true,
-                extensions: ["content-mathml.js"]
-            },
-            showMathMenu: false
-            
-        });            
-    </script>
-    <script type="text/javascript"src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>        
+    <link rel="stylesheet" href="{{site.baseurl}}/css/default.css">  
+    <link rel="stylesheet" href="{{site.baseurl}}/css/syntax-highlight/prism.css">     
     <script type="text/javascript" src="{{site.baseurl}}/css/syntax-highlight/prism.js"></script>
+    {% include partials/mathjax.html %}
 </head>
 <body>
     {% include header.html %}

@@ -16,7 +16,7 @@ categories: [ml-stanford,course]
 
 - 如果要<math><mi>y</mi><mo>=</mo><mn>0</mn></math>，需要<math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>≈</mo><mn>0</mn></math>，即<math><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi> <mo><<</mo><mn>0</mn></math>
 
-![](/images/2017/09/ml-8-1.png)
+![](/assets/images/2017/09/ml-8-1.png)
 
 预测函数在某点的代价函数为
 
@@ -97,7 +97,7 @@ categories: [ml-stanford,course]
 
 对应的函数曲线为：
 
-![](/images/2017/09/ml-8-2.png)
+![](/assets/images/2017/09/ml-8-2.png)
 
 
 对于SVM，我们使用粉色的函数来近似cost function，分别表示为<math><msub><mi>cost</mi><mn>1</mn></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></math>和<math><msub><mi>cost</mi><mn>0</mn></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></math>，有了这两项，我们再回头看一下逻辑回归完整的代价函数：
@@ -436,11 +436,11 @@ SVM的Cost函数为:
 
 SVM的预测函数为
 
-![](/images/2017/09/ml-8-3.png)
+![](/assets/images/2017/09/ml-8-3.png)
 
 对于<math><msub><mi>cost</mi><mn>1</mn></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></math> 和 <math><msub><mi>cost</mi><mn>0</mn></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></math> ，它们的函数曲线如下图所示:
 
-![](/images/2017/09/ml-8-4.png)
+![](/assets/images/2017/09/ml-8-4.png)
 
 当C的值很大时，如果让cost函数的值最小，那么我们希望中括号里的值为0，这样我们的优化目标就变成了：
 
@@ -450,13 +450,13 @@ SVM的预测函数为
 
 先忽略数学求解，按照这个优化目标最后得出的SVM预测函数可以参考下图做直观的理解：
 
-![](/images/2017/09/ml-8-5.png)
+![](/assets/images/2017/09/ml-8-5.png)
 
 上图中，如果我们想要用一条曲线做为Decision Boundary来划分正负样本，可以有很多选择，比如绿线，粉线和黑线，其中黑线代表的预测函数为SVM分类模型，它的一个特点是样本到这条线的距离较其它预测函数比较大，因此SVM分类模型也叫做 **Large Margin Classifier**。
 
 假设有向量 <math><mi>u</mi><mo>=</mo><mfenced open="[" close="]"> <mtable> <mtr> <mtd> <msub> <mi>u</mi> <mn>1</mn> </msub> </mtd> </mtr> <mtr> <mtd> <msub> <mi>u</mi> <mn>2</mn> </msub> </mtd> </mtr></mtable> </mfenced></math> 和 <math><mi>v</mi><mo>=</mo><mfenced open="[" close="]"> <mtable> <mtr> <mtd> <msub> <mi>v</mi> <mn>1</mn> </msub> </mtd> </mtr> <mtr> <mtd> <msub> <mi>v</mi> <mn>2</mn> </msub> </mtd> </mtr></mtable> </mfenced></math>，其中<math><mi>u</mi></math>的长度为<math><mo>||</mo><mi>u</mi><mo>||</mo><mo>=</mo><msqrt><msup><mi>u1</mi><mn>2</mn></msup><mo>+</mo><msup><mi>u2</mi><mn>2</mn></msup></msqrt></math>，我们想要求解向量u和v的內积：<math><msup><mi>u</mi><mi>T</mi></msup><mi>v</mi></math>
 
-![](/images/2017/09/ml-8-6.png)
+![](/assets/images/2017/09/ml-8-6.png)
 
 参考上图，定义p为向量v在u上的投影，有如下等式
 
@@ -560,7 +560,7 @@ SVM代价函数的优化目标为：
 </math>
 
 
-![](/images/2017/09/ml-8-7.png)
+![](/assets/images/2017/09/ml-8-7.png)
 
 
 接下来考虑<math><msup><mi>θ</mi><mi>T</mi></msup><msup><mi>x</mi><mi>(i)</mi></msup></math>的替换，由前面可知，<math><msup><mi>θ</mi><mi>T</mi></msup><msup><mi>x</mi><mi>(i)</mi></msup></math>的内积可等价于向量x在向量θ
@@ -632,7 +632,7 @@ SVM代价函数的优化目标为：
 接着我们用上面的视角再重新看待分类问题，如下图
 
 
-![](/images/2017/09/ml-8-8.png)
+![](/assets/images/2017/09/ml-8-8.png)
 
 同样的样本数据，左图是用绿线做Decision Boundary，正负样本x在θ上的投影p长度很小，对于<math><mi>y</mi><mo>=</mo><mn>1</mn></math>的结果，要求<math><msup><mi>p</mi><mi>(i)</mi></msup><mo>||</mo><mi>θ</mi><mo>||</mo><mo>>=</mo><mn>1</mn></math>那么则需要<math><mo>||</mo><mi>θ</mi><mo>||</mo></math>很大，而<math><mo>||</mo><mi>θ</mi><mo>||</mo></math>显然会使优化函数<math> <munder> <mrow> <mtext>min</mtext> </mrow> <mi>θ</mi> </munder> <mfrac><mrow><mn>1</mn></mrow><mrow><mn>2</mn></mrow></mfrac> <munderover> <mo>∑</mo> <mrow> <mi>j</mi> <mo>=</mo> <mn>1</mn> </mrow> <mrow> <mi>n</mi> </mrow> </munderover> <msubsup> <mi>θ</mi> <mi>j</mi> <mn>2</mn> </msubsup> </math>的值变大。因此这样的Decision Boundary是我们不想要的。右图的绿线是SVM模型的Decision Boundary，按照上面的推理可以看出，SVM模型得到的<math><mo>||</mo><mi>θ</mi><mo>||</mo></math>比左边的要小，进而使优化函数能得出更优解。注意的是，<math><msub><mi>θ</mi><mn>0</mn></msub><mo>=</mo><mn>0</mn></math>可以使Decision Boundary穿过原点，即使<math><msub><mi>θ</mi><mn>0</mn></msub><mo>≠</mo><mn>0</mn></math>，结论也依旧成立。
 
@@ -641,7 +641,7 @@ SVM代价函数的优化目标为：
 假设有一系列非线性样本如下图：
 
 
-![](/images/2017/09/ml-8-9.png)
+![](/assets/images/2017/09/ml-8-9.png)
 
 我们使用一个非线性方程来描述Decision Boundary（上图蓝线）：
 
@@ -753,12 +753,12 @@ end
 假如我们有一个landmark：<math> <msup><mi>l</mi><mn>(1)</mn></msup> <mo>=</mo><mfenced open="[" close="]"> <mtable> <mtr> <mtd> <mn>3</mn> </mtd> </mtr> <mtr> <mtd> <mn>5</mn> </mtd> </mtr> </mtable> </mfenced> </math>，<math> <msub><mi>f</mi><mn>1</mn></msub> <mo>=</mo><mtext>exp</mtext> <mo>(</mo> <mo>-</mo> <mfrac> <mrow><mo>||</mo><mi>x</mi><mo>-</mo><msup><mi>l</mi><mn>(1)</mn></msup><msup><mo>||</mo><mn>2</mn></msup></mrow> <mrow><mn>2</mn><msup><mi>σ</mi><mn>2</mn></msup></mrow> </mfrac> <mo>)</mo> </math>，令<math><msup><mi>σ</mi><mn>2</mn></msup><mo>=</mo><mn>1</mn></math>，下图是Kernel函数的可视化呈现：
 
 
-![](/images/2017/09/ml-8-10.png)
+![](/assets/images/2017/09/ml-8-10.png)
 
 
 当给定的样本点 <math><mi>x</mi></math> 更靠近 <math><mfenced open="[" close="]"> <mtable> <mtr> <mtd> <mn>3</mn> </mtd> </mtr> <mtr> <mtd> <mn>5</mn> </mtd> </mtr></mtable></mfenced></math> 时，<math><msub><mi>f</mi><mn>1</mn></msub></math>更接近最大值1。同理，离得更远则 <math><msub><mi>f</mi><mn>1</mn></msub></math> 更接近于0。接下来我们观察<math><msup><mi>σ</mi><mn>2</mn></msup></math>对f曲线的影响
 
-![](/images/2017/09/ml-8-11.png)
+![](/assets/images/2017/09/ml-8-11.png)
 
 
 - 上图可以看到当<math><msup><mi>σ</mi><mn>2</mn></msup></math>越小时，f下降到0的速度越快，反之则越慢
@@ -766,7 +766,7 @@ end
 
 当我们计算出<math><msub><mi>f</mi><mn>1</mn></msub><mo>,</mo><msub><mi>f</mi><mn>2</mn></msub><mo>,</mo><msub><mi>f</mi><mn>3</mn></msub></math>的值之后，给定θ值，我们就能绘制预测函数了，如下图：
 
-![](/images/2017/09/ml-8-12.png)
+![](/assets/images/2017/09/ml-8-12.png)
 
 
 假设我们有一个样本<math><mi>x</mi></math>（粉色的点），显然它更靠近<math><msup><mi>l</mi><mn>(1)</mn></msup></math>，因此有：<math><msub><mi>f</mi><mn>1</mn></msub> <mo>≈</mo> <mn>1</mn><mo>,</mo><msub><mi>f</mi><mn>2</mn></msub> <mo>≈</mo><mn>0</mn><mo>,</mo><msub><mi>f</mi><mn>3</mn></msub> <mo>≈</mo> <mn>0</mn><mo></math>，对应的预测函数为：
@@ -811,7 +811,7 @@ end
 通常来说在给定一组训练样本之后，我们把每个样本点标记为一个landmark，如图所示
 
 
-![](/images/2017/09/ml-8-13.png)
+![](/assets/images/2017/09/ml-8-13.png)
 
 
 具体来说，给定训练样本：<math><mo stretchy="false">(</mo><msup><mi>x</mi><mi>(1)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(1)</mi></msup><mo stretchy="false">)</mo><mo>,</mo><mo stretchy="false">(</mo><msup><mi>x</mi><mi>(2)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(2)</mi></msup><mo stretchy="false">)</mo><mo>...</mo><mo stretchy="false">(</mo><msup><mi>x</mi><mi>(m)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(m)</mi></msup><mo stretchy="false">)</mo></math> ，使 <math><msup><mi>l</mi><mi>(1)</mi></msup><mo>=</mo><msup><mi>x</mi><mi>(1)</mi></msup><mo>,</mo><msup><mi>l</mi><mi>(2)</mi></msup><mo>=</mo><msup><mi>x</mi><mi>(2)</mi></msup><mo>...</mo><msup><mi>l</mi><mi>(m)</mi></msup><mo>=</mo><msup><mi>x</mi><mi>(m)</mi></msup></math>，对于任意训练样本<math><mi>x</mi></math>，计算<math><mi>f</mi></math>向量：
@@ -840,7 +840,7 @@ end
 <mo>]</mo>
 </math>
 
-![](/images/2017/09/ml-8-14.png)
+![](/assets/images/2017/09/ml-8-14.png)
 
 在得到<math><mi>f</mi></math>向量后，我们可以构建预测函数
 
@@ -1045,7 +1045,7 @@ end
 
 对于多个分类结果的场景，许多SVM库提供了函数可直接调用。或者采用之前提到的one-vs-all的方式
 
-![](/images/2017/09/ml-8-15.png)
+![](/assets/images/2017/09/ml-8-15.png)
 
 ### Logistic regression vs. SVM
 

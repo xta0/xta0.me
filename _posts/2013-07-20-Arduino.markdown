@@ -19,7 +19,7 @@ categories: 随笔
 
 ##Arduino 101
 
-<a href="/images/2013/07/arduino-robot-11.png"><img src="/images/2013/07/arduino-robot-11.png" alt="arduino-robot-11" width="360" height="260" class="alignnone size-full wp-image-1026" /></a>
+<a href="/assets/images/2013/07/arduino-robot-11.png"><img src="/assets/images/2013/07/arduino-robot-11.png" alt="arduino-robot-11" width="360" height="260" class="alignnone size-full wp-image-1026" /></a>
 
 - 电源：左边灰色的部分是USB口，调试程序的时候可以顺便用来供电，下面黑色口是独立的电源input。
 
@@ -49,7 +49,7 @@ Arduino的开发很简单，推荐大家在Mac或者Linux上开发，因为不�
 
 此外，Arduino还为你准备了一个IDE:
 
-<a href="/images/2013/07/arduino-ide2.png"><img src="/images/2013/07/arduino-ide2.png" alt="arduino-ide" width="454" height="440" class="alignnone size-full wp-image-1037" /></a>
+<a href="/assets/images/2013/07/arduino-ide2.png"><img src="/assets/images/2013/07/arduino-ide2.png" alt="arduino-ide" width="454" height="440" class="alignnone size-full wp-image-1037" /></a>
 
 Arduino程序包含两个函数——setup()和loop()。
 
@@ -108,4 +108,4 @@ Serial.println(val);
 
 ```
 
-<a href="/images/2013/11/arduino.png"><img src="/images/2013/11/arduino.png" alt="arduino" width="353" height="260" class="alignnone size-full wp-image-239" /></a>
+<a href="/assets/images/2013/11/arduino.png"><img src="/assets/images/2013/11/arduino.png" alt="arduino" width="353" height="260" class="alignnone size-full wp-image-239" /></a>

@@ -194,11 +194,11 @@ end
 </mfenced>
 </math>
 
-![](/images/2017/09/ml-10-1.png)
+![](/assets/images/2017/09/ml-10-1.png)
  
 接下来的问题是，对于不服从高斯分布的样本，我们怎么将其转化为高斯分布样本
 
-![](/images/2017/09/ml-10-2.png)
+![](/assets/images/2017/09/ml-10-2.png)
 
 如上图所示，如果样本数据不服从高斯分布，可以使用<math><mo>log</mo></math>或指数来调整样本分布。
 另外，上述模型对某些异常数据可能无法区分，我们希望：
@@ -208,7 +208,7 @@ end
 
 但是对于某些异常数据，<math> <mi>P</mi> <mo stretchy="false">(</mo> <mi>x</mi> <mo stretchy="false">)</mo></math>可能也很大，它们在各自样本分布曲线中均处于正常范畴，但是在二维高斯函数分布中却属于异常数据这时我们需要对异常数据进行分析，如下图所示
 
-![](/images/2017/09/ml-10-3.png)
+![](/assets/images/2017/09/ml-10-3.png)
 
 因此我们要优化之前的模型，相比原来独立计算各维度的概率，优化后的模型使用协方差来表示各维度之间的关系：
 
@@ -262,21 +262,21 @@ end
 
 多元高斯函数以及协方差的变化对其影响如下：
 
-![](/images/2017/09/ml-10-4.png)
+![](/assets/images/2017/09/ml-10-4.png)
 
-![](/images/2017/09/ml-10-5.png)
+![](/assets/images/2017/09/ml-10-5.png)
 
-![](/images/2017/09/ml-10-6.png)
+![](/assets/images/2017/09/ml-10-6.png)
 
-![](/images/2017/09/ml-10-7.png)
+![](/assets/images/2017/09/ml-10-7.png)
 
 我们可以使用新的概率模型来替换上面式子，同样根据阈值判断是否为异常数据<math><mi>P</mi> <mo stretchy="false">(</mo> <mi>x</mi> <mo stretchy="false">)</mo><mo><</mo><mi>ε</mi></math>。和之前的公式相比，在数学上一元高斯函数相当于是多元高斯函数的一个特例（协方差矩阵为对角阵）
 
-![](/images/2017/09/ml-10-8.png)
+![](/assets/images/2017/09/ml-10-8.png)
 
 和一元高斯函数相比，多元高斯函数计算复杂度更高，不利于大规模计算以及特征的扩展，当N很大时，计算NxN的<math><mo>∑</mo></math>矩阵的逆矩阵会很耗时。此外多元高斯模型还要求m（训练集大小）远大于（至少10倍）n（特征数量），否则<math><mo>∑</mo></math>是奇异矩阵，不可逆。而一元模型及时在m很小的情况下也可以很好的预测，因此通常情况下我们使用一元模型
 
-![](/images/2017/09/ml-10-9.png)
+![](/assets/images/2017/09/ml-10-9.png)
 
 如果发现计算多元高斯模型时，<math><mo>∑</mo></math>是奇异矩阵不可逆，通常有两种情况，一是m小于n，另一种是包含冗余特征（特征之间线性相关），比如<math><msub><mi>x</mi><mn>1</mn></msub><mo>=</mo><msub><mi>x</mi><mn>2</mn></msub></math>,<math><msub><mi>x</mi><mn>3</mn></msub><mo>=</mo><msub><mi>x</mi><mn>4</mn></msub><mo>+</mo><msub><mi>x</mi><mn>5</mn></msub></math>等
 
@@ -284,7 +284,7 @@ end
 
 假设我们有如下数据，左边是电影名称，右边是用户给电影的评分，假设每部电影有两个特征，分别是爱情片和动作片。我们的目的是根据用户的打分习惯推测出用户未评分的电影分数。
 
-![](/images/2017/09/ml-10-10.png)
+![](/assets/images/2017/09/ml-10-10.png)
 
 - 使用<math><msub><mi>n</mi><mi>u</mi></msub></math>表示用户数量，上面例子中<math><msub><mi>N</mi><mi>u</mi></msub><mo>=</mo><mn>4</mn></math>
 - 使用<math><msub><mi>n</mi><mi>m</mi></msub></math>表示电影数量，上面例子中<math><msub><mi>N</mi><mi>m</mi></msub><mo>=</mo><mn>5</mn></math>
@@ -435,7 +435,7 @@ end
 
 协同过滤是一种构建推荐系统的方法，它有一个特点是feature learning，算法可以自行学习所要使用的特征。还是以上面电影评分为例，对于<math><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><msub><mi>x</mi><mn>2</mn></msub></math>两个特征，我们假设有人会告诉我们他们的值，比如某个电影的浪漫指数是多少，动作指数是多少。但是要让每个人都看一遍这些电影然后收集这两个样本的数据是非常耗时的一件事情，有时也是不切实际的，此外，在除了这两个feature之外我们还想要获取更多的feature，从哪里能得到这些feature呢。如果我们有一种算法可以在已知个人偏好（θ值）的前提下，自行推算出feature值。如下图所示
 
-![](/images/2017/09/ml-10-11.png)
+![](/assets/images/2017/09/ml-10-11.png)
 
 假设Alice, Bob, Carol, Dave提前告诉了我们他们的个人偏好，即<math><msup><mi>θ</mi><mi>(1)</mi></msup><mo>,</mo><msup><mi>θ</mi><mi>(2)</mi></msup><mo>,</mo><msup><mi>θ</mi><mi>(3)</mi></msup><mo>,</mo><msup><mi>θ</mi><mi>(4)</mi></msup></math>，根据这些特征向量我们可以推测对于第一部电影Alice和Bob喜欢，Carol和Dave不喜欢，因此它可能是一部爱情片而不是动作片，即<math><msub><mi>x</mi><mn>1</mn></msub><mo>=</mo><mn>1</mn><mo>,</mo><msub><mi>x</mi><mn>2</mn></msub><mo>=</mo><mn>0</mn></math>。数学上看是需要找到<math><msup><mi>x</mi><mi>(1)</mi></msup></math>使<math><mo stretchy="false">(</mo> <msup><mi>θ</mi><mi>(1)</mi></msup> <msup> <mo stretchy="false">)</mo> <mi>T</mi> </msup> <msup><mi>x</mi> <mi>(1)</mi> </msup><mo>≈</mo><mn>5</mn><mo>,</mo><mo stretchy="false">(</mo> <msup><mi>θ</mi><mi>(2)</mi></msup> <msup> <mo stretchy="false">)</mo> <mi>T</mi> </msup> <msup><mi>x</mi> <mi>(2)</mi> </msup><mo>≈</mo><mn>5</mn><mo>,</mo><mo stretchy="false">(</mo> <msup><mi>θ</mi><mi>(3)</mi></msup> <msup> <mo stretchy="false">)</mo> <mi>T</mi> </msup> <msup><mi>x</mi> <mi>(3)</mi> </msup><mo>≈</mo><mn>0</mn><mo>,</mo><mo stretchy="false">(</mo> <msup><mi>θ</mi><mi>(4)</mi></msup> <msup> <mo stretchy="false">)</mo> <mi>T</mi> </msup> <msup><mi>x</mi> <mi>(4)</mi> </msup><mo>≈</mo><mn>0</mn></math>。类似的可以计算出<math><msup><mi>x</mi> <mi>(2)</mi> </msup></math>,<math><msup><mi>x</mi> <mi>(3)</mi> </msup></math>,<math><msup><mi>x</mi> <mi>(4)</mi> </msup></math>...
 
@@ -673,7 +673,7 @@ end
 
 上述计算也可以通过向量化来表示：
 
-![](/images/2017/09/ml-10-12.png)
+![](/assets/images/2017/09/ml-10-12.png)
 
 通过对Y矩阵的低秩分解求得θ和x。
 
@@ -694,8 +694,8 @@ end
 
 还是上述例子，假设用户Eve没有对任何电影评分过，使用上述模型进行计算，将会得到0分的结果，如下图所示
 
-![](/images/2017/09/ml-10-13.png)
+![](/assets/images/2017/09/ml-10-13.png)
 
 解决方式是对于这种情况，使用均值来代替
 
-![](/images/2017/09/ml-10-14.png)
+![](/assets/images/2017/09/ml-10-14.png)

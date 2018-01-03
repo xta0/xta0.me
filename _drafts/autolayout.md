@@ -70,15 +70,15 @@ NSLayoutConstraint* constraint2 = [NSLayoutConstraint constraintWithItem:self.bu
 
 - 大小，优先级： `[wideView(>=60@700)]`: `wideView`的宽度至少为60，优先级为700
 
-![Alt text](/blog/images/2012/08/al-1.png)
+![Alt text](/blog/assets/images/2012/08/al-1.png)
 
 - 垂直对齐，等高: `V:[redBox][yellowBox(==redBox)]`
 
-![Alt text](/blog/images/2012/08/al-2.png)
+![Alt text](/blog/assets/images/2012/08/al-2.png)
 
 - 组合：`H:|-[Find]-[FindNext]-[FindField(>=20)]-|`
 
-![Alt text](/blog/images/2012/08/al-3.png)
+![Alt text](/blog/assets/images/2012/08/al-3.png)
 
 ### Debug
 

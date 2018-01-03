@@ -16,19 +16,19 @@ K-Means是解决分类问题的一种很常用的迭代算法，具体步骤如�
 
 - 在数据集中随机初始化两个点（红蓝叉），作为聚类中心(Cluster Centrioid)
 
-![](/images/2017/09/ml-9-1.png)	
+![](/assets/images/2017/09/ml-9-1.png)	
 
 - 对样本进行簇分配（Cluster Assignment）：对数据集中的所有样本计算到聚类中心的距离，按照样本据某个中心点距离远近进行归类
 
-![](/images/2017/09/ml-9-2.png)
+![](/assets/images/2017/09/ml-9-2.png)
 
 - 移动聚类中心 (Move Centroid): 对分类好的样本，求平均值，得到新的聚类中心
 
-![](/images/2017/09/ml-9-3.png)
+![](/assets/images/2017/09/ml-9-3.png)
 
 - 重复上述两个步骤，直到中心点不再变化
 
-![](/images/2017/09/ml-9-4.png)
+![](/assets/images/2017/09/ml-9-4.png)
 
 
 K-Means函数的输入有两个参数：聚类数量K和训练集（默认<math><msub><mi>x</mi><mn>0</mn></msub><mo>=</mo><mn>0</mn></math> )
@@ -140,7 +140,7 @@ end
 
 前面提到了在进行K-Means运算之前要先随机初始化K个聚类中心点:<math><msub><mi>μ</mi><mn>1</mn></msub><mo>,</mo><msub><mi>μ</mi><mn>1</mn></msub><mo>...,</mo><msub><mi>μ</mi><mi>k</mi></msub></math>（<math><mi>K</mi><mo><</mo><mi>m</mi></math>）,通常的做法是在训练样本中随机选取<math><mi>K</mi></math>个样本作为<math><msub><mi>μ</mi><mn>1</mn></msub><mo>,</mo><msub><mi>μ</mi><mn>1</mn></msub><mo>...,</mo><msub><mi>μ</mi><mi>k</mi></msub></math>的值，即<math xmlns="http://www.w3.org/1998/Math/MathML"> <msub> <mi>&#x03BC;<!-- μ --></mi> <mn>1</mn> </msub> <mo>=</mo> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <msub> <mi>i</mi> <mn>1</mn> </msub> <mo stretchy="false">)</mo> </mrow> </msup> <mo>,</mo> <msub> <mi>&#x03BC;<!-- μ --></mi> <mn>2</mn> </msub> <mo>=</mo> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <msub> <mi>i</mi> <mn>2</mn> </msub> <mo stretchy="false">)</mo> </mrow> </msup> <mo>,</mo> <mo>&#x2026;<!-- … --></mo> <mo>,</mo> <msub> <mi>&#x03BC;<!-- μ --></mi> <mi>k</mi> </msub> <mo>=</mo> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <msub> <mi>i</mi> <mi>k</mi> </msub> <mo stretchy="false">)</mo> </mrow> </msup> </math>。如果随机选取的样本点不理想，均值点很可能会落到local optima，如下图所示：
 
-![](/images/2017/09/ml-9-5.png)
+![](/assets/images/2017/09/ml-9-5.png)
 
 为了避免这种情况出现，我们可以尝试多次计算:
 
@@ -161,13 +161,13 @@ For i = 1 to 100 {
 
 对于多维度的样本数据我们希望可以将其缩减到低维度，这样可以对数据进行可视化处理，便于观察和理解数据。例如将二维数据映射到一维，3维数据映射到二维，映射过程主要是通过投影完成
 
-![](/images/2017/09/ml-9-6.png)
+![](/assets/images/2017/09/ml-9-6.png)
 
-![](/images/2017/09/ml-9-7.png)
+![](/assets/images/2017/09/ml-9-7.png)
 
 一种常用的降维算法叫做主成分分析**PCA**( [Principal Compoent Analysis](https://zh.wikipedia.org/wiki/%E4%B8%BB%E6%88%90%E5%88%86%E5%88%86%E6%9E%90))，它可以将<math><mi>n</mi></math>维数据映射成<math><mi>k</mi></math>维数据。具体来说，是找到<math><mi>k</mi></math>个向量<math><msup><mi>u</mi><mn>(1)</mn></msup><mo>,</mo><msup><mi>u</mi><mn>(2)</mn></msup><mo>,</mo><mo>...</mo><mo>,</mo><msup><mi>u</mi><mi>(k)</mi></msup></math>，使各个数据点在该向量上的投影误差（距离）最小。通俗的说，PCA就是尝试寻找一个低维平面将高维度数据投影到这个平面，且各个点到该平面的垂直距离最短（误差最小）
 
-![](/images/2017/09/ml-9-8.png)
+![](/assets/images/2017/09/ml-9-8.png)
 
 在使用PCA之前，通常要对数据进行预处理，使样本保持在统一数量级上。假设有训练样本：<math><mo>{</mo><msup><mi>x</mi><mi>(1)</mi></msup><msup><mi>x</mi><mi>(2)</mi></msup><mo>,</mo><mo>...</mo><mo>,</mo><msup><mi>x</mi><mi>(m)</mi></msup><mo>}</mo></math>，对其进行feature scaling(mean normalization):
 
@@ -283,7 +283,7 @@ end
 
 
 
-![](/images/2017/09/ml-9-9.png)
+![](/assets/images/2017/09/ml-9-9.png)
 
 接下来的问题是如何选择<math><mi>k</mi></math>值，使用下面公式：
 

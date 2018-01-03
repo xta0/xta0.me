@@ -267,7 +267,7 @@ categories: [ml-stanford,course]
 
 如下图所示：
 
-![](/images/2017/09/ml-7-1.png)
+![](/assets/images/2017/09/ml-7-1.png)
 
 总结一下：
 
@@ -279,7 +279,7 @@ categories: [ml-stanford,course]
 
 参考之前对Regularization的介绍，λ的值对预测函数的影响如下图所示
 
-![](/images/2017/09/ml-7-2.png)
+![](/assets/images/2017/09/ml-7-2.png)
 
 为了找到最适合的λ值，可以按如下步骤
 
@@ -300,7 +300,7 @@ categories: [ml-stanford,course]
 	- 如果某个学习算法有较高的bias，仅通过增加训练样本是没用的
 	- 学习曲线图如下所示
 	
-	![](/images/2017/09/ml-7-3.png)
+	![](/assets/images/2017/09/ml-7-3.png)
 	
 - high variance
 	- 样本数少：<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> 值很低，<math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>值很高
@@ -308,7 +308,7 @@ categories: [ml-stanford,course]
 	- 	如果某个学习算法有较高的variance，通过增加训练样本有可能有帮助
 	-  学习曲线图如下所示
 	
-	![](/images/2017/09/ml-7-4.png)
+	![](/assets/images/2017/09/ml-7-4.png)
 	
 
 ### 调试预测函数(Revisit)
@@ -342,7 +342,7 @@ categories: [ml-stanford,course]
 
 对于垃圾邮件，通常来说会包含一些关键字，比如"discount"，"deal"等。我们用一个nx1的向量表示每一封邮件，向量中的每一项代表某个关键词是否出现，即如果这封email出现了某个关键词，那么对应向量中的该项的值为1，否则为0。向量长度为1000<n<5000，如下图所示：
 
-![](/images/2017/09/ml-7-5.png)
+![](/assets/images/2017/09/ml-7-5.png)
 
 为了训练出准确的分类器模型，有哪些挑战
 
@@ -362,7 +362,7 @@ categories: [ml-stanford,course]
 
 所谓Skewed Class指的是分类问题中，对于某些结果出现的可能性很小，比如在患癌症的诊断中，癌症的样本占比很少，非癌症的训练样本很多，因此训练出来的模型，在预测结果上可能99.5%都趋向于一个结果，这时我们怎么去衡量模型预测的准确率，需要引入"准确率"与"召回率"的概念：
 
-![](/images/2017/09/ml-7-6.png)
+![](/assets/images/2017/09/ml-7-6.png)
 
 如上图所示
 

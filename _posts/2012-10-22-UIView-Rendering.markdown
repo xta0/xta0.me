@@ -27,7 +27,7 @@ categories: 随笔
 
 上面提到的从CPU到GPU的过程可用下图表示：
 
-<a href="/images/2013/11/QQ20131123-1.png"><img alt="UIView Rendering" src="/images/2013/11/QQ20131123-1.png" width="755" height="131" /></a>
+<a href="/assets/images/2013/11/QQ20131123-1.png"><img alt="UIView Rendering" src="/assets/images/2013/11/QQ20131123-1.png" width="755" height="131" /></a>
 
 下面具体来讨论下这个过程
 
@@ -47,7 +47,7 @@ label.text = @"test";
 
 类似这个样子：
 
-<a href="/images/2013/11/QQ20131123-2.png"><img src="/images/2013/11/QQ20131123-2.png" width="233" height="167" /></a>
+<a href="/assets/images/2013/11/QQ20131123-2.png"><img src="/assets/images/2013/11/QQ20131123-2.png" width="233" height="167" /></a>
 
 然后一个新的`Runloop`到来，上面说道在这个`Runloop`中需要将界面渲染上去，对于UIKit的渲染，Apple用的是它的Core Animation。
 
@@ -66,7 +66,7 @@ label.text = @"test";
 
 当<code>[CATransaction commit]</code>执行完后，CPU开始绘制这个view：
 
-<a href="/images/2013/11/QQ20131123-3.png"><img src="/images/2013/11/QQ20131123-3.png" width="341" height="162" /></a>
+<a href="/assets/images/2013/11/QQ20131123-3.png"><img src="/assets/images/2013/11/QQ20131123-3.png" width="341" height="162" /></a>
 
 - 首先CPU会为layer分配一块内存用来绘制bitmap，叫做backing store
 
@@ -122,7 +122,7 @@ Core Animation对OpenGL的api有一层封装，当我们的要渲染的layer已�
 
 GPU大致的工作模式如下：
 
-<a href="/images/2013/11/QQ20131123-4.png"><img src="/images/2013/11/QQ20131123-4.png" alt="`UIView` rendering-03" width="325" height="136"/></a>
+<a href="/assets/images/2013/11/QQ20131123-4.png"><img src="/assets/images/2013/11/QQ20131123-4.png" alt="`UIView` rendering-03" width="325" height="136"/></a>
 
 整个过程也就是一件事：CPU将准备好的bitmap放到RAM里，GPU去搬这快内存到VRAM中处理。
 
@@ -198,7 +198,7 @@ label.layer.rasterizationScale = label.layer.contentsScale;
 
 同样GPU的性能也可以通过instrument去衡量：
 
-<a href="/images/2013/11/QQ20131123-6.png"><img src="/images/2013/11/QQ20131123-6.png" alt="QQ20131123-6" width="153" height="241"/></a>
+<a href="/assets/images/2013/11/QQ20131123-6.png"><img src="/assets/images/2013/11/QQ20131123-6.png" alt="QQ20131123-6" width="153" height="241"/></a>
 
 红色代表GPU需要做额外的工作来渲染View，绿色代表GPU无需做额外的工作来处理bitmap。
 

@@ -1360,7 +1360,7 @@ BASH_ENV            |   |   |A |
 
 更详细的流程图如下所示：
 
-![](/images/07/02/shell1.png)
+![](/assets/images/07/02/shell1.png)
 
 对于Bash，最好把自己的配置文件写到`~/.bashrc`里，在`~/.bash_profile` 里面`source ~/.bashrc`。
 

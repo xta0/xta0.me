@@ -33,7 +33,7 @@ categories: 随笔
 
 例如：要展示这样一个cell：
 
-<a href="/images/2013/07/cell.png"><img class="alignnone size-full wp-image-251" alt="cell" src="/images/2013/07/cell.png" width="311" height="96" /></a>
+<a href="/assets/images/2013/07/cell.png"><img class="alignnone size-full wp-image-251" alt="cell" src="/assets/images/2013/07/cell.png" width="311" height="96" /></a>
 
 ###传统的做法：
 
@@ -181,7 +181,7 @@ categories: 随笔
 
 对于社交类的app如微博，微信，都有用户内容的timeline（通常是一个tableview），在timeline中，用户会发一些表情，会有##话题，@某人，发起一个http连接等，一般这种场合在iOS中会用`CoreText`处理，假设我们绘制这样一段文本：
 
-<a href="/blogimages/2013/07/coretext.png"><img class="alignnone size-full wp-image-257" alt="coretext" src="/images/2013/07/coretext.png" width="308" height="161" /></a>
+<a href="/blogimages/2013/07/coretext.png"><img class="alignnone size-full wp-image-257" alt="coretext" src="/assets/images/2013/07/coretext.png" width="308" height="161" /></a>
 
 绘制这段文本的瓶颈都有什么呢？
 
@@ -193,7 +193,7 @@ categories: 随笔
 
 这些都要通过CPU来完成，而且在tableview滚动的时候，label虽然可以复用，但上面展示的内容却需要实时的计算和绘制，就以上述那段文本为例，上述3条花费的时间如下：
 
- <a href="/images/2013/07/time.png"><img src="/images/2013/07/time.png" alt="time" width="785" height="124"/></a>
+ <a href="/assets/images/2013/07/time.png"><img src="/assets/images/2013/07/time.png" alt="time" width="785" height="124"/></a>
 
 这个结果能看出两件事情：
 

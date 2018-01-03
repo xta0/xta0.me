@@ -9,7 +9,7 @@ tag: iOS
 
 ## Architechture
 
-![Alt text](/images/2010/10/ca1.png)
+![Alt text](/assets/images/2010/10/ca1.png)
 
 ## UIKit and Core Animation
 
@@ -31,7 +31,7 @@ tag: iOS
 - Animatable properties
 - Declarative model
 
-![Alt text](/images/2010/10/ca2.png)
+![Alt text](/assets/images/2010/10/ca2.png)
 
 - Creating Layer:
 
@@ -53,7 +53,7 @@ layer.content = calogo;
 - transform : CATransform3D
 - anchorPoint: CGPoint
 
-![Alt text](/images/2010/10/ca3.png)
+![Alt text](/assets/images/2010/10/ca3.png)
 
 ## Providing Layer Content
 
@@ -87,7 +87,7 @@ layer.content = calogo;
 	
 ### Explicit Animations
 
-![Alt text](/images/2010/10/ca4.png)
+![Alt text](/assets/images/2010/10/ca4.png)
 
 - Which property?
 	- Use keyPath
@@ -164,7 +164,7 @@ self.myLayer.shadowPath = shadowPath;
 
 ## How Do GPUs Work
 
-![Alt text](/images/2010/10/ca5.png)
+![Alt text](/assets/images/2010/10/ca5.png)
 
 - GPU converts triangles to pixels
 	- Each is filled with a color or image
@@ -176,7 +176,7 @@ self.myLayer.shadowPath = shadowPath;
 
 - CA translates your layers into triangles
 
-![Alt text](/images/2010/10/ca6.png)
+![Alt text](/assets/images/2010/10/ca6.png)
 
 - "backgroundColor" is two colored triangles
 

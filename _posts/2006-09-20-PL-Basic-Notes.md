@@ -73,7 +73,7 @@ tag: History
 		- 可以沿着存储带一格一格的左移右移
 
 
-![image](/images/2006/09/turing.png)
+![image](/assets/images/2006/09/turing.png)
 
 - 图灵机的工作准备：
 	- 存储带上符号初始化
@@ -194,7 +194,7 @@ tag: History
 
 - 存储的原理是什么？
 
-<img src="/images/2006/09/RAM.png" width="300"/>
+<img src="/assets/images/2006/09/RAM.png" width="300"/>
    
 原理：
 
@@ -237,11 +237,11 @@ tag: History
  
 - 指令执行过程:
 
-<img src="/images/2006/09/cpu_ins.png" width="600" height="330"/>
+<img src="/assets/images/2006/09/cpu_ins.png" width="600" height="330"/>
 
 ### 程序
 
-<img src="/images/2006/09/pl_work.png" width="600"/>
+<img src="/assets/images/2006/09/pl_work.png" width="600"/>
 
 -结论：
 	- 程序必须要经过编译才转换成CPU所能接手的指令

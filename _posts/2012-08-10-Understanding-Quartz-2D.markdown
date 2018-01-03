@@ -80,7 +80,7 @@ CGAffineTransform t2 = CGAffineTransformIdentity;
 
 CTM是Current Transform Matrix的缩写，为了理解的更直观，我们从Quartz的坐标系统开始：
 
-<a href="/images/2012/04/quartz.png"><img src="/images/2012/04/quartz.png" alt="quartz" width="244" height="290"/></a>
+<a href="/assets/images/2012/04/quartz.png"><img src="/assets/images/2012/04/quartz.png" alt="quartz" width="244" height="290"/></a>
 
 在Quartz的坐标系中左下角为（0，0），但是我们是用Core Graphic的api都是以左上角为(0，0)的，这中间的转换就是通过了CGAffineTransform这个状态矩阵，我们可以看一下一个普通view的CGAffineTransform矩阵：
 
@@ -99,13 +99,13 @@ CTM是Current Transform Matrix的缩写，为了理解的更直观，我们从Qu
 
 这个矩阵的意思很明确：将y轴翻转然后再想上平移568个单位，就是(0,0)了。加入我们在(100,100)画了一个点，实际上在Quartz的坐标系中，这个点是(100,468)。
 
-<a href="/images/2012/04/quartz2.png"><img src="/images/2012/04/quartz2.png" alt="quartz2" width="236" height="289"/></a>
+<a href="/assets/images/2012/04/quartz2.png"><img src="/assets/images/2012/04/quartz2.png" alt="quartz2" width="236" height="289"/></a>
 
 <h4>改变坐标系</h4>
 
 了解这个原理后，我们便可以随便改变坐标系，我们先在(0,0)点画个圆:
 
-<a href="/images/2012/04/quartz3.png"><img src="/images/2012/04/quartz3.png" alt="quartz3" width="284" height="127"/></a>
+<a href="/assets/images/2012/04/quartz3.png"><img src="/assets/images/2012/04/quartz3.png" alt="quartz3" width="284" height="127"/></a>
 
 然后将坐标系的原点平移到(20,20)：
 
@@ -121,7 +121,7 @@ CGContextConcatCTM(ctx, t1);</pre>
 ```
 得到结果如下：
 
-<a href="/images/2012/04/quartz4.png"><img src="/images/2012/04/quartz4.png" alt="quartz4" width="198" height="137"/></a>
+<a href="/assets/images/2012/04/quartz4.png"><img src="/assets/images/2012/04/quartz4.png" alt="quartz4" width="198" height="137"/></a>
 
 这种变换不难想象其实是改变了tx,ty的偏移值：
 
@@ -158,7 +158,7 @@ UIGraphicsEndImageContext();
 
 上面代码是将原图缩小到10x10，绘制一张新图:
 
-<a href="/images/2012/04/quartz5.png"><img src="/images/2012/04/quartz5.png" alt="quartz5" width="218" height="101"/></a>
+<a href="/assets/images/2012/04/quartz5.png"><img src="/assets/images/2012/04/quartz5.png" alt="quartz5" width="218" height="101"/></a>
 
 next,we try the old way:
 
@@ -177,7 +177,7 @@ UIGraphicsEndImageContext();
  
 结果却是这样的：
 
-<a href="/images/2012/04/quartz6.png"><img src="/images/2012/04/quartz6.png" alt="quartz6" width="220" height="100"/></a>
+<a href="/assets/images/2012/04/quartz6.png"><img src="/assets/images/2012/04/quartz6.png" alt="quartz6" width="220" height="100"/></a>
 
 why?
 
@@ -216,7 +216,7 @@ y(new) = y(old)*1;
 
 layer.renderInContext：可以将当前layer的content变成一张CGImageRef，这和Quartz有什么关系呢？很久以前我试图render部分layer的内容到一张image，就是说给View的一部分截图。例如一个view的bounds是(0,0,100,100)，我想截取其（50，50，30，30）的部分。实现这个功能有很多种办法，最笨的就是把layer的content先通过context生成bitmap，然后去找像素点，聪明一点的就可以使用layer的二维状态矩阵。假如我们要实现下面的效果：
 
-<a href="/images/2012/04/quartz7.png" alt="quartz7" width="222" height="100" class="alignnone size-full wp-image-660" /></a>
+<a href="/assets/images/2012/04/quartz7.png" alt="quartz7" width="222" height="100" class="alignnone size-full wp-image-660" /></a>
 
 假设左边原图大小为100x100，待截取区域矩形的origin位于原图的(25,15)处，大小为50x50。
 

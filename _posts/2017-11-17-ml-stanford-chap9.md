@@ -150,7 +150,7 @@ categories: [ml-stanford,course]
 
 上述梯度下降公式也称作“Batch Gradient Descent”它在<math><mi>m</mi></math>非常大时（假设m为3亿，美国人口数量)计算求和的过程非常耗时，它需要把磁盘中所有m的数据读入内存，仅仅为了计算一个微分项，而计算机的内存无法一次性存储3亿条数据，因此只能批量读入，批量计算，才能完成一次梯度下降的计算。
 
-![](/images/2017/09/ml-11-1.png)
+![](/assets/images/2017/09/ml-11-1.png)
 
 随机梯度下下降法实际上是扫描所有的训练样本，首先是计算第一组样本(x(1),y(1))，对它的代价函数计算一小步的梯度下降，然后把θ修改一点使其对第一个训练样本拟合变得好一点。在完成这个内部循环后（先遍历j再遍历i），再转向第二个，第三个样本直到所有样本。外部Repeat循环会多次遍历整个训练集，确保算法收敛。需要注意几点：
 
@@ -162,7 +162,7 @@ categories: [ml-stanford,course]
 
 为了观察算法的学习情况，可以画出随机梯度下降的学习曲线，可能有如下几种情况
 
-![](/images/2017/09/ml-11-2.png)
+![](/assets/images/2017/09/ml-11-2.png)
 
 ### Mini-batch gradient descent
 
@@ -170,6 +170,6 @@ categories: [ml-stanford,course]
 - Stochasitc gradient descent： 每次迭代使用1个训练样本
 - Mini-Batch gradient descent：每次迭代使用b个训练样本，b的取值一般为2-100
 
-![](/images/2017/09/ml-11-3.png)
+![](/assets/images/2017/09/ml-11-3.png)
 
 使用mini-batch梯度下降的另一个好处是，可以并行处理，将数据分段后，使用向量化进行并行运算

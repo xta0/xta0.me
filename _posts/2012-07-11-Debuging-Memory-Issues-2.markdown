@@ -14,14 +14,14 @@ categories: 随笔
 
 调试内存最基本的手段是使用Instrument的Allocation,Allocation可以帮助找到当前内存中活跃的object，通常可以用来观察对象有没有释放。假设我们有一个10个cell的tableview列表，我们运行Allocation，得到的状态如下：
 
-<a href="/images/2014/01/debug-1.png"><img src="/images/2014/01/debug-1.png" alt="debug-1" width="430" height="382"/></a>
+<a href="/assets/images/2014/01/debug-1.png"><img src="/assets/images/2014/01/debug-1.png" alt="debug-1" width="430" height="382"/></a>
 
 这个时候我们可以通过筛选类名前缀，来看当前存活的class，例如上图中，我的类名为ET开头，上面所有ET开头的类都是当前活跃在内存中的，我们可以看到有10个cell，20个item。此时我们退出这个界面，那么上面的对象，除了单例对象外应该全部释放掉。如果发现有没有释放的类名，则就要引起警惕了，要仔细排查没有dealloc的原因。
 
 
 通常情况下，原因很好发现。但是，当仔细review了代码后，仍然找不到问题的时候，就要考虑是不是系统对象引用了你的对象。这种对象由于不是以自己的类名前缀开通，通常很难发现。假如，当我们退出这个界面时，发现10个cell都没释放，然后我们仔细review了代码，发现没有ET开头的对象引用它。这时候就要看看系统对象了，对于cell，如果没有外部引用，cell是会被tableview引用的，这时候我们需要搜索UITableView，如下图：
 
-<a href="/images/2014/01/debug-2.png"><img src="/images/2014/01/debug-2.png" alt="debug-2" width="524" height="105"/></a>
+<a href="/assets/images/2014/01/debug-2.png"><img src="/assets/images/2014/01/debug-2.png" alt="debug-2" width="524" height="105"/></a>
 
 这时候我们发现，有一个ETLibDemo创建的UITableView，就是这个UITableView没释放，我们后面可以继续排查为什么tableview没有释放。
 
@@ -31,11 +31,11 @@ Allocation除了帮助我们发现当前heap上活跃的object外，还有一个
 
 <em>Jayson updated the picture @2014/01/10</em>
 
-<a href="/images/2012/07/debug-3.png"><img src="/images/2012/07/debug-3.png" alt="debug-3" width="472" height="125" class="alignnone size-full wp-image-804" /></a>
+<a href="/assets/images/2012/07/debug-3.png"><img src="/assets/images/2012/07/debug-3.png" alt="debug-3" width="472" height="125" class="alignnone size-full wp-image-804" /></a>
 
 图中，A，B,C,D,E五个点为HeapShot的地方:
 
-<a href="/images/2012/07/debug-4.png"><img src="/images/2012/07/debug-4.png" alt="debug-4" width="522" height="118"/></a>
+<a href="/assets/images/2012/07/debug-4.png"><img src="/assets/images/2012/07/debug-4.png" alt="debug-4" width="522" height="118"/></a>
 
 - A点：启动程序
 - B点：第一次进入页面X，然后返回。内存出现一个峰值，我们发现内存开始增长（黄色的斜线），并没有回落到进入第一个页面之前的高度，差值为：174.89kb。这很正常，因为我们可能在这个过程中创建了一些单例变量，初始化cache等，因此这个阶段通常为warm up。
@@ -57,9 +57,9 @@ Instrument的leak选项，通常是大家都愿意点的，但实际中，我发
 
 <div style="overflow: hidden; width: 100%;"> 
 
-<a style="display: block; float:left";href="/images/2012/07/debug-6.png"><img src="/images/2012/07/debug-6.png" alt="debug-6" width="529" height="258"/></a>
+<a style="display: block; float:left";href="/assets/images/2012/07/debug-6.png"><img src="/assets/images/2012/07/debug-6.png" alt="debug-6" width="529" height="258"/></a>
 
-<a style="display: block; float:left;margin-left:30px";href="/images/2012/07/debug-7.png"><img src="/images/2012/07/debug-7.png" alt="debug-7" width="300" height="104"/></a>
+<a style="display: block; float:left;margin-left:30px";href="/assets/images/2012/07/debug-7.png"><img src="/assets/images/2012/07/debug-7.png" alt="debug-7" width="300" height="104"/></a>
 
 </div>
 
@@ -80,16 +80,16 @@ for (int i=0; i&lt;100; i++)
 
 然后我们在debug：
 
-<a href="/images/2012/07/debug-8.png"><img src="/images/2012/07/debug-8.png" alt="debug-8" width="626" height="399"/></a>
+<a href="/assets/images/2012/07/debug-8.png"><img src="/assets/images/2012/07/debug-8.png" alt="debug-8" width="626" height="399"/></a>
 
 我们可以点开里面的每一项仔细阅读分析，其中Mapped Files主要是系统的一些公共类库，这部分memory属于shared memory，这部分内存通常与应用程序无关。LARGE_MALLOC这部分内存主要集中在将图片File变成NSData：
 
-<a href="/images/2012/07/debug-10.png"><img src="/images/2012/07/debug-10.png" alt="debug-10" width="337"/></a>
+<a href="/assets/images/2012/07/debug-10.png"><img src="/assets/images/2012/07/debug-10.png" alt="debug-10" width="337"/></a>
 
 然后是大量的ImageIO操作，通过ImageIO的stack trace我们发现一个很有趣的事情：
 UIImageView在显示image的时候，实际上对image做了copy操作，然后重新create新的image，原因也很好理解，因为原图片的大小尺寸一般和imageview的尺寸不一致，即使一致的情况下，也会有pixel alignment的问题，因此，imageview要对原图进行down sampling或者up sampling，pixel alignment等操作，来最终适应imageview的尺寸。但是这回导致耗费大量的内存，性能也会受到一定的影响，因此在做图片优化的时候，尽可能的让这部分时间缩短。
 
-<a href="/images/2012/07/debug-9.png"><img src="/images/2012/07/debug-9.png" alt="debug-9" width="473" height="614"/></a>
+<a href="/assets/images/2012/07/debug-9.png"><img src="/assets/images/2012/07/debug-9.png" alt="debug-9" width="473" height="614"/></a>
 
 
 总之，VM Region或者VM Tracker是一个很强大的内存分析工具，通过它可以看出一些iOS的源码设计。

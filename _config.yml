@@ -1,11 +1,63 @@
 
+# ---------------------------------------------------------------
+# Basic  Settings
+# ---------------------------------------------------------------
+
+title: Visionary Lab
+subtitle:
+description:
+author: xta0
+
+language: en
+date_format: '%m-%d-%Y'
+
+# site url
+url:
 baseurl: 
+permalink: pretty
+
+# Pagination
+paginate: 10
+
+# Handling Reading
+exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md", "Gemfile", "Gemfile.lock", "README_en.md"]
+
+# Assets
+css: assets/css
+js: assets/js
+images: assets/assets/images
+
+# markdown
 markdown: kramdown
 highlighter: none
 kramdown:
    syntax_highlighter_opts:
       disable : true
 
+# front matter
+# ref: https://jekyllrb.com/docs/configuration/#front-matter-defaults
+defaults:
+  -
+    scope:
+      path: "" # an empty string here means all files in the project
+    values:
+      layout: "default"
+
+# Plugins
+## Docs: https://help.github.com/articles/configuring-jekyll-plugins/
+plugins:
+ - jekyll-sitemap
+ - jekyll-feed
+
+# Put your favicon.ico into `assets/` directory.
+favicon: /assets/favicon.ico
+
+# Footer `powered-by` and `theme-info` copyright
+copyright: true
+
+# ---------------------------------------------------------------
+# Post  Settings
+# ---------------------------------------------------------------
 
 # Post meta display settings
 post_meta:
@@ -13,6 +65,20 @@ post_meta:
   created_at: true
   updated_at: false
   categories: true
+
+# Post wordcount display settings
+post_wordcount:
+  item_text: true
+  wordcount: false
+  min2read: false
+  separated_meta: true
+  
+  # Declare license on posts
+post_copyright:
+  enable: false
+  license: CC BY-NC-SA 3.0
+  license_url: https://creativecommons.org/licenses/by-nc-sa/3.0/
+
   
 # ---------------------------------------------------------------
 # Third Party Services Settings
@@ -20,7 +86,7 @@ post_meta:
 
 # MathJax Support
 mathjax:
-  enable: false
+  enable: true
   per_page: false
-  cdn: //cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML
+  cdn: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
 

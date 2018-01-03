@@ -12,10 +12,10 @@ categories: 随笔
 [VZInspector](https://github.com/akaDealloc/VZInspector) 是一个可以在App内部运行的debugger，功能类似Instrument，可以监测App在运行时的状态信息。最开始在项目中运用，得到了测试和服务端开发人员的一致认可，因此我决定将它从业务中剥离出来，希望可以复用到每个独立的工程中。
 
 <ul style="list-style:none;">
-	<li><img src="/images/2014/12/vzi_1.png" alt="vzi_1.png" style="float: left; display:inline-block; width:45%;margin: 5px 5% 10px 0;"></li>
-	<li> <img src="/images/2014/12/vzi_2.png" alt="vzi_2.png" style="float: left; display:inline-block; width:45%;margin: 5px 0 10px 0;"></li>
-	<li> <img src="/images/2014/12/vzi_3.png" alt="vzi_3.png" style="float: left; display:inline-block; width:45%; margin: 5px 5% 10px 0;"></li>
-	<li> <img src="/images/2014/12/vzi_4.png" alt="vzi_4.png" style="float: left; display:inline-block; width:45%; margin: 5px 0 10px 0;"></li>
+	<li><img src="/assets/images/2014/12/vzi_1.png" alt="vzi_1.png" style="float: left; display:inline-block; width:45%;margin: 5px 5% 10px 0;"></li>
+	<li> <img src="/assets/images/2014/12/vzi_2.png" alt="vzi_2.png" style="float: left; display:inline-block; width:45%;margin: 5px 0 10px 0;"></li>
+	<li> <img src="/assets/images/2014/12/vzi_3.png" alt="vzi_3.png" style="float: left; display:inline-block; width:45%; margin: 5px 5% 10px 0;"></li>
+	<li> <img src="/assets/images/2014/12/vzi_4.png" alt="vzi_4.png" style="float: left; display:inline-block; width:45%; margin: 5px 0 10px 0;"></li>
 </ul>
 
 
@@ -25,7 +25,7 @@ categories: 随笔
 
 - 内存状态：
 
-![Alt text](/images/2014/12/vzi_memory.png)
+![Alt text](/assets/images/2014/12/vzi_memory.png)
 
 如图所示，我们可以通过内存的起伏来判断页面消耗内存的情况，以及判断是否存在内存泄露。
 
@@ -33,7 +33,7 @@ categories: 随笔
 
 - 网络请求状态
 
-![Alt text](/images/2014/12/vzi_network.png)
+![Alt text](/assets/images/2014/12/vzi_network.png)
 
 如图所示，如果界面有网络请求，便会出现一个峰值。
 
@@ -43,7 +43,7 @@ categories: 随笔
 
 - 全局变量状态值
 
-![Alt text](/images/2014/12/vzi_overview.png)
+![Alt text](/assets/images/2014/12/vzi_overview.png)
 
 如图所示，App可以通过VZInspector提供的接口来实时监控一些重要的全局数据状态。比如，地理位置，用户名，版本号等一些业务相关的信息。
 
@@ -55,7 +55,7 @@ categories: 随笔
 
 - Request Log:
 
-![Alt text](/images/2014/12/vzi_request_log.png)
+![Alt text](/assets/images/2014/12/vzi_request_log.png)
 
 如图所示，我们可以在App内部实时抓取HTTP请求中的参数。
 
@@ -68,7 +68,7 @@ categories: 随笔
 
 - Response Log:
 
-![Alt text](/images/2014/12/vzi_response_log.png)
+![Alt text](/assets/images/2014/12/vzi_response_log.png)
 
 如图所示，我们可以在App内部实时抓取HTTP请求的返回值。
 
@@ -85,7 +85,7 @@ categories: 随笔
 
 通常情况下，我们在脱离调试环境时发生crash都无法及时查找原因。VZInspector会拦截crash产生的exception并将内容按照时间戳保存到本地的沙盒中，便于及时查看，如图：
 
-![Alt text](/images/2014/12/vzi_crashes.png)
+![Alt text](/assets/images/2014/12/vzi_crashes.png)
 
 
 - 查询Heap中仍然存活的object:
@@ -94,7 +94,7 @@ categories: 随笔
 
 这个功能类似于Instrument中的allocation，可以通过过滤类名前缀查看当前heap上活跃的object，从而可以判断出哪些对象没有被释放。如图：
 
-![Alt text](/images/2014/12/vzi_heap.png)
+![Alt text](/assets/images/2014/12/vzi_heap.png)
 
 - 查询沙盒文件:
 
@@ -102,7 +102,7 @@ categories: 随笔
 
 这个功能可以实时查询沙盒内的文件:
 
-![Alt text](/images/2014/12/vzi_sandbox.png)
+![Alt text](/assets/images/2014/12/vzi_sandbox.png)
 
 除了这几个功能外，VZInspector的命令行还具备如下功能:
 
@@ -119,7 +119,7 @@ categories: 随笔
 
 通常一个项目中会有多套开发环境，比如开发环境，预发布环境和正式环境。VZInspector会提供接口，注入业务代码的规则，实现在App内部即时切换环境。省去重复编译代码的时间。如图:
 
-![Alt text](/images/2014/12/vzi_setting.png)
+![Alt text](/assets/images/2014/12/vzi_setting.png)
 
 
 ##用法

@@ -18,7 +18,7 @@ categories: [ml-stanford,course]
 
 在监督学习中，对输入的样本`X`我们使用预测函数（hypothesis）` h(x) ` 来求解预测结果`y`，即`h : X → Y`，如下图所示
 
-![Altext](/images/2017/09/ml-1.png)
+![Altext](/assets/images/2017/09/ml-1.png)
 
 > Regression Analysis是一种统计学上分析数据的方法，目的在于了解两个或多个变数间是否相关、相关方向与强度，并建立数学模型以便观察特定变数来预测研究者感兴趣的变数。更具体的来说，回归分析可以帮助人们了解在只有一个自变量变化时因变量的变化量。一般来说，通过回归分析我们可以由给出的自变量估计因变量的条件期望。
  
@@ -296,7 +296,7 @@ categories: [ml-stanford,course]
 
 以此类推，通过不同的`θ`值可以求出不同的`J(θ)`，如下图所示：
 
-![](/images/2017/09/ml-2.png)
+![](/assets/images/2017/09/ml-2.png)
 
 我们的目标是找到一个`θ`值使`J(θ)`最小。显然上述案例中，当`θ=1`时，`J(θ)`最小，因此我们可以得到Hypothesis函数：
 
@@ -311,18 +311,18 @@ categories: [ml-stanford,course]
 
 > 关于contour plot[参考](https://nb.khanacademy.org/math/multivariable-calculus/thinking-about-multivariable-function/visualizing-scalar-valued-functions/v/contour-plots）
 
-![](/images/2017/09/ml-3.png)
+![](/assets/images/2017/09/ml-3.png)
 
 Taking any color and going along the 'circle', one would expect to get the same value of the cost function. For example, the three green points found on the green line above have the same value for J(θ0,θ1) and as a result, they are found along the same line. The circled x displays the value of the cost function for the graph on the left when θ0 = 800 and θ1= -0.15
 
 Taking another h(x) and plotting its contour plot, one gets the following graphs:
 
-![](/images/2017/09/ml-3-1.png)
+![](/assets/images/2017/09/ml-3-1.png)
 
 When θ0 = 360 and θ1 = 0, the value of J(θ0,θ1) in the contour plot gets closer to the center thus reducing the cost function error. Now giving our hypothesis function a slightly positive slope results in a better fit of the data.
 
 
-![](/images/2017/09/ml-3-2.png)
+![](/assets/images/2017/09/ml-3-2.png)
 
 The graph above minimizes the cost function as much as possible and consequently, the result of θ1 and θ0 tend to be around 0.12 and 250 respectively. Plotting those values on our graph to the right seems to put our point in the center of the inner most 'circle'.
 
@@ -365,7 +365,7 @@ end
 
 - 图形理解
 
-![Altext](/images/2017/09/ml-4.png)
+![Altext](/assets/images/2017/09/ml-4.png)
 
 - 梯度下降法：
 	- `:=` 代表赋值，例如 a:=b 代表把b的值赋值给a，类似的比如 a:=a+1。因此 := 表示的是计算机范畴中的赋值。而=号则代表truth assertion，a = b的含义是a的值为b
@@ -412,7 +412,7 @@ end
 
 梯度下降是求多维函数的极值方法，因此公式是对 <math><msub><mi>θ</mi><mi>j</mi></msub></math> 求导，每一个<math><msub><mi>θ</mi><mi>j</mi></msub></math>代表一元参数，也可以理解为一维向量，上述case中，只有<math><msub><mi>θ</mi><mn>0</mn></msub></math>和<math><msub><mi>θ</mi><mn>1</mn></msub></math>两个参数，可以理解在这两个方向上各自下降，他们的向量方向为<math><msup><mi>J</mi><mi>(θ)</mi></msup></math>下降的方向，下降过程是一个同步迭代的过程：	
 	
-![](/images/2017/09/ml-4.png)
+![](/assets/images/2017/09/ml-4.png)
 	
 理解二维梯度下降之前，可以先假设<math><msup><mi>J</mi><mi>(θ)</mi></msup></math>是一维的，即只有一个参数，那么上述梯度下降公式简化为：
 
@@ -449,7 +449,7 @@ end
 
 问题简化为对一元函数求导，假设<math><msup><mi>J</mi><mi>(θ)</mi></msup></math>如下图所示：
 	
-![](/images/2017/09/ml-3-2.png)
+![](/assets/images/2017/09/ml-3-2.png)
 	
 `θ`会逐渐向极值点出收敛，当`θ`到达极值点时，该处导数为0，则`θ`值不再变化。
 		
@@ -1501,11 +1501,11 @@ For example, if xi represents housing prices with a range of 100 to 2000 and a m
 
 为了求解`J(θ)`的最小值，梯度下降会不断的迭代找出最小值，理论上来说随着迭代次数的增加，`J(θ)`将逐渐减小，如图：
 
-![Altext](/images/2017/09/ml-4-3.png)
+![Altext](/assets/images/2017/09/ml-4-3.png)
 
 但是如果`α`选取过大，则可能会导致越过极值点的情况，导致随着迭代次数的增加，`J(θ)`的值增加或忽高忽低不稳定的情况:
 
-![Altext](/images/2017/09/ml-4-4.png)
+![Altext](/assets/images/2017/09/ml-4-4.png)
 
 解决办法都是选取较小的`α`值
 
@@ -1819,7 +1819,7 @@ We can **combine** multiple features into one. For example, we can combine x1 an
 
 看个例子：
 
-![](/images/2017/09/ml-4-5.png)
+![](/assets/images/2017/09/ml-4-5.png)
 
 若希望<math><msub><mi>h</mi><mi>(θ)</mi></msub><mo>=</mo><mi>y</mi></math>，则有<math><mi>X</mi><mo>·</mo><mi>θ</mi><mo>=</mo><mi>Y</mi></math>，回想**单位矩阵** 和 **矩阵的逆**的性质：
 

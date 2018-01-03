@@ -75,7 +75,7 @@ AFNetworking解决这个问题采用了另一种方法：单独起一个global t
 
 整个请求流程如下：
 
-![Alt text](/images/2012/11/afnetworking.png)
+![Alt text](/assets/images/2012/11/afnetworking.png)
 
 这个想法其实不是AFNetworking最早想出来的，是apple的一个demo：<a href="https://developer.apple.com/LIBRARY/IOS/samplecode/MVCNetworking/Introduction/Intro.html ">MVCNetworking</a>，AFNetworking简单粗暴的借鉴了这个demo。
 

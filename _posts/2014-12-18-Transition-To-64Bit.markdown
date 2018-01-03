@@ -69,11 +69,11 @@ C或Objective-C是不会去限制原生数据类型的size的，因为这与具�
 
 32bit的runtime环境使用ILP32的数据模型，integer，long，pointer都是32bit长。64bit的runtime环境使用的是LP64的数据模型，integer是32bit长，long，pointer类型是64bit长。更多数据类型的变化如下图：
 
-![alt text](/images/2014/12/64bit-data-types.png)
+![alt text](/assets/images/2014/12/64bit-data-types.png)
 
 关于浮点型的变化如下：
 
-![alt text](/images/2014/12/64bit-data-type-float.png)
+![alt text](/assets/images/2014/12/64bit-data-type-float.png)
 
 - 对于使用可变参数的函数和普通函数的相互cast要格外小心。
 
@@ -186,7 +186,7 @@ printf("%lld\n", d);
 ###使用一些不会根据平台环境变化的数据结构：
 
 
-![alt text](/images/2014/12/64bit-data-type-c99.png)
+![alt text](/assets/images/2014/12/64bit-data-type-c99.png)
 
 
 ###要兼顾字节对齐：
