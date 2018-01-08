@@ -3,34 +3,32 @@ layout: post
 title: Machine Learning - Chap2
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter2
 categories: [ml-stanford,course]
+mathjax: true
 ---
 
 ## Chapter2
 
 ### Model Representation
 
-
 为了后面课程使用方便，我们先来定义一些术语：
 
-- 我们使用<math xmlns="http://www.w3.org/1998/Math/MathML"> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> </math> 来表示输入的特征样本，使用 <math xmlns="http://www.w3.org/1998/Math/MathML"> <msup> <mi>y</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> </math> 表示我们想要得到的预测结果
-- 我们使用 <math xmlns="http://www.w3.org/1998/Math/MathML"> <mo stretchy="false">(</mo> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo>,</mo> <msup> <mi>y</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo stretchy="false">)</mo> </math> 来表示一组训练样本，通常我们的数据集中有多个训练样本，数据集用<math xmlns="http://www.w3.org/1998/Math/MathML"> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo>,</mo> <msup> <mi>y</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo stretchy="false">)</mo> <mo>;</mo> <mi>i</mi> <mo>=</mo> <mn>1</mn> <mo>,</mo> <mo>.</mo> <mo>.</mo> <mo>.</mo> <mo>,</mo> <mi>m</mi> </mrow> </math> 表示，注意上角标`(i)`表示数据样本的index
-- 我们使用`X`表示输入样本空间，也可以理解为输入矩阵，`Y`表示输出样本空间或者输出矩阵，有X = Y = ℝ.
+* 我们使用<math xmlns="http://www.w3.org/1998/Math/MathML"> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> </math> 来表示输入的特征样本，使用 <math xmlns="http://www.w3.org/1998/Math/MathML"> <msup> <mi>y</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> </math> 表示我们想要得到的预测结果
+* 我们使用 <math xmlns="http://www.w3.org/1998/Math/MathML"> <mo stretchy="false">(</mo> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo>,</mo> <msup> <mi>y</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo stretchy="false">)</mo> </math> 来表示一组训练样本，通常我们的数据集中有多个训练样本，数据集用<math xmlns="http://www.w3.org/1998/Math/MathML"> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo>,</mo> <msup> <mi>y</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo stretchy="false">)</mo> <mo>;</mo> <mi>i</mi> <mo>=</mo> <mn>1</mn> <mo>,</mo> <mo>.</mo> <mo>.</mo> <mo>.</mo> <mo>,</mo> <mi>m</mi> </mrow> </math> 表示，注意上角标`(i)`表示数据样本的 index
+* 我们使用`X`表示输入样本空间，也可以理解为输入矩阵，`Y`表示输出样本空间或者输出矩阵，有 X = Y = ℝ.
 
-在监督学习中，对输入的样本`X`我们使用预测函数（hypothesis）` h(x) ` 来求解预测结果`y`，即`h : X → Y`，如下图所示
+在监督学习中，对输入的样本`X`我们使用预测函数（hypothesis）`h(x)` 来求解预测结果`y`，即`h : X → Y`，如下图所示
 
 ![Altext](/assets/images/2017/09/ml-1.png)
 
-> Regression Analysis是一种统计学上分析数据的方法，目的在于了解两个或多个变数间是否相关、相关方向与强度，并建立数学模型以便观察特定变数来预测研究者感兴趣的变数。更具体的来说，回归分析可以帮助人们了解在只有一个自变量变化时因变量的变化量。一般来说，通过回归分析我们可以由给出的自变量估计因变量的条件期望。
- 
-回归在数学上来说是建立因变数 <math><mi>Y</mi></math> 与自变数 <math><mi>X</mi></math>之间关系的模型，给定一个点集，能够用一条曲线去拟合之，如果这个曲线是一条直线，那就被称为线性回归，如果曲线是一条二次曲线，就被称为二次回归，回归还有很多的变种，如locally weighted回归，logistic回归，等等。如果得到的预测函数得出的结果是离散的，我们把这种学习问题叫做**分类问题**
+> Regression Analysis 是一种统计学上分析数据的方法，目的在于了解两个或多个变数间是否相关、相关方向与强度，并建立数学模型以便观察特定变数来预测研究者感兴趣的变数。更具体的来说，回归分析可以帮助人们了解在只有一个自变量变化时因变量的变化量。一般来说，通过回归分析我们可以由给出的自变量估计因变量的条件期望。
 
-回归的最早形式是[最小二乘法](https://zh.wikipedia.org/wiki/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95)，由1805年的勒让德(Legendre)[1]，和1809年的高斯(Gauss)出版[2]。勒让德和高斯都将该方法应用于从天文观测中确定关于太阳的物体的轨道（主要是彗星，但后来是新发现的小行星）的问题。 高斯在1821年发表了最小二乘理论的进一步发展[3]，包括高斯－马尔可夫定理的一个版本。
+回归在数学上来说是建立因变数 <math><mi>Y</mi></math> 与自变数 <math><mi>X</mi></math>之间关系的模型，给定一个点集，能够用一条曲线去拟合之，如果这个曲线是一条直线，那就被称为线性回归，如果曲线是一条二次曲线，就被称为二次回归，回归还有很多的变种，如 locally weighted 回归，logistic 回归，等等。如果得到的预测函数得出的结果是离散的，我们把这种学习问题叫做**分类问题**
 
-
+回归的最早形式是[最小二乘法](https://zh.wikipedia.org/wiki/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95)，由 1805 年的勒让德(Legendre)[1]，和 1809 年的高斯(Gauss)出版[2]。勒让德和高斯都将该方法应用于从天文观测中确定关于太阳的物体的轨道（主要是彗星，但后来是新发现的小行星）的问题。 高斯在 1821 年发表了最小二乘理论的进一步发展[3]，包括高斯－马尔可夫定理的一个版本。
 
 ### Cost Function
 
-- Hypothesis函数：
+* Hypothesis 函数：
 
 <math display="block">
 	<msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi>
@@ -42,12 +40,11 @@ categories: [ml-stanford,course]
 	<mi>x</mi>
 </math>
 
+怎么计算参数 θ 呢？
 
-怎么计算参数θ呢？
+根据训练数据集，找到最合适的 θ 值
 
-根据训练数据集，找到最合适的θ值
-
-- cost函数：
+* cost 函数：
 
 <math display="block">
   <mi>J</mi>
@@ -157,31 +154,29 @@ categories: [ml-stanford,course]
   </mstyle>
 </math>
 
-这个式子的含义是找到<math><msub><mi>θ</mi><mn>0</mn></msub><mo>,</mo><msub><mi>θ</mi><mn>1</mn></msub></math>的值使 <math><mi>J</mi><mo stretchy="false">(</mo><msub><mi>θ</mi><mn>0</mn></msub><mo>,</mo><msub><mi>θ</mi><mn>1</mn></msub><mo stretchy="false">)</mo></math>的值最小，为了求导方便系数乘了1/2
-
+这个式子的含义是找到<math><msub><mi>θ</mi><mn>0</mn></msub><mo>,</mo><msub><mi>θ</mi><mn>1</mn></msub></math>的值使 <math><mi>J</mi><mo stretchy="false">(</mo><msub><mi>θ</mi><mn>0</mn></msub><mo>,</mo><msub><mi>θ</mi><mn>1</mn></msub><mo stretchy="false">)</mo></math>的值最小，为了求导方便系数乘了 1/2
 
 ### Cost Function - Intuition(1)
 
-对于Hypothesis函数：<math>
-	<msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi>
-	<mo>=</mo>
-	<msub><mi>θ</mi> <mi>0</mi></msub>
-	<mo>+</mo>
-	<msub><mi>θ</mi>
-	<mi>1</mi></msub>
-	<mi>x</mi>
+对于 Hypothesis 函数：<math>
+<msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi>
+<mo>=</mo>
+<msub><mi>θ</mi> <mi>0</mi></msub>
+<mo>+</mo>
+<msub><mi>θ</mi>
+<mi>1</mi></msub>
+<mi>x</mi>
 </math>
-
 
 当<math><msub><mi>θ</mi><mi>0</mi></msub><mo>=</mo><mi>0</mi></math>时，简化为：<math>
-	<msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi>
-	<mo>=</mo>
-	<msub><mi>θ</mi>
-	<mi>1</mi></msub>
-	<mi>x</mi>
+<msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi>
+<mo>=</mo>
+<msub><mi>θ</mi>
+<mi>1</mi></msub>
+<mi>x</mi>
 </math>
 
-对于cost函数简化为：
+对于 cost 函数简化为：
 
 <math display="block">
   <mi>J</mi>
@@ -290,26 +285,26 @@ categories: [ml-stanford,course]
 
 当<math><msub><mi>θ</mi><mi>1</mi></msub><mo>=</mo><mi>1</mi></math>时，<math><msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi><mo>=</mo><mi>x</mi></math>, 有<math><mi>J</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo><mo>=</mo><mstyle displaystyle="true"><mfrac><mn>1</mn><mrow><mn>2</mn><mi>m</mi></mrow></mfrac></mstyle><mfenced open="(" close=")"><mrow><msup><mi>0</mi><mn>2</mn></msup><mo>+</mo><msup><mi>0</mi><mn>2</mn></msup><mo>+</mo><msup><mi>0</mi><mn>2</mn></msup></mrow></mfenced><mo>=</mo><mi>0</mi></math>
 
-当<math><msub><mi>θ</mi><mi>1</mi></msub><mo>=</mo><mi>0.5</mi></math>时，<math><msub><mi>h</mi><mi>θ</mi></msub><mi>(x)</mi>	<mo>=</mo>	<mi>0.5</mi>	<mi>x</mi></math>，<math><mi>J</mi><mo stretchy="false">(</mo><mn>0.5</mn><mo stretchy="false">)</mo><mo>=</mo><mstyle displaystyle="true"><mfrac><mn>1</mn><mrow><mn>2</mn><mi>m</mi></mrow></mfrac></mstyle><mo stretchy="false">[</mo>		<mo stretchy="false">(</mo>			<mi>0.5</mi>			<mo>-</mo>			<mi>1</mi>		<msup>			<mo stretchy="false">)</mo>			<mn>2</mn>		</msup>		<mo>+</mo>			<mo stretchy="false">(</mo>				<mi>1</mi>				<mo>-</mo>				<mi>2</mi>		<msup>			<mo stretchy="false">)</mo>			<mn>2</mn>		</msup>			<mo>+</mo>			<mo stretchy="false">(</mo>	<mi>1.5</mi>				<mo>-</mo>				<mi>3</mi>		<msup>			<mo stretchy="false">)</mo>			<mn>2</mn>		</msup><mo stretchy="false">]</mo><mo>=</mo><mfrac><mn>1</mn><mrow><mn>2</mn><mo>x</mo><mi>3</mi></mrow></mfrac>	<mo stretchy="false">(</mo>	<mi>3.5</mi>	<mo stretchy="false">)</mo>	<mo>=</mo>	<mi>0.58</mi></math>
+当<math><msub><mi>θ</mi><mi>1</mi></msub><mo>=</mo><mi>0.5</mi></math>时，<math><msub><mi>h</mi><mi>θ</mi></msub><mi>(x)</mi> <mo>=</mo> <mi>0.5</mi> <mi>x</mi></math>，<math><mi>J</mi><mo stretchy="false">(</mo><mn>0.5</mn><mo stretchy="false">)</mo><mo>=</mo><mstyle displaystyle="true"><mfrac><mn>1</mn><mrow><mn>2</mn><mi>m</mi></mrow></mfrac></mstyle><mo stretchy="false">[</mo> <mo stretchy="false">(</mo> <mi>0.5</mi> <mo>-</mo> <mi>1</mi> <msup> <mo stretchy="false">)</mo> <mn>2</mn> </msup> <mo>+</mo> <mo stretchy="false">(</mo> <mi>1</mi> <mo>-</mo> <mi>2</mi> <msup> <mo stretchy="false">)</mo> <mn>2</mn> </msup> <mo>+</mo> <mo stretchy="false">(</mo> <mi>1.5</mi> <mo>-</mo> <mi>3</mi> <msup> <mo stretchy="false">)</mo> <mn>2</mn> </msup><mo stretchy="false">]</mo><mo>=</mo><mfrac><mn>1</mn><mrow><mn>2</mn><mo>x</mo><mi>3</mi></mrow></mfrac> <mo stretchy="false">(</mo> <mi>3.5</mi> <mo stretchy="false">)</mo> <mo>=</mo> <mi>0.58</mi></math>
 
-当<math><msub><mi>θ</mi><mi>1</mi></msub><mo>=</mo><mi>0</mi></math>时，<math><msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi><mo>=</mo><mi>0</mi></math>，有<math><mi>J</mi><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo><mo>=</mo><mstyle displaystyle="true"><mfrac><mn>1</mn><mrow><mn>2</mn><mi>m</mi></mrow></mfrac></mstyle><mo stretchy="false">(</mo><mrow>		<msup>			<mi>1</mi>			<mn>2</mn>		</msup>		<mo>+</mo><msup><mi>2</mi><mn>2</mn>		</msup>		<mo>+</mo>		<msup>			<mi>3</mi>			<mn>2</mn>		</msup></mrow><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>14</mn>		<mn>6</mn></mfrac>	<mo>=</mo>	<mi>2.3</mi></math>
+当<math><msub><mi>θ</mi><mi>1</mi></msub><mo>=</mo><mi>0</mi></math>时，<math><msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi><mo>=</mo><mi>0</mi></math>，有<math><mi>J</mi><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo><mo>=</mo><mstyle displaystyle="true"><mfrac><mn>1</mn><mrow><mn>2</mn><mi>m</mi></mrow></mfrac></mstyle><mo stretchy="false">(</mo><mrow> <msup> <mi>1</mi> <mn>2</mn> </msup> <mo>+</mo><msup><mi>2</mi><mn>2</mn> </msup> <mo>+</mo> <msup> <mi>3</mi> <mn>2</mn> </msup></mrow><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>14</mn> <mn>6</mn></mfrac> <mo>=</mo> <mi>2.3</mi></math>
 
 以此类推，通过不同的`θ`值可以求出不同的`J(θ)`，如下图所示：
 
 ![](/assets/images/2017/09/ml-2.png)
 
-我们的目标是找到一个`θ`值使`J(θ)`最小。显然上述案例中，当`θ=1`时，`J(θ)`最小，因此我们可以得到Hypothesis函数：
+我们的目标是找到一个`θ`值使`J(θ)`最小。显然上述案例中，当`θ=1`时，`J(θ)`最小，因此我们可以得到 Hypothesis 函数：
 
 <math display="block"><msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi>
-	<mo>=</mo>
-	<mi>x</mi>
+<mo>=</mo>
+<mi>x</mi>
 </math>
 
 ### Cost Function - Intuition(2)
 
-使用contour plots观察<math><mi>J</mi><mo>(</mo><msub><mi>θ</mi><mi>0</mi></msub><mi>,</mi><msub><mi>θ</mi><mi>1</mi></msub><mo>)</mo></math>在二维平面的投影，
+使用 contour plots 观察<math><mi>J</mi><mo>(</mo><msub><mi>θ</mi><mi>0</mi></msub><mi>,</mi><msub><mi>θ</mi><mi>1</mi></msub><mo>)</mo></math>在二维平面的投影，
 
-> 关于contour plot[参考](https://nb.khanacademy.org/math/multivariable-calculus/thinking-about-multivariable-function/visualizing-scalar-valued-functions/v/contour-plots）
+> 关于 contour plot[参考](https://nb.khanacademy.org/math/multivariable-calculus/thinking-about-multivariable-function/visualizing-scalar-valued-functions/v/contour-plots）
 
 ![](/assets/images/2017/09/ml-3.png)
 
@@ -321,15 +316,13 @@ Taking another h(x) and plotting its contour plot, one gets the following graphs
 
 When θ0 = 360 and θ1 = 0, the value of J(θ0,θ1) in the contour plot gets closer to the center thus reducing the cost function error. Now giving our hypothesis function a slightly positive slope results in a better fit of the data.
 
-
 ![](/assets/images/2017/09/ml-3-2.png)
 
 The graph above minimizes the cost function as much as possible and consequently, the result of θ1 and θ0 tend to be around 0.12 and 250 respectively. Plotting those values on our graph to the right seems to put our point in the center of the inner most 'circle'.
 
-- Ocatave Demo
+* Ocatave Demo
 
 ```matlab
-
 function J = computeCost(X, y, theta)
 %COMPUTECOST Compute cost for linear regression
 %   J = COMPUTECOST(X, y, theta) computes the cost of using theta as the
@@ -338,12 +331,12 @@ function J = computeCost(X, y, theta)
 % Initialize some useful values
 m = length(y); % number of training examples
 
-% You need to return the following variables correctly 
+% You need to return the following variables correctly
 J = 0;
 
 predictions = X*theta;
 
-sqrErrors = ( predictions - y ).^2; 
+sqrErrors = ( predictions - y ).^2;
 
 J = 1/(2*m)*sum(sqrErrors);
 
@@ -351,26 +344,19 @@ J = 1/(2*m)*sum(sqrErrors);
 % =========================================================================
 
 end
-
-
 ```
 
 ### Gradient descent
 
-对Cost函数： <math><mi>J</mi><mo>(</mo><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>)</mo></math>，找到<math><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub></math>使 <math><mi>J</mi><mo>(</mo><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>)</mo></math>值最小
+对 Cost 函数： <math><mi>J</mi><mo>(</mo><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>)</mo></math>，找到<math><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub></math>使 <math><mi>J</mi><mo>(</mo><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>)</mo></math>值最小
 
-- 方法
-	1. 选择任意<math><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub></math>，例如：<math><msub><mi>θ</mi><mi>0</mi></msub><mo>=</mo><mn>1</mn><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>=</mo><mn>1</mn></math>
-	2. 不断改变<math><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub></math>使<math><mi>J</mi><mo>(</mo><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>)</mo></math>按梯度方向进行减少，直到找到最小值
+* 方法 1. 选择任意<math><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub></math>，例如：<math><msub><mi>θ</mi><mi>0</mi></msub><mo>=</mo><mn>1</mn><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>=</mo><mn>1</mn></math> 2. 不断改变<math><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub></math>使<math><mi>J</mi><mo>(</mo><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>)</mo></math>按梯度方向进行减少，直到找到最小值
 
-- 图形理解
+* 图形理解
 
 ![Altext](/assets/images/2017/09/ml-4.png)
 
-- 梯度下降法：
-	- `:=` 代表赋值，例如 a:=b 代表把b的值赋值给a，类似的比如 a:=a+1。因此 := 表示的是计算机范畴中的赋值。而=号则代表truth assertion，a = b的含义是a的值为b
-	- `α` 代表learning rate是梯度下降的步长
-	- <math> <mfrac><mi mathvariant="normal">∂</mi><mrow><mi mathvariant="normal">∂</mi><msub><mi>θ</mi><mi>j</mi></msub></mrow></mfrac><mi>J</mi><mo stretchy="false">(</mo><msub><mi>θ</mi><mn>0</mn></msub><mo>,</mo><msub><mi>θ</mi><mn>1</mn></msub><mo stretchy="false">)</mo></math>代表对`θ`求偏导
+* 梯度下降法： - `:=` 代表赋值，例如 a:=b 代表把 b 的值赋值给 a，类似的比如 a:=a+1。因此 := 表示的是计算机范畴中的赋值。而=号则代表 truth assertion，a = b 的含义是 a 的值为 b - `α` 代表 learning rate 是梯度下降的步长 - <math> <mfrac><mi mathvariant="normal">∂</mi><mrow><mi mathvariant="normal">∂</mi><msub><mi>θ</mi><mi>j</mi></msub></mrow></mfrac><mi>J</mi><mo stretchy="false">(</mo><msub><mi>θ</mi><mn>0</mn></msub><mo>,</mo><msub><mi>θ</mi><mn>1</mn></msub><mo stretchy="false">)</mo></math>代表对`θ`求偏导
 
 <math display="block">
   <msub>
@@ -408,12 +394,10 @@ end
   <mo stretchy="false">)</mo>
 </math>
 
-- 理解梯度下降
+* 理解梯度下降
 
-梯度下降是求多维函数的极值方法，因此公式是对 <math><msub><mi>θ</mi><mi>j</mi></msub></math> 求导，每一个<math><msub><mi>θ</mi><mi>j</mi></msub></math>代表一元参数，也可以理解为一维向量，上述case中，只有<math><msub><mi>θ</mi><mn>0</mn></msub></math>和<math><msub><mi>θ</mi><mn>1</mn></msub></math>两个参数，可以理解在这两个方向上各自下降，他们的向量方向为<math><msup><mi>J</mi><mi>(θ)</mi></msup></math>下降的方向，下降过程是一个同步迭代的过程：	
-	
+梯度下降是求多维函数的极值方法，因此公式是对 <math><msub><mi>θ</mi><mi>j</mi></msub></math> 求导，每一个<math><msub><mi>θ</mi><mi>j</mi></msub></math>代表一元参数，也可以理解为一维向量，上述 case 中，只有<math><msub><mi>θ</mi><mn>0</mn></msub></math>和<math><msub><mi>θ</mi><mn>1</mn></msub></math>两个参数，可以理解在这两个方向上各自下降，他们的向量方向为<math><msup><mi>J</mi><mi>(θ)</mi></msup></math>下降的方向，下降过程是一个同步迭代的过程：
 ![](/assets/images/2017/09/ml-4.png)
-	
 理解二维梯度下降之前，可以先假设<math><msup><mi>J</mi><mi>(θ)</mi></msup></math>是一维的，即只有一个参数，那么上述梯度下降公式简化为：
 
 <math display="block">
@@ -448,27 +432,23 @@ end
 </math>
 
 问题简化为对一元函数求导，假设<math><msup><mi>J</mi><mi>(θ)</mi></msup></math>如下图所示：
-	
 ![](/assets/images/2017/09/ml-3-2.png)
-	
-`θ`会逐渐向极值点出收敛，当`θ`到达极值点时，该处导数为0，则`θ`值不再变化。
-		
+`θ`会逐渐向极值点出收敛，当`θ`到达极值点时，该处导数为 0，则`θ`值不再变化。
 <math display = "block">
-	<msub>
-	<mi>θ</mi>
-	<mn>1</mn>
-	</msub>
-	<mo>:=</mo>
-	<msub>
-	<mi>θ</mi>
-	<mn>1</mn>
-	</msub>
-	<mo>−</mo>
-	<mi>α</mi>
-	<mo>∗</mo>
-	<mn>0</mn>
+<msub>
+<mi>θ</mi>
+<mn>1</mn>
+</msub>
+<mo>:=</mo>
+<msub>
+<mi>θ</mi>
+<mn>1</mn>
+</msub>
+<mo>−</mo>
+<mi>α</mi>
+<mo>∗</mo>
+<mn>0</mn>
 </math>
-	
 理解了一维的梯度下降，接下来看怎么把它应用到<math><mi>J</mi><mo>(</mo><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>)</mo></math>上，对<math><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub></math>分别求偏导，得到下面公式：
 
 <math display="block">
@@ -611,32 +591,31 @@ end
 
 上几节讨论的问题是：已知一个房子大小和价格样本数据集，来推导房价和房屋大小的关系函数：
 
+| Size(x) | Price(y) |
+| ------- | -------- |
+| 2104    | 460      |
+| 1035    | 224      |
+| 868     | 230      |
+| 642     | 126      |
+| ...     | ...      |
 
-Size(x)  | Price(y)
-------| -------------
-2104  | 460
-1035  | 224
-868  | 230
-642  | 126
-...	   | ...
-
-`x`为房子的size，`y`是房价，上述的一维线性回归函数：<math>
-	<msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi>
-	<mo>=</mo>
-	<msub><mi>θ</mi> <mi>0</mi></msub>
-	<mo>+</mo>
-	<msub><mi>θ</mi>
-	<mi>1</mi></msub>
-	<mi>x</mi>
+`x`为房子的 size，`y`是房价，上述的一维线性回归函数：<math>
+<msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi>
+<mo>=</mo>
+<msub><mi>θ</mi> <mi>0</mi></msub>
+<mo>+</mo>
+<msub><mi>θ</mi>
+<mi>1</mi></msub>
+<mi>x</mi>
 </math>，但是影响房价的因素很多，比如房屋数量，楼层数等等：
 
-Size(x1)| number of bed room (x2) | number of floors(x3) | Price(y)
-------| ------------| ----------- | ----|
-2104  | 5				| 	2			|		460 |
-1035  | 4				|	1			|		224 |
-868  |  3				|	2			|		230 | 
-642  |  2				|	1			|		126 |
-...	  | ...			| 	...			|		... | 
+| Size(x1) | number of bed room (x2) | number of floors(x3) | Price(y) |
+| -------- | ----------------------- | -------------------- | -------- |
+| 2104     | 5                       | 2                    | 460      |
+| 1035     | 4                       | 1                    | 224      |
+| 868      | 3                       | 2                    | 230      |
+| 642      | 2                       | 1                    | 126      |
+| ...      | ...                     | ...                  | ...      |
 
 对应到公式里，则表现为`x`是多维时，公式如下：
 
@@ -781,7 +760,6 @@ Size(x1)| number of bed room (x2) | number of floors(x3) | Price(y)
   </mtable>
 </math>
 
-
 举例来说，<math><msup><mi>x</mi><mi>(2)</mi></msup></math>表示第二组训练集：
 
 <math display="block">
@@ -825,7 +803,7 @@ Size(x1)| number of bed room (x2) | number of floors(x3) | Price(y)
 <mn>2</mn><msub><mi>x</mi><mi>4</mi></msub>
 </math>
 
-其中<math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></math>表示房子的总价，<math><msub><mi>θ</mi><mn>0</mn></msub></math> = 80代表房子的基础价格，<math><msub><mi>x</mi><mn>1</mn></msub></math>代表这栋房子的size，<math><msub><mi>θ</mi><mn>1</mn></msub></math>是用cost function计算出来对<math><msub><mi>x</mi><mn>1</mn></msub></math>的系数，类似的<math><msub><mi>x</mi><mn>2</mn></msub></math>代表房子的房间数，<math><msub><mi>θ</mi><mn>2</mn></msub></math>是对<math><msub><mi>x</mi><mn>2</mn></msub></math>的系数，等等
+其中<math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></math>表示房子的总价，<math><msub><mi>θ</mi><mn>0</mn></msub></math> = 80 代表房子的基础价格，<math><msub><mi>x</mi><mn>1</mn></msub></math>代表这栋房子的 size，<math><msub><mi>θ</mi><mn>1</mn></msub></math>是用 cost function 计算出来对<math><msub><mi>x</mi><mn>1</mn></msub></math>的系数，类似的<math><msub><mi>x</mi><mn>2</mn></msub></math>代表房子的房间数，<math><msub><mi>θ</mi><mn>2</mn></msub></math>是对<math><msub><mi>x</mi><mn>2</mn></msub></math>的系数，等等
 
 在这个式子中
 
@@ -994,7 +972,7 @@ Size(x1)| number of bed room (x2) | number of floors(x3) | Price(y)
 
 ### Gradient Descent for Multiple variables
 
-参考一维线性回归的的cost函数，多维线性回归的cost函数为:
+参考一维线性回归的的 cost 函数，多维线性回归的 cost 函数为:
 
 <math display="block">
   <mi>J</mi>
@@ -1050,8 +1028,6 @@ Size(x1)| number of bed room (x2) | number of floors(x3) | Price(y)
     </mstyle>
 </math>
 
-
-
 多维梯度下降公式和前面类似：
 
 <math display="block">
@@ -1085,304 +1061,303 @@ Size(x1)| number of bed room (x2) | number of floors(x3) | Price(y)
 对<math><msub><mi>θ</mi><mi>j</mi></msub></math>求偏导，得到：
 <math display="block">
 <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd />
-      <mtd>
-        <mtext>repeat until convergence:</mtext>
-        <mspace width="thickmathspace" />
-        <mo fence="false" stretchy="false">{</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mspace width="thickmathspace" />
-      </mtd>
-      <mtd>
-        <msub>
-          <mi>θ</mi>
-          <mn>0</mn>
-        </msub>
-        <mo>:=</mo>
-        <msub>
-			<mi>θ</mi>
-          <mn>0</mn>
-        </msub>
-        <mo>−</mo>
-        <mi>α</mi>
-        <mfrac>
-          <mn>1</mn>
-          <mi>m</mi>
-        </mfrac>
-        <munderover>
-          <mo movablelimits="false">∑</mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>m</mi>
-          </mrow>
-        </munderover>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi>h</mi>
-			<mi>θ</mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <msup>
-          <mi>x</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <mo>−</mo>
-        <msup>
-          <mi>y</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <mo>⋅</mo>
-        <msubsup>
-          <mi>x</mi>
-          <mn>0</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mspace width="thickmathspace" />
-      </mtd>
-      <mtd>
-        <msub>
-          <mi>θ</mi>
-          <mn>1</mn>
-        </msub>
-        <mo>:=</mo>
-        <msub>
-          <mi>θ</mi>
-          <mn>1</mn>
-        </msub>
-        <mo>−</mo>
-        <mi>α</mi>
-        <mfrac>
-          <mn>1</mn>
-          <mi>m</mi>
-        </mfrac>
-        <munderover>
-          <mo movablelimits="false">∑</mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>m</mi>
-          </mrow>
-        </munderover>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi>h</mi>
-          <mi>θ</mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <msup>
-          <mi>x</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <mo>−</mo>
-        <msup>
-          <mi>y</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <mo>⋅</mo>
-        <msubsup>
-          <mi>x</mi>
-          <mn>1</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mspace width="thickmathspace" />
-      </mtd>
-      <mtd>
-        <msub>
-          <mi>θ</mi>
-          <mn>2</mn>
-        </msub>
-        <mo>:=</mo>
-        <msub>
-          <mi>θ</mi>
-          <mn>2</mn>
-        </msub>
-        <mo>−</mo>
-        <mi>α</mi>
-        <mfrac>
-          <mn>1</mn>
-          <mi>m</mi>
-        </mfrac>
-        <munderover>
-          <mo movablelimits="false">∑</mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>m</mi>
-          </mrow>
-        </munderover>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi>h</mi>
-          <mi>θ</mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <msup>
-          <mi>x</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <mo>−</mo>
-        <msup>
-          <mi>y</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <mo>⋅</mo>
-        <msubsup>
-          <mi>x</mi>
-          <mn>2</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <mo>⋯</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mspace width="thickmathspace" />
-      </mtd>
-      <mtd>
-        <msub>
-          <mi>θ</mi>
-          <mn>j</mn>
-        </msub>
-        <mo>:=</mo>
-        <msub>
-          <mi>θ</mi>
-          <mn>j</mn>
-        </msub>
-        <mo>−</mo>
-        <mi>α</mi>
-        <mfrac>
-          <mn>1</mn>
-          <mi>m</mi>
-        </mfrac>
-        <munderover>
-          <mo movablelimits="false">∑</mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>m</mi>
-          </mrow>
-        </munderover>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi>h</mi>
-          <mi>θ</mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <msup>
-          <mi>x</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <mo>−</mo>
-        <msup>
-          <mi>y</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <mo>⋅</mo>
-        <msubsup>
-          <mi>x</mi>
-          <mn>j</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mo fence="false" stretchy="false">}</mo>
-      </mtd>
-    </mtr>
-  </mtable>
+<mtr>
+<mtd />
+<mtd>
+<mtext>repeat until convergence:</mtext>
+<mspace width="thickmathspace" />
+<mo fence="false" stretchy="false">{</mo>
+</mtd>
+</mtr>
+<mtr>
+<mtd>
+<mspace width="thickmathspace" />
+</mtd>
+<mtd>
+<msub>
+<mi>θ</mi>
+<mn>0</mn>
+</msub>
+<mo>:=</mo>
+<msub>
+<mi>θ</mi>
+<mn>0</mn>
+</msub>
+<mo>−</mo>
+<mi>α</mi>
+<mfrac>
+<mn>1</mn>
+<mi>m</mi>
+</mfrac>
+<munderover>
+<mo movablelimits="false">∑</mo>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>=</mo>
+<mn>1</mn>
+</mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>m</mi>
+</mrow>
+</munderover>
+<mo stretchy="false">(</mo>
+<msub>
+<mi>h</mi>
+<mi>θ</mi>
+</msub>
+<mo stretchy="false">(</mo>
+<msup>
+<mi>x</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mo stretchy="false">(</mo>
+<mi>i</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+<mo>−</mo>
+<msup>
+<mi>y</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mo stretchy="false">(</mo>
+<mi>i</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+<mo>⋅</mo>
+<msubsup>
+<mi>x</mi>
+<mn>0</mn>
+<mrow class="MJX-TeXAtom-ORD">
+<mo stretchy="false">(</mo>
+<mi>i</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msubsup>
+</mtd>
+</mtr>
+<mtr>
+<mtd>
+<mspace width="thickmathspace" />
+</mtd>
+<mtd>
+<msub>
+<mi>θ</mi>
+<mn>1</mn>
+</msub>
+<mo>:=</mo>
+<msub>
+<mi>θ</mi>
+<mn>1</mn>
+</msub>
+<mo>−</mo>
+<mi>α</mi>
+<mfrac>
+<mn>1</mn>
+<mi>m</mi>
+</mfrac>
+<munderover>
+<mo movablelimits="false">∑</mo>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>=</mo>
+<mn>1</mn>
+</mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>m</mi>
+</mrow>
+</munderover>
+<mo stretchy="false">(</mo>
+<msub>
+<mi>h</mi>
+<mi>θ</mi>
+</msub>
+<mo stretchy="false">(</mo>
+<msup>
+<mi>x</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mo stretchy="false">(</mo>
+<mi>i</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+<mo>−</mo>
+<msup>
+<mi>y</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mo stretchy="false">(</mo>
+<mi>i</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+<mo>⋅</mo>
+<msubsup>
+<mi>x</mi>
+<mn>1</mn>
+<mrow class="MJX-TeXAtom-ORD">
+<mo stretchy="false">(</mo>
+<mi>i</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msubsup>
+</mtd>
+</mtr>
+<mtr>
+<mtd>
+<mspace width="thickmathspace" />
+</mtd>
+<mtd>
+<msub>
+<mi>θ</mi>
+<mn>2</mn>
+</msub>
+<mo>:=</mo>
+<msub>
+<mi>θ</mi>
+<mn>2</mn>
+</msub>
+<mo>−</mo>
+<mi>α</mi>
+<mfrac>
+<mn>1</mn>
+<mi>m</mi>
+</mfrac>
+<munderover>
+<mo movablelimits="false">∑</mo>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>=</mo>
+<mn>1</mn>
+</mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>m</mi>
+</mrow>
+</munderover>
+<mo stretchy="false">(</mo>
+<msub>
+<mi>h</mi>
+<mi>θ</mi>
+</msub>
+<mo stretchy="false">(</mo>
+<msup>
+<mi>x</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mo stretchy="false">(</mo>
+<mi>i</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+<mo>−</mo>
+<msup>
+<mi>y</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mo stretchy="false">(</mo>
+<mi>i</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+<mo>⋅</mo>
+<msubsup>
+<mi>x</mi>
+<mn>2</mn>
+<mrow class="MJX-TeXAtom-ORD">
+<mo stretchy="false">(</mo>
+<mi>i</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msubsup>
+</mtd>
+</mtr>
+<mtr>
+<mtd />
+<mtd>
+<mo>⋯</mo>
+</mtd>
+</mtr>
+<mtr>
+<mtd>
+<mspace width="thickmathspace" />
+</mtd>
+<mtd>
+<msub>
+<mi>θ</mi>
+<mn>j</mn>
+</msub>
+<mo>:=</mo>
+<msub>
+<mi>θ</mi>
+<mn>j</mn>
+</msub>
+<mo>−</mo>
+<mi>α</mi>
+<mfrac>
+<mn>1</mn>
+<mi>m</mi>
+</mfrac>
+<munderover>
+<mo movablelimits="false">∑</mo>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>i</mi>
+<mo>=</mo>
+<mn>1</mn>
+</mrow>
+<mrow class="MJX-TeXAtom-ORD">
+<mi>m</mi>
+</mrow>
+</munderover>
+<mo stretchy="false">(</mo>
+<msub>
+<mi>h</mi>
+<mi>θ</mi>
+</msub>
+<mo stretchy="false">(</mo>
+<msup>
+<mi>x</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mo stretchy="false">(</mo>
+<mi>i</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+<mo>−</mo>
+<msup>
+<mi>y</mi>
+<mrow class="MJX-TeXAtom-ORD">
+<mo stretchy="false">(</mo>
+<mi>i</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msup>
+<mo stretchy="false">)</mo>
+<mo>⋅</mo>
+<msubsup>
+<mi>x</mi>
+<mn>j</mn>
+<mrow class="MJX-TeXAtom-ORD">
+<mo stretchy="false">(</mo>
+<mi>i</mi>
+<mo stretchy="false">)</mo>
+</mrow>
+</msubsup>
+</mtd>
+</mtr>
+<mtr>
+<mtd>
+<mo fence="false" stretchy="false">}</mo>
+</mtd>
+</mtr>
+</mtable>
 </math>
 
-- 线性回归梯度计算的Ocatave Demo
+* 线性回归梯度计算的 Ocatave Demo
 
 ```matlab
-
 function [theta, J_history] = gradientDescentMulti(X, y, theta, alpha, num_iters)
 %GRADIENTDESCENTMULTI Performs gradient descent to learn theta
 %   theta = GRADIENTDESCENTMULTI(x, y, theta, alpha, num_iters) updates theta by
@@ -1404,39 +1379,37 @@ for iter = 1:num_iters
 
     % ============================================================
 
-    % Save the cost J in every iteration    
+    % Save the cost J in every iteration
     J_history(iter) = computeCostMulti(X, y, theta);
 
 end
 
 end
-
 ```
 
 ### Feature Scaling
 
 Idea: Make sure features are on a similar scale.
 
-E.g.:`x1 = size(0-200 feet) `,`x2=number of bedrooms(1-5)`
+E.g.:`x1 = size(0-200 feet)`,`x2=number of bedrooms(1-5)`
 
-这种情况contour图是一个瘦长的椭圆，如图：
-
+这种情况 contour 图是一个瘦长的椭圆，如图：
 
 在不优化的情况下，这类梯度下降速度很慢。如果我们将`x1,x2`做如下调整：
 
-`x1 = size(0-200 feet)/5`,`x2=(number of bedrooms)/5`,则contour图会变为接近圆形，梯度下降收敛的速度会加快。通常为了加速收敛，会将每个feature值(每个`xi`)统一到某个区间里，比如 <math><mn>0</mn><mo>≤</mo><msub><mi>x</mi><mi>1</mi></msub><mo>≤</mo><mn>3</mn></math>，<math><mn>-2</mn><mo>≤</mo><msub><mi>x</mi><mi>2</mi></msub><mo>≤</mo><mn>0.5</mn></math>等等
+`x1 = size(0-200 feet)/5`,`x2=(number of bedrooms)/5`,则 contour 图会变为接近圆形，梯度下降收敛的速度会加快。通常为了加速收敛，会将每个 feature 值(每个`xi`)统一到某个区间里，比如 <math><mn>0</mn><mo>≤</mo><msub><mi>x</mi><mi>1</mi></msub><mo>≤</mo><mn>3</mn></math>，<math><mn>-2</mn><mo>≤</mo><msub><mi>x</mi><mi>2</mi></msub><mo>≤</mo><mn>0.5</mn></math>等等
 
 ### Mean normalization
 
-Replace <math><msub><mi>x</mi><mi>i</mi></msub></math>with <math><msub><mi>x</mi><mi>i</mi></msub><mo>-</mo><msub><mi>μ</mi><mi>i</mi></msub></math> to make features have approximately zero mean.实际上就是将feature归一化，
+Replace <math><msub><mi>x</mi><mi>i</mi></msub></math>with <math><msub><mi>x</mi><mi>i</mi></msub><mo>-</mo><msub><mi>μ</mi><mi>i</mi></msub></math> to make features have approximately zero mean.实际上就是将 feature 归一化，
 
-例如`x1=(size-1000)/2000	x2=(#bedrooms-2)/5`
+例如`x1=(size-1000)/2000 x2=(#bedrooms-2)/5`
 
 则有：<math><mn>-0.5</mn><mo>≤</mo><msub><mi>x</mi><mi>1</mi></msub><mo>≤</mo><mn>0.5</mn></math>，<math><mn>-0.5</mn><mo>≤</mo><msub><mi>x</mi><mi>2</mi></msub><mo>≤</mo><mn>0.5</mn></math>
 
-- <math><msub><mi>μ</mi><mi>i</mi></msub></math> 是所有 <math><msub><mi>x</mi><mi>i</mi></msub></math>
+* <math><msub><mi>μ</mi><mi>i</mi></msub></math> 是所有 <math><msub><mi>x</mi><mi>i</mi></msub></math>
 
-- <math><msub><mi>μ</mi><mi>i</mi></msub></math> 是`xi`的区间范围，(max-min)
+* <math><msub><mi>μ</mi><mi>i</mi></msub></math> 是`xi`的区间范围，(max-min)
 
 Note that dividing by the range, or dividing by the standard deviation, give different results. The quizzes in this course use range - the programming exercises use standard deviation.
 
@@ -1464,8 +1437,8 @@ For example, if xi represents housing prices with a range of 100 to 2000 and a m
   </mstyle>
 </math>
 
-- `μ`表示所有feature的平均值
-- `s = max - min`
+* `μ`表示所有 feature 的平均值
+* `s = max - min`
 
 ### Learning Rate
 
@@ -1509,11 +1482,7 @@ For example, if xi represents housing prices with a range of 100 to 2000 and a m
 
 解决办法都是选取较小的`α`值
 
-- Summary:
-	- if `α` is too small: slow convergence
-	- if `α` is too large: `J(θ)`may not decrease on every iteration; may not converge
-	- To choose `α` , try: ..., 0.001, 0.003, 0.01,0.03, 0.1,0.3, 1, ...
-
+* Summary: - if `α` is too small: slow convergence - if `α` is too large: `J(θ)`may not decrease on every iteration; may not converge - To choose `α` , try: ..., 0.001, 0.003, 0.01,0.03, 0.1,0.3, 1, ...
 
 ### Polynomial regression
 
@@ -1572,14 +1541,14 @@ For example, if xi represents housing prices with a range of 100 to 2000 and a m
   </msub>
 </math>
 
-其中<math><msub><mi>x</mi><mi>i</mi></msub></math>代表feature种类，有些情况下使用这些feature制作目标函数不方便，因此可以考虑重新定义feature的值
+其中<math><msub><mi>x</mi><mi>i</mi></msub></math>代表 feature 种类，有些情况下使用这些 feature 制作目标函数不方便，因此可以考虑重新定义 feature 的值
 
 We can improve our features and the form of our hypothesis function in a couple different ways.
 We can **combine** multiple features into one. For example, we can combine x1 and x2 into a new feature x3 by taking x1⋅x2.
 
-例如我们可以将两个feature合成一个:`x3 = x1*x2`，使用`x3`作为先行回归的feature值。
+例如我们可以将两个 feature 合成一个:`x3 = x1*x2`，使用`x3`作为先行回归的 feature 值。
 
-另外，如果只有一个feature，而使用线性函数又不适合描述完整的数据集，可以考虑多项式函数，比如使用二次函数或者三次函数：
+另外，如果只有一个 feature，而使用线性函数又不适合描述完整的数据集，可以考虑多项式函数，比如使用二次函数或者三次函数：
 
 <math display="block">
   <msub>
@@ -1604,67 +1573,67 @@ We can **combine** multiple features into one. For example, we can combine x1 an
     <mn>1</mn>
   </msub>
 
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>2</mn>
-  </msub>
-  <msubsup>
-  	<mi>x</mi>
-  	<mn>1</mn>
-  	<mn>2</mn>
-  </msubsup>
-  <mspace width="1em"></mspace>
-  <mi>or</mi>
-  <mspace width="1em"></mspace>
-  <msub>
-    <mi>h</mi>
-    <mi>θ</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>0</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>1</mn>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mn>1</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>2</mn>
-  </msub>
-  <msubsup>
-  	<mi>x</mi>
-  	<mn>1</mn>
-  	<mn>2</mn>
-  </msubsup>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>3</mn>
-  </msub>
-  <msubsup>
-  	<mi>x</mi>
-  	<mn>1</mn>
-  	<mn>3</mn>
-  </msubsup>
+<mo>+</mo>
+<msub>
+<mi>θ</mi>
+<mn>2</mn>
+</msub>
+<msubsup>
+<mi>x</mi>
+<mn>1</mn>
+<mn>2</mn>
+</msubsup>
+<mspace width="1em"></mspace>
+<mi>or</mi>
+<mspace width="1em"></mspace>
+<msub>
+<mi>h</mi>
+<mi>θ</mi>
+</msub>
+<mo stretchy="false">(</mo>
+<mi>x</mi>
+<mo stretchy="false">)</mo>
+<mo>=</mo>
+<msub>
+<mi>θ</mi>
+<mn>0</mn>
+</msub>
+<mo>+</mo>
+<msub>
+<mi>θ</mi>
+<mn>1</mn>
+</msub>
+<msub>
+<mi>x</mi>
+<mn>1</mn>
+</msub>
+<mo>+</mo>
+<msub>
+<mi>θ</mi>
+<mn>2</mn>
+</msub>
+<msubsup>
+<mi>x</mi>
+<mn>1</mn>
+<mn>2</mn>
+</msubsup>
+<mo>+</mo>
+<msub>
+<mi>θ</mi>
+<mn>3</mn>
+</msub>
+<msubsup>
+<mi>x</mi>
+<mn>1</mn>
+<mn>3</mn>
+</msubsup>
 </math>
 
-可以令 <math><msub><mi>x</mi><mn>2</mn></msub><mo>=</mo><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>,</mo><msub><mi>x</mi><mn>3</mn></msub><mo>=</mo><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup></math> 但是这么选择的一个问题在于feature scaling 会比较重要，如果x1的range是[1,1000]，那么x2的range就会变成[1,1000000]等
+可以令 <math><msub><mi>x</mi><mn>2</mn></msub><mo>=</mo><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>,</mo><msub><mi>x</mi><mn>3</mn></msub><mo>=</mo><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup></math> 但是这么选择的一个问题在于 feature scaling 会比较重要，如果 x1 的 range 是[1,1000]，那么 x2 的 range 就会变成[1,1000000]等
 
 ### Normal Equation
 
-对于cost函数：
+对于 cost 函数：
 
 <math display="block">
   <mi>J</mi>
@@ -1720,7 +1689,7 @@ We can **combine** multiple features into one. For example, we can combine x1 an
   </mstyle>
 </math>
 
-前面提到的求`J(θ)`最小值的思路是使用梯度下降法，对<math><msub><mi>θ</mi><mi>j</mi></msub></math>求偏导得到各个θ值:
+前面提到的求`J(θ)`最小值的思路是使用梯度下降法，对<math><msub><mi>θ</mi><mi>j</mi></msub></math>求偏导得到各个 θ 值:
 
 <math display="block">
 <mfrac><mi mathvariant="normal">∂</mi><mrow><mi mathvariant="normal">∂</mi><msub><mi>θ</mi><mi>j</mi></msub></mrow></mfrac><mi>J</mi><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo>
@@ -1730,9 +1699,9 @@ We can **combine** multiple features into one. For example, we can combine x1 an
 <mi>(for every j)</mi>
 </math>
 
-出了梯度下降法之外，还有一种方法叫做**Normal Equation**，这种方式不需要迭代，可以直接计算出θ值 。
+出了梯度下降法之外，还有一种方法叫做**Normal Equation**，这种方式不需要迭代，可以直接计算出 θ 值 。
 
-假设我们有m个样本。特征向量的维度为n。因此，可知样本为 <math><mo>{</mo><mo>(</mo><msup><mi>x</mi><mi>(1)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(1)</mi></msup><mo>)</mo><mo>,</mo><mo>(</mo><msup><mi>x</mi><mi>(2)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(2)</mi></msup><mo>)</mo><mo>,</mo><mo>...</mo><mo>(</mo><msup><mi>x</mi><mi>(m)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(m)</mi></msup><mo>)</mo><mo>}</mo></math>，其中对于每一个样本中的<math><msup><mi>x</mi><mi>(i)</mi></msup></math>，都有 <math><msup><mi>x</mi><mi>(i)</mi></msup><mo>=</mo><mo>{</mo><msubsup><mi>x</mi><mi>1</mi><mi>(i)</mi></msubsup><msubsup><mi>x</mi><mi>2</mi><mi>(i)</mi></msubsup><mo>,</mo><mo>...</mo><msubsup><mi>x</mi><mi>n</mi><mi>(i)</mi></msubsup><mo>}</mo></math>，令线性回归函数 <math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>θ</mi><mn>0</mn></msub><mo>+</mo><msub><mi>θ</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>θ</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub><mo>+</mo><msub><mi>θ</mi><mn>3</mn></msub><msub><mi>x</mi><mn>3</mn></msub><mo>+</mo><mo>⋯</mo><mo>+</mo><msub><mi>θ</mi><mi>n</mi></msub><msub><mi>x</mi><mi>n</mi></msub></math>，则有：
+假设我们有 m 个样本。特征向量的维度为 n。因此，可知样本为 <math><mo>{</mo><mo>(</mo><msup><mi>x</mi><mi>(1)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(1)</mi></msup><mo>)</mo><mo>,</mo><mo>(</mo><msup><mi>x</mi><mi>(2)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(2)</mi></msup><mo>)</mo><mo>,</mo><mo>...</mo><mo>(</mo><msup><mi>x</mi><mi>(m)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(m)</mi></msup><mo>)</mo><mo>}</mo></math>，其中对于每一个样本中的<math><msup><mi>x</mi><mi>(i)</mi></msup></math>，都有 <math><msup><mi>x</mi><mi>(i)</mi></msup><mo>=</mo><mo>{</mo><msubsup><mi>x</mi><mi>1</mi><mi>(i)</mi></msubsup><msubsup><mi>x</mi><mi>2</mi><mi>(i)</mi></msubsup><mo>,</mo><mo>...</mo><msubsup><mi>x</mi><mi>n</mi><mi>(i)</mi></msubsup><mo>}</mo></math>，令线性回归函数 <math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>θ</mi><mn>0</mn></msub><mo>+</mo><msub><mi>θ</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>θ</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub><mo>+</mo><msub><mi>θ</mi><mn>3</mn></msub><msub><mi>x</mi><mn>3</mn></msub><mo>+</mo><mo>⋯</mo><mo>+</mo><msub><mi>θ</mi><mi>n</mi></msub><msub><mi>x</mi><mi>n</mi></msub></math>，则有：
 
 <math display="block">
 <mi>X</mi>
@@ -1813,9 +1782,9 @@ We can **combine** multiple features into one. For example, we can combine x1 an
 
 其中：
 
-- <math><mi>X</mi></math> 是 <math><mi>m</mi><mo>*</mo><mi>(n+1)</mi></math>的矩阵
-- <math><mi>θ</mi></math> 是 <math><mi>(n+1)</mi><mo>*</mo><mn>1</mn></math>的矩阵
-- <math><mi>Y</mi></math> 是 <math><mi>m</mi><mo>*</mo><mn>1</mn></math>的矩阵
+* <math><mi>X</mi></math> 是 <math><mi>m</mi><mo>\*</mo><mi>(n+1)</mi></math>的矩阵
+* <math><mi>θ</mi></math> 是 <math><mi>(n+1)</mi><mo>\*</mo><mn>1</mn></math>的矩阵
+* <math><mi>Y</mi></math> 是 <math><mi>m</mi><mo>\*</mo><mn>1</mn></math>的矩阵
 
 看个例子：
 
@@ -1823,35 +1792,35 @@ We can **combine** multiple features into one. For example, we can combine x1 an
 
 若希望<math><msub><mi>h</mi><mi>(θ)</mi></msub><mo>=</mo><mi>y</mi></math>，则有<math><mi>X</mi><mo>·</mo><mi>θ</mi><mo>=</mo><mi>Y</mi></math>，回想**单位矩阵** 和 **矩阵的逆**的性质：
 
-- 单位矩阵E，<math><mi>AE</mi><mo>=</mo><mi>EA</mi><mo>=</mo><mi>A</mi></math>
-- 矩阵的逆<math><msup><mi>A</mi><mi>-1</mi></msup></math>，A必须为方阵，<math><mi>A</mi><msup><mi>A</mi><mi>-1</mi></msup><mo>=</mo><msup><mi>A</mi><mi>-1</mi></msup><mi>A</mi><mo>=</mo><mi>E</mi></math>
+* 单位矩阵 E，<math><mi>AE</mi><mo>=</mo><mi>EA</mi><mo>=</mo><mi>A</mi></math>
+* 矩阵的逆<math><msup><mi>A</mi><mi>-1</mi></msup></math>，A 必须为方阵，<math><mi>A</mi><msup><mi>A</mi><mi>-1</mi></msup><mo>=</mo><msup><mi>A</mi><mi>-1</mi></msup><mi>A</mi><mo>=</mo><mi>E</mi></math>
 
-再来看看式子 <math><mi>X</mi><mo>·</mo><mi>θ</mi><mo>=</mo><mi>Y</mi></math> 若想求出θ，那么我们需要做一些转换：
+再来看看式子 <math><mi>X</mi><mo>·</mo><mi>θ</mi><mo>=</mo><mi>Y</mi></math> 若想求出 θ，那么我们需要做一些转换：
 
-1. 先把θ左边的矩阵变成一个方阵。通过乘以<math><msup><mi>X</mi><mi>T</mi></msup></math>可以实现，则有 <math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><mo>·</mo><mi>θ</mi><mo>=</mo><msup><mi>X</mi><mi>T</mi></msup><mi>Y</mi></math>
+1. 先把 θ 左边的矩阵变成一个方阵。通过乘以<math><msup><mi>X</mi><mi>T</mi></msup></math>可以实现，则有 <math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><mo>·</mo><mi>θ</mi><mo>=</mo><msup><mi>X</mi><mi>T</mi></msup><mi>Y</mi></math>
 
-2. 把θ左边的部分变成一个单位矩阵，这样左边就只剩下θ，<math><mo>(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><msup><mo>)</mo><mn>-1</mn></msup><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><mo>·</mo><mi>θ</mi><mo>=</mo><mo>(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><msup><mo>)</mo><mn>-1</mn></msup><msup><mi>X</mi><mi>T</mi></msup><mi>Y</mi></math>
+2. 把 θ 左边的部分变成一个单位矩阵，这样左边就只剩下 θ，<math><mo>(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><msup><mo>)</mo><mn>-1</mn></msup><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><mo>·</mo><mi>θ</mi><mo>=</mo><mo>(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><msup><mo>)</mo><mn>-1</mn></msup><msup><mi>X</mi><mi>T</mi></msup><mi>Y</mi></math>
 
 3. 由于<math><mo>(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><msup><mo>)</mo><mn>-1</mn></msup><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><mo>=</mo><mi>E</mi></math>，因此式子变为<math><mi>θ</mi><mo>=</mo><mo>(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><msup><mo>)</mo><mn>-1</mn></msup><msup><mi>X</mi><mi>T</mi></msup><mi>Y</mi></math>，这就**Normal Equation**的表达式。
 
-如果用Octave表示，命令为：`pinv(X'*X)*X'*Y`
+如果用 Octave 表示，命令为：`pinv(X'*X)*X'*Y`
 
-什么case适合使用Normal Equation，什么case适合使用Gradient Descent？
+什么 case 适合使用 Normal Equation，什么 case 适合使用 Gradient Descent？
 
-Gradient Descent | Normal Equation
-------------- | -------------
-Need to choose alpha  | No need to choose alpha
-Needs many iterations  | No need to iterate
-<math><mi>O</mi><mo>(</mo><mi>k</mi><msup><mi>n</mi><mn>2</mn></msup><mo>)</mo></math> | <math><mi>O</mi><mo> (</mo><msup><mi>n</mi><mn>3</mn></msup><mo>)</mo></math> need to calculate inverse of <math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi></math>
-Works well when n is large | Slow if n is very large
-	
-当样本数量n>=1000时使用梯度下降，小于这个数量使用normal equation更方便，当n太大时，计算 <math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi></math> 会非常慢
+| Gradient Descent                                                                       | Normal Equation                                                                                                                                                     |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Need to choose alpha                                                                   | No need to choose alpha                                                                                                                                             |
+| Needs many iterations                                                                  | No need to iterate                                                                                                                                                  |
+| <math><mi>O</mi><mo>(</mo><mi>k</mi><msup><mi>n</mi><mn>2</mn></msup><mo>)</mo></math> | <math><mi>O</mi><mo> (</mo><msup><mi>n</mi><mn>3</mn></msup><mo>)</mo></math> need to calculate inverse of <math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi></math> |
+| Works well when n is large                                                             | Slow if n is very large                                                                                                                                             |
+
+当样本数量 n>=1000 时使用梯度下降，小于这个数量使用 normal equation 更方便，当 n 太大时，计算 <math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi></math> 会非常慢
 
 When implementing the normal equation in octave we want to use the `pinv` function rather than `inv`. The `pinv` function will give you a value of θ even if<math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi></math> is not invertible(不可逆).
 
 If <math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi></math> is noninvertible, the common causes might be having :
 
-- Redundant features, where two features are very closely related (i.e. they are linearly dependent)
-- Too many features (e.g. m ≤ n). In this case, delete some features or use "regularization" (to be explained in a later lesson).
+* Redundant features, where two features are very closely related (i.e. they are linearly dependent)
+* Too many features (e.g. m ≤ n). In this case, delete some features or use "regularization" (to be explained in a later lesson).
 
 Solutions to the above problems include deleting a feature that is linearly dependent with another or deleting one or more features when there are too many features.

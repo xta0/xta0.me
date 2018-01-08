@@ -17,7 +17,7 @@ baseurl:
 permalink: pretty
 
 # Pagination
-paginate: 10
+# paginate: 10
 
 # Handling Reading
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md", "Gemfile", "Gemfile.lock", "README_en.md"]
@@ -45,9 +45,9 @@ defaults:
 
 # Plugins
 ## Docs: https://help.github.com/articles/configuring-jekyll-plugins/
-plugins:
- - jekyll-sitemap
- - jekyll-feed
+# plugins:
+#  - jekyll-sitemap
+#  - jekyll-feed
 
 # Put your favicon.ico into `assets/` directory.
 favicon: /assets/favicon.ico
