@@ -139,12 +139,7 @@ fi
 >echo $var //20150712
 ```
 
-
-
-
 - 接受用户输入作为参数:`read -p "PROMPT" VARIABLE`
-
-
 
 	
 <h2 id="3">字符串操作</h2>
