@@ -390,18 +390,40 @@ tag: History
 	- `load 0 a`：将数据装入寄存器0
 	- `mult 0 1`：将数据装入寄存器1
 	- ...
-
 - 高级语言之C
 	- `d = a*b+c`  
 
-- [高级语言的进化](http://staff.pausd.org/~cbly/1web_design/12b_final/daniel/history.html)
+### 语言历史
+
+- Fortran 
+	- 1954 - 1956 年IBM的 **John Backus**和他的研究小组开发了FORTRAN(FORmula TRANslation)
+- Algol 60
+	- 1960年1月，Alan J. Perlis发表《算法语言Algol60》（A语言）
+	- 计算科学里程碑
+- BCPL
+	- 1963年剑桥大学在ALGOL 60的基础上推出了CPL，但是规模较大，难以实现
+	- 1967年剑桥大学的Martin Richards对CPL进行了简化，推出了BCPL
+- C	
+	- 1970年贝尔实验室，Ken Thompson在PDP-7上写操作系统，缺乏语言，于是他简化了BCPL，发明了B语言，同时用B语言写出了UNIX
+	- 1972-1973，Dennis Ritchie加入，在B语言上完善出C语言，并重写了UNIX
+
+### 语言构成
+
+- 数据
+	- 数据类型
+- 运算
+	- 运算符号
+	- 运算规则
+- 控制
+	- 条件控制语句
+- IO
+	- 输入输出
+
+## 资料
 
 - [流行语言](http://langpop.com)
-
-
-### 编程语言历史
-
-
+- [高级语言的进化](http://staff.pausd.org/~cbly/1web_design/12b_final/daniel/history.html)
+- [Report on the Algorithmic Language ALGOL](https://link.springer.com/article/10.1007%2FBF01386216?LI=true)
 - [原文](http://james-iry.blogspot.ca/2009/05/brief-incomplete-and-mostly-wrong.html)
 
 
