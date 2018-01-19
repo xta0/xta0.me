@@ -1,0 +1,24 @@
+---
+layout: post
+title: Modern C++
+---
+
+## Modern C++
+
+### Features
+
+- Encompasses features of C++11
+- Move semantics
+- Smart pointers
+- Automatic type inference
+- Threading
+- Lambda functions
+
+### ISO Standard
+
+- Responsible for adding new featuers to C++
+- Has members from all over the world
+- Some are representatives of their companies (Microsoft, Google, IBM, etc)
+- Published first standartd in 1998,followed by a minor revision in 2003
+- Major change in 2011, lots of new features
+- 2014 added a minor change, mostly enhancements
