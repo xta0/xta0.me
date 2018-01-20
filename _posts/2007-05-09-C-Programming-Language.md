@@ -344,8 +344,9 @@ for (int i=0; i<3; i++)
 {
 	for(int j=0; j<4; j++)
 	{
-		cout << setw(3) << a[i][j];
+		cout << setw(3) << a[i][j]
 	}
+	cout << endl;
 }
 
 ``` 
