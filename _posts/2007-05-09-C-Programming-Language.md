@@ -419,7 +419,17 @@ int main(){
 	}
 	str2[3] = '\0';
 	```
+- 输出/输出
+	- 使用`cout`输出字符数组，要确保数组以`\0`结尾
+	- 使用`cin`输入字符数组时，默认空格和回车作为字符串间断
+- 二位数组
 
+```c
+char weekday[7][11]={"Sunday","Monday","Tuesday","Wednesday","Thursday","Firday",""Saturday}.
+for(int i=0;i<7;i++){
+	cout<<weekday[i]<<endl;
+}
+``` 
 ### 常用字符串函数
 
 - `i = strlen(len)`
