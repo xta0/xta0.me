@@ -432,9 +432,20 @@ for(int i=0;i<7;i++){
 ``` 
 ### 常用字符串函数
 
-- `i = strlen(len)`
-- `v = strcmp(str1,str2)`
-- `n = atoi(str1)`
+- 字符串长度`strlen`
+	- `int i = strlen(len)`
+- 比较字符串`strcmp`
+	- `bool v = strcmp(str1,str2)`
+- 切分字符串 `strtok`
+
+```c
+ char input[] = "A bird came down the walk";
+ char *token = strtok(input, " ");
+ while(token) {
+ 	puts(token);
+ 	token = strtok(NULL, " ");//如果第一个参数为null，表示在前一次的位置继续向后查找
+}
+```
 
 
 ## 函数
@@ -485,6 +496,13 @@ int main()
 
 - 实参与形参具有不同的存储单元，实参与形参变量的数据传递是“值传递”
 - 函数调用时，系统给形参在函数的stack上分配空间，并将实参的值传递给形参
+- 数组名做函数参数
+
+```c
+void change(int a[]){
+	//...
+}
+```
 
 ### 递归
 

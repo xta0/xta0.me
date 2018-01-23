@@ -1,5 +1,5 @@
 ---
-title: PL History
+title: 计算导论
 layout: post
 categories: [pl]
 tag: History
