@@ -506,51 +506,76 @@ void change(int a[]){
 
 ### 递归
 
-- 递归调用跟函数的嵌套调用没有区别
-- 所有循环结构都能用递归函数代替
-	- 递归实际上是将问题进行更高层次的抽象，需要得到两个信息：
-		- 具体的递归运算公式是什么，找到`i=n`和`i=n-1`之间的关系
-		- 初值是什么  
+- 递归调用跟函数的嵌套调用没有区别，开辟新的空间
+- 用递归解决具有递推关系的问题
+	- 关注点放在求解目标上
+	- 找到第`n`次和`n-1`次之间的关系
+	- 确定第一次的返回结果
+- 递归用来描述重复性的动作，代替循环
+	- 连续发生的动作是什么 -> 确定递归函数，入参
+	- 和前一次动作之间的关系 -> 通项公式
+	- 边界条件是什么 -> 递归终止的边界
+- 进行”自动分析“
+	- 先假设有一个函数能给出答案
+	- 在利用这个函数的前提下，分析如何解决问题
+	- 搞清楚最简单的情况下答案是什么 	
 
-- 汉诺塔问题:求解n个盘子的汉诺塔移动次数:
 
-```c
+- 常见的递归问题
+	- 打印二进制
+	
+	```c
+	void convert(int x){
+		if((x/2)!=0){
+			convert(x/2);
+			cout<<x%2;
+		}else{
+		cout<<x;
+		}
+	}
+	```
+	
+	- 汉诺塔问题
 
-int  calculateHannoTimes(int count)
-{
-	if (count == 1)
+	```c
+	/*两种解法：
+	1. 可以先枚举—>递推->得到通项公式
+	2. 简化问题:
+	(1)移动2个 = 两次移动1个的次数 + 移动一次底座
+	(2)移动3个 = 两次移动2个的次数 + 移动一次底座
+	(3)移动n个 = 两次移动(n-1)个的次数 + 移动一次底座
+	*/
+	int  hanno(int n)
 	{
+		if (n == 1){
 			return 1;
+		}
+		return 2*hanno(n-1)+1;	
 	}
-	else if (count == 2)
-	{
-			return 3;
-	}
-	else
-	{
-			return (2*calculateHannoTimes(count-1)+1);
-	}
-}
-
-
-
-int main(int argc, char* argv[]){
-
-	char* param = argv[1];
-	printf("%s\n", param);
-
-	int count = atoi(param);
-	printf("%d\n", count);
-
-	int n = calculateHannoTimes(count);
+	```
 	
-	printf("%d\n",n);
-
-	return 0;
-}
-
-```
+	- 逆波兰表达式
 	
+	```c
+	/*
+	逆波兰表达式是一种把运算符前置的算术表达式
+	如：2+3 的逆波兰表示法为 + 2 3 
+	如：(2+3)*4 的逆波兰表示法为 x + 2 3 4
+	输入：x + 11.0 12.0 + 24.0 35.0
+	输出：1357.0
+	*/
+	
+	void reverse (char* notation){
+		switch(notaion[0]{
+			case '+': return reverse
+		
+		})
+		if(notation[0] == 'x'){
+			return reverse
+		}
+	}
+	
+	```
 
 ## 指针
 
@@ -561,9 +586,7 @@ int main(int argc, char* argv[]){
 	- `http://www.nasa.gov/assets/images/content/166502.jpg`是一幅图片的指针 
 
 - 存放地址的变量称为指针变量，指针变量也有自己的地址
-
 - 指向数组的指针：`int a[10]; int *p; p=a;`p为指向数组的指针
-
 - 指向字符串的指针：`char a[10]; char* p; p = a;`p为指向字符串的指针
 	 
 
