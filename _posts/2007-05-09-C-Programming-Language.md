@@ -565,17 +565,34 @@ void change(int a[]){
 	输出：1357.0
 	*/
 	
-	void reverse (char* notation){
-		switch(notaion[0]{
-			case '+': return reverse
-		
-		})
-		if(notation[0] == 'x'){
-			return reverse
-		}
+	//伪代码
+	void reverse (deque<string> s){
+	    string token = s.front();
+	    s.pop_front();
+	    if (token == "+") 
+	    {
+	        return notation(s) + notation(s);
+	    }
+	    else if (token == "-")
+	    {
+	        return notation(s) - notation(s);
+	    }
+	    else if (token == "x")
+	    {
+	        return notation(s) * notation(s);
+	    }
+	    else if (token == "/")
+	    {
+	        return notation(s) / notation(s);
+	    }
+	    else
+	    {
+	        return stof(token);
+	    }
 	}
-	
 	```
+	
+	
 
 ## 指针
 

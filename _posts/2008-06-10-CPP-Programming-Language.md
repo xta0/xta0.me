@@ -1018,9 +1018,7 @@ string s3 = "world";
 
 ```
 容器类名::iterator 变量名;
-
 容器类名::const_iterator 变量名;
-
 ```
 
 - 访问迭代器指向的元素:
