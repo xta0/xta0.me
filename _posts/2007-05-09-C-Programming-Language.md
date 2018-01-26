@@ -327,6 +327,11 @@ a[2][0]
 a[2][3]
 
 ```  
+
+![](/assets/images/2007/05/2-dimension-array.png)
+
+
+
 - 初始化
 	- `a[3][4] = { {1,2,3,4}, {5,6,7,8}, {9,10,11,12} };`
 	- `a[3][4] = { 1,2,3,4, 5,6,7,8, 9,10,11,12}`省略里面的括号
@@ -594,16 +599,70 @@ void change(int a[]){
 
 ## 指针
 
-### 定义
+### 指针与指针变量
 
-- 某个变量的地址称为"指向该变量的指针"，注意:"地址" == "指针"
+- 某个变量的地址称为"指向该变量的指针"，注意:**"地址" == "指针"**
 	- `0x0012ff78`这个地址就是它指向变量的指针
-	- `http://www.nasa.gov/assets/images/content/166502.jpg`是一幅图片的指针 
+	- 例如，`http://www.nasa.gov/assets/images/content/166502.jpg`是一幅图片的指针 
 
-- 存放地址的变量称为指针变量，指针变量也有自己的地址
-- 指向数组的指针：`int a[10]; int *p; p=a;`p为指向数组的指针
-- 指向字符串的指针：`char a[10]; char* p; p = a;`p为指向字符串的指针
-	 
+- 存放地址的变量称为**指针变量**
+	- 指针变量也有自己的地址
+	- 定义:`int *pointer`
+		- `pointer`是变量名
+		- `*`代表变量的类型是指针
+		- `int`表示指针变量的基类型，即指针变量指向变量的类型
+	- 赋值:
+	
+	```c
+	int *pointer;
+	int c=100;
+	pointer = &c;
+	```
+	- 访问：
+
+	```c
+	int d = *pointer;
+	*pointer = 49;
+	```
+	
+- 例子
+
+```c
+#include <iostream>
+using namespace std;
+
+int main(){
+
+    int count = 18;
+    int *pointer = &count;
+    *pointer = 58;
+    cout<<count<<endl; //58
+    cout<<pointer<<endl; // 0x7ffee67631d8
+    cout<<&count<<endl; // 0x7ffee67631d8
+    cout<<*pointer<<endl; // 58
+    cout<<&pointer<<endl; //0x7ffee67631d0
+
+    return 0;
+}
+```
+
+- `&`和`*`的优先级
+	- `*&a = *(&)a`
+	- `&*a = &(*)a`
+	- `(*a)++ != *(a++)`
+
+![](/assets/images/2007/05/priority.png)
+
+### 数组与指针
+
+- 数组名代表数组元素的首地址
+	- 数组名相当于指向数组第一个元素的指针
+- 指向数组的指针：
+	- `int a[10]; int *p; p=a;`p为指向数组的指针
+- 指向字符串的指针：
+	- `char a[10]; char* p; p = a;`p为指向字符串的指针
+
+- 索引二维数组	 
 
 ### const
 
@@ -612,7 +671,6 @@ void change(int a[]){
 - 例1：
 
 ```c
-
 {
 	const int a = 78; const int b = 28; int c = 18;
 	const int *pi = &a;
@@ -621,7 +679,6 @@ void change(int a[]){
 	pi = &c; *pi = 100; //error
 
 }
-
 ```
 
 ### 函数指针
@@ -637,36 +694,37 @@ void change(int a[]){
 
 ### 定义
 
-- 语法定义: `struct STUDENT {...};` 其中，`STUDENT`表示数据类型，类似`int,char`等
+- 语法定义: 
+	- `struct STUDENT {...};` 
+		- `STUDENT`表示数据类型，类似`int,char`等
 
 - 定义结构体:
-	- 直接使用已声明的结构体(struct + 结构体类型名 + 变量名):`struct STUDENT stu1, stu2;`，例如：
-
-	```c
-	struct Person {
-	    char *name;
-	    int age;
-	    int height;
-	    int weight;
-	};
-
-	struct Person *Person_create(char *name, int age, int height, int weight)
-	{
-	    struct Person *who = malloc(sizeof(struct Person));
-	    assert(who != NULL);
-
-	    who->name = strdup(name);
-	    who->age = age;
-	    who->height = height;
-	    who->weight = weight;
-
-	    return who;
-	}
-	```
+	- 直接使用已声明的结构体(struct + 结构体类型名 + 变量名):
+		- `struct STUDENT stu1, stu2;`，例如：
+		
+		```c
+		struct Person {
+		    char *name;
+		    int age;
+		    int height;
+		    int weight;
+		};
+		struct Person *Person_create(char *name, int age, int height, int weight)
+		{
+		    struct Person *who = malloc(sizeof(struct Person));
+		    assert(who != NULL);
+		    who->name = strdup(name);
+		    who->age = age;
+		    who->height = height;
+		    who->weight = weight;
+		    return who;
+		}
+		```
 
 	- 使用`typedef`:
-		- `typedef struct _STUDENT{...}STUDENT;`,其中`_STUDENT`叫做struct tag，可以省略
-		- 使用:`STUDENT stu1,stu2`  
+		- `typedef struct _STUDENT{...}STUDENT;`
+			- 其中`_STUDENT`叫做struct tag，可以省略
+			- 使用:`STUDENT stu1,stu2`  
 	
 	- 在声明类型的同时定义变量:
 
@@ -677,17 +735,10 @@ void change(int a[]){
 	    int height;
 	    int weight;
 	}xt1,xt2;
-
 	```
 	
-- typedef
 
-```c
-typedef struct _Object
-{
-
-}Object
-```
+### 赋值
 
 - 结构体赋值，传参，做返回值
 
@@ -698,6 +749,8 @@ x2 = x1;
 
 ```
 x2中的值相当于x1中的值的copy，同理，结构体变量做函数参数和返回值也是copy的
+
+### 应用
 
 - 链表：一种非常常常用的数据结构
 	- 链表头：指向第一个链表节点的指针
