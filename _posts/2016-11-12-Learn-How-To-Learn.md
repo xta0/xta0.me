@@ -3,17 +3,6 @@ layout: post
 title: Learn How to Learn
 ---
 
-### 专有名词
-
-- [synapse](https://zh.wikipedia.org/wiki/%E7%AA%81%E8%A7%A6): 神经突触，神经元之间的链接接头
-- [dendrites](https://zh.wikipedia.org/wiki/%E6%A0%91%E7%AA%81): 树突，是神经元的一部分，为神经元的输入通道，其功能是将自其他神经元所接收的动作电位（电信号）传送至细胞本体
-- Neuron Pattern: 对某种问题的思维模式
-- Prefrontal Cortex：前额叶皮质
-- Chunk：信息块
-- acetylcholine：乙酰胆碱
-- dopamine：多巴胺
-- serotonin：血清素
-- [Amygdaloid](https://zh.wikipedia.org/wiki/%E6%9D%8F%E4%BB%81%E6%A0%B8): 杏仁核
 
 ## Focus vs Diffuse Thinking
 
@@ -104,11 +93,11 @@ Two fundamentally thinking mode.
 
 ###Chunk是什么
 
-chunk是一个让多个神经元共同运作的神经网络，用来解决具体事务
+Chunk是一个让多个神经元共同运作的神经网络，是用来解决具体事务的信息片段
 
 - 专注重复的练习可以建立强烈的记忆痕迹，从而逐渐形成chunk
-- 许多小的chunk可以形成大的chunk
-- **刻意练习**是形成chunk的唯一途径
+	- **刻意练习**是形成chunk的唯一途径
+- Chunk与Chunk之间可以建立联系，许多小的chunk可以形成大的chunk
 - Chunk对大脑处理信息帮助很大，一旦将某个领域的知识形成chunk，就可以掌握这个领域的main idea而不需要再关注细节
 
 ### 如何形成Chunk
@@ -120,7 +109,7 @@ chunk是一个让多个神经元共同运作的神经网络，用来解决具体
 	- 有些知识可能是当时明白了，但没有真正理解，也不代表自己能将这些知识应用到实践
 	- 对于数学科学学科，学了新知识后尝试把书本合上，做习题检测自己是不是真的理解了
 	- **看一眼答案就觉得自己会了是一种很常见的自欺欺人的错误，必须自己动手实践才能建立起神经模型**
-3. Context
+3. Practice
 	- 不仅知道如何使用chunk中的信息，还要知道什么时候用
 		- 从上到下学习：看到big picture，知道各种chunk怎么拼起来的，fit in的
 		- 从下到上学习：反复练习，形成各种chunk
@@ -148,11 +137,67 @@ chunk是一个让多个神经元共同运作的神经网络，用来解决具体
 		- 血清素
 			- 影响社交水平，社交能力越强的，血清素水平越高。较低的血清素水平会导致做出过激的冒险行为
 	- 杏仁核控制情绪和认知，同时和海马体一起影响记忆和学习
+
+
+### Overlearning
+
+- 重复练习自己已经熟练掌握的知识不是一种有效的学习方法
+- 走出舒适区进行刻意练习
+- 使用的交替学习的方式，不拘泥某种特定的学习方法
+	- 比如看书可以先看看后面章节，再回头看前面的
+	- 解题可以尝试不同方法，不拘泥教科书的方法
+	- 尝试交叉学科之间的学习，知识能够在各个领域迁移，也间接加深了对原有知识的理解
+
+### 检测是否是无效学习的方式
+- Illusions of competence in learning
+	- Test yourself!
+	- Recall
+	- Minimize highlighting
+	- Mistakes are good
+	- Use deliberate practice 
+	- Explain the idea to someone else to see if they can understand
+	
+## Procrastination and Memory
+
+
+
+	
+### 专有名词
+
+- [synapse](https://zh.wikipedia.org/wiki/%E7%AA%81%E8%A7%A6): 神经突触，神经元之间的链接接头
+- [dendrites](https://zh.wikipedia.org/wiki/%E6%A0%91%E7%AA%81): 树突，是神经元的一部分，为神经元的输入通道，其功能是将自其他神经元所接收的动作电位（电信号）传送至细胞本体
+- Neuron Pattern: 对某种问题的思维模式
+- Prefrontal Cortex：前额叶皮质
+- Chunk：信息块
+- acetylcholine：乙酰胆碱
+- dopamine：多巴胺
+- serotonin：血清素
+- [Amygdaloid](https://zh.wikipedia.org/wiki/%E6%9D%8F%E4%BB%81%E6%A0%B8): 杏仁核
+- [Deliberate Practice](): 刻意练习，走出舒适区，持续练习那些困难的部分
+- [Einstellung]()：对某种事务熟悉的思维模式，会阻碍创新思维
+- [Interleaving]()：交替学习
 	
 	
 ## 资料
-
+- [MIT Open Course]()
 - [brainfacts](http://www.brainfacts.org)
+- **Articles**:
+	- Robyn Scott, "The 30 Second Habit That Can Have a Big Impact On Your Life," Feb 18, 2014, The Huffington Post. This is actually a wonderful article on chunking!
+	Richard Wiseman, 
+	- "Be lucky - it's an easy skill to learn," The Telegraph, Jan 9, 2003. Yes, Lady Luck DOES favor some--and for a reason!
+	- David Glenn,"Divided Attention," February 28, 2010, The Chronicle of Higher Education.
+	- Steve Mensing, "Dunning-Kruger Effect: When Distorted Self-Perception and Illusions of Competence Trick Entertainers, Politicians, and Cities," Nov 26, 2013, Rowan Free Press.
+	- Errol Morris, "The Anosognosic’s Dilemma: Something’s Wrong but You’ll Never Know What It Is (Part 1)," June 20, 2010, The New York Times, Opinionator.
+	- Maria Konnikova, "What's Lost as Handwriting Fades," June 2, 2014, The New York Times.
+	- Carl Zimmer, "This is Your Brain on Writing," June 20, 2014, The New York Times. A nice discussion of the caudate nucleus, which is involved in habitual, chunking type activities in all sorts of areas, including sports, and its role in writing expertise.
+	- Johns Hopkins Medicine, "Memories of errors foster faster learning," August 14, 2014, Science Daily. Yes, mistakes really do help you learn!
+	- Travis Bradberry, "Multitasking Damages Your Brain And Career, New Studies Suggest," October 8, 2014, Forbes.
+	- Sue Shellenbarger, "The Power of the Doodle: Improve Your Focus and Memory," July 29, 2014, The Wall Street Journal.
+	- Colin Gerber, "Memory Consolidation and Productivity Can Both Be Improved by Taking Breaks," Quora, November, 2014.
+	- Steven C. Pan, "The Interleaving Effect: Mixing It Up Boosts Learning," Scientific American, August 4, 2015.
+	- Shana K. Carpenter, "Spacing and Interleaving of Study and Practice by Shana K. Carpetner", Society for the Teaching of Psychology, 2014.
+
+- [The 30 Second Habit That Can Have a Big Impact On Your Life](https://www.huffingtonpost.com/robyn-scott/the-30-second-habit-that-_b_4808632.html)
 - Books:
 	- [A Mind for Numbers](http://www.amazon.com/gp/product/039916524X/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=039916524X&linkCode=as2&tag=learningho0a9-20&linkId=D4N64HNWGXOU5SBK)
 	- [10 Rules of Good and Bad Studying (PDF version)
