@@ -16,10 +16,8 @@ tag: C++
 - 创建一个T类型的指针：`T* p = new T;`
 
 ```c++
-
 int *pn = NULL;
 pn = new int(5);
-
 ```
 - 创建一个T类型的数组：`T* p = new T[N];`
 
