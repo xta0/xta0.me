@@ -8,20 +8,6 @@ tag: C++
 
 > 所有文章均为作者原创，转载请注明出处
 
-### C/C++语言历史
-
-- 1954-1956 IBM的John Backus和他的研究小组研发了FORTRAN
-- 1960年1月 Alan J.Perlis发明了`Algol 60`<Report on the Algorithmic Language ALGOL 60>，A语言诞生
-- 1963年 剑桥大学发明CPL, 1967年剑桥大学Matin Richards简化了CPL，推出了BCPL语言
-- 1970年贝尔实验室，Ken Thompson在一台废弃的PDP-7机器上简化了BCPL，发明了B语言，并用B语言写了一个操作系统叫UNIX
-- 1972-1973 Dennis Ritchie在B语言的基础上，发明C语言，并重写了UNIX 
-- 1978: K&RC《The C Programming Language》
-- 1979 贝尔实验室Bjarne Stroustrup开发了C++
-- 1985年10月 Bajarne完成了《C++ Programming Language》第一版
-- 1989: ANSI C 和 ISO C
-- 1998年，C++ 98标准诞生
-- 1999: C99
-- 2011年，C++ 11 
 
 ## 内存分配
 
@@ -1801,3 +1787,20 @@ function<int(int)> fib = [&fib](int n){
 //function<int(int)>表示输入为int，返回值为int的函数
 
 ```
+
+## C/C++语言历史
+
+- 1954-1956 IBM的John Backus和他的研究小组研发了FORTRAN
+- 1960年1月 Alan J.Perlis发明了`Algol 60`<Report on the Algorithmic Language ALGOL 60>，A语言诞生
+- 1963年 剑桥大学发明CPL, 1967年剑桥大学Matin Richards简化了CPL，推出了BCPL语言
+- 1970年贝尔实验室，Ken Thompson在一台废弃的PDP-7机器上简化了BCPL，发明了B语言，并用B语言写了一个操作系统叫UNIX
+- 1972-1973 Dennis Ritchie在B语言的基础上，发明C语言，并重写了UNIX 
+- 1978: K&RC《The C Programming Language》
+- 1979 贝尔实验室Bjarne Stroustrup开发了C++
+- 1985年10月 Bajarne完成了《C++ Programming Language》第一版
+- 1989: ANSI C 和 ISO C
+- 1998年，C++ 98标准诞生
+- 1999: C99
+- 2011年，C++ 11 
+
+## 资料
