@@ -1,47 +1,104 @@
 ---
 layout: post
-title: PL-C++
+title: C++(11) Basics 
 categories: PL
 tag: C++
-
+mathml: true
 ---
 
-> 所有文章均为作者原创，转载请注明出处
+
+## Overview
+
+1. 记录C++知识点的一些盲区，目录结构按照《C++ Primer》设计
+2. 记录一些晦涩难懂的推导，比如Template，move语义等
+3. 持续更新，了解C++新增feature
+
+
+## 基本内置类型
+
+### 浮点数
+
+- 浮点数在内存中的表示
+
+
+### 字面常量
+
+- 整型和浮点型
+	- `0`开头的表示8进制，`x`开头的表示16进制
+	- 浮点型字面常量默认是`double`类型
+		- 科学计数法的指数用`e`或者`E`表示
+			- `3.14159E0` 
+- 转义字符
+	- 换行：`\n`，回车：`\r`，退格`\b`
+	- 纵向制表符：`\v`，横向制表符`\t`
+	- 反斜线：`\\`
+	- 单引号：`\'`, 双引号：`\"`
+	- 进纸符：`\f`
+
+- 字符和字符串字面值
+
+前缀   | 含义   | 类型     | 例子
+------|--------|---------| ---|
+u | Unicode 16   | char16_t   |
+U | Unicode 32   | char32_t   |
+L  | 宽字符 | wchar_t | `L'a'`
+u8 | UTF-8（仅用于字符串）| char | `u8"Hi"`
+
+
+- 整型字面值
+
+后缀   |  最小匹配类型  | 例子
+------|--------|---------| 
+u or U | unsigned | `42ULL //无符号整型字面值，类型是unsigned long long` |
+l or L | long   |  `42ULL //无符号整型字面值，类型是unsigned long long` |
+ll or LL  | longlong | `42ULL //无符号整型字面值，类型是unsigned long long` |
+
+- 浮点型字面值
+
+后缀   |  类型  | 例子
+------|--------|---------| 
+f or F | float | `1E-3F //单精度浮点型，类型是float` |
+l or L | long double |  `3.14159L，扩展精度浮点型字面值` |
+
+
+
+### 变量
+
+- 初始化
+	- 变量在定义时被初始化，`=`不是赋值的意思（赋值是把当前的值擦除）
+
 
 
 ## 内存分配
 
-### new
+### `new`和`delete`
 
-- 创建一个T类型的指针：`T* p = new T;`
+- new
+	- 创建一个T类型的指针：`T* p = new T;`
+	
+	```c++
+	int *pn = NULL;
+	pn = new int(5);
+	```
+	- 创建一个T类型的数组：`T* p = new T[N];`
 
-```c++
-int *pn = NULL;
-pn = new int(5);
-```
-- 创建一个T类型的数组：`T* p = new T[N];`
+- delete
 
-### delete
+	- delete两次会报错
+	
+	```c++
+	int* p = new int(5);
+	delete p;
+	delete p; //error!
+	```
 
-- delete两次会报错
+	- delete 数组：
 
-```c++
-
-int* p = new int(5);
-delete p;
-delete p; //error!
-
-```
-
-- delete 数组：
-
-```c++
-
-int *p = new int[20];
-p[0] = 1;
-delete[] p;
-
-```
+	```c++
+	int *p = new int[20];
+	p[0] = 1;
+	delete[] p;
+	```
 
 ## 函数
 
