@@ -99,7 +99,193 @@ l or L | long double |  `3.14159L，扩展精度浮点型字面值` |
 	- 默认情况下const对象只在当前文件内有效，如果要在不同文件中共享`const`，在头文件中添加声明，在`.c`文件中定义
 		- 在`.h`文件中声明：`extern const int buff;` 
 		- 在`.c`文件中定义：`extern const int bufSize = fcn();`  
+	- 如果用`const`定义指针，顶层`const`指的是指针本身是常量，底层`const`指的是这个指针是一个指向常量的指针
+	- **constexpr**	
+		- 常量表达式，如果某个`const`变量的值在编译时就能确定，可以将其定义为常量表达式
 		
+		```c
+		const int max = 20; //是常量表达式
+		const int limit = max+1; //是常量表达式
+		int sz = 29; //不是
+		const int buff_size = get_size()//不是，因为buff_size的值要在运行时决定
+		```
+		
+		- 如果是常量表达式，可以用`constexpr`来定义变量，而且必须用常量表达式来初始化
+		
+		```c
+		constexpr int mf = 20;	//20是常量表达式
+		constexpr int limit = mf+1; //mf+1是常量表达式
+		constexpr int sz = size(); //只有当size()是一个constexpr函数时，才正确
+		```
+	
+		- 如果用`constexpr`定义指针，要注意，得到的指针是一个常量指针，初始值必须要能在编译时确定
+
+		```c
+		constexpr int *p = nullptr; //定义了一个指向整数的常量指针，值为0
+		const int *q = nullptr; //定义了一个指向整型的常量指针，注意区别
+		```
+
+- type alias
+	- `using` ：类似`typedef`
+		- `using SI = sales_item; SI item;` 
+		
+- auto
+	- C++ 11新的类型说明作符，让编译器推断变量类型，因此使用`auto`定义的变量必须要有初值
+	 - `auto item = val1 + val2;`  
+	 - 使用`auto`要注意`const`的情况
+	
+	```c
+	const int i=100;
+	auto *p = &i;
+	*p = 111; //error, i is a real-only 
+	```
+	
+- decltype
+	- C++11新的类型说明符，它的作用是选择并返回表达式的数据类型，编译器只做类型推断，不进行表达式求解
+
+	```c
+	decltype(f()) sum x; //编译器并不实际调用f
+	```
+	
+	- 如果`decltype`中的表达式是指针取值操作，得到的类型是引用类型
+
+	```c
+	int i = 42;
+	int *p = &i;
+	decltype(*p) c; //错误，decltype(*p)返回的结果是int&，因此必须赋初值
+	```
+	
+	- 如果`decltype`后面的表达式加上了一对括号，返回的结果是引用
+
+	```c
+	decltype((i)) d; //错误： d是int&, 必须初始化
+	decltype(i) d; //正确； d是int型变量
+	```
+
+## 字符串，向量，数组
+
+### 头文件
+
+- 原C中的库函数文件定义形式为`name.h`，在C++中统一使用`<cname>`进行替换，去掉了`.h`，在前面增加字母`c`。在`cname`中定义的函数从属于标准库命名空间`std`
+
+- 尽量不要在头文件中不包含`using`声明
+
+### stirng
+
+- 初始化
+
+```cpp
+stirng s1; //默认初始化，s1是空串
+string s2(s1); //拷贝初始化
+string s3=s1; //拷贝初始化
+string s4("value"); //拷贝常量字符串
+string s5 = "value"; //和上面相同
+string s6(10,'c'); //重复c十次
+```
+
+### vector
+
+- 初始化，可使用值初始化，和初始化列表，当编译器确认无法使用初始化列表时，会将花括号中的内容作为已有的构造函数参数
+
+```cpp
+vector<int> a(10); //使用值初始化，创建10个元素的容器
+vector<int> a{1,2,3} //使用初始化列表，创建一个容器，前三个元素是1，2，3
+
+//上述代码等价于:
+initializer_list<int> list = {1,2,3};        
+vector<int> v(list);
+
+vector<string> a{"ab","cd"} //使用初始化列表，创建一个string容器，并初始化前两个元素
+vector<string> a{10}; //a是一个默认有10个初始化元素的容器，类型不同，不是初始化列表，退化为值初始化
+vector<string> a{10,"hi"}; //a是一个默认有10个初始化元素的容器，类型不同，不是初始化列表，退化为值初始化
+```
+
+- vector支持下标索引操作
+
+- 关于Vector的元素增长问题，vector内部是连续存储，因此push和insert操作会很低效，原因是需要开辟新的存储空间，将原先内容复制过去，在进行操作。vector内部实现会稍有优化，在分配空间时多预留冗余部分，减少频繁的拷贝。可以通过`capacity`和`reserve`来干预内存分配
+
+- 迭代器
+	- 类型
+	
+	常用的容器类中定义了迭代器类型，比如
+	
+	```cpp
+	vector<int>::iterator it;
+	vector<string>::iterator it2;
+	//只读迭代器
+	vector<int>::const_iterator it3;
+	vector<string>::const_iterator it4;
+	```
+	
+	- 如果记不住迭代器类型，可以使用auto自动推导
+	
+	```c
+	auto b = v.begin(); //b表示v的第一个元素
+	auto e = v.end(); //e表示v的最后一个元素
+	
+	auto it1 = v.cbegin(); //C++11中，不论集合对象是否是const的，使用cbegin可以返回常量迭代器
+	auto it2 = v.cend(); //cend同理
+	```
+	
+	- 操作
+	
+	```cpp
+	*iter
+	iter -> mem //等价于 (*iter).mem
+	++iter
+	--iter
+	iter1 == iter2
+	iter1 != iter2
+	```
+
+### 数组
+
+- C++ 11新增标准库函数`begin`，`end`，用来返回数组的头指针和尾指针
+
+```cpp
+int a[] = {1,2,3,4,5,6};
+int *pbeg = begin(a);
+int *pend = end(a);
+```
+
+遍历数组无需知道数组长度，有头尾指针即可
+
+```cpp
+whlile(pbeg!=pend){
+	//do sth..
+	pbeg++;
+}
+```
+
+- 使用数组来初始化`vector`，由于数组存储是连续的，因此只要指明这片存储空间的首尾地址即可
+
+```cpp
+int arr[] = {1,2,3,4,5}l
+vector<int> vc(begin(arr), end(arr));
+```
+
+## 表达式
+
+### 基础
+
+- 运算符
+	- 一元运算符：作用于一个对象的运算符，如`&`,`*`
+	- 二元运算符：作用于两个对象的运算符，如`=`,`==`,`+` 
+
+- 左值
+	- 当一个对象被用作左值的时候，用的是对象的身份（在内存中的位置），因此左值有名字 
+	- 左值是定义的变量，可以被赋值
+	- 如果函数的返回值是引用，那么这个返回值是左值
+
+- 右值
+	- 当一个对象被用作右值的时候，用的是对象的值（内容），因此右值没有名字
+	- 右值是临时变量，不能被赋值
+	- 如果函数的返回值是数值，那么这个返回值是右值
+
+### 递增和递减运算符
+- `++i`: 将`i`先+1后，作为左值返回，返回的还是`i`本身
+- `i++`: 先将i的拷贝作为右值返回，然后执行`i+1`
+- 除非必须，否则不用后置版本
 		 
 ## 函数
 
@@ -1884,19 +2070,37 @@ function<int(int)> fib = [&fib](int n){
 
 ```
 
-## C/C++语言历史
+## Error Handling
 
-- 1954-1956 IBM的John Backus和他的研究小组研发了FORTRAN
-- 1960年1月 Alan J.Perlis发明了`Algol 60`<Report on the Algorithmic Language ALGOL 60>，A语言诞生
-- 1963年 剑桥大学发明CPL, 1967年剑桥大学Matin Richards简化了CPL，推出了BCPL语言
-- 1970年贝尔实验室，Ken Thompson在一台废弃的PDP-7机器上简化了BCPL，发明了B语言，并用B语言写了一个操作系统叫UNIX
-- 1972-1973 Dennis Ritchie在B语言的基础上，发明C语言，并重写了UNIX 
-- 1978: K&RC《The C Programming Language》
-- 1979 贝尔实验室Bjarne Stroustrup开发了C++
-- 1985年10月 Bajarne完成了《C++ Programming Language》第一版
-- 1989: ANSI C 和 ISO C
-- 1998年，C++ 98标准诞生
-- 1999: C99
-- 2011年，C++ 11 
+### Try Catch
+
+- 使用`throw`和`try-catch`
+
+如果是非内核的错误，catch到后程序仍可继续运行
+
+
+```cpp
+
+void func(){
+	///
+	if（error ）{
+		throw 8;
+		//throw "wrong"
+	}
+}
+int main(){
+	try{
+		func();
+	}
+	catch(int x){
+		//..
+	}
+	catch(char *const p){
+		//...
+	}
+}
+
+```
+
 
 ## 资料
