@@ -317,63 +317,109 @@ func(10,,9);//error
 ```
 
 ## 类
-
-
 ### 构造函数
 
+- 对象不论以什么样的形式创建都会调用构造函数
 - 成员函数的一种
 	- 名字与类名相同，可以有参数，不能有返回值
  	- 作用是对对象进行初始化，给成员变量赋值
  	- 如果没定义构造函数，编译器生成一个默认的无参数的构造函数
-- 对象不论以什么样的形式创建都会调用构造函数
  
-- 拷贝构造函数：
-	- `X::X(X&)`
-	- `X::X(const X &)` 
+- **拷贝构造函数**：
+	- `X::X(X& x)`, 一定是该类对象的引用 
+	- `X::X(const X& x)` ，一定是该类对象的引用
+	- 三种情况会调用拷贝构造函数
+		- 用一个对象去初始化同类的另一个对象
+		
+		```cpp
+		Complex c1(c2); 
+		Complex c1 = c2; //调用拷贝构造函数，非赋值，Complex c2; c2 = c1; //这是赋值
+		```
+		
+		- 函数传参时，如果函数参数是类A的对象，则传参的时候会调用拷贝构造
+
+		```cpp
+		void func(A a){ ... }
+		int main(){
+			A a2;
+			func(a2)
+		}
+		```
+		
+		- 类A做函数返回值时，会调用拷贝构造
+
+		```cpp
+		A func(int x){
+			A b(x);
+			return b;
+		}
+		int main(){
+			A a1 = func(4);
+		}
+		```
+		  
 	- 如果没有定义拷贝构造函数，则系统默认生成一个
 	- 拷贝构造函数，如果涉及成员变量指向一片内存空间的，需要使用深拷贝，赋值被拷贝对象的内存空间
 
-```c++
-class A
-{
-	private: 
-		double real,image;
-		
-	A(const A &c)
-	{
-		real = c.real;
-		image = c.image;
-	}
-};
-
-void func(A a){ ... } 
-
-A a1;
-A a2(a1);
-A a3 = a1; //初始化语句，非赋值语句
-func(a1); //这种情况也会调用，在func的stack中，创建的a是通过拷贝构造函数创建的
-```
-
-- 类型转换构造函数
+- **类型转换构造函数**
 	- 只有一个参数
 	- 不是拷贝构造函数
 
-```c++
-class B
-{
-	public:
-		double real, image;
-		B(int i)
-		{
-			real = i;
-			image = 0;
-		}
-};
-B  b1 = 12; //触发类型转换构造函数
-b1 = 20; //20会被自动转换成一个临时B对象，同样会触发类型转换构造函数
-```
+	```c++
+	class B
+	{
+		public:
+			double real, image;
+			B(int i)
+			{
+				real = i;
+				image = 0;
+			}
+	};
+	B  b1 = 12; //触发类型转换构造函数
+	b1 = 20; //20会被自动转换成一个临时B对象，同样会触发类型转换构造函数
+	```
 
 ### 析构函数
+
+###成员变量
+
+- 普通成员变量
+	
+- 静态成员变量
+	- 该类的所有对象共享这个变量,是全局变量
+	- sizeof运算符不会计算静态成员变量
+	- 静态成员必须在类定义的文件中对静态成员变量做一次说明或初始化,否则编译可以通过，链接失败
+
+	```cpp
+	class B{
+	public:
+		static void printVal();
+		static int val;
+	};
+	int B::val = 0; //要显示声明
+	void B::printVal(){
+	cout<<__FUNCTION__<<"L "<<B::val<<endl;
+	}
+	```
+
+- **封闭类**
+	- 一个类的成员变量是另一个类对象，包含成员对象的类叫封闭类
+
+	```c++
+	class Car
+	{
+	private:
+		int price;
+		Engine engine;
+	public:
+		Car(int a, int b, int c);
+	};
+	//初始化列表
+	Car::Car(int a, int b, int c):price(a),engine(b,c){};
+	//这种情况，Car类必须要定义构造函数来初始化engine
+	//如果使用默认构造函数，编译器无法知道Engine类对象该如何初始化。
+	```
 
 ### 成员函数
 
@@ -398,105 +444,76 @@ class A{
 }
 ``` 
 
-### 静态成员函数&成员变量
+- 静态成员函数
+	- 相当于类方法，不作用于某个对象，本质上是全局函数 
+	- 不能访问非静态成员变量
+	- 不能使用`this`指针，它不作用于某个对象，因此静态成员函数就是c语言的全局函数，没有多余的参数。
+	- 访问：
+		- 使用类名访问：`类名::成员名`: `CRectangle::PrintTotal();`
+		- 使用类对象访问：`对象名.成员名`: `CRectangle r; r.PrintTotal();`
+		
+- `const`成员函数
+	- `const`成员函数不能修改成员变量，不能访问成员函数，本质上是看这个函数会不会有修改对象状态的可能性
+	- `const`成员函数也可作为构造函数，算重载
 
-- 静态成员函数：相当于类方法，不作用于某个对象，本质上是全局函数
-- 静态成员变量：该类的所有对象共享这个变量,使全局变量
-- sizeof运算符不会计算静态成员变量
-- 访问:
-	- `类名::成员名`: `CRectangle::PrintTotal();`
-	- `对象名.成员名`: `CRectangle r; r.PrintTotal();`
-	- `指针->成员名`:	`CRectangle* p = &r; p -> PrintTotal();`
-	- `引用.成员名`: `CRectangle &ref = r; int n = ref.nTotalNumber`
-
-- 必须在类定义的文件中对静态成员变量做一次说明或初始化。
-
-	
-### 常量成员函数&常量对象&常引用
-
-
-- `const`成员函数不能修改成员变量，不能访问成员函数，本质上是看这个函数会不会有修改对象状态的可能性
-
-- `const`成员函数也可作为构造函数，算重载
+	```c++
+	class Hello
+	{
+	private:
+		int value;
+	public:
+			void getValue() const;
+			void foo(){}
+	};
+	void Hello::getValue() const
+	{
+		value = 0;//wrong;
+		foo(); //error
+	}
+	int main()
+	{
+		const Hello o;	
+		o.value = 100; //wrong!
+		o.getValue(); //ok
+		return 0;
+	} 
+	```
 	 
-- 常量对象不能修改成员成员变量，不能访问成员函数
+### 类对象
+
+- 常量对象
+	- 常量对象不能修改成员成员变量，不能访问成员函数
+	
+	```cpp
+	class Demo(){
+		public:
+			Demo(){} //如果有常量对象，则必须要提供构造函数
+			int x;
+			void func(){}; //虽然func没有修改操作，但是编译器无法识别
+	};
+	int main(){
+		const Demo c;
+		c.x = 100; //wrong!
+		c.func(); //wrong
+	}
+	```
+	
+- 使用对象引用作为函数的参数
 
 ```c++
-
-class Hello
-{
-private:
-	int value;
-public:
-		void getValue() const;
-		void foo(){}
-};
-
-void Hello::getValue() const
-{
-	value = 0;//wrong;
-	foo(); //error
-}
-
-int main()
-{
-	const Hello o;
-	
-	o.value = 100; //wrong!
-	o.func(); //wrong!
-	o.getValue(); //ok
-	
-	return 0;
-} 
-
-```
-- 对象作为函数的参数时，生成该参数需要调用复制构造函数，效率较低。用指针做参数，代码不好看，如何解决？可以用对象的引用作为参数：
-
-```c++
-
 class Sample{ ... };
-
 void printSample(Sample& o)
 {
 	...
 }
-
 ```
 
 对象引用作为函数参数有一定风险，如果函数中不小心修改了o，是我们不想看到的。解决方法是将函数参数声明为const，这样就确保了o的值不会被修改
 
 ```c++
-
 void printSample(const Sample& o)
-
 ```
 
-
-### 封闭类和初始化列表
-
-- 一个类的成员变量是另一个类对象，包含成员对象的类叫封闭类
-
-```c++
-
-class Car
-{
-private:
-	int price;
-	Engine engine;
-public:
-	Car(int a, int b, int c);
-
-};
-
-//初始化列表
-Car::Car(int a, int b, int c):price(a),engine(b,c)
-{
-
-};
-
-```
-
-- 这种情况，Car类必须要定义构造函数来初始化engine，如果使用默认构造函数，编译器无法知道Engine类对象该如何初始化。
 
 ### 友元
 
@@ -506,7 +523,6 @@ Car::Car(int a, int b, int c):price(a),engine(b,c)
 - 友元类
 
 ```c++
-
 class Car
 {
 private:
@@ -515,13 +531,14 @@ private:
 public:
 	Car(int p):price(p){}
 
-//友元函数
+//友元函数声明
 friend int mostExpensiveCar(Car* pCar);
-//友元类
+//友元类声明
 friend class Driver;
 
 };
 
+//只要函数签名能对上就可以访问
 int mostExpensiveCar(Car* pCar)
 {
 	//访问car的私有成员
@@ -531,65 +548,61 @@ int mostExpensiveCar(Car* pCar)
 class Driver
 {
 public:
-	void getCarPrice(Car* pCar){printf("%s_Car.price:%d\n",__FUNCTION__,pCar->price);};
+	void getCarPrice(Car* pCar){ //Driver是Car的友元类，可以访问其私有成员
+		printf("%s_Car.price:%d\n",__FUNCTION__,pCar->price);
+	};
 };
 
-
-Car car(100);//赋值构造函数
-mostExpensiveCar(&car);  //友元函数
-Driver driver; //友元类
-driver.getCarPrice(&car);
-
+int main(){
+	Car car(100);//赋值构造函数
+	mostExpensiveCar(&car);  //友元函数
+	Driver driver; //友元类
+	driver.getCarPrice(&car);
+	
+	return 0;
+}
 ```
 
-### 理解this指针
+### this指针
 
 在早期c++刚出来时，没有编译器支持，因此需要将c++翻译成c执行，例如人下面一段程序：
 
 ```c++
-
 class Car
 {
 public:
 	int price;
 	void setPrice(int p); 
 };
-
 void Car::setPrice(int p)
 {
 	price = p;
 }
-
 int main()
 {
 	Car car;
 	car.setPrice(100);
 	return 0;
 }
-
 ```
 
 被翻译成：
 
 ```c
-
 struct Car
 {
 	int price;
 };
-
 void setPrice(struct Car* this, int p)
 {
 	this -> price = p;
 }
-
 int main()
 {
 	Car car;
 	setPrice(&car, 100);
 	return 0;
 }
-
 ```
 
 - class对应struct
@@ -599,24 +612,20 @@ int main()
 理解下面一段代码：
 
 ```c++
-
 class Hello
 {
 	public:
 		void hello(){printf("hello!\n");};
 };
-
 int main(int argc, char** argv)
 {
 	Hello* p = NULL;
 	p -> hello();
 }
-
 ```
 
 程序会正常输出hello，原因是成员函数`void hello()`会被编译器处理为：`void hello(Hello* this){printf("hello!\n");}`与this是否为NULL没关系。
 
-- 静态成员函数中不能使用`this`指针，它不作用于某个对象，因此静态成员函数就是c语言的全局函数，没有多余的参数。
 
 ## 继承
 
@@ -851,17 +860,15 @@ pa = new A; //错误，A是抽象类，不能创建对象
 
 ## 运算符重载
 
-### 算术运算符重载
+- 普通的运算符只能用于基本数据类型
+- 对抽象的数据类型也能使用C++提供的数据类型
+	- 代码更简洁
+	- 代码更容易理解
 
-- 运算符重载的实质是函数重载
+- 运算符重载的实质是**函数重载**，形式为：
 
 ```
-
-返回值类型 operator 运算符（形参表）{
-
-
-}
-
+返回值类型 operator 运算符（形参表）{}
 ```
 
 - 在程序编译时：
@@ -869,94 +876,77 @@ pa = new A; //错误，A是抽象类，不能创建对象
 	- 把运算符的操作数 -> 运算符函数的参数
 	- 运算符多次被重载时，根据实参类型决定调用哪个运算符函数
 	
-- 运算符可以被重载成普通函数
-	- 参数个数为运算符数目
+- 运算符可以被重载成**普通函数**
+	- 参数个数为运算符的目数（如`+`为二元运算符，因此参数个数为2）
 	
-```c++
-
-class Complex
-{
-	public:
-		Complex(double r = 0.0, double i = 0.0)
-		{
-			real = r;
-			image = i;
-		}
-		
-	double real;
-	double image;
-};
-
-Complex operator+ (const Complex& a, const Complex& b){
-	return Complex(a.real+b.real, a.image+b.image);
-}
-
-```
-
-- 也可以被重载成类的成员函数 
-	- 参数个数为运算符目数减一 
-
-```c++
-
-class Complex
-{
-	public:
-		Complex(double r = 0.0, double i = 0.0)
-		{
-			real = r;
-			image = i;
-		}
-		
-		Complex operator+ (const Complex& );
-		Complex operator- (const Complex& );
-		
-	private:
+	```c++
+	class Complex
+	{
+		public:
+			Complex(double r = 0.0, double i = 0.0)
+			{
+				real = r;
+				image = i;
+			}		
 		double real;
 		double image;
-};
+	};
+	//普通的全局函数
+	Complex operator+ (const Complex& a, const Complex& b){
+		return Complex(a.real+b.real, a.image+b.image);
+	}
+	```
 
-Complex Complex::operator+(const Complex& op)
-{
-	return Complex(real+op.real,image+op.image);
-}
+- 也可以被重载成类的**成员函数**
+	- 参数个数为运算符目数减一 
 
-int main()
-{
-	Complex x, y(4.3,2.6), z(3.3,1.1);
-	x = y+z; //=> x = y.operator+(z)
-
-	return 0;
-}
-
-```
-### 重载`<<`
+	```c++
+	class Complex
+	{
+		public:
+			Complex(double r = 0.0, double i = 0.0)
+			{
+				real = r;
+				image = i;
+			}		
+			Complex operator+ (const Complex& );
+			Complex operator- (const Complex& );
+		private:
+			double real;
+			double image;
+	};
+	Complex Complex::operator+(const Complex& op)
+	{
+		return Complex(real+op.real,image+op.image);
+	}
+	int main()
+	{
+		Complex x, y(4.3,2.6), z(3.3,1.1);
+		x = y+z; //=> x = y.operator+(z)
+		return 0;
+	}
+	```
+	
+- 重载`<<`
 
 C++中的`cout<<`使用的也是运算符重载，`cout`是`ostream`类的对象，`ostream`重载了`<<`:
 
 ```c++
-
 ostream& ostream::operator<<(int n)
 {
 	///...
-	
-	
 	return *this;
 }
-
+//cout<<3<<"this";`等价于:
+//cout.operator<<(3).operator<<("this");
 ```
 
-而`cout<<3<<"this";`等价于:
 
-```c
-
-cout.operator<<(3).operator<<("this");;
-
-```
 
 ### 赋值运算符重载
 
 - 赋值运算符两边类型可以不匹配
-- 赋值运算符“=”只能重载为“成员函数”
+- 赋值运算符`=`只能重载为**成员函数**
 - 返回值不能设计成void，会有`a=b=c`的情况
 - 返回值要设计成引用类型
 
@@ -973,39 +963,32 @@ cout.operator<<(3).operator<<("this");;
 
 - 重载为成员函数：
 	
-```c
-	
+```cpp
 T operator++();
 T operator--();
-	
 ```  
 - 重载为全局函数:
 
-```c
-	
+```cpp
 T operator++(T);
 T operator--(T);
-	
 ``` 
 
 - 后置运算符作为二元运算符重载
 	- 多写一个参数，具体无意义
+
 - 重载为成员函数:
 
 ```c
-
 T operator++(int);
 T operator--(int);
-
 ```
 
 - 重载为全局函数:
 
 ```c
-
 T operator++(T, int);
 T operator--(T, int);
-
 ```   
 
 ## 泛型
