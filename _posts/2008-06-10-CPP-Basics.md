@@ -942,13 +942,73 @@ ostream& ostream::operator<<(int n)
 ```
 
 
-
 ### 赋值运算符重载
 
 - 赋值运算符两边类型可以不匹配
 - 赋值运算符`=`只能重载为**成员函数**
+
+```cpp
+class string{
+	private:
+		char* p;
+		
+	public:
+		string():p(NULL){}
+		const char* c_str(){ return p; }
+		
+		char* operator=(const char* s){
+			if(p){
+				delete[] p;
+			}
+			if(s){
+				int len = strlen(s);
+				p = new char[len+1];
+				strcpy(p,s);
+			}
+			else{
+				p = NULL;
+			}
+			return p;
+		}
+};
+
+int main(){
+	string x1 = "abc"; //通过重载运算符实现
+}
+
+```
+
+- 深浅拷贝
+	- 发生在两个对象互相赋值的过程中 
+	- 浅拷贝的问题:如果成员变量有指针对象，那么浅拷贝会导致被复制的对象和原对象的指针成员变量值相同，即他们指向同一块内存区域，当对象析构时，会有double free的风险 
+
+```cpp
+
+string& operator=(string& s){
+
+	if(s.c_str() == p){ //自己赋值给自己
+		return *this;
+	}
+
+	if(p){
+		delete[] p;
+	}
+	p = new char[strlen(s.c_str()+1)];
+	strcpy(p,s.c_str());
+	return *this;
+}
+
+int main(){
+	string x1="abc";
+	string x2;
+	x2 = x1; //通过重载运算符实现
+}	
+```	
+
 - 返回值不能设计成void，会有`a=b=c`的情况
+	- 等价于`a.operator=(b.operator=(c))` 
 - 返回值要设计成引用类型
+	- 运算结果最终还是作用于自身，因此返回值用引用 
 
 ### 运算符重载为友元函数
 
