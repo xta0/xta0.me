@@ -162,6 +162,17 @@ l or L | long double |  `3.14159L，扩展精度浮点型字面值` |
 	decltype(i) d; //正确； d是int型变量
 	```
 
+- typeid
+
+返回C++符号的混淆（mangling）结果
+
+```cpp
+int main(){
+	string s;
+	cout<<typeid(s).name()<<endl; //NSt3__112basic_stringIcNS_11char_traitsIcEENS_9allocatorIcEEEE
+}
+```
+
 ## 字符串，向量，数组
 
 ### 头文件
@@ -983,7 +994,6 @@ int main(){
 	- 浅拷贝的问题:如果成员变量有指针对象，那么浅拷贝会导致被复制的对象和原对象的指针成员变量值相同，即他们指向同一块内存区域，当对象析构时，会有double free的风险 
 
 ```cpp
-
 string& operator=(string& s){
 
 	if(s.c_str() == p){ //自己赋值给自己
@@ -1019,37 +1029,30 @@ int main(){
 ### 自加/自减运算符重载
 
 - 自加`++`, 自减`--`运算符有前置/后置之分
-- 前置运算符为一元运算符重载
-
-- 重载为成员函数：
+- 前置运算符为一元运算符重载, 返回左值
+		
+	```cpp
+	//重载为成员函数
+	T operator++();
+	T operator--();
+	//重载为全局函数:
+	T operator++(T);
+	T operator--(T);
+	```  
 	
-```cpp
-T operator++();
-T operator--();
-```  
-- 重载为全局函数:
-
-```cpp
-T operator++(T);
-T operator--(T);
-``` 
-
 - 后置运算符作为二元运算符重载
-	- 多写一个参数，具体无意义
-
-- 重载为成员函数:
-
-```c
-T operator++(int);
-T operator--(int);
-```
-
-- 重载为全局函数:
-
-```c
-T operator++(T, int);
-T operator--(T, int);
-```   
+	- 多写一个参数，具体无意义，返回右值
+	
+	```cpp
+	//重载为成员函数:
+	T operator++(int);
+	T operator--(int);
+	//重载为全局函数	
+	T operator++(T, int);
+	T operator--(T, int); //第二个参数没有特殊意义, 默认初始化为0
+	//obj++, obj.operator++(0), operator++(obj, 0) 都调用上述函数
+	```
+	   
 
 ## 泛型
 

@@ -184,10 +184,34 @@ Chunk是一个让多个神经元共同运作的神经网络，是用来解决具
 
 ### Memory
 
+- 长期记忆
+	- 类似于硬盘
+	- 需要反复训练加强，分时间段学习的效果比一次性学很多更有效，有持续回忆，巩固的过程
+- 工作记忆
+	- 短期记忆，类似内存，用完就被回收
+
+- 使用感官
+	- 图像与右脑的视觉空间中枢直接相连，将图片转化为记忆
+	- 声音，触觉，味觉均能增加记忆效果
+
+- 海马体对记忆的形成有重要的作用
+	- 当回忆某件事情的时候，记忆会变化，这一过程成为再巩固，因此想要记住某事，就要不断回忆
+
+![](/assets/images/2016/11/learning-memory-1.png)
+
+- 记忆技巧
+	- 使用flash card
+	- 创建有意义的意群来简化记忆，将要记住的数字，字母和某些实物，场景，事件结合起来，产生关联结构 
+		- 使用**记忆宫殿**(memory palace)
+			- 先创建记忆宫殿，选择熟悉的场景，找到场景中的记忆槽
+			- 将要待记住的事情(比如购物清单)和记忆槽关联
+			- 反复练习
+
 ### 专有名词
 
 - [synapse](https://zh.wikipedia.org/wiki/%E7%AA%81%E8%A7%A6): 神经突触，神经元之间的链接接头
 - [dendrites](https://zh.wikipedia.org/wiki/%E6%A0%91%E7%AA%81): 树突，是神经元的一部分，为神经元的输入通道，其功能是将自其他神经元所接收的动作电位（电信号）传送至细胞本体
+- [Astrocytes](): 神经胶质，为神经元提供养分，有助提高记忆力和学习力
 - Neuron Pattern: 对某种问题的思维模式
 - Prefrontal Cortex：前额叶皮质
 - Chunk：信息块
@@ -203,22 +227,6 @@ Chunk是一个让多个神经元共同运作的神经网络，是用来解决具
 ## 资料
 - [MIT Open Course]()
 - [brainfacts](http://www.brainfacts.org)
-- **Articles**:
-	- Robyn Scott, "The 30 Second Habit That Can Have a Big Impact On Your Life," Feb 18, 2014, The Huffington Post. This is actually a wonderful article on chunking!
-	Richard Wiseman, 
-	- "Be lucky - it's an easy skill to learn," The Telegraph, Jan 9, 2003. Yes, Lady Luck DOES favor some--and for a reason!
-	- David Glenn,"Divided Attention," February 28, 2010, The Chronicle of Higher Education.
-	- Steve Mensing, "Dunning-Kruger Effect: When Distorted Self-Perception and Illusions of Competence Trick Entertainers, Politicians, and Cities," Nov 26, 2013, Rowan Free Press.
-	- Errol Morris, "The Anosognosic’s Dilemma: Something’s Wrong but You’ll Never Know What It Is (Part 1)," June 20, 2010, The New York Times, Opinionator.
-	- Maria Konnikova, "What's Lost as Handwriting Fades," June 2, 2014, The New York Times.
-	- Carl Zimmer, "This is Your Brain on Writing," June 20, 2014, The New York Times. A nice discussion of the caudate nucleus, which is involved in habitual, chunking type activities in all sorts of areas, including sports, and its role in writing expertise.
-	- Johns Hopkins Medicine, "Memories of errors foster faster learning," August 14, 2014, Science Daily. Yes, mistakes really do help you learn!
-	- Travis Bradberry, "Multitasking Damages Your Brain And Career, New Studies Suggest," October 8, 2014, Forbes.
-	- Sue Shellenbarger, "The Power of the Doodle: Improve Your Focus and Memory," July 29, 2014, The Wall Street Journal.
-	- Colin Gerber, "Memory Consolidation and Productivity Can Both Be Improved by Taking Breaks," Quora, November, 2014.
-	- Steven C. Pan, "The Interleaving Effect: Mixing It Up Boosts Learning," Scientific American, August 4, 2015.
-	- Shana K. Carpenter, "Spacing and Interleaving of Study and Practice by Shana K. Carpetner", Society for the Teaching of Psychology, 2014.
-
 - [The 30 Second Habit That Can Have a Big Impact On Your Life](https://www.huffingtonpost.com/robyn-scott/the-30-second-habit-that-_b_4808632.html)
 - Books:
 	- [A Mind for Numbers](http://www.amazon.com/gp/product/039916524X/ref=as_li_qf_sp_asin_il_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=039916524X&linkCode=as2&tag=learningho0a9-20&linkId=D4N64HNWGXOU5SBK)
