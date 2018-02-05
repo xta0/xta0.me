@@ -1245,7 +1245,6 @@ template<class 参数1, class 参数2,...>
 	- 例如，下面两个模板可以同时存在:
 
 ```cpp
-
 template<class T1, class T2>
 void print(T1 arg1, T2 arg2)
 {
@@ -1257,15 +1256,37 @@ void print(T arg1, T arg2)
 {
 	cout << arg1 << "" <<arg2 <<endl;
 }
-
 ```  
 
-- C++编译器遵循以下优先顺序
+- C++编译器如何决定选用选用哪个函数，遵循以下优先顺序
+	1. 先找**参数完全匹配**的**普通函数**（非由模板实例化而得的函数）
+	2. 再找参数完全匹配的模板函数
+	3. 再找实参经过自动类型转换后能够匹配的普通函数
+	4. 上面的都找不到，则报错
 
-	- 先找参数完全匹配的普通函数（非由模板实例化而得的函数）
-	- 再找参数完全匹配的模板函数
-	- 再找实参经过自动类型转换后能够匹配的普通函数
-	- 上面的都找不到，则报错
+```cpp
+template<class T>
+T max(T a, T b){
+	return 0;
+}
+template<class T1, clas T2>
+T max(T1 a, T2 b){
+	return 0;
+}
+double max(double a, double b){
+	return 0;
+}
+
+int main(){
+	int i=4, j=5;
+	max(1.2,3.5);//调用max(double, double)
+	max(i,j);//调用第一个max函数
+	max(1.3,2);//调用第二个max函数
+	return 0;
+}
+```
+
+如果函数有多个类型参数，在函数模版中要使用多个类型参数
 
 ### 类模板
 
@@ -1273,14 +1294,9 @@ void print(T arg1, T arg2)
 - 这些参数表示不同的数据类型
 
 ```c++
-
 template<类型参数表>
 class 类模板名
-{
-	
-
-};
-
+{};
 ```
 
 - 类型参数表的写法就是:`class 类型参数1, class 类型参数2,...`

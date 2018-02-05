@@ -208,6 +208,8 @@ Chunk是一个让多个神经元共同运作的神经网络，是用来解决具
 			- 反复练习
 	- 平时可以每天吃1000mg的DHA omega three
 
+## Become a 
+
 ### 专有名词
 
 - [synapse](https://zh.wikipedia.org/wiki/%E7%AA%81%E8%A7%A6): 神经突触，神经元之间的链接接头
