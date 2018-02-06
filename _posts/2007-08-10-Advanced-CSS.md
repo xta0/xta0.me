@@ -415,22 +415,6 @@ body {
 
 - 对于`inline`的元素，外层套`div`
 
-## FlexBox Properties
-
-* Container Properties
-
-  * `flex-direction`
-  * `justify-content`
-  * `flex-wrap`
-  * `aligin-items`
-  * `align-content`
-
-* Item Properties
-  * `order`
-  * `flex`
-  * `flex-grow`
-  * `flex-shrink`
-  * `align-self`
 
 ## 资料
 

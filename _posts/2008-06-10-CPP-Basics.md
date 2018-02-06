@@ -100,7 +100,7 @@ l or L | long double |  `3.14159L，扩展精度浮点型字面值` |
 		- 在`.h`文件中声明：`extern const int buff;` 
 		- 在`.c`文件中定义：`extern const int bufSize = fcn();`  
 	- 如果用`const`定义指针，顶层`const`指的是指针本身是常量，底层`const`指的是这个指针是一个指向常量的指针
-	- **constexpr**	
+		 **constexpr**	
 		- 常量表达式，如果某个`const`变量的值在编译时就能确定，可以将其定义为常量表达式
 		
 		```c
@@ -128,7 +128,7 @@ l or L | long double |  `3.14159L，扩展精度浮点型字面值` |
 - type alias
 	- `using` ：类似`typedef`
 		- `using SI = sales_item; SI item;` 
-		
+	
 - auto
 	- C++ 11新的类型说明作符，让编译器推断变量类型，因此使用`auto`定义的变量必须要有初值
 	 - `auto item = val1 + val2;`  
@@ -183,6 +183,12 @@ int main(){
 
 ### stirng
 
+- string类是一个模板类，它的定义如下：
+
+```cpp
+typedef basic_string<char> string;
+```
+
 - 初始化
 
 ```cpp
@@ -193,6 +199,17 @@ string s4("value"); //拷贝常量字符串
 string s5 = "value"; //和上面相同
 string s6(10,'c'); //重复c十次
 ```
+
+- 常用API：
+	- 长度：`length()`
+	- 赋值: `assign()`: `string s1("abc"),s3; s3.assign(s1,1,3)`
+	- 访问每个字符：`[]` 或者 `at(index)`
+	- 拼接: `+`,`append()`
+	- 字串:`substr(4,5); //下标4开始，长度5`
+	- 查找:`find("abc");`,`rfind("adbc"); //重后向前找`
+	- 替换:`replace(2,3,"haha"); //从下标开始的3个字符被替换为haha`
+	- 插入:`insert(5,s2); 将s2插入到下标为5的位置`
+	- 转换为char* : `s1.c_str(); //将String转化为const char* `
 
 ### vector
 
@@ -297,7 +314,7 @@ vector<int> vc(begin(arr), end(arr));
 - `++i`: 将`i`先+1后，作为左值返回，返回的还是`i`本身
 - `i++`: 先将i的拷贝作为右值返回，然后执行`i+1`
 - 除非必须，否则不用后置版本
-		 
+	​	 
 ## 函数
 
 ### 重载(Overload)
@@ -333,9 +350,9 @@ func(10,,9);//error
 - 对象不论以什么样的形式创建都会调用构造函数
 - 成员函数的一种
 	- 名字与类名相同，可以有参数，不能有返回值
- 	- 作用是对对象进行初始化，给成员变量赋值
- 	- 如果没定义构造函数，编译器生成一个默认的无参数的构造函数
- 
+		- 作用是对对象进行初始化，给成员变量赋值
+		- 如果没定义构造函数，编译器生成一个默认的无参数的构造函数
+
 - **拷贝构造函数**：
 	- `X::X(X& x)`, 一定是该类对象的引用 
 	- `X::X(const X& x)` ，一定是该类对象的引用
@@ -368,7 +385,7 @@ func(10,,9);//error
 			A a1 = func(4);
 		}
 		```
-		  
+		
 	- 如果没有定义拷贝构造函数，则系统默认生成一个
 	- 拷贝构造函数，如果涉及成员变量指向一片内存空间的，需要使用深拷贝，赋值被拷贝对象的内存空间
 
@@ -453,7 +470,7 @@ class A{
 	int value(int x){ return x;}
 	void value(){ }
 }
-``` 
+```
 
 - 静态成员函数
 	- 相当于类方法，不作用于某个对象，本质上是全局函数 
@@ -462,7 +479,7 @@ class A{
 	- 访问：
 		- 使用类名访问：`类名::成员名`: `CRectangle::PrintTotal();`
 		- 使用类对象访问：`对象名.成员名`: `CRectangle r; r.PrintTotal();`
-		
+	
 - `const`成员函数
 	- `const`成员函数不能修改成员变量，不能访问成员函数，本质上是看这个函数会不会有修改对象状态的可能性
 	- `const`成员函数也可作为构造函数，算重载
@@ -489,7 +506,7 @@ class A{
 		return 0;
 	} 
 	```
-	 
+	
 ### 类对象
 
 - 常量对象
@@ -644,7 +661,7 @@ int main(int argc, char** argv)
 
 ```cpp
 class A : public B{};
-``` 	
+```
 
 - 子类拥有基类全部的成员函数和成员变量，不论是private,protected,public，在子类的各个成员函数中，不能访问父类的private成员
 - 子类对象的内存空间
@@ -671,7 +688,7 @@ class B: public A{
 
 ```
 构造函数名(形参表): 基类名(基类构造函数实参表){}
-``` 
+```
 
 - 子类构造过程
 	1. 先执行基类的构造函数：
@@ -1009,7 +1026,7 @@ class A{
 A a; //错，A是抽象类，不能创建对象
 A* pa; //ok，可以定义抽象类的指针和引用
 pa = new A; //错误，A是抽象类，不能创建对象
-```   
+```
 
 - 如果一个类从抽象类派生而来
 	- 它实现了基类中所有的纯虚函数，才能成为**非抽象类** 
@@ -1179,7 +1196,7 @@ int main(){
 	string x2;
 	x2 = x1; //通过重载运算符实现
 }	
-```	
+```
 
 - 返回值不能设计成void，会有`a=b=c`的情况
 	- 等价于`a.operator=(b.operator=(c))` 
@@ -1196,7 +1213,7 @@ int main(){
 
 - 自加`++`, 自减`--`运算符有前置/后置之分
 - 前置运算符为一元运算符重载, 返回左值
-		
+	​	
 	```cpp
 	//重载为成员函数
 	T operator++();
@@ -1204,7 +1221,7 @@ int main(){
 	//重载为全局函数:
 	T operator++(T);
 	T operator--(T);
-	```  
+	```
 	
 - 后置运算符作为二元运算符重载
 	- 多写一个参数，具体无意义，返回右值
@@ -1218,7 +1235,7 @@ int main(){
 	T operator--(T, int); //第二个参数没有特殊意义, 默认初始化为0
 	//obj++, obj.operator++(0), operator++(obj, 0) 都调用上述函数
 	```
-	   
+	
 
 ## 泛型
 
@@ -1239,7 +1256,7 @@ template<class 参数1, class 参数2,...>
 	函数体
 }
 
-``` 
+```
 
 - 函数模板可以重载，只要它们形参表不同即可
 	- 例如，下面两个模板可以同时存在:
@@ -1256,7 +1273,7 @@ void print(T arg1, T arg2)
 {
 	cout << arg1 << "" <<arg2 <<endl;
 }
-```  
+```
 
 - C++编译器如何决定选用选用哪个函数，遵循以下优先顺序
 	1. 先找**参数完全匹配**的**普通函数**（非由模板实例化而得的函数）
@@ -1296,148 +1313,169 @@ int main(){
 ```c++
 template<类型参数表>
 class 类模板名
-{};
+{
+	成员函数和成员变量
+};
 ```
 
-- 类型参数表的写法就是:`class 类型参数1, class 类型参数2,...`
-
-- 类模板里的成员函数，如在类模板外面定义时,
+- **类型参数表**的写法就是:`class 类型参数1, class 类型参数2,...`
+- 类模板里的**成员函数**，如在类模板外面定义时,
 
 ```c++
-
 template<形参表>
 返回值类型 类模板名<类型参数名列表>::成员函数名(参数表)
-{
-
-}
-
+{}
 ```
 
-- 用类模板定义对象的写法:
+```c++
+//Pair类模板
+template<class T1, class T2>
+class Pair{
+public:
+	T1 key;
+	T2 value;
+    Pair(T1 k, T2 v):key(k), value(v){};
+    bool operator<(const Pair<T1,T2>&p )const;
+};
+template<class T1, class T2>//函数模板
+bool Pair<T1,T2>::operator<(const Pair<T1,T2>& p)const{
+    return key < p.key
+}
+int main(){
+    Pair<string, int> stu("Tom",19);
+}
+```
 
-`类模板名<真实类型参数表> 对象名(构造函数实际参数表)`
-
-- 如果类模板有无参数构造函数，也可以直接写:
-
-`类模板名<真实类型参数表> 对象名`
-
-- 编译器由类模板生成类的过程叫类模板实例化
-	- 编译器自动用具体的数据类型替换模板中的类型参数，生成模板类的代码
-
-- 由类模板实例化得到的类叫模板类
+- 用类模板定义对象的写法:`类模板名<真实类型参数表> 对象名(构造函数实际参数表)`
+- 如果类模板有无参数构造函数，也可以直接写:`类模板名<真实类型参数表> 对象名`
+- 编译器由类模板生成类的过程叫**类模板实例化**
+	- 编译器自动用**具体的数据类型**替换模板中的**类型参数**，生成模板类的代码
+- 由类模板实例化得到的类叫**模板类**
 	- 为类型参数指定的数据类型不同，得到的模板类不同
-
 - 同一个类模板的两个模板类是不兼容的
 
 ```cpp
-
 Pair<string, int>* p;
 Pair<string, double> q;
 p = &q; //wrong!
-
 ```
 
 - 函数模板作为类模板成员
 
 ```cpp
-
 template<class T>
 class A
 {
-	pubic:
-		template<class T2>
-		void Func(T2 t){cout<<t;}; //成员函数模板
+pubic:
+	template<class T2> //类模板和函数模板的参数不能一致
+	void Func(T2 t){cout<<t;}; //成员函数模板
 };
-
+int main(){
+	A<int> a;
+	a.Func('k');
+}
 ```
 
 - 类模板的参数声明中可以包括非类型参数
 
 ```cpp
-
-template<class T, int ele>
-
+template<class T, int elements>
 ```
 
-- 非类型参数：用来说明类模板中的属性
-- 类型参数：用来说明类模板中的属性类型，成员操作的参数类型和返回值类型
+- 非类型参数：用来说明类模板中的**属性**
+- 类型参数：用来说明类模板中的**属性类型**，成员操作的参数类型和返回值类型
 
 ```cpp
-
+template<class T, int size>
+class CArray{
+	T array[size];
+public:
+	void print(){
+		for(int i=0;i<size;++i>){
+			cout<<array[i]<<endl
+		}
+	}
+}
 CArray<double,40> a2;
 CArray<int,50> a3;
-
+//注意：CArray<double,40>和CArray<int,50>完全是两个类，这两个类对象之前不能相互赋值 
 ```
+- 类模板与继承
+	- 类模板派生出类模板
 
-- 注意：`CArray<double,40>`和`CArray<int,50>`完全是两个类，这两个类对象之前不能相互赋值 
-
-
-
-## 内存分配
-
-### `new`和`delete`
-
-- new
-	- 创建一个T类型的指针：`T* p = new T;`
-	
-	```c++
-	int *pn = NULL;
-	pn = new int(5);
-	```
-	- 创建一个T类型的数组：`T* p = new T[N];`
-
-- delete
-
-	- delete两次会报错
-	
-	```c++
-	int* p = new int(5);
-	delete p;
-	delete p; //error!
+	```cpp
+	tempalte<class T1, class T2>
+	class A{
+		T1 v1;
+		T2 v2;	
+	};
+	template <class T1, class T2>
+	class B: public A<T2,T1>{
+		T1 v3;
+		T2 v4;
+	};
+	template <class T>
+	class C:public B<T,T>{
+		T v5;
+	};
+	int main(){
+		B<int,double> obj1;
+		C<int> obj2;
+		return 0;
+	}
 	```
 
-	- delete 数组：
+	- 模板类派生出类模板
 
-	```c++
-	int *p = new int[20];
-	p[0] = 1;
-	delete[] p;
+	```cpp
+	template<class T1, class T2>
+	class A{
+		T1 v1;
+		T2 v2;
+	};
+	template<class T>
+	class B:publicA<int, double> {
+		T v;
+	}
+	int main(){
+		B<char> obj1;
+		return 0;
+	}
+	//自动生成两个模板类：A<int,double>和B<char>
 	```
 
-### string类
+	- 普通类派生出类模板
 
-- string类是一个模板类，它的定义如下：
+	```cpp
+	class A{ 
+		int v1;	
+	};
+	template<class T>
+	class B:public A{
+		T v;
+	};
+	int main(){
+		B<char> obj1;
+		return 0;
+	}
+	```
 
-```cpp
+	- 模板类派生出普通类
 
-typedef basic_string<char> string;
+	```cpp
+	template<class T>
+	class A{
+		T v1; int n;
+	};
+	class B:public<int>{
+		double v;
+	};
+	int main(){
+		B obj1;
+		return 0;
+	}
+	```
 
-```
-
-- 使用string类要包含头文件`<string>`
-
-- 初始化:
-
-```cpp
-
-string s1("hello");
-string s2(8,'x');
-string s3 = "world";
-
-```
-
-- 常用API：
-	- 长度：`length()`
-	- 赋值: `assign()`: `string s1("abc"),s3; s3.assign(s1,1,3)`
-	- 访问每个字符：`[]` 或者 `at(index)`
-	- 拼接: `+`,`append()`
-	- 字串:`substr(4,5); //下标4开始，长度5`
-	- 查找:`find("abc");`,`rfind("adbc"); //重后向前找`
-	- 替换:`replace(2,3,"haha"); //从下标开始的3个字符被替换为haha`
-	- 插入:`insert(5,s2); 将s2插入到下标为5的位置`
-	- 转换为char* : `s1.c_str(); //将String转化为const char* `
-
-	
 ## STL标准库
 
 - 容器：可容纳各种类型的通用数据结构，是类模板
@@ -1951,6 +1989,43 @@ int main()
 ### const_cast
 
 ### dynamic_cast
+
+
+
+## 内存分配
+
+### `new`和`delete`
+
+- new
+
+  - 创建一个T类型的指针：`T* p = new T;`
+
+  ```c++
+  int *pn = NULL;
+  pn = new int(5);
+  ```
+
+  - 创建一个T类型的数组：`T* p = new T[N];`
+
+- delete
+
+  - delete两次会报错
+
+  ```c++
+  int* p = new int(5);
+  delete p;
+  delete p; //error!
+  ```
+
+  - delete 数组：
+
+  ```c++
+  int *p = new int[20];
+  p[0] = 1;
+  delete[] p;
+  ```
+
+### 
 
 ## C++ 11新特性
 
