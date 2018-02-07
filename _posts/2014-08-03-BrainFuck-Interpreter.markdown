@@ -7,7 +7,7 @@ categories: 随笔
 
 <em>文章均为作者原创，转载请著名出处</em>
 
-为了回答[这个问题](http://fun.coolshell.cn/first.html)我用Ruby写了一个BrainFuck的解释器，代码不一定最优，却是最快想到的。
+为了回答[这个问题](http://fun.coolshell.cn/first.html)用Ruby写了一个BrainFuck的解释器，代码不一定最优，却是最快想到的。
 
 BrainFuck代码如下：
 

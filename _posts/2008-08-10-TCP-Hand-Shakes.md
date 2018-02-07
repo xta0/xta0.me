@@ -8,7 +8,7 @@ categories: 随笔
 
 <em>所有文章均为作者原创，转载请注明出处</em>
 
-突然想看一下TCP connection的具体过程，简单写了一个TCP server（python的twist简单而快速），和iOS的client（socket+NSStream）。配合wire shark来做一些分析：
+快速看一下TCP connection的具体过程，简单写了一个TCP server（python的twist简单而快速），和iOS的client（socket+NSStream）。配合`wireshark`来做一些分析：
 
 <h2>建立三步握手</h2>
 
@@ -27,8 +27,6 @@ Window size value: 65535
 [Calculated window size: 65535]
 Checksum: 0xfc9c [validation disabled]
 ```
-
-
 
 - ACK+SYN
 
