@@ -3,7 +3,25 @@ layout: post
 title: Learn How to Learn
 ---
 
+> [Coursera Link](https://www.coursera.org/learn/learning-how-to-learn)
 
+
+### 专有名词
+
+- [synapse](https://zh.wikipedia.org/wiki/%E7%AA%81%E8%A7%A6): 神经突触，神经元之间的链接接头
+- [dendrites](https://zh.wikipedia.org/wiki/%E6%A0%91%E7%AA%81): 树突，是神经元的一部分，为神经元的输入通道，其功能是将自其他神经元所接收的动作电位（电信号）传送至细胞本体
+- [Astrocytes](): 神经胶质，为神经元提供养分，有助提高记忆力和学习力
+- Neuron Pattern: 对某种问题的思维模式
+- Prefrontal Cortex：前额叶皮质
+- Chunk：信息块
+- acetylcholine：乙酰胆碱
+- dopamine：多巴胺
+- serotonin：血清素
+- [Amygdaloid](https://zh.wikipedia.org/wiki/%E6%9D%8F%E4%BB%81%E6%A0%B8): 杏仁核
+- [Deliberate Practice](): 刻意练习，走出舒适区，持续练习那些困难的部分
+- [Einstellung]()：对某种事务熟悉的思维模式，会阻碍创新思维
+- [Interleaving]()：交替学习
+	
 ## Focus vs Diffuse Thinking
 
 Two fundamentally thinking mode.
@@ -218,24 +236,57 @@ Chunk是一个让多个神经元共同运作的神经网络，是用来解决具
 - 使用比喻和类比
 	- 比喻和类比可以发现两种事物的相似之处，对新知识尝试找到类比的东西进行记忆
 - 坚持比聪明更重要
-	- 敢于坚持
+- 不要盲目自信
+	- 大脑左半球负责focus模式思考，右半球负责质疑与批判
+	- 团队合作有主意发现自己思维的盲区，所谓旁观者清
+	- 解决某个问题之后，跳出来，站在全局视角看看，答案是否真的合理并且符合逻辑
+- 使用**考试清单**来准备各种考试
+	- Did you make a serious effort to understand the text?
+	- Did you work with classmates on homework problems?
+	- Did you attemp to ouline every homework problem solution?
+	- Did you participate actively in homework group discussions?
+	- Did you consult with the instructor?
+	- Did you understand all of your homework problem solutions?
+	- Did you ask in class for explanations of homework problem solutions that weren't clear to you? 
+	- Did you read through the study guide（辅导书）?
+	- Did you attempt to outline lots of problem solutions quickly？
+	- Did you get a reasonable night's sleep before the test?
 
-### 专有名词
+- “Hard start - jump to easy technique” - 考试技巧
+	1. 当拿到试卷时，先通览一遍题目
+	2. 先从最难的题目开始，如果卡住了，或者不确定想的答案是否正确时，就跳过这到题去做简单题
+		- 实际上是将大脑从focus mode转向diffuse mode
+		- 要有强大的自制力，当发现卡住时，要果断转向下一题
 
-- [synapse](https://zh.wikipedia.org/wiki/%E7%AA%81%E8%A7%A6): 神经突触，神经元之间的链接接头
-- [dendrites](https://zh.wikipedia.org/wiki/%E6%A0%91%E7%AA%81): 树突，是神经元的一部分，为神经元的输入通道，其功能是将自其他神经元所接收的动作电位（电信号）传送至细胞本体
-- [Astrocytes](): 神经胶质，为神经元提供养分，有助提高记忆力和学习力
-- Neuron Pattern: 对某种问题的思维模式
-- Prefrontal Cortex：前额叶皮质
-- Chunk：信息块
-- acetylcholine：乙酰胆碱
-- dopamine：多巴胺
-- serotonin：血清素
-- [Amygdaloid](https://zh.wikipedia.org/wiki/%E6%9D%8F%E4%BB%81%E6%A0%B8): 杏仁核
-- [Deliberate Practice](): 刻意练习，走出舒适区，持续练习那些困难的部分
-- [Einstellung]()：对某种事务熟悉的思维模式，会阻碍创新思维
-- [Interleaving]()：交替学习
-	
+- 对考试有用的心里暗示
+	- "This test has got me excited to do my best!"
+	- 深呼吸
+		- 手放到肚子上做腹式呼吸
+	- 考试前一天快速复习一遍学的知识
+
+## 总结
+
+有收获的几点：
+
+- 大脑的两种工作模式
+	- Focus Mode：使用番茄工作法
+	- Diffused Mode：
+		- 需要困难先放一放，不要死磕
+		- 睡眠很重要
+- 学习新知识
+	- 大脑不断形成chunk的过程，pattern不断加深的过程
+	- 神经元在学习新知识和运动时会不断生长，是一个动态的过程
+	- 刻意练习才有效果，重复学习已经会的知识没用
+- 记忆
+	- 大脑对图像关联的记忆确实比其它的方式记得牢靠（想到某本书，第一个想到的是封面）
+	- 记忆宫殿记忆法
+		- 创建宫殿，选择槽位
+		- 将带记忆的东西和图片进行关联，越夸张越好
+- 考试
+	- Test check list
+	- 先从难题做，卡住了立刻转到简单题，循环往复
+	- 心理暗示和腹式呼吸
+
 	
 ## 资料
 - [MIT Open Course]()
