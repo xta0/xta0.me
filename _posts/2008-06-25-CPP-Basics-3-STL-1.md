@@ -60,7 +60,7 @@ mathml: true
 		- `erase`: 从容器中删除一个或几个元素
 		- `clear`: 从容器中删除所有元素
 	- 除了各容器都有的函数外，还支持以下成员函数
-		- `find`：查找等于某个值的元素(x小于y和y小于x同时不成立即为相等)
+		- `find`：查找等于某个值的元素(x小于y和y小于x同时不成立即为相等),返回一个迭代器类型对象
 		- `lower_bound`：查找某个下界
 		- `upper_bound`：查找某个上界
 		- `equal_range`：同时查找上界和下界
@@ -85,10 +85,9 @@ mathml: true
 
 ## 顺序容器
 
-### vector
-
 ### list
 
+- 双向链表
 - 迭代器不支持完全随机访问
 	- 不能用标准库中的`sort`函数排序
 - 排序使用自己的`sort`成员函数
@@ -113,9 +112,30 @@ mathml: true
 - 只能使用双向迭代器
 	- 迭代器不支持大于/小于的比较运算符，不支持`[]`运算符和随机移动
 
+```cpp
+list<int> numbers;
+numbers.push_back(1);
+numbers.push_back(2);
+numbers.push_back(3);
+numbers.push_front(4);
+auto itor = numbers.begin();
+itor++;
+itor = numbers.insert(itor,100); //在第二个位置插入100, 返回第三个位置的迭代器
+itor = numbers.erase(itor); //删除第三个元素，返回第四个位置的迭代器
+//遍历
+for(;itor!=numbers.end();++itor){
+	cout<<*itor<<endl;
+	if(*itor == 2){
+		numbers.insert(itor,1234);//在2之前插入1234
+	}
+}
+
+```
+
+
 ### deque
 
-- 双向队列
+- 双向队列：double ended queue
 - 包含头文件`#include<deque>`
 - `deque`可以`push_front`和`pop_front`
 
@@ -150,9 +170,11 @@ pair<int, int> p(pair<double,double>(5.5,4.6))
 
 ### set / multiset
 
-- `set`定义
+#### set
 
-```
+- 定义
+
+```cpp
 tempate<class key, class pred = less<key>>
 class set{...}
 ```
@@ -164,19 +186,16 @@ int main(){
 	std::set<int> ::iterator IT;
 	int a[5] = {3,4,5,1,2};
 	set<int> st(a,a+5);
-	pair<IT,bool> result;
-	result = st.insert(6);
-	if(result.second){ //插入成功，则输出被插入的元素
-	}
-	if(st.insert(5).second){
-	}
-	else{
-		//这时候表示插入失败
+	pair<IT,bool> result = st.insert(6); //返回值类型是pair
+	if(result.second){ 
+		//插入成功，则输出被插入的元素
 	}
 }
 ```
 
-- `multiset`定义
+#### multiset
+
+- 定义
 
 ```cpp
 template<class key, class Pred=less<key>,class A = allocator<key>>
@@ -207,18 +226,11 @@ struct less:publi binary_function<T,T,bool>
 class A{};
 int main(){
 	
-	std::multiset<A> a;
+	std::multiset<A> a; //等价于multiset<A,less<A>> a;
 	a.insert(A()); //error,由于A没有重载<无法比大小，因此insert后编译器无法知道插入的位置
 }
 
-//multiset<A> a;
-//等价于
-//multiset<A,less<A>> a;
-//插入元素时，multiset会将被插入的元素和已有的元素进行比较。由于less模板使用<进行比较，所以，这都要求A对象能用<比较，即适当重载了<
-
-```
-
-```cpp
+//修改class A
 class A
 {
 	private: 
@@ -232,7 +244,6 @@ class A
 	}	
 	friend class Myless;
 }
-
 
 struct Myless{
 	bool operator()(const A& a1, const A& a2){
@@ -256,85 +267,139 @@ int main(){
 }
 ```
 
+### pair
+
 ### map/multimap
+
+#### map
+
+- 定义
+
+```cpp
+template<class key,class T, class Pred = less<key>,class A = allocator<T>>
+class map{	
+	//typedef pair<const key, T> value_type;
+};
+```	
+- map**有序的**k-v集合，元素按照`key`**从小到大**排列，缺省情况下用`less<key>`即`<`定义
+- map中相同的`key`的元素只保留一份
+- map中元素都是`pair模板类`对象。`first`返回key，`second`返回value
+- map有`[]`成员函数，支持k-v赋值
+- 返回对象为second成员变量的引用。若没有关键字key的元素，则会往pairs里插入一个关键字为key的元素，其值用无参构造函数初始化，并返回其值的引用
+
+```cpp
+map<string,int> ages;
+ages["mike"]=40;
+ages["kay"]=20;
+cout<<map["kay"]<<endl;
+//add
+pair<string, int> peter("peter",44);
+ages.insert(perter);
+//find
+if(ages.find("Vickey")!=ages.end()){ //find返回一个迭代器
+	cout<<"Found"<<endl;
+}
+for(auto itor=ages.begin(); itor!=ages.end(); itor++){
+	pair<string, int> p = *itor;
+	cout<<p->first;
+	cout<<p->second;
+}
+```
+
+- 使用自定义对象作为`key`
+	- 需要实现对象的排序方式
+
+```cpp
+class Person{
+private:
+	int age;
+	string name;
+public:
+	Person():name(""),age(0){}
+	Person(const Person& p){
+		name = p.name;
+		age = p.age;
+	}
+	Person(string name, int age):name(name),age(age){}
+	bool operator<(const Person& p) const {  //重载<做比较运算,声明成const，不会改变内部状态
+		return age<p.age;
+	}
+};
+int main(){
+	map<Person, int> people;
+	people[Person("mike",44)] = 40;
+	people[Person("kay",22)] = 40;
+
+	return 0;
+}
+
+```
+
+#### multimap
+
+- 定义：
 
 ```cpp
 template<class key, class T, class Pred = less<key>, class A = allocator<T>>
 class multimap{
-...
-typedef pair<const key, T> value_type;
-...
-}; //key代表关键字的类型
+	//typedef pair<const key, T> value_type;
+
+};
 ```
 
-- multimap中的元素由<key,value>组成，每个元素是一个pair对象，关键字就是first成员变量，类型为key
+- `multimap`和`map`的区别
+	- `multimap`没有重载`[]`，插入元素只能使用`insert`
+	- `multimap`中允许相同的key存在，key按照first成员变量从小到大排列，缺省用`less<key>`定义关键字的`<`关系
 
-- multimap中允许多个元素的关键字相同，元素按照first成员变量从小到大排列，缺省用`less<key>`定义关键字的"小于"关系
-
-- multimap实例：
 
 ```cpp
-
 #include<map>
 using namespace std;
 int main(){
 	
 	typedef multimap<int,double,less<int>> mmid;
-	mmid pairs;
+	mmid mmap;
 	
 	//typedef pair<const key, T> value_type;
-	pairs.insert(mmid::value_type(15,2.7)); 
-	pairs.insert(mmid::value_type(15,99.3)); 
-	pairs.count(15); //2
+	mmap.insert(mmid::value_type(15,2.7)); 
+	mmap.insert(mmid::value_type(15,99.3)); 
+	mmap.insert(make_pair(14,22.3));
+	mmap.count(15); //3
 	
-	for(mmid::const_iterator i = pairs.begin();
-	i != paris.end(); i++){
-		
+	for(auto itor = pairs.begin();itor != paris.end(); itor++){
 		i->first;
 		i->second;
-	
 	}
-	
 }
-
 ```
 
-- map
+## 容器适配器
+
+- 可以用某种顺序容器实现
+	- `stack` : LIFO
+	- `queue`: FIFO
+	- `priority_queue`
+		- 优先级队列，最高优先级元素第一个出列
+- 通用API
+	- `push/pop`：添加，删除一个元素
+	- `top`: 返回容器头部元素的引用
+
+- 容器适配器上**没有迭代器**
+	- STL中各种排序，查找，变序等算法不适合容器适配器
+
+### stack 
+
+- LIFO数据结构
+- 只能插入，删除，访问栈顶元素
+- 可用`vector`,`list`,`deque`来实现
+	- STLss默认情况下用`deque`实现
+	- `vector`和`deque`实现性能优于`list`实现
 
 ```cpp
-
-template<class key,class T, class Pred = less<key>,class A = allocator<T>>
-class map{
-	
-	///
-	typedef pair<const key, T> value_type;
+template<class T, class Cont=deque<T> >
+class stack{
 
 };
-
 ```
 
-- map中元素都是pair模板类对象。关键字(first成员变量)各不相同。元素按照关键字从小到大排列，缺省情况下用`less<key>`即"<"定义
-
-- map的[]成员函数
-
-若pairs为map模板类对象
-
-```
-pairs[key]
-
-```
-
-返回对关键字等于key的元素的值(second成员变量)的引用。若没有关键字key的元素，则会往pairs里插入一个关键字为key的元素，其值用无参构造函数初始化，并返回其值的引用
-
-如：
-
-```cpp
-
-map<int, double> pairs
-pairs[50] = 5;
-
-```
-
-## STL自带的算法
-
-- 大多重载的算法都有两个版本：
+### priority_queue
