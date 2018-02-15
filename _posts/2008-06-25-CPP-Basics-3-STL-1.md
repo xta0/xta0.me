@@ -402,4 +402,44 @@ class stack{
 };
 ```
 
+### queue
+
+- FIFO数据结构
+- 和`stack` 基本类似, 可以用 `list`和`deque`实现
+	- 缺省情况下用deque实现
+
+```cpp
+template<class T, class Cont = deque<T> >
+class queue {
+};
+```
+- 同样也有push, pop, top函数
+	- `push`发生在队尾
+	- `pop`, `top`发生在队头, 先进先出
+
 ### priority_queue
+
+- 优先级队列，最大元素在队头
+- 可以用`vector`和`deque`实现
+	- 缺省情况下用`vector`实现
+	- `priority_queue` 通常用**堆排序**实现, 保证最大的元
+素总是在最前面,默认的元素比较器是 `less<T>`
+- 执行pop操作时, 删除的是最大的元素
+- 执行top操作时, 返回的是最大元素的引用
+
+```cpp
+#include <queue>
+#include <iostream>
+using namespace std;
+int main() {
+priority_queue<double> priorities;
+priorities.push(3.2);
+priorities.push(9.8);
+priorities.push(5.4);
+while( !priorities.empty() ) {
+	cout << priorities.top() << " ";	
+	priorities.pop();//输出结果: 9.8 5.4 3.2
+}
+return 0;
+} 
+```

@@ -70,3 +70,234 @@ template<class InIt, class Pred>
 InIt find_if(InIt first, InIt last, Pred pr);
 ```
 返回区间 `[first,last)` 中的迭代器 `i`, 使得 `pr(*i) == true`
+
+- **for_each**
+
+```cpp
+template<class InIt, class Fun>
+Fun for_each(InIt first, InIt last, Fun f);
+```
+对[first, last)中的每个元素e, 执行`f(e)`, 要求 `f(e)`不能改变`e`
+
+- **count**
+
+```cpp
+template<class InIt, class T>
+size_t count(InIt first, InIt last, const T& val);
+```
+计算[first, last) 中等于val的元素个数(x==y为true算等于)
+
+- **count_if**
+
+```cpp
+template<class InIt, class Pred>
+size_t count_if(InIt first, InIt last, Pred pr);
+```
+计算[first, last) 中符合pr(e) == true 的元素e的个数
+
+- **min_element**
+
+```cpp
+template<class FwdIt>
+FwdIt min_element(FwdIt first, FwdIt last);
+```
+
+返回[first,last) 中最小元素的迭代器, 以 “<” 作比较器
+
+> 最小指没有元素比它小, 而不是它比别的不同元素都小，因为即便`a!= b`, `a<b` 和`b<a`有可能都不成立
+
+- **max_element**
+
+```cpp
+template<class FwdIt>
+FwdIt max_element(FwdIt first, FwdIt last);
+```
+
+返回[first,last) 中**最大元素(不小于任何其他元素)**的迭代器，以 “<” 作比较器 
+
+```cpp
+#include <iostream>
+#include <algorithm>
+using namespace std;
+class A {
+public:
+    int n;
+    A(int i):n(i) { }
+};
+bool operator<( const A & a1, const A & a2) {
+    cout << “< called” << endl;
+    if( a1.n == 3 && a2.n == 7 ){
+        return true;
+    }
+    return false;
+}
+
+int main() {
+    A aa[] = { 3,5,7,2,1 };
+    cout << min_element(aa,aa+5)->n << endl;
+    cout << max_element(aa,aa+5)->n << endl;
+    return 0;
+}
+```
+
+### 变值算法
+
+- 此类算法会修改源区间或目标区间元素的值
+
+
+算法名称 | 功 能
+------------- | -------------
+`for_each` | 对区间中的每个元素都做某种操作
+`copy` | 复制一个区间到别处
+`copy_backward` | 复制一个区间到别处, 但目标区前是从后往前被修改的
+`transform`| 将一个区间的元素变形后拷贝到另一个区间
+`swap_ranges` | 交换两个区间内容
+`fill`| 用某个值填充区间
+`fill_n` | 用某个值替换区间中的n个元素
+`generate`| 用某个操作的结果填充区间
+`generate_n`| 用某个操作的结果替换区间中的n个元素
+`replace` |将区间中的某个值替换为另一个值
+`replace_if`| 将区间中符合某种条件的值替换成另一个值
+`replace_copy` | 将一个区间拷贝到另一个区间，拷贝时某个值要换成新值拷过去
+`replace_copy_if` | 将一个区间拷贝到另一个区间，拷贝时符合某条件的值要换成新值拷过去
+
+- **transform**
+
+```cpp
+template<class InIt, class OutIt, class Unop>
+OutIt transform(InIt first, InIt last, OutIt x, Unop uop);
+```
+对[first,last)中的每个迭代器`I`:
+- 执行 `uop( * I )`; 并将结果依次放入从 `x` 开始的地方
+- 要求 `uop( * I )` 不得改变 `*I` 的值
+
+模板返回值是个迭代器, 即 `x + (last-first)`, x可以和 first相等
+
+```cpp
+#include <vector>
+#include <iostream>
+#include <numeric>
+#include <list>
+#include <algorithm>
+#include <iterator>
+using namespace std;
+class CLessThen9 {
+public:
+    bool operator()( int n) { return n < 9; }
+};
+void outputSquare(int value ) { cout << value * value << " "; }
+int calculateCube(int value) { return value * value * value; }
+
+int main() {
+    const int SIZE = 10;
+    int a1[] = { 1,2,3,4,5,6,7,8,9,10 };
+    int a2[] = { 100,2,8,1,50,3,8,9,10,2 };
+    vector<int> v(a1,a1+SIZE);
+    ostream_iterator<int> output(cout," ");
+    random_shuffle(v.begin(),v.end());
+    cout << endl << "1) ";
+    copy( v.begin(),v.end(),output);
+    copy( a2,a2+SIZE,v.begin());
+    cout << endl << "2）";
+    cout << count(v.begin(),v.end(),8);
+    cout << endl << "3）";
+    cout << count_if(v.begin(),v.end(),CLessThen9());
+
+输出:
+1) 5 4 1 3 7 8 9 10 6 2
+2) 2
+3) 6
+//1) 是随机的
+cout << endl << "4) ";
+cout << * (min_element(v.begin(), v.end()));
+cout << endl << "5) ";
+cout << * (max_element(v.begin(), v.end()));
+cout << endl << "6) ";
+cout << accumulate(v.begin(), v.end(), 0); //求和
+18
+输出:
+4) 1
+5) 100
+6) 193
+cout << endl << "7) ";
+for_each(v.begin(), v.end(), outputSquare);
+vector<int> cubes(SIZE);
+transform(a1, a1+SIZE, cubes.begin(), calculateCube);
+cout << endl << "8) ";
+copy(cubes.begin(), cubes.end(), output);
+return 0;
+}
+
+输出：
+7)10000 4 64 1 2500 9 64 81 100 4
+8)1 8 27 64 125 216 343 512 729 1000
+ostream_iterator<int> output(cout ,“ ”);
+定义了一个 ostream_iterator<int> 对象,
+可以通过cout输出以 “ ”(空格) 分隔的一个个整数
+copy (v.begin(), v.end(), output);
+导致v的内容在 cout上输出
+
+template<class InIt, class OutIt>
+OutIt copy(InIt first, InIt last, OutIt x);
+本函数对每个在区间[0, last - first)中的N执行一次
+*(x+N) = *(first + N), 返回 x + N
+对于copy(v.begin(),v.end(),output);
+first 和 last 的类型是 vector<int>::const_iterator
+output 的类型是 ostream_iterator<int>
+21
+copy 函数模板(算法)
+copy 的源代码:
+template<class _II, class _OI>
+inline _OI copy(_II _F, _II _L, _OI _X)
+{
+for (; _F != _L; ++_X, ++_F)
+*_X = *_F;
+return (_X);
+}
+22
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <algorithm>
+#include <iterator>
+using namespace std;
+int main(){
+int a[4] = { 1,2,3,4 };
+My_ostream_iterator<int> oit(cout,"*");
+copy(a,a+4,oit); //输出 1*2*3*4*
+ofstream oFile("test.txt", ios::out);
+My_ostream_iterator<int> oitf(oFile,"*");
+copy(a,a+4,oitf); //向test.txt文件中写入 1*2*3*4*
+oFile.close();
+return 0;}
+// 如何编写 My_ostream_iterator? 23
+上面程序中调用语句 “copy( a,a+4,oit)” 实例化后得到copy如下:
+My_ostream_iterator<int> copy(int * _F, int * _L, My_ostream_iterator<int> _X)
+{
+for (; _F != _L; ++_X, ++_F)
+*_X = *_F;
+return (_X);
+}
+copy 的源代码:
+template<class _II, class _OI>
+inline _OI copy(_II _F, _II _L, _OI _X){
+for (; _F != _L; ++_X, ++_F)
+*_X = *_F;
+return (_X);
+}
+24
+My_ostream_iterator类应该重载 “++” 和 “*” 运算符
+“=” 也应该被重载
+#include <iterator>
+template<class T>
+class My_ostream_iterator:public iterator<output_iterator_tag, T>{
+private:
+string sep; //分隔符
+ostream & os;
+public:
+My_ostream_iterator(ostream & o, string s):sep(s), os(o){ }
+void operator ++() { }; // ++只需要有定义即可, 不需要做什么
+My_ostream_iterator & operator * () { return * this; }
+My_ostream_iterator & operator = ( const T & val)
+{ os << val << sep; return * this; }
+};
