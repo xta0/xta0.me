@@ -193,60 +193,42 @@ int main() {
     int a1[] = { 1,2,3,4,5,6,7,8,9,10 };
     int a2[] = { 100,2,8,1,50,3,8,9,10,2 };
     vector<int> v(a1,a1+SIZE);
-    ostream_iterator<int> output(cout," ");
-    random_shuffle(v.begin(),v.end());
-    cout << endl << "1) ";
-    copy( v.begin(),v.end(),output);
-    copy( a2,a2+SIZE,v.begin());
-    cout << endl << "2）";
-    cout << count(v.begin(),v.end(),8);
-    cout << endl << "3）";
-    cout << count_if(v.begin(),v.end(),CLessThen9());
-
-输出:
-1) 5 4 1 3 7 8 9 10 6 2
-2) 2
-3) 6
-//1) 是随机的
-cout << endl << "4) ";
-cout << * (min_element(v.begin(), v.end()));
-cout << endl << "5) ";
-cout << * (max_element(v.begin(), v.end()));
-cout << endl << "6) ";
-cout << accumulate(v.begin(), v.end(), 0); //求和
-18
-输出:
-4) 1
-5) 100
-6) 193
-cout << endl << "7) ";
-for_each(v.begin(), v.end(), outputSquare);
-vector<int> cubes(SIZE);
-transform(a1, a1+SIZE, cubes.begin(), calculateCube);
-cout << endl << "8) ";
-copy(cubes.begin(), cubes.end(), output);
-return 0;
+    ostream_iterator<int> output(cout," "); //输出int类型的值，每输出一个后面链接一个空格
+    random_shuffle(v.begin(),v.end()); //随机打散
+    copy( v.begin(),v.end(),output); //将v拷贝到output缓冲区输出，7 1 4 6 8 9 5 2 3 10 
+    copy( a2,a2+SIZE,v.begin()); //将a2拷贝到v中
+    cout << count(v.begin(),v.end(),8);   //等于2的个数
+    cout << count_if(v.begin(),v.end(),CLessThen9()); //小于9的个数
+    cout << * (min_element(v.begin(), v.end())); //1
+    cout << * (max_element(v.begin(), v.end())); //100
+    cout << accumulate(v.begin(), v.end(), 0); //求和,193
+    cout << endl << "7) ";
+    for_each(v.begin(), v.end(), outputSquare);
+    vector<int> cubes(SIZE);
+    transform(a1, a1+SIZE, cubes.begin(), calculateCube);
+    cout << endl << "8) ";
+    copy(cubes.begin(), cubes.end(), output);
+    return 0;
 }
+```
 
-输出：
-7)10000 4 64 1 2500 9 64 81 100 4
-8)1 8 27 64 125 216 343 512 729 1000
-ostream_iterator<int> output(cout ,“ ”);
-定义了一个 ostream_iterator<int> 对象,
-可以通过cout输出以 “ ”(空格) 分隔的一个个整数
-copy (v.begin(), v.end(), output);
+上述代码中，`ostream_iterator<int> output(cout ,“ ”);`
+定义了一个 `ostream_iterator<int>` 对象,可以通过cout输出以 “ ”(空格) 分隔的一个个整数，`copy (v.begin(), v.end(), output);`
 导致v的内容在 cout上输出
 
+- **copy**
+
+```cpp
 template<class InIt, class OutIt>
 OutIt copy(InIt first, InIt last, OutIt x);
-本函数对每个在区间[0, last - first)中的N执行一次
-*(x+N) = *(first + N), 返回 x + N
-对于copy(v.begin(),v.end(),output);
-first 和 last 的类型是 vector<int>::const_iterator
-output 的类型是 ostream_iterator<int>
-21
-copy 函数模板(算法)
-copy 的源代码:
+```
+本函数对每个在区间[0, last - first)中的N执行一次`*(x+N) = *(first + N)`, 返回 `x + N`,对于`copy(v.begin(),v.end(),output);`
+`first` 和 `last` 的类型是 `vector<int>::const_iterator`
+`output` 的类型是 `ostream_iterator<int>`
+
+copy 函数模板(算法)的源代码:
+
+```cpp
 template<class _II, class _OI>
 inline _OI copy(_II _F, _II _L, _OI _X)
 {
@@ -254,7 +236,9 @@ for (; _F != _L; ++_X, ++_F)
 *_X = *_F;
 return (_X);
 }
-22
+```
+
+```cpp
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -270,6 +254,8 @@ My_ostream_iterator<int> oitf(oFile,"*");
 copy(a,a+4,oitf); //向test.txt文件中写入 1*2*3*4*
 oFile.close();
 return 0;}
+```
+
 // 如何编写 My_ostream_iterator? 23
 上面程序中调用语句 “copy( a,a+4,oit)” 实例化后得到copy如下:
 My_ostream_iterator<int> copy(int * _F, int * _L, My_ostream_iterator<int> _X)
