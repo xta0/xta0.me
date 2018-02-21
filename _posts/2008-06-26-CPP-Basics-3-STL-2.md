@@ -36,24 +36,24 @@ mathml: true
 
 算法  | 功能
 ------------- | -------------
-find  | 求两个对象中较小的(可自定义比较器)
-min | 求两个对象中较小的(可自定义比较器)
-max | 求两个对象中较大的(可自定义比较器)
-min_element | 求区间中的最小值(可自定义比较器)
-max_element | 求区间中的最大值(可自定义比较器)
-for_each | 对区间中的每个元素都做某种操作
-count | 计算区间中等于某值的元素个数
-count_if |  计算区间中符合某种条件的元素个数
-find | 在区间中查找等于某值的元素
-find_if | 在区间中查找符合某条件的元素
-find_end | 在区间中查找另一个区间最后一次出现的位置(可自定义比较器)
-find_first_of | 在区间中查找第一个出现在另一个区间中的元素 (可自定义比较器)
-adjacent_find | 在区间中寻找第一次出现连续两个相等元素的位置(可自定义比较器)
-search | 在区间中查找另一个区间第一次出现的位置(可自定义比较器)
-search_n | 在区间中查找第一次出现等于某值的连续n个元素(可自定义比较器)
-equal | 判断两区间是否相等(可自定义比较器)
-mismatch | 逐个比较两个区间的元素，返回第一次发生不相等的两个元素的位置(可自定义比较器)
-lexicographical_compare | 按字典序比较两个区间的大小(可自定义比较器)
+`find` | 求两个对象中较小的(可自定义比较器)
+`min` | 求两个对象中较小的(可自定义比较器)
+`max` | 求两个对象中较大的(可自定义比较器)
+`min_element` | 求区间中的最小值(可自定义比较器)
+`max_element` | 求区间中的最大值(可自定义比较器)
+`for_each` | 对区间中的每个元素都做某种操作
+`count` | 计算区间中等于某值的元素个数
+`count_if` |  计算区间中符合某种条件的元素个数
+`find` | 在区间中查找等于某值的元素
+`find_if` | 在区间中查找符合某条件的元素
+`find_end` | 在区间中查找另一个区间最后一次出现的位置(可自定义比较器)
+`find_first_of` | 在区间中查找第一个出现在另一个区间中的元素 (可自定义比较器)
+`adjacent_find` | 在区间中寻找第一次出现连续两个相等元素的位置(可自定义比较器)
+`search` | 在区间中查找另一个区间第一次出现的位置(可自定义比较器)
+`search_n` | 在区间中查找第一次出现等于某值的连续n个元素(可自定义比较器)
+`equal` | 判断两区间是否相等(可自定义比较器)
+`mismatch` | 逐个比较两个区间的元素，返回第一次发生不相等的两个元素的位置(可自定义比较器)
+`lexicographical_compare` | 按字典序比较两个区间的大小(可自定义比较器)
 
 - **find**
 
@@ -205,7 +205,7 @@ int main() {
     cout << endl << "7) ";
     for_each(v.begin(), v.end(), outputSquare);
     vector<int> cubes(SIZE);
-    transform(a1, a1+SIZE, cubes.begin(), calculateCube);
+    transform(a1, a1+SIZE, cubes.begin(), calculateCube); //对a中的元素应用calculateCube，结果放到cubes数组中
     cout << endl << "8) ";
     copy(cubes.begin(), cubes.end(), output);
     return 0;
@@ -232,58 +232,162 @@ copy 函数模板(算法)的源代码:
 template<class _II, class _OI>
 inline _OI copy(_II _F, _II _L, _OI _X)
 {
-for (; _F != _L; ++_X, ++_F)
-*_X = *_F;
-return (_X);
+    for (; _F != _L; ++_X, ++_F)
+    *_X = *_F;
+    return (_X);
 }
 ```
+
+### 删除算法
+
+- 删除一个容器里的某些元素，不会使容器里的元素减少
+- 删除操作
+    - 将所有应该被删除的元素看做空位子  
+    - 用留下的元素从后往前移, 依次去填空位子
+    - 元素往前移后, 它原来的位置也就算是空位子，也应由后面的留下的元素来填上
+    - 最后, 没有被填上的空位子, 维持其原来的值不变
+- 删除算法不应作用于关联容器 
+- 算法复杂度都是`O(n)`
+
+- **unique**
 
 ```cpp
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <algorithm>
-#include <iterator>
-using namespace std;
-int main(){
-int a[4] = { 1,2,3,4 };
-My_ostream_iterator<int> oit(cout,"*");
-copy(a,a+4,oit); //输出 1*2*3*4*
-ofstream oFile("test.txt", ios::out);
-My_ostream_iterator<int> oitf(oFile,"*");
-copy(a,a+4,oitf); //向test.txt文件中写入 1*2*3*4*
-oFile.close();
-return 0;}
+template<class FwdIt>
+FwdIt unique(FwdIt first, FwdIt last); //用 == 比较是否等
+
+template<class FwdIt, class Pred>
+FwdIt unique(FwdIt first, FwdIt last, Pred pr); //用 pr (x,y)为 true说明x和y相等
 ```
 
-// 如何编写 My_ostream_iterator? 23
-上面程序中调用语句 “copy( a,a+4,oit)” 实例化后得到copy如下:
-My_ostream_iterator<int> copy(int * _F, int * _L, My_ostream_iterator<int> _X)
-{
-for (; _F != _L; ++_X, ++_F)
-*_X = *_F;
-return (_X);
+对`[first,last)` 这个序列中连续相等的元素, 只留下第一个返回值是迭代器, 指向元素删除后的区间的最后一个元素的后面
+
+```cpp
+int main(){
+int a[5] = { 1,2,3,2,5 };
+int b[6] = { 1,2,3,2,5,6 };
+ostream_iterator<int> oit(cout,",");
+int * p = remove(a,a+5,2);
+cout << "1) "; copy(a,a+5,oit); cout << endl; //输出 1) 1,3,5,2,5,
+cout << "2) " << p - a << endl; //输出 2) 3
+vector<int> v(b,b+6);
+remove(v.begin(), v.end(),2);
+cout << "3) "; copy(v.begin(), v.end(), oit); cout << endl;
+//输出 3) 1,3,5,6,5,6,
+cout << "4) "; cout << v.size() << endl;
+//v中的元素没有减少,输出 4) 6
+return 0;
 }
-copy 的源代码:
-template<class _II, class _OI>
-inline _OI copy(_II _F, _II _L, _OI _X){
-for (; _F != _L; ++_X, ++_F)
-*_X = *_F;
-return (_X);
-}
-24
-My_ostream_iterator类应该重载 “++” 和 “*” 运算符
-“=” 也应该被重载
-#include <iterator>
-template<class T>
-class My_ostream_iterator:public iterator<output_iterator_tag, T>{
-private:
-string sep; //分隔符
-ostream & os;
-public:
-My_ostream_iterator(ostream & o, string s):sep(s), os(o){ }
-void operator ++() { }; // ++只需要有定义即可, 不需要做什么
-My_ostream_iterator & operator * () { return * this; }
-My_ostream_iterator & operator = ( const T & val)
-{ os << val << sep; return * this; }
-};
+```
+
+
+### 变序算法
+
+- 变序算法改变容器中元素的顺序，但是不改变元素的值
+- 变序算法不适用于关联容器
+- 算法复杂度都是`O(n)`的
+
+算法名称 | 功 能
+------------- | -------------
+`reverse` | 颠倒区间的前后次序
+`reverse_copy` |把一个区间颠倒后的结果拷贝到另一个区间，源区间不变
+`rotate`| 将区间进行循环左移
+`rotate_copy`| 将区间以首尾相接的形式进行旋转后的结果，拷贝到另一个区间，源区间不变
+`next_permutation`  | 将区间改为下一个排列(可自定义比较器)
+`prev_permutation` | 将区间改为上一个排列(可自定义比较器)
+`random_shuffle` | 随机打乱区间内元素的顺序
+`partition` | 把区间内满足某个条件的元素移到前面，不满足该条件的移到后面
+`stable_patition` | 把区间内满足某个条件的元素移到前面不满足该条件的移到后面，而对这两部分元素, 分别保持它们原来的先后次序不变
+
+- **random_shuffle**
+
+```cpp
+template<class RanIt>
+void random_shuffle(RanIt first, RanIt last);
+```
+随机打乱`[first,last)`中的元素, 适用于能随机访问的容器
+
+- **reverse**
+
+```cpp
+template<class BidIt>
+void reverse(BidIt first, BidIt last);
+```
+颠倒区间[first,last)顺序
+
+- **next_permutation**
+
+```cpp
+template<class InIt>
+bool next_permutaion (Init first,Init last);
+```
+求数组的下一个排列，比如当前数组顺序是123，可依次输出其余的排列，132，213，231，312，321
+
+### 排序算法
+
+- 不适用于关联容器和list 
+- 排序算法需要随机访问迭代器的支持
+- 比前面的变序算法复杂度更高, 一般是O(nlog(n))
+
+
+算法名称 | 功 能
+------------- | -------------
+`sort` |  将区间从小到大排序(可自定义比较器)
+`stable_sort` | 将区间从小到大排序并保持相等元素间的相对次序(可自定义比较器)
+`partial_sort` | 对区间部分排序, 直到最小的n个元素就位(可自定义比较器)
+`partial_sort_copy`| 将区间前n个元素的排序结果拷贝到别处源区间不变(可自定义比较器)
+`nth_element` |  对区间部分排序, 使得第n小的元素(n从0开始算)就位, 而且比它小的都在它前面, 比它大的都在它后面(可自定义比较器)
+`make_heap` |  使区间成为一个“堆”(可自定义比较器)
+`push_heap` | 将元素加入一个是“堆”区间(可自定义比较器)
+`pop_heap`| 从“堆”区间删除堆顶元素(可自定义比较器)
+`sort_heap`| 将一个“堆”区间进行排序，排序结束后，该区间就是普通的有序区间，不再是 “堆”了(可自定义比较器)
+
+- **sort**(快速排序)
+
+```cpp
+template<class RanIt>
+void sort(RanIt first, RanIt last);//升序排序，判断x<y
+template<class RanIt, class Pred>
+void sort(RanIt first, RanIt last, Pred pr);//判断x是否应比y靠前, 就看 pr(x,y) 是否为true
+```
+
+- 实际上是快速排序, 时间复杂度 `O(n*log(n))`
+- 平均性能最优。但是最坏的情况下, 性能可能非常差，如果要保证 “最坏情况下” 的性能, 那么可以使用`stable_sort`
+    - `stable_sort`实际上是归并排序, 特点是能保持相等元素之间的
+先后次序
+    - 在有足够存储空间的情况下, 复杂度为 `n * log(n)`, 否则复杂度为 `n * log(n) * log(n)`
+    - `stable_sort` 用法和 `sort`相同。
+- 排序算法要求随机存取迭代器的支持, 所以list不能使用，要使用`list::sort`
+
+###有序区间算法
+
+- 要求所操作的区间是已经从小到大排好序的
+- 需要随机访问迭代器的支持
+- 有序区间算法不能用于关联容器和list
+
+算法名称 | 功 能
+------------- | -------------
+`binary_search`| 判断区间中是否包含某个元素，log(n)
+`includes`| 判断是否一个区间中的每个元素，都在另一个区间中
+`lower_bound`| 查找最后一个不小于某值的元素的位置，log(n)
+`upper_bound` |查找第一个大于某值的元素的位置，log(n)
+`equal_range` |同时获取lower_bound和upper_bound，log(n)
+`merge` |合并两个有序区间到第三个区间
+`set_union`| 将两个有序区间的**并集**拷贝到第三个区间
+`set_intersection`| 将两个有序区间的**交集**拷贝到第三个区间
+`set_difference`| 将两个有序区间的**差集**拷贝到第三个区间
+`set_symmetric_difference`| 将两个有序区间的**对称差**拷贝到第三个区间
+`inplace_merge`| 将两个连续的有序区间原地合并为一个有序区间
+
+- **binary_search**(折半查找)
+
+要求容器已经有序且支持随机访问迭代器, 返回是否找到
+
+```cpp
+template<class FwdIt, class T>
+bool binary_search(FwdIt first, FwdIt last, const T& val); //比较两个元素x, y 大小时, 看 x < y
+
+template<class FwdIt, class T, class Pred>
+bool binary_search(FwdIt first, FwdIt last, const T& val, Pred pr);
+//比较两个元素x, y 大小时, 若 pr(x,y) 为true, 则
+认为x小于y
+```
