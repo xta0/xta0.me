@@ -391,3 +391,45 @@ bool binary_search(FwdIt first, FwdIt last, const T& val, Pred pr);
 //比较两个元素x, y 大小时, 若 pr(x,y) 为true, 则
 认为x小于y
 ```
+
+## Bitset
+
+- 定义
+
+```cpp
+template<size_t N>
+class bitset{};
+```
+实际使用的时候, N是个整型常数如:`bitset<40> bst;`，其中`bst`是一个由40位组成的对象, 用`bitset`的函数可以方便地访问任何一位。
+
+> 注意: 第0位在最右边
+
+- 成员函数
+    - `bitset<N>& operator&=(const bitset<N>& rhs);`
+    - `bitset<N>& operator|=(const bitset<N>& rhs);`
+    - `bitset<N>& operator^=(const bitset<N>& rhs);`
+    - `bitset<N>& operator<<=(size_t num);`
+    - `bitset<N>& operator>>=(size_t num);`
+    - `bitset<N>& set(); //全部设成1`
+    - `bitset<N>& set(size_t pos, bool val = true); //设置某位`
+    - `bitset<N>& reset(); //全部设成0`
+    - `bitset<N>& reset(size_t pos); //某位设成0`
+    - `bitset<N>& flip(); //全部翻转`
+    - `bitset<N>& flip(size_t pos); //翻转某`
+    - `reference operator[](size_t pos); //返回对某位的引用`
+    - `bool operator[](size_t pos) const; //判断某位是否为1`
+    - `reference at(size_t pos);`
+    - `bool at(size_t pos) const;`
+    - `unsigned long to_ulong() const; //转换成整数`
+    - `string to_string() const; //转换成字符串`
+    - `size_t count() const; //计算1的个数`
+    - `size_t size() const;`
+    - `bool operator==(const bitset<N>& rhs) const;`
+    - `bool operator!=(const bitset<N>& rhs) const;`
+    - `bool test(size_t pos) const; //测试某位是否为 1`
+    - `bool any() const; //是否有某位为1`
+    - `bool none() const; //是否全部为0`
+    - `bitset<N> operator<<(size_t pos) const;`
+    - `bitset<N> operator>>(size_t pos) const;`
+    - `bitset<N> operator~();`
+    - `static const size_t bitset_size = N;`
