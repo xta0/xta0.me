@@ -27,3 +27,10 @@ title: Stanford Algorithm Course-1
         - worst - case
         - asymptotic analysis
     - Analysis generalizes to "Master Method"
+
+- Merge Sort Pseudocode
+
+```
+C = out
+
+```
