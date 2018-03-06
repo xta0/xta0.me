@@ -31,6 +31,8 @@ title: Stanford Algorithm Course-1
 - Merge Sort Pseudocode
 
 ```
-C = out
+C = output [lenght = n]
+A = 1st sorted array[n/2]
+B = 2nd sorted array[n/2]
 
 ```

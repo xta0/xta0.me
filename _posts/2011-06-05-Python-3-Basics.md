@@ -7,6 +7,7 @@ layout: post
 
 ### py2 vs py3
 
+
 ### Variable and Printing
 
 - **print**
@@ -136,3 +137,36 @@ d['k2'] #[0,1,2]
 d['k4']="abc"
 keys = d.keys() 
 ```
+
+### Tuples
+
+- Immutable，不能修改tuple中的元素
+- Tuple uses parenthesis: `(1,2,3)`
+- Only two methods
+    - `index`
+    - `count`
+
+```python
+t=(1,2,3)
+type(t) #tuple
+t=('one',2)
+t[0] #one
+t[1] 2 #2
+t=('a','a',2)
+t.count('a') #2
+t.index('a') #0
+t[0]='NEW' #TypeError
+```
+
+### Sets
+
+- Unordered collections of unique elements
+
+```python
+myset = set()
+myset.add(1)
+myset.add(2)
+mylist = [1,2,1,2]
+newset = set(mylist) #{1,2}
+```
+
