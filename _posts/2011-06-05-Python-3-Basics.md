@@ -50,12 +50,33 @@ print("Is it greater or equal?", 5 >= -2) #Is it greater or equal? True
     ```
     - 使用`f-string`
 
-        ```py
-        name="tao"
-        age = 33;
-        #使用fstring
-        print(f"{name} is {age} years old ") #my name is tao
-            ```
+    ```py
+    name="tao"
+    age = 33;
+    #使用fstring
+    print(f"{name} is {age} years old ") #my name is tao
+    ```
+- 转义字符
+
+Escape | What it does.
+------------- | -------------
+`\\` |  Backslash (`\`)
+`\'` | Single-quote (`’`)
+`\"` | Double-quote (`”`)
+`\a` | ASCII bell (BEL)
+`\b` | ASCII backspace (BS)
+`\f` | ASCII formfeed (FF)
+`\n` | ASCII linefeed (LF)
+`\N` | {name} Character named name in the Unicode database (Unicode only)
+`\r` | Carriage Return (CR)
+`\t` | Horizontal Tab (TAB)
+`\uxxxx` | Character with 16-bit hex value `xxxx`
+`\Uxxxxxxxx` | Character with 32-bit hex value `xxxxxxxx`
+`\v` | ASCII vertical tab (VT)
+`\ooo` | Character with octal value `ooo`
+`\xhh` | Character with hex value `hh`
+
+
 ### Datastructures
 
 - **String**
@@ -142,6 +163,10 @@ print("Is it greater or equal?", 5 >= -2) #Is it greater or equal? True
     mylist3 = [x for x in range(0,11) if x%2==1]#[1, 3, 5, 7, 9]
     mylist4 = [x if x%2 == 0 else 'ODD' for x in range(0,11)] #[0, 'ODD', 2, 'ODD', 4, 'ODD', 6, 'ODD', 8, 'ODD', 10]
     mylist5 = [x*y for x in [2,4,6] for y in [1,10,100]] #[2, 20, 200, 4, 40, 400, 6, 60, 600]
+
+    ##返回一个参数为偶数的数组
+    def myfunc(*args):
+        return [x for x in args if x%2 == 0]
     ```
 
 - **Dictionary**
@@ -338,4 +363,54 @@ else:
     ```
 
 ### Functions
+
+- 定义
+
+```python
+def name_of_function(args): #注意冒号
+    #some_code 
+    print("Hello")  #注意tab
+```
+- 可变参数
+    - `*args`: 将参数打包成tuple
+
+    ```python
+    def myfunc(*args): #可变参数，args是tuple
+        return sum(args)*0.05
+    myfunc(12,2,3)
+    ```
+    - `**kwargs`: 将参数打包成dictionary
+
+    ```python
+    def myfunc(**kwargs):
+        print(kwargs) #可变参数，kwargs是map
+        if 'fruit' in kwargs: #kargs中是否有key为fruit的参数
+            print(kwargs['fruit'])
+        else
+            print('I did not find any fruit')
+
+    myfunc(fruit='apple', veggie='lettuce')
+    ```
+    - 两者可以一起使用
+    
+    ```python
+    def myfunc(*args, **kwargs):
+        print(args)
+        print(kwargs)
+    myfunc(1,2,3,fruit='apple',veggie='lettuce')
+    ```
+### Lambda Expressions
+
+- `map/filter`: 第一个参数是函数对象，第二个参数是数组
+
+```python
+def square(num):
+    return num*num
+def check_even(num):
+    return num%2 == 0
+
+list1 = [12,3,3]
+list2 = map(square,list1)
+list3 = filter(check_even,list1)
+```
 
