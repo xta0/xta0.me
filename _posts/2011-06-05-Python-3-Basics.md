@@ -413,4 +413,35 @@ list1 = [12,3,3]
 list2 = map(square,list1)
 list3 = filter(check_even,list1)
 ```
+- `lamda expression`
+
+```python
+square = lambda num: num**2;
+square(3)
+
+mynums=[1,2,3,4]
+list(map(lambda num:num**2,mynums))
+
+```
+
+### OOP
+
+- `class`
+
+```python
+class NameOfClass(): #注意括号和冒号
+    def __init__(self,param1, param2):
+        self.param1 = param1
+        self.param2 = param2
+    def some_method(self):
+        print(self.param1)
+```
+```python
+class Dog():
+    def __init__(self,breed):
+        self.breed = breed
+
+my_dog = Dog('Lab')
+type(my_dog)  #<class '__main__.Dog'>
+```
 
