@@ -430,16 +430,17 @@ list(map(lambda num:num**2,mynums))
 
 ```python
 class NameOfClass(): #注意括号和冒号
+    instance_variable = some_value #共有成员
     def __init__(self,param1, param2):
-        self.param1 = param1
+        self.param1 = param1 #定义私有成员
         self.param2 = param2
-    def some_method(self):
+    def some_method(self): #成员函数
         print(self.param1)
 
 class Dog():
-    species="mammal" #定义成员变量
+    species="mammal" #定义共有成员变量
     def __init__(self,breed):
-        self.name = breed
+        self.name = breed #定义私有成员变量
     def bark(self): #定义成员函数
         print("WOOF") 
 
@@ -449,7 +450,7 @@ print(my_dog.name)
 print(my_dog.species)
 ```
 
-- 继承与多态
+- 继承
 
 ```python
 class Animal():
@@ -466,5 +467,155 @@ class Dog(Animal): #继承
         print("Dog Created")
     def who_am_i(self): #override
         print("I am a dog")
+```
 
+- 抽象类
+
+```python
+class Animal():
+    def __init__(self,name):
+        self.name = name
+    def speak(self):
+        raise NotImplementedError("Subclass must implement this abstract method")
+
+class Dog(Animal):
+    def speak(self):
+        return self.name + "say WOOF!"
+```
+
+- 特殊API
+
+```python
+class Book():
+    def __init__(self,title,author):
+        self.title = title
+        self.author = author
+        self.pages = 100
+    def __str__(self): #自定义类描述
+        return f"{self.title} by {self.author}"
+    def __len__(self): #len()使用
+        return self.pages
+    def __del__(self):
+        print("A book object has been deleted")
+
+b = Book('Python3','Jose')
+print(b) #Python3 by Jose
+len(b) #100
+del b #A book object has been deleted
+```
+
+### Errors and Exception
+
+- Three keywords
+    - `try`: block of code might lead to an error
+    - `except`:block of code will be executed in case there is an error in `try` block
+    - `finally`: A final block of code to be executed, regardless of an error
+
+```python
+def ask_for_int():
+    while true:
+        try:
+            result = int(input("Please provide number: "))
+        except:
+            print("Whoops! this is not a number!)
+            continue
+        else:
+            print(result)
+            break
+        finally:
+            print("END")
+```
+
+- `except`可以捕获具体的错误类型
+
+```python
+try:
+    f = open('testfile','w')
+    f.write("Write a test line")
+except TypeError: #捕获具体错误类型
+    print("There was a type error!")
+except OSError: #捕获具体错误类型
+    print("You have an OS Error")
+finally:
+    print("End)
+
+```
+
+### Unit Test
+
+- `pylint`: 静态语法检查
+    - `pip install pylint`
+    - `> pylint xx.py`
+
+- `unittest`: built-in library，自带的单元测试库
+
+```python
+
+#cap.py - file to be tested
+def cap_text(str):
+    return str.capitalize()
+def title_text(str):
+    return str.title()
+
+#test.py - Unit test file
+import unitest
+import cap #file name
+
+class TestCap(unittest.TestCase):
+    def test_one_word(self):
+            text = 'python'
+            result = cap.cap_text(text)
+            self.assertEqual(result,'Python')
+    def test_multiple_words(self):
+            text = 'monty python'
+            result = title_text(text)
+            self.assertEqual(result,'Monty Python')
+    
+if __name == '__main__':
+        unittest.main()
+```
+
+### Modules and Packages
+
+- `PyPI` python的包管理系统，类型`RubyGem`,`NPM`
+    - `pip3 install request`
+- 文件引用
+    
+```python
+### mymodule.py
+def my_func():
+    print("from my_module")
+
+### other files
+from mymodule import my_func
+my_func()
+```
+- 文件夹(package)引用
+
+```
+└── package
+├── __init__.py
+├── main_script.py
+└── subpackage
+    ├── __init__.py
+    └── sub_script.py
+```
+假设包结构如上，注意包内要包含`__init__.py`
+
+```python
+from package import main_script #引用包内文件
+from package.subpackage import sub_script #引用包内文件
+
+main_script.func_from_mainsript() #调用main_script的方法
+sub_script.func_from_subsript() #调用sub_script的方法
+```
+
+- `__main__`
+
+python没有`main`函数，当执行`python xx.py`时，在`xx.py`内有一个全局变量`__name__`被赋值为`"__main__"`表示这个文件是被直接运行的文件，也就是相当于`main`函数所在的文件。在程序里可以做如下判断:
+
+```python
+if __name == '__main__':
+    #当被直接运行时，需要执行的代码
+    some_func()
 ```
