@@ -426,7 +426,7 @@ list(map(lambda num:num**2,mynums))
 
 ### OOP
 
-- `class`
+- `class`，成员变量，成员函数
 
 ```python
 class NameOfClass(): #注意括号和冒号
@@ -435,13 +435,36 @@ class NameOfClass(): #注意括号和冒号
         self.param2 = param2
     def some_method(self):
         print(self.param1)
-```
-```python
+
 class Dog():
+    species="mammal" #定义成员变量
     def __init__(self,breed):
-        self.breed = breed
+        self.name = breed
+    def bark(self): #定义成员函数
+        print("WOOF") 
 
-my_dog = Dog('Lab')
+my_dog = Dog(breed='Lab')
 type(my_dog)  #<class '__main__.Dog'>
+print(my_dog.name)
+print(my_dog.species)
 ```
 
+- 继承与多态
+
+```python
+class Animal():
+    def __init__(self):
+        print("Animal created")
+    def who_am_i(self):
+        print("I am an animal")
+    def eat(self):
+        print("I am eating")
+
+class Dog(Animal): #继承
+    def __init__(self):
+        Animal.__init__(self) #调用父类构造
+        print("Dog Created")
+    def who_am_i(self): #override
+        print("I am a dog")
+
+```
