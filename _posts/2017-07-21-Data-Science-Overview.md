@@ -79,3 +79,68 @@ of Progress](https://arxiv.org/pdf/math/0606441.pdf)
         - 结果的评估，哪些预测结果是合理的，哪些不合理
     - Communication
         - 公布结果
+
+### The outputs of a data science experiment
+
+- Reports/Presentations
+    - Clearly written
+    - Narrative
+    - Concise conclusions
+    - Omit the unnecessary
+    - Reproducible result
+- Web pages and apps
+    - Easy to use
+    - Documentation
+    - Code commented
+    - Version control
+
+### Defining Success in data science
+
+Defining success is a crucial part of managing a data science experiment. Of course, <mark>success is often context specific</mark>. However, some aspects of success are general enough to merit discussion. My list of hallmarks of success includes:
+
+1. <mark>New knowledge</mark> is created.
+2. Decisions or policies are made based on the outcome of the experiment.
+3. A report, presentation or app with impact is created.
+4. It is learned that the data can't answer the question being asked of it.
+
+> 通过研究证明所提出的问题是无法用数据解决的，这也算是一种成功吧
+
+Some more <mark>negative outcomes include</mark>: decisions being made that disregard clear evidence from the data, equivocal results that do not shed light in one direction or another, uncertainty prevents new knowledge from being created.
+
+Let's discuss some of the successful outcomes first.
+
+New knowledge seems ideal to me (especially since I'm an academic). However, <mark>new knowledge doesn't necessarily mean that it's important</mark>. If it produces actionable decisions or policies, that's even better. (Wouldn't it be great if there was an evidence-based policy like the evidence-based medicine movement that has transformed medicine.) That our data science products have great (positive) impact is of course ideal. Creating reusable code or apps is great way to increase the impact of a project.
+
+Finally, the last point is perhaps the most controversial. I view it as a success if we can show that the data can't answer the questions being asked. I am reminded of a friend who told a story of the company he worked at. They hired many expensive prediction consultants to help use their data to inform pricing. However, the prediction results weren't helping. They were able to prove that the data couldn't answer the hypothesis under study. There was too much noise and the measurements just weren't accurately measuring what was needed. Sure, the result wasn't optimal, as they still needed to know how to price things, but it did save money on consultants. I have since heard this story repeated nearly identically by friends in different industries.
+
+### Data Scientist Toolbox
+
+- 数据存储
+    - Database
+    - 分布式存储
+- 编程语言
+    - R
+    - Python
+- 平台
+    - AWS
+    - Hadoop
+    - Spark
+- 沟通工具
+    - Slack
+- 文档
+    - iPython Notebook
+    - R markdown
+- 数据产品化
+    - [Shiny](https://shiny.rstudio.com/)
+
+### Sperating Hype from Value
+
+> 对热门技术，避免盲目的跟风炒作，搞清楚要解决的问题和现实情况
+
+- What is the question you are trying to answer with data?
+- Do you have the data to answer that question?
+- If you could answer the question? Could you use the answer?
+- Resources
+    - [THE END OF THEORY: THE DATA DELUGE MAKES THE SCIENTIFIC METHOD OBSOLETE](https://www.wired.com/2008/06/pb-theory/)
+    - [NETFLIX NEVER USED ITS $1 MILLION ALGORITHM DUE TO ENGINEERING COSTS](https://www.wired.com/2012/04/netflix-prize-costs/)
+    - [Google Flu Trends gets it wrong three years running](https://www.newscientist.com/article/dn25217-google-flu-trends-gets-it-wrong-three-years-running/)
