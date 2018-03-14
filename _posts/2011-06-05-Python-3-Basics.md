@@ -399,6 +399,102 @@ def name_of_function(args): #注意冒号
         print(kwargs)
     myfunc(1,2,3,fruit='apple',veggie='lettuce')
     ```
+- 函数性
+    - first-class object
+    
+    ```python
+    def hello():
+        return 1
+    greet = hello
+    greet() #1
+
+    del hello 
+    greet() #1, 删除hello，greet仍然有效
+    ```
+    - 函数对象做函数参数
+
+    ```python
+    def func1:
+        return 1
+    def func2(f):
+        f()
+    func2(func1)
+    ```
+    - 函数对象做范数返回值
+
+    ```python
+    def func():
+        def inner_func():
+            return 'inner_func() called!'
+        return inner_func
+
+    func()() #'inner_func() called!'
+    ```
+
+- Nested Function
+
+```python
+def hello(name="Jason"):
+    print('The hello() function has been executed!')
+
+    #nested function
+    def greet(): #greet()的作用域仅在hello内部
+        return '\t this is the greet() func inside hello!'
+    def welcome():
+        return '\t this is the welcome() func inside hello!'
+    
+    if name == 'Jason':
+        return greet
+    else:
+        return welcome
+
+new_func = hello('Jason')
+print(new_func) #this is the greet() func inside hello!
+```
+
+- Decorators
+    - 在不修改原函数的前提下，对已有函数进行扩展
+    - 在需要扩展的函数上面，使用`@`符号标记
+
+    ```python
+    def some_decorator(some_func)
+        #some code
+        some_func()
+        #some code 
+        return some_func            
+        
+    @some_decorator
+    def simple_func():
+        #DO something
+        return something
+    ```
+    - Decorator的实现
+
+    ```python
+    def new_decorator(orig_func):
+        def wrap_func():
+            #some code before execute  orig_func
+            print('before orig_func')
+            orig_func()
+            #some code after execute orig_func
+            print('after orig_func')
+        return wrap_func
+    
+    def fun_needs_decorator():
+        print("fun needs decorator")
+    
+    new_func = new_decorator(fun_needs_decorator)
+    new_func()
+
+    #使用 @符号
+    @new_decorator
+    def fun_needs_decorator():
+        print("fun needs decorator")
+    
+    fun_needs_decorator()#得到相同结果
+    ```
+
+
 ### Lambda Expressions
 
 - `map/filter`: 第一个参数是函数对象，第二个参数是数组
@@ -421,6 +517,10 @@ square(3)
 
 mynums=[1,2,3,4]
 list(map(lambda num:num**2,mynums))
+
+```
+
+- 使用函数对象
 
 ```
 
@@ -619,3 +719,4 @@ if __name == '__main__':
     #当被直接运行时，需要执行的代码
     some_func()
 ```
+
