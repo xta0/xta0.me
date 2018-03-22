@@ -17,7 +17,6 @@ a="abc"
 b="123"
 print(a+b)
 ```
-
 - 使用`,`输出空格
 
 ```py
@@ -69,7 +68,33 @@ Escape | What it does.
 `\xhh` | Character with hex value `hh`
 
 
+### Primary Types
+
+- `locals()/globals()`
+
+```py
+#查看全局变量
+print(globals())
+#{'__name__': '__main__', '__doc__': None, '__package__': None, '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': None, '__annotations__': {}, '__builtins__': <module 'builtins' (built-in)>}
+
+def func:
+    a = 'some text'
+    b = 100
+    #查看函数内的局部变量
+    print(locals()) #{'b': 1, 'a': 's'}
+```
+
+
 ### Datastructures
+
+- **Numbers**   
+    - 进制转换
+        - 十六进制：`hex(12)` 
+        - 二进制：`bin(1234)`
+    - 内置数值运算
+        - 次方:`pow(2,4)`等价`2**4`
+        - 绝对值: `abs(-2)`
+        - 四舍五入：`round(3.9) #4.0`
 
 - **String**
     - 支持`[]`索引
@@ -108,6 +133,22 @@ Escape | What it does.
         a[1:-1:2] #el,起始1，终点-1，步长2
         a[::-1]#olleh, 反转字符串
         ```
+    - 正则表达
+        
+        ```python
+        s = 'hello'
+        s.split('e') #['h','llo']
+        s.partition('l') #('he', 'l', 'lo')
+        ```
+    - 其它API
+        - 首字母大写: `s.capitalize` 
+        - 大小写转换: `s.lower()`,`s.upper()` 
+        - 字符出现次数:`s.count('o')`
+        - 字符出现位置: `s.find('o')`
+        - 检查字符是否是数字或字母: `s.isalum()`
+        - 检查字符是否是字母:`s.isalpha()`
+        - 开头结尾：`s.startswith(str)`/`s.endswith(str)`
+
 - **list**
     - 创建list
 
@@ -116,37 +157,42 @@ Escape | What it does.
     mylist[2] #three
     len(mylist) #长度
     mylist[1] = 10
+    mylist.index(2) #1
     ```
     - 追加元素
 
     ```python
-    list=['one','two','three']
-    list.append('four') #['one', 'two', 'three', 'four']
+    list1=['one','two']
+    list1.append('three') #['one', 'two', 'three']
+    list1.append([1,2]) #['one', 'two', 'three', [1, 2]]
+    list1.insert(2,'str') #['one', 'two', 'str', 'three',[1, 2]]
     ```
-
     - 删除元素
 
     ```python
-    val = list.pop() #four 默认删除尾部
+    val = list.pop() #默认删除尾部
     val = list.pop(-1) #删除尾部
-    val = list.pop(2) # three
+    val = list.pop(2) # 删除index=2的元素
+    list1 = [1,2,2,3,4]
+    list1.remove(2) #删除数组中第一个2
     ```
-
     - 拼接list
 
     ```python
     list1=[1,2,3]
     list2=[4,5]
-    list = list1 + list2 #[1, 2, 3, 4, 5]
+    list3 = list1 + list2 #[1, 2, 3, 4, 5]
+    list1.extend(list2) #等价于list1 = list1+list2
     ```
-    - `max` , `min`
+    - 其它API
 
     ```python
-    list=[1,2,3]
+    list1=[1,2,3]
     max_num = max(list)
     min_num = min(list)
+    list1.revers()
+    list1.sort()
     ```
-
     - functional API
 
     ```python
@@ -169,6 +215,15 @@ Escape | What it does.
     d['k2'] #[0,1,2]
     d['k4']="abc"
     keys = d.keys() 
+    ```
+
+    - functional API
+
+    ```python
+    #{key:value | 规则}
+    d = {x:x**2 for x in range(10)}#{0: 0, 1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
+    #{key:value | zip(k,v)}
+    d = {k:v**2 for k,v in zip(['a','b'],range(2))} #{'a': 0, 'b': 1}
     ```
 
 -  **Tuples**
@@ -195,10 +250,37 @@ Escape | What it does.
 
     ```python
     myset = set()
+    #添加
     myset.add(1)
     myset.add(2)
-    mylist = [1,2,1,2]
-    newset = set(mylist) #{1,2}
+    #删除
+    myset.discard(2)
+    #清空
+    myset.clear() 
+    # create set using array
+    nset = set([1,2,1,2]) #{1,2}
+    #copy
+    cset = nset.copy()
+    #求差集
+    s1 = {1,2,3}
+    s2 = {2,3,4,5}
+    s2.difference(s1) #{2, 3, 4, 5}
+    s2.difference_update(s1) #s2更新为二者差集{2, 3, 4, 5}
+
+    #求交集
+    s1 = {1,2,3}
+    s2 = {1,2,4}
+    s1.intersection(s2) #{1,2}
+    s3 = {5,6}
+    s1.disjoint(s3) #无交集返回True，有交集返回False
+
+    #父集子集
+    s1.issubset(s2)
+    s1.issupperset(s1)
+
+    #求并集
+    s1.union(s2)
+    s1.update(s2) #将s1更新为s1,s2的并集
     ```
 
 - **File**
@@ -444,47 +526,52 @@ new_func = hello('Jason')
 print(new_func) #this is the greet() func inside hello!
 ```
 
-- Decorators
-    - 在不修改原函数的前提下，对已有函数进行扩展
-    - 在需要扩展的函数上面，使用`@`符号标记
+### Decorators
 
-    ```python
-    def some_decorator(some_func)
+- 在不修改原函数的前提下，对已有函数进行扩展后，返回一个新的函数给原函数
+- 在需要扩展的函数上面，使用`@`符号标记
+
+```python
+def some_decorator(some_func)    
+    def wrap_func()
         #some code
         some_func()
         #some code 
-        return some_func            
-        
-    @some_decorator
-    def simple_func():
-        #DO something
-        return something
-    ```
-    - Decorator的实现
+    return wrap_func            
+    
+#通过@修饰，将simple_func传递给some_decorator函数，some_decorator将wrap_func返回给simple_func，这样在后面调用simple_func时就相当于调用了wrap_func()
+@some_decorator 
+def simple_func():
+    #DO something
+    return something
+```
 
-    ```python
-    def new_decorator(orig_func):
-        def wrap_func():
-            #some code before execute  orig_func
-            print('before orig_func')
-            orig_func()
-            #some code after execute orig_func
-            print('after orig_func')
-        return wrap_func
-    
-    def fun_needs_decorator():
-        print("fun needs decorator")
-    
-    new_func = new_decorator(fun_needs_decorator)
-    new_func()
 
-    #使用 @符号
-    @new_decorator
-    def fun_needs_decorator():
-        print("fun needs decorator")
-    
-    fun_needs_decorator()#得到相同结果
-    ```
+- Decorator的实现
+
+```python
+def new_decorator(orig_func):
+    def wrap_func():
+        #some code before execute  orig_func
+        print('before orig_func')
+        orig_func()
+        #some code after execute orig_func
+        print('after orig_func')
+    return wrap_func
+
+def fun_needs_decorator():
+    print("fun needs decorator")
+
+fun_needs_decorator = new_decorator(fun_needs_decorator)
+fun_needs_decorator()
+
+#使用 @符号
+@new_decorator
+def fun_needs_decorator():
+    print("fun needs decorator")
+
+fun_needs_decorator()#得到相同结果
+```
 
 
 ### Lambda Expressions
