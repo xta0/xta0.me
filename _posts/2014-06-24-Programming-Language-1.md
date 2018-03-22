@@ -1,8 +1,6 @@
 ---
-title: Programming Language
-
+title: Programming Language - 1
 layout: post
-
 ---
 
 <em>文章均为作者原创，转载请著名出处</em>
