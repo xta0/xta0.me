@@ -14,15 +14,13 @@ categories: 随笔
 
 我们知道View的frame是针对其Superview坐标系的位置，关于frame的计算方法如下: 
 
-```
-
+```objc
 view.frame.origin.x = center.x - 1/2 * bounds.size.width;   
 view.frame.origin.y = center.y - 1/2 * bounds.size.height;  
-     
 view.frame.size.width = bounds.size.width;
 view.frame.size.height = bounds.size.height;  
-
 ```
+
 从上面的公式我们能看出，view的frame受到它的center和bounds的size的约束。此外还有两个影响frame的因素是transform和layer的`anchorPoint`但是我们这里不讨论它们带来的影响。
 
 

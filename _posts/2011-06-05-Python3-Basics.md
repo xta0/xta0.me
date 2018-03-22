@@ -301,6 +301,14 @@ def func:
     file.write('THis is a test file!')
     file.close()
     ```
+    - 使用`with`操作
+
+    ```py
+    with open("welcome.txt") as file: # Use file to refer to the file object
+        data = file.read()
+        #do something with data
+   ```
+
 
 ### Statements
 
