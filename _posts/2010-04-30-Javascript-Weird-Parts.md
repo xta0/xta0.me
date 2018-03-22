@@ -26,7 +26,6 @@ function variableInThis(){
 	//all we are doing here is creating a global variable
 	this.person = "Elie" 
 }
-
 console.log(person) //Elie
 ```
 - **Strick Mode**
@@ -35,15 +34,11 @@ console.log(person) //Elie
 
 ```javascript
 "use strict"
-
 console.log(this); //window
-
 function whatIsThis(){
 	return this; 
 }
-
 whatIsThis(); //undefined
-
 function variableInThis(){
 	//sincce the value of this is the window
 	//all we are doing here is creating a global variable
@@ -72,8 +67,7 @@ var person = {
 		return this === person;
 	}
 }
-
-person.sayHi(); //"Hi Elie"
+erson.sayHi(); //"Hi Elie"
 person.determineContext() //true
 person.dog.sayHello(); //"Hello undefined"
 person.dog.determineContext(); //false

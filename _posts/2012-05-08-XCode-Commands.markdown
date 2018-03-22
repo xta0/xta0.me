@@ -184,18 +184,9 @@ XCode自带了导出二进制符号表的工具:`dsymutil`
 ## Security & CodeSign
 
 `Security`用来执行和证书，签名相关的命令：
-
 - 显示出所有可以用于签名的证书：`$ security find-identity -v -p codesigning `
 
-
-
-## PLutil
-
 ## Clang
-
-Xcode使用自己的`clang`,位置在
-
-### Compile
 
 - `clang -c test.c`
 	- `-E` #preprocess,but done compile
@@ -208,18 +199,13 @@ Xcode使用自己的`clang`,位置在
 
 ## Lipo
 
-### Read
-
 - `lipo -info 二进制包`
 - `lipo -detailed_info 二进制包`
-
 
 ## otool
 
 otool用来查看Mach-O文件格式
-
 - `otool -h`:查看头部信息
-
 
 ## optool
 

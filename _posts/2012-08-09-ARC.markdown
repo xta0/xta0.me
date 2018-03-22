@@ -42,7 +42,7 @@ Objective-C定义了一个新的类型:<em>**object pointer types**</em>。这�
 
 Block指针可以被强转为`id`。block对象的layout会兼容普通Objective-C对象，这种内置的block类型通过`retain`方法来调整引用计数，而不是通过`Block_copy`。
 
->译者注:
+>注:
 
 >上面一段其实也说明了，block为first class的，可以当做object进行传递，可以理解为一种HOF。
 
