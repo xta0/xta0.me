@@ -3,13 +3,9 @@ layout: post
 title:  Behind Swift Object
 tag: iOS
 categories: 随笔
-
 ---
 
 <em>所有文章均为作者原创，转载请注明出处</em>
-
->本文的内容一部分来自[Mike Ash](https://www.mikeash.com/)的研究成果，一部分来自作者的一些实验性探索。感谢Mike长期以来对iOS/MacOS社区做出的贡献，他的研究成果让我获益匪浅。
-
 
 ## Memory Layout
 
@@ -78,20 +74,16 @@ struct objc_class {
 
 ### 对象间通信：
 
-按照我的理解，为了[提升性能](https://www.mikeash.com/pyblog/friday-qa-2014-07-04-secrets-of-swifts-speed.html)，Swift对象间的通信（method调用），是不需要runtime的（在下一节说明这个观点），也没有了所谓的"消息"。但有一个问题，如果这个Swift对象需要和Objective-C对象通信怎么办？例如，有这样一段OC代码，它向`s`发消息:
+Swift作为一种静态语言，对象间通信是不需要使用Runtime的，这样也间接的[提升了性能](https://www.mikeash.com/pyblog/friday-qa-2014-07-04-secrets-of-swifts-speed.html)。但有一个问题，如果一个Swift对象需要和Objective-C对象通信怎么办？例如，有这样一段OC代码，它向`s`发消息:
 
 ```objc
-
+//MySwiftClass是Swift的Class
 MySwiftClass* s = [MySwiftClass new];
-
-if([s responseToSelector(@selector(method))])
-{
+if([s responseToSelector(@selector(method))]){
 	[s method];
 }
-
 ```
-此时`s`需要实现`responseToSelector`这样的方法，还需要检查`mehtod`这个方法是否存在。
-这说明`s`仍然需要具备在运行时introspect的能力，而我们又没有在`MySwiftClass`中定义任何OC的方法，这是怎么做到的呢？
+此时`s`需要实现`responseToSelector`这样的方法，还需要检查`mehtod`这个方法是否存在。这说明`s`仍然需要具备在运行时introspect的能力，而我们又没有在`MySwiftClass`中定义任何OC的方法，这是怎么做到的呢？
 
 ### 神奇的SwiftObject
 
@@ -99,9 +91,8 @@ if([s responseToSelector(@selector(method))])
 
 ```c
 let obj = MySwiftClass()
-
 ```
-我们接下来的任务就是反射出`obj`更多的信息，关于在Swift中如何拿到这些信息，Mike写了一个[非常牛逼的工具](https://github.com/mikeash/memorydumper/blob/master/memory.swift)，这个工具的思路是根据对象address和size，通过`dladdr`将里面的内容符号化。这份代码对于理解Swift和C有着很好的帮助。但是...仅从实现这个功能来说，不需要那么复杂，我上传了一份比较精简的[代码](https://github.com/akaDealloc/blog/tree/gh-pages/code/swift/swift-basic/chap14-Runtime/chap14.playground)。总之，不论用哪种方法，都能得到下面的结果:
+我们接下来的任务就是反射出`obj`更多的信息，关于在Swift中如何拿到这些信息，Mike写了一个[非常牛逼的工具](https://github.com/mikeash/memorydumper/blob/master/memory.swift)，这个工具的思路是根据对象address和size，通过`dladdr`将里面的内容符号化。这份代码对于理解Swift和C有着很好的帮助。但是仅从实现这个功能来说，不需要那么复杂，我上传了一份比较精简的[代码](https://github.com/akaDealloc/blog/tree/gh-pages/code/swift/swift-basic/chap14-Runtime/chap14.playground)。总之，不论用哪种方法，都能得到下面的结果:
 
 
 ```
@@ -137,7 +128,6 @@ method:Optional("isMemberOfClass:") type:Optional("B24@0:8#16")
 method:Optional("superclass") type:Optional("#16@0:8") 
 method:Optional("class") type:Optional("#16@0:8") 
 method:Optional("debugDescription") type:Optional("@16@0:8") 
-
 ```
 
 我们先来分析一下上面的信息：
@@ -166,21 +156,17 @@ method:Optional("debugDescription") type:Optional("@16@0:8")
 let obj = MySwiftClass()
 var obj_ptr:UnsafePointer<Void> = unsafeAddressOf(obj)
 dumpmem(obj_ptr)
-
 ```
 `dumpmem`会在运行时dump出`objc_class`中所有的符号：
 
 ```
 ...
-
 Symbol _TFC16TestSwiftRuntime12MySwiftClassg1aVSs6UInt64
 Symbol _TFC16TestSwiftRuntime12MySwiftClasss1aVSs6UInt64
 Symbol _TFC16TestSwiftRuntime12MySwiftClassm1aVSs6UInt64
 Symbol _TFC16TestSwiftRuntime12MySwiftClass6methodfS0_FT_T
 Symbol _TFC16TestSwiftRuntime12MySwiftClasscfMS0_FT_S0
-
 ...
-
 ```
 
 我们根据Name mangling规则找到了`obj`的成员方法，先忽略这些诡异的符号，我们后面会详细解释name mangling的问题。从上到下依次为：

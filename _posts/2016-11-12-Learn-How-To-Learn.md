@@ -5,27 +5,6 @@ title: Learn How to Learn
 
 > [Coursera Link](https://www.coursera.org/learn/learning-how-to-learn)
 
-
-### 专有名词
-
-- [synapse](https://zh.wikipedia.org/wiki/%E7%AA%81%E8%A7%A6): 神经突触，神经元之间的链接接头
-- [dendrites](https://zh.wikipedia.org/wiki/%E6%A0%91%E7%AA%81): 树突，是神经元的一部分，为神经元的输入通道，其功能是将自其他神经元所接收的动作电位（电信号）传送至细胞本体
-- [Astrocytes](): 神经胶质，为神经元提供养分，有助提高记忆力和学习力
-- Neuron Pattern: 对某种问题的思维模式
-- Prefrontal Cortex：前额叶皮质
-- Chunk：信息块
-- acetylcholine：乙酰胆碱
-- dopamine：多巴胺
-- serotonin：血清素
-- [Amygdaloid](https://zh.wikipedia.org/wiki/%E6%9D%8F%E4%BB%81%E6%A0%B8): 杏仁核
-- [Deliberate Practice](): 刻意练习，走出舒适区，持续练习那些困难的部分
-- [Einstellung]()：对某种事务熟悉的思维模式，会阻碍创新思维
-- [Interleaving]()：交替学习
-	
-## Focus vs Diffuse Thinking
-
-Two fundamentally thinking mode.
-
 ### Overview
 
 - Focused Thinking
@@ -240,7 +219,7 @@ Chunk是一个让多个神经元共同运作的神经网络，是用来解决具
 	- 大脑左半球负责focus模式思考，右半球负责质疑与批判
 	- 团队合作有主意发现自己思维的盲区，所谓旁观者清
 	- 解决某个问题之后，跳出来，站在全局视角看看，答案是否真的合理并且符合逻辑
-- 使用**考试清单**来准备各种考试
+- 使用<mark>考试清单</mark>来准备各种考试
 	- Did you make a serious effort to understand the text?
 	- Did you work with classmates on homework problems?
 	- Did you attemp to ouline every homework problem solution?
@@ -264,12 +243,13 @@ Chunk是一个让多个神经元共同运作的神经网络，是用来解决具
 		- 手放到肚子上做腹式呼吸
 	- 考试前一天快速复习一遍学的知识
 
-## 总结
+## A Quick Summary
 
 有收获的几点：
 
 - 大脑的两种工作模式
-	- Focus Mode：使用番茄工作法
+	- Focus Mode：
+		- 使用番茄工作法
 	- Diffused Mode：
 		- 需要困难先放一放，不要死磕
 		- 睡眠很重要
@@ -287,7 +267,25 @@ Chunk是一个让多个神经元共同运作的神经网络，是用来解决具
 	- 先从难题做，卡住了立刻转到简单题，循环往复
 	- 心理暗示和腹式呼吸
 
-	
+
+
+### 专有名词
+
+- [synapse](https://zh.wikipedia.org/wiki/%E7%AA%81%E8%A7%A6): 神经突触，神经元之间的链接接头
+- [dendrites](https://zh.wikipedia.org/wiki/%E6%A0%91%E7%AA%81): 树突，是神经元的一部分，为神经元的输入通道，其功能是将自其他神经元所接收的动作电位（电信号）传送至细胞本体
+- [Astrocytes](): 神经胶质，为神经元提供养分，有助提高记忆力和学习力
+- Neuron Pattern: 对某种问题的思维模式
+- Prefrontal Cortex：前额叶皮质
+- Chunk：信息块
+- acetylcholine：乙酰胆碱
+- dopamine：多巴胺
+- serotonin：血清素
+- [Amygdaloid](https://zh.wikipedia.org/wiki/%E6%9D%8F%E4%BB%81%E6%A0%B8): 杏仁核
+- [Deliberate Practice](): 刻意练习，走出舒适区，持续练习那些困难的部分
+- [Einstellung]()：对某种事务熟悉的思维模式，会阻碍创新思维
+- [Interleaving]()：交替学习
+
+
 ## 资料
 - [MIT Open Course]()
 - [brainfacts](http://www.brainfacts.org)

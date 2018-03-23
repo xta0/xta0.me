@@ -481,6 +481,14 @@ def name_of_function(args): #注意冒号
         print(kwargs)
     myfunc(1,2,3,fruit='apple',veggie='lettuce')
     ```
+    - unpack args
+
+    ```python
+    def print_two(*args)
+        arg1, arg2 = args
+        print(f"arg1: {arg1}, arg2: {arg2}")
+    ```
+
 - 函数性
     - first-class object
     
