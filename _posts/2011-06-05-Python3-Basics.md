@@ -320,7 +320,7 @@ def func:
 100==1 or 2==2
 not 1==1
 ```
-- **if elif else **
+- **if-elif-else**
 
 ```
 if some_condition: #注意冒号
@@ -615,9 +615,6 @@ list(map(lambda num:num**2,mynums))
 
 ```
 
-- 使用函数对象
-
-```
 
 ### OOP
 
