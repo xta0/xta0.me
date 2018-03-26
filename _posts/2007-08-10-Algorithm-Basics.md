@@ -221,7 +221,7 @@ def fib2(n):
 4. 确定状态转移方程
     - 找到不同状态之间如何迁移-即如何从一个或多个值已知的状态，求出另一个状态的值。状态的迁移可以用递推公式表示，递推公式也可被称作<mark>状态转移方程</mark>
         - 递推公式可以从前往后推导，也可以从后向前推导 
-
+    - 当选取的状态，难以进行递推时（分解出的子问题和原问题形式不一样，或不具有无后效性），考虑将状态<mark>增加限制条件后分类细化，即增加维度</mark>，然后在新的状态上尝试递推
 
 ### 能用动规解决问题的特点
 
@@ -253,10 +253,58 @@ maxLen(k) = max{ maxLen(i) | 1<=i<k and ai < ak and k != 1 } + 1
 ```
 `maxLen(k)`的值，就是在`ak`左边，“终点”数值小于`ak` ，且长度最大的那个上升子序列的长度再加`1`。因为`ak`左边任何“终点”小于`ak`的子序列，加上`ak`后就能形成一个更长的上升子序列。
 
-```cpp
+```c
+int a[n];
+int maxLen[n];
 for(int i=2; i<n; i++){
-    for(int j=0; j<i; j++){
+    for(int j=1; j<i; j++){
+        if(a[i]>a[j]){
+            maxLen[i] = max(maxLeb[i],maxLen[j]+1)
+        }
+    }
+}
+```
 
+## 深度搜索
+
+将问题的各状态之间的转移关系描述为一个<mark>图</mark>,则深度优先搜索遍历整个图的框架为：
+
+```
+Dfs(v) {
+    if( v 访问过)
+        return;
+
+    //1.将v标记为访问过;
+    v.is_visited = true
+    //2.对和v相邻的每个点u进行递归:
+    Dfs(u);
+}
+int main() {
+    while(在图中能找到未访问过的点 k)
+        Dfs(k);
+}
+```
+也可以用栈来实现递归
+
+```
+struct Obj{
+    bool is_visited
+    Obj(x);
+};
+void DFS(v){
+    stack<Obj> stk;
+    Obj root = Obj(v)
+    while(!stk.empty()){
+        Obj o = stk.top();
+        if(o.is_visited){
+            stk.pop();
+        }else{
+            o.is_visited == true;
+            if (some_condition){
+                Obj o' = Obj(v')
+                stk.push(o')
+            }
+        }
     }
 }
 ```
