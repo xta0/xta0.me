@@ -5,6 +5,7 @@ mathjax: true
 ---
 
 ### Course Topics
+
 - Vocabulary for design and analysis of algorithms
     - "Big-O" notation
     - "Sweet spot" for high-level reasoning about algorithms
