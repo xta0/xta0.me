@@ -740,6 +740,12 @@ h2 {
 	-  Number转String:`String(x);`
 
 - **Stings**
+	- JS中的String是immutable的，无法修改里面的值
+	
+	```js
+	str = "abc"
+	str[0] = 'b' #not working
+	``` 
 	- 获得字符
 		- `"hello[0]" //"h"` 
 	
@@ -961,26 +967,17 @@ h2 {
 		- 使用index和list：
 		
 		```javascript
-			for(var i=0;i<list.length;i++){
-				...
-				break;
-			}
+		for(var i=0;i<list.length;i++){
+			...
+			break;
+		}
 		```
+		- `for-in`
 		
-		 - 循环index：
-	
 		```javascript
-			for(var index in list){
-				...
-			}
-		```
-		
-		- 循环value
-	
-		```javascript
-			for (var value in list){ 
-				... 
-			}
+		for (var obj in list){ 
+			... 
+		}
 		```
 
 
