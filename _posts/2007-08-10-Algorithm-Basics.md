@@ -276,14 +276,20 @@ Dfs(v) {
 
     //1.将v标记为访问过;
     v.is_visited = true
-    //2.对和v相邻的每个点u进行递归:
-    Dfs(u);
+    
+    //2.(不是必须)设置某些状态
+    setFlags();
+    //3.对和u相邻的每个点v进行递归:
+    Dfs(v);
+    //4.(不是必须)回溯，如果当前搜索不符合条件，重置状态
+    setFlags();
 }
 int main() {
     while(在图中能找到未访问过的点 k)
         Dfs(k);
 }
 ```
+
 也可以用栈来实现递归
 
 ```
@@ -307,4 +313,137 @@ void DFS(v){
         }
     }
 }
+```
+### Sudoku
+
+- 问题描述
+
+求解数独问题是一个典型的DFS搜索问题，数独问题描述如下:
+
+> 将数字1到9,填入9x9矩阵中的小方格，使得矩阵中的每行，每列，每个3x3的小格子内，9个数字都会出现。
+
+输入，输出为:
+<div style=" content:'' ;display: block;clear:both; height=0">
+    <div style="float:left">
+        Sample Input
+        1
+        103000509
+        002109400
+        000704000
+        300502006
+        060000050
+        700803004
+        000401000
+        009205800
+        804000107
+    </div>
+    <code style="float:left; margin-left: 20px">
+        Sample Output
+        2
+            103000509
+        002109400
+        000704000
+        300502006
+        060000050
+        700803004
+        000401000
+        009205800
+        804000107
+    </code>
+</div>
+
+其中`0`为待填充部分
+
+- 解题思路
+
+
+```cpp
+
+int col[9][10];
+int row[9][10];
+int block[9][10];
+int board[9][9];
+struct Value{
+    int row;
+    int col;
+};
+vector<Value> blanks;
+
+void init(){
+    for(int i=0;i<9;i++){
+        for(int j=0;j<10;j++){
+            col[i][j] = 0;
+            row[i][j] = 0;
+            board[i][j] = 0;
+        }
+    }
+}
+
+int block_index(int row, int col){
+    return row/3 * 3  + col/3;
+}
+
+void set_state(int r, int c, int num){
+    col[c][num] = 1;
+    row[r][num] = 1;
+    block[block_index(r,c)][num] = 1;
+}
+void clear_state(int r, int c,  int num){
+    col[c][num] = 0;
+    row[r][num] = 0;
+    block[block_index(r,c)][num] = 0;
+}
+bool can_be_placed(int r, int c, int num){
+    if( row[r][num] == 0 && 
+        col[c][num] == 0){
+        return true;
+    }
+    return false;
+}
+
+bool DFS(int index){
+    if(index < 0){
+        return true;
+    }
+    int row = blanks[index].row;
+    int col = blanks[index].col;
+    for(int num=1;num<=9;num++){
+        //枚举num，如果可以被放置
+        if(can_be_placed(row, col, num)){
+            //填充板子上的值
+            board[row][col] = num;
+            //设置状态
+            set_state(row,col,num);
+            //继续递归
+            if(DFS(index-1)){
+                return true;
+            }else{
+                //递归失败，回溯清空状态
+                 clear_state(row,col,num);
+            }
+        }
+    }
+    return false;
+}
+
+
+
+int main(){
+
+    init();
+    for(int i=0;i <9;i++){
+        for(int j=0;j<9;j++){
+            int x = -1;
+            cin >> x;
+            if(x == 0){
+                blanks.push_back({i,j});
+            }
+            board[i][j] = x;
+        }
+    }
+    DFS(blanks.size()-1);
+
+    return 0;
+}
+
 ```
