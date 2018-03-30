@@ -323,9 +323,10 @@ void DFS(v){
 > 将数字1到9,填入9x9矩阵中的小方格，使得矩阵中的每行，每列，每个3x3的小格子内，9个数字都会出现。
 
 输入，输出为:
-<div style="content: "";display: table;clear:both;">
-    <code style="float:left">
-        Sample Input 1
+<div style=" content:'' ;display: block;clear:both; height=0">
+    <div style="float:left">
+        Sample Input
+        1
         103000509
         002109400
         000704000
@@ -335,18 +336,19 @@ void DFS(v){
         000401000
         009205800
         804000107
-    </code>
-    <code style="float:left">
+    </div>
+    <code style="float:left; margin-left: 20px">
         Sample Output
-        143628579
-        572139468
-        986754231
-        391542786
-        468917352
-        725863914
-        237481695
-        619275843
-        854396127
+        2
+            103000509
+        002109400
+        000704000
+        300502006
+        060000050
+        700803004
+        000401000
+        009205800
+        804000107
     </code>
 </div>
 
