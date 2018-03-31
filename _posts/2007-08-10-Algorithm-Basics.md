@@ -316,91 +316,64 @@ void DFS(v){
 ```
 ### Sudoku
 
-- 问题描述
-
 求解数独问题是一个典型的DFS搜索问题，数独问题描述如下:
+> 将数字1到9,填入9x9矩阵中的小方格，使得矩阵中的每行，每列，每个3x3的小格子内，9个数字都会出现"。
+程序的输入(左边，其中`0`为待填充部分)，输出(右边)为:
 
-> 将数字1到9,填入9x9矩阵中的小方格，使得矩阵中的每行，每列，每个3x3的小格子内，9个数字都会出现。
-
-输入，输出为:
-<div style=" content:'' ;display: block;clear:both; height=0">
-    <div style="float:left">
-        Sample Input
-        1
-        103000509
-        002109400
-        000704000
-        300502006
-        060000050
-        700803004
-        000401000
-        009205800
-        804000107
-    </div>
-    <code style="float:left; margin-left: 20px">
-        Sample Output
-        2
-            103000509
-        002109400
-        000704000
-        300502006
-        060000050
-        700803004
-        000401000
-        009205800
-        804000107
+<div style=" content:''; display: table; clear:both; height=0">
+    <code style="width:160px; float:left">
+        1 0 3 0 0 0 5 0 9
+        0 0 2 1 0 9 4 0 0
+        0 0 0 7 0 4 0 0 0
+        3 0 0 5 0 2 0 0 6
+        0 6 0 0 0 0 0 5 0
+        7 0 0 8 0 3 0 0 4
+        0 0 0 4 0 1 0 0 0
+        0 0 9 2 0 5 8 0 0
+        8 0 4 0 0 0 1 0 7
+    </code>
+    <code style="margin-left:15px;width:160px; float:left">
+        1 4 3 6 2 8 5 7 9 
+        5 7 2 1 3 9 4 6 8 
+        9 8 6 7 5 4 2 3 1 
+        3 9 1 5 4 2 7 8 6 
+        4 6 8 9 1 7 3 5 2 
+        7 2 5 8 6 3 9 1 4 
+        2 3 7 4 8 1 6 9 5 
+        6 1 9 2 7 5 8 4 3 
+        8 5 4 3 9 6 1 2 7
     </code>
 </div>
 
-其中`0`为待填充部分
-
 - 解题思路
 
+这个题目的解法可以通过枚举空白处所有可能的情况，解法相对暴利。由于所有每个位置的解依赖它前面的解，因此这是一个深度搜索的过程。
 
 ```cpp
-
-int col[9][10];
-int row[9][10];
-int block[9][10];
-int board[9][9];
+//确定数据结构：
+int col[9][10]; //标志位，存放每列1-9出现的标志，1为放置，0为未放置
+int row[9][10]; //标志位，存放每行1-9出现的标志，1为放置，0为未放置
+int block[9][10]; //标志位，存放每个小块1-9出现的标志，1为放置，0为未放置
+int board[9][9]; //棋盘
 struct Value{
     int row;
     int col;
-};
-vector<Value> blanks;
+};//棋盘中的每个点
+vector<Value> blanks; //待填充的空白数字
 
-void init(){
-    for(int i=0;i<9;i++){
-        for(int j=0;j<10;j++){
-            col[i][j] = 0;
-            row[i][j] = 0;
-            board[i][j] = 0;
-        }
-    }
-}
+...
 
-int block_index(int row, int col){
-    return row/3 * 3  + col/3;
-}
-
-void set_state(int r, int c, int num){
-    col[c][num] = 1;
-    row[r][num] = 1;
-    block[block_index(r,c)][num] = 1;
-}
-void clear_state(int r, int c,  int num){
-    col[c][num] = 0;
-    row[r][num] = 0;
-    block[block_index(r,c)][num] = 0;
-}
+//可放置数字的条件
 bool can_be_placed(int r, int c, int num){
-    if( row[r][num] == 0 && 
-        col[c][num] == 0){
+    if( row[r][num] == 0 &&
+        col[c][num] == 0 &&
+        block[block_index(r,c)][num] == 0){
         return true;
     }
     return false;
 }
 
+//深度搜索过程
 bool DFS(int index){
     if(index < 0){
         return true;
@@ -419,31 +392,11 @@ bool DFS(int index){
                 return true;
             }else{
                 //递归失败，回溯清空状态
-                 clear_state(row,col,num);
+                clear_state(row,col,num);
             }
         }
     }
     return false;
-}
-
-
-
-int main(){
-
-    init();
-    for(int i=0;i <9;i++){
-        for(int j=0;j<9;j++){
-            int x = -1;
-            cin >> x;
-            if(x == 0){
-                blanks.push_back({i,j});
-            }
-            board[i][j] = x;
-        }
-    }
-    DFS(blanks.size()-1);
-
-    return 0;
 }
 
 ```
