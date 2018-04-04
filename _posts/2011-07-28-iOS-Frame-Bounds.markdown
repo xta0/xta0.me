@@ -42,10 +42,9 @@ subv.backgroundColor = [UIColor redColor];
 ```
 结果是这个样子的:
 
-![Alt text](/assets/images/2011/06/bounds1.png)
+![](/assets/images/2011/06/bounds1.png)
 
 - 由于`v`的`bounds.size`没发生变化，`center`也没法生变化，因此`v`的`frame`不会发生变化，它相对父类的位置不会变化。因此`bounds.origin`根本不影响View的`frame`
-
 - 由于`v`的`bounds.origin`发生了变化，相当于`v`自身的坐标系改变了，原点变成了`(-20,-20)`，那么`(0,0)`点的位置就变了，那么它的subView:`subv`的位置也会发生变化。因此`bounds.origin`仅仅影响View内部的坐标系进而影响Subview的位置。
 
 
@@ -63,7 +62,6 @@ v .bounds = CGRectMake(-20, -20, 50,50);
 ![Alt text](/assets/images/2011/06/bounds2.png)
 
 - 由于`v`的`center`没有发生变化，但是`v`的`bounds.size`缩小了1倍，因此`v`的`frame`发生了变化，根据公式，变成了`{25,25,50,50}`
-
 - 由于`v`的`bounds.origin`不会影响frame，因此影响的还是`v`的subView：`subv`的位置。
 
 

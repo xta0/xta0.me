@@ -1021,19 +1021,12 @@ resource:session
 将上面命令改为单数形式:
 
 ```
-
 session 				POST   /session(.:format)              sessions#create
-
 new_session 			GET    /session/new(.:format)          sessions#new
-
 edit_session 			GET    /session/edit(.:format)         sessions#edit
-                       
                        GET    /session(.:format)              sessions#show
-                       
                        PATCH  /session(.:format)              sessions#update
-                       
                        PUT    /session(.:format)              sessions#update
-                        
                        DELETE /session(.:format)              sessions#destroy
 
 ```
