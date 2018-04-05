@@ -4,6 +4,12 @@ title: Computational Investment - 1
 mathml: true
 ---
 
+---
+title: Computational Investing -1
+layout: post
+
+---
+
 ## Overview
 
 - Course Objectives
@@ -127,7 +133,8 @@ mathml: true
            		<mtext>std(dailyret)</mtext>
            	</mfrac>
         	</math>
-		- python code
+		
+        - seudo code
 				
     	```py
     	metric = k * mean(daily_rets)/stdev(daily_rets)
@@ -143,10 +150,10 @@ mathml: true
 
 假设有一只Fund，它参考Dow Jones指数的benchmark如下：
 
-      | Return | Sharpe | STDEV | D-down | Corr
-------| -------|--------|-------|--------|------|
-Fund  | 33%	| .94	| 0.58%	| -8.67%	| 0.89  |
-$DJI  | 43%	| .63	| 1.23%	| -27.38%	| 1.00  |
+|      | Return | Sharpe | STDEV | D-down | Corr
+|------| -------|--------|-------|--------|------|
+| xxFund  | 33%	| .94	| 0.58%	| -8.67%	| 0.89  |
+|   $DJI  | 43%	| .63	| 1.23%	| -27.38%	| 1.00  |
 
 1. 该基金没有收益率没有跑赢大盘，但是Sharpe指数高于大盘，说明它的整体波动率较低，相对于收益的风险更小
 2. 同样，STDEV，D-down 数据也偏低，说明日均波动较小
