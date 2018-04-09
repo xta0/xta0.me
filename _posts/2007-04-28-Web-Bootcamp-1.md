@@ -1,5 +1,5 @@
 ---
-title: Web Bootcamp - 1
+title: Web Bootcamp-1
 layout: post
 categories: [web,html,css,javascript]
 meta: Web Development Bootcamp. Basic HTML/CSS usage

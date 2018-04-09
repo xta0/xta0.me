@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Cryptography Mathmatics Course
+title: Cryptography-1
 categories: Math
 ---
 

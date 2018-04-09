@@ -45,20 +45,13 @@ meta: Octave 简明操作
 	- 以线性回归为例，加入我们有三个数据集(1,1),(2,2),(3,3)，回归函数为`h(x)=θ*x`，求cost function的最小值。首先定义costFunction.m:
 
 ```matlab
-
 	function J = costFunction(X,Y,theta)
-
 	%X is "designed matrix" , containing the training example
 	%y is the class labels
-
 	m = size(X,1); %number of the training example
-
 	predictions = X*theta; %predictions of hypothesis on all examples
-
 	sqrErrors = ( predictions - Y ).^2; %squared errors
-
 	J = 1/(2*m)*sum(sqrErrors)
-
 ```
 
 然后输入参数：`X=[1 1; 1 2; 1 3]`(x0 = 1),`y = [1;2;3]`,`theta = [0;1]`(θ0=0，θ1=1)，最后调用函数:`j=costFunction(X,y,theta)`
@@ -122,3 +115,7 @@ end;
 ```
 
 而如果使用向量化，则可以将上述式子理解为<math><msup><mi>θ</mi><mi>T</mi></msup><mi>X</mi></math>，代码描述为：`predication = theta'*X`，更简单。 
+
+### Resource
+
+- [Octave Doc](https://octave.org/doc/)

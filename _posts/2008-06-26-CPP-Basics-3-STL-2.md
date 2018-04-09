@@ -1,6 +1,6 @@
 ---
 layout: post
-title: C++ STL Part 2
+title: C++ STL Part2
 categories: PL
 tag: C++
 mathml: true

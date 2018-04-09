@@ -1,7 +1,13 @@
+---
+layout: post
+title: Data Structure Part 2
+---
+
 ## 线性表
 
 ### 线性表的概念
-- 线性表简称表，是零个或者多个元素的**有穷**序列，通常可以表示成k0,k1,...,kn-1(n>=1)
+
+- 线性表简称表，是零个或者多个元素的**有穷**序列，通常可以表示成`k0,k1,...,kn-1(n>=1)`
 	- 表目：线性表中的元素
 	- 索引（下标）：i称为表目ki的“索引”或“下标”
 	- 表的长度：线性表中所有包含元素的个数n
@@ -12,10 +18,11 @@
 	- 适合数据量较小的场景
 
 ### 线性结构
-- 二元组B=(K,R) K={a0,a1,...,an-1} R={r}  
+
+- 二元组 `B=(K,R) K={a0,a1,...,an-1} R={r}`  
 	- 有一个**唯一**的**开始节点**，它没有前驱，有一个**唯一**的**直接后继**
 	- 一个唯一的**终止节点**，它有一个唯一的直接前驱，没有后继
-	- 其它的节点成为**内部节点**，每一个内部节点有且仅有一个前驱节点和一个后继节点：<ai, ai+1> ai是ai+1的前驱，ai+1是ai的后继
+	- 其它的节点成为**内部节点**，每一个内部节点有且仅有一个前驱节点和一个后继节点：`<ai, ai+1>` `ai`是`ai+1`的前驱，`ai+1`是`ai`的后继
 	- 前驱/后继关系r，具有反对称性和传递性
 
 - 特点
@@ -31,19 +38,24 @@
 	- 顺序访问：栈，队列，列表，广义表，链表
 	- 目录索引：字典，散列表
 
+- 安存储划分
+	- 顺序表: `vector<T
+	- 链表: `list<T>`
 - 按操作划分
 	- 线性表
 		- 所有表目都是同一类型节点的线性表
-		- 不限制操作形式
-		- 根据存储的不同分为：顺序表，链表
+		- <mark>不限制操作形式</mark>
 	
 	- 栈(LIFO)
-		- 插入和删除操作都限制在表的同一端进行
+		- <mark>同一端操作</mark>
+		- 插入和删除操作在同一端进行
 			- DFS，深度搜索 
 		
 	- 队列(FIFO)
+		- <mark>两端操作</mark>
 		- 插入操作在表的一端，删除在表的另一端
-			- 广度优先搜索 
+
+### 小结
 
 - 三个方面
 	- 线性表的逻辑结构
@@ -63,25 +75,42 @@
 		- 对表内元素的增删改查
 		- 排序，检索    
 
-- 线性表接口
+- 线性表运算
+	- 创建
+	- 删除
+	- 增，删，改，查
+	- 排序
+	- 检索
 
-	```cpp
+```cpp
+//interface
+template <class T> class List {
+	void clear(); // 置空线性表
+	bool isEmpty(); // 线性表为空时，返回 true
+	bool append(const T value);
+	// 在表尾添加一个元素 value，表的长度增 1
+	bool insert(const int p, const T value);
+	// 在位置 p 上插入一个元素 value，表的长度增 1
+	bool delete(const int p);
+	// 删除位置 p 上的元素，表的长度减 1
+	bool getPos(int& p, const T value);
+	// 查找值为 value 的元素并返回其位置
+	bool getValue(const int p, T& value);
+	// 把位置 p 元素值返回到变量 value
+	bool setValue(const int p, const T value);
+	// 用 value 修改位置 p 的元素值
+};
+```
 
-	template <class T> class List {
-	 void clear(); // 置空线性表
-	 bool isEmpty(); // 线性表为空时，返回 true
-	 bool append(const T value);
-	 // 在表尾添加一个元素 value，表的长度增 1
-	 bool insert(const int p, const T value);
-	 // 在位置 p 上插入一个元素 value，表的长度增 1
-	 bool delete(const int p);
-	 // 删除位置 p 上的元素，表的长度减 1
-	 bool getPos(int& p, const T value);
-	 // 查找值为 value 的元素并返回其位置
-	 bool getValue(const int p, T& value);
-	 // 把位置 p 元素值返回到变量 value
-	 bool setValue(const int p, const T value);
-	 // 用 value 修改位置 p 的元素值
-	};
+## 链表
 
-	```
+### 概述
+
+
+### 单向链表
+
+
+### 双向链表
+
+
+### 循环链表
