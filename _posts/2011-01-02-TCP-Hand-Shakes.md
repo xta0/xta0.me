@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 分析TCP的三步握手
+title: TCP Handshake Notes
 tag: TCP/IP
 categories: 随笔
 
