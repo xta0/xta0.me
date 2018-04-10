@@ -1,6 +1,6 @@
 ---
 layout: post
-title: PL-Lua
+title: Lua
 tag: Lua
 categories: PL
 

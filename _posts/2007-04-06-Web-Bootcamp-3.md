@@ -1,5 +1,5 @@
 ---
-title: Web Bootcamp-2
+title: Web Bootcamp Part 3
 layout: post
 categories: [javascript]
 meta: Web Development Bootcamp. Basic Javascript usage

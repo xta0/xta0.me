@@ -1,6 +1,7 @@
 ---
 layout: post
-title: Computer Graphics
+title: Computer Graphics Part 1
+mathjax: true
 ---
 
 ### Course Overview
@@ -25,13 +26,6 @@ title: Computer Graphics
 	- GLSL + Programmable Shaders in HW0,1,2
 	- Should be very portable, but need to setup your envrionment, compliation framework 
 
-- Recommended Textbook
-	- < Real-Time Rendering> 	
-	- < Computer Graphics: Principles and Practice>, 2nd Edition (3rd would be released around mid 2013) 	- < Computer Graphics, C Version>, 2nd Edition (not 3rd or 4th)
-	- < Fundamentals of Computer Graphics>, 3rd Edition
-	- < Computer Graphics using OpenGL>, 2nd or 3rd Edition*
-	- < Interactive Computer Graphics: A Top-Down Approach with Shader-Based OpenGL>, 6th Edition
-	- < 3D Computer Graphics: A Mathematical Introduction with OpenGL>
 
 
 ## Overview and History of Computer Graphics
@@ -322,3 +316,13 @@ title: Computer Graphics
 
 	- 逆矩阵
 		-  <math><mo stretchy="false">(</mo><mi>A</mi><mi>B</mi><msup><mo>)</mo><mi>-1</mi></msup><mo>=</mo><msup><mi>B</mi><mi>-1</mi></msup><msup><mi>A</mi><mi>-1</mi></msup></math> 
+
+
+###  Recommended Textbook
+
+- < Real-Time Rendering> 	
+- < Computer Graphics: Principles and Practice>, 2nd Edition (3rd would be released around mid 2013) 	- < Computer Graphics, C Version>, 2nd Edition (not 3rd or 4th)
+- < Fundamentals of Computer Graphics>, 3rd Edition
+- < Computer Graphics using OpenGL>, 2nd or 3rd Edition*
+- < Interactive Computer Graphics: A Top-Down Approach with Shader-Based OpenGL>, 6th Edition
+- < 3D Computer Graphics: A Mathematical Introduction with OpenGL>

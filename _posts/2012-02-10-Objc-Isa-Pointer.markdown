@@ -8,7 +8,7 @@ categories: 随笔
 
 <em>所有文章均为作者原创，转载请注明出处</em>
 
-首先我得承认，这是个很奇怪的问题，这个问题困扰我的时间也最长，要先从id说起：
+这是个很奇怪的问题，这个问题困扰我的时间也最长，要先从id说起：
 
 ```objc
 typedef struct objc_object *id;
@@ -16,7 +16,6 @@ struct objc_object {
     Class isa;
 };
 typedef struct objc_class *Class;
-
 ```
 
 OC中的对象都是id，id是一个objc_object结构体指针，这个结构体中只有一个成员是isa。isa代表了这个对象的类型：
