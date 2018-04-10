@@ -1,16 +1,14 @@
-{% if site.mathjax.enable %} 
-    {% if page.mathjax %} 
-        <script type="text/x-mathjax-config">
-            MathJax.Hub.Config({
-                jax:["input/MathML","output/HTML-CSS"],
-                MathML: {
-                    useMathMLspacing: true,
-                    extensions: ["content-mathml.js"]
-                },
-                showMathMenu: false
-            });            
-        </script>
-        <script type="text/javascript" src={{ site.mathjax.cdn }}></script>
-    
-    {% endif %}
+{% if page.mathjax %} 
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            jax:["input/MathML","output/HTML-CSS"],
+            MathML: {
+                useMathMLspacing: true,
+                extensions: ["content-mathml.js"]
+            },
+            showMathMenu: false
+        });            
+    </script>
+    <script type="text/javascript" src={{ site.mathjax.cdn }}></script>
+
 {% endif %}

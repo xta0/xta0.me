@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Computational Investment - 1
+title: Computational Investment Part1
 mathml: true
 ---
 
@@ -136,11 +136,11 @@ layout: post
 		
         - seudo code
 				
-    	```py
-    	metric = k * mean(daily_rets)/stdev(daily_rets)
-    	# k = sqrt(250) for daily returns
-    	# 250: days in a trading year
-    	```
+            ```
+            metric = k * mean(daily_rets)/stdev(daily_rets)
+            # k = sqrt(250) for daily returns
+            # 250: days in a trading year
+            ```
     	
 
 	- Sortino Ratio
