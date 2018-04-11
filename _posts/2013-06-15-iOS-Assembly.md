@@ -6,13 +6,7 @@ categories: 随笔
 
 ---
 
-<em>所有文章均为作者原创，转载请注明出处</em>
-
-Matt Galloway has wrote <a href="http://www.raywenderlich.com/37181/ios-assembly-tutorial">a wonderful article</a> on Assembly
-
-Now , Let's take a deeper look at Assembly with <a href="http://lldb.llvm.org/lldb-gdb.html">LLDB debugger tool</a> 
-
-<h3>一，ARM基础</h3>
+### ARM基础
 
 - 寄存器功能：
 
@@ -374,3 +368,7 @@ General Purpose Registers:
 后面的过程，我们便可以依此方法去观察寄存器和stack情况，来印证我们上文的分析。
 
 
+### Resources
+
+- [iOS Assembly](http://www.raywenderlich.com/37181/ios-assembly-tutorial)
+- [LLDB debugger tool](http://lldb.llvm.org/lldb-gdb.html)

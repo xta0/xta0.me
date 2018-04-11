@@ -1,5 +1,5 @@
 ---
-title: BrainFuck解释器
+title: BrainFuck
 layout: post
 tag: Ruby
 categories: 随笔
@@ -110,7 +110,6 @@ while( ip+=1 ) <= le - 1
 end
 
 ```
-
 
 输出结果如下:
 

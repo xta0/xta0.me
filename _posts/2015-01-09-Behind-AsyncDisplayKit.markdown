@@ -52,26 +52,19 @@ category: iOS
 
 既然我们不能使用静态动画，那我们就需要在当前进程内，自己控制对小球位置的移动，控制每一帧中小球的位置:
 
-```objectivec
-
+```objc
 - (void)_renderTime:(CFTimeInterval)time items:(POPAnimtorItemList)items
 {
     // begin transaction with actions disabled
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
-    
     ...
-    
     std::vector<POPAnimatorItemRef> vector{ std::begin(items), std::end(items) };
-    
     for (auto item : vector) {
         [self _renderTime:time item:item];
     }
-    
    	...
-   	
    [CATransaction commit];
-
 }
 ```
 

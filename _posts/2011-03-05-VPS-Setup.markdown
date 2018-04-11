@@ -58,10 +58,6 @@ tag: UNIX
 - 关闭ssh:`sudo ufw disable`
 
 
-### Configure Iptables
-
-
-
 ### Config Fail2Ban
 
 - 安装fail2ban：`apt-get install fail2ban`

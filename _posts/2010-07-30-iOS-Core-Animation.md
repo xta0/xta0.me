@@ -14,14 +14,11 @@ tag: iOS
 ## UIKit and Core Animation
 
 - 尽量使用UIKit
-
 - Core Animation?
-
 	- Lightweight
 	- Short-lived
 
 - Benefits of understanding CoreAnimation
-
 	- Improve your effectiveness with UIKit animation
 	- Improve app's performance
 

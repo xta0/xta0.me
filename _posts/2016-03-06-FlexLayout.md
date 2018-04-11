@@ -98,11 +98,8 @@ using namespace o2o::flex;
 了解了FlexLayout的布局语法，我们需要一个Pure Function将数据映射为一个完整的FlexLayout：
 
 ```cpp
-
 - (FlexLayout)layoutForModel:(CModel* )model{
-
     return FlexLayout {
-
         .backColor = "white",
         .padding = 10,
         .spacing = 10,
