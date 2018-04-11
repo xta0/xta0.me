@@ -601,11 +601,16 @@ x.reverse()
 - 数组遍历
 
 ```ruby
-
  #使用do-each
 q.each do |i|
   puts i.to_s
 end
+
+#使用do-each with index
+q.each_with_index do |item, index|
+  puts "current_index: #{index}"
+end
+
 
  #使用block
 q.each { |i| 

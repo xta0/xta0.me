@@ -1,6 +1,7 @@
 ---
 layout: post
 title: Data Structure Part 2
+
 ---
 
 ## 线性表
@@ -39,7 +40,7 @@ title: Data Structure Part 2
 	- 目录索引：字典，散列表
 
 - 安存储划分
-	- 顺序表: `vector<T
+	- 顺序表: `vector<T>`
 	- 链表: `list<T>`
 - 按操作划分
 	- 线性表
@@ -102,15 +103,111 @@ template <class T> class List {
 };
 ```
 
-## 链表
+## 顺序表
 
-### 概述
+#### 基本概念
 
+- 也称向量，采用<mark>定长</mark>的一维数组存储结构
+- 主要特性
+	- 元素类型相同
+	- <mark>元素顺序的存储在连续的存储空间中，每个元素有唯一的索引值</mark>
+	- 使用常数作为向量长度
+- 数组存储
+- 读写元素很方便，通过下标即可指定位置
+	- 只要确定了首地址，线性表中任意数据元素都可以<mark>随机访问</mark>
 
-### 单向链表
+- 元素地址计算
 
+```
+Loc(ki) = Loc(k0)+c*i, c=sizeof(ELEM)
+```
 
-### 双向链表
+#### 顺序表类定义
 
+```cpp
+class Array:public List<T>{
+	private:
+		T* list;
+		int maxSize; //向量实际的内存空间
+		int curLen; //向量当前长度，这个值小于maxSize，要预留一部分存储空间，放置频繁的内存开销
+		int position;
+	public:
+		Array(const int size){
+			maxSize = size;
+			list = new T[maxSize];
+			curLen = position = 0;
+		}
+		~MyList(){
+			delete []list;
+			list = nullptr;
+		}
+		void clear(){
+			delete []list;
+			list = nullptr;
+			position = 0;
+			list = new T[maxSize];
+		}
+		int length();
+		bool append(const T value);
+		bool insert(const int p, const T value);
+		bool remove(const int p);
+		bool setValue(const int p, const T value);
+		bool getValue(const int p, T& value);
+		bool getPos(int &p, const T value);
+}
 
-### 循环链表
+```
+
+### 顺序表上的运算
+
+- 插入运算
+
+```cpp
+template<class T>
+bool Array<T>::insert(const int p, const T value){
+	if(curLen >= maxSize){
+		//重新申请空间
+		//或者报错
+		return false;
+	}
+	if(p<0 || p>=curLen){
+		return false;
+	}
+	for(int i=curLen;i>p;i--){
+		list[i] = list[i-1];
+	}
+	list[p] = value;
+	curLen ++;
+
+	return true;
+}
+```
+- 删除运算
+
+```cpp
+template<class T>
+bool Array<T>::delete(const int p){
+	if(curLen == 0){
+		return false;
+	}
+	if(p == 0 || p>=curLen){
+		return false;
+	}
+	for(int i=p; i<curLen-1; i++){
+		list[i] = list[i+1];
+	}
+	curLen--;
+
+	return true;
+}
+
+```
+
+- 表中元素的移动
+	- 插入：移动<mark>n-i</mark>个元素
+	- 删除：移动<mark>n-i-1</mark>个元素
+	- <mark>时间复杂度为O(n)</mark>
+
+### Where to Go
+
+下一节我们讨论线性表的第二种实现方式——链表
