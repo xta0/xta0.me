@@ -329,6 +329,9 @@ elif some_other_condition:
     #do something different
 else:
     # do something else
+
+#三元运算
+condition_is_true if condition else condition_is_false
 ```
 
 - **for-loops**
@@ -1102,7 +1105,7 @@ str = f.read() #Second line written to file like object
 
 
 ## Resources for basic Practice
-
+- [Intermediate Python](http://book.pythontips.com/en/latest/)
 - [Basic Practice](http://codingbat.com/python)
 - [More Mathematical (and Harder) Practice](https://projecteuler.net/archives)
 - [List of Practice Problems](http://www.codeabbey.com/index/task_list)
