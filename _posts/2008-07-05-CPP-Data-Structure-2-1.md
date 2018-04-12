@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Data Structure Part 2
+title: Array
 
 ---
 
@@ -200,7 +200,6 @@ bool Array<T>::delete(const int p){
 
 	return true;
 }
-
 ```
 
 - 表中元素的移动
