@@ -94,7 +94,8 @@ meta: Octave 简明操作
 	- `xlabel`,`ylabel`横纵坐标标注，`legend('sin','cos')`做图解，`title`标题
 	- `axis[0.5 1 -1 1]`设置y轴，x轴显示范围
 	- `print -dpng 'plotpng'`在当前目录保存图片
-	- `close`关掉图片窗口，`figure(1)`打开一个窗口，``figure(2)`同时打开两个窗口，`subplot(1,2,1)`将窗口切分成1x2个并占用第一个，`subplot(1,2,2)` 将窗口切分成1x2个并占用第2个
+	- `close`关掉图片窗口，`figure(1)`打开一个窗口，`figure(2)`同时打开两个窗口
+	- `subplot(1,2,1)`将窗口切分成1x2个并占用第一个，`subplot(1,2,2)` 将窗口切分成1x2个并占用第2个
 - 直方图
 	- `hist(w,50)`绘制w的高斯直方图，50个柱，
 
@@ -119,3 +120,4 @@ end;
 ### Resource
 
 - [Octave Doc](https://octave.org/doc/)
+- [Octave 例子参考](https://octave.sourceforge.io/octave/overview.html)
