@@ -88,5 +88,5 @@ post_copyright:
 mathjax:
   enable: true
   per_page: false
-  cdn: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+  cdn: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js"
 
