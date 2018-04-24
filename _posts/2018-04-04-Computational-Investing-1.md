@@ -1,13 +1,13 @@
 ---
 layout: post
 title: Computational Investment Part1
-mathml: true
+mathjax: true
 ---
 
 ---
 title: Computational Investing -1
 layout: post
-
+mathml: true
 ---
 
 ## Overview
@@ -88,7 +88,7 @@ layout: post
             - 平均跌幅
 - Reward/Risk
     - How much reward you are getting for your risk?
-    - Sharpe Ratio
+    - **Sharpe Ratio**
         - Most "important" measure of asset performance.
         - How well does the return of an asset compensate the investor for the risk taken
         - <mark>The higher the Sharpe ratio the better.</mark>
