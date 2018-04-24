@@ -10,12 +10,9 @@ categories: 随笔
 <em>所有文章均为作者原创，转载请注明出处</em>
 
 最近被迫在大量的使用__unsafe_unretained pointer，用起来坑太多了
-
 先看一段必然会crash的代码：
 
-
 ```objc
-
 // Do any additional setup after loading the view.
  _welcomeView = [[ATCSearchLivingWelcomeView alloc]initWithFrame:CGRectMake(0, 0, 100,100)];
  [self.view addSubview:_welcomeView];
@@ -25,7 +22,6 @@ categories: 随笔
     
      [weakSelf internalMethod];
  }];
-
 ```
 
 假设welcomeView的animation执行10秒，那么animation结束前，释放controller，必然会crash。

@@ -3,13 +3,6 @@ layout: post
 title: Computational Investment Part1
 mathjax: true
 ---
-
----
-title: Computational Investing -1
-layout: post
-mathml: true
----
-
 ## Overview
 
 - Course Objectives
@@ -24,13 +17,7 @@ mathml: true
 - Course Logistics
     - 8 weeks, 2 modules per week
     - Projects in Excel and Python
-- Course Resources
-    - [wiki](http://wiki.quantsoftware.org/index.php?title=QuantSoftware_ToolKit)
-    - [Active Portfolio Management](https://www.amazon.com/Active-Portfolio-Management-Quantitative-Controlling/dp/0070248826/ref=sr_1_1?ie=UTF8&s=books&qid=1263182044&sr=1-1)
-    - [All about Hedge Funds](https://www.amazon.com/All-About-Hedge-Funds-Started/dp/0071393935)
-    - (Applied Quantitative Methods for Trading and Investment)[https://www.amazon.com/Applied-Quantitative-Methods-Trading-Investment/dp/0470848855/ref=sr_1_1?ie=UTF8&s=books&qid=1263181752&sr=8-1]
 
-    - [Other Resources](- [Resources](https://www.coursera.org/learn/computational-investing/supplement/TPxSD/course-resources))
 
 
 ## Portfolio Management
@@ -75,7 +62,7 @@ mathml: true
             - (110/100) -1 = 0.1 = 10%
             - (110-100)/100 = 0.1 = 10%
     - Risk 
-        - Standard deviation of return
+        - 定义风险：<mark>Standard deviation of return</mark>
             -  daily return
 
             ```
@@ -86,8 +73,8 @@ mathml: true
         - Draw down
             - 最大跌幅
             - 平均跌幅
-- Reward/Risk
-    - How much reward you are getting for your risk?
+- <mark>Reward/Risk</mark>
+    - 收益风险比，How much reward you are getting for your risk?
     - **Sharpe Ratio**
         - Most "important" measure of asset performance.
         - How well does the return of an asset compensate the investor for the risk taken
@@ -144,6 +131,8 @@ mathml: true
     	
 
 	- Sortino Ratio
+        - Sortino ratio only penalizes for negative volatility in the calculation of risk.
+        - Sharpe ratio penalizes for both positive and negative volatility.
 	- Jensen's Alpha
 
 - Example
@@ -158,16 +147,44 @@ mathml: true
 1. 该基金没有收益率没有跑赢大盘，但是Sharpe指数高于大盘，说明它的整体波动率较低，相对于收益的风险更小
 2. 同样，STDEV，D-down 数据也偏低，说明日均波动较小
 
+### Market Mechanics
+
+- Types of Orders
+    - But,Sell
+    - Market, Limit
+    - Shares
+    - Price(if Limit)
+    - Additional possibilities:
+        - Sell short
+    - More complex orders
+
+- The Order Book(买盘与卖盘)
+    - Ask (Buy)
+    - Bid (Sell)
+
+- Mechanics of Short Selling
+    1. Borrow the shares 像券商融券
+    2. 立刻卖掉融到的券
+        - 拿到现金
+        - 需要在未来归还券商融到的股票
+    3. 如果价格未来价格下跌
+        - 只需要支付较低价格来买回股票还给券商
+        - 差价即是利润
+
+### Computing Inside a Hedge Fund
+
+![](/assets/images/2018/04/CI-1.jpg)
 
 
-## Market Mechanics
 
 
+## Course Resource
+
+- [wiki](http://wiki.quantsoftware.org/index.php?title=QuantSoftware_ToolKit)
+- [Active Portfolio Management](https://www.amazon.com/Active-Portfolio-Management-Quantitative-Controlling/dp/0070248826/ref=sr_1_1?ie=UTF8&s=books&qid=1263182044&sr=1-1)
+- [All about Hedge Funds](https://www.amazon.com/All-About-Hedge-Funds-Started/dp/0071393935)
+- [Applied Quantitative Methods for Trading and Investment](https://www.amazon.com/Applied-Quantitative-Methods-Trading-Investment/dp/0470848855/ref=sr_1_1?ie=UTF8&s=books&qid=1263181752&sr=8-1)
+
+- [Other Resources](https://www.coursera.org/learn/computational-investing/supplement/TPxSD/course-resources))
 
 
-
-
-
-## Resource
-
-- 使用Excel计算
