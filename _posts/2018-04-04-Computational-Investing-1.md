@@ -1,9 +1,14 @@
 ---
 layout: post
-title: Computational Investment Part1
+title: Computational Investment-1
 mathjax: true
 ---
-## Overview
+
+## Computational Investment
+
+> Online course from Geogia Tech
+
+### Overview
 
 - Course Objectives
     - Understand electronic markets
@@ -18,11 +23,8 @@ mathjax: true
     - 8 weeks, 2 modules per week
     - Projects in Excel and Python
 
+### Portfolio Management
 
-
-## Portfolio Management
-
-### Portfolio Manager Incentives
 - Expense ratio
     - Used by mutual funds & ETFs
     - Usually less than 1%
@@ -174,6 +176,8 @@ mathjax: true
 ### Computing Inside a Hedge Fund
 
 ![](/assets/images/2018/04/CI-1.jpg)
+
+上图是
 
 
 

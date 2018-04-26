@@ -179,19 +179,20 @@ int KMPStrMatching(String T, string P, int *N, int start){
     int i=start;
     int j=0;
     while(i<tLen && j<pLen){
-        if(T[i] == P[j] || N[j] == -1){
+        if(T[i] == P[j] || j == -1){
             i++, j++;
         }else{
             j = N[j];
         }
-    }
-    if(j >= pLen){
-        return i-pLen;
-    }else{
-        return -1;
+        if(j >= pLen){
+            return i-pLen;
+        }else{
+            return -1;
+        }
     }
 }
 ```
+上述代码假设已经有特征向量数组`N`，`N`该如何计算呢
 
 
 
@@ -204,10 +205,12 @@ int KMPStrMatching(String T, string P, int *N, int start){
 
 
 
-## Resources
+- 算法复杂度分析
+
+
+### Resources
 
 - [Pattern Matching Pointer](http://www.cs.ucr.edu/~stelo/pattern.html)
-- [EXACT STRING MATCHING ALGORITHMS](http://www-igm.univ-mlv.fr/~lecroq/string/)
-    – 字符串匹配算法的描述、复杂度分析和C源代码
+- [字符串匹配算法的描述、复杂度分析和C源代码](http://www-igm.univ-mlv.fr/~lecroq/string/)（）
 
 
