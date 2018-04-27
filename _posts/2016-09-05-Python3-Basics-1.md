@@ -3,7 +3,7 @@ title: python3
 layout: post
 ---
 
-## Python3 Cheatsheet
+## Python Basics Part 1
 
 ### py2 vs py3
 
