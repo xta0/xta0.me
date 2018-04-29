@@ -24,7 +24,6 @@ doubleSmallNumber x = (if x > 100 then x else x*2)+1
 
 f(x,y) = 2*x + 2*y
 doubleXY x y = 2*x + 2*y
-
 ```
 
 - 字符常量:
@@ -38,7 +37,6 @@ conanO'Brien = "It's a-me, Conan O'Brien!"
 ```haskell
 numbers = [1,2,2,3,4,5,6]
 strings = ["ask","hell"]
-
 ```
 
 - 数组拼接
@@ -48,7 +46,7 @@ addNumbers = [1,2,3] ++ [3,2,1]
 addStrings = ["haskell","java"] ++ ["lua","python"]
 ```
 
-- 塞入
+- 入队
 
 ```haskell
 anotherStrings = "shit":["ask","hell"]

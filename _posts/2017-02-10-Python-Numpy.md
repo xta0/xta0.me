@@ -31,3 +31,8 @@ np.random.rand(3,3) #产生一个[0-1)之间的3x3矩阵
 np.random.randn(5) #按照正态分布产生5个(-1,1)之间的随机数，均值为0，方差为1
 np.random.randint(1,100,10) #产生10个【1,100)之间的随机数组
 ```
+
+
+### Resources
+
+- [Numpy](https://www.python-course.eu/numpy.php)

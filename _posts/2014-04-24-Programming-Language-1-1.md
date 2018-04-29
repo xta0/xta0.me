@@ -3,8 +3,6 @@ title: Programming Language - 1
 layout: post
 ---
 
-<em>文章均为作者原创，转载请著名出处</em>
-
 > Programming Language课程笔记
 
 ### Course Content
@@ -63,56 +61,47 @@ layout: post
 ## Variable Bindings and Expressions
 
 - "Let go" of all programming languages you already know"
-- Treat "ML" as a "totally new thing"
+- <mark>Treat "ML" as a "totally new thing"</mark>
 	- Time later to compare / contrast to what you konw
 - Start from a blank file 
 
 ```Haskell
 (* This is a comment. This is our first program. *)
-
 val x = 34; 
 
 (* static enviroment: x : int *)
 (* dynamic enviroment: x --> 34 *)
-
 val y = 17;
 
 (* static enviroment: x:int, y:int *)
 (* dynamic enviroment: x --> 34, y --> 17 *)
-
 val z = (x+y) + (y+2);
 
 (* static enviroment: x:int, y:int, z:int *)
 (* dynamic enviroment: x--> 34, y-->17, z --> 70 *)
-
 val q = z+1
 
 (* static enviroment: x:int, y:int, z:int, q:int *)
 (* dynamic enviroment: x--> 34, y-->17, q --> 71 *)
-
-
 val abs_of_z = if z<0 then 0-z else z;(* bool *)(* int *)
 
 (* dynamic enviroment: ..., abs_of_z --> 70 *)
-
 val abs_of_z_simpler = abs(z)
-
 ```
 
-- Static environment: Dan这里讲的静态环境是指代码在运行时环境之前（执行前），ML会对变量做类型推断，签名检查，比如`x:int`。
+- Static environment: 静态环境是指代码在运行时环境之前（执行前），ML会对变量做类型推断，签名检查，比如`x:int`。
 - Dynamic environment: 程序的运行时环境，保存变量当前状态
 
 ### A Variable Binding
 
-
-- 定义 ： ` val x = e ; `
+- 定义
+	- `val x = e;`
 
 - Syntax(语法):
 	- **Syntax** is just how you write something
 	- `val`, `=` , `;` 
 	- variable `x`
 	- Expression `e`
-
 
 - Semantics(语义):
 	- Syntax is just how you write something
@@ -126,7 +115,7 @@ val abs_of_z_simpler = abs(z)
 		
 > 在函数型语言里，没有赋值(assign)的概念，而是叫做binding。一个变量(符号)被bind一个value后，这个变量是不允许再去bind其它的value。
 		
-##Rules for Expressions
+## Rules for Expressions
 
 ### Expressions
 
@@ -134,16 +123,21 @@ val abs_of_z_simpler = abs(z)
 	- `34 true false x e1+e2 e1>e2`
 	- `if e1 then e2 else e3`
 	
-- **(重点)Every kind of expression has**: 
-	- Syntax - 语法
-	- Type-checking rules - 类型检查
+- <mark>Every kind of expression has</mark>
+	- **Syntax** 
+		- 语法
+	- **Type-checking rules** 
+		- 类型检查
 		- Produces a type or fails(with a bad error message)
 		- types so far: `int` `bool` `unit`
 		
-	- Evaluation rules(used only on things that type-check) - 求值规则
+	- **Evaluation rules**(used only on things that type-check) 
+		- 求值规则
 		- Produces a value(or exception or infinite-loop)
 
-- 例1: `Variables`:
+### 分析
+
+- `a=3`
 	- Syntax:
 		- sequence of letters,digits,_,not starting with digit
 	- Type-checking:
@@ -151,18 +145,17 @@ val abs_of_z_simpler = abs(z)
 	- Evaluation:
 		- look up value in current **dynamic enviroment**
 	
-- 例2: `Addition`:
+- `+`
 	- Syntax:
 		`e1+e2` where `e1` and `e2` are expressions
 	- Type-checking:
 		- if `e1` and `e2` have type `int`,
 		- then `e +e2` has type `int`
-	
 	- Evaluation:
 		- if `e1` evaluates to `v1` and `e2` evaluates to `v2`,
 		- then `e1+e2` evaluates to sum of `v1` and `v2`
 
-- 例3: `if-else`
+- `if-else`
 	- Syntax: 
 		- if `e1` then `e2` else `e3`
 		- where `if`,`then`,`else` are keywords and `e1`,`e2`,`e3` are subexpressions
@@ -173,7 +166,6 @@ val abs_of_z_simpler = abs(z)
 	- Evaluation rules:
 		- first evaluate `e1` to a value call it `v1`, if the result is ture, then evaluate `e2` as the result of whole expression. else, evaluate `e3` and that result is the whole expression's result.
 
-
 ### Values
 
 - All values are expressions
@@ -183,49 +175,32 @@ val abs_of_z_simpler = abs(z)
 	- `34`,`17`,`42` have type `int`
 	- `true`, `false` have type `bool`
 	- `()` has type `unit`
-	
 
-## The REPL and Erros
+### The REPL and Erros
 
 - 使用命令行解释执行单条语句要加`;`
 	- `val x=1;` 
 - 读文件`use "foo.sml";`
 
-### Error
-
-- syntax:
-	- what you wrote means nothing or not the construct you intended.
-- Type-checking:
-	- What you wrote does not type-checked
-- Evaluation: 
-	- It runs but produces wrong answer, or an exception, or an infinite loop
-- common error:
-	- `if` - `then` - `else`
-	- if takes a `bool` type value
-	- `then` and `else` must return the same type of result
-	- 负号用`~`表示：`~5`
-	- 除号用`div`表示 `10 div 5`
+- Error
+	- syntax:
+		- what you wrote means nothing or not the construct you intended.
+	- Type-checking:
+		- What you wrote does not type-checked
+	- Evaluation: 
+		- It runs but produces wrong answer, or an exception, or an infinite loop
+	- common error:
+		- `if` - `then` - `else`
+		- if takes a `bool` type value
+		- `then` and `else` must return the same type of result
+		- 负号用`~`表示：`~5`
+		- 除号用`div`表示 `10 div 5`
 
 ## Shadowing
 
 ### Multiple binding of same variable
 
-**shadowing**指的是add a variable to the environment，但是这个variable在environment中已经存在了。
-
-> There is  no way in ML to **mutate** or change the fact that `a = 10` in previous enviroment all we get is a **subsequence enviroment**,`a` is shadowed, we have a different mapping for a in a different envrioment
-
-ML中没有赋值的概念，同一块内存的值也不允许mutate。
-
-Multiple varibale bindings of the same variable is often poor style
-
-- Often counfusing
- 
-But it's an instructive exercise
-
-- Help explain how the enviroment "works"
-- Help explain how a variable binding "works" 
-
-下面代码:
+<mark>shadowing</mark>指的是add a variable to the environment，但是这个variable在environment中已经存在了，下面代码：
 
 ```haskell
 val a = 10
@@ -235,11 +210,11 @@ val b = a*2
 (* b -> 20 *)
 
 val a = 5 (*  this is not an assignment statement *)
-(*There is no way in ML to mutate or change the fact that a = 10 in previous enviroment all we get is a subsequence enviroment,a is shadowed, we have a different mapping for a in a different envrioment*)
 (* a -> 5, b-> 20 *)
 ```
 
-从这里开始，相当于创建了一个新的environment,后面的expression都是在这个enviroment当中了，因此原来的a被shadow掉了。
+上面代码中，`a=5`并没有改变原来的`a`值，在ML中是没有办法修改原先内存中的值的。因此这里得到的`a`是一个新的environment中的`a`,后面的变量都注册到这个enviroment中，因此原来的a被shadow掉了。
+
 
 ```haskell
 val c = b
@@ -255,7 +230,7 @@ val d = a
 val a = a + 1
 (*create a new envrioment, a -> 6*)
 ```
-和上面例子相同，在当前的envrionment中，a+1 = 6，此时需要增加一个variable，也叫a，此时就产生了shadowing。系统会再创建一个新的environment保存新的a。
+和上面原理相同，在当前的envrionment中`a+1 = 6`，此时需要增加一个variable，也叫`a`，又产生了shadowing。系统会再创建一个新的environment保存新的`a`。
 
 ```haskell
 val a = <hidden-value> : int
@@ -266,57 +241,25 @@ val d = 5 : int
 val a = 6 : int
 val it = () : unit
 ```
-
-a之前的赋值被shadow掉，提示<hidden-value>
-
-下面代码:
-
-```haskell
-val a = 1
-val b = a (* b is bound to 1 *)
-val a = 2
-
-```
-
-Two reasons to reason aout the code above:
-
-- Expressions in variable bindings are evaluated "eagerly"
-	- Before the variable binding "finishes"
-	- Afterwards, the expression producing the value is irrelevant
-	
-- There is no way to "assign to" a variable in ML
-	- Can only shadow it in a later enviroment 
-
+查看当前环境的转台，可以看到之前的两个被shadow掉的`a`提示`<hidden-value>`
 
 ## Functions(informally)
 
-### Function definitions
+### Function
 
-- **Functions**: the most important build block in the whole course
+- the most important build block in the whole course
 	- Like Java methods,have arguments and result
 	- But no classes,`self`,`this`,`return`
 
-Example function binding:
-
 ```haskell
-(*Note:correct only if y>=0 *)
+(* val pow = fn : int * int -> int *)
 fun pow(x:int, y:int) = 
 	if y=0 
 	then 1 
 	else x*pow(x,y-1)
 ```
-Note：The body includes recursive call
 
-compile and run:
-
-```haskell
-(* 函数签名： *)
-val pow = fn : int * int -> int (* fn的类型 *)
-val cube = fn : int -> int
-
-```
-
-- The use of `"*"` in type syntax is not multiplication
+- 函数签名
 	- Example: `int * int -> int` 表示有两个参数，类型都是`int`,返回值也是`int`
 	- In expressions, `*` is multiplication: `x*pow(x,y-1)`
 
@@ -334,100 +277,86 @@ val cube = fn : int -> int
 	- We won't use a single loop in ML
 	- Loops ofter(not always)obscure simple, elegant solutions
 	
-**Everything you can do in loop, you can do it in recursion**，使用递归可以取代循环，简化代码
+<mark>Everything you can do in loop, you can do it in recursion</mark>，使用递归可以取代循环，简化代码
 
-> 由于`for`或`while`是一种过程性的表达式，它表达的是如何完成循环，还需要引入一些状态变量。在函数型语言中，这种做法不直观，不是一种declarative风格，没有输入和输出。
+> 由于`for`或`while`是一种过程性的表达式，它表达的是如何完成循环，还需要引入一些状态变量。在函数型语言中，这种做法不直观，是一种过程式的风格
 
 
 ## Functions（formally)
 
-###Function binding
+### Function binding
 
 - Syntax : `fun x0（x1:t1,...,xn:tn）= e`
 	- `x0`是函数名
 	- (will generalize in later lecture)
 		
 - Type-Checking: 
-	- Adds binding `x0:(t1 *...* tn ) -> t `，首先将`x0`的类型绑定为`(t1 *...* tn)->t`
-	- Can type-check body `e` to have type `t` in the static envrioment containing:
-		 - "Enclosing" static envrioment (earlier bindings)
-		- `x1:t1,...,xn:tn`(arguments with their types)
-		- `x0 : (t1 *...*tn) -> t`(for recursion)
-
-对函数的body`e`进行type-checking, 使用static environment中已有的信息，比如之前创建的binding（函数body中可能使用以前的binding），以及函数的参数类型check和函数自身的类型check（函数body中可能出现递归，因此对函数自身也要进行type-checking）
+	- 首先将`x0`的类型绑定为`(t1 *...* tn)->t`
+	- 对函数的body`e`进行type-checking, 使用static environment中已有的信息，比如之前创建的binding（函数body中可能使用以前的binding）
+	- 对函数的参数类型检查和函数自身的类型检查
+		- 函数body中可能出现递归，因此对函数自身也要进行type-checking
 
 - Evaluation : 
-	- **A function is a value!**(No evaluation yet)。`x0`和普通变量一样，只不过类型是funcion
-	- Add `x0` to dynamic enviroment so later expression can call it. 运行时求值，对函数的body不进行提前Evaluation
-	- Funcation call semantics will alse allow recursion		
+	- 运行时求值，对函数的body不进行提前Evaluation
+	- Add `x0` to dynamic enviroment so later expression can call it. 
+	- Funcation call semantics will also allow recursion		
 
 ### More on type-checking
 
-`fun x0（x1:t1,...,xn:tn）= e`
+<div style="text-align:center">
+	<code>fun x0（x1:t1,...,xn:tn）= e</code>
+</div>
 
 - New kind of type : `(t1 *...* tn ) -> t`
 	- Result type on right
-	- The overall type-checking result is to give `x0` this type in rest of program(unlike Java, not for earlier bindings)。意思是在static environment中，只有函数对象`x0`的类型。ML函数也是在运行时求值的，因此函数体中使用的binding是在dynamic environment中寻找的
-	- Arguments can be used only in `e`
-	- Because evaluation of a call to `x0` will return result of evaluating `e`，The return type of` x0` is the type of `e`
-	- The type-checker "magically" figures out `t` if such a `t` exists.Type-checker可以根据函数体`e`自行推断出函数`x0`的返回值类型`t`
-	- Later lecture:Requires some cleverness due to recursion
-	- More magic after hw1 : Later can omit argument types too
-	
-	
+	- 在static environment中，只有函数对象`x0`的类型。ML函数也是在运行时求值的，因此函数体中使用的binding是在dynamic environment中寻找的
+	- 参数只能在函数体内部`e`中使用
+	- `x0`的返回值类型是函数体`e`的类型，Type-checker可以根据`e`推断出返回值类型`t`
+		
 ### Function Calls
 
 A new kind of expression:
 
 - Syntax : `e0 (e1,...,en)`
-	- Parentheses optional if there is exactly one argument, 如果只有一个参数，则可以省略括号。ML中不支持可变参数
+	- 如果只有一个参数，则可以省略括号。ML中不支持可变参数
 	- `pow(2,3)`
 - Type-Checking:
-	- if:
-		- `e0` has some type `(t1 *...* tn ) -> t`
-		- `e1` has type `t1`, ... , `en` has type `tn`
-	- then:
-		- `e0 (e1,...,en)` has type `t`
+	- `e0` has some type `(t1 *...* tn ) -> t`，then `e0 (e1,...,en)` has type `t`
 		- Example:`pow(x,y-1)` in previouse example has type `int`
-	
+	- `e1` has type `t1`, ... , `en` has type `tn`
 - Evaluation:
-
-	1. (Under current dynamic enviroment) evalute `e0` to a function :`(t1 *...* tn ) -> t`
-		- Since call type-checked, result will be a function
-	
-	2. (Under current dynamic enviroment) evaluate the arguments to value `v1,...,vn`
+	1. 在当前运行时环境(<mark>current dynamic enviroment</mark>)中对`e0`进行求值
+		- `e0`求值之后是一个函数，类型为 :`(t1 *...* tn ) -> t`
+	2. 在当前运行时环境中求解参数 `v1,...,vn`
 		- 比如参数中有`2+2`，这种情况下需要对其进行求值后再继续evaluate function
-	
 	3. Result is evaluation of `e` in an enviroment extended to map `x1` to `v1`, ... `xn` to `vn`
 	 	- ("An envrioment" is actually the enviroment where the function was defined, and includes `x0` for recursion)
 	
 	
 ## Tuples and Pairs
 
-### Paris(2-tuples)
+### Paris
 
-#### Defination:
-
-- Syntax : `（e1,e2）`
-
-- Evaluation:Evaluate `e1` to `v1` and `e2` to `v2`; result is `(v1,v2)`
-	- A pair of values is a value
-	
-- Type-checking: if `e1` has type `ta` and `e2` has type `tb` then the expression has type `ta * tb`
+- Syntax : 
+	- `(e1,e2)`
+- Type-checking: 
+	- if `e1` has type `ta` and `e2` has type `tb` then the expression has type `ta * tb`
 	- A new kind of type
-	
-#### Access:
+- Evaluation:
+	- Evaluate `e1` to `v1` and `e2` to `v2`; result is `(v1,v2)`
+	- A pair of values is a value
 
-- Syntax： `#1 e` and `#2 e`
+#### Access
 
-- Evaluation: Evaluate e to a pair of values and return first or section piece
+- Syntax：
+	- `#1 e` and `#2 e`
+- Evaluation: 
+	- Evaluate e to a pair of values and return first or section piece
 	- Example: if `e` is a variable x then look up x in enviroment
-	
-- Type-checking:if `e` has type `ta * tb` then `#1 e` has type `ta` and `#2 e` has type `tb`
+- Type-checking:
+	- if `e` has type `ta * tb` then `#1 e` has type `ta` and `#2 e` has type `tb`
 
-- example:
-
-```
+```haskell
 fun swap(pr : int*bool) = (#2 pr, #1 pr)
 
 (* (int*int) * (int*int) -> int *) 
@@ -440,7 +369,6 @@ fun sort_pair(pr:int*int) =
     if (#1 pr) < (#2 pr)
     then pr 
     else (#2 pr, #1 pr)
-    
 ```
 
 
@@ -462,8 +390,6 @@ val x1 = (7,(true,9)) (* int * (bool*int) *)
 val x2 = #1 (#2 x1) (* bool *)
 
 ```
-
-
 
 ## Lists
 

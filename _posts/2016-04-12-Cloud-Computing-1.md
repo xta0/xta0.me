@@ -12,3 +12,23 @@ title: Cloud Computing Part 1
     - Classical Precursors: P2P systems, Grids
     - Widely-used algorithms: Gossip, Membership, Paxos
     - Classical algorithms: Time and Ordering, Snapshots, Multicast
+
+## Part 1
+
+### Overview
+
+- Introduction to Clouds
+    - Hisotory, What, Why
+    - Comparison with previous generation of distributed systems
+- Clouds are distributed systems
+- Mapreduce and Hadoop
+    - Paradigm, Examples
+
+- Cloud Providers
+    - AWS Amazon Web Services:
+        - ES2：Elastic Compute Cloud
+        - S3: SImple Storage Service
+        - EBS: Elastic Block Storage
+    - Microsoft Azure
+    - Google Compute Engine
+    - Many, many more

@@ -4,7 +4,7 @@ title: Computational Investment-1
 mathjax: true
 ---
 
-## Computational Investment
+## Computational Investment Part 1
 
 > Online course from Geogia Tech
 
@@ -177,10 +177,15 @@ mathjax: true
 
 ![](/assets/images/2018/04/CI-1.jpg)
 
-上图是
+上图是一个系统交易模型，
 
+## Company
 
+- Key Terms
+    - [Intrinsic Value](https://www.investopedia.com/terms/i/intrinsicvalue.asp#axzz2Lc5AZO48)
+    - [Capital Assests Pricing Model](http://www.investopedia.com/terms/c/capm.asp#axzz2Lc5AZO48)
 
+### Company Worth
 
 ## Course Resource
 
