@@ -256,3 +256,7 @@ BinaryTreeNode<T>* Parent(BinaryTreeNode<T>* root, BinaryTreeNode<T>* current){
         - 当`i`为奇数且`i+1<n`时，结点i的右兄弟是结点`i+1`，否则结点`i`没有右兄弟
 
 
+### 堆
+
+堆(heap)又被为优先队列(priority queue)，是一个经典的实现是完全二叉树。这样实现的堆成为二叉堆(binary heap)。它在完全二叉树上增加了一个要求：<mark>任意节点的优先级不小于它的子节点</mark>。
+
