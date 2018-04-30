@@ -44,9 +44,9 @@ mathjax: true
 ### 二叉树性质
 
 1. 在二叉树中，第i层上最多有 $2i (i≥0)$ 个结点
-2. 深度为 k 的二叉树至多有 $2^(k+1)-1 (k≥0)$ 个结点
+2. 深度为 k 的二叉树至多有 $2^{(k+1)}-1 (k≥0)$ 个结点
     - 其中深度(depth)定义为二叉树中层数最大的叶结点的层数
-3. 一棵二叉树，若其终端结点数为$n$，度为$2$的结点数为$n_2$，则 $n_0=n_2+1$
+3. 一棵二叉树，若其终端结点数为$n_0$，度为$2$的结点数为$n_2$，则 $n_0=n_2+1$
 4. <mark>满二叉树定理：非空满二叉树树叶数目等于其分支结点数加1</mark>
 5. 满二叉树定理推论：一个非空二叉树的空子树数目等于其结点数加1
 6. 有$n$个结点$(n>0)$的完全二叉树的高度为$⌈\log_2(n+1)⌉$，深度为$⌈\log_2(n+1)- 1⌉$
@@ -88,12 +88,12 @@ public:
 ```cpp
 //递归，前序遍历
 template<class T>
-void BinaryTree<T>::DepthOrder (BinaryTreeNode<T>* root){
+void BinaryTree<T>::Recursive (BinaryTreeNode<T>* root){
     if(root!=NULL) {
         //Visit(root); //前序遍历
-        DepthOrder(root->leftchild()); // 递归访问左子树
+        Recursive(root->leftchild()); // 递归访问左子树
         //Visit(root); // 中序
-        DepthOrder(root->rightchild()); // 递归访问右子树
+        Recursive(root->rightchild()); // 递归访问右子树
         //Visit(root); // 后序
     }
 ｝
@@ -103,7 +103,7 @@ void BinaryTree<T>::DepthOrder (BinaryTreeNode<T>* root){
 ```cpp
 //非递归，前序遍历
 template<class T>
-void BinaryTree<T>::DepthOrder (BinaryTreeNode<T>* root){
+void BinaryTree<T>::None_Recursive_1(BinaryTreeNode<T>* root){
     stack<BinaryTreeNode<T>* > ss;
     BinaryTreeNode<T>* pointer = root;
     ss.push(NULL);// 栈底监视哨
@@ -117,6 +117,27 @@ void BinaryTree<T>::DepthOrder (BinaryTreeNode<T>* root){
         }else{
             pointer = ss.top(); //右子树
             ss.pop();
+        }
+    }
+}
+```
+
+也可以通过判断栈是否为空作为循环条件
+
+```cpp
+template<class T>
+void BinaryTree<T>::None_Recursive_2(BinaryTreeNode<T>* root){
+    stack<BinaryTreeNode<T>* > ss;
+    ss.push(node);
+    while(!ss.empty()){
+        BinaryTreeNode<T>* top = ss.top();
+        Visit(top);
+        ss.pop();
+        if(top->right){
+            ss.push(top->right); //先入栈右子树节点
+        }
+        if(top->left){ 
+            ss.push(top->left); //后入栈右子树节点
         }
     }
 }
@@ -165,20 +186,73 @@ void BinaryTree<T>::LevelOrder (BinaryTreeNode<T>* root){
         - 最好 `O(1)`
         - 最坏 `O(n)`
 
-### 存储结构
+### 二叉树的存储结构
 
 二叉树的各结点随机地存储在内存空间中，结点之间的逻辑关系用指针来链接。
 
 - 二叉链表
     - left,right两个指针指向左右两个子树
-
-    ```
-    left - info - right
-    ```
+    - `left - info - right`
+    
 - 三叉链表
     - left,right,指向左右两个子树
     - parent指向父节点
+    - `left-info-parent-right`
 
-    ```
-    left-info-parent-right
-    ```
+- 由根节点和叶子节点定位父节点
+
+```cpp
+template<class T>
+BinaryTreeNode<T>* Parent(BinaryTreeNode<T>* root, BinaryTreeNode<T>* current){
+    BinaryTreeNode<T>* ret = NULL;
+    //前序遍历搜索
+    if(root == NULL){
+        return NULL;
+    }
+    if(root->left == current || root->right == current){
+        return root;
+    }else{
+        tmp = Parent(root->left, current); //左子树
+        if(tmp){
+            return tmp;
+        }
+        tmp = Parent(root->right, current); //右子树
+        if(tmp){
+            return tmp;
+        }
+        return NULL;
+    }
+}
+```
+
+- 二叉链表的空间开销分析
+    - 存储密度$\alpha$表示数据结构存储的效率
+    - 结构性开销 $\gamma=1-\alpha$
+        - 有效数据外的辅助信息
+    
+    $$
+    \alpha=\frac{数据本身存储量}{整个结构占用的存储总量}
+    $$
+
+    - 以满二叉树为例，满二叉树的一半指针域为空
+        - 每个节点存在两个指针，一个数据域
+            - 总空间: $(2p+d)n$
+            - 结构性开销: $pdn
+            - 如果$p=d$，那么结构性开销为$2p/(sp+d)=2/3$
+    - 可见满二叉树存储效率并不高，有三分之二的结构性开销
+
+### 完全二叉树的顺序存储
+
+- 由于完全二叉树的结构，可以将二叉树结点按一定的顺序存储到一片连续的存储单元，使结点在序列中的位置反映出相应的结构信息
+    - 存储结构实现性的
+    - 逻辑结构上仍然是二叉树结构 
+
+- 下标公式
+    - 从一维数组的下标确定二叉树的节点位置
+        - 当`2i+1<n`时，结点`i`的左孩子是结点`2i+1`，否则结点i没有左孩子
+        - 当`2i+2<n` 时，结点`i`的右孩子是结点`2i+2`，否则结点i没有右孩子
+        - 当`0<i<n` 时，结点`i`的父亲是结点`⌊(i-1)/2⌋`
+        - 当`i`为偶数且`0<i<n`时，结点`i`的左兄弟是结点`i-1`，否则结点`i`没有左兄弟
+        - 当`i`为奇数且`i+1<n`时，结点i的右兄弟是结点`i+1`，否则结点`i`没有右兄弟
+
+
