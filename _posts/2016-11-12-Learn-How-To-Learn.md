@@ -287,6 +287,7 @@ Chunk是一个让多个神经元共同运作的神经网络，是用来解决具
 
 
 ## 资料
+
 - [MIT Open Course]()
 - [brainfacts](http://www.brainfacts.org)
 - [The 30 Second Habit That Can Have a Big Impact On Your Life](https://www.huffingtonpost.com/robyn-scott/the-30-second-habit-that-_b_4808632.html)
