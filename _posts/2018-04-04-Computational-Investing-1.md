@@ -224,7 +224,9 @@ $$
 
 ### CAPM
 
-CAPM是Capital Assets Pricing Model的缩写。1996年由Jack Treynor, William Sharpe, John Linter和Jan Mossin共同提出，其中Sharpe还因此获得过诺贝尔奖。在这之前，有观点认为投资指数基金或者配置资产来跟踪指数是比较好的选择，这种观点是基于有效市场假说的一种被动投资理念。而CAPM模型则想要证明通过主动投资，也可以获得不错的回报
+CAPM是Capital Assets Pricing Model的缩写，翻译过来叫做<mark>资本资产定价模型</mark>。1966年由Jack Treynor, William Sharpe, John Linter和Jan Mossin共同提出，其中Sharpe,Markowitz和Merton Miller还因此共同获得了诺奖。这个理论的提出，改变了当时人们对投资的理念，基于这个模型和有效市场假说，有观点认为投资指数基金或者配置资产来跟踪指数是比较好的选择，也就是所谓的被动投资。
+
+> 本课程的投资观点（量化交易）是一种主动投资的理念，Tucker Balch指出基于这种理念也可以取得不错的汇报，但是CAPM模型影响力非常大，是各种投资产管理理论的基础，因此有必要仔细了解
 
 - CAPM假说
     - Return of stock has two components:
@@ -241,7 +243,7 @@ CAPM是Capital Assets Pricing Model的缩写。1996年由Jack Treynor, William S
 
 $$ \gamma_i=\beta_i * \gamma_m + \alpha_i $$
 
-$\gamma_i$表示股价，它的值为市场波动率$\beta_i$乘以前一天的价格加上个股当天波动的价格$\alpha_i$。按照CAPM理论，在大部分时间内，某家公司的股价应该随着指数的波动而波动，即$\alpha_i$的期望为0，而如果表现出偏离，则说明这家公司具备某些可以挖掘的信息。
+$\gamma_i$表示股价，它的值为市场波动系数$\beta_i$乘以前一天的价格加上个股当天波动的价格$\alpha_i$。按照CAPM理论，在大部分时间内，某家公司的股价应该随着指数的波动而波动，即$\alpha_i$的期望为0，而如果表现出偏离，则说明这家公司具备某些可以挖掘的信息。
 
 - 计算模型
 
