@@ -258,8 +258,46 @@ BinaryTreeNode<T>* Parent(BinaryTreeNode<T>* root, BinaryTreeNode<T>* current){
     - 当`i`为偶数且`0<i<n`时，结点`i`的左兄弟是结点`i-1`，否则结点`i`没有左兄弟
     - 当`i`为奇数且`i+1<n`时，结点i的右兄弟是结点`i+1`，否则结点`i`没有右兄弟
 
+### 二叉搜索树
 
-### 堆
+二叉搜索树（Binary Search Tree）是具有下列性质的二叉树：
 
-堆(heap)又被为优先队列(priority queue)，是一个经典的实现是完全二叉树。这样实现的堆成为二叉堆(binary heap)。它在完全二叉树上增加了一个要求：<mark>任意节点的优先级不小于它的子节点</mark>。
+1. 对于任意节点，设其值为`K`
+2. 该结点的左子树(若不空)的任意一个结点的值都小于`K`
+3. 该结点的 右子树(若不空)的任意一个结点的值都大于`K`
+4. 该节点的左右子树也是BST
 
+<img src="/assets/images/2008/07/tree-5.jpg" style="margin-left:auto; margin-right:auto;display:block">
+
+- 搜索
+
+1. 二叉搜索树的<mark>中序遍历</mark>即是节点的正序排列（从小到大排列）。
+2. 假如我们要搜索`19`，每次只需要检索两个子树之一，直到`19`被被找到，或者走到叶子节点停止，类似二分法
+
+- 插入节点
+
+1. 从根节点开始搜索，在停止位置插入一个新叶子节点。
+2. 假如我们要插入`17`，如下图搜索树，直到遇到`19`搜索停止，`17`成为`19`左叶子节点。
+3. 插入新节点后的二叉树依然保持BST的性质和性能，插入时间复杂度为`O(logN)`
+
+<img src="/assets/images/2008/07/tree-6.jpg" style="margin-left:auto; margin-right:auto;display:block">
+
+- 删除节点
+
+1. 如果该节点没有左子树，则使用右子树替换该节点
+2. 如果该节点没有右子树，则使用左子树替换该节点
+3. 如果该节点既有左子树也有右子树
+    - 找到左子树中最大的节点
+    - 找到右子树中最小的节点
+
+```cpp
+BinaryTreeNode <T> * temp = rt;
+if (rt->leftchild() == NULL) {
+    rt = rt->rightchild();
+}else if (rt->rightchild() == NULL) {
+    rt = rt->leftchild();
+}else {
+    temp = deletemin(rt->rightchild());
+    rt->setValue(temp->value());
+}
+```
