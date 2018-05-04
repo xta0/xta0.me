@@ -466,9 +466,17 @@ L(110),E(0)
 
 - 霍夫曼树
 
-给出一个具有$n$个外部结点的扩充二叉树该二叉树每个外部结点$K_i$ 有一个权 $w_i$ 外部路径长度为$l_i$, 这个扩充二叉树的<mark>叶结点带权外部路径长度总和</mark>为$\sum_{i=0}^{n-1}l_i * w_i $ 权值越大的叶节点离根部越近，编码约少
+为了实现上述编码规则，我们需要设计这样一棵树：
 
-- 编码
+1. 给出一个具有$n$个外部结点($n$个待编码字符)的扩充二叉树
+2. 令该二叉树每个外部结点$K_i$ 有一个权 $w_i$ 外部路径长度为$l_i$ 
+3. 使这个扩充二叉树的<mark>叶结点带权外部路径长度总和</mark>为$\sum_{i=0}^{n-1}l_i * w_i $ 最小
+
+我们把具有这样性质的树叫做Huffman树，它是一种带权路径长度最短的二叉树，也称为最优二叉树。如下图中，左边树构建方式的带权路径和为：(2+7+24+32)x2 = 130, 右边树构建方式的带权路径和为：32x1+24x2 +(2+7)x3 = 107。
+
+<img src="/assets/images/2008/07/tree-10.png" style="margin-left:auto; margin-right:auto;display:block">
+
+- 构建Huffman树
 
 > 贪心法
 
@@ -480,7 +488,27 @@ L(110),E(0)
 
 假设有一组节点的优先级序列为: `2 3 5 7 11 13 17 19 23 29 31 37 41`，对应的Huffman树为：
 
-<img src="/assets/images/2008/07/tree-9.jpeg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="/assets/images/2008/07/tree-9.jpg" style="margin-left:auto; margin-right:auto;display:block">
+
+- 编码
+
+有了Huffman树，就可按路径对叶子节点(待编码字符)进行编码
+
+```
+d0 ： 1011110
+d1 ： 1011111
+d2 ： 101110 
+d3 ： 10110
+d4 ： 0100 
+d5 ： 0101
+d6 ： 1010 
+d7 ： 000
+d8 ： 001 
+d9 ： 011
+d10： 100 
+d11 ： 110
+d12： 111
+```
 
 - 译码
 
@@ -505,24 +533,30 @@ L(110),E(0)
 
 ```cpp
 HuffmanTree(vector<int> weight, TreeNode* root;){
-    MinHeap<TreeNode* > heap;
-    int n = weight.size();
-    for(int i=0; i<n; ++i){
-        TreeNode* node = new TreeNode(weight[i]);
-        node->left = node->right = node->parent = NULL;
-        heap.push(node);
-    }
-    for(int i=0; i<n-1; i++){ //两个节点合成一个，共有n-1次合并建立Huffman树
-        TreeNode* first = heap.top();
-        heap.pop();
-        TreeNode* second = heap.top();
-        heap.pop();
-        TreeNode* parent = new TreeNode()
-        MergeTree(first, second, parent);
-        heap.push(parent);
-        root = parent;
-        delete first,second;
-    }
+    HuffmanTreeNode* root; 
+    HuffmanTree(vector<int>& weight){
+        priority_queue<HuffmanTreeNode*,std::vector<HuffmanTreeNode* >,comp> heap; //最小堆
+        size_t n = weight.size();
+        for(int i=0; i<n; ++i){
+            HuffmanTreeNode* node = new HuffmanTreeNode();
+            node->weight = weight[i];
+            node->left = node->right = node->parent = NULL;
+            heap.push(node);
+        }
+        for(int i=0; i<n-1; i++){ //两个节点合成一个，共有n-1次合并建立Huffman树
+            HuffmanTreeNode* first = heap.top();
+            heap.pop();
+            HuffmanTreeNode* second = heap.top();
+            heap.pop();
+            HuffmanTreeNode* parent = new HuffmanTreeNode();
+            first->parent = parent;
+            second->parent = parent;
+            parent->weight = first->weight + second->weight;
+            parent->left  = first;
+            parent->right = second;
+            heap.push(parent);
+            root = parent;
+        }
 }
 ```
 
