@@ -466,20 +466,67 @@ L(110),E(0)
 
 - 霍夫曼树
 
-给出一个具有$n$个外部结点的扩充二叉树该二叉树每个外部结点$K_i$ 有一个权 $w_i$ 外部路径长度为$l_i$, 这个扩充二叉树的<mark>叶结点带权外部路径长度总和</mark>为$\sum_{i=0}^{n-1}l_i * w_i $ 权值越大的叶节点离根部越近
+给出一个具有$n$个外部结点的扩充二叉树该二叉树每个外部结点$K_i$ 有一个权 $w_i$ 外部路径长度为$l_i$, 这个扩充二叉树的<mark>叶结点带权外部路径长度总和</mark>为$\sum_{i=0}^{n-1}l_i * w_i $ 权值越大的叶节点离根部越近，编码约少
 
-- 建立霍夫曼编码树
+- 编码
+
+> 贪心法
 
 1. 将节点按照权值从小到大排列
+2. 拿走前两个权值最小的节点，创建一个节点，权值为两个节点权值之和，将两个节点挂在新结点上
+3. 将新节点的权值放回序列，使权值顺序保持
+4. 重复上述步骤，直到序列处理完毕
+5，所有待编码的节点都处在叶子位置
 
+假设有一组节点的优先级序列为: `2 3 5 7 11 13 17 19 23 29 31 37 41`，对应的Huffman树为：
 
+<img src="/assets/images/2008/07/tree-9.jpeg" style="margin-left:auto; margin-right:auto;display:block">
 
+- 译码
 
+与编码过程相逆，从左至右逐位判别代码串，直至确定一个字符
 
+1. 从树的根结点开始
+    - `0`下降到左分支
+    - `1`下降到右分支
+2. 到达一个树叶结点，对应的字符就是文本信息的字符
+3. 译出了一个字符，再回到树根，从二进制位串中的下一位开始继续译码
 
+```
+译码: 111101110
 
+111 -> d12
+101110 -> d0
 
+111101110 ->d12d0
+```
 
+- 构建Huffman树
+
+```cpp
+HuffmanTree(vector<int> weight, TreeNode* root;){
+    MinHeap<TreeNode* > heap;
+    int n = weight.size();
+    for(int i=0; i<n; ++i){
+        TreeNode* node = new TreeNode(weight[i]);
+        node->left = node->right = node->parent = NULL;
+        heap.push(node);
+    }
+    for(int i=0; i<n-1; i++){ //两个节点合成一个，共有n-1次合并建立Huffman树
+        TreeNode* first = heap.top();
+        heap.pop();
+        TreeNode* second = heap.top();
+        heap.pop();
+        TreeNode* parent = new TreeNode()
+        MergeTree(first, second, parent);
+        heap.push(parent);
+        root = parent;
+        delete first,second;
+    }
+}
+```
+
+- 编码效率
 
 
 
