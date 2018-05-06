@@ -1,34 +1,11 @@
 ---
 layout: post
-title: Lua
-tag: Lua
-categories: PL
-
+title: Lua Part 1 - C API
 ---
 
 <em> 所有文章均为作者原创，转载请注明出处 </em>
 
-> "Programming in Lua" 读书笔记
-
-
-<h2> 目录 </h2>
-
-- [Chap2](#2)
-- [Chap3](#3)
-- [Chap4](#4)
-- [Chap5](#5)
-- [Chap6](#6)
-- [Chap7](#7)
-- [Chap8](#8)
-- [Chap9](#9)
-- [Chap10](#10)
-- [Chap24](#24)
-
-<h3 id="2"> Chap2: String </h3>
-
-
-todo..
-
+> From "Programming in Lua"
 
 <h2 id="24">Chap24: An Overview of the C API</h2>
 
@@ -49,7 +26,7 @@ lua是一种嵌入式语言。这意味着lua不是一个封闭的体系，它�
 
 Lua和C通信最关键的媒介是virtual stack。几乎所有的C API都在这个stack中执行。所有Lua和C的数据交换也在这个stack中发生，此外你还可以通过这个stack来保存临时变量，等等。这个stack有两个作用：一个是为Lua提供回收C中对象的场所，另一个用来做动态类型和静态类型的转换。
 
-###24.1 A First Example
+### A First Example
 
 lua.h定义了Lua中的基本函数，包含了创建lua环境，调用Lua函数（比如lua_pcall），读写全局变量，注册新函数等等。所有定义在Lua.h中得方法以lua_开头。
 
@@ -64,7 +41,7 @@ luaL_loadbuffer 用来编译代码，如果没有错误，这个函数返回0，
 
 lua_pcall首先将compile后的stack中的代码pop出来，然后执行。如果没有错误返回0，如果有错误，两个函数都会将错误push到stack上
 
-###24.2 The Stack
+### The Stack
 
 在C和Lua的通信中，有两个问题需要解决：
 
@@ -166,6 +143,6 @@ lua_settop(L,0)
 define lua_pop(L,n) lua_settop(L, -(n)-1)
 
 ```
-###24.3 Error Handling with C API
+### Error Handling with C API
 
 

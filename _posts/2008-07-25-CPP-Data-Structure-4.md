@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Data Structure Part 4
+title: Data Structure Part 4 - String
 mathjax: true
 ---
 

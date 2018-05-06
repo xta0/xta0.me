@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Data Structure Part 3
+title: Data Structure Part 3 - Stack & Queue
 ---
 
 ## 栈

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Data Structure Part 5
+title: Data Structure Part 5 - Binary Tree
 mathjax: true
 ---
 
@@ -404,11 +404,20 @@ void sift_up(size_t position){
 1. 将`n`个关键码放到一维数组中，整体不是最小堆
 2. 由完全二叉树的特性，有一半的节点`⌊n/2⌋`是叶子节点，它们不参与建堆的过程
     - `i≥⌊n/2⌋` 时，以关键码`Ki`为根的子树已经是堆
-3. 从倒数第二层，`i=⌊n/2-1⌋` 开始进行递归SiftDown调整。例如下图中，需要从`23`开始进行递归调整，调整完毕后是`71`,`73`,`72`
+3. 从倒数第二层最右边的非叶子节点开始（完全二叉树数组`i=⌊n/2-1⌋`的元素），依次向前，进行递归SiftDown调整。
 
 
 <img src="/assets/images/2008/07/tree-8.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
+例如上图中，我们有一组8个数的无序序列`{72,73,71,23,94,16,05,68}`，建堆步骤为
+
+1. 按照完全二叉树排布，形成树形结构，如上图
+2. 成树后，可以看到有4个节点(`⌊4/2⌋`)已经是叶子节点，它们不需要参与建堆的过程
+3. 从`23`开始（数组第`i=⌊4/2-1⌋=3`项）向前依次进行递归调整，顺序依次是
+    - `23` 递归SiftDown
+    - `71` 递归SiftDown
+    - `73` 递归SiftDown
+    - `72` 递归SiftDown
 
 ```cpp
 template<class T>
@@ -492,22 +501,40 @@ L(110),E(0)
 
 - 编码
 
-有了Huffman树，就可按路径对叶子节点(待编码字符)进行编码
+有了Huffman树，就可按路径对叶子节点(待编码字符)进行霍夫曼编码，例如上图中的每个叶子节点的编码为：
 
 ```
-d0 ： 1011110
-d1 ： 1011111
-d2 ： 101110 
-d3 ： 10110
-d4 ： 0100 
-d5 ： 0101
-d6 ： 1010 
-d7 ： 000
-d8 ： 001 
-d9 ： 011
-d10： 100 
-d11 ： 110
-d12： 111
+d0 ： 1011110   d1 ： 1011111
+d2 ： 101110    d3 ： 10110
+d4 ： 0100      d5 ： 0101
+d6 ： 1010      d7 ： 000
+d8 ： 001       d9 ： 011
+d10： 100       d11 ：110  d12： 111
+```
+
+```cpp
+//前序遍历，得到每个叶子节点的霍夫曼编码
+void traverse(HuffmanTreeNode* root, vector<int>& codes){
+    
+    if(root&&root->left==NULL&&root->right==NULL){
+        for(auto num : codes){
+            cout<<num<<" ";
+        }
+        cout<<endl;
+    }
+    
+    if(root->left){
+        codes.push_back('0');
+        traverse(root->left,codes,dictionary);
+        codes.pop_back(); //回溯
+    }
+    
+    if(root->right){
+        codes.push_back('1');
+        traverse(root->right, codes,dictionary);
+        codes.pop_back();//回溯
+    }
+};
 ```
 
 - 译码

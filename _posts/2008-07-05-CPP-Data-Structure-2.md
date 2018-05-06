@@ -1,6 +1,6 @@
 ---
 layout: post
-title: DataStructure Part 2
+title: DataStructure Part 2 - Vector & List
 
 ---
 
