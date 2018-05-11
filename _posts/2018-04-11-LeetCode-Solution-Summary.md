@@ -5,6 +5,14 @@ post: layout
 
 求职需要，开始刷LeetCode，之前没刷过题，不得不翻出之前算法和数据结构的文章再看一遍。LeetCode上有些题目着实难解
 
+## 字符串
+
+### 滑动窗口
+
+- 最长不重复子串
+
+如果没有刷题经验，这个问题还是很不好想的
+
 
 ## 重复子问题
 
@@ -63,3 +71,12 @@ vector<string> generateParenthesis(int n) {
 ```
 
 ### Problem #78
+
+## Tree
+
+### BinaryTree
+
+- Traversal
+    - [【#144 PreOrderTraversal】](https://leetcode.com/problems/binary-tree-preorder-traversal/description/)
+    - [【#145 PostOrderTraversal】](https://leetcode.com/problems/binary-tree-postorder-traversal/description/)
+    - [【#94 InOrderTraversal】](https://leetcode.com/problems/binary-tree-inorder-traversal/description/)

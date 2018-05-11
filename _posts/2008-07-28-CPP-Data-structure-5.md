@@ -105,8 +105,9 @@ void BinaryTree<T>::Recursive (BinaryTreeNode<T>* root){
     
 - 前序遍历
 
-1. 先访问根节点，并把此结点的非空**右结点**推入栈中，然后下降去遍历它的左子树
-2. 遍历完左子树之后，弹出一个右结点继续重复第一步
+1. 指针指向根节点
+2. 访问该节点，**右结点**入栈，下降去遍历它的左子树
+3. 遍历完左子树之后，弹出一个右结点继续重复第一步
 
 ```cpp
 template<class T>
@@ -129,7 +130,7 @@ void BinaryTree<T>::None_Recursive_1(BinaryTreeNode<T>* root){
 }
 ```
 
-也可以通过判断栈是否为空作为循环条件，思路为
+也可以通过判断栈是否为空作为循环条件，思路为：
 
 1. 将根节点放入栈中
 2. 判断栈是否为空，如果不空，取出栈顶结点访问
@@ -157,18 +158,92 @@ void BinaryTree<T>::None_Recursive_2(BinaryTreeNode<T>* root){
 ```
 - 中序遍历
 
-中序遍历的思路和前序遍历类似，以第二种方式为例
+1. 指针指向根节点
+2. 遇到一个节点，入栈一个节点，指针指向左子节点，继续下降
+3. 左节点为空时，弹出一个节点，指针指向该节点
+4. 指针指向右结点
+5. 循环第1步
 
 ```cpp
-
-
+void inOrder_Traverse(TreeNode* root){
+    stack<TreeNode* >st;
+    TreeNode* pointer = root;
+    while(!st.empty() || pointer){
+        if(pointer){
+            st.push(pointer);
+            pointer = pointer->left;
+        }else{
+            pointer = st.top();
+            st.pop();
+            cout<<pointer->val<<endl;
+            pointer = pointer -> right;
+        }
+    }
+}
 ```
+
+- 后序遍历
+
+后序遍历相对复杂，需要给栈中元素加上一个特征位：
+
+1. Left 表示已进入该结点的左子树，将从左边回来
+2. Right 表示已进入该结点的右子树，将从右边回来
+
+```cpp
+enum Tag{left, rigt};
+class TreeNodeElement{
+    TreeNode* node;
+    Tag tag;
+    TreeNodeElement(TreeNode* n):node(n){
+        tag = left;
+    }
+};
+```
+
+遍历的具体步骤为：
+
+1. 指针指向根节点
+2. 如果当前指针不为空，指针沿着左子结点下降，将途径结点标记为left，并入栈
+3. 左节点下降到末尾后，将栈顶元素弹出
+4. 如果该元素来自left，将其将其标记为right，重新入栈，指针指向右结点，并沿右结点下降
+5. 如果该元素来自right，访问该节点，并将指针置为空
+6，重复第2步
+
+
+```cpp
+void postOrder_Traversal(TreeNode* root){
+    stack<TreeNodeElement> st;
+    TreeNode* pointer =  root;   
+    while(pointer || !st.empty()){
+        while(pointer){
+            TreeNodeElement ele(pointer); // 沿非空指针压栈，并左路下降
+            ele.tag = left;
+            st.push(ele); // 把标志位为Left的结点压入栈
+            pointer = pointer->left;
+        }
+        //左子结点下降完毕
+        TreeNodeElement ele = st.top();
+        st.pop();
+        pointer = ele.pointer;
+        if(ele.tag == left){ //来自左边
+            //将其更改为右边，重新入栈
+            ele.tag = right;
+            st.push(tag);
+        }else{
+            //visit结点
+            visit(pointer);
+            pointer = NULL; //置为NULL，继续弹栈
+        }
+    }
+}
+```
+
 
 
 ### 复杂度分析
 
 - 时间复杂度
-    - 在各种遍历中，每个结点都被访问且只被访问一次，时间代价为`O(n)`
+    - <mark>在各种遍历中，每个结点都被访问且只被访问一次，时间代价为`O(n)`</mark>
     - 非递归保存入出栈（或队列）时间
         -  前序、中序，某些结点入/出栈一次， 不超过`O(n)`
         -  后序，每个结点分别从左、右边各入/出一次， `O(n)`
