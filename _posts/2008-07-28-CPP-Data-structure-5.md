@@ -84,6 +84,7 @@ public:
         - 左子树->右子树->根结点
         - 上图：`DBGEHIFCA`
 
+### 递归遍历
 
 ```cpp
 //递归，前序遍历
@@ -100,8 +101,14 @@ void BinaryTree<T>::Recursive (BinaryTreeNode<T>* root){
 ```
 递归遍历是一种简洁并很好理解的算法，而且编译器也会在递归过程中做一些优化使其效率不会太差，但是对树层次很深的情况下，容易出现StackOverflow，此时可以将递归解法转为非递归解法
 
+### 非递归遍历
+    
+- 前序遍历
+
+1. 先访问根节点，并把此结点的非空**右结点**推入栈中，然后下降去遍历它的左子树
+2. 遍历完左子树之后，弹出一个右结点继续重复第一步
+
 ```cpp
-//非递归，前序遍历
 template<class T>
 void BinaryTree<T>::None_Recursive_1(BinaryTreeNode<T>* root){
     stack<BinaryTreeNode<T>* > ss;
@@ -122,7 +129,13 @@ void BinaryTree<T>::None_Recursive_1(BinaryTreeNode<T>* root){
 }
 ```
 
-也可以通过判断栈是否为空作为循环条件
+也可以通过判断栈是否为空作为循环条件，思路为
+
+1. 将根节点放入栈中
+2. 判断栈是否为空，如果不空，取出栈顶结点访问
+3. 如果该结点有右子树，入栈右子树
+4. 如果该结点有左子树，入栈左子树
+5. 重复第2步
 
 ```cpp
 template<class T>
@@ -137,21 +150,32 @@ void BinaryTree<T>::None_Recursive_2(BinaryTreeNode<T>* root){
             ss.push(top->right); //先入栈右子树节点
         }
         if(top->left){ 
-            ss.push(top->left); //后入栈右子树节点
+            ss.push(top->left); //后入栈左子树节点
         }
     }
 }
 ```
+- 中序遍历
+
+中序遍历的思路和前序遍历类似，以第二种方式为例
+
+```cpp
+
+
+```
+
+
+### 复杂度分析
 
 - 时间复杂度
     - 在各种遍历中，每个结点都被访问且只被访问一次，时间代价为`O(n)`
     - 非递归保存入出栈（或队列）时间
         -  前序、中序，某些结点入/出栈一次， 不超过`O(n)`
-        - 后序，每个结点分别从左、右边各入/出一次， `O(n)`
+        -  后序，每个结点分别从左、右边各入/出一次， `O(n)`
 - 空间复杂度
     - 栈的深度与树的高度有关
-        - 最好 O(log n)
-        - 最坏 O(n) ，此时树退化为线性链表
+        - 最好 `O(log n)`
+        - 最坏 `O(n)` ，此时树退化为线性链表
 
 ### 广度优先遍历
 
