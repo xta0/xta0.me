@@ -380,3 +380,8 @@ pre code, pre tt {
     word-wrap: break-word;
   }
 }
+
+/* mathjax */
+.MathJax_Display{overflow-x:auto;overflow-y:hidden;}
+.MathJax{outline:0;}
+.MathJax span{font-size:16px;}
