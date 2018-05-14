@@ -214,11 +214,11 @@ bool Array<T>::delete(const int p){
 - 通过指针把它的一串存储节点连接成一个链
 - 存储节点由两部分组成
 	- 数据域(data) + 指针域（后继地址,next） 
-- <mark>带头结点的单链表<mark>
-	- 头结点是一个虚节点：
+- <mark>带头节点的单链表<mark>
+	- 头节点是一个虚节点：
         - `(head)->first->second->third...->NULL`
         - 本身没有值，方便操作
-        - <mark>头结点本身可以代表一个链表</mark>
+        - <mark>头节点本身可以代表一个链表</mark>
 	- 第一个节点：`head->next, head != NULL;`
 	- 空表判断：`head->next == NULL;`
 	- 当前节点：fence->next(curr隐含)
@@ -234,8 +234,8 @@ bool Array<T>::delete(const int p){
 ```cpp
 template <class T> class Link {
  public:
-    T data; // 用于保存结点元素的内容
-    Link<T> * next; // 指向后继结点的指针
+    T data; // 用于保存节点元素的内容
+    Link<T> * next; // 指向后继节点的指针
     Link(const T info, const Link<T>* nextValue =NULL) {
         data = info;
         next = nextValue;
@@ -273,7 +273,7 @@ public:
 template<class T>
 Link<T> * LinkList<T>::pos(const int i){
     if(i == -1){
-        //返回头结点
+        //返回头节点
         return head;
     }
     Link<T>* node = head->next;    
@@ -344,7 +344,7 @@ bool LinkList<T>::delete(const int i){
 ## 双向链表
 
 - 为弥补单链表的不足,而产生双链表
-    - 单链表的`next`字段仅仅指向后继结点，不能有效地找到前驱, 反之亦然
+    - 单链表的`next`字段仅仅指向后继节点，不能有效地找到前驱, 反之亦然
 - 增加一个指向前驱的指针`prev | data | next`
 
 ```
@@ -357,9 +357,9 @@ head-->[]<-->[a0]<-->a[1]<-...->[an](tail)
 template <class T> 
 class DLink {
 public:
-    T data; // 用于保存结点元素的内容
-    Link<T> * next; // 指向后继结点的指针
-    Link<T> *prev; // 指向前驱结点的指针
+    T data; // 用于保存节点元素的内容
+    Link<T> * next; // 指向后继节点的指针
+    Link<T> *prev; // 指向前驱节点的指针
     Link(const T info, Link<T>* preValue = NULL, Link<T>* nextValue = NULL) {
         // 给定值和前后指针的构造函数
         data = info;
@@ -414,7 +414,7 @@ head->[]<-->[a0]<-->[a1]<-...->[an](tail)
 - 几个特殊点处理
 	- 头指针处理
 	- 非循环链表尾节点的指针为 `NULL`
-	- 循环链表尾节点指向头结点
+	- 循环链表尾节点指向头节点
 
 - 链表处理
 	- 空链表的特殊处理
