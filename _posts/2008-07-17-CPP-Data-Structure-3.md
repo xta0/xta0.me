@@ -5,54 +5,34 @@ title: Data Structure Part 3 - Stack & Queue
 
 ## 栈
 
-- 主要操作：push，pop
-- 应用：
-	- 表达式求值
-	- 消除递归
-	- 深度优先搜索
+### 栈的实现方式
 
-- 抽象数据类型：
+- 顺序栈（Array-based Stack）
+	- 使用向量实现，本质上是顺序表的简化版
+	- 关键是确定哪一端作为栈顶
+	- 上溢，下溢问题
+		- 栈中已有maxsize个元素，再进栈报错
+		- 已经是空栈，再出栈报错
+
+- 链式栈（Linked Stack）
+	- 使用单链表方式存储
+	- 其中指针的方向是从栈顶向下链接  
 
 ```cpp
-template<class T>
-class Stack{
-public:
-	void clear();
-	bool push(const T item);
-	bool pop(T& item);
-	bool top(T& item);
-	bool isEmpty();
-	bool isFull();
-};
+// 入栈操作的链式实现
+bool lnksStack<T>:: push(const T item) {
+	Link<T>* tmp = new Link<T>(item, top);
+	top = tmp;
+	size++;
+	return true;
+} 
+Link(const T info, Link* nextValue) {// 具有两个参数的Link构造函数
+	data = info;
+	next = nextValue;
+}
 ```
 
-- 栈的实现方式：
-	- 顺序栈（Array-based Stack）
-		- 使用向量实现，本质上是顺序表的简化版
-		- 关键是确定哪一端作为栈顶
-		- 上溢，下溢问题
-			- 栈中已有maxsize个元素，再进栈报错
-			- 已经是空栈，再出栈报错
-
-	- 链式栈（Linked Stack）
-		- 使用单链表方式存储
-		- 其中指针的方向是从栈顶向下链接  
-
-	```cpp
-	// 入栈操作的链式实现
-	bool lnksStack<T>:: push(const T item) {
-		Link<T>* tmp = new Link<T>(item, top);
-		top = tmp;
-		size++;
-		return true;
-	} 
-	Link(const T info, Link* nextValue) {// 具有两个参数的Link构造函数
- 		data = info;
- 		next = nextValue;
- 	}
-	```
-
-### 顺序栈和链式栈的比较
+- 顺序栈和链式栈的比较
 
 - 时间效率
 	- 所有操作都只需要常数时间
