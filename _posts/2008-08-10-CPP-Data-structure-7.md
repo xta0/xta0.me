@@ -22,13 +22,6 @@ mathjax: true
 
 在计算机中我们可以使用邻接矩阵来描述图，所谓邻接矩阵就是描述顶点之间链接关系的矩阵。如果一个图有$n$个顶点，则关联矩阵为$n \times n$的方阵，如果顶点$i,j$相连，则矩阵第$i$行$j$列$(i,j)$和第$j$行$i$列$(j,i)$的值为$1$或者为$i$到$j$的权重$w$，因此邻接矩阵是一个对称阵，且对角线的元素值为0
 
-<img src="/assets/images/2008/08/graph-1.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="/assets/images/2008/08/graph-2.png" style="margin-left:auto; margin-right:auto;display:block">
 
-上面三种图的邻接矩阵分别为
-
-```
-[]
-
-
-
-```
+上面给出了几种邻接矩阵，对于无向图，邻接矩阵是对称阵，在存储上有一定的冗余，对于有向图，需要根据箭头的指向来填充矩阵的值，对于带权图，矩阵中的值为边的权重值
