@@ -385,3 +385,7 @@ pre code, pre tt {
 .MathJax_Display{overflow-x:auto;overflow-y:hidden;}
 .MathJax{outline:0;}
 .MathJax span{font-size:16px;}
+
+.code {
+  text-align: center;
+}
