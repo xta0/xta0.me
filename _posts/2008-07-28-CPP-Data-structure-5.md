@@ -88,20 +88,23 @@ public:
 ```cpp
 //递归，前序遍历
 template<class T>
-void BinaryTree<T>::Recursive (BinaryTreeNode<T>* root){
-    if(root!=NULL) {
-        //Visit(root); //前序遍历
-        Recursive(root->leftchild()); // 递归访问左子树
-        //Visit(root); // 中序
-        Recursive(root->rightchild()); // 递归访问右子树
-        //Visit(root); // 后序
+void BinaryTree<T>::traverse (BinaryTreeNode<T>* root){
+    if(!root){
+        return ;
     }
+    //Visit(root); //前序遍历
+    traverse(root->leftchild()); // 递归访问左子树
+    //Visit(root); // 中序
+    traverse(root->rightchild()); // 递归访问右子树
+    //Visit(root); // 后序
 ｝
 ```
-递归遍历是一种简洁并很好理解的算法，而且编译器也会在递归过程中做一些优化使其效率不会太差，但是对树层次很深的情况下，容易出现StackOverflow，此时可以将递归解法转为非递归解法
+递归遍历的时间复杂度为 $T(n)=O(1) + T(a) + T(n-a-1) = O(n)$ 这是一个不能再好的时间复杂度了。
 
-### 非递归遍历
-    
+### 迭代遍历
+
+递归遍历是一种简洁并很好理解的算法，而且编译器也会在递归过程中做一些优化使其效率不会太差，但是对树层次很深的情况下，容易出现StackOverflow，此时可以将递归解法转为非递归的迭代解法，可以观察到上面递归函数
+
 - 前序遍历
 
 1. 指针指向根节点
@@ -174,7 +177,7 @@ void inOrder_Traverse(TreeNode* root){
         }else{
             pointer = st.top();
             st.pop();
-            cout<<pointer->val<<endl;
+            Visit(pointer);
             pointer = pointer -> right;
         }
     }
