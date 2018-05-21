@@ -196,10 +196,9 @@ $$
 void graph_traverse(){
 
 // 对图所有顶点的标志位进行初始化
-for(int i=0; i<G.VerticesNum(); i++)
-    G.Mark[i] = UNVISITED;
-// 检查图的所有顶点是否被标记过，如果未被标记，
-// 则从该未被标记的顶点开始继续遍历
+for(int i=0; i<VerticesNum(); i++)
+    status(V[i]) = UNVISITED;
+// 检查图的所有顶点是否被标记过，如果未被标记，则从该未被标记的顶点开始继续遍历
 // do_traverse函数用深度优先或者广度优先
 for(int i=0; i<G.VerticesNum(); i++)
     if(G.Mark[i] == UNVISITED){
@@ -318,7 +317,13 @@ void BFS(Ve v) {
 </div>
 </div>
 
-如上图所示，我们按照选课的先决条件可生成右边的图，我们可以一种方式遍历这个图来得到一组顶点序列，方法如下
+如上图所示，如果我们要修完图表中的课程，我们该按照怎样的顺序选课，才能保证课程能够正常修完呢(在修某一门课程前，要先修完它的先序课程)？我们可以首先按照节点间的先决条件（课程之间的关联关系）来构建一个有向无环图图，如右边图(a)所示，然后将图(a)等价的转化为图(b)，显然，图(b)就是一份可行的选课顺序。
+
+实际上，许多应用问题，都可转化和描述为这一标准形式：给定描述某一实际应用的有向图（图(b)），如何在与该图“相容”的前提下，将所有顶点排成一个线性序列（图(c)）。此处的“相容”，准确的含义是：每一顶点都不会通过边，指向其在此序列中的前驱顶点。这样的一个线性序列，称作原有向图的一个拓扑排序（topological sorting）。
+
+对于有向无环图，它的拓扑序列必然存在，但是却不一定唯一，如上面的例子，$C_1$,$C_2$互换后，仍然是一个拓扑排序，因此，一个有向图五环图的拓扑序列未必唯一。
+
+我们可以一种BFS遍历的方式来得到这样一组拓扑序列，方法如下
 
 1. 从图中选择任意一个入度为0的顶点且输出
 2. 从图中删掉此顶点及其所有的出边，则其所有相邻节点入度减少1
@@ -330,25 +335,42 @@ void TopsortbyQueue(Graph& G) {
         G.status(G.V[i]) = UNVISITED; // 初始化
         queue<Vertex<int>> Q; // 使用STL中的队列
         for (i = 0; i < G.VerticesNum(); i++){ // 入度为0的顶点入队
-            if (G.V[i].indegree == 0) 
+            if (G.V[i].indegree == 0) {
                 Q.push(i);
-            while (!Q.empty()) { // 如果队列非空
-    int v = Q.front(); Q.pop(); // 获得队列顶部元素， 出队
-    Visit(G,v); G.Mark[v] = VISITED; // 将标记位设置为VISITED
-    for (Edge e = G.FirstEdge(v); G.IsEdge(e); e = G.NextEdge(e)) {
-    G.Indegree[G.ToVertex(e)]--; // 相邻的顶点入度减1
-    if (G.Indegree[G.ToVertex(e)] == 0) // 顶点入度减为0则入队
-    Q.push(G.ToVertex(e));
-    } }
-    for (i = 0; i < G.VerticesNum(); i++) // 判断图中是否有环
-    if (G.Mark[i] == UNVISITED) {
-    cout<<“ 此图有环！”; break;
-} }
+            }
+        }
+        while (!Q.empty()) { // 如果队列非空
+            Vertex<int> v = Q.front(); 
+            Q.pop(); // 获得队列顶部元素， 出队
+            Visit(G,v); 
+            G.status(v) = VISITED; // 将标记位设置为VISITED
+            for (Edge e = G.FirstEdge(v); G.IsEdge(e); e = G.NextEdge(e)) {
+                Vertex<int> v = G.toVertex(e);
+                v.indegree--; // 相邻的顶点入度减1    
+            if (v.indegree == 0){ // 顶点入度减为0则入队
+                Q.push(v);
+            } 
+        }
+        for (i = 0; i < G.VerticesNum(); i++){ // 判断图中是否有环
+            if (G.status(V[i]) == UNVISITED) {
+                cout<<“ 此图有环！”; break;
+            }
+        }
+}
 ```
 
 ### 最短路径问题
 
-BFS搜索是一种按层次搜索的算法，因此可以求解某个顶点到原点的最短路径问题
+最短路径问题是针对带权图的一类问题
+
+- 单源最短路径(single-source shortest paths)
+    - 给定带权图 $G = <V，E>$，其中每条边 $(v_i，v_j)$ 上的权 $W[v_i，v_j]$ 是一个**非负实数**。计算从任给的一个源点$s$到所有其他各结点的最短路径
+
+<img src="/assets/images/2008/08/graph-8.png" width="50%" style="margin-left:auto; margin-right:auto;display:block">
+
+- Dijkstra算法的基本思想
+
+
 
 ### 最小生成树
 
