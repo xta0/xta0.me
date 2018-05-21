@@ -21,7 +21,7 @@ mathjax: true
 若邻接顶点$u$和$v$的次序无所谓，则$(u,v)$为无向边(undirected edge)，若图中的所有边均为无向边，则这个图称为**无向图**。反之，**有向图**(digraph)中均为有向边(directed edge)，$u,v$分别称作边$(u,v)$的尾，头，表示从$u$出发，到达$v$
 
 - 路径/环路
-    - **路径**为一系列的顶点按照依次邻接的关系组成的序列，*$\pi = <v_0,v_1...,v_k>$，长度$\|\pi\|=k$，如果再一条通路中不含重复节点，我们称之为 **简单路径** ($v_i = v_j$除非$i=j$)。当路径的起点和终点重合时，称之为**环路**($v_0=v_k$)。如果再有向图中不包含任何环路，则称之为**有向无环图**(DAG)，树和森林是DAG图的一种特例。
+    - **路径**为一系列的顶点按照依次邻接的关系组成的序列，*$\pi = <v_0,v_1...,v_k>$，长度$\|\pi\|=k$，如果再一条通路中不含重复节点，我们称之为 **简单路径** ($v_i = v_j$除非$i=j$)。当路径的起点和终点重合时，称之为**环路**($v_0=v_k$)。如果再有向图中不包含任何环路，则称之为**有向无环图**(DAG,Directed Acyclic Graph)，树和森林是DAG图的一种特例。
     
     - 对于两个顶点的情况
         - 如果是无向图，则不认为是环路
@@ -32,17 +32,37 @@ mathjax: true
 图结构的接口主要包括顶点操作，边操作，遍历算法等
 
 ```cpp
+//定义顶点
+template<class Tv>
+class Vertex{
+    enum{
+        VISITED,
+        UNVISTED
+    }STATUS;
+    
+    STATUS status; //顶点状态
+    Tv data; //顶点数据
+    int inDegree;
+    int outDegree;
+};
+
+//定义边
+class Edge{
+    int from=1, to=-1, weight=0;
+};
+
+template<class Tv>
 class Graph{ // 图的ADT
 public:
     int VerticesNum(); // 返回图的顶点个数
     int EdgesNum(); // 返回图的边数
-    Edge FirstEdge(int oneVertex); // 第一条关联边
+    Edge FirstEdge(Vertex<Tv> oneVertex); // 第一条关联边
     Edge NextEdge(Edge preEdge); //下一条兄弟边
-    bool setEdge(int fromVertex,int toVertex,int weight); // 添一条边
-    bool delEdge(int fromVertex,int toVertex); // 删边
+    bool setEdge(Vertex<Tv> fromVertex,Vertex<Tv> toVertex,int weight); // 添一条边
+    bool delEdge(Vertex<Tv> fromVertex,Vertex<Tv> toVertex); // 删边
     bool IsEdge(Edge oneEdge); // 判断oneEdge是否
-    int FromVertex(Edge oneEdge); // 返回边的始点
-    int ToVertex(Edge oneEdge); // 返回边的终点
+    Vertex<Tv> FromVertex(Edge oneEdge); // 返回边的始点
+    Vertex<Tv> ToVertex(Edge oneEdge); // 返回边的终点
     int Weight(Edge oneEdge); // 返回边的权
 };
 ```
@@ -68,11 +88,6 @@ $$
 基于邻接矩阵的图结构，可以用二维数组来表达：
 
 ```cpp
-template <class Te>
-class Edge{
-    int from=1, to=-1, weight=0;
-};
-
 template<class Tv, Class Te>
 GraphMatrix:public Graph<Tv, Te>{
 private:
@@ -88,7 +103,7 @@ public:
 
 - 顶点操作
 
-对于任意顶点$i$，如何枚举其所有的邻接顶点(neighboor)。
+使用邻接矩阵表示法，对于任意顶点$i$，如何枚举其所有的邻接顶点(neighboor)。
 
 ```cpp
 int nextNbr(int i, int j){ //若已经枚举邻居j，则转向下一个邻居
@@ -170,14 +185,16 @@ $$
 
 ### 图的遍历
 
-图的遍历需要考虑两方面的问题：
-1. 由于图有连通的问题，从一个点出发不一定能够到达所有点，比如非连通图
-2. 由于图可能存在回路，因此遍历可能进入死循环
+图的遍历算法和树类似，和树不同的是，图有两个树没有的问题：
+
+1. 连通的问题，从一个点出发不一定能够到达所有点，比如非连通图
+2. 可能存在回路，因此遍历可能进入死循环
 
 解决这两个问题，需要给顶点加一个状态位，标识该节点是否已经被访问过。另外，对图的遍历，可将其按照一定规则转化为对树的遍历
 
 ```cpp
-void graph_traverse(Graph& G) {
+void graph_traverse(){
+
 // 对图所有顶点的标志位进行初始化
 for(int i=0; i<G.VerticesNum(); i++)
     G.Mark[i] = UNVISITED;
@@ -185,8 +202,9 @@ for(int i=0; i<G.VerticesNum(); i++)
 // 则从该未被标记的顶点开始继续遍历
 // do_traverse函数用深度优先或者广度优先
 for(int i=0; i<G.VerticesNum(); i++)
-    if(G.Mark[i] == UNVISITED)
-    do_traverse(G, i);
+    if(G.Mark[i] == UNVISITED){
+        do_traverse(G, i);
+    }
 }
 ```
 
@@ -194,24 +212,29 @@ for(int i=0; i<G.VerticesNum(); i++)
 
 图的深搜类似树的先根遍历，基本步骤为
 
-1. 选取一个未访问的点 v0 作为源点
-2. 访问顶点 v0
-3. 递归地深搜遍历 v0 邻接到的其他顶点
-4. 重复上述过程直至从 v0 有路径可达的顶点都已被访问过
-5. 再选取其他未访问顶点作为源点做深搜，直到图的所有顶点都被访问过
+1. 选取一个未访问的点$v_0$作为源点,访问顶点$v_0$
+2. 若$v_0$有未被访问的邻居，任选其中一个顶点$u_0$，进行递归地深搜遍历；否则，返回
+3. 顶点$u_0$，重复上述过程
+4. 不断递归+回溯，直至所有节点都被访问
 
 例如下图深度搜索的遍历次序为：`a b c f d e g`
 
 <img src="/assets/images/2008/08/graph-4.png" style="margin-left:auto; margin-right:auto;display:block">
 
 ```cpp
-void DFS(Graph& G, int v) { // 深度优先搜索的递归实现
-    G.Mark[v] = VISITED; // 把标记位设置为 VISITED
-    Visit(G,v); // 访问顶点v
-    for (Edge e = G.FirstEdge(v); G.IsEdge(e);e = G.NextEdge(e))
-        if (G.Mark[G.ToVertex(e)] == UNVISITED)
-            DFS(G, G.ToVertex(e));
-    PostVisit(G,v); // 对顶点v的后访问
+template<class Tv>
+void DFS(Vertex<Tv>& v) { // 深度优先搜索的递归实现
+    status(v) = VISITED;  // 把标记位设置为 VISITED
+    Visit(v); // 访问顶点v
+    //采用邻接矩阵
+    //for(int u = first(v); u>-1; u=nextNbr(v,u)){
+    //采用邻接表表示法
+    for (Edge e = FirstEdge(v); IsEdge(e);e = NextEdge(e)){
+        if (status(ToVertext(e)) == UNVISITED){
+            DFS(u);
+        }
+    }
+   // PostVisit(G,v); // 对顶点v的后访问
 }
 ```
 
@@ -224,22 +247,32 @@ void DFS(Graph& G, int v) { // 深度优先搜索的递归实现
 3. 依次访问这些邻接顶点的邻接顶点，如此反复
 4. 直到所有点都被访问过
 
+<img src="/assets/images/2008/08/graph-6.png" style="margin-left:auto; margin-right:auto;display:block">
+
+以上图为例，假设我们从`s`开始遍历：
+
+1. 随机选取一个`s`节点，入队
+2. `s`出队并做标记,将`s`的相邻节点`a,c,d`，入队
+3. `a`出队并做标记,将`a`相邻节点入队，由于`s,c`已经是被标记，于是只有`e`入队
+4. 同理，`c`出队，`b`入队，以此类推
+5. 直至节点全部被访问
+
+
 ```cpp
-void BFS(int v) {
-    queue<int> Q; // 使用STL中的队列
-    Visit(v); // 访问顶点v
-    status(v) = VISITED;  //更新节点状态
+template<class Ve>
+void BFS(Ve v) {
+    queue<Vertex<Ve>> Q; // 使用STL中的队列
     Q.push(v); // 标记,并入队列
     while (!Q.empty()) { // 如果队列非空
-        int u = Q.front (); // 获得队列顶部元素
+        Vertex<Ve> u = Q.front (); // 获得队列顶部元素
         Q.pop(); // 队列顶部元素出队
         Visit(u);//访问节点
         status(u) = VISITED; 
-        //通过枚举与当前节点u相连的边，找到所有u的邻居顶点
-        //也可以直接枚举u的所有邻居顶点
+        //使用邻接表，枚举与当前节点u相连的边，找到所有u的邻居顶点
+        //使用邻接矩阵，枚举u的所有邻居顶点
         //for(int u = firstNbr(v); u>-1; u=nextNbr(v,u)){
         for (Edge e = FirstEdge(u); IsEdge(e); e = NextEdge(e)){ 
-            int u = ToVertext(e);
+            Vertex<Ve> u = ToVertext(e);
             if(status(u) == UNVISITED){
                 Q.push(u);
             }
@@ -250,16 +283,72 @@ void BFS(int v) {
 
 - 时间复杂度分析：
 
-DFS 和 BFS 每个顶点访问一次，对每一条边处理一次 (无向图的每条边从两个方向处理)
-
-1. 采用邻接表表示时，有向图总代价为 $\Theta(n + e)$，无向图为 $\Theta(n + 2e)$
-2. 采用相邻矩阵表示时，处理所有的边需要 $\Theta(n^2)$的时间 ，所以总代价为$\Theta(n + n^2) = \Theta(n^2)$
+    DFS 和 BFS 每个顶点访问一次，对每一条边处理一次 (无向图的每条边从两个方向处理)
+    1. 采用邻接表表示时，有向图总代价为 $\Theta(n + e)$，无向图为 $\Theta(n + 2e)$
+    2. 采用相邻矩阵表示时，理论上，处理所有的边需要 $\Theta(n^2)$的时间 ，所以总代价为$\Theta(n + n^2) = \Theta(n^2)$。但实际上，在执行`nextNbr(v,u)`时，可认为是常数时间，因此它的时间复杂度也可以近似为$\Theta(n + e)$
 
 ### 拓扑排序
 
+所谓拓扑排序，是一种对<mark>有向无环图</mark>顶点排序的方式，排序的规则为两个顶点之间的前后位置，比如从顶点$v_i$到顶点$v_j$有一条有向边$(v_i, v_j)$，那么我们认为$v_i$在$v_j$的前面。
+
+生活中有很多拓扑排序的场景，比如任务之间的依赖关系，学生的选课等，以选课为例，假如我们有如下课程，它们之间的依赖关系为：
+
+<div style=" content:''; display: table; clear:both; height=0">
+<div style="float:left">
+    <table>
+    <thead>
+        <tr><th>课程代号</th><th>课程名称</th><th>先修课程</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>C1</td><td>高等数学</td><td></td></tr>
+        <tr><td>C2</td><td>程序设计</td><td></td></tr>
+        <tr><td>C3</td><td>离散数学</td><td>C1，C2</td></tr>
+        <tr><td>C4</td><td>数据结构</td><td>C2，C3</td></tr>
+        <tr><td>C5</td><td>算法分析</td><td>C2</td></tr>
+        <tr><td>C6</td><td>编译技术</td><td>C4,C5</td></tr>
+        <tr><td>C7</td><td>操作系统</td><td>C4,C9</td></tr>
+        <tr><td>C8</td><td>普通物理</td><td>C1</td></tr>
+        <tr><td>C8</td><td>计算机原理</td><td>C8</td></tr>
+    </tbody>
+    </table>
+</div>
+<div style="float:left;margin-left:30px">
+    <img src="/assets/images/2008/08/graph-7.png" width="50%" />
+</div>
+</div>
+
+如上图所示，我们按照选课的先决条件可生成右边的图，我们可以一种方式遍历这个图来得到一组顶点序列，方法如下
+
+1. 从图中选择任意一个入度为0的顶点且输出
+2. 从图中删掉此顶点及其所有的出边，则其所有相邻节点入度减少1
+3. 回到第 1 步继续执行
+
+```cpp
+void TopsortbyQueue(Graph& G) {
+    for (int i = 0; i < G.VerticesNum(); i++)
+        G.status(G.V[i]) = UNVISITED; // 初始化
+        queue<Vertex<int>> Q; // 使用STL中的队列
+        for (i = 0; i < G.VerticesNum(); i++){ // 入度为0的顶点入队
+            if (G.V[i].indegree == 0) 
+                Q.push(i);
+            while (!Q.empty()) { // 如果队列非空
+    int v = Q.front(); Q.pop(); // 获得队列顶部元素， 出队
+    Visit(G,v); G.Mark[v] = VISITED; // 将标记位设置为VISITED
+    for (Edge e = G.FirstEdge(v); G.IsEdge(e); e = G.NextEdge(e)) {
+    G.Indegree[G.ToVertex(e)]--; // 相邻的顶点入度减1
+    if (G.Indegree[G.ToVertex(e)] == 0) // 顶点入度减为0则入队
+    Q.push(G.ToVertex(e));
+    } }
+    for (i = 0; i < G.VerticesNum(); i++) // 判断图中是否有环
+    if (G.Mark[i] == UNVISITED) {
+    cout<<“ 此图有环！”; break;
+} }
+```
 
 ### 最短路径问题
 
+BFS搜索是一种按层次搜索的算法，因此可以求解某个顶点到原点的最短路径问题
 
 ### 最小生成树
 
@@ -268,3 +357,4 @@ DFS 和 BFS 每个顶点访问一次，对每一条边处理一次 (无向图的
 
 - [算法与数据结构-北大MOOC](https://www.coursera.org/learn/shuju-jiegou-suanfa/lecture/6Kuta/tu-de-bian-li)
 - [算法与数据结构-清华-邓俊峰]()
+- [拓扑排序](https://zh.wikipedia.org/wiki/%E6%8B%93%E6%92%B2%E6%8E%92%E5%BA%8F)

@@ -2,14 +2,16 @@ import os
 import string
 import argparse
 
-def rename(path,old_name,new_name):
+def rename(path,old_keyword,new_keyword):
     for file in os.listdir(path):
         tmp = file
-        if tmp.find(old_name) != -1:
-            tmp.replace(old_name,new_name)
-            os.rename(os.path.join(path,old_name), os.path.join(path,tmp))
+        if old_keyword in tmp:
+            print(f'found "{tmp}"')
+            new_name = tmp.replace(old_keyword,new_keyword)
+            print(f'change to "{new_name}"')
+            os.rename(os.path.join(path,tmp), os.path.join(path,new_name))
     
-    print 'Done.'
+    print('Done.')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -20,5 +22,5 @@ if __name__ == '__main__':
     input_dir = parser.parse_args().path
     old_name = parser.parse_args().old_name
     new_name = parser.parse_args().new_name
-    rename(path,old_name,new_name)
+    rename(input_dir,old_name,new_name)
     

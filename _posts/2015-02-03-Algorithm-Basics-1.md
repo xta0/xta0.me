@@ -1,12 +1,13 @@
 ---
 layout: post
-title: Algorithm Part 1
+title: Algorithm-Basics Part 1 | Overview
 mathjax: true
 ---
 
-# 算法分析
+## 算法分析
 
-## 概述
+所谓计算机算法，是信息处理的一种手段，它可以借助某种工具，按照一定规则，以明确而机械的形式进行
+
 
 ### 算法特性
 
@@ -59,6 +60,11 @@ Euclid(m,n){
 	return n
 }
 ```
+
+### 复杂度分析的主要方法
+
+- 迭代： 级数求和
+- 递归： 递归跟踪 + 递推方程
 
 ## 算法设计
 
