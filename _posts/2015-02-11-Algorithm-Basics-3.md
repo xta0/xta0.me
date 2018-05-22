@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Algorithm Part 3
+title: Algorithms-3 | 算法度量 |BigO notation
 mathjax: true
 ---
 

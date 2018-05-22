@@ -21,9 +21,7 @@ post: layout
     - [438. Find All Anagrams in a String](https://leetcode.com/problems/find-all-anagrams-in-a-string/description/)
 
 
-## 递归
-
-### 重复子问题
+## Divide & Conquer
 
 - 题目
     - [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/description/)

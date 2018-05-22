@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Algorithm Part 2
+title: Algorithms-2 | 算法分析基础 | Analysis Foundation
 mathjax: true
 ---
 

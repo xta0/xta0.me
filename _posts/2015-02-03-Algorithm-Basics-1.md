@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Algorithm-Basics Part 1 | Overview
+title: Algorithms-1 | 概述 | Overview
 mathjax: true
 ---
 

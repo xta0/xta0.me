@@ -308,12 +308,12 @@ void BFS(Ve v) {
         <tr><td>C6</td><td>编译技术</td><td>C4,C5</td></tr>
         <tr><td>C7</td><td>操作系统</td><td>C4,C9</td></tr>
         <tr><td>C8</td><td>普通物理</td><td>C1</td></tr>
-        <tr><td>C8</td><td>计算机原理</td><td>C8</td></tr>
+        <tr><td>C9</td><td>计算机原理</td><td>C8</td></tr>
     </tbody>
     </table>
 </div>
-<div style="float:left;margin-left:30px">
-    <img src="/assets/images/2008/08/graph-7.png" width="50%" />
+<div style="float:left;margin-left:10px;">
+    <img src="/assets/images/2008/08/graph-7.png" width="500px" />
 </div>
 </div>
 
