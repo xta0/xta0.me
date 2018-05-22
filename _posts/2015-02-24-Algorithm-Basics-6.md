@@ -16,9 +16,9 @@ dfs(v) {
     //2.(不是必须)设置某些状态
     setFlags();
     //3.对和u相邻的每个点v进行递归:
-    dfs(v);
+    dfs(next_v);
     //4.(不是必须)回溯，如果当前搜索不符合条件，重置状态
-    setFlags();
+    unsetFlags();
 }
 int main() {
     while(在图中能找到未访问过的点 k)
