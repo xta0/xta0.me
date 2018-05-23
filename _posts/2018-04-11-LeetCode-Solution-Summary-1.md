@@ -23,12 +23,18 @@ post: layout
 
 ## Divide & Conquer
 
-- 题目
-    - [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/description/)
-    - [46. Permutations](https://leetcode.com/problems/permutations/description/)
-    - [47. Permutations II](https://leetcode.com/problems/permutations-ii/description/)
-    - [78. Subsets](https://leetcode.com/problems/subsets/description/)
 
+- [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/description/)
+- [46. Permutations](https://leetcode.com/problems/permutations/description/)
+- [47. Permutations II](https://leetcode.com/problems/permutations-ii/description/)
+- [78. Subsets](https://leetcode.com/problems/subsets/description/)
+
+## DFS
+
+- [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/description/)
+- [46. Permutations](https://leetcode.com/problems/permutations/description/)
+- [47. Permutations II](https://leetcode.com/problems/permutations-ii/description/)
+- [78. Subsets](https://leetcode.com/problems/subsets/description/)
 
 ## Tree
 
