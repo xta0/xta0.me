@@ -39,15 +39,12 @@ mathjax: true
 之前介绍的数据结构都可以看成是图的一种表现形式，比如二叉树是一种无权的有向无环图，节点的入度为1，出度最大为2，顶点之间只有一条路径。而单项链表也可以看成是一种无权的DAG，每个节点的入度出度都为1
 
 
-
-
 ### 图的接口ADT
 
 图结构的接口主要包括顶点操作，边操作，遍历算法等
 
 ```cpp
 //定义顶点
-template<class Tv>
 class Vertex{
     enum{
         VISITED,
@@ -55,35 +52,60 @@ class Vertex{
     }STATUS;
     
     STATUS status; //顶点状态
-    Tv data; //顶点数据
+    string name; //顶点数据
     int inDegree;
     int outDegree;
+    double cost;
+    Set<Edge* > edges;
+    Vertex* previous;
 };
 
 //定义边
 class Edge{
-    int from=1, to=-1, weight=0;
+    Vertex *start;
+    Vertex *end;
+    double weight;
 };
 
-template<class Tv>
 class Graph{ // 图的ADT
 public:
-    int VerticesNum(); // 返回图的顶点个数
-    int EdgesNum(); // 返回图的边数
-    Edge FirstEdge(Vertex<Tv> oneVertex); // 第一条关联边
-    Edge NextEdge(Edge preEdge); //下一条兄弟边
-    bool setEdge(Vertex<Tv> fromVertex,Vertex<Tv> toVertex,int weight); // 添一条边
-    bool delEdge(Vertex<Tv> fromVertex,Vertex<Tv> toVertex); // 删边
+    //顶点操作
+    void addVertex(string name); //添加顶点
+    void removeVertex(string name); //删除某个顶点
+    bool containsVertex(string name); //图中是否包含某个顶点
+    set<Vertex getVertexSet(); //返回顶点集合
+    Vertex firstNbr(Vertex v); //当前节点的第一个邻居
+    Vertex nextNbr(Vertex v, Vertex u); //节点u的下一个邻居
+    set<Vertex> getNbrs(Vertex v); //返回某个点所有的邻居
+    Edge firstEdge(Vertex oneVertex); // 某顶点的第一条关联边
+
+    //边操作
+    void addEdge(Vertex v1, Vertex v2); //添加边
+    bool removeEdge(Vertex fromVertex,Vertex toVertex); // 删边
+    set<Edge> getEdgeSet(); //返回所有边集合
+    set<Edge> getEdgeSet(Vertex v); //返回某个点对应的边集合
+    bool setEdge(Vertex fromVertex,Vertex toVertex,int weight); // 添一条边
     bool IsEdge(Edge oneEdge); // 判断oneEdge是否
-    Vertex<Tv> FromVertex(Edge oneEdge); // 返回边的始点
-    Vertex<Tv> ToVertex(Edge oneEdge); // 返回边的终点
+    Edge nextEdge(Edge preEdge); //下一条兄弟边
+    Vertex FromVertex(Edge oneEdge); // 返回边的始点
+    Vertex ToVertex(Edge oneEdge); // 返回边的终点
     int Weight(Edge oneEdge); // 返回边的权
+    
+    //其它操作
+    int VerticesNum() const; // 返回图的顶点个数
+    int EdgesNum() const; // 返回图的边数
+    clear(); //清空所有顶点，所有边
+    isEmpty(); //图中是否有顶点
 };
 ```
 
+例如我们要添加两个点点
+
 ### 邻接矩阵/关联矩阵
 
-在计算机中我们可以使用邻接矩阵来描述图，所谓邻接矩阵就是描述顶点之间链接关系的矩阵。设$G=<V,E>$是一个有$n$个顶点图，则邻接矩阵是一个$n \times n$的方阵，用二维数组`A[n,n]`表示，它的定义如下:
+上面我们已经了解了关于图的逻辑模型，但是在计算机中该如何表示这个模型呢？方法有很多种，这里我们主要介绍两种，分别是邻接矩阵表示法和邻接表表示法，顾名思义，前者使用矩阵（二维数组）作为数据结构，后者使用链表。
+
+所谓邻接矩阵就是描述顶点之间链接关系的矩阵。设$G=<V,E>$是一个有$n$个顶点图，则邻接矩阵是一个$n \times n$的方阵，用二维数组`A[n,n]`表示，它的定义如下:
 
 $$ 
 A[i,j]=
@@ -102,16 +124,10 @@ $$
 基于邻接矩阵的图结构，可以用二维数组来表达：
 
 ```cpp
-template<class Tv, Class Te>
-GraphMatrix:public Graph<Tv, Te>{
+GraphMatrix:public Graph{
 private:
-    int n = 0; //顶点数
-    int e = 0;  //边数
-    vector<Vertex<Tv>> V; //顶点
+    vector<Vertex> V; //顶点
     vector<vector<Edge<Te>*>> E; //边集合，邻接矩阵
-public:
-    Tv firstNbr(Tv v); //当前节点的第一个邻居
-    Tv nextNbr(Tv v, Tv u); //前节点u的下一个邻居
 };
 ```
 
@@ -197,9 +213,9 @@ $$
     - 边表中表目顺序往往按照顶点编号从小到大排列
 
 
-### 图的遍历
+### 图的搜索与遍历
 
-图的遍历算法和树类似，和树不同的是，图有两个树没有的问题：
+在图中搜索两点间的路径有很多种方式，常用的有DFS，BFS，Dijkstra，A*等，对于图的遍历，和树类似我们也可以使用DFS和BFS两种方式，但是图有两个树没有的问题：
 
 1. 连通的问题，从一个点出发不一定能够到达所有点，比如非连通图
 2. 可能存在回路，因此遍历可能进入死循环
@@ -212,53 +228,82 @@ void graph_traverse(){
 // 对图所有顶点的标志位进行初始化
 for(int i=0; i<VerticesNum(); i++)
     status(V[i]) = UNVISITED;
-// 检查图的所有顶点是否被标记过，如果未被标记，则从该未被标记的顶点开始继续遍历
-// do_traverse函数用深度优先或者广度优先
-for(int i=0; i<G.VerticesNum(); i++)
-    if(G.Mark[i] == UNVISITED){
-        do_traverse(G, i);
-    }
+    // do_traverse函数用深度优先或者广度优先
+    do_traverse(v);
 }
 ```
 
-- DFS
+- **DFS**
 
-图的深搜类似树的先根遍历，基本步骤为
+图的DFS遍历过程和之前介绍的树的DFS遍历过程类似，都是从一个节点开始，不断的递归+回溯，最终走完全部路径。其基本步骤为
 
 1. 选取一个未访问的点$v_0$作为源点,访问顶点$v_0$
 2. 若$v_0$有未被访问的邻居，任选其中一个顶点$u_0$，进行递归地深搜遍历；否则，返回
 3. 顶点$u_0$，重复上述过程
 4. 不断递归+回溯，直至所有节点都被访问
 
-例如下图深度搜索的遍历次序为：`a b c f d e g`
-
-<img src="/assets/images/2008/08/graph-4.png" style="margin-left:auto; margin-right:auto;display:block">
 
 ```cpp
-template<class Tv>
-void DFS(Vertex<Tv>& v) { // 深度优先搜索的递归实现
+void DFS(Vertex v) { // 深度优先搜索的递归实现
     status(v) = VISITED;  // 把标记位设置为 VISITED
     Visit(v); // 访问顶点v
-    //采用邻接矩阵
-    //for(int u = first(v); u>-1; u=nextNbr(v,u)){
-    //采用邻接表表示法
-    for (Edge e = FirstEdge(v); IsEdge(e);e = NextEdge(e)){
-        if (status(ToVertext(e)) == UNVISITED){
+    //访问所有UNVISITED状态的节点
+    for(auto u : getNbrs(v))
+        if (status(u) == UNVISITED){
             DFS(u);
         }
-    }
-   // PostVisit(G,v); // 对顶点v的后访问
+    } 
 }
 ```
 
-- BFS
+<img src="/assets/images/2008/08/graph-4.png" style="margin-left:auto; margin-right:auto;display:block">
 
-对图的广度优先遍历可转化为对树的层次遍历，的过程为
+例如上图DFS的遍历次序为：`a b c f d e g`。这里有一点要注意，由于第二步对相邻节的未访问的节点选取规则不唯一（下图例子使用的是字母顺序），因此对全图进行遍历得到结果序列是不唯一的。类似的，如果使用DFS进行搜索，寻找两点间路径，得到的结果不一定是最短路径。
+
+```
+//使用DFS进行搜索
+function dfs(v1,v2):
+    v1.status = visited
+    if v1 == v2:
+        //found a path
+        return true
+    //遍历v的每一个未被访问的相邻节点
+    for n : v1.unvisited_neighbors:
+        if dfs(n,v2): 
+        //found a path
+    return false
+```
+
+- **BFS**
+
+图的广度优先遍历过程类似从某个点出发，一圈一圈的向外层顶点扩散的过程
 
 1. 从图中的某个顶点$v_0$出发，访问并标记该节点
 2. 依次访问$v_0$所有尚未访问的邻接顶点
 3. 依次访问这些邻接顶点的邻接顶点，如此反复
 4. 直到所有点都被访问过
+
+```cpp
+//从v点开始便利啊
+void BFS(Vertex v) {
+    status(v) = VISITED; 
+    queue<Vertex> Q; // 使用STL中的队列
+    Q.push(v); // 标记,并入队列
+    while (!Q.empty()) { // 如果队列非空
+        Vertex v = Q.front (); // 获得队列顶部元素
+        Q.pop(); // 队列顶部元素出队
+        Visit(u);//访问节点
+        //遍历v的每一个未被访问的相邻节点
+        for(auto u : getNbrs(v)){
+            if (status(u) == UNVISITED){
+                status(u) = VISITED; 
+                u.previous = v;//设置前驱节点
+                Q.push(u);
+            }
+        }
+    }
+}
+```
 
 <img src="/assets/images/2008/08/graph-6.png" style="margin-left:auto; margin-right:auto;display:block">
 
@@ -270,28 +315,23 @@ void DFS(Vertex<Tv>& v) { // 深度优先搜索的递归实现
 4. 同理，`c`出队，`b`入队，以此类推
 5. 直至节点全部被访问
 
+对于无权图来说，BFS相比DFS可以用来寻找两点间（例如上图中的a和b）的最短路径（最少边），但却不容易保存到达b点的路径，解决这个问题，可以给每个节点加一个指向前驱节点的指针。
 
-```cpp
-template<class Ve>
-void BFS(Ve v) {
-    queue<Vertex<Ve>> Q; // 使用STL中的队列
-    Q.push(v); // 标记,并入队列
-    while (!Q.empty()) { // 如果队列非空
-        Vertex<Ve> u = Q.front (); // 获得队列顶部元素
-        Q.pop(); // 队列顶部元素出队
-        Visit(u);//访问节点
-        status(u) = VISITED; 
-        //使用邻接表，枚举与当前节点u相连的边，找到所有u的邻居顶点
-        //使用邻接矩阵，枚举u的所有邻居顶点
-        //for(int u = firstNbr(v); u>-1; u=nextNbr(v,u)){
-        for (Edge e = FirstEdge(u); IsEdge(e); e = NextEdge(e)){ 
-            Vertex<Ve> u = ToVertext(e);
-            if(status(u) == UNVISITED){
-                Q.push(u);
-            }
-        }
-    }
-}
+```
+//使用BFS进行搜索
+function bfs(v1,v2):
+    queue := {v1}
+    v1.status = visited
+    while not queue.empty():
+        v = queue.front
+        if v == v2 :
+            //path is found
+        //遍历v的每一个未被访问的相邻节点
+        for n : v1.unvisited_neighbors:
+            n.status = visited
+            queue.push(n)
+
+    //if we get here, no path exists.
 ```
 
 - 时间复杂度分析：
@@ -299,6 +339,56 @@ void BFS(Ve v) {
     DFS 和 BFS 每个顶点访问一次，对每一条边处理一次 (无向图的每条边从两个方向处理)
     1. 采用邻接表表示时，有向图总代价为 $\Theta(n + e)$，无向图为 $\Theta(n + 2e)$
     2. 采用相邻矩阵表示时，理论上，处理所有的边需要 $\Theta(n^2)$的时间 ，所以总代价为$\Theta(n + n^2) = \Theta(n^2)$。但实际上，在执行`nextNbr(v,u)`时，可认为是常数时间，因此它的时间复杂度也可以近似为$\Theta(n + e)$
+
+### 最短路径问题（Dijkstra）
+
+路径的权值在某些场合下是非常重要的，比如两地间飞机的票价，两个网络节点间数据传输的延迟等等。DFS和BFS在搜索两个节点路径时不会考虑边的权值问题，如果加入权值，那么两点间权值最小的路径不一定是BFS得到的最短路径，如下图中求$\\{a,f\\}$两点间的BFS的结果为$\\{a,e,f\\}$，cost为9，而cost最少的路径为$\\{a,d,g,h,f\\}$，其值为6
+
+<img src="/assets/images/2008/08/graph-9.jpg" style="margin-left:auto; margin-right:auto;display:block">
+
+Dijkstra算法研究的是单源最短路径(single-source shortest paths)问题，即给定带权图 $G = <V，E>$，其中每条边 $(v_i，v_j)$ 上的权 $W[v_i，v_j]$ 是一个**非负实数**。计算从任给的一个源点$s$到所有其他各结点的最短路径。其基本思想是维护一张表，表中记录当前两点间的最短路径，然后不断更新路径值，直到找到最终解。
+
+```
+function dijkstra(v1,v2):
+    //初始化所有节点的cost值
+    for v: all vertexes:
+        v.cost = maximum
+
+    v1.cost = 0
+    //创建一个最小堆保存顶点，优先级最低的顶点在堆顶部
+    priority_queue pq = {v1}
+
+    while not pq.empty():
+        v = pq.front(); //弹出优先级最低的vertex
+        v.status = visited
+        if v == v2:
+            break;
+        //遍历v的每一个未被访问的相邻节点
+         for n : v.unvisited_neighbors:
+            n.status = visited
+            //计算到达n的cost
+            cost := v.cost + weight of edge(v,n)
+            if cost < n.cost:
+                n.cost = cost
+                n.prev = v
+                pq.push(n)
+
+    //使用v2的前驱指针重建到v1的路径
+```
+
+上述是Dijkstra算法的伪码，我们通过下面一个例子看看它是如何工作的。如下图所示，假设我们要求从$\\{a,f\\}$的权值最短路径。
+
+1. 初始化各节点的cost为无穷大，令`a`的cost为0，放入优先级队列pq
+2. 从pq中取出顶部节点，访问它的相邻节点`b,d`，计算到达`b,d`的cost，分别为`2,1`，由于`2,1`均小于`b,d`原来的cost(无穷大)，因此将`b,d`的cost更新，放入到优先队列，第一次选择（循环）结束，此时队列中的顶点为`pqueue = {d:1,b:2}`
+3. 重复步骤2，pq顶部的节点为`d`,找到`d`相邻的节点`c,f,g,e`分别计算各自的权重为`3,9,5,3`，均小于各自cost值（无穷大），因此`c,f,g,e`入队，第二次循环结束，此时队列中的顶点为`pqueue = {b:2,c:3,e:3,g:5,f:9}`
+4. 重复步骤2，pq顶部的节点为`b`，找到`d`相邻的节点`e`(`d`在上一步中已经被访问了)，计算`b`到`e`的cost为2+10=12，大于`e`在上一步得到的cost`3`，因此直接返回。第三次循环结束，此时队列中的顶点为`pqueue = {c:3,e:3,g:5,f:9}`
+5. 重复步骤2，pq顶部的节点为`c`,找到`d`相邻的节点`f`，计算到达`f`的权重为`8`，小于队列中的`9`，说明该条路径优于第三步产生的路径，于是更新`f`的cost为`8`，更新`f`的前驱节点为`c`。第四次循环结束，此时队列中的顶点为`pqueue = {e:3,g:5,f:8}`
+6. 重复步骤2，pq顶部的节点为`e`，找到`e`相邻的节点`g`，计算`e`到`g`的cost为`3+6=9`，大于`g`在之前得到的cost`5`，因此直接返回。第五次循环结束，此时队列中的顶点为`pqueue = {g:5,f:8}`
+7. 重复步骤2，pq顶部的节点为`g`，找到`g`相邻的节点`f`，计算`g`到`f`的cost为`5+1=6`，小于`f`在之前得到的cost`8`，说明从`g`到达`f`这条路径更优，于是更新`f`的cost为`6`，更新`f`的前驱节点为`g`，此次循环结束，此时队列中的顶点为`pqueue = {f:8}`
+8. 重复步骤2，发现已经到达节点`f`因此整个循环结束。然后从`f`开始根据前驱节点依次回溯，得到路径`f<-g<-d<-a`，为权值最优路径。
+
+<img src="/assets/images/2008/08/graph-10.jpg" style="margin-left:auto; margin-right:auto;display:block">
+
 
 ### 拓扑排序
 
@@ -371,16 +461,6 @@ void TopsortbyQueue(Graph& G) {
 }
 ```
 
-### 最短路径问题
-
-最短路径问题是针对带权图的一类问题
-
-- 单源最短路径(single-source shortest paths)
-    - 给定带权图 $G = <V，E>$，其中每条边 $(v_i，v_j)$ 上的权 $W[v_i，v_j]$ 是一个**非负实数**。计算从任给的一个源点$s$到所有其他各结点的最短路径
-
-<img src="/assets/images/2008/08/graph-8.png" width="50%" style="margin-left:auto; margin-right:auto;display:block">
-
-- Dijkstra算法的基本思想
 
 
 
