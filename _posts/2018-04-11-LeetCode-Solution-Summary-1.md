@@ -14,7 +14,6 @@ post: layout
 
 ### 滑动窗口
 所谓滑动窗口是指使用一个map+两个指针的方式来动态tracez字符串的范围
-   
 - [3. Longest Substring Without Repeating Characters]()
 
 ### Anagrams
@@ -22,22 +21,36 @@ post: layout
 - [438. Find All Anagrams in a String](https://leetcode.com/problems/find-all-anagrams-in-a-string/description/)
 - [49. Group Anagrams](https://leetcode.com/problems/group-anagrams/description/)
 
-### Divide & Conquer
+### K-Sum
+
+双指针+滑动窗口求解
+- [1. Two Sum](https://leetcode.com/problems/two-sum/description/)
+- [15. 3Sum](https://leetcode.com/problems/3sum/description/)
+- [16. 3Sum Closest](https://leetcode.com/problems/3sum-closest/description/)
+- [18. 4Sum](https://leetcode.com/problems/4sum/description/)
+
+## Divide & Conquer
 
 - [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/description/)
 - [46. Permutations](https://leetcode.com/problems/permutations/description/)
 - [47. Permutations II](https://leetcode.com/problems/permutations-ii/description/)
 - [78. Subsets](https://leetcode.com/problems/subsets/description/)
 
-### DFS
+## DFS
+
+### 排列组合问题
 
 - [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/description/)
-- [40. Combination Sum II](https://leetcode.com/problems/combination-sum-ii/description/)
 - [46. Permutations](https://leetcode.com/problems/permutations/description/)
 - [47. Permutations II](https://leetcode.com/problems/permutations-ii/description/)
 - [78. Subsets](https://leetcode.com/problems/subsets/description/)
 - [77. Combinations](https://leetcode.com/problems/combinations/description/)
+- [40. Combination Sum II](https://leetcode.com/problems/combination-sum-ii/description/)
 - [216. Combination Sum III](https://leetcode.com/problems/combination-sum-iii/description/)
+
+### 搜索问题
+
+
 
 ## Tree
 

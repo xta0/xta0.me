@@ -4,7 +4,7 @@ title: Algorithms-2 | 算法分析基础 | Analysis Foundation
 mathjax: true
 ---
 
-## 算法的数学基础
+## 算法分析的数学基础
 
 ### 递推方程
 
