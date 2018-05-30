@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Data Structure Part 7 | Graph
+title: Data Structure Part 7 | Graph | 图
 mathjax: true
 ---
 
@@ -22,9 +22,9 @@ mathjax: true
 
 **路径**为一系列的顶点按照依次邻接的关系组成的序列，*$\pi = <v_0,v_1...,v_k>$，长度$\|\pi\|=k$。如上图中$V$到$Z$的一条路径为${b,h}$或${V,X,Z}$。路径的**长度**为顶点的个数或者边的个数。如果再一条通路中不含重复节点，我们称之为 **简单路径** ($v_i = v_j$除非$i=j$)。
 
-- 连通/强连通
+- 连通图
 
-有向图 $G (V,E)$，如果两个顶点 $v_i,v_j$ 间有一条从$v_i$ 到 $v_j$ 的有向路径，同时还有一条从 $v_j$ 到 $v_i$ 的有向路径，则称两个顶点**强连通**,非强连通图有向图的极大强连通子图，称为**强连通分量**。
+有向图 $G (V,E)$，如果两个顶点 $v_i,v_j$ 间有一条从$v_i$ 到 $v_j$ 的有向路径，责成同时还有一条从 $v_j$ 到 $v_i$ 的有向路径，则称两个顶点**强连通**,非强连通图有向图的极大强连通子图，称为**强连通分量**。
 
 - 环路
 
@@ -340,7 +340,7 @@ function bfs(v1,v2):
     1. 采用邻接表表示时，有向图总代价为 $\Theta(n + e)$，无向图为 $\Theta(n + 2e)$
     2. 采用相邻矩阵表示时，理论上，处理所有的边需要 $\Theta(n^2)$的时间 ，所以总代价为$\Theta(n + n^2) = \Theta(n^2)$。但实际上，在执行`nextNbr(v,u)`时，可认为是常数时间，因此它的时间复杂度也可以近似为$\Theta(n + e)$
 
-### 最短路径问题（Dijkstra）
+### Dijkstra和A*算法
 
 路径的权值在某些场合下是非常重要的，比如两地间飞机的票价，两个网络节点间数据传输的延迟等等。DFS和BFS在搜索两个节点路径时不会考虑边的权值问题，如果加入权值，那么两点间权值最小的路径不一定是BFS得到的最短路径，如下图中求$\\{a,f\\}$两点间的BFS的结果为$\\{a,e,f\\}$，cost为9，而cost最少的路径为$\\{a,d,g,h,f\\}$，其值为6
 
@@ -378,6 +378,9 @@ function dijkstra(v1,v2):
 
 上述是Dijkstra算法的伪码，我们通过下面一个例子看看它是如何工作的。如下图所示，假设我们要求从$\\{a,f\\}$的权值最短路径。
 
+<img src="/assets/images/2008/08/graph-10.jpg" style="margin-left:auto; margin-right:auto;display:block">
+
+
 1. 初始化各节点的cost为无穷大，令`a`的cost为0，放入优先级队列pq
 2. 从pq中取出顶部节点，访问它的相邻节点`b,d`，计算到达`b,d`的cost，分别为`2,1`，由于`2,1`均小于`b,d`原来的cost(无穷大)，因此将`b,d`的cost更新，放入到优先队列，第一次选择（循环）结束，此时队列中的顶点为`pqueue = {d:1,b:2}`
 3. 重复步骤2，pq顶部的节点为`d`,找到`d`相邻的节点`c,f,g,e`分别计算各自的权重为`3,9,5,3`，均小于各自cost值（无穷大），因此`c,f,g,e`入队，第二次循环结束，此时队列中的顶点为`pqueue = {b:2,c:3,e:3,g:5,f:9}`
@@ -387,7 +390,24 @@ function dijkstra(v1,v2):
 7. 重复步骤2，pq顶部的节点为`g`，找到`g`相邻的节点`f`，计算`g`到`f`的cost为`5+1=6`，小于`f`在之前得到的cost`8`，说明从`g`到达`f`这条路径更优，于是更新`f`的cost为`6`，更新`f`的前驱节点为`g`，此次循环结束，此时队列中的顶点为`pqueue = {f:8}`
 8. 重复步骤2，发现已经到达节点`f`因此整个循环结束。然后从`f`开始根据前驱节点依次回溯，得到路径`f<-g<-d<-a`，为权值最优路径。
 
-<img src="/assets/images/2008/08/graph-10.jpg" style="margin-left:auto; margin-right:auto;display:block">
+
+从上面的求解过程可以发现Dijkstra算法实际上是一种<mark>贪心算法</mark>，即每一步都找当前最优解（最小堆堆顶元素)。对于贪心法，它实际上是动态规划算法的特例，因此要求每一步的重复子结构解具有无后效性。对应到Dijkstra算法，要求路径的权值不能为负数。因为如果出现负数，当前的最优选择在后面不一定是最优。
+
+- Dijkstra算法时间复杂度
+
+对于稀疏图，Dijkstra算法使用最小堆实现效率较高：
+
+1. 初始化: $O(v)$
+2. While循环： $O(v)$
+    - remove vertex from pq: $O(\log{V})$
+    - potentially perform E updates on cost/previous
+    - update costs in pq: $O(\log{V})$
+3. 路径重建： $O(E)$
+4. 总的时间复杂度为: $O(V\log{V}+E\log{V}) = O(E\log{V})$ (如果图是连通的，有$V=O(E)$)
+
+对任何一个图算法，我们要回答下面问题
+
+
 
 
 ### 拓扑排序
@@ -464,7 +484,12 @@ void TopsortbyQueue(Graph& G) {
 
 
 
-### 最小生成树
+
+### 最小生成树(Kruskal's algorithm)
+
+所谓生成树(Spanning Tree)是连接无环图中所有顶点的边的集合。如下图所示，我们将左边的图去环后得到了右边的无环图，该图所有边构成了一个生成树
+
+<img src="/assets/images/2008/08/graph-11.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 
 ### Resources 
@@ -472,3 +497,4 @@ void TopsortbyQueue(Graph& G) {
 - [算法与数据结构-北大MOOC](https://www.coursera.org/learn/shuju-jiegou-suanfa/lecture/6Kuta/tu-de-bian-li)
 - [算法与数据结构-清华-邓俊峰]()
 - [拓扑排序](https://zh.wikipedia.org/wiki/%E6%8B%93%E6%92%B2%E6%8E%92%E5%BA%8F)
+- [CS106B Stanford](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)

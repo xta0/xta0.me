@@ -144,7 +144,7 @@ f(n) = n^2 + n, g(n) = 100n^2
 
 - 增长率比较
 
-<img src="/assets/images/2015/02/bigo.png" width="70%"/>
+<img src="/assets/images/2007/08/bigo.png" width="70%"/>
 
 由上图可知：
 
