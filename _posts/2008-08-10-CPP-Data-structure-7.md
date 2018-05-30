@@ -24,7 +24,7 @@ mathjax: true
 
 - 连通图
 
-有向图 $G (V,E)$，如果两个顶点 $v_i,v_j$ 间有一条从$v_i$ 到 $v_j$ 的有向路径，责成同时还有一条从 $v_j$ 到 $v_i$ 的有向路径，则称两个顶点**强连通**,非强连通图有向图的极大强连通子图，称为**强连通分量**。
+若图中任意两点都是连通的，那么该图称为**连通图**。对于有向图 $G (V,E)$，如果两个顶点 $v_i,v_j$ 间有一条从$v_i$ 到 $v_j$ 的有向路径，责成同时还有一条从 $v_j$ 到 $v_i$ 的有向路径，则称两个顶点**强连通**,称$G为**强连通图**。强连通图只有一个连通分量，即其自身。
 
 - 环路
 
@@ -43,7 +43,7 @@ mathjax: true
 
 图结构的接口主要包括顶点操作，边操作，遍历算法等
 
-```cpp
+``` 
 //定义顶点
 class Vertex{
     enum{
@@ -99,11 +99,23 @@ public:
 };
 ```
 
-例如我们要添加两个点点
+### 图的实现
 
-### 邻接矩阵/关联矩阵
+上面我们已经了解了关于图的逻辑模型和基本接口，但是在计算机中该如何表示这个模型呢？方法有很多种，这里我们主要介绍三种，分别是边表(edge list)，邻接矩阵(adjacency matrix)和邻接表(adjacency list)。
 
-上面我们已经了解了关于图的逻辑模型，但是在计算机中该如何表示这个模型呢？方法有很多种，这里我们主要介绍两种，分别是邻接矩阵表示法和邻接表表示法，顾名思义，前者使用矩阵（二维数组）作为数据结构，后者使用链表。
+<img src="/assets/images/2008/08/graph-14.jpg" style="margin-left:auto; margin-right:auto;display:block">
+
+- **边表**
+
+边表，顾名思义是使用一个无序链表来表示图，其中链表中的每个节点为一组边的集合。如上图中，我们可以使用如下链表来表示图:
+
+| (1,2) | (1,4) | (1,7) | (2,3) | (2,5) | (3,6) | (4,7) | (5,6) | (5,7) | (6,7) |
+
+对于每个节点的有序对，使用起点和终点来表示方向，值为顶点的内容。因此这种表示方法不会显示的存放顶点，所有顶点信息均包含在边表中。
+
+显然这种方式对顶点操作不是很友好，如果想要找出`4`的邻居节点，则要遍历每个节点，不是很高效。
+
+- **邻接矩阵/关联矩阵**
 
 所谓邻接矩阵就是描述顶点之间链接关系的矩阵。设$G=<V,E>$是一个有$n$个顶点图，则邻接矩阵是一个$n \times n$的方阵，用二维数组`A[n,n]`表示，它的定义如下:
 
@@ -123,64 +135,30 @@ $$
 
 基于邻接矩阵的图结构，可以用二维数组来表达：
 
-```cpp
+``` 
 GraphMatrix:public Graph{
 private:
-    vector<Vertex> V; //顶点
-    vector<vector<Edge<Te>*>> E; //边集合，邻接矩阵
+    vector<Vertex* > V; //顶点
+    vector<vector<Edge<Te>*>> matrix; //边集合，邻接矩阵
+    //map<Vertex* , vector<Edge* >> matrix; //也可以使用map
+    //map<Vertex* , set<Edge* >> matrix; //也可以使用map
 };
 ```
 
-- 顶点操作
+使用邻接矩阵的优点是：
+    
+1. 直观，易于理解和实现
+2. 适用范围广，包括有向图，无向图，带权图，自环图等等，尤其适用于稠密图
+3. 判断两点之间是否存在联边: $O(1)$
+4. 获取顶点的出度入度: $O(1)$
+    - 添加删除边后更新度: $O(1)$
+5. 扩展性强
 
-使用邻接矩阵表示法，对于任意顶点$i$，如何枚举其所有的邻接顶点(neighboor)。
-
-```cpp
-int nextNbr(int i, int j){ //若已经枚举邻居j，则转向下一个邻居
-    while( -1 > j ){
-        if(exists(i,j)){
-            return j;
-        }
-        j--;
-    }
-}
-```
-
-假设$i$在邻接矩阵中的向量为`011001`,可以让$j$从末尾开始向前找，遇到1则返回
-
-```
-i 0 1 1 0 0 1
-            j
-```
-
-- 边操作
-
-```cpp
-//插入一条边
-void insert(Te const& edge, int w, int i, int j){ //插入(i,j,w)
-    if(exists(i,j)){ //点i，j之间已经有一条边了
-        return; 
-    }
-    E[i][j] = new Edge<Te>(edge, w); //创建新边
-    e++; //更新计数
-    V[i].outDegree++; //i节点的出度+1
-    V[j].inDegree++;  //j节点的入读+1
-}
-```
-
-- 邻接矩阵的优缺点
-    - 优点
-        - 直观，易于理解和实现
-        - 适用范围广，包括有向图，无向图，带权图，自环图等等，尤其适用于稠密图
-        - 判断两点之间是否存在联边: $O(1)$
-        - 获取顶点的出度入度: $O(1)$
-            - 添加删除边后更新度: $O(1)$
-        - 扩展性强
-    - 缺点
-        - 空间复杂度为$\Theta(n^2)$，与边数无关
+缺点为：
+1. 空间复杂度为$\Theta(n^2)$，与边数无关
             
 
-### 邻接表
+- **邻接表**
 
 对于任何一个矩阵，我们以定义它的稀疏因子：在$m \times n$的矩阵中，有$t$个非零单元，则稀疏因子$\delta$为
 
@@ -204,13 +182,21 @@ $$
 
 <img src="/assets/images/2008/08/graph-3.png" style="margin-left:auto; margin-right:auto;display:block">
 
-上图分别为无向图，带权图和有向图的邻接表，对于有向图，有出度和入度两种邻接表，这里只给出了出度的邻接表，对于入度的情况类似。
+上图分别为无向图，带权图和有向图的邻接表，对于有向图，有出度和入度两种邻接表，这里只给出了出度的邻接表，对于入度的情况类似。由上图的结构可以看出使用邻接表，对每个节点的相邻节点的访问是非常高效的，另外，邻接表的空间利用率也相对较高。
 
-- 邻接表的空间代价
-    - n 个顶点 e 条边的无向图需用 (n + 2e) 个存储单元
-    - n 个顶点 e 条边的有向图需用 (n + e) 个存储单元
-    - 当边数 e 很小时，可以节省大量的存储空间
-    - 边表中表目顺序往往按照顶点编号从小到大排列
+
+- 几种图的不同实现方式的性能比较
+
+||边表|邻接表|邻接矩阵|
+|内存消耗| $V+E$| $V+E$ | $V^2$ |
+|判断相邻节点| $E$|$degree(v)$ | V|
+|添加顶点| $1$ | $1$ | $V^2$ |
+|删除顶点| $E$ | $1$ | $V^2$ |
+|添加边| $1$ |$1$ |$1$ |
+|删除边| $E$ | $degree(v)$ | 1|
+
+
+
 
 
 ### 图的搜索与遍历
@@ -222,7 +208,7 @@ $$
 
 解决这两个问题，需要给顶点加一个状态位，标识该节点是否已经被访问过。另外，对图的遍历，可将其按照一定规则转化为对树的遍历
 
-```cpp
+``` 
 void graph_traverse(){
 
 // 对图所有顶点的标志位进行初始化
@@ -243,7 +229,7 @@ for(int i=0; i<VerticesNum(); i++)
 4. 不断递归+回溯，直至所有节点都被访问
 
 
-```cpp
+``` 
 void DFS(Vertex v) { // 深度优先搜索的递归实现
     status(v) = VISITED;  // 把标记位设置为 VISITED
     Visit(v); // 访问顶点v
@@ -283,7 +269,7 @@ function dfs(v1,v2):
 3. 依次访问这些邻接顶点的邻接顶点，如此反复
 4. 直到所有点都被访问过
 
-```cpp
+``` 
 //从v点开始便利啊
 void BFS(Vertex v) {
     status(v) = VISITED; 
@@ -405,9 +391,103 @@ function dijkstra(v1,v2):
 3. 路径重建： $O(E)$
 4. 总的时间复杂度为: $O(V\log{V}+E\log{V}) = O(E\log{V})$ (如果图是连通的，有$V=O(E)$)
 
-对任何一个图算法，我们要回答下面问题
 
+### 最小生成树
 
+所谓生成树(Spanning Tree)是连接无环图中所有顶点的边的集合。如下图所示，我们将左边的图去环后得到了右边的无环图，该图即是一棵生成树
+
+<img src="/assets/images/2008/08/graph-11.jpg" style="margin-left:auto; margin-right:auto;display:block">
+
+所谓最小生成树，是图中所有生成树中权值之和最小的一棵,简称 MST(minimum-cost spanning tree)。
+
+- **Prim's algorithm**
+
+1. 从图中任意一个顶点开始 (例如A)，首先把这个顶点包括在MST中
+2. 然后从图中选一个与A点连通，但不再MST中的顶点B，并且A到B的权值最小的一条边连同B一起加入到MST中
+3. 如此进行下去，每次往 MST 里加一个顶点和一条权最小的边，直到把所有的顶点都包括进 MST 里
+4. 算法结束时, MST中包含了原图中的n-1条边
+
+<img src="/assets/images/2008/08/graph-13.jpg" style="margin-left:auto; margin-right:auto;display:block">
+
+```
+void Prim(Graph& G, int s, Edge* &MST) { // s是始点，MST存边
+    int MSTtag = 0; // 最小生成树的边计数
+    MST = new Edge[G.VerticesNum()-1]; // 为数组MST申请空间
+    Dist *D;
+    D = new Dist[G. VerticesNum()]; // 为数组D申请空间
+    for (int i = 0; i < G.VerticesNum(); i++) { // 初始化Mark和D数组
+        G.Mark[i] = UNVISITED;
+        D[i].index = i;
+        D[i].length = INFINITE;
+        D[i].pre = s; // D[i].pre = -1 呢？
+    }
+    D[s].length = 0;
+    G.Mark[s]= VISITED; // 开始顶点标记为VISITED
+    int v = s;
+    for (i = 0; i < G.VerticesNum()-1; i++) {// 因为v的加入，需要刷新与v相邻接的顶点的D值
+        for (Edge e = G.FirstEdge(v); G.IsEdge(e); e = G.NextEdge(e))
+            if (G.Mark[G.ToVertex(e)] != VISITED &&(D[G.ToVertex(e)].length > e.weight)) {
+                D[G.ToVertex(e)].length = e.weight;
+                D[G.ToVertex(e)].pre = v;
+            }
+            v = minVertex(G, D); // 在D数组中找最小值记为v
+            if (v == -1) return; // 非连通，有不可达顶点
+            G.Mark[v] = VISITED; // 标记访问过
+            Edge edge(D[v].pre, D[v].index, D[v].length); // 保存边
+            AddEdgetoMST(edge, MST, MSTtag++); // 将边加入MST
+    }
+}
+int minVertex(Graph& G, Dist* & D) {
+    int i, v = -1;
+    int MinDist = INFINITY;
+    for (i = 0; i < G.VerticesNum(); i++){
+        if ((G.Mark[i] == UNVISITED) && (D[i] < MinDist)){
+            v = i; // 保存当前发现的最小距离顶点
+            MinDist = D[i];
+        }
+    }
+    return v;
+}
+```
+
+Prim 算法非常类似于 Dijkstra 算法，算法中的距离值不需要累积，直接用最小边，而确定代价最小的边就需要总时间$O(n^2)$；取出权最小的顶点后，修改 D 数组共需要时间$O(e)$，因此共需要花费$O(n^2)$的时间。Prim算法适合于稠密图，对于稀疏图，可以像 Dijkstra 算法那样用堆来保存距离值。
+
+- **Kruskal's algorithm**
+
+上面提到的Prim算法是基于边来寻找最小生成树，我们也可以使用边来生成。其方法如下：
+
+```
+function kruskal(graph):
+    //创建一个最小堆
+    priority_queue pq
+    //将图中所有边放最小堆中，则权值cost最小的边在堆顶
+    for edge : graph.all_edges:
+        pq.push(edge)
+    //删除所有边
+    graph.delete_all_edges()
+    //循环
+    while not pq.empty():
+        e = pq.front()
+        pq.pop()
+        v1 = e.from()
+        v2 = e.to()
+        //如果v1，v2两点不连通，则把该边放入图中，否则忽略这条边
+        if not graph.is_connected(v1, v2):
+            //将该条边放入图中
+            graph.addEdge(v1,v2)
+```
+
+<img src="/assets/images/2008/08/graph-12.jpg" style="margin-left:auto; margin-right:auto;display:block">
+
+如上图所示，首先将所有边放入优先队列，则权值最小的`a`在堆顶，然后`a`出队，其两个顶点不连通，因此将该边放入图中（标红），当`e`出队的时候，我们发现`e`的两个顶点可以已通过`a,d`连通，因此`e`被忽略。按照此规则，以此类推，最终得到最小生成树（图中红色边）为:`a,b,c,d,f,h,i,k,p`总权值为`1+2+3+4+6+8+9+11+16 = 60`。不难看出，上述规则依旧是贪心法，每次选择权值最小的路径
+
+Kruskal算法使用了路径压缩，Different() 和 Union() 函数几乎是常数
+• 假设可能对几乎所有边都判断过了
+• 则最坏情况下算法时间代价为 Θ (elog e)，即堆排
+序的时间
+• 通常情况下只找了略多于 n 次，MST 就已经
+生成
+• 时间代价接近于 $Θ (n\log{e})$
 
 
 ### 拓扑排序
@@ -451,7 +531,7 @@ function dijkstra(v1,v2):
 2. 从图中删掉此顶点及其所有的出边，则其所有相邻节点入度减少1
 3. 回到第 1 步继续执行
 
-```cpp
+``` 
 void TopsortbyQueue(Graph& G) {
     for (int i = 0; i < G.VerticesNum(); i++)
         G.status(G.V[i]) = UNVISITED; // 初始化
@@ -480,17 +560,6 @@ void TopsortbyQueue(Graph& G) {
         }
 }
 ```
-
-
-
-
-
-### 最小生成树(Kruskal's algorithm)
-
-所谓生成树(Spanning Tree)是连接无环图中所有顶点的边的集合。如下图所示，我们将左边的图去环后得到了右边的无环图，该图所有边构成了一个生成树
-
-<img src="/assets/images/2008/08/graph-11.jpg" style="margin-left:auto; margin-right:auto;display:block">
-
 
 ### Resources 
 
