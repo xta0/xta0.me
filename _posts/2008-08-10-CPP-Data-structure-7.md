@@ -494,7 +494,12 @@ void TopsortbyQueue(Graph& G) {
 
 ### Resources 
 
-- [算法与数据结构-北大MOOC](https://www.coursera.org/learn/shuju-jiegou-suanfa/lecture/6Kuta/tu-de-bian-li)
-- [算法与数据结构-清华-邓俊峰]()
-- [拓扑排序](https://zh.wikipedia.org/wiki/%E6%8B%93%E6%92%B2%E6%8E%92%E5%BA%8F)
-- [CS106B Stanford](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
+- [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
+- [Algorithms-Stanford-Cousera]()
+- [算法与数据结构-1-北大-Cousera](https://www.coursera.org/learn/shuju-jiegou-suanfa/lecture/6Kuta/tu-de-bian-li)
+- [算法与数据结构-2-北大-Cousera](https://www.coursera.org/learn/shuju-jiegou-suanfa/lecture/6Kuta/tu-de-bian-li)
+- [算法与数据结构-1-清华-EDX]()
+- [算法与数据结构-2-清华-EDX]()
+- [算法设计与分析-1-北大-Cousera]()
+- [算法设计与分析-2-北大-EDX]()
+

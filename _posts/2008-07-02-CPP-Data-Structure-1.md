@@ -47,6 +47,14 @@ mathml: true
 	- `运算`：数据操作->函数 
 
 
+### Resources 
+
+- [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
+- [Algorithms-Stanford-Cousera]()
+- [算法与数据结构-北大-Cousera](https://www.coursera.org/learn/shuju-jiegou-suanfa/lecture/6Kuta/tu-de-bian-li)
+- [算法设计与分析-1-北大-Cousera]()
+- [算法设计与分析-2-北大-EDX]()
+- [算法与数据结构-清华-EDX]()
 
 
 
