@@ -1,10 +1,9 @@
 ---
 layout: post
 list_title: Algorithms-4 | 几种朴素算法 | Simple Algrorithms
+title: 几种朴素的算法思想
 mathjax: true
 ---
-
-<h1 style="text-align:center">几种朴素的算法思想</h1>
 
 ## 枚举
 

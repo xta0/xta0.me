@@ -2,6 +2,7 @@
 layout: post
 list_title: Data Structure Part 4 | 字符串 | String
 title: 字符串
+sub_title: String & KMP Algorithm
 mathjax: true
 ---
 
@@ -154,21 +155,10 @@ T = a b a b a b a b a b a b a b b
 P =                 a b a b a b b 
 ```
 
-总结一下，如果`P`首尾的真子串不相等，即：`p(0)p(1)...p(j-2) != p(1)p(2)...p(j-1)`，则能得出朴素匹配的下一步一定是不匹配的。同样的，如果`p(0)p(1)...p(j-3) != p(2)(p3)...p(j-1)`，则再下一趟也一定不匹配。直到对于某个`k`值（首尾串的长度），使得第`k`个首尾子串不等：`p(0)p(1)...p(k) != p(j-k-1)p(j-k)...p(j-1)` 但是第`k-1`个首尾子串相等`p(0)p(1)...p(k-1) = p(j-k)p(j-k)...p(j-1)` 即
-
-```
-t(i+k-1) t(i+k) ...   t(i+j-1) t(i+j)
-|        |            |        X
-p(j-k)   p(j-k+1) ... p(j-1)   p(j)
-|        |            |        ?
-p(0)     p(1)   ...   p(k-1)   p(k)
-```
-此时相当于将`P`右滑`j-k`位，另`p(k)`再和目标串字符`t(i+j)`继续进行比较
-
 - KMP的算法实现
 
 ```cpp
-int KMPStrMatching(String T, string P, int *N, int start){
+int kmp(String T, string P, int *N, int start){
     int tLen = T.length();
     int pLen = P.length();
     if(tLen - start < pLen){
@@ -209,7 +199,7 @@ vector<int> findNext(string P){
     int m = P.length();
     vector<int> next(m);
     next[0] = -1;
-    next[1] = 2;
+    next[1] = 0;
     int j = 2;
     while(j < m ){
         int index = next[j-1];
