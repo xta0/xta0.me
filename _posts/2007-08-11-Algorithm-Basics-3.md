@@ -186,10 +186,6 @@ then q<-⌊(p+r)/2⌋
 	- 总共的执行次数为：<math><mn>6</mn><mi>n</mi><mo stretchy="false">(</mo><msubsup><mo>log</mo><mn>2</mn><mi>n</mi></msubsup><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mo>=</mo><mn>6</mn><mi>n</mi><msubsup><mo>log</mo><mn>2</mn><mi>n</mi></msubsup><mo>+</mo><mn>6</mn><mi>n</mi></math>
 
 
-
-
-	
-
 ### Resources
 
 - [算法基础](https://www.coursera.org/learn/suanfa-jichu)
