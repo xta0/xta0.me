@@ -1,6 +1,7 @@
 ---
 layout: post
-title: Data Structure Part 4 - String
+list_title: Data Structure Part 4 | 字符串 | String
+title: 字符串
 mathjax: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Algorithms-5 | 递推与递归 | Recurrence and Recursion
+list_title: Algorithms-5 | 递推与递归 | Recurrence and Recursion
 mathjax: true
 ---
 

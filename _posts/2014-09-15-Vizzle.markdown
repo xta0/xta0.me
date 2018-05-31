@@ -1,5 +1,5 @@
 ---
-title: 一个新的MVC框架-Vizzle
+list_title: 一个新的MVC框架-Vizzle
 layout: post
 tag: VizLab
 categories: 随笔

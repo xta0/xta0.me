@@ -1,5 +1,5 @@
 ---
-title: 实现Lomo效果
+list_title: 实现Lomo效果
 layout: post
 tag: iOS
 categories: 随笔

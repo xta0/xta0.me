@@ -1,5 +1,5 @@
 ---
-title: Numpy
+list_title: Numpy
 layout: post
 ---
 

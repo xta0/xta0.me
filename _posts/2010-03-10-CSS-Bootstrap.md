@@ -1,5 +1,5 @@
 ---
-title: CSS Bootstrap
+list_title: CSS Bootstrap
 layout: post
 ---
 

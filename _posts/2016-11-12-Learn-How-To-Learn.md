@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Learn How to Learn
+list_title: Learn How to Learn
 ---
 
 > [Coursera Link](https://www.coursera.org/learn/learning-how-to-learn)

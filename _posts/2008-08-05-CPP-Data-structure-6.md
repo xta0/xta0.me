@@ -1,6 +1,7 @@
 ---
 layout: post
-title: Data Structure Part 6 - Tree
+list_title: Data Structure Part 6 | 树 |Tree
+title: 树
 mathjax: true
 ---
 

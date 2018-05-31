@@ -1,5 +1,5 @@
 ---
-title: BrainFuck
+list_title: BrainFuck
 layout: post
 tag: Ruby
 categories: 随笔

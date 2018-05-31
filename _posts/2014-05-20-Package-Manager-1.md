@@ -1,5 +1,5 @@
 ---
-title: Package Manager
+list_title: Package Manager
 layout: post
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 理解iOS中的线程池
+list_title: 理解iOS中的线程池
 tag: iOS
 categories: 随笔
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Algorithms-4 | 几种朴素算法 | Simple Algrorithms
+list_title: Algorithms-4 | 几种朴素算法 | Simple Algrorithms
 mathjax: true
 ---
 

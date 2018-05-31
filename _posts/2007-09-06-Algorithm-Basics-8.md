@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Algorithms-8 | 分治法 | Divide and Conquer
+list_title: Algorithms-8 | 分治法 | Divide and Conquer
 ---
 
 ## 分治法 

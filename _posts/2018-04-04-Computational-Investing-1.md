@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Computational Investment-1
+list_title: Computational Investment-1
 mathjax: true
 ---
 

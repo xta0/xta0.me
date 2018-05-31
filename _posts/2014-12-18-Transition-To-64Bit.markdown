@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Transition To 64 Bit 
+list_title: Transition To 64 Bit 
 tag: iOS
 categories: 随笔
 ---

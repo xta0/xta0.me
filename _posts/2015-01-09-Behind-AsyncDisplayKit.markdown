@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Introduce to AsyncDisplayKit
+list_title:  Introduce to AsyncDisplayKit
 meta: AsyncDisplayKit是Facebook开源的一套异步绘制UI的framework，用来提高GUI的绘制效率。它最初和[POP](https://github.com/facebook/pop)一起被用在Facebook的Paper上，Paper在当时引起了强烈的反响，因为其引入了很多物理效果和流畅的动画表现。然后Facebook开源了它们的物理效果引擎[POP](https://github.com/facebook/pop)，同时也宣布会开源一套全新的UI绘制引擎，大概7个月前，Facebook宣布开源AsyncDisplayKit。
 category: iOS
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Data Structre Part 8 - Sort
+list_title: Data Structre Part 8 - Sort
 ---
 
 这一节我们来聊一聊排序问题

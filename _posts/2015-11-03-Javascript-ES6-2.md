@@ -1,5 +1,5 @@
 ---
 layout: post
-title: ES6-1
+list_title: ES6-1
 ---
 

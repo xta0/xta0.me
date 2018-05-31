@@ -1,7 +1,8 @@
 ---
 layout: post
-title: Data Structure Part 5 - Binary Tree
+list_title: Data Structure Part 5 | 二叉树 | Binary Tree
 mathjax: true
+title: 二叉树
 ---
 
 ## 二叉树

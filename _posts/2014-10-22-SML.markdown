@@ -1,5 +1,5 @@
 ---
-title: PL-SML
+list_title: PL-SML
 layout: post
 tag: SML
 categories: PL

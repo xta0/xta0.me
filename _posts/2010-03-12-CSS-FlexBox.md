@@ -1,5 +1,5 @@
 ---
-title: CSS FlexBox
+list_title: CSS FlexBox
 layout: post
 ---
 

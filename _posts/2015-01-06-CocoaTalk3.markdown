@@ -1,6 +1,6 @@
 ---
 layout: post
-title: CocoaTalk#3
+list_title: CocoaTalk#3
 tag: CocoaTalk
 categories: 随笔
 ---

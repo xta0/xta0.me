@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Machine Learning - Chap5
+list_title: Machine Learning - Chap5
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter5
 categories: [ml-stanford,course]
 mathjax: true

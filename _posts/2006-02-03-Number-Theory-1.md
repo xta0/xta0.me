@@ -1,4 +1,4 @@
 ---
 layout: post
-title: Number Theory 1
+list_title: Number Theory 1
 ---

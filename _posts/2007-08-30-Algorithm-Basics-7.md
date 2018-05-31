@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Algorithms-7 | 广度优先搜索 | BFS
+list_title: Algorithms-7 | 广度优先搜索 | BFS
 ---
 
 ## 广度优先搜索

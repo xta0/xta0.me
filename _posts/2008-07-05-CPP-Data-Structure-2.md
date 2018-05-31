@@ -1,10 +1,10 @@
 ---
 layout: post
-title: DataStructure Part 2 | Vector & List
-
+list_title: DataStructure Part 2 | 线性表 | Vector & List
+title: 线性表
 ---
 
-## 线性表
+
 
 ### 线性表的概念
 

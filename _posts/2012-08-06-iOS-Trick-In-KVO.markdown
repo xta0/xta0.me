@@ -1,5 +1,5 @@
 ---
-title: 理解Objective-C中的KVO
+list_title: 理解Objective-C中的KVO
 layout: post
 tag: Objective-C
 categories: 随笔

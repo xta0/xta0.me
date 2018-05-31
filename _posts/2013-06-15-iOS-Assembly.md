@@ -1,5 +1,5 @@
 ---
-title: Assembly on ARM
+list_title: Assembly on ARM
 layout: post
 tag: Assembly
 categories: 随笔

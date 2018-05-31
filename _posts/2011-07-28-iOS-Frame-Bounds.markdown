@@ -1,6 +1,6 @@
 ---
 layout: post
-title: UIView的frame和bounds
+list_title: UIView的frame和bounds
 tag: WWDC
 categories: 随笔
 

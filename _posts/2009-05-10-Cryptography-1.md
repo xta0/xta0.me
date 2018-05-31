@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Cryptography-1
+list_title: Cryptography-1
 categories: Math
 ---
 

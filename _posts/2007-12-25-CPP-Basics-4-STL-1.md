@@ -1,6 +1,6 @@
 ---
 layout: post
-title: C++ Part 4| STL Containers | STL容器
+list_title: C++ Part 4| STL Containers | STL容器
 categories: PL
 tag: C++
 mathml: true

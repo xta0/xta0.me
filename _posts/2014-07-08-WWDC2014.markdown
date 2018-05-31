@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  WWDC部分Session内容摘录
+list_title:  WWDC部分Session内容摘录
 tag: WWDC
 categories: 随笔
 ---

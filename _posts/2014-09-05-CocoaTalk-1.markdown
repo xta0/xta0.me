@@ -1,5 +1,5 @@
 ---
-title: CocoaTalk#1
+list_title: CocoaTalk#1
 layout: post
 tag: CocoaTalk
 categories: 随笔

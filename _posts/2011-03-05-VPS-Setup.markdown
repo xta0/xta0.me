@@ -1,5 +1,5 @@
 ---
-title: Linode Setup CheetSheet
+list_title: Linode Setup CheetSheet
 categories: 随笔
 layout: post
 tag: UNIX

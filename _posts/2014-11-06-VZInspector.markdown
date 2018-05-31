@@ -1,5 +1,5 @@
 --- 
-title: VZInspector
+list_title: VZInspector
 layout: post
 tag: VizLab
 categories: 随笔

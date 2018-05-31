@@ -1,5 +1,5 @@
 ---
-title: Lua Part 2 - Coroutine
+list_title: Lua Part 2 - Coroutine
 layout: post
 ---
 

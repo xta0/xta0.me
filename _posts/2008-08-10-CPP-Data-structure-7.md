@@ -1,10 +1,9 @@
 ---
 layout: post
-title: Data Structure Part 7 | Graph | 图
+list_title: Data Structure Part 7 | Graph | 图
+title: 图
 mathjax: true
 ---
-
-## 图
 
 ### 术语
 
@@ -99,13 +98,13 @@ public:
 };
 ```
 
-### 图的实现
+## 图的实现
 
 上面我们已经了解了关于图的逻辑模型和基本接口，但是在计算机中该如何表示这个模型呢？方法有很多种，这里我们主要介绍三种，分别是边表(edge list)，邻接矩阵(adjacency matrix)和邻接表(adjacency list)。
 
 <img src="/assets/images/2008/08/graph-14.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
-- **边表**
+### 边表
 
 边表，顾名思义是使用一个无序链表来表示图，其中链表中的每个节点为一组边的集合。如上图中，我们可以使用如下链表来表示图:
 
@@ -115,7 +114,7 @@ public:
 
 显然这种方式对顶点操作不是很友好，如果想要找出`4`的邻居节点，则要遍历每个节点，不是很高效。
 
-- **邻接矩阵/关联矩阵**
+### 邻接矩阵/关联矩阵
 
 所谓邻接矩阵就是描述顶点之间链接关系的矩阵。设$G=<V,E>$是一个有$n$个顶点图，则邻接矩阵是一个$n \times n$的方阵，用二维数组`A[n,n]`表示，它的定义如下:
 
@@ -158,7 +157,7 @@ private:
 1. 空间复杂度为$\Theta(n^2)$，与边数无关
             
 
-- **邻接表**
+### 邻接表
 
 对于任何一个矩阵，我们以定义它的稀疏因子：在$m \times n$的矩阵中，有$t$个非零单元，则稀疏因子$\delta$为
 
@@ -197,9 +196,7 @@ $$
 
 
 
-
-
-### 图的搜索与遍历
+## 图的搜索与遍历
 
 在图中搜索两点间的路径有很多种方式，常用的有DFS，BFS，Dijkstra，A*等，对于图的遍历，和树类似我们也可以使用DFS和BFS两种方式，但是图有两个树没有的问题：
 
@@ -219,7 +216,7 @@ for(int i=0; i<VerticesNum(); i++)
 }
 ```
 
-- **DFS**
+### DFS
 
 图的DFS遍历过程和之前介绍的树的DFS遍历过程类似，都是从一个节点开始，不断的递归+回溯，最终走完全部路径。其基本步骤为
 
@@ -260,7 +257,7 @@ function dfs(v1,v2):
     return false
 ```
 
-- **BFS**
+### BFS
 
 图的广度优先遍历过程类似从某个点出发，一圈一圈的向外层顶点扩散的过程
 
@@ -326,7 +323,7 @@ function bfs(v1,v2):
     1. 采用邻接表表示时，有向图总代价为 $\Theta(n + e)$，无向图为 $\Theta(n + 2e)$
     2. 采用相邻矩阵表示时，理论上，处理所有的边需要 $\Theta(n^2)$的时间 ，所以总代价为$\Theta(n + n^2) = \Theta(n^2)$。但实际上，在执行`nextNbr(v,u)`时，可认为是常数时间，因此它的时间复杂度也可以近似为$\Theta(n + e)$
 
-### Dijkstra和A*算法
+### Dijkstra算法
 
 路径的权值在某些场合下是非常重要的，比如两地间飞机的票价，两个网络节点间数据传输的延迟等等。DFS和BFS在搜索两个节点路径时不会考虑边的权值问题，如果加入权值，那么两点间权值最小的路径不一定是BFS得到的最短路径，如下图中求$\\{a,f\\}$两点间的BFS的结果为$\\{a,e,f\\}$，cost为9，而cost最少的路径为$\\{a,d,g,h,f\\}$，其值为6
 
@@ -400,7 +397,49 @@ function dijkstra(v1,v2):
 
 所谓最小生成树，是图中所有生成树中权值之和最小的一棵,简称 MST(minimum-cost spanning tree)。
 
+- **Kruskal's algorithm**
+
+Kruskal算法是一种贪心算法，主要步骤如下：
+
+1. 将图$G$中所有边放入最小堆$E$
+2. 删除图$G$中的所有边，剩下$n$个顶点，此时图的状态为无边的森林$T=<V,{}>$
+3. 在$E$中弹出权值最小边，如果该边的两个顶点在$T$中不连通，则将其加入到$E$中，否则忽略这条边
+4. 依次类推，直到$E$为空，此时就得到图$G$的一颗最小生成树
+
+<img src="/assets/images/2008/08/graph-12.jpg" style="margin-left:auto; margin-right:auto;display:block">
+
+如上图所示，首先将所有边放入优先队列，则权值最小的`a`在堆顶，然后`a`出队，其两个顶点不连通，因此将该边放入图中（标红），当`e`出队的时候，我们发现`e`的两个顶点可以已通过`a,d`连通，因此`e`被忽略。按照此规则，以此类推，最终得到最小生成树（图中红色边）为:`a,b,c,d,f,h,i,k,p`总权值为`1+2+3+4+6+8+9+11+16 = 60`。不难看出，上述规则依旧是贪心法，每次选择权值最小的路径，其伪码如下：
+
+```
+function kruskal(graph):
+    //创建一个最小堆
+    priority_queue pq
+    //将图中所有边放最小堆中，则权值cost最小的边在堆顶
+    for edge : graph.all_edges:
+        pq.push(edge) 
+    //此时产生n个顶点，对应n个等价类
+    while equal_num > 1: //等价类个数>1,说明还没有形成树
+        //循环
+        while not pq.empty():
+            e = pq.front()
+            pq.pop()
+            v1 = e.from()
+            v2 = e.to()
+            //如果v1，v2两点不连通，则把该边放入图中，否则忽略这条边
+            if graph.different(v1, v2): //判断v1,v2是否不连通
+                graph.union(v1,f2); //合并两个顶点所在的等价类
+                //将该条边放入图中
+                graph.addEdge(v1,v2)
+                //等价类个数-1
+                equal_num -= 1
+```
+
+Kruskal算法使用了路径压缩（并查集）来合并等价类，`different()` 和 `Union()` 函数几乎是常数。假设可能对几乎所有边都判断过了，则最坏情况下算法时间代价为$\Theta(e\log{e})$，即堆排序的时间,通常情况下只找了略多于 n 次，MST 就已经生成，因此，<mark>时间代价接近于$\Theta(e\log{e})$</mark>
+
+
 - **Prim's algorithm**
+
+Prim算法和上面算法类似，也是采用贪心的策略，不同的是Prim算法每次取权值最小边对应的顶点，具体如下（代码见附录）：
 
 1. 从图中任意一个顶点开始 (例如A)，首先把这个顶点包括在MST中
 2. 然后从图中选一个与A点连通，但不再MST中的顶点B，并且A到B的权值最小的一条边连同B一起加入到MST中
@@ -409,86 +448,7 @@ function dijkstra(v1,v2):
 
 <img src="/assets/images/2008/08/graph-13.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
-```
-void Prim(Graph& G, int s, Edge* &MST) { // s是始点，MST存边
-    int MSTtag = 0; // 最小生成树的边计数
-    MST = new Edge[G.VerticesNum()-1]; // 为数组MST申请空间
-    Dist *D;
-    D = new Dist[G. VerticesNum()]; // 为数组D申请空间
-    for (int i = 0; i < G.VerticesNum(); i++) { // 初始化Mark和D数组
-        G.Mark[i] = UNVISITED;
-        D[i].index = i;
-        D[i].length = INFINITE;
-        D[i].pre = s; // D[i].pre = -1 呢？
-    }
-    D[s].length = 0;
-    G.Mark[s]= VISITED; // 开始顶点标记为VISITED
-    int v = s;
-    for (i = 0; i < G.VerticesNum()-1; i++) {// 因为v的加入，需要刷新与v相邻接的顶点的D值
-        for (Edge e = G.FirstEdge(v); G.IsEdge(e); e = G.NextEdge(e))
-            if (G.Mark[G.ToVertex(e)] != VISITED &&(D[G.ToVertex(e)].length > e.weight)) {
-                D[G.ToVertex(e)].length = e.weight;
-                D[G.ToVertex(e)].pre = v;
-            }
-            v = minVertex(G, D); // 在D数组中找最小值记为v
-            if (v == -1) return; // 非连通，有不可达顶点
-            G.Mark[v] = VISITED; // 标记访问过
-            Edge edge(D[v].pre, D[v].index, D[v].length); // 保存边
-            AddEdgetoMST(edge, MST, MSTtag++); // 将边加入MST
-    }
-}
-int minVertex(Graph& G, Dist* & D) {
-    int i, v = -1;
-    int MinDist = INFINITY;
-    for (i = 0; i < G.VerticesNum(); i++){
-        if ((G.Mark[i] == UNVISITED) && (D[i] < MinDist)){
-            v = i; // 保存当前发现的最小距离顶点
-            MinDist = D[i];
-        }
-    }
-    return v;
-}
-```
-
-Prim 算法非常类似于 Dijkstra 算法，算法中的距离值不需要累积，直接用最小边，而确定代价最小的边就需要总时间$O(n^2)$；取出权最小的顶点后，修改 D 数组共需要时间$O(e)$，因此共需要花费$O(n^2)$的时间。Prim算法适合于稠密图，对于稀疏图，可以像 Dijkstra 算法那样用堆来保存距离值。
-
-- **Kruskal's algorithm**
-
-上面提到的Prim算法是基于边来寻找最小生成树，我们也可以使用边来生成。其方法如下：
-
-```
-function kruskal(graph):
-    //创建一个最小堆
-    priority_queue pq
-    //将图中所有边放最小堆中，则权值cost最小的边在堆顶
-    for edge : graph.all_edges:
-        pq.push(edge)
-    //删除所有边
-    graph.delete_all_edges()
-    //循环
-    while not pq.empty():
-        e = pq.front()
-        pq.pop()
-        v1 = e.from()
-        v2 = e.to()
-        //如果v1，v2两点不连通，则把该边放入图中，否则忽略这条边
-        if not graph.is_connected(v1, v2):
-            //将该条边放入图中
-            graph.addEdge(v1,v2)
-```
-
-<img src="/assets/images/2008/08/graph-12.jpg" style="margin-left:auto; margin-right:auto;display:block">
-
-如上图所示，首先将所有边放入优先队列，则权值最小的`a`在堆顶，然后`a`出队，其两个顶点不连通，因此将该边放入图中（标红），当`e`出队的时候，我们发现`e`的两个顶点可以已通过`a,d`连通，因此`e`被忽略。按照此规则，以此类推，最终得到最小生成树（图中红色边）为:`a,b,c,d,f,h,i,k,p`总权值为`1+2+3+4+6+8+9+11+16 = 60`。不难看出，上述规则依旧是贪心法，每次选择权值最小的路径
-
-Kruskal算法使用了路径压缩，Different() 和 Union() 函数几乎是常数
-• 假设可能对几乎所有边都判断过了
-• 则最坏情况下算法时间代价为 Θ (elog e)，即堆排
-序的时间
-• 通常情况下只找了略多于 n 次，MST 就已经
-生成
-• 时间代价接近于 $Θ (n\log{e})$
-
+Prim 算法非常类似于 Dijkstra 算法，算法中的距离值不需要累积，直接用最小边，而确定代价最小的边就需要总时间$O(n^2)$；取出权最小的顶点后，修改 D 数组共需要时间$O(e)$，因此<mark>共需要花费$O(n^2)$的时间</mark>。Prim算法适合于稠密图，对于稀疏图，可以像 Dijkstra 算法那样用堆来保存距离值。
 
 ### 拓扑排序
 
@@ -572,3 +532,79 @@ void TopsortbyQueue(Graph& G) {
 - [算法设计与分析-1-北大-Cousera]()
 - [算法设计与分析-2-北大-EDX]()
 
+### 附录1
+
+- Kruskal's algorithm
+
+```cpp
+void Kruskal(Graph& G, Edge* &MST) { // MST存最小生成树的边
+    ParTree<int> A(G.VerticesNum()); // 等价类
+    MinHeap<Edge> H(G.EdgesNum()); // 最小堆
+    MST = new Edge[G.VerticesNum()-1]; // 为数组MST申请空间
+    int MSTtag = 0; // 最小生成树的边计数
+    for (int i = 0; i < G.VerticesNum(); i++) // 将所有边插入最小堆H中
+        for (Edge e = G. FirstEdge(i); G.IsEdge(e); e = G. NextEdge(e))
+            if (G.FromVertex(e) < G.ToVertex(e))// 防重复边
+                H.Insert(e);
+    int EquNum = G.VerticesNum(); // 开始有n个独立顶点等价类
+    while (EquNum > 1) { // 当等价类的个数大于1时合并等价类
+        if (H.isEmpty()) {
+            cout << "不存在最小生成树." <<endl;
+            delete [] MST;
+            MST = NULL; // 释放空间
+            return;
+        }
+        Edge e = H.RemoveMin(); // 取权最小的边
+        int from = G.FromVertex(e); // 记录该条边的信息
+        int to = G.ToVertex(e);
+        if (A.Different(from,to)) { // 边e的两个顶点不在一个等价类
+            A.Union(from,to); // 合并边的两个顶点所在的等价类
+            AddEdgetoMST(e,MST,MSTtag++); // 将边e加到MST
+            EquNum--; // 等价类的个数减1
+        }
+    }
+}
+```
+
+- Prim's algorithm
+
+```cpp
+void Prim(Graph& G, int s, Edge* &MST) { // s是始点，MST存边
+    int MSTtag = 0; // 最小生成树的边计数
+    MST = new Edge[G.VerticesNum()-1]; // 为数组MST申请空间
+    Dist *D;
+    D = new Dist[G. VerticesNum()]; // 为数组D申请空间
+    for (int i = 0; i < G.VerticesNum(); i++) { // 初始化Mark和D数组
+        G.Mark[i] = UNVISITED;
+        D[i].index = i;
+        D[i].length = INFINITE;
+        D[i].pre = s; // D[i].pre = -1 呢？
+    }
+    D[s].length = 0;
+    G.Mark[s]= VISITED; // 开始顶点标记为VISITED
+    int v = s;
+    for (i = 0; i < G.VerticesNum()-1; i++) {// 因为v的加入，需要刷新与v相邻接的顶点的D值
+        for (Edge e = G.FirstEdge(v); G.IsEdge(e); e = G.NextEdge(e))
+            if (G.Mark[G.ToVertex(e)] != VISITED &&(D[G.ToVertex(e)].length > e.weight)) {
+                D[G.ToVertex(e)].length = e.weight;
+                D[G.ToVertex(e)].pre = v;
+            }
+            v = minVertex(G, D); // 在D数组中找最小值记为v
+            if (v == -1) return; // 非连通，有不可达顶点
+            G.Mark[v] = VISITED; // 标记访问过
+            Edge edge(D[v].pre, D[v].index, D[v].length); // 保存边
+            AddEdgetoMST(edge, MST, MSTtag++); // 将边加入MST
+    }
+}
+int minVertex(Graph& G, Dist* & D) {
+    int i, v = -1;
+    int MinDist = INFINITY;
+    for (i = 0; i < G.VerticesNum(); i++){
+        if ((G.Mark[i] == UNVISITED) && (D[i] < MinDist)){
+            v = i; // 保存当前发现的最小距离顶点
+            MinDist = D[i];
+        }
+    }
+    return v;
+}
+```

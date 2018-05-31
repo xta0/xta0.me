@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Web Bootcamp Part 2
+list_title: Web Bootcamp Part 2
 ---
 
 

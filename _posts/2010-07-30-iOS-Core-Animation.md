@@ -1,5 +1,5 @@
 ---
-title: Core Animation Note 2010
+list_title: Core Animation Note 2010
 categories: 随笔
 layout: post
 tag: iOS

@@ -1,5 +1,5 @@
 ---
-title: Computation Theory Part 1
+list_title: Computation Theory Part 1
 layout: post
 mathjax: true
 ---

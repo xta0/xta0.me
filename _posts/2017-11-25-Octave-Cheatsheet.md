@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Octave Cheatsheet
+list_title: Octave Cheatsheet
 categories: [pl,cheatsheet,octave]
 meta: Octave 简明操作
 ---

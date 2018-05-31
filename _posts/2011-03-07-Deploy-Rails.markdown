@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Ubuntu上部署ROR 
+list_title: Ubuntu上部署ROR 
 ---
 
 <em>所有文章均为作者原创，转载请注明出处</em>

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Cloud Computing Part 1
+list_title: Cloud Computing Part 1
 ---
 
 ### Course Overview

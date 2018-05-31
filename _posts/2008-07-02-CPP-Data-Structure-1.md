@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Data Structure Part 1 - Overview
+list_title: Data Structure Part 1 - Overview
 mathml: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 理解Objective-C的Block
+list_title: 理解Objective-C的Block
 tag: Objective-C
 categories: 随笔
 

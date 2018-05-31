@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Data Science Course Part 1 - Overview
+list_title: Data Science Course Part 1 - Overview
 ---
 
 ## A Crash Course in Data Science

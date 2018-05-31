@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Computer Graphics Part 1
+list_title: Computer Graphics Part 1
 mathjax: true
 ---
 

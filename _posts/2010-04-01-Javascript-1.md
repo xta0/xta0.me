@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Javascript Part 1 
+list_title: Javascript Part 1 
 categories: PL
 tag: Javascript
 ---

@@ -1,9 +1,8 @@
 ---
 layout: post
-title: Data Structure Part 3 - Stack & Queue
+list_title: Data Structure Part 3 | 栈与队列 | Stack & Queue
+title:  栈与队列 
 ---
-
-## 栈
 
 ### 栈的实现方式
 

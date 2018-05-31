@@ -1,5 +1,5 @@
 ---
-title: Package Manager Part 2
+list_title: Package Manager Part 2
 layout: post
 ---
 

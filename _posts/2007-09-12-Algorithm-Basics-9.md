@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Algorithms-9 | 动态规划 | Dynamic Programming
+list_title: Algorithms-9 | 动态规划 | Dynamic Programming
 mathjax: true
 ---
 

@@ -1,6 +1,6 @@
 ------
 layout:Post
-title: XCode Commands
+list_title: XCode Commands
 categories: [XCode,UNIX]
 tag: Commands
 

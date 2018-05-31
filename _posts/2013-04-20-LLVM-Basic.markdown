@@ -1,5 +1,5 @@
 ---
-title: 理解Apple的LLVM(1)
+list_title: 理解Apple的LLVM(1)
 layout: post
 tag: iOS
 categories: 随笔

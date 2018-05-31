@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Computation Theory Part 2
+list_title: Computation Theory Part 2
 ---
 
 ##  Turing machines

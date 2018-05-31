@@ -1,10 +1,10 @@
 ---
 layout: post
-title: Algorithms-2 | 算法分析基础 | Analysis Foundation
+list_title: Algorithms-2 | 算法分析基础 | Algorithm Analysis Basics
+titile: 算法分析的数学基础
 mathjax: true
 ---
 
-## 算法分析的数学基础
 
 ### 递推方程
 

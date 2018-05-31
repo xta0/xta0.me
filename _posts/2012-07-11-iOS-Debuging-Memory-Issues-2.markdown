@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 使用Instrument排查内存问题
+list_title: 使用Instrument排查内存问题
 tag: iOS
 categories: 随笔
 

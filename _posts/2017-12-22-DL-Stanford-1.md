@@ -1,5 +1,5 @@
 ---
-title: Deep Learning
+list_title: Deep Learning
 layout: post
 ---
 

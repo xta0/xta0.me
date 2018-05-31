@@ -1,6 +1,6 @@
 ---
 layout: post
-title: CSS Tricks
+list_title: CSS Tricks
 ---
 
 

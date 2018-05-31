@@ -1,7 +1,7 @@
 ---
 
 layout: post
-title: CSS-1:Basic 
+list_title: CSS-1:Basic 
 ---
 
 # Advanced CSS

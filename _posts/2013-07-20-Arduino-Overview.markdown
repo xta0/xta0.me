@@ -1,5 +1,5 @@
 ---
-title: Arduino 101
+list_title: Arduino 101
 layout: post
 tag: Arduino
 categories: 随笔

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 理解isa
+list_title: 理解isa
 tag: Objective-C
 categories: 随笔
 

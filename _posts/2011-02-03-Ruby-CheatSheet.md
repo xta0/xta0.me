@@ -1,5 +1,5 @@
 ---
-title: Ruby Programming Language
+list_title: Ruby Programming Language
 layout: post
 tag: Ruby
 categories: [pl,cheatsheet]

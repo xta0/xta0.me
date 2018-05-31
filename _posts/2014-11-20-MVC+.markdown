@@ -1,5 +1,5 @@
 ---
-title: Vizzle下一步的进化方向 
+list_title: Vizzle下一步的进化方向 
 layout: post
 tag: VizLab
 categories: 随笔

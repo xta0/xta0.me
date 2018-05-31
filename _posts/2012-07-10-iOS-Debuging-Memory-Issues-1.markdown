@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 关于内存的理解
+list_title: 关于内存的理解
 tag: iOS
 categories: 随笔
 

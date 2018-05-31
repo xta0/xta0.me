@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  Behind Swift Object
+list_title:  Behind Swift Object
 tag: iOS
 categories: 随笔
 ---

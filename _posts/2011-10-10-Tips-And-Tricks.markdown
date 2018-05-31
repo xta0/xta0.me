@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Tips and Tricks
+list_title: Tips and Tricks
 categories: 随笔
 
 ---

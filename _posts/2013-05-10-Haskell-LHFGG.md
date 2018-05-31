@@ -1,5 +1,5 @@
 ---
-title:  PL-Haskell-1
+list_title:  PL-Haskell-1
 layout: post
 tag: Haskell
 categories: PL

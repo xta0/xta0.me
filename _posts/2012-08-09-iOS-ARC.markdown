@@ -1,6 +1,6 @@
 ---
 layout: post
-title: ARC
+list_title: ARC
 tag: iOS
 categories: 翻译
 

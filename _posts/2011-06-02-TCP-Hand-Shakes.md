@@ -1,6 +1,6 @@
 ---
 layout: post
-title: TCP Handshake Notes
+list_title: TCP Handshake Notes
 tag: TCP/IP
 categories: 随笔
 
