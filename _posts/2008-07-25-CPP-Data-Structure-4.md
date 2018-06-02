@@ -2,7 +2,7 @@
 layout: post
 list_title: Data Structure Part 4 | 字符串 | String
 title: 字符串
-sub_title: String & KMP Algorithm
+sub_title: String Algorithms
 mathjax: true
 ---
 
@@ -127,51 +127,13 @@ P |     R   E   G   R   O
 P |                 R   E   G   R   O 
 ```
 
-当`T`和`P`串在`E`和`O`位置出现了不等，此时我们可以将`P`串直接向后移动到`R`的位置，为什么是`R`的位置，这个规律是什么呢？ 仔细观察可发现，<mark>对模式串`P`来说，如果在出现不等位置有尾串和首串相等，则可以直接将`P`向后移动到尾串的起始位置。</mark>接下来的问题就是，我们怎么知道在出现不匹配字符时，它前面的子串存在首尾相同的子串，以及这个子串的长度是多少呢？
+当`T`和`P`串在`E`和`O`位置出现了不等，此时我们可以将`P`串直接向后移动到`R`的位置，为什么是`R`的位置，这个规律是什么呢？ 仔细观察可发现，<mark>对模式串`P`来说，如果在出现不等位置有尾串和首串相等，则可以直接将`P`向后移动到尾串的起始位置。</mark>接下来的问题就是，我们怎么知道在出现不匹配字符时，它前面的子串是否存在首尾相同的子串，以及这个子串的长度是多少呢？
 
-
-
-
-
-
-
-看一个具体例子，假设有串`P`和目标串`T`如下，其中`N`为模式串`P`的特征向量，如下：
-
-```
-P =  a b a b a b b
-N = -1 0 0 1 2 3 4
-
-T = a b a b a b a b a b a b a b b
-    | | | | | | x
-P = a b a b a b b (i=6,j=6,N[j]=4)
-```
-可以看到当比较到`i=6, j=6`时，`T`和`P`不相等，这时候`P`该向右移动多少位呢？此时`P[6]`的特征向量，`N[6]=4`，说明首串最大长度为`4`，因此可以将`P`右移`j-k`位,即`6-4=2`位:
-
-```
-T = a b a b a b a b a b a b a b b
-        | | | | | | x
-P =     a b a b a b b (i=8,j=6,N[j]=4)
-```
-重复上面步骤，计算`j-k`，即`6-4=2`位，继续移动:
-
-```
-T = a b a b a b a b a b a b a b b
-            | | | | | | x
-P =         a b a b a b b (i=10,j=6,N[j]=4)
-```
-
-不断重复上述步骤，直到:
-
-```
-T = a b a b a b a b a b a b a b b
-                    | | | | | | |
-P =                 a b a b a b b 
-```
-
-- KMP的算法实现
+这就要用到前面一节提到的字符串的`next[]`数组，当模式串`P(j)`出现失配后，检查`next[j]`的值，若`next[j]`的值不为`-1`或`0`，说明则前面子串存在相同的首尾字符串，可以将新的对其位置更新为`P(j)`。而KMP算法的核心就在于得到`next[]`数组，到这里我们可以大致写出KMP算法的雏形：
 
 ```cpp
-int kmp(String T, string P, int *N, int start){
+int kmp(String T, string P, int start){
+    vector<int> next = buildNext(P); 
     int tLen = T.length();
     int pLen = P.length();
     if(tLen - start < pLen){
@@ -183,7 +145,7 @@ int kmp(String T, string P, int *N, int start){
         if(T[i] == P[j] || j == -1){
             i++, j++;
         }else{
-            j = N[j];
+            j = N[j]; //注意，i不增加
         }
         if(j >= pLen){
             return i-pLen;
@@ -194,9 +156,39 @@ int kmp(String T, string P, int *N, int start){
 }
 ```
 
-- 特征值数组
 
-上述代码假设已经有特征向量数组`N`，接下来的问题是如何计算`next[]`数组，假设有子串`P`如下，我们先观察一下`next[k]`数组的一般规律。
+接下来我们看一个具体例子，假设有串`P`和目标串`T`如下，其中`N`为模式串`P`的特征向量，如下：
+
+```
+P =  a b a b a b b
+N = -1 0 0 1 2 3 4
+
+T = a b a b a b a b a b a b a b b
+    | | | | | | x
+P = a b a b a b b (i=6,j=6,N[j]=4)
+```
+可以看到当比较到`i=6, j=6`时，`T`和`P`不相等，此时`P[6]`的特征向量，`N[6]=4`，因此下一轮需要用`P[4]`继续和`T[6]`比较，说明首串最大长度为`4`，相当于将`P`右移`j-k`位,即`6-4=2`位，得到：
+
+```
+T = a b a b a b a b a b a b a b b
+        | | | | | | x
+P =     a b a b a b b (i=8,j=6,N[j]=4)
+```
+重复上面步骤，发现在第`i=8,j=6`时，出现了失配，继续查表得到`next[6]=4`，令`P[4]`继续和`T[8]`进行比较，因此需要将`P移动`j-k`位，即`6-4=2`位
+
+```
+T = a b a b a b a b a b a b a b b
+            | | | | | | x
+P =         a b a b a b b (i=10,j=6,N[j]=4)
+```
+不断重复上述步骤，直到:
+```
+T = a b a b a b a b a b a b a b b
+                    | | | | | | |
+P =                 a b a b a b b 
+```
+
+上述代码并没有特征向量`next[]`是怎么来的，因此接下来的问题是如何得到`next[]`数组，假设有子串`P`如下，我们先观察一下`next[k]`数组的一般规律。
 
 ```
 A B Y ... A B X P(j)
@@ -208,7 +200,7 @@ A B Y ... A B X P(j)
 接下来的问题，便是怎么用下标找出`X`和`Y`。不难看出`X=P(j-1)`，由于`X`前面的尾串`AB`和首串`AB`相同，因此可以得到`next[j-1] = 2`，那么可以推理得到`Y=P(next[j-1])`。完整算法可以实现如下：
 
 ```cpp
-vector<int> findNext(string P){
+vector<int> buildNext(string P){
     int m = P.length();
     vector<int> next(m);
     next[0] = -1;
@@ -230,12 +222,13 @@ vector<int> findNext(string P){
     return next;
 }
 ```
-- **算法复杂度分析**
-    - 循环体中`j = N[j];` 语句的执行次数不能超过`n`次。否则
-        - 由于`j = N[];` 每一行必然使得`j`减少
-        - 而使得`j`增加的操作只有`j++`
-        - 那么，如果`j = N[j];`的执行次数超过`n`次，最终的结果必然使得`j`为比`-1`小很多的负数。这是不可能的(`j`有时为`-1`,但是很快`+1`回到`0`)。
-    - 同理可以分析出求N数组的时间为`O(m)`，<mark>KMP算法的时间为Ｏ(n+m)</mark>
+KMP算法复杂度分析：
+
+1. 循环体中`j = N[j];` 语句的执行次数不能超过`n`次。否则
+    - 由于`j = N[];` 每一行必然使得`j`减少
+    - 而使得`j`增加的操作只有`j++`
+    - 那么，如果`j = N[j];`的执行次数超过`n`次，最终的结果必然使得`j`为比`-1`小很多的负数。这是不可能的(`j`有时为`-1`,但是很快`+1`回到`0`)。
+2. 同理可以分析出求N数组的时间为`O(m)`，<mark>KMP算法的时间为Ｏ(n+m)</mark>
 
 ### Resources
 
