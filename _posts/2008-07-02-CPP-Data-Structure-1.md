@@ -1,6 +1,8 @@
 ---
 layout: post
-list_title: Data Structure Part 1 - Overview
+list_title: Data Structure Part 1 | 向量 | Vector
+title: 向量
+sub_title: Vector
 mathml: true
 ---
 

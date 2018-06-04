@@ -4,8 +4,6 @@ list_title: DataStructure Part 2 | 线性表 | Vector & List
 title: 线性表
 ---
 
-
-
 ### 线性表的概念
 
 - 线性表简称表，是零个或者多个元素的**有穷**序列，通常可以表示成`k0,k1,...,kn-1(n>=1)`
