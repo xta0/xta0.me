@@ -2,6 +2,7 @@
 layout: post
 list_title: DataStructure Part 2 | 线性表 | Vector & List
 title: 线性表
+sub_title: Vector & List
 ---
 
 ### 线性表的概念
