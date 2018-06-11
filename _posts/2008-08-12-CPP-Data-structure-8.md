@@ -8,12 +8,14 @@ mathjax: true
 
 本章主要讨论一些常见的内排序算法，所谓内排序是指整个排序过程是在内存中完成的。排序的算法有很多种，不同的排序方法应用场景不同，因此没有所谓的“最好”的排序方法。常用的排序算法有
 
-1. bubble sort: swap adjacent pairs that are out of order
-2. selection sort: look for the smallest element, move to the front
-3. insertion sort: build na increasingly large sorted front portion
-4. merget sort: recursively divide the data in half and sort it
-5. heap sort: place the values into a sorted tree structure
-6. quick sort: recursively "partition" data based on a middle value
+| -- | -- | -- |
+| bubble sort | swap adjacent pairs that are out of order | $O(n^2)$ | 
+| selection sort | look for the smallest element, move to the front | $O(n^2)$ | 
+| insertion sort | build an increasingly large sorted front portion | $O(n^2)$ | 
+| merge sort | recursively divide the data in half and sort it | $O(nlog{n})$ | 
+| heap sort | place the values into a sorted tree structure | $O(nlog{n})$ | 
+| quick sort |recursively "partition" data based on a middle value | $O(nlog{n})$ |
+
 
 另外还有一些其他的排序方法，比如桶排序(bucket sort)，(radix sort)等。对于排序方法，如何来衡量其性能，来说
 
@@ -47,42 +49,45 @@ void selectionSort(vector<int>& vec){
     }
 }
 ```
+- 复杂度分析
 
-不难看出，选择排序的时间复杂度为$O(n^2)$
+1. 空间代价 $O(1)$
+2. 时间代价
+    - 比较次数：$\Theta(n^2)$
+    - 交换次数：$n-1$
+    - 总时间代价：$\Theta(n^2)$
 
-|--|--|
-|N| Runtime(ms)|
-|1000| 0|
-|2000| 16|
-|4000| 47|
-|8000| 234|
-|16000| 657|
-|32000| 2562|
-|64000| 10265|
-|128000| 41141|
-|256000| 164985|
-
-//y=[0,16,47,234,657,2562,10265,41141,164985];
-//x=[1000,2000,4000,8000,16000,32000,64000,128000,256000];
 ### 堆排序
 
+上面介绍的直接排序是直接从剩余记录中线性查找最大记录，而所谓的堆排序是指
 
-### 插入排序
+## 插入排序
 
-插入排序类似我们队扑克牌进行排序，其过程为：
+### 直接插入排序
 
-1. 
+插入排序类似我们队扑克牌进行排序。我们可以首先将数组分为两部分，第一部分是有序的，第二部分是无序的。假设数组的前`i`个数是有序的，当插入元素`e`时，我们需要将该元素与前`i`个元素一次比较来找到插入位置，整个数组的有序部分会依次增长，最终达到整体有序。上述算法中，我们要做的就是每次将注意力都放到无序部分的首元素上，即`e`的值。
+
+```
+Sorted     Unsorted
+[.....]  e  [......]
+L[0, i)     L[i+1, n)
+```
 
 ```cpp
 void insertSort(vector<int>& v){
-    for(int i=1;i<vec.size();++i>){
-        int tmp = v[i];
-        int j = i;
-        while(j>=i && v[j-1] > tmp){
-            v[j] = v[j-1];
-            j--;
+    for(int i=1;i<v.size();++i){ //无序部分从1开始减少
+        int e = v[i]; //无序部分的首元素，待插入数字
+        int j = i-1;
+        for(;j>=0 ; j--){ //有序部分从0开始增加
+            if(e < v[j]){
+                //将大于等于e的记录向后移
+                v[j+1] = v[j];
+            }else{
+                //得到插入位置j+1
+                break;
+            }            
         }
-        v[j] = temp;        
+        v[j+1] = e;        
     }
 }
 ```
@@ -93,7 +98,11 @@ void insertSort(vector<int>& v){
 2. 最坏情况：$\Theta(n^2)$
     - 比较次数：$\sum{i=1}{n-1}i=n(n-1)/2$ = $\Theta(n^2)$
 
-### Shell排序
+直接插入排序的两个性质：
+
+1. 在最好情况（序列本身已是有序的）下时间代价为$Θ(n)$
+2. 对于短序列，直接插入排序比较有效
+
 
 ### 归并排序
 

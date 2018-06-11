@@ -1,7 +1,7 @@
 
 ---
 layout: post
-list_title: Javascript Part 1 
+list_title: Javascript Part 
 categories: PL
 tag: Javascript
 ---

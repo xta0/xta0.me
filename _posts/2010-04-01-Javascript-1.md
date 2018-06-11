@@ -1,8 +1,8 @@
 ---
 layout: post
-list_title: Javascript Part 1 
-categories: PL
-tag: Javascript
+list_title: Javascript Part 1  | This 
+title: Javascript中的This
+sub_title: This in Javascript
 ---
 
 > update @2016/4/10
@@ -29,7 +29,7 @@ console.log(person) //Elie
 ```
 - **Strick Mode**
 
-当使用strict模式时，全局的`this`是`undefined`，试图修改`this`会报错
+当使用strict模式时，禁止修改全局的`this`，防止污染
 
 ```javascript
 "use strict"

@@ -6,47 +6,106 @@ sub_title: Vector
 mathml: true
 ---
 
-## 数据结构
+### 基本概念
 
-- 结构：实体+关系
-- 数据结构：
-	- **逻辑**: 按照逻辑关系组织起来的一批数据
-	- **存储**: 按一定能的存储方法把它存储在计算机中
-	- **运算**: 在这些数据上定义了一个运算集合
+- 所谓向量采用<mark>定长</mark>的一维数组存储结构
+- 主要特性
+	- 元素类型相同
+	- <mark>元素顺序的存储在连续的存储空间中，每个元素有唯一的索引值</mark>
+	- 使用常数作为向量长度
+- 数组存储
+- 读写元素很方便，通过下标即可指定位置
+	- 只要确定了首地址，线性表中任意数据元素都可以<mark>随机访问</mark>
 
-### 数据的逻辑结构
+- 元素地址计算
 
-- 集合
-	- 元素为松散的关系
-- 线性结构
-	- 元素间为严格的一对一关系
-- 树状结构
-	- 元素间为严格的一对多关系
-	- 树（二叉树，Huffman树，二叉检索树等）
-- 网状结构
-	- 元素间为多对多关系
-	- 图（有向图，无向图）
+```
+Loc(ki) = Loc(k0)+c*i, c=sizeof(ELEM)
+```
 
-### 数据存储结构
+#### 顺序表类定义
 
-- 逻辑结构到物理存储空间的映射
-- 四类：
-	- 顺序
-	- 链接
-	- 索引
-	- 散列
+```cpp
+class Array:public List<T>{
+	private:
+		T* list;
+		int maxSize; //向量实际的内存空间
+		int curLen; //向量当前长度，这个值小于maxSize，要预留一部分存储空间，放置频繁的内存开销
+		int position;
+	public:
+		Array(const int size){
+			maxSize = size;
+			list = new T[maxSize];
+			curLen = position = 0;
+		}
+		~MyList(){
+			delete []list;
+			list = nullptr;
+		}
+		void clear(){
+			delete []list;
+			list = nullptr;
+			position = 0;
+			list = new T[maxSize];
+		}
+		int length();
+		bool append(const T value);
+		bool insert(const int p, const T value);
+		bool remove(const int p);
+		bool setValue(const int p, const T value);
+		bool getValue(const int p, T& value);
+		bool getPos(int &p, const T value);
+}
+```
 
-### 抽象数据类型
+### 顺序表上的运算
 
-- 简称ADT(Abstract Data Type)
-	- 定义了一组运算的数学模型
-	- 与物理存储结构无关
-	- 使软件建立在数据之上（面向对象） ，例如Stack，Tree这种数据结构  
+- 插入运算
 
-- 抽象数据结构二元组`<数据对象D，数据操作P>`
-- 先定义逻辑结构，再定义运算
-	- `逻辑结构`：数据对象及其关系
-	- `运算`：数据操作->函数 
+```cpp
+template<class T>
+bool Array<T>::insert(const int p, const T value){
+	if(curLen >= maxSize){
+		//重新申请空间
+		//或者报错
+		return false;
+	}
+	if(p<0 || p>=curLen){
+		return false;
+	}
+	for(int i=curLen;i>p;i--){
+		list[i] = list[i-1];
+	}
+	list[p] = value;
+	curLen ++;
+
+	return true;
+}
+```
+- 删除运算
+
+```cpp
+template<class T>
+bool Array<T>::delete(const int p){
+	if(curLen == 0){
+		return false;
+	}
+	if(p == 0 || p>=curLen){
+		return false;
+	}
+	for(int i=p; i<curLen-1; i++){
+		list[i] = list[i+1];
+	}
+	curLen--;
+
+	return true;
+}
+```
+
+- 表中元素的移动
+	- 插入：移动<mark>n-i</mark>个元素
+	- 删除：移动<mark>n-i-1</mark>个元素
+	- <mark>时间复杂度为O(n)</mark>
 
 
 ### Resources 
