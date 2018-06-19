@@ -1,8 +1,8 @@
 ---
 layout: post
-list_title: Data Structre Part 8 | Introsort | 内排序
+list_title: Data Structre Part 8 | In-place Sort Algorithm | 内排序
 title: 内排序算法
-sub_title: Introsort Algorithm
+sub_title: In-place Sort Algorithm
 mathjax: true
 ---
 
@@ -23,8 +23,6 @@ mathjax: true
 衡量内排序的标准为时间与空间复杂度
 
 ## 选择排序
-
-选择排序有两类，分别是直接选择排序和堆排序
 
 ### 直接选择排序
 
@@ -49,7 +47,7 @@ void selectionSort(vector<int>& vec){
     }
 }
 ```
-- 复杂度分析
+- 算法分析
 
 1. 空间代价 $O(1)$
 2. 时间代价
@@ -59,7 +57,29 @@ void selectionSort(vector<int>& vec){
 
 ### 堆排序
 
-上面介绍的直接排序是直接从剩余记录中线性查找最大记录，而所谓的堆排序是指
+上面介绍的直接排序是直接从剩余记录中线性查找最大记录，而所谓的堆排序是指利用堆的性质，方便的依次找出最大数/最小数。
+
+```cpp
+template <class Record>
+void sort(Record Array[], int n){
+    int i;
+    // 建堆
+    MaxHeap<Record> max_heap = MaxHeap<Record>(Array,n,n);
+    // 算法操作n-1次，最小元素不需要出堆
+    for (i = 0; i < n-1; i++){
+        // 依次找出剩余记录中的最大记录，即堆顶
+        max_heap. RemoveMax();
+    }
+}
+```
+
+- 算法分析
+
+1. 建堆：$Θ(n)$
+2. 删除堆顶: $Θ(log{n})$
+3. 一次建堆，n 次删除堆顶
+4. <mark>总时间代价为$Θ(nlog{n})$</mark>
+5. 空间代价为$Θ(1)$
 
 ## 插入排序
 
