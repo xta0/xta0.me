@@ -230,11 +230,10 @@ void quickSort(vector<int>& arr, int left, int right){
 2. 比较左边index = 1 和右边 index = 0，那边大那边的index+1
 3. 重复步骤2
 
-merge过程消耗的时间为$O(n)$
 
 ```cpp
 void mergeSort(vector<int>& v){
-    if(v.szie() <= 1){
+    if(v.size() <= 1){
         return;
     }
     //recursive case
@@ -247,18 +246,42 @@ void mergeSort(vector<int>& v){
     //3. merge halves
     int i1 = 0; //index into left
     int i2 = 0; //index into right
-    for(int i =0; i<v.size(); i++){
-        //take from left IF:
-        //      1. nothing remaining on the right
-        //      2. thing on the left is maller
-        if(i2>=right.size() || (i1<left.size() && left[i]<right[i2])){
+    int i = 0; //index of the merged array
+    while(i1<left.size() && i2<right.size()){
+        if(left[i1] <= right[i2]){
             v[i] = left[i1];
-            il++;
+            i1++;
         }else{
             v[i] = right[i2];
             i2++;
         }
+        i++;
+    }
+    //append left half
+    while(i1<left.size()){
+        v[i++] = left[i1++];
+    }
+    //append right half
+    while(i2<right.size()){
+        v[i++] = right[i2++];
     }
 }
 ```
+
+观察上述代码可以发现，在merge的过程中，有两步操作：
+
+1. `while`循环，通过比较`left[i1]`和`right[i2]`向`v`中填充，循环结束条件为两个数组谁先到达末尾
+2. 未到达末尾的数组将其剩余部分追加到`v`中。
+
+- 算法分析
+
+1. 空间代价：$Θ(n)$ / $O(1)$
+2. 划分时间、排序时间、归并时间
+    - $T(n) = 2T(n/2)+cn$, $T(1) = 1$
+    - merge过程消耗的时间为$O(n)$
+    - 最大、最小以及平均时间代价均为$Θ(nlog{n})$
+
+## 分配排序
+
+### 桶排序
 
