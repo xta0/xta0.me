@@ -249,11 +249,9 @@ void mergeSort(vector<int>& v){
     int i = 0; //index of the merged array
     while(i1<left.size() && i2<right.size()){
         if(left[i1] <= right[i2]){
-            v[i] = left[i1];
-            i1++;
+            v[i] = left[i1++];
         }else{
-            v[i] = right[i2];
-            i2++;
+            v[i] = right[i2++];
         }
         i++;
     }
@@ -285,3 +283,4 @@ void mergeSort(vector<int>& v){
 
 ### 桶排序
 
+桶排序是使用
