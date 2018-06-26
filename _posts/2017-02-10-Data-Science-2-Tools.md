@@ -1,10 +1,17 @@
 ---
-list_title: Numpy
+list_title: Data Science Course Part 2 - Tools-Python
 layout: post
 ---
 
+## Python Stack
+
+- Use Python3 
+
+### Numpy
+
 - **Matrix**
 
+对于数值计算，操作单元是矩阵，一维数组也可以看成是矩阵，
 
 ```python
 #一维数组
