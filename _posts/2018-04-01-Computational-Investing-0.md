@@ -23,7 +23,7 @@ mathjax: true
     - Projects in Excel and Python
 
 
-### Quick
+### Quick 
 
 
 

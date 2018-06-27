@@ -1,6 +1,8 @@
 ---
 layout: post
-list_title: 理解iOS中的Runloop
+list_title: 什么是Runloop | Runloop in iOS
+title: 理解iOS中的Runloop
+sub_title: A brief introduction of how Runloop works in iOS
 categories: 随笔
 tag: Runloop
 
@@ -8,22 +10,19 @@ tag: Runloop
 
 ## Runloop的事件轮训
 
-了解Runloop的工作方式很重要，以前一直以为Main Runloop是一个60fps的回调，后来发现这种理解是不对的，60fps是屏幕的刷新频率，工作在更底层，它和Runloop并没有直接对应的关系。Runloop实质上是一种由操作系统控制的事件轮训机制，类似的消息模型每个GUI操作系统都有，比如MFC的:
+了解Runloop的工作方式很重要，以前一直以为Main Runloop是一个60fps的回调，后来发现这种理解是不对的，60fps是屏幕的刷新频率，工作在更底层，它和Runloop并没有直接对应的关系。Runloop实质上是一种由操作系统控制的事件轮训机制，类似的消息模型每个GUI操作系统都有，比如早期Windows程序中(MFC)有：
 
 ```c++
-
 while(GetMessage(&msg,NULL,0,0))
 {
    TranslateMessage (&msg);
    DispatchMessage (&msg) ;
 }
-
 ```
 
 根据Apple开放的Runloop代码来看，思路是一样的:
 
 ```c
-
 void CFRunLoopRun(void) {	/* DOES CALLOUT */
     int32_t result;
     do {
@@ -31,11 +30,8 @@ void CFRunLoopRun(void) {	/* DOES CALLOUT */
         CHECK_FOR_FORK();
     } while (kCFRunLoopRunStopped != result && kCFRunLoopRunFinished != result);
 }
-
 ```
-追着看下去，最终执行的函数是`__CFRunLoopRun`。
-
-根据官方文档所载：
+追着看下去，最终执行的函数是`__CFRunLoopRun`。根据Apple的官方文档所载：
 
 > A run loop receives events from two different types of sources. Input sources deliver asynchronous events, usually messages from another thread or from a different application. Timer sources deliver synchronous events, occurring at a scheduled time or repeating interval. Both types of source use an application-specific handler routine to process the event when it arrives.
 
@@ -46,7 +42,6 @@ Runloop只检测两种类型的消息，一种是Input Sources，通常是来自
 如果想要获取Runloop每一次扫描的回调，可以注册observer:
 
 ```c
-
 CFRunLoopObserverContext context = {
    0,
    (__bridge void *)(self),
@@ -56,13 +51,10 @@ CFRunLoopObserverContext context = {
 };
 CFRunLoopObserverRef observerRef = CFRunLoopObserverCreate(kCFAllocatorDefault, kCFRunLoopAllActivities, YES, 0, &runloopCallback, &context);
 CFRunLoopAddObserver(CFRunLoopGetCurrent(), observerRef, kCFRunLoopCommonModes);
-
 ```
-
 上面代码以Main Runloop为例，注册了一个回调函数:`runloopCallback`,同时指定了要监听事件类型为`kCFRunLoopAllActivities`。在回调函数中，将被监听的事件打印出来：
 
 ```c
-
 void runloopCallback(CFRunLoopObserverRef observer, CFRunLoopActivity activity, void *info)
 {
     NSString* activityStr = @"unkown";
@@ -88,47 +80,36 @@ void runloopCallback(CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
     {
         activityStr = @"kCFRunLoopAllActivities";
     }
-    
     printf("[%.4f] activity:%s\n",CFAbsoluteTimeGetCurrent(),activityStr.UTF8String);
 }
-
 ```
 
 可以看出，RunloopActivity包含下面这6种事件:
 
-- `kCFRunLoopEntry`：Runloop准备启动
-- `kCFRunLoopBeforeTimers`：Runloop准备处理timer事件
-- `kCFRunLoopBeforeSources`：Runloop准备处理input sources
-- `kCFRunLoopBeforeWaiting`：Runloop准备进入休眠
-- `kCFRunLoopAfterWaiting`：Runloop被唤醒准备处理消息
-- `kCFRunLoopExit`：Runloop退出
+1. `kCFRunLoopEntry`：Runloop准备启动
+2. `kCFRunLoopBeforeTimers`：Runloop准备处理timer事件
+3. `kCFRunLoopBeforeSources`：Runloop准备处理input sources
+4. `kCFRunLoopBeforeWaiting`：Runloop准备进入休眠
+5 `kCFRunLoopAfterWaiting`：Runloop被唤醒准备处理消息
+6. `kCFRunLoopExit`：Runloop退出
 
-如果程序监听了`kCFRunLoopAllActivities`，那么当Runloop每轮训到某个activity的时候，程序会收该activity事件的回调。
-
-运行上面代码，输出下面的log：
+如果程序监听了`kCFRunLoopAllActivities`，那么当Runloop每轮训到某个activity的时候，程序会收该activity事件的回调。运行上面代码，观察下面的日志：
 
 ```
-
 [471507989.6447] activity:kCFRunLoopEntry
 [471507989.6448] activity:kCFRunLoopBeforeTimers
 [471507989.6448] activity:kCFRunLoopBeforeSources
 [471507989.6456] activity:kCFRunLoopBeforeTimers
 [471507989.6456] activity:kCFRunLoopBeforeSources
 [471507989.6456] activity:kCFRunLoopBeforeWaiting
-
 ...
-
-
 [471507991.0989] activity:kCFRunLoopAfterWaiting
 [471507991.0993] activity:kCFRunLoopBeforeTimers
 [471507991.0993] activity:kCFRunLoopBeforeSources
 [471507991.0993] activity:kCFRunLoopBeforeWaiting
-
 ```
 
-可以发现，Runloop会在启动的时候依次轮训Timer,Sources，过一阵后，如果没有任何的Input Source发生或Timer，Runloop将进入`kCFRunLoopBeforeWaiting`，即休眠状态。
-
-这时候，如果有touch事件进来，相当于产生了一个Input Source，这时候：
+可以发现，Runloop会在启动的时候依次轮训Timer,Sources，过一阵后，如果没有任何的Input Source发生或Timer，Runloop将进入`kCFRunLoopBeforeWaiting`，即休眠状态。这时候，如果有touch事件进来，相当于产生了一个Input Source，这时候：
 
 1. Runloop会先发一个被唤醒的回调：`kCFRunLoopAfterWaiting`
 2. 接着处理touch事件，`kCFRunLoopBeforeSources`会回调
@@ -136,8 +117,7 @@ void runloopCallback(CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 4. 重新进入休眠状态
 5. 当touch end的时候又会唤醒Runloop，重复上面的操作的操作。
 
-```c
-
+```
 [471512170.7319] activity:kCFRunLoopBeforeSources
 VZRunloopSample[40478:3595823] touch began
 [471512170.7327] activity:kCFRunLoopBeforeSources
@@ -149,7 +129,6 @@ VZRunloopSample[40478:3595823] touch end
 [471512170.8277] activity:kCFRunLoopBeforeWaiting
 [471512171.4833] activity:kCFRunLoopBeforeSources
 [471512171.4833] activity:kCFRunLoopBeforeWaiting
-
 ```
 
 类似的，如果有Timer进来，`kCFRunLoopBeforeTimers`会先回调，接着再执行Timer的callback函数。
@@ -167,14 +146,9 @@ VZRunloopSample[40478:3595823] touch end
 OSX提供了一种基于MachPort的线程或进程间的通信方式，这种方式需要添加一个NSMachPort对象到Runloop的Source中，当Port中有消息发送过来时，会唤醒Runloop来处理消息:
 
 ```c
-
 // Delegates are sent this if they respond, otherwise they
 // are sent handlePortMessage:; argument is the raw Mach message
-- (void)handleMachMessage:(void *)msg
-{
-	
-}
-
+- (void)handleMachMessage:(void *)msg{ ... }
 ```
 注意，参数`msg`的类型为`NSPortMessage`，这个类在OSX中可以正常使用，原因是OSX对app没有进程通信的限制，但是在iOS中，这个类只在`NSPort.h`中有一个前向声明，无法直接使用，推测涉及到沙盒安全的问题，因此还没找到iOS中使用`NSPort`进行线程通信的方法。
 
@@ -188,43 +162,32 @@ OSX提供了一种基于MachPort的线程或进程间的通信方式，这种方
 
 如果想使用自定义的Input Source向Runloop投递消息，需要使用CoreFoundation的API，Foundation的API不提供创建自定义的Input Source，根据文档，使用Input Source需要如下步骤：
 
-- 创建一个`CFRunloopContextRef`,实现三个回调函数:
+1. 创建一个`CFRunloopContextRef`,实现三个回调函数:
 	- `void	(*schedule)(void *info, CFRunLoopRef rl, CFStringRef mode);`
 	- `void	(*cancel)(void *info, CFRunLoopRef rl, CFStringRef mode);`
 	- `void	(*perform)(void *info);`
-
-- 通过上面的context创建一个RunloopSourceRef:
+2. 通过上面的context创建一个RunloopSourceRef:
 	- `CFRunLoopSourceRef runLoopSource = CFRunLoopSourceCreate(NULL, 0, &context);` 
-
-- 将创建的RunloopSource添加到当前的Runloop中:
+3. 将创建的RunloopSource添加到当前的Runloop中:
 	- `CFRunLoopRef runLoop = CFRunLoopGetCurrent();`
    - `CFRunLoopAddSource(runLoop, runLoopSource, kCFRunLoopDefaultMode);` 
-
-- 向RunloopSource发送Signal，唤醒Runloop处理事件
+4. 向RunloopSource发送Signal，唤醒Runloop处理事件
 
 ```c
- 	CFRunLoopSourceSignal(runLoopSource);
-	CFRunLoopWakeUp(runloop);
+CFRunLoopSourceSignal(runLoopSource);
+CFRunLoopWakeUp(runloop);
 ```
-	
 使用这种方式可以实现线程间的通信，通常用于子线程向主线程通信，但是数据传递会很麻烦，暂时想不到应用场景。
 	
-
 ### 使用PerformSelector
 
 除了上面两种Input Sources，`performSelector`也是通过runloop执行的，`selector`对应的方法在Runloop中串行执行，`performSelector`通常用在主线程，如果要在其它线程使用，需要这个线程有一个活着的Runloop保持线程不退出。
 
-
 ## 理解Runloop Modes
 
-官方文档对Runloop Modes的描述有只有三小段文字，但信息量确非常的大，说的也很晦涩。
-
-首先是说Runloop Mode包含一组input sources，timers和observers的集合，只有mode中包含的Source才会被Runloop扫描到。
-
-理解Runloop Mode，要先看下`CFRunLoop`的结构：
+官方文档对Runloop Modes的描述有只有三小段文字，但信息量确非常的大，说的也很晦涩。首先是说Runloop Mode包含一组input sources，timers和observers的集合，只有mode中包含的Source才会被Runloop扫描到。理解Runloop Mode，要先看下`CFRunLoop`的结构：
 
 ```c
-
 struct __CFRunLoop {
     CFRuntimeBase _base;
     pthread_mutex_t _lock;			/* locked for accessing mode list */
@@ -241,52 +204,37 @@ struct __CFRunLoop {
     struct _block_item *_blocks_tail;
     CFTypeRef _counterpart;
 };
-
 ```
 
-通过这个结构可以看到：
-
-- 每一个`CFRunloop`中都包含一个`_commonModes`的集合，它用来保存Runloop支持的mode类型（包括系统默认的mode和自定义的mode），我们可以在运行时访问`__CFRunLoop`这个结构，来查看`_commonModes`中具体保存了哪些mode:
+通过这个结构可以看到, 每一个`CFRunloop`中都包含一个`_commonModes`的集合，它用来保存Runloop支持的mode类型（包括系统默认的mode和自定义的mode），我们可以在运行时访问`__CFRunLoop`这个结构，来查看`_commonModes`中具体保存了哪些mode:
 
 ```c
-
 CFRunLoopRef runloopRef = CFRunLoopGetCurrent();
 struct __CFRunLoop* runloopStructPointer = runloopRef;
-
 ```
 上面代码中，打印出的`_commonModes`结构如下：
 
 ```
+//当前Runloop支持两种mode:
 common modes = <CFBasicHash 0x7f9f43601ea0 [0x1013297b0]>{type = mutable set, count = 2,
 entries =>
-	0 : <CFString 0x10244c270 [0x1013297b0]>{contents = "UITrackingRunLoopMode"}
-	2 : <CFString 0x101349b60 [0x1013297b0]>{contents = "kCFRunLoopDefaultMode"}
+0 : <CFString 0x10244c270 [0x1013297b0]>{contents = "UITrackingRunLoopMode"}
+2 : <CFString 0x101349b60 [0x1013297b0]>{contents = "kCFRunLoopDefaultMode"}
 }
 ```
 
-说明当前Runloop支持两种mode：一个是`UITrackingRunLoopMode`,一个是`kCFRunLoopDefaultMode`
+每一个`CFRunloop`中都包含一个`_commonModeItems`集合，它用来保存某个Mode中支持的消息源，包括`Timer/Input Source/Observers`, 类型为`CFRunLoopSourceRef`。每当有一个上述对象添加进来时，便向这个集合增加一个元素:`CFSetAddValue(rl->_commonModeItems, rls);`。在默认情况下，当Runloop启动后，系统会自动在`_commonModeItems`中添加一些列Source和Observer。
 
--  每一个`CFRunloop`中都包含一个`_commonModeItems`集合，它用来保存某个Mode中支持的消息源，包括`Timer/Input Source/Observers`, 类型为`CFRunLoopSourceRef`。每当有一个上述对象添加进来时，便向这个集合增加一个元素:
-
-```c
-
-CFSetAddValue(rl->_commonModeItems, rls);
+此外，每一个`CFRunloop`中还包含一个`_currentMode`表示当前运行在的Mode，通过`CFRunLoopCopyCurrentMode(CFRunloopRef runloop)`这个API可以看到系统默认预置进来的几种Mode:
 
 ```
-
-默认情况下，当Runloop启动后，系统会自动在`_commonModeItems`中添加一些列Source和Observer。
-
-- 每一个`CFRunloop`中还包含一个`_currentMode`表示当前运行在的Mode
-
-- 通过`CFRunLoopCopyCurrentMode(CFRunloopRef runloop)`这个API可以看到系统默认预置进来的几种Mode:
-
-	- UITrackingRunLoopMode,
-	- GSEventReceiveRunLoopMode,
-	- kCFRunLoopDefaultMode,
-	- UIInitializationRunLoopMode,
-	- kCFRunLoopCommonModes
-
-	这些mode和官方文档上给出的并不一致，原因是iOS和MacOS对某些模式的命名不同，这些mode中，需要注意的有三种:kCFRunLoopDefaultMode, kCFRunLoopCommonModes和UITrackingRunLoopMode
+- UITrackingRunLoopMode,
+- GSEventReceiveRunLoopMode,
+- kCFRunLoopDefaultMode,
+- UIInitializationRunLoopMode,
+- kCFRunLoopCommonModes
+```
+这些mode和官方文档上给出的并不一致，原因是iOS和MacOS对某些模式的命名不同，这些mode中，需要注意的有三种:`kCFRunLoopDefaultMode, kCFRunLoopCommonModes和UITrackingRunLoopMode`
 
 ### kCFRunLoopDefaultMode
 

@@ -159,32 +159,6 @@ mathjax: true
 | $O(2^n) $ | 斐波那契数列 |  $O(2^n)$ |$O(2^n)$|
 	
 
-### 归并排序时间复杂度分析
-
-归并排序是一个很好的分治+二分的例子，我们看下如何计算它的时间复杂度，算法伪码如下：
-
-```
-MergeSort(A,p,r)
-输入： 数组A[p...r]
-输出： 排序后的数组A
-if p>r
-then q<-⌊(p+r)/2⌋
-	MergeSort(A,p,q)
-	MergeSort(A,q+1,r)
-	Merge(A,p,q,r)
- ```
-
-
-1. 归并排序需要的代码执行次数： $6nlog2n + 6n $,  $n $为数组维度
-2. 推导时间复杂度
-	- 使用递归树
-	- 对递归树的每一层 $j=0,1,2...,\log_2n $，有 $2^j $个节点，每个节点代表一个需要继续递归的子数组
-		- 每个子数组的大小为<math><mi>n</mi><mo>/</mo><msup><mi>2</mi><mi>j</mi></msup></math>
-		- 由伪代码可以推导出，合并需要的执行次数为 $6m $
-	- 对第 $j $层，一共需要的执行次数为：
-		- 所有子数组的个数 x 每个子数组合并需要的次数，即<math><msup><mi>2</mi><mi>j</mi></msup><mo> * </mo><mn>6</mn><mo stretchy="false">(</mo><mi>n</mi><mo>/</mo><msup><mi>2</mi><mi>j</mi></msup><mo stretchy="false">)</mo><mo>=</mo><mn>6</mn><mi>n</mi></math>
-	- 总共的执行次数为：<math><mn>6</mn><mi>n</mi><mo stretchy="false">(</mo><msubsup><mo>log</mo><mn>2</mn><mi>n</mi></msubsup><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mo>=</mo><mn>6</mn><mi>n</mi><msubsup><mo>log</mo><mn>2</mn><mi>n</mi></msubsup><mo>+</mo><mn>6</mn><mi>n</mi></math>
-
 
 ### Resources
 

@@ -5,7 +5,7 @@ title: Portfolio Management and Market Mechanics
 mathjax: true
 ---
 
-> Online course from Geogia Tech
+> Online course from Coursera & Udacity
 
 ## Portfolio Management
 

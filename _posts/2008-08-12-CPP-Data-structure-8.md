@@ -177,7 +177,7 @@ void quickSort(vector<int>& arr, int left, int right){
     //选择轴值为最左边数
     int pivot = arr[left];
     int l=left,r=right;
-    while(l != r){
+    while(l < r){
         //skip掉右边界大于pivot的值
         while(arr[r] >= pivot && r>l){
             r--;
