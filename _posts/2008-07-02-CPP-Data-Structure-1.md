@@ -108,7 +108,9 @@ bool Array<T>::delete(const int p){
 	- <mark>时间复杂度为O(n)</mark>
 
 
-### Resources 
+## Array相关的问题
+
+## Resources 
 
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
 - [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)
