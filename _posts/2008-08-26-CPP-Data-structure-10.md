@@ -338,5 +338,15 @@ kn : vn->vn'->vn''->...
     M = 4k +3 \thinspace (k>=1)
     $$
 
-出了线性探查，平方探查以外还有一些冲突解决的技术，比如使用伪随机数探查
+
+- **双散列探查**
+
+双散列探查是指在计算探查序列函数时，引入另一个散列函数最为常数
+
+$$
+\begin{aligned}
+& d = h_1(key) \\
+& d_i = (d+i*h_2(key)) \thinspace \% \thinspace M  \\
+\end{aligned}
+$$
     
