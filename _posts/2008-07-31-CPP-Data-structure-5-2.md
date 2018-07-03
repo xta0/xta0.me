@@ -26,29 +26,91 @@ title: 几种常见的二叉树
 ```
 15 17 18 20 35 51 60 88 93
 ```
-由于每次搜索都是拿算法实现思路为:
+由于每次搜索都是`target`和该节点的`value`，而且这个过程是重复的，因此可以使用递归来实现，思路为:
 
-```
-bool search(TreeNode* node, int target){
-
+```cpp
+TreeNode* search(TreeNode* node, int target){
+    if(!node || node->val == target){         
+        return node;
+    }
+    //递归
+    if(target < node->val){
+        return search(node->left,target,node);
+    }else{
+        return search(node->right,target,node);
+    }
 }
 ```
+查找的运算时间正比于待查找节点的深度，平均情况下和二分法相同，$O(log_2^{N})$，最坏情况下不超过树的高度，BST退化为单调序列，时间复杂度为$O(N)$。另一个值得注意的地方是，在算法的接口定义中引入了一个`parent`指针用来保存搜索过程中当前节点的父节点，这个目的主要是便于后续的插入与删除操作。
 
-- 插入节点
+### 插入节点
+
+插入算法的实现思路是先借助搜索找到插入位置，再进行节点插入，值得注意的是，对于插入节点的位置一定是某个叶子节点左孩子获右孩子为`NULL`的位置
 
 1. 从根节点开始搜索，在停止位置插入一个新叶子节点。
 2. 假如我们要插入`17`，如下图搜索树，直到遇到`19`搜索停止，`17`成为`19`左叶子节点。
-3. 插入新节点后的二叉树依然保持BST的性质和性能，插入时间复杂度为`O(logN)`
+3. 插入新节点后的二叉树依然保持BST的性质和性能
 
 <img src="/assets/images/2008/07/tree-6.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
-- 删除节点
+按照上面步骤，其插入的实现思路为:
+
+```cpp
+void insert(TreeNode* node,int target){
+    if( target == node->val  ){
+        return; //禁止重复元素插入
+    }else if(target < node->val){
+        if(!node->left){
+            node ->let = new TreeNode(target);
+            return;
+        }else{
+            search(node->left,target,node);
+        }
+    }else{
+        if(!node->right){
+            node->right = new TreeNode(target);
+            return;
+        }else{
+            search(node->right,target,node);
+        }
+    }
+}
+```
+插入的运算时间主要来自两部分，一部分是search，一部分是插入节点。总的时间复杂度为$O(log_2^{N})$，最坏情况下为$O(N)$
+
+### 删除节点
+
+相对于插入操作，节点的删除操作则略为复杂，但仍是基于搜索为主要框架，找到待删除元素后，再根据不同分支做不同的处理：
 
 1. 如果该节点没有左子树，则使用右子树替换该节点
 2. 如果该节点没有右子树，则使用左子树替换该节点
 3. 如果该节点既有左子树也有右子树，则找到右子树中最小的节点，将该节点的值替换为待删除节点的值，删除该节点
 
 ```cpp
+void deleteNode(TreeNode* root, int target){
+    if(!root){
+        return;
+    }
+    if(root->val == target){
+        TreeNode* tmp = root;
+        //无子节点，直接删除
+        if(!root->left && !root->right){
+            delete tmp;
+        }
+        //两个节点有一个为空，则将其替换为非空的
+        else if(!root->right && root->left ){
+            root = root->left;
+            delete tmp;
+        }else if(!root->left && root->right){
+            root = root->right;
+            delete tmp;
+        }
+        //两个节点都不空,情况略复杂
+        else{
+
+        }
+    }
+}
 {
     BinaryTreeNode <T> * temp = rt;
     if (rt->leftchild() == NULL) {
@@ -63,7 +125,7 @@ bool search(TreeNode* node, int target){
     delete temp;
 }
 
-template<class T>
+
 BinaryTreeNode<T>* deleteMin(BinaryTreeNode<T>* rt){
     if(rt->leftChild()!=NULL){
         return deletemin(rt->leftchild()) //在右子树中递归找到左边叶子节点
@@ -75,6 +137,7 @@ BinaryTreeNode<T>* deleteMin(BinaryTreeNode<T>* rt){
 }
 ```
 
+对于删除算法，
 - 组织内存索引
     - 二叉搜索树是适用于内存储器的一种重要的树形索引
         - 常用红黑树、伸展树等，以维持平衡  
