@@ -1,10 +1,11 @@
 ---
 layout: post
-list_title: Data Structure Part 5 | 几种常见的二叉树 | More on Binary Trees
+list_title: Data Structure Part 5 | 常见的二叉树 | More on Binary Trees
 mathjax: true
 title: 几种常见的二叉树
 ---
 
+前面介绍了二叉树的一些性质和常用操作，实际应用中，使用的多是二叉树的一些变种，如BST，Heap，Balance Tree，红黑树等。接下来的两篇将展开介绍这些树的原理和使用
 
 ## 二叉搜索树
 
@@ -14,13 +15,24 @@ title: 几种常见的二叉树
 2. 该节点的左子树(若不空)的任意一个节点的值都小于`K`
 3. 该节点的 右子树(若不空)的任意一个节点的值都大于`K`
 4. 该节点的左右子树也是BST
+5. <mark>BST的中序遍历</mark>即是节点的正序排列（从小到大排列）
 
 <img src="/assets/images/2008/07/tree-5.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
-- 搜索
+### 搜索
 
-1. 二叉搜索树的<mark>中序遍历</mark>即是节点的正序排列（从小到大排列）。同样，我们可以通过中序遍历来验证一个数是否是BST
-2. 假如我们要搜索`19`，每次只需要检索两个子树之一，直到`19`被被找到，或者走到叶子节点停止，类似二分法
+上图中，假如我们要搜索`20`，根据BST的性质，每次只需要检索两个子树之一，直到`20`被被找到，或者走到叶子节点停。我们如果将BST的中序遍历序列用数组表示，搜索过程实际上就是二分法:
+
+```
+15 17 18 20 35 51 60 88 93
+```
+由于每次搜索都是拿算法实现思路为:
+
+```
+bool search(TreeNode* node, int target){
+
+}
+```
 
 - 插入节点
 

@@ -1,7 +1,7 @@
 ---
 layout: post
 list_title: Algorithms-8 | 分治法 | Divide and Conquer
-title: 分而治之
+title: 分而治之 | Divide and Conquer
 mathjax: true
 ---
 
@@ -76,7 +76,7 @@ then q<-⌊(p+r)/2⌋           //二分
 
 1. 对递归树的每一层 $j=0,1,2...,log_2{n}$，有$2^j$个节点，每个节点代表一个需要继续递归的子数组
 2. 对第$j$层，和并需要的时间为$6n$(可通过对merge函数的分析得到)
-3. 归并排序一共需要执行的次数为：$6n*(\log{n}+1) = 6n\log{n} + {6n}
+3. 归并排序一共需要执行的次数为：$6n*(\log{n}+1) = 6n\log{n} + {6n}$
 
 ### Decrease and Conquer
 
