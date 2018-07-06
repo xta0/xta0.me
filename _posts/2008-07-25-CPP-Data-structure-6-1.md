@@ -1,15 +1,15 @@
 ---
 layout: post
-list_title: Data Structure Part 5 | 二叉搜索树 | BST & AVL 
+list_title: Data Structure Part 6-1 | 二叉搜索树 | BST
 mathjax: true
 title: 二叉搜索树
 ---
 
-前面介绍了二叉树的一些性质和常用操作，在实际应用中，使用的多是二叉树的一些变种，如BST，Heap，Balance Tree，红黑树等。接下来的两篇文章将展开介绍这些树的原理和使用。
+从这一篇开始我们将围绕一种特殊的二叉树及其变种进行长时间的讨论
 
 ## 二叉搜索树（BST）
 
-二叉搜索树（Binary Search Tree）是具有下列性质的二叉树：
+所谓二叉搜索树（Binary Search Tree）是具有下列性质的二叉树：
 
 1. 对于任意节点，设其值为`K`
 2. 该节点的左子树(若不空)的任意一个节点的值都小于`K`
@@ -18,6 +18,8 @@ title: 二叉搜索树
 5. <mark>BST的中序遍历</mark>即是节点的正序排列（从小到大排列）
 
 <img src="/assets/images/2008/07/tree-5.jpg" style="margin-left:auto; margin-right:auto;display:block">
+
+二叉搜索树及其变种是内存中一种重要的树形索引（关于索引，在后面文章中会提到），常用的BST变种有红黑树，伸展树，AVL树等，从这篇文章开始将会依次介绍这些树的特性及其实际应用。
 
 ### 三种操作
 
@@ -49,7 +51,7 @@ TreeNode* search(TreeNode* node, int target){
 
 -  **插入**
 
-插入算法的实现思路是先借助搜索找到插入位置，再进行节点插入，值得注意的是，对于插入节点的位置一定是某个叶子节点左孩子获右孩子为`NULL`的位置
+插入算法的实现思路是先借助搜索找到插入位置，再进行节点插入，值得注意的是，对于插入节点的位置一定是某个叶子节点左孩子或右孩子为`NULL`的位置
 
 1. 从根节点开始搜索，在停止位置插入一个新叶子节点。
 2. 假如我们要插入`17`，如下图搜索树，直到遇到`19`搜索停止，`17`成为`19`左叶子节点。
@@ -144,7 +146,7 @@ TreeNode* deleteNode(TreeNode* root, int key) {
 
 如果仔细回想，我们在介绍二叉树时曾提到过的完全二叉树和满二叉树，这两种树都是平衡二叉树，但实际应用中，这种树往往可遇而不可求，即是遇到，经过一系列的动态操作，平衡性也会被破坏，可以说理想平衡出现的概率极低，维护的成本过高。因此，我们要追求的是一种适度的平衡，即在渐进的意义上不超过$O(\log_2{N})$即可。适度平衡的BST，也称作**平衡二叉搜索树(Balanced BST)**。
 
-### BST的等价变换
+### BST的旋转变换
 
 如果我们使用中序遍历来恢复一棵BST，会发现其往往存在歧义性，因为其结果往往不唯一，如下图所示的两棵BST，其中序遍历序列相同，但是拓扑结构却不同
 
@@ -161,31 +163,16 @@ TreeNode* deleteNode(TreeNode* root, int key) {
 
 参照上图，可以大致理解为，BST以节点`V`，进行右旋(左图`Zig`)，或者以节点`V`进行左旋(右图`Zag`)后得到的树是和原树等价的。有了这两种方式，我们即可将一棵非平衡的BST转化为BBST，但值得注意的是，这种旋转操作，最多只针对两个节点`V,C`进行操作，且时间在控制在常数。
 
-有了这种调整的策略，我们便可对BST的各种操作进行优化，即使某些动态操作使BST变得不平衡，仍可通过上面的变换，以及小的代价（不超过$O(\log_2{N})$）将其还原为BBST，进而降低各种操作的时间复杂度。例如，后面介绍的AVL树，可将插入操作优化为$O(1)$，而红黑树更可以将插入删除均优化为$O(1)$
-
-
-## AVL树
-
-AVL树是一种经典的BBST，由Adelson-Velskii 和 Landis在1962年提出。所谓AVL树，是指树中的每个节点平衡因子（左右子树的高度差）都不超过1，所谓平衡因子的定义如下：
-
-$$
-bf(x) = height(x_{rchild}) - height(x_{lchild})
-$$
-
-节点的平衡因子可能取值为0,1（`+`）和-1（`-`）。
-
-<img src="/assets/images/2008/07/tree-15.jpg" style="margin-left:auto; margin-right:auto;display:block">
+有了这种调整的策略，我们便可对BST的各种操作进行优化，即使某些动态操作使BST变得不平衡，仍可通过上面的变换，以极小的代价（不超过$O(\log_2{N})$）将其还原为BBST，进而降低各种操作的时间复杂度。例如，后面介绍的AVL树，可将插入操作优化为$O(1)$，而红黑树更可以将插入删除均优化为$O(1)$
 
 
 
-
-- 组织内存索引
-    - 二叉搜索树是适用于内存储器的一种重要的树形索引
-        - 常用红黑树、伸展树等，以维持平衡  
-    -  外存常用B/B+树
 
 ### Resources
 
+- [Binary search tree](https://en.wikipedia.org/wiki/Binary_search_tree)
+- [树旋转](https://zh.wikipedia.org/wiki/%E6%A0%91%E6%97%8B%E8%BD%AC)
+- [Tree rotation](https://en.wikipedia.org/wiki/Tree_rotation)
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
 - [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)
 - [算法与数据结构-1-北大-Cousera](https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome)
