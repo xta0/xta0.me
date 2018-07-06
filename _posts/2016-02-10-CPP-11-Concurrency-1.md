@@ -3,7 +3,20 @@ layout: post
 list_title: C++11 Part-1
 ---
 
+- Lunching Thread
+
+C++ 11中对线程的管理集中在`std::thread`这个类中，创建线程的方式包括：
+
+1. 使用回调函数
+2. 使用functor
+3. 使用Lambda表达式
+
+
+
+
 ## C++ 11 Features 
+
+
 
 ### auto keyword
 
