@@ -45,8 +45,8 @@ defaults:
 
 
 # Docs: https://help.github.com/articles/configuring-jekyll-plugins/
-plugins:
- - jekyll-sitemap
+# plugins:
+#  - jekyll-sitemap
 
 # Put your favicon.ico into `assets/` directory.
 favicon: /assets/favicon.ico
