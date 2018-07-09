@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Data Structure Part 5-3 | 堆与霍夫曼树 | Heap & Huffman Tree
+list_title: Data Structure Part 5-1 | 堆与霍夫曼树 | Heap & Huffman Tree
 mathjax: true
 title: 堆与霍夫曼树
 ---

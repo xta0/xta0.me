@@ -25,7 +25,7 @@ exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md", "
 # Assets
 css: assets/css
 js: assets/js
-images: assets/assets/images
+images: assets/images
 
 # markdown
 markdown: kramdown
@@ -43,11 +43,10 @@ defaults:
     values:
       layout: "default"
 
-# Plugins
-## Docs: https://help.github.com/articles/configuring-jekyll-plugins/
-# plugins:
-#  - jekyll-sitemap
-#  - jekyll-feed
+
+# Docs: https://help.github.com/articles/configuring-jekyll-plugins/
+plugins:
+ - jekyll-sitemap
 
 # Put your favicon.ico into `assets/` directory.
 favicon: /assets/favicon.ico
@@ -79,9 +78,8 @@ post_copyright:
   license: CC BY-NC-SA 3.0
   license_url: https://creativecommons.org/licenses/by-nc-sa/3.0/
 
-  
 # ---------------------------------------------------------------
-# Third Party Services Settings
+# 3rd partyl lib
 # ---------------------------------------------------------------
 
 # MathJax Support
@@ -90,3 +88,31 @@ mathjax:
   per_page: false
   cdn: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js"
 
+
+# ---------------------------------------------------------------
+# Menu Settings
+# ---------------------------------------------------------------
+
+# When running the site in a subdirectory (e.g. domain.tld/blog), remove the leading slash (/archives -> archives)
+menu:
+  home: /
+  categories: /categories/
+  archives: /archives/
+  about: /about/
+  tags: /tags/
+  #sitemap: /sitemap.xml
+  #commonweal: /404.html
+menu_icons:
+  enable: true
+  #KeyMapsToMenuItemKey: NameOfTheIconFromFontAwesome
+  home: home
+  about: user
+  categories: th
+  schedule: calendar
+  tags: tags
+  archives: archive
+  sitemap: sitemap
+  commonweal: heartbeat
+
+  # Theme version
+  version: 0.0.1

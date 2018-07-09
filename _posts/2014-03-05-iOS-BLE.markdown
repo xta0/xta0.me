@@ -1,9 +1,7 @@
 ---
-list_title: BLE研究报告
 layout: post
-tag: iOS
-categories: 随笔
-
+list_title: iOS中的BLE
+title: iOS中的BLE | BLE in iOS
 ---
 
 <em>文章均为作者原创，转载请著名出处</em>

@@ -6,6 +6,8 @@ list_title: CSS Tricks
 
 ## Best Practice
 
+- 使用Emmet
+
 - 将`px`转换为`rem`。
 	- 改变`root font-size`其它属性都会自动变化
 	- 将`root font-size`设为`62.5%`

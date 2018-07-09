@@ -34,7 +34,28 @@ $$
 4. 对数级数
     - $\log1 + \log2 + ... + \log{n} = \log(n!) = \Theta(nlogn)$
 
-我们以二分法为例
+### 递归树
+
+1. 递归树是迭代计算的模型
+2. 递归树的生成过程与迭代过程一致
+
+### 主定理的证明和引用
+
+形如下面的递推方程
+
+$$
+T(n) = a T(n/b) + f(n)
+$$
+
+其中$a$为归约后的子问题个数，$n/b$为归约后子问题规模，$f(n)$为归约过程及组合子问题的解的工作量。该类递推方程在实际引用中非常广泛，比如二分检索:$T(n) = T(n/2)+1$，二分归并排序$T(n) = 2T(n/2)n-1$，大部分算法形式包含递归。
+
+求解上述递推方程，可分如下几种类型
+
+1. 若$f(n) = O(n^{\log_b{a-\epsilon}}),\epsilon > 0, \thinspace 那么 \thinspace T(n) = \Theta(n^{\log_b{a}})$
+
+2. 若$f(n) = \Theta(n^{\log_b{a}})，那么 \thinspace T(n) = \Theta(n^{\log_b{a}}\log{n})$
+
+3. 若$f(n) = \Omega(n^{\log_b{a+\epsilon}}),\epsilon > 0, \thinspace，且对于某个常数$
 
 ### Resources
 

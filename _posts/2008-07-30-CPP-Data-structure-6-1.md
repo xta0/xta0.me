@@ -2,7 +2,7 @@
 layout: post
 list_title: Data Structure Part 6-2 | 伸展树 & AVL树 | Splay Tree & AVL Tree
 mathjax: true
-title: 伸展树与AVL树
+title: AVL树与伸展树
 ---
 
 ## AVL树
@@ -32,6 +32,21 @@ $$
 //和BST不同的是插入和删除的动态操作
 void insert(TreeNode* root, int target);
 TreeNode* remove(TreeNode* root, int target);
+```
+
+另外，为了后续算法的便捷性，我们还需要在原来二叉树的节点中增加一个对父节点的引用
+
+```cpp
+template <class T>
+struct BinaryTreeNode{
+    T val;
+    BinaryTreeNode<T>* left;
+    BinaryTreeNode<T>* right
+    //维护一个parent指针
+    BinaryTreeNode<T>* parent;
+}
+//后续例子中将以int做为基本类型
+typedef TreeNode BinaryTreeNode<int>;
 ```
 
 ### 失衡与重平衡
@@ -106,7 +121,7 @@ BST的另一个改进变种是伸展树，伸展树是一种自适应的数据�
 
 由上面介绍的AVL树可知，每次查找某个节点所用的时间为$O(\log{N})$，如果连续查找$m$次，则需要$O(m\log{N})$时间。如果对查找的某些节点具有局部性，我们可以找到某种方法使得对这些节点的访问更高效。
 
-- 自适应
+- 自适应伸展
 
 一种简单的自适应策略是，如果某种元素刚被访问，将这个元素至于序列或者树的最前端，则经过一段时间的使用后，所有被频繁访问的元素都将聚集于序列或者树的前端位置。
 
@@ -117,9 +132,7 @@ BST的另一个改进变种是伸展树，伸展树是一种自适应的数据�
 
 <img src="/assets/images/2008/07/tree-19.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
-可见不论`V`在左还是右，通过旋转都可以让`V`上升一层，因此可以对`V`进行反复旋转，直到其转移至树根，这个过程中，`V`每前进磁层都要对整棵树进行伸展，这就是所谓伸展树的来历
-
-存在一种最坏情况，
+可见不论`V`在左还是右，通过旋转都可以让`V`上升一层，因此可以对`V`进行反复旋转，直到其转移至树根，这个过程中，`V`每前进磁层都要对整棵树进行伸展，这就是所谓伸展树的来历。但是上述过程存在一种最坏情况，即当BST为单链表结构时
 
 
 
