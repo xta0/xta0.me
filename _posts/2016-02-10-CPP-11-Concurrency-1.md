@@ -1,9 +1,10 @@
 ---
 layout: post
-list_title: C++11 Part-1
+list_title: Concurrency in C++ Part 1
+title: C++中的并发 | Concurrency in C++ Part 1
 ---
 
-- Lunching Thread
+### Lunching Thread
 
 C++ 11中对线程的管理集中在`std::thread`这个类中，创建线程的方式包括：
 
@@ -11,6 +12,99 @@ C++ 11中对线程的管理集中在`std::thread`这个类中，创建线程的�
 2. 使用functor
 3. 使用Lambda表达式
 
+```cpp
+struct Functor{
+    void operator()(string name){
+        cout<<name<<endl;
+    }
+};
+void runCode(){
+	//使用Functor
+	Functor f;
+	std::thread th1(f,"Functor thread is running");
+
+	//使用lambda
+	std::string p = "lambda thread is running";
+	std::thread th2([p]{
+		cout<<p<<endl;
+	});
+}
+```
+
+`std::thread`是C++11引入的用来管理多线程的新类，是对UNIX C中`pthread_t`结构体的封装，构造时调用`pthread_create`传入`pthread_t`和回调函数指针
+
+```cpp
+typedef pthread_t __libcpp_thread_t;
+class _LIBCPP_TYPE_VIS thread{
+    __libcpp_thread_t __t_; //pthread_t
+	...
+}
+thread::thread(_Fp&& __f, _Args&&... __args){
+	...
+	int __ec = __libcpp_thread_create(&__t_, &__thread_proxy<_Gp>, __p.get());
+	 if (__ec == 0)
+        __p.release();
+   	 else
+        __throw_system_error(__ec, "thread constructor failed");
+}
+int __libcpp_thread_create(__libcpp_thread_t *__t, void *(*__func)(void *),
+                           void *__arg){
+  return pthread_create(__t, 0, __func, __arg);
+}
+```
+上述代码有一个问题是构造函数是如何将传入的lambda表达式通过`__thread_proxy<_Gp>`转化成C函数（`void *(*__func)(void *)`）的，这个问题可参考[之前对C++11中 `move`语义的介绍]()
+
+- Join
+
+`join()`是`launch_thread`和`worker_thread`一个线程同步点，`launch_thread`会在调用`join()`后等待`worker_thread`执行完成后继续执行
+
+```cpp
+std::string p = "lambda";
+std::thread td([p]{cout<<p<<" thread is running"<<endl;});
+cout<<"lanched thread is running"<<endl;
+td.join();
+cout<<"lanched thread is running"<<endl;
+td.joinable(); //return false
+```
+
+1. 如果`td`在`main thread`执行`td.join()`之前完成，则`td.join()`直接返回，否则`launch_thread`会暂停，等待`td`执行完成
+2.  如果不调用`td.join()`，则`launch_thread`会提前结束，线程空间被销毁，此时如果`td`线程未执行完，则系统会发出`std::terminate`的错误
+3. `td`在调用`join`后，`joinable`转态变为`false`，此时`td`可被安全释放
+4. 确保`join()`只被调用一次
+
+- Detach
+
+如果使用`td.detach()`则`launch_thread`不会等待`workder thread`，即两条线程没有同步点，各自独立执行
+
+```cpp
+void runCode()
+{
+    cout << "lanched thread is running" << endl;
+    std::string p = "lambda";
+    std::thread td([p] { 
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+        cout << p << " thread is running" << endl; 
+    });
+    td.detach();
+    cout << "lanched thread is ending" << endl;
+}
+```
+上述代码中令`workder thread`暂停5s，则`launch_thread`继续执行，不会等待`worker_thread`执行完，如果将`detach()`改为`join()`则`launch_thread`会阻塞等待
+
+```
+//detach
+lanched thread is running
+lanched thread is ending
+
+//join
+lanched thread is running
+lambda thread is running
+lanched thread is ending
+```
+
+## Resources
+
+- [C++ 11 Concurrency](https://www.classes.cs.uchicago.edu/archive/2013/spring/12300-1/labs/lab6/)
 
 
 
