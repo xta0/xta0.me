@@ -63,13 +63,13 @@ fib(4) + fib(3)
 ((fib(2) + fib(1)) + (fib(1) + fib(0))) + ((fib(1) + fib(0)) + fib(1))
 (((fib(1) + fib(0)) + fib(1)) + (fib(1) + fib(0))) + ((fib(1) + fib(0)) + fib(1))
 ```
-这种算法对于相似的子问题（求解`fib(3),fib(2),fib(1),fib(0)`）进行了重复的计算，由于这些计算结果没有存储，因此这部分信息被浪费了，我们来分析一下使用递归解法的时间复杂度，在计算它的时间复杂度之前，我们先看看斐波那契数列的递推式$f_n = f_{n-1} + f_{n-2}$，其中$f_0=1, f_1 = 1$。可以对该数列求和得到
+可以看到，上面的递归过程存在大量的重复计算，例如`fib(3),fib(2),fib(1),fib(0)`，由于这些计算结果没有缓存，因此每次计算一个新的fib值时，这几个数都要重新计算。我们来分析一下使用递归解法的时间复杂度，我们先看看斐波那契数列的递推式$f_n = f_{n-1} + f_{n-2}$，其中$f_0=1, f_1 = 1$。可以对该数列求和得到
 
 $$
 f_n=\frac{1}{\sqrt 5}(\frac{1+\sqrt 5}{2})^{n+1} - \frac{1}{\sqrt 5}(\frac{1- \sqrt 5}{2})^{n+1}
 $$
 
-显然这是一个指数函数。接下来我们分析算法的时间复杂度，不难看出，时间复杂度的递推式为：$T(n) = T(n-1) + T(n-2) + 1 \thinspace (n>1)$，将上面式子带入后，经过推导可以得出$T(n)$正比于Fibonacci的递推式$f(n)$，即
+显然这是一个指数函数。接下来我们分析算法的时间复杂度，不难看出，时间复杂度的递推式为：$T(n) = T(n-1) + T(n-2) + 1 \thinspace (n>1)$，同样为一个斐波那契数列，可以得出$T(n)$正比于斐波那契的递推式$f(n)$，即
 
 $$T(n) = 2 * fib(n+1)-1 = O(fib(n+1)) = O(\Phi^n) = O(2^n)$$
 
@@ -119,7 +119,7 @@ def fib3(n):
 
 改为迭代算法后，时间复杂度依然为$O(n)$，空间复杂度仅为$O(n)$。这种计算方式和使用递归+缓存的方式基本一致，不同的是计算方向，将递归这种自顶而下的计算方式改为了自底向上的迭代。也可以将其理解为是一种拓扑序列结构，项与项之间有依赖关系:
 
-<img src="/assets/images/2007/09/fib-2.png" width="50%"/>
+<img src="/assets/images/2007/09/fib-2.png" width="50%" style="margin-left:auto; margin-right:auto;display:block"/>
 
 
 - 启发
@@ -132,26 +132,35 @@ $$
 
 但这个例子也会给人造成一种错觉，即DP就是在原来算法的基础上增加缓存即可。就这个例子而言，确实是这样，不过动态规划的思想远不止增加缓存这么简单，在接下来的几个例子中，我们将会看到DP的其它用法。
 
-### 两点间路径数量
+### 两点间路径
 
 > A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid (marked 'Finish' in the diagram below).How many possible unique paths are there?
 
-![](/assets/images/2007/09/dp-1.png)
+<img src="/assets/images/2007/09/dp-1.png">
 
-上面问题是说，在一个`m x n`的棋盘上，在每一个格子上只能向右或者向下两种走法，那么从`start`(左上角)走到`finish`(右下角)有几种不同的走法？
+上面问题是说，在一个`m x n`的棋盘上（n行，m列），在每一个格子上只能向右或者向下两种走法，那么从`start`(左上角)走到`finish`(右下角)有几种不同的走法？如上面例子中，到达`end`的路径有三条，分别是:
+
+```
+1. Right -> Right -> Down
+2. Right -> Down -> Right
+3. Down -> Right -> Right
+```
 
 - **蛮力算法**
 
-首先想到的是使用蛮力算法，即想走迷宫一样，搜索节点，当走到右下角时，记作一次发现，然后将发现的结果累计起来即可得到最终解。由之前的深搜+回溯的思路，不难得出穷举的解法：
+首先想到的是使用蛮力算法，类似走迷宫，搜索可抵达边界的每条路径，当搜走到右下角时，记作一次发现，将每次发现的次数计起来即可得到最终解。由之前介绍的深搜+回溯的思路，不难得出穷举的解法：
 
-1. 先一直向右走，走到边界后向下（回溯）
-2. 重复这个过程
+1. 先一直向右走，走到边界回溯后向下
+2. 重复上述过程
 
 ```cpp
+//m列，n行，起点pt = {1,1}, 终点target = {m,n} , num用来收集结果
 void dfs(int m, int n, pair<int,int>& pt, pair<int,int>& target, int& num ){
+    //走到边界
     if(pt.second > n || pt.first > m){
         return ;
     }
+    //走到右下角
     if(pt.first == target.first && pt.second == target.second){
         num ++;
         return;
@@ -166,15 +175,20 @@ void dfs(int m, int n, pair<int,int>& pt, pair<int,int>& target, int& num ){
     dfs(m,n,pt,target,num);
     pt.first -= 1;
 }
-//棋盘mxn
-//起点{1,1}
-//终点{m,n}
-// num用来收集结果
+int uniquePaths(int m, int n) {
+    pair<int,int> pt = {1,1};
+    pair<int,int> target = {m,n};
+    int num = 0;
+    dfs(m,n,pt,target,num);
+    return num;
+}
+
+
 dfs(m,n,{1,1},{m,n},num);
 ```
-上述解法的确能够穷举出所有到达右下角的路径，我们来分析一下其时间复杂度，假设$m=3,n=2$，字母$R$表示向右走，字母$B$表示向下走，左上角为用`start`表示，右下角为`end`表示，则生成的递归树为：
+上述解法的确能够穷举出所有到达右下角的路径，然而效率确非常低。不难看出，上述算法是一种正向的，符合人类直觉的思考方式，即从起点出发穷举所有到达终点的可能性。我们来分析一下其时间复杂度，假设$m=3,n=2$，字母$R$表示向右走，字母$B$表示向下走，左上角为用`start`表示，右下角为`end`表示，则生成的递归树为：
 
-![](/assets/images/2007/09/dp-2.png)
+<img src="/assets/images/2007/09/dp-2.png" style="margin-left:auto; margin-right:auto;display:block">
 
 上述递归树可以看出，在所有的叶节点中，只有3个是有效的，其余的均为无效搜索。从某一点出发均有两条路径，因此算法的时间复杂度是呈几何级数增长的
 
@@ -184,7 +198,45 @@ $$
 
 - **使用DP**
 
-使用动态规划该如何思考这个问题呢，首先想到的是，能否和上个例子一样使用缓存，但是缓存对这个问题貌似用处不大，这个问题是
+使用动态规划该如何思考这个问题呢，首先想到的是，能否和上个例子一样使用缓存，但是对于这个问题，由于每次搜索的路径都不同，不存在重复计算，因此缓存没有用。这时我们需要转变思路，寻找反直觉的方式，比如尝试从终点开始向前递推，则思路或许会被打开。
+
+从终点出发，问题将简化成：“如果要到达`end`，需要先到达`(x,m-1)`，或者到达`(n-1,y)`，那么到达`end`的路径数就等于到达`(x,m-1)`加上到达`(n-1,y)`的路径数”。同理，对每个点均可应用上述条件，则可得出状态转移方程：
+
+$$
+dp(x,y) = dp(x-1, y) + dp(x, y-1)
+$$
+
+以`m=3,n=3`为例，则到达每个点的路径数为：
+
+```cpp
+/*
+m=3, n=3
+---------------
+| 0 |  1 |  1 |
+|---|----|----|
+| 1 |  2 |  3 |
+|---|----|----|
+| 1 |  3 |  6 |
+---------------
+*/
+int uniquePaths(int m, int n) {
+    if(m == 0 || n == 0){
+        return 0;
+    }
+    if( m == 1 || n == 1){
+        return 1;
+    }
+    vector<vector<int>> dp(n,vector<int>(m,1));
+    for(int x=1;x<n;x++){
+        for(int y=1; y<m; y++){
+            dp[x][y] = dp[x-1][y] + dp[x][y-1];
+        }
+    }
+    return dp[n-1][m-1];
+}
+```
+
+
 
 
 ### Maximum Subarray
