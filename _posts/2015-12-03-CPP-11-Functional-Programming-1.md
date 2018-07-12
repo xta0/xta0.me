@@ -1,8 +1,3 @@
----
-layout: post
-list_title: C++11 Part 2
----
-
 - Pure functions
     - have no hidden inputs.
     - have no hidden outpus.
