@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Computational Investment Part 0
+list_title: 计算投资（一）| Computational Investment Part 0
 title: Course Overview
 mathjax: true
 ---
