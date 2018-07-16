@@ -4,7 +4,7 @@ list_title: CSS Tricks
 ---
 
 
-## Best Practice
+## Implementation Notes
 
 - 使用Emmet
 
@@ -15,10 +15,9 @@ list_title: CSS Tricks
 - `box-sizing`
 
 ```css
-
 * {
     box-sizing: inherit;
-  }
+}
   
 body {
 	box-sizing: border-box;

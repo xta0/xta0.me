@@ -144,6 +144,16 @@ mathjax: true
 上图是上述几种函数的增长率曲线，由此不难看出：<math display="inline"><msup><mi>2</mi><mi>n</mi></msup><mo>></mo><msup><mi>n</mi><mi>2</mi></msup><mo>></mo><msubsup><mi>nlog</mi> <mi>2</mi> <mi>n</mi></msubsup> <mo>></mo><msubsup><mi>n</mi> <mi></mi> <mi></mi></msubsup><mo>></mo><msubsup><mi>log</mi> <mi>2</mi> <mi>n</mi></msubsup>     
 </math>
 
+- 数据规模
+
+为了直观的了解$O(1)$和$O(n^2)$的差别，假设数据样本的规模为`2000`
+
+1. $O(1)$ 的算法需要$1$次运算
+2.  O(log(n)) algorithm will cost you 7 operations
+An O(n) algorithm will cost you 2 000 operations
+An O(n*log(n)) algorithm will cost you 14 000 operations
+An O(n2) algorithm will cost you 4 000 000 operations
+
 ### 常用操作算法复杂度
 
 | 时间复杂度| 算法 | 最坏情况 | 平均情况 |

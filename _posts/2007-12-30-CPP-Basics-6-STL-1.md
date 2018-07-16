@@ -32,6 +32,26 @@ list<string>::const_iterator it6 = a.begin(); //是普通迭代器还是const迭
 auto it7 = a.begin(); //根据a的类型来返回是否是const迭代器
 auto it8 = a.cbegin(); //不管a的类型，一定返回一个const迭代器
 ```
+对于非集合类的静态数组，也可以使用迭代器
+
+```cpp
+int a[4] = {1,23,3,5};
+int* begin = std::begin(a);
+int* end = std::end(a);
+int* result = find(begin,end,10);
+if(result!=end){
+	//found
+} 
+```
+对于动态数组，则不能使用`std::begin`和`std::end`
+
+```cpp
+int *a = new int[4]{1,2,3,5};
+int* result = find(a,a+4,10);
+if(result!=end){
+	//found
+} 
+```
 
 ## 顺序容器
 

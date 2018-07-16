@@ -86,8 +86,11 @@ post_copyright:
 mathjax:
   enable: true
   per_page: false
-  cdn: "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js"
-
+  cdn: //cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML
+    
+# //cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+    
+  
 
 # ---------------------------------------------------------------
 # Menu Settings

@@ -1,1 +1,19 @@
 
+/* 全局标签 */
+* {
+    margin: 0;
+    padding: 0;
+
+    /* 默认情况下，一个box的宽高不包括padding值 
+      指定box-sizing为border-box，则div的宽高会累加进去
+      https://www.w3schools.com/css/css3_box-sizing.asp
+    */
+    box-sizing: border-box;
+}
+
+body {
+    /* 字体可被继承 */
+    font-family: Helvetica, arial, sans-serif;
+    font-size: 62.5%;
+
+}
