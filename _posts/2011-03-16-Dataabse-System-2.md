@@ -5,6 +5,11 @@ title: SQL语法 | SQL Syntax
 mathjax: true
 ---
 
+## Schema
+
+![](/assets/images/2011/03/sql-sample-schema.png)
+
+## SQL Basic Syntax
 
 ### SELECT
 
@@ -260,13 +265,38 @@ WHERE rating IN('R','G','PG')
 GROUP BY rating
 HAVING AVG(rental_rate)<3;
 ```
-GROUP之前应用WHERE
+GROUP之前应用WHERE来做搜条件，GROUP之后用HAVING来做搜索结果的过滤条件
+
+### JOINs
+
+- **AS**
+
+给query重命名
+
+```SQL
+SELECT payment_id AS my_payment_column FROM payment;
+
+SELECT customer_id, SUM(amount) AS total_spent 
+FROM payment
+GROUP BY customer_id;
+```
+- **JOINS**
+
+假设有两张表结构如下:
+
+![](/assets/images/2011/03/sql-join-1.png)
+
+表A主键是`pka`，在B中`fka`是外键，想要查询AB中的数据，需要使用`INNER JOIN`
+
+```SQL
+SELECT A.pka, A.c1, B.pkb, B.c2
+FROM A
+INNER JOIN B ON A.pka = B.fka
+```
 
 
 
-### Schema
-![](/assets/images/2011/03/sql-sample-schema.png)
 
-### Cheat Sheet
+## SQL Command CheatSheet
 
 ![](/assets/images/2011/03/sql-cheatsheet.png)

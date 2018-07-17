@@ -129,11 +129,8 @@ mathjax: true
 ## 几类重要的渐进函数
 
 1. 至少指数级：<math><msup><mn>2</mn><mi>n</mi></msup></math>, <math><msup><mn>3</mn><mi>n</mi></msup></math>,<math><mi>n</mi><mo>!</mo></math> ...
-
-2. 多项式级：<math><mi>n</mi></math>, <math><msup><mi>n</mi><mn>2</mn></msup></math>, <math><mi>nlogn</mi></math>, <math><msup><mi>n</mi><mn>1/2</mn></msup></math>, ...
-
+2. 多项式级：<math><mi>n</mi></math>, <math><msup><mi>n</mi><mn>2</mn></msup></math>, <math><msup><mi>n</mi><mn>1/2</mn></msup></math>, ...
 3. 对数多项式级别：<math><mi>nlogn</mi></math>, <math><msup><mi>log</mi><mn>2</mn></msup><mi>n</mi></math>, <math><mi>nloglogn</mi></math>, ...
-
 4. 指数与阶乘
 	- <math><mi>n</mi><mo>!</mo><mo>=</mo><mi>o</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mi>n</mi></msup><mo stretchy="false">)</mo></math>
 	- <math><mi>n</mi><mo>!</mo><mo>=</mo><mi>ω</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mi>n</mi></msup><mo stretchy="false">)</mo></math>
@@ -144,15 +141,13 @@ mathjax: true
 上图是上述几种函数的增长率曲线，由此不难看出：<math display="inline"><msup><mi>2</mi><mi>n</mi></msup><mo>></mo><msup><mi>n</mi><mi>2</mi></msup><mo>></mo><msubsup><mi>nlog</mi> <mi>2</mi> <mi>n</mi></msubsup> <mo>></mo><msubsup><mi>n</mi> <mi></mi> <mi></mi></msubsup><mo>></mo><msubsup><mi>log</mi> <mi>2</mi> <mi>n</mi></msubsup>     
 </math>
 
-- 数据规模
-
 为了直观的了解$O(1)$和$O(n^2)$的差别，假设数据样本的规模为`2000`
 
-1. $O(1)$ 的算法需要$1$次运算
-2.  O(log(n)) algorithm will cost you 7 operations
-An O(n) algorithm will cost you 2 000 operations
-An O(n*log(n)) algorithm will cost you 14 000 operations
-An O(n2) algorithm will cost you 4 000 000 operations
+- $O(1)$ 的算法需要$1$次运算
+- $O(\log{n})$ 的算法需要$7$次运算
+- $O(n)$ 的算法需要$2000$次运算
+- $O(n\log{n})$ 的算法需要$14000$次运算
+- $O(n2)$ 的算法需要$4000000$次运算
 
 ### 常用操作算法复杂度
 
