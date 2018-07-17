@@ -267,7 +267,7 @@ HAVING AVG(rental_rate)<3;
 ```
 GROUP之前应用WHERE来做搜条件，GROUP之后用HAVING来做搜索结果的过滤条件
 
-### JOINs
+### JOIN
 
 - **AS**
 
@@ -280,7 +280,7 @@ SELECT customer_id, SUM(amount) AS total_spent
 FROM payment
 GROUP BY customer_id;
 ```
-- **JOINS**
+- **INNER JOINS**
 
 假设有两张表结构如下:
 
@@ -293,10 +293,273 @@ SELECT A.pka, A.c1, B.pkb, B.c2
 FROM A
 INNER JOIN B ON A.pka = B.fka
 ```
+SELECT两个表中需要查询的column，A表中pka和c1字段，B表中pkb和c2字段。对A中的每条数据，在B中check是否有`A.kpa = B.fka`的数据，如果有将B中的该条数据和A中的该条数据合并后放入set返回。有时，AB中某项column会重名，因此需要使用`table_name.column_name`的形式，如果表名太长或者字段太长刻意使用alias。
 
+如果用文氏图表示，INNTER JOIN的关系可表示为下图：
+
+<img src="/assets/images/2011/03/sql-join-2.png" width="40%" style="display:block; margin-left:auto;margin-right:auto" />
+
+```SQL
+<!-- Join customer table with payment table -->
+SELECT 
+customer.customer_id, first_name,last_name,email,
+amount,payment_date
+FROM customer
+INNER JOIN payment ON payment.customer_id = customer.customer_id;
+```
+上面查询语句中用来查询每个用户的交易记录，first_name,last_name,email来自customer表，amount，payment_date来自payment表，两个表之间通过customer_id进行关联。
+
+也可增加WHERE语句查询某个人的交易记录
+
+```SQL
+SELECT 
+customer.customer_id, first_name,last_name,email,
+amount,payment_date
+FROM customer
+INNER JOIN payment ON payment.customer_id = customer.customer_id
+WHERE first_name='Patricia';
+```
+
+另外，上述查询是令customer join payment，也可以反过来用payment join customer，结果一致。实际使用中，通常可以使用`AS`简化复杂命名操作，或者用空格代替`AS`，`INNER JOIN`也可以直接写为`JOIN`。
+
+```SQL
+SELECT title, description, release_year,name AS move_language
+FROM film 
+JOIN language AS lan ON film.language_id = lan.language_id;
+```
+### JOIN TYPES
+
+- INNTER JOIN
+
+INNTER JOIN返回两个集合有公共colunm数据的交集
+
+<div style=" content:''; display: table; clear:both; height=0">
+<div style="float:left">
+<pre>
+id nmae         id name             
+-- ------      --- -----
+1  Pirate       1  Rutabaga
+2  Monkey       2  Pirate
+3  Ninja        3  Darth Vader
+4  Spaghetti    4  Ninja
+
+SELECT * FROM TableA
+INNTER JOIN TableB
+ON TableA.name = TableB.name
+
+id name         id name
+-- -----       --- ----
+1  Pirate       2  Priate
+3  Ninja        4  Ninja
+</pre>
+</div>
+
+<img style="float:left;margin-left:40px" src="/assets/images/2011/03/sql-join-3.png" width="40%"/>
+</div>
+
+以一个实际例子看一下
+
+
+- FULL OUTER JOIN
+
+FULL OUTER JOIN返回两个集合的并集，对于两个集合没有交集的column，用null代替
+
+<div style=" content:''; display: table; clear:both; height=0">
+<div style="float:left">
+<pre>
+id nmae         id name             
+-- ------      --- -----
+1  Pirate       1  Rutabaga
+2  Monkey       2  Pirate
+3  Ninja        3  Darth Vader
+4  Spaghetti    4  Ninja
+
+SELECT * FROM TableA
+FULL OUTER JOIN TableB
+ON TableA.name = TableB.name
+
+id name         id  name
+-- -----       ---  ----
+1  Pirate       2   Priate
+2  Monkey      null null
+3  Ninja        4   Ninja
+4  Spaghetti   null null
+null null       1   Rutabaga
+null null       3   Darth Vader
+</pre>
+</div>
+<img style="float:left;margin-left:40px" src="/assets/images/2011/03/sql-join-4.png" width="40%"/>
+</div>
+
+- FULL OUTER JOIN WITH WHERE
+
+FULL OUTER JOIN WHERE 返回两个集合的非交集部分，对于没有交集的column，用null代替
+
+<div style=" content:''; display: table; clear:both; height=0">
+<div style="float:left">
+<pre>
+id nmae         id name             
+-- ------      --- -----
+1  Pirate       1  Rutabaga
+2  Monkey       2  Pirate
+3  Ninja        3  Darth Vader
+4  Spaghetti    4  Ninja
+
+SELECT * FROM TableA
+FULL OUTER JOIN TableB
+ON TableA.name = TableB.name
+WHERE TableA.id IS null
+OR TableB.id IS null
+
+id name         id  name
+-- -----       ---  ----
+2  Monkey      null null
+4  Spaghetti   null null
+null null       1   Rutabaga
+null null       3   Darth Vader
+</pre>
+</div>
+<img style="float:left;margin-left:40px" src="/assets/images/2011/03/sql-join-7.png" width="40%"/>
+</div>
+
+
+-  LEFT OUTER JOIN
+
+LEFT OUTER JOIN返回左边集合的全集，对于没有交集的colunm用null代替
+
+<div style=" content:''; display: table; clear:both; height=0">
+<div style="float:left">
+<pre>
+id nmae         id name             
+-- ------      --- -----
+1  Pirate       1  Rutabaga
+2  Monkey       2  Pirate
+3  Ninja        3  Darth Vader
+4  Spaghetti    4  Ninja
+
+SELECT * FROM TableA
+LEFT OUTER JOIN TableB
+ON TableA.name = TableB.name
+
+id name         id  name
+-- -----       ---  ----
+1  Pirate       2   Priate
+2  Monkey      null null
+3  Ninja        4   Ninja
+4  Spaghetti   null null
+</pre>
+</div>
+<img style="float:left;margin-left:40px" src="/assets/images/2011/03/sql-join-5.png" width="40%"/>
+</div>
+
+看下面例子，从前面的schema表中可以看出，每个film_id对应多个inventory_id，即每个影片有多个拷贝保存在不同的店里，因此在inventory表中，同一个film_id会有多条记录，现在希望查找。每个film的所有拷贝的库存ID。
+
+```SQL
+SELECT film.film_id, film.title,inventory_id
+FROM film
+LEFT OUTER JOIN inventory ON inventory.film_id = film.film_id;
+```
+上面使用LEFT JOIN对所有film都找到了对应的库存ID，由于是LEFT JOIN，因此会有film对应的inventory_id为NULL的情况。一个更直观的方法查看方式是统计每个影片的库存，再按照库存数量排序
+
+```SQL
+SELECT film.film_id, film.title, COUNT(inventory_id) AS TOTAL
+FROM film
+LEFT OUTER JOIN inventory ON inventory.film_id = film.film_id
+GROUP BY film.film_id
+ORDER BY TOTAL ASC;
+```
+
+- LEFT OUTER JOIN WITH WHERE
+
+
+LEFT OUTER JOIN返回左边除去右边集合的数据，对于没有交集的colunm用null代替
+
+<div style=" content:''; display: table; clear:both; height=0">
+<div style="float:left">
+<pre>
+id nmae         id name             
+-- ------      --- -----
+1  Pirate       1  Rutabaga
+2  Monkey       2  Pirate
+3  Ninja        3  Darth Vader
+4  Spaghetti    4  Ninja
+
+SELECT * FROM TableA
+LEFT OUTER JOIN TableB
+ON TableA.name = TableB.name
+WHERE TableB.id IS null
+
+id name         id  name
+-- -----       ---  ----
+2  Monkey      null null
+4  Spaghetti   null null
+</pre>
+</div>
+<img style="float:left;margin-left:40px" src="/assets/images/2011/03/sql-join-6.png" width="40%"/>
+</div>
+
+接着上面的例子，如果要找出那些电影没有库存Id，只需要用Where语句进行过滤
+
+```SQL
+SELECT film.film_id, film.title,inventory_id
+FROM film
+LEFT OUTER JOIN inventory ON inventory.film_id = film.film_id
+WHERE inventory_id IS NULL;
+```
+
+### UNION
+
+UNION用来合并多个SELECT的查询结果，将过个set合并成一个set，合并的过程中回去掉重复的row，如果想要保留需要使用`UNION ALL`
+
+```SQL
+SELECT colunm_1, colunm_2
+FROM tbl_name_1
+UNION
+SELECT colunm_1, column_2
+FROM tbl_name_2
+```
+
+UION的一个场景是合并多张表的数据，将数据拼接成一个row，假设有下面一个例子
+
+<img style="display:block;margin-left:auto;margin-right:auto" src="/assets/images/2011/03/sql-union-1.png" width="80%"/>
+
+现在想统计每个员工全面的销售总额，因此，需要将几张表的数据进行UNION
+
+```SQL
+SELECT * FROM sales2007q1
+UNION ALL
+SELECT * FROM sales2007q2
+```
+
+### Advanced SQL Commands
+
+- Timestamps
+
+SQL允许在查询时获取timestamp信息，可以通过`extract`函数提取。例如，想要统计每个月份的支出有多少
+
+```SQL
+SELECT SUM(amount), extract(month from payment_date) AS month
+FROM payment
+GROUP BY month
+ORDER BY SUM(amount);
+```
+
+- Mathmatical Function
+
+PostgreSQL提供了一些内置函数用于数学计算，[参考文档](https://www.postgresql.org/docs/9.5/static/functions-math.html)
+
+- String Functions
+
+同样，PostgreSQL也支持字符串运算，[参考文档](https://www.postgresql.org/docs/9.5/static/functions-string.html)
 
 
 
 ## SQL Command CheatSheet
 
 ![](/assets/images/2011/03/sql-cheatsheet.png)
+
+## Resources
+
+- [PostgreSQL Tutorial](http://www.postgresqltutorial.com/)
+- [Stanford Database Introduction Course]()
+- [Core Database Concepts on Cousera](https://www.coursera.org/learn/core-database)
