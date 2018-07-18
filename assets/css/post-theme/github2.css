@@ -221,6 +221,11 @@ table tr th :last-child, table tr td :last-child {
 img {
   max-width: 100%;
 }
+.img-center{
+  display: block;
+  margin-left:auto;
+  margin-right:auto;
+}
 
 span.frame {
   display: block;
@@ -373,6 +378,4 @@ pre code, pre tt {
 .MathJax{outline:0;}
 .MathJax span{font-size:16px;}
 
-.code {
-  text-align: center;
-}
+

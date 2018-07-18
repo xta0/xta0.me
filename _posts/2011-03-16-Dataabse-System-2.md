@@ -9,6 +9,8 @@ mathjax: true
 
 ![](/assets/images/2011/03/sql-sample-schema.png)
 
+例子中用到的Schema和[sample database](http://www.postgresqltutorial.com/load-postgresql-sample-database/)
+
 ## SQL Basic Syntax
 
 ### SELECT
@@ -544,15 +546,53 @@ GROUP BY month
 ORDER BY SUM(amount);
 ```
 
-- Mathmatical Function
+-  Function
 
-PostgreSQL提供了一些内置函数用于数学计算，[参考文档](https://www.postgresql.org/docs/9.5/static/functions-math.html)
+1. 数学函数，[参考文档](https://www.postgresql.org/docs/9.5/static/functions-math.html)
 
-- String Functions
+2. 字符串函数，[参考文档](https://www.postgresql.org/docs/9.5/static/functions-string.html)
 
-同样，PostgreSQL也支持字符串运算，[参考文档](https://www.postgresql.org/docs/9.5/static/functions-string.html)
+- Subquery
 
+Subquery的意思是一个将查询任务分为几个子的查询，例如，要寻找所有rental_rate高于平均rantal_rate的电影，这个任务将分两步：
 
+1. 使用SELECT和AVG函数计算平均rental_rate
+
+    ```SQL
+    SELECT AVG(rental_rate) AS avg FROM film;
+    ```
+
+2. 将上一步得到的结果作为条件，过滤出rental_rate高于平均值的film
+
+    ```SQL
+    SELECT title,rental_rate FROM film;
+    WHERE rental_rate > 2.92;
+    ```
+
+Subquery可以让上述两条语句合并成一条，Subquery允许使用括号将条件SQL插入
+
+```SQL
+SELECT title,rental_rate FROM film;
+WHERE rental_rate > (SELECT AVG(rental_rate) FROM film;);
+```
+
+- SELF JOIN
+
+SELF JOIN用来在同一个表中找寻符合某种关系的记录，例如，在一个user表中查找所有FIRST_NAME等于LAST_NAME的用户
+
+```SQL
+SELECT a.first_name, a.last_name , b.first_name, b.last_name FROM
+customer AS a, customer AS b
+WHERE a.first_name = b.last_name;
+```
+对于上面的query语句也可以使用JOIN
+
+```SQL
+SELECT a.first_name, a.last_name , b.first_name, b.last_name FROM
+customer AS a
+INNER JOIN customer AS b
+ON a.first_name = b.last_name;
+```
 
 ## SQL Command CheatSheet
 
@@ -563,3 +603,4 @@ PostgreSQL提供了一些内置函数用于数学计算，[参考文档](https:/
 - [PostgreSQL Tutorial](http://www.postgresqltutorial.com/)
 - [Stanford Database Introduction Course]()
 - [Core Database Concepts on Cousera](https://www.coursera.org/learn/core-database)
+

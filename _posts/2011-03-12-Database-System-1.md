@@ -87,6 +87,78 @@ Project用来获取列数据，使用$\pi$表示
 3. combine
 
 
+### Types
+
+- Boolean
+    - true/false/null
+- Character
+    - single character: `char`
+    - Fixed-length character strings: `char(n)`
+        - 如果insert的字符少于n，PostgreSQL会末尾补齐
+        - 如果insert的字符超过n，PostgreSQL会报错
+    - Variable-length: `varchar(n)`
+        - 最多只能insert长度为n的字符，例如人名
+        - 如果少于n，PostgreSQL不会补齐
+- Number
+    - Small integers(short) : 2-byte 有符号整型
+        - (-32768 , 32768)
+    - Integer (int): 4-byte 有符号整型
+        - (-214783648 , 214783647)
+    - serial
+    - `float(n)`单精度浮点数，n为精确位数，最多8字节
+    - `real`/`float8`，双精度浮点数，8字节
+    - `numeric(p,s)`，整数p位，小数s位
+- Temporal
+    - date
+    - time
+    - timestamp
+    - interval
+    - timestamptz
+- special types
+- Array
+
+### Primary Key and Foreign Keys
+
+- 主键
+    - 每个表中只能有一个主键
+    - 数据库会为每个主键建索引
+- 外键
+    - 表中的某个非primary key是另一个表中的主键
+
+### Create Table
+
+- SQL syntax
+    ```SQL
+    CREATE TABLE table_name(
+        colunm_name1 TYPE column_constraint,
+        colunm_name2 TYPE column_constraint,
+        ...
+        table_constraint)
+    INHERITS existing_table_name;
+    ```
+- column_constraint,每个colunm的限制条件
+    - `NOT NULL`
+    - `UNIQUE`，该column的值不能重复，但可以是`NULL`
+    - `PRIMARY KEY`，不空+唯一。如果PRIMARY KEY由多个colunm构成，则要在table constraint中说明
+    - `CHECK`，当插入或更新数据时会自动check是否合法
+    - `REFERENCES`，表示当前colunm也存在于别的表中，表明该column是外键
+- table constraint
+    - `UNIQUE(column_list`
+    - `PRIMARY KEY(column_list)`
+    - `CHECK(condition)`
+    - `REFERENCES`
+
+- INHERITES
+    - 指定TABLE的继承关系，如果从某个表继承，则当前表有其所有colunm属性
+
+<br>
+
+<img class='img-center' src="/assets/images/2011/03/sql-db-1.png">
+
+以上面ER关系模型为例，看如何建表
+
+
+
 
 
 ### 附录
@@ -117,16 +189,7 @@ psql (10.4)
 Type "help" for help.
 
 # list all databases
-postgres=# \list 
-
-                                  List of databases
-   Name    |  Owner   | Encoding |   Collate   |    Ctype    |   Access privileges
------------+----------+----------+-------------+-------------+-----------------------
- postgres  | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 |
- template0 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +
-           |          |          |             |             | postgres=CTc/postgres
- template1 | postgres | UTF8     | en_US.UTF-8 | en_US.UTF-8 | =c/postgres          +
-           |          |          |             |             | postgres=CTc/postgres
+postgres=# \lis
 ```
 
 
