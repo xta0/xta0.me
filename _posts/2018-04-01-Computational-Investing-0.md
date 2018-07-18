@@ -23,7 +23,16 @@ mathjax: true
     - Projects in Excel and Python
 
 
-### Quick 
+### Quick Hands on Demo
+
+In this demo we are going to 
+
+```python
+import panda as pd
+
+def 
+
+```
 
 
 
