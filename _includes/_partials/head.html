@@ -1,0 +1,18 @@
+
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+<!-- link css  -->
+<link href="{{ site.css | relative_url }}/main.css" rel="stylesheet" type="text/css" />
+
+
+<script type="text/javascript" id="viz.configuration">
+    var CONFIG = {
+        root: '{{site.baseurl}}',
+        css: '{{site.css | relative_url}}'
+    };
+</script>
+
+<!-- customize header -->
+{% include _custom/head.html %}

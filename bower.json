@@ -1,0 +1,27 @@
+{
+  "name": "xta0",
+  "homepage": "https://xta0.me/blog",
+  "authors": [
+    "xta0 <taoxu.va@gmail.com>"
+  ],
+  "description": "A personal static website powered by jekyll.",
+  "main": "index.html",
+  "keywords": [
+    "xutao",
+    "jekll",
+    "xta0"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "assets/lib",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.3.1"
+  }
+}
