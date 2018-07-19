@@ -593,6 +593,226 @@ customer AS a
 INNER JOIN customer AS b
 ON a.first_name = b.last_name;
 ```
+## Other SQL Commands
+
+
+### CREATE TABLE
+
+- SQL syntax
+    ```SQL
+    CREATE TABLE table_name(
+        colunm_name1 TYPE column_constraint,
+        colunm_name2 TYPE column_constraint,
+        ...
+        table_constraint)
+    ```
+- column_constraint
+    - 每个colunm的限制条件
+    - `NOT NULL`
+    - `UNIQUE`，该column的值不能重复，但可以是`NULL`
+    - `PRIMARY KEY`，不空+唯一。如果PRIMARY KEY由多个colunm构成，则要在table constraint中说明
+    - `CHECK`，当插入或更新数据时会自动check是否合法
+    - `REFERENCES`，表示当前colunm也存在于别的表中，表明该column是外键
+- table constraint
+    - `UNIQUE(column_list`
+    - `PRIMARY KEY(column_list)`
+    - `CHECK(condition)`
+    - `REFERENCES`
+
+- INHERITES
+    - 指定TABLE的继承关系，如果从某个表继承，则当前表有其所有colunm属性
+- LIKE
+    - 拷贝另一个表的schema(不拷贝数据)
+    
+    ```SQL
+    <!-- copy schema from link -->
+    CREATE TABLE link_copy (LIKE link); 
+    ```
+
+- Demo
+
+    <img class='img-center' src="/assets/images/2011/03/sql-db-1.png">
+    
+    ```SQL
+    CREATE TABLE account(
+        user_id serial PRIMARY KEY,
+        username VARCHAR(50) UNIQUE NOT NULL,
+        password VARCHAR(50) NOT NULL,
+        email VARCHAR(335) UNIQUE NOT NULL,
+        created_on TIMESTAMP NOT NULL,
+        last_login TIMESTAMP
+    );
+
+    CREATE TABLE role(
+	    role_id serial PRIMARY KEY,
+	    role_name VARCHAR(255) UNIQUE NOT NULL
+    );
+
+    CREATE TABLE account_role(
+	    user_id integer NOT NULL,
+	    role_id integer NOT NULL,
+	    grant_date timestamp without time zone,
+	    PRIMARY KEY(user_id, role_id),
+	    CONSTRAINT account_role_role_id_fKey FOREIGN KEY(role_id)
+		REFERENCES role (role_id) MATCH SIMPLE
+		ON UPDATE NO ACTION ON DELETE NO ACTION,
+
+	    CONSTRAINT account_role_user_id_fKey FOREIGN KEY(user_id)
+		REFERENCES account (role_id) MATCH SIMPLE
+		ON UPDATE NO ACTION ON DELETE NO ACTION
+    );
+    ```
+
+### INSERT
+
+- syntax
+
+```SQL
+INSERT INTO table(colunm1, colunm2,...)
+VALUES(value1, value2,...),
+      (value1, value2,...);
+
+INSERT INTO table
+SELECT colunm1, colunm2,...
+FROM another_table
+WHERE condition;
+```
+
+- demo
+
+```SQL
+INSERT INTO link(url,name)
+VALUES('www.yahoo.com','Yahoo'),
+('www.youtube.com','Youtube'),
+('www.amazon.com','Amazon');
+
+<!-- Insert value from another table-->
+INSERT INTO link_copy 
+SELECT * FROM link
+WHERE name = 'Youtube';
+```
+
+### UPDATE
+
+- syntax
+
+```SQL
+UPDATE table 
+SET colunm1 = value1,
+    colunm2 = value2, ...
+WHERE condition;
+```
+
+- demo
+
+```SQL
+<!-- 更新所有数据的description字段 -->
+UPDATE link 
+SET description = 'Empty Descripiton';
+
+UPDATE link 
+SET description = name;
+
+
+UPDATE link 
+SET description = "An online video platform"
+WHERE name='youtube';
+
+<!-- 返回执行结果 -->
+UPDATE link 
+SET description = 'unknown'
+WHERE id=1
+RETURNING id,url,name,description;
+```
+
+### DELETE
+
+- syntax
+
+```SQL
+DELETE FROM table
+WHERE condition
+```
+
+- Demo
+
+```SQL
+DELETE FROM link
+WHERE id = 1;
+
+<!-- 删除所有数据, 返回被删除数据结果 -->
+DELETE FROM link
+RETURNING * ;
+```
+### ALTER TABLE
+
+ALTER TABLE用来修改表结构
+
+1. 增加，删除，重命名column
+2. 给每个column设定默认值
+3. CHECKT colunm的constraint
+4. 重命名table
+
+- syntax
+
+```SQL
+ALTER TABLE table
+action
+```
+- ADD  COLUMN
+
+```SQL
+<!-- 增加active字段，类型为boolean -->
+ALTER TABLE link 
+ADD COLUMN active boolean;
+```
+- DROP COLUNM
+
+```SQL
+ALTER TABLE link 
+DROP COLUMN active;
+```
+
+- RENAME
+
+```SQL
+<!-- 重命名某个字段 -->
+ALTER TABLE link 
+RENAME COLUMN title TO title_name;
+
+<!-- 重命名整张表 -->
+ALTER TABLE link RENAME TO url_table;
+```
+
+### DROP TABLE
+
+- syntax
+
+```SQL
+DROP TABLE IF EXISTS table_name RESTRICT;
+```
+
+### CHECK constraint
+
+CHECK用来检查某个colunm的值是否合法
+
+```SQL
+CREATE TABLE new_users(
+	id serial PRIMARY KEY,
+	first_name VARCHAR(40),
+	birth_date DATE CHECK(birth_date > '1900-01-01'),
+	join_date DATE CHECK(join_date > birth_date),
+	salary integer CHECK(salary > 0)
+);
+```
+
+```SQL
+<!-- 插入一条非法数据 -->
+insert into new_users(first_name,birth_date,join_date,salary)
+VALUES('Joe','1980-02-01','1994-01-01',-10);
+```
+
+
 
 ## SQL Command CheatSheet
 

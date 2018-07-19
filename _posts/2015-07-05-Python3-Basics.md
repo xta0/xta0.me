@@ -1,6 +1,7 @@
 ---
-list_title: python3
+list_title: Python 3 基本语法 | Basic Syntax
 layout: post
+title: Python 3 Basic Syntax
 ---
 
 ## Python Basics Part 1
