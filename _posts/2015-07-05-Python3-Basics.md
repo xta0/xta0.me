@@ -1,13 +1,58 @@
 ---
-list_title: Python 3 基本语法 | Basic Syntax
+list_title: Python3 基本语法 | Basic Syntax
 layout: post
-title: Python 3 Basic Syntax
+title: Python3 Basic Syntax
 ---
 
-## Python Basics Part 1
+## Language Overview
 
-### py2 vs py3
+- **Numbers**
+    - Integral
+        - Integer
+        - Boolean
+    - Non-Integral
+        - Floats(c doubles)
+        - Complex
+        - Decimals
+        - Fractions
+- **Collections**
+    - Sequences
+        - Mutable
+            - Lists
+        - Immutable
+            - Tuples
+            - String
+    - Sets
+        - Mutable
+            - Sets
+        - Immutable
+            - Frozen Setes
+    - Mappings
+        - Dictionaries
 
+- **Callables**
+    - User-Defined Functions
+    - Generators
+    - Classes
+    - Instance Methods
+    - Class Instances(`__call__()`)
+    - Built-in Functions (e.g. `len()`,`open()`)
+    - Built-in Methods (e.g. `my_list.append(x)`)
+
+- **Singletons**
+    - None
+    - NotImplemented
+    - Ellipsis(...)
+
+## Strings
+
+## Naming Conventions
+
+## Conditionals
+
+## Functions
+
+## Loops
 
 ### Printing
 
