@@ -1,8 +1,10 @@
 ---
 layout: post
-list_title: Regular Expression
-title: Regular Expression
+list_title: Regular Expression-1 | 基本语法 | Syntax |
+title: Regular Expression - Syntax
 ---
+
+## Overview
 
 -  Regular Expressions Engines
     - C/C++
@@ -21,8 +23,9 @@ title: Regular Expression
 - Basic Syntax
     - Enclose in Literals such as `/regex/`
 
-- Literal Characters
-    - `/php/`只匹配字符串`"php"`
+- Matching Algorithm
+    - Geedy 
+    - Backtracking
 
 - Modes
     - Standard Mode: `/regex/`
@@ -46,28 +49,24 @@ title: Regular Expression
     - `?`
     - `:`
     - `\`
-    
+
+## Syntax
+
+### Matching Character
+
 -  **WildCard**
     - Notation: `.`
     - 单个字符匹配所有除了换行以外的字符
+        - `/.ohb/`-->`John`,`mohn`
+        - `/3.14/` -->`3.14`,`3x4`,...        
     - 用`\`做转义字符
+        - `user\.txt` ---> `user.txt`
 
-    ```
-    Regex -> /.ohn/
-    match -> John, mohn
-    !match -> jjohn
-
-    Regex -> /3.14/
-    math string -> 314, 3x4, 3-4, ...
-    !match -> 3.14
-
-    Regex -> user\.txt
-    match string -> user.txt
-    ```
 - **Character Set**
     - Notion: `[]`
     - 如果`[]`前后没有字符，则每个字符都按上述规则匹配
         - `\[abcde]\` --> `dcbeas`
+        - `[a-zA-Z_.]+@\w+.(com|cn)` --> `jayson.xu@foxmail.com`
     - 如果`[]`前后有字符，则只有对应位的单个字符按照规则匹配
         - `/[cd]ash/ ` -> `cash, dash`
 
@@ -115,3 +114,60 @@ title: Regular Expression
     - Notation: `?`
         - Match one or zero previous
             - `/Flavou?r/` --> `Flavour, Flavor`
+    
+    - Notion: `{number}`,`{min, max}`,`{min,}`
+        - Match exactly <em>number</em> of previous
+            - `/[0-9]{3}/` --> `000,723, [x]45, [x]4544`
+            - phone number: `/[0-9]{3}-[0-9]{4}-[0-9]{4}/`
+        - Match as least <em>min</em> but not more than <em>max</em> of previous characters
+            - `/[0-9]{3,5}/` --> `000,727, [x]45,4545,[x]454545`
+        - Match at least <em>min</em> times
+            - `/[0-9]{3,}/` --> `000,723, [x]45, 4545, 345435`
+
+- **Lazy Expressions**
+    - Greey mode
+        - 如果当前Quantifier满足条件，则一直向后匹配，直到末尾，到达末尾后，如果发现还有未执行的正则符号，则进行backtrack，从后向前搜索。
+        - `/".+"/` --> This is <mark>"Jason" from "Microsoft"</mark> developer team.
+            1. 首先找到第一个引号位置
+            2. `.+`匹配一个字符`J`后，由greedy的特性，`.+`会一直向后匹配到整个字符串结尾`.`
+            3. `.+`发现后面还有一个`"`未使用，因此从字符串末尾开始向前回溯，直到遇到第一个`"`
+            
+    - Lazy mode
+        -  "repeat minimum number of times."
+        - 在Quantifier后`*,+,?`加上`?`表示lazy求值
+        - `/".+?"/` --> This is <mark>"Jason"</mark> from <mark>"Microsoft"</mark> developer team. 分析下这个例子
+            1. 首先找到第一个引号位置
+            2. `.+`匹配一个字符`J`，由于`.+`被声明成了lazy(跟随`?`)，因此匹配一次后，会将匹配控制权交给`?`之后的字符，即第二个引号
+            3. 第二个引号匹配`a`不满足，将控制权交还给`.+`，`.+`成功匹配`a`后继续将控制权交给第二个引号
+            4. 重复过程3，直到遇到下一个`"`，则第一次匹配完成
+            5. 接着从`f`开始，继续重复步骤1
+            6. 上述正则表达式也等价于`/"[^"]"+/`
+    - One more example
+        - `\d+ \d+` ---> <mark>123 456</mark>
+        - `\d+ \d+?` ---> <mark>123 4</mark>56
+- **Group**
+    - Notion：`()`
+    - 增加可读性, 不能出现在`[]`中
+    - `/(xyz)+/` ---> <mark>xyzxyz</mark>abcdef1234<mark>xyz</mark>
+    - `/([a-z]+[0-9]{0,3}) team/` ---> `abcds812team`,`zero team`
+
+- **Alternation/Choice**
+    - Notion: `|`
+    - 和括号搭配使用, 允许嵌套
+    - `/boy|gird/` ---> `boy`, `girl`
+    - `/I think (China|Brazil|England) will win the world cup in 2050./`
+    - `/((Jane|John) likes blue|(Tom|Jim) likes green)/`
+
+### Matching Positions
+
+- **Anchors**
+    - Notion: `^,%`
+        - 如果`^`出现在正则式开头，表示匹配以`^`后面字符开头，以`$`前一个字符结尾的串。Anchor字符用来确定匹配位置。
+        - `^a[a-z]+a` -->`america`
+        - `^[^a-zA-Z]+` -->`123`,`$#%`
+        - `^[A-Z][a-zA-Z, ]+\.` --> 匹配英文每段的第一句话
+        - `[A-Z][a-zA-Z, ]+\.$` --> 匹配英文每段的最后一句话
+    - Notion: `\b,\B`
+        - 用来分割word, word由`[a-zA-Z0-9_]`构成
+            - `\b[a-z]+\b`匹配文本中所有小写单词
+            - `\b[A-Z]+\b`匹配文本中所有大写单词
