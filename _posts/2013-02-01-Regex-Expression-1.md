@@ -104,4 +104,14 @@ title: Regular Expression
     - `[\D]` -> no digit
     - `[^\d]` -> no digit
 
-
+- **Quantified Repetition**
+    - Notation: `*`
+        - Match zero or more of previous
+            - `/Buz*/` --> `Bu,Buz,Buzz,Buzzz,...`
+    - Notation: `+`
+        - Match one or more of previous
+            - `[0-9]+` --> match all numbers
+            - `[0-9][0-9][0-9]+` --> `[x]012, [x]2, [x]86`
+    - Notation: `?`
+        - Match one or zero previous
+            - `/Flavou?r/` --> `Flavour, Flavor`
