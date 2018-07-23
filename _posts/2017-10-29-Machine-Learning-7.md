@@ -1,12 +1,13 @@
 ---
 layout: post
-list_title: Machine Learning - Chap7
+list_title: 机器学习 | Machine Learning | Unsupervised Learning
+title: Unsupervised Learning
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter7
 categories: [ml-stanford,course]
 mathjax: true
 ---
 
-## Chapter7 Unsupervised Learning
+
 
 * 监督学习，它的特点是对已知样本产生的结果是有预期的，因此我们可以对样本进行标记，Training Set 可以表示为<math><mo>{</mo><mo>(</mo><msup><mi>x</mi><mi>(1)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(1)</mi></msup><mo>)</mo><mo>,</mo><mo>(</mo><msup><mi>x</mi><mi>(2)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(2)</mi></msup><mo>)</mo><mo>,</mo><mo>...</mo><mo>,</mo><mo>(</mo><msup><mi>x</mi><mi>(m)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(m)</mi></msup><mo>)</mo><mo>}</mo></math>
 * 非监督性学习对样本产生的结果是无法预期的，因此无法对样本数据进行标，Training Set 可表示为<math><mo>{</mo><msup><mi>x</mi><mi>(1)</mi></msup><msup><mi>x</mi><mi>(2)</mi></msup><mo>,</mo><mo>...</mo><mo>,</mo><msup><mi>x</mi><mi>(m)</mi></msup><mo>}</mo></math>，非监督学习要做的是在这些无标注的数据中寻找某种规则或者模式。比如将数据归类，也叫做聚类( **Clustering** )就是一种非监督学习算法

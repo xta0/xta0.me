@@ -1,6 +1,7 @@
 ---
 layout: post
-list_title: Machine Learning - Chap10
+list_title: 机器学习 | Machine Learning | OCR
+title:  OCR
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter10
 categories: [ml-stanford,course]
 mathjax: true

@@ -169,5 +169,26 @@ title: Regular Expression - Syntax
         - `[A-Z][a-zA-Z, ]+\.$` --> 匹配英文每段的最后一句话
     - Notion: `\b,\B`
         - 用来分割word, word由`[a-zA-Z0-9_]`构成
+            - `\b(\w)+\b\`匹配所有word
             - `\b[a-z]+\b`匹配文本中所有小写单词
             - `\b[A-Z]+\b`匹配文本中所有大写单词
+
+### Advacnced Topics
+
+- **Group & Backreference**
+    - Notion: `(ab)(cd)\1\2`
+    - 用标号`\1,\2`指代前面前面的group
+        - `/(ab)(cd)\1\2/` --> `abcdabcd`
+        - `/(Bruce) Wayne \1/` --> `Bruce Wayne Bruce`
+        - `<([a-z][a-z0-9]*)>.*<\/\1>`
+    
+
+
+
+### Assertions
+
+
+
+## Resource
+
+- [Learn regex the easy way](https://github.com/zeeshanu/learn-regex)

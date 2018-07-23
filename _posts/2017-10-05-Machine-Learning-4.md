@@ -1,12 +1,11 @@
 ---
 layout: post
-list_title: Machine Learning - Chap4
+list_title: 机器学习 | Machine Learning | Neural Networks
+title: Neural Networks
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter4
 categories: [ml-stanford,course]
 mathjax: true
 ---
-
-## Chapter4: Neural Networks
 
 ### Non-linear hypotheses
 
@@ -120,9 +119,8 @@ mathjax: true
 
 - 第一层是叫"Input Layer"，最后一层叫"Output Layer"，中间叫"Hidden Layer"，上面例子中，我们使用<math xmlns="http://www.w3.org/1998/Math/MathML"><msubsup><mi>a</mi><mn>0</mn><mn>2</mn></msubsup><mo>⋯</mo><msubsup><mi>a</mi><mi>n</mi><mn>2</mn></msubsup></math>表示，他们也叫做"activationunits."
 
-- <math><msubsup><mi>a</mi><mi>i</mi><mi>(j)</mi></msubsup></math>="activation" of unit <math><mi>i</mi></math> in layer <math><mi>j</mi></math>
-
-- <math><msup><mi>θ</mi><mi>(j)</mi></msup></math>=matrix of weights controlling function mapping from layer <math><mi>j</mi></math> to <math><mi>j+1</mi></math>
+- $a_i^{(j)} = "activition" \thinspace of \thinspace unit \thinspace {i} \thinspace in \thinspace \thinspace layer \thinspace{j}$
+- $\theta^{j} = \thinspace matrix \thinspace of \thinspace weights \thinspace controlling \thinspace function \thinspace mapping \thinspace from \thinspace layer \thinspace j \thinspace to \thinspace {j+1}$
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
   <mfenced open="[" close="]">
@@ -1848,7 +1846,7 @@ end
 ```
 
 
-### Backpropagation algotrithm
+## Backpropagation algotrithm
 
 "Backpropagation"是神经网络用来求解**Cost Function**最小值的算法，类似之前线性回归和逻辑回归中的梯度下降法。上一节我们已经了解了**Cost Function**的定义，我们的目标是求解：
 

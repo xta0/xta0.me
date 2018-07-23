@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Machine Learning - Chap3
+list_title: 机器学习 | Machine Learning | Classification
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter3
 categories: [ml-stanford,course]
 mathjax: true

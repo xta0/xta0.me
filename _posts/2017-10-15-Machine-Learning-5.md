@@ -1,12 +1,11 @@
 ---
 layout: post
-list_title: Machine Learning - Chap5
+list_title: 机器学习 | Machine Learning | Debugging
+title: Machine Learning Debugging
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter5
 categories: [ml-stanford,course]
 mathjax: true
 ---
-
-## Chapter 5 机器学习的应用
 
 ### 调试预测函数
 

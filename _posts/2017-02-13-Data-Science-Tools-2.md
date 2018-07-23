@@ -1,11 +1,10 @@
 ---
-layout: default
-list_title: Octave Cheatsheet
-categories: [pl,cheatsheet,octave]
-meta: Octave 简明操作
+list_title: Data Science Tools - Octave
+layout: post
+title: Octave Cheatsheet
 ---
 
-## Octave Cheat Sheet
+## Octave Cheatsheet
 
 #### Basic Operations
 

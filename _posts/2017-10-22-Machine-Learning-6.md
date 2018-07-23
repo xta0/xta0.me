@@ -1,12 +1,12 @@
 ---
 layout: post
-list_title: Machine Learning - Chap6
+list_title: 机器学习 | Machine Learning | SVM
+title: Support Vector Machine
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter6
 categories: [ml-stanford,course]
 mathjax: true
 ---
 
-## Chapter6 SVM
 
 支持向量机 SVM（support vector machine）是另一种监督学习的算法，它主要用解决**分类**问题（二分类）和**回归分析**中。SVM 和前面几种机器学习算法相比，在处理复杂的非线性方程（不规则分类问题）时效果很好。在介绍 SVM 之前，先回顾一下 logistic regression，在逻辑回归中，我们的预测函数为：
 

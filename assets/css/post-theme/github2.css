@@ -170,6 +170,7 @@ blockquote {
   border-left: 4px solid #dddddd;
   padding: 0 15px;
   color: #777777;
+  margin-left: 0px;
 }
 
 blockquote> :first-child {

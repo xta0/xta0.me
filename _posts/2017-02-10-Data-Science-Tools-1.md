@@ -1,6 +1,7 @@
 ---
-list_title: Data Science Course Part 2 - Tools-Python
+list_title: Data Science Tools - Python Stack
 layout: post
+title: Python Stack
 ---
 
 ## Python Stack

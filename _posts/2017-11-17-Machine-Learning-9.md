@@ -1,12 +1,11 @@
 ---
 layout: post
-list_title: Machine Learning - Chap9
+list_title: 机器学习 | Machine Learning | Learning With Large Datasets
+title: Learning With Large Datasets
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter9
 categories: [ml-stanford,course]
 mathjax: true
 ---
-
-## Chapter 9: Learning With Large Datasets
 
 当数据集很大时，进行梯度下降计算会带来较高的计算量。我们需要寻找一些其它的最优化算法来处理大数据的情况
 

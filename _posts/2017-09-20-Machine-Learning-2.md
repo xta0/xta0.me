@@ -1,12 +1,11 @@
 ---
 layout: post
-list_title: Machine Learning - Chap2
+list_title: 机器学习 | Machine Learning | Linear Regression 
+title: Linear Regression 
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter2
 categories: [ml-stanford,course]
 mathjax: true
 ---
-
-## Chapter2
 
 ### Model Representation
 
@@ -158,23 +157,17 @@ mathjax: true
 
 ### Cost Function - Intuition(1)
 
-对于 Hypothesis 函数：<math>
-<msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi>
-<mo>=</mo>
-<msub><mi>θ</mi> <mi>0</mi></msub>
-<mo>+</mo>
-<msub><mi>θ</mi>
-<mi>1</mi></msub>
-<mi>x</mi>
-</math>
+对于 Hypothesis 函数：
 
-当<math><msub><mi>θ</mi><mi>0</mi></msub><mo>=</mo><mi>0</mi></math>时，简化为：<math>
-<msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi>
-<mo>=</mo>
-<msub><mi>θ</mi>
-<mi>1</mi></msub>
-<mi>x</mi>
-</math>
+$$
+h_{\theta}(x)=\theta_0 + \theta_1x
+$$
+
+当$\theta_0=0$时，简化为：
+
+$$
+h_{\theta}(x) = \theta_1x
+$$
 
 对于 cost 函数简化为：
 

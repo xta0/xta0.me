@@ -1,21 +1,20 @@
 ---
 layout: post
-list_title: Machine Learning - Chap8
+list_title: 机器学习 | Machine Learning | Anomaly Detection
+title : Anomaly Detection
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter8
 categories: [ml-stanford,course]
 mathjax: true
 ---
 
-## Chapter8: Anomaly detection
-
 异常检测主要是通过概率模型对输入的样本数据进行判定，判断是否为异常数据。比如在线购物网站识别用户的异常行为，飞机部件出厂检测，电脑状态检测等。以电脑监控为例，可以使用如下几个值很大或者很小的 feature：
 
-* <math><msub><mi>x</mi><mn>1</mn></msub><mo>=</mo></math> memeory use of the computer
-* <math><msub><mi>x</mi><mn>2</mn></msub><mo>=</mo></math> number of disk accesses / etc
-* <math><msub><mi>x</mi><mn>3</mn></msub><mo>=</mo></math> CPU load
-* <math><msub><mi>x</mi><mn>4</mn></msub><mo>=</mo></math> network traffic
-* <math><msub><mi>x</mi><mn>5</mn></msub><mo>=</mo></math> (CPU load) / (network traffic)
-* <math><msub><mi>x</mi><mn>6</mn></msub><mo>=</mo></math> (CPU load)^2 / (network traffic)
+* $ x_1 = \thinspace memeory \thinspace use \thinspace of \thinspace the \thinspace computer $
+* $ x_2 = \thinspace number \thinspace of \thinspace disk \thinspace accesses \thinspace  etc $
+* $ x_3 = \thinspace CPU \thinspace  load $
+* $ x_4 = \thinspace network \thinspace traffic $
+* $ x_5 = \thinspace CPU \thinspace  load \thinspace  / \thinspace network \thinspace  traffic $
+* $ x_6 = \thinspace CPU {load^2} \thinspace  / \thinspace network \thinspace traffic $
 
 我们的目标就是构建一个概率模型，对任意输入<math><mi>x</mi></math>判断其是否是异常数据。在介绍具体算法之前，先回顾一下高斯分布：
 
