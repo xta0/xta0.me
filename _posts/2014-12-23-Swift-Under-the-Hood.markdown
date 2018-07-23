@@ -1,6 +1,7 @@
 ---
 layout: post
-list_title:  Behind Swift Object
+list_title:  Swift对象的内存模型 | Behind Swift Object
+title: Swift对象探寻
 tag: iOS
 categories: 随笔
 ---

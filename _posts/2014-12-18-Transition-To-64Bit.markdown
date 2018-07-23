@@ -1,11 +1,10 @@
 ---
 layout: post
-list_title: Transition To 64 Bit 
+list_title: 64位的时代 | Transition to 64 Bit
+title: 64位的时代 
 tag: iOS
 categories: 随笔
 ---
-
-<em>所有文章均为作者原创，转载请注明出处</em>
 
 两个月前Apple放出了这样[一条消息](https://developer.apple.com/news/?id=10202014a)。今天Apple[又来了](https://developer.apple.com/news/)：
 
@@ -29,15 +28,14 @@ categories: 随笔
 
 今天仔细读了一遍[64-Bit Transition Guide for Cocoa Touch](https://developer.apple.com/library/ios/documentation/General/Conceptual/CocoaTouch64BitGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40013501-CH1-SW1)。摘录下其中关键的部分:
 
-##At a Glance
+## 64bit at a Glance
 
-###Apple A7支持两种不同的指令集:
+### Apple A7支持两种不同的指令集:
 	
 - 32bit ARM : 所有CPU都支持
-	
 - 64bit ARM : 64bit ARM
 	
-###使用64bit ARM architecture的优势:
+### 使用64bit ARM architecture的优势
 
 - CPU寻址空间变大了
 	
@@ -45,7 +43,7 @@ categories: 随笔
 	
 - LLVM针对64bit进行了优化，提升了App的性能
 	
-###注意的点:
+### 注意的点
 
 - 64bit的pointer意味着消耗更多的内存。
 	
@@ -54,7 +52,7 @@ categories: 随笔
 - 从32bit到64bit需要对基本的数据类型做一些处理,如int,NSInteger,float,CGFloat等。
 	
 
-##Major 64 bit changes
+## Major 64 bit changes
 
 ### 64bit 和 32bit的运行时环境，主要由两方面区别：
 
@@ -65,7 +63,7 @@ categories: 随笔
 
 C或Objective-C是不会去限制原生数据类型的size的，因为这与具体的平台相关，不同平台会针对硬件环境和操作系统来重新定义这些数据类型。从32bit到64bit，这些基本数据类型的大小要重新定义。
 
-###ILP32 vs LP64
+### ILP32 vs LP64
 
 32bit的runtime环境使用ILP32的数据模型，integer，long，pointer都是32bit长。64bit的runtime环境使用的是LP64的数据模型，integer是32bit长，long，pointer类型是64bit长。更多数据类型的变化如下图：
 
@@ -83,8 +81,7 @@ C或Objective-C是不会去限制原生数据类型的size的，因为这与具�
 
 直接给出在64bit平台下，访问isa指针的方法：
 
-```C
-
+```c
  #ifdef __arm64__
         // See http://www.sealiesoftware.com/blog/archive/2013/09/24/objc_explain_Non-pointer_isa.html        
         extern uint64_t objc_debug_isa_class_mask WEAK_IMPORT_ATTRIBUTE;
@@ -92,13 +89,12 @@ C或Objective-C是不会去限制原生数据类型的size的，因为这与具�
  #else
         clz = obj->isa;
  #endif
-
 ```
 
 - 64bit的汇编指令集发生了变化，关于32bit的ARM指令集，可以参考[我之前的文章](http://akadealloc.github.io/blog/2013/06/15/assembly-on-arm.html)。
 
 
-##Converting Your App to a 64-Bit Binary
+## Converting Your App to a 64-Bit Binary
 
 ### 不要将pointer强制转换为int类型。
 
@@ -183,13 +179,11 @@ printf("%lld\n", d);
 
 ```
 
-###使用一些不会根据平台环境变化的数据结构：
-
+### 使用一些不会根据平台环境变化的数据结构：
 
 ![alt text](/assets/images/2014/12/64bit-data-type-c99.png)
 
-
-###要兼顾字节对齐：
+### 要兼顾字节对齐：
 
 定义struct要注意字节对齐:
 
@@ -208,7 +202,6 @@ struct bar {
 如下:
 
 ```c
-
  #pragma pack(4)
 struct bar {
     int32_t foo0;
@@ -217,11 +210,10 @@ struct bar {
     int64_t bar;
 };
  #pragma options align=reset
-
 ```
 
 
-###函数与函数指针
+### 函数与函数指针
 
 
 在64bit的环境中，编译器生成的用来处理可变参数的函数的指令顺序和32bit环境有着较大的区别,因此这两者不可以强制相互cast：
@@ -237,7 +229,7 @@ action(1,2,3); // Error!
 在64bit的环境中，尽量使用函数原型，这种通过函数指针调用函数的方式有风险，因为可能会碰到可变参数的函数。
 
 
-###Message Dispatch
+### Message Dispatch
 
 `objc_msgSend`的函数原型为:`id objc_msgSend(id self, SEL op, ...)`，显然它是一个可变参数的函数。在32bit的环境中，我们可以通过这个方法在运行时调用某个类的某个method，而不用考虑可变参数的问题:
 
@@ -259,7 +251,7 @@ action(1,2,3); // Error!
 
 ```
 
-###其它
+### 其它
 
 - 不要自定义原生数据类型，因为它涉及到32bit和64bit两套环境，以及他们之间的相互转换。
 
@@ -269,10 +261,9 @@ action(1,2,3); // Error!
 
 - 关于使用内存的优化，这部分不详细列出。
 
-
 ---
 
-##附：iPhone Hardware/OS Model
+## 附录 | iPhone Hardware/OS Model
 
 
 | Hardware |iPhone 3gs| iPhone 4 |iPhone 4s| iPhone 5 | iPhone 5s | iPhone 6 | iPhone 6+ |
@@ -286,9 +277,7 @@ action(1,2,3); // Error!
 
 ---
 
-
-##Further Reading
-
+## Further Reading
 
 - [iPhone Hardware Models](http://en.wikipedia.org/wiki/List_of_iOS_devices)
 - [ARM Cortext-A8](http://en.wikipedia.org/wiki/ARM_Cortex-A8)

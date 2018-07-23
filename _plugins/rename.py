@@ -17,8 +17,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description='Rename Files')
     parser.add_argument('path', metavar='PATH', type=str,help='Input file directory')
-    parser.add_argument('old_name', metavar='NAME_OLD', type=str, help='Old file names')
-    parser.add_argument('new_name', metavar='NAME_NEW', type=str, help='New file names')
+    parser.add_argument('old_name', metavar='old name', type=str, help='Old file names')
+    parser.add_argument('new_name', metavar='new name', type=str, help='New file names')
     input_dir = parser.parse_args().path
     old_name = parser.parse_args().old_name
     new_name = parser.parse_args().new_name

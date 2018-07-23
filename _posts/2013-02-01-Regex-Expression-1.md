@@ -181,14 +181,71 @@ title: Regular Expression - Syntax
         - `/(ab)(cd)\1\2/` --> `abcdabcd`
         - `/(Bruce) Wayne \1/` --> `Bruce Wayne Bruce`
         - `<([a-z][a-z0-9]*)>.*<\/\1>`
-    
 
+    - A python example
 
+    ```python
+    import re
+
+    regex = r'^(\d{2})-(\w{3})\s(\d{9})\s([A-Z][\w .]+)\s(\d{4})'
+    str = "01-SSN 123324134 S.Neis Steve 1997"
+    m = re.match(regex,str)
+
+    print(m.group(0)) # 01-SSN 123324134 S.Neis Steve 1997
+    print(m.group(1)) #01
+    print(m.group(2)) #SSN
+    print(m.group(3)) #123324134
+    print(m.group(4)) #S.Neis Steve
+    print(m.group(5)) #1997
+    ```
+- **Non-Capturing Groups**
+    - 可以令正则式成组，但是不引用它们
+    - Notion: `?:`
+        - `?` --> Give this group a different meaning
+        - `:` --> The meaning is non-capturing
+    - Advantages
+        - Increase Speed
+        - Make a room to caputures necessary groups
+    - `/(ab)(?:cd)\1/` ---> `abcdab, [x]abcdabcd`
+    - `/(?:red) looks (white)\1 to me` ---> `\1`指向的是`white`
 
 ### Assertions
 
+- Look Ahead Assertions
+    - **Positive Look Ahead Assertions**
+        - Notion: `?=`
+            - `?` --> Give this group a different meaning
+            - `=` --> The meaning is PLAA
+        - 用来匹配出现在某个字符前面的字符
+            - `/long(?=island)` --> 只匹配出现在`island`之前的long
+                - <mark>long</mark>island, `[x]longbeach`
+            - `/a(?=b)/` --> <mark>a</mark>b
+            - `\b[a-z][A-Z]+\b(?=\.)`--->匹配所有句号前面的单词
+        - 另一种写法是`(?=)`在前，表示过滤条件
+            - `\b(?=\w*ce)(?=\w*O)[a-z][A-Z]+\b(?=\.)`--->匹配所有句号前面的单词，并且是以`ce`结尾，`O`开头的
+            - 电话号码正则式为`\d{3}-\d{3}-\d{4}`
+                - `(?=^[0-6\-]+$)\d{3}-\d{3}-\d{4}`--> 匹配电话号码数字在`0-6`之间的
+                - `(?=^[0-6\-]+$)(?=.*321)\d{3}-\d{3}-\d{4}`--> 匹配电话号码数字在`0-6`之间的，且有321的号码            
+    - **Negative Look Ahead Assertions**
+        - Notion: `?!`
+        - 用来匹配不出现在某个字符后面的字符串
+            - `/long(?!island)` --> 只匹配`long`后面不是`island`的字符串
+                - <mark>long</mark>beach,<mark>long</mark>drive, `[x]longisland`
 
+
+- Look Behind Assertions
+    - **Positive Look Behind Assertions**
+        - Notion: `?<=`
+        - 用来匹配出现在某个字符后面的字符
+            - `(?<=long)island` --> long<mark>island</mark>
+    - **Negative Look Behind Assertions**
+        - Notion: `?<!`
+        - 用来匹配前面不是某个字符的字符串
+            - `(?<!long)island` --> xx<mark>island</mark>
+    - 所有能用Looke Behind Assertions 表示的情况，也能用Looke Ahead Assertions表示，因此
 
 ## Resource
 
 - [Learn regex the easy way](https://github.com/zeeshanu/learn-regex)
+- [精通正则表达式](http://shop.oreilly.com/product/9780596528126.do)
+- [Regex101](https://regex101.com/)

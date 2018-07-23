@@ -171,6 +171,8 @@ blockquote {
   padding: 0 15px;
   color: #777777;
   margin-left: 0px;
+  margin-top:10px;
+  margin-bottom: 10px;
 }
 
 blockquote> :first-child {
