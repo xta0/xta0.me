@@ -9,8 +9,7 @@ source.old
 source/_stash
 source/stylesheets/screen.css
 vendor
-node_modules
+node_modules/
 Gemfile.lock
 _site/
 bower_components/
-pods/

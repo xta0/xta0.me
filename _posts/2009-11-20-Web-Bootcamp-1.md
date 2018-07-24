@@ -1,8 +1,9 @@
 ---
-list_title: Web Bootcamp Part 1
 layout: post
 categories: [web,html,css,javascript]
 meta: Web Development Bootcamp. Basic HTML/CSS usage
+title: HTML Basics
+list_title: Web Dev Bootcamp Part 1 | HTML Basics
 ---
 
 ## HTML

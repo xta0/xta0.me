@@ -1,9 +1,7 @@
 ---
-list_title: 理解AFNetworking中的Runloop 
+list_title: 理解AFNetworking中的Runloop | Runloop in AFNetworking
+title: 理解AFNetworking中的Runloop
 layout: post
-tag: iOS
-categories: 随笔
-
 ---
 
 

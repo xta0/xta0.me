@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: iOS中的BLE
+list_title: iOS中的BLE | Bluetooth 4.0 in iOS
 title: iOS中的BLE | BLE in iOS
 ---
 

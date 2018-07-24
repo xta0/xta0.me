@@ -23,7 +23,6 @@ struct Widget{
 Widget w1; //default构造
 Widget w2(w1); //copy构造
 w1 = w2; //调用copy assignment操作符
-
 Widget w1 = w2; //调用copy构造函数
 
 ```

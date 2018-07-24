@@ -1,16 +1,11 @@
 ---
 layout: post
-list_title: Web Bootcamp Part 2
+title: CSS Basics
+list_title: Web Dev Bootcamp Part 2 | CSS Basics
 ---
 
+### 历史
 
-## CSS
-
-- [MDN](https://developer.mozilla.org/zh-CN/)
-- [WebPlatform.org](https://docs.webplatform.org/wiki/Main_Page)
-- [W3C](http://www.w3.org/)
-- [Can I Use](http://caniuse.com/)
-- [CSS Zen Garden](http://www.csszengarden.com/)
 - 1996年第一个版本
 - 1998年5月第二个版本
 - 2007年第三个版本
@@ -59,25 +54,21 @@ selector{
 }
 ```
 
-
 - **Element Selector**，为指定标签类型应用特定样式
 
-```html
+```css
+<!-- HTML -->
 <div>
 	<p>You say yes</p>
 </div>
-```
-	
-```css
+<!-- CSS -->
 div{
 	background: purple;
-}
-	
+}	
 p{
 	color: yellow;
 }
 ```
-
 - **ID Selector** 为指定标签ID应用特定样式。格式为：`# + 名字`
  - 一个元素只能有一个ID
  - 一个页面中可以有多个ID，ID不能重复 
@@ -290,11 +281,30 @@ h2 {
 
 ### H5新增布局
 
-```
+```css
 <div id = "header">
 <div id = "nav">
 <div class="article"> <div class="sidebar">
 <div class="section"> <div class="address">
 <div id="footer">
-
 ```
+
+## CSS Best Practice
+
+### Normalized CSS
+
+
+
+### BEM
+
+
+
+
+
+## Resources
+
+- [MDN](https://developer.mozilla.org/zh-CN/)
+- [WebPlatform.org](https://docs.webplatform.org/wiki/Main_Page)
+- [W3C](http://www.w3.org/)
+- [Can I Use](http://caniuse.com/)
+- [CSS Zen Garden](http://www.csszengarden.com/)
