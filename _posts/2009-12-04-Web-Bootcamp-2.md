@@ -10,39 +10,47 @@ list_title: Web Dev Bootcamp Part 2 | CSS Basics
 - 1998年5月第二个版本
 - 2007年第三个版本
 
+### Browser work flow 
+
+<img class="img-center" src="/assets/images/2007/08/work-flow.png">
+
 ### 引入CSS
 
-- 行内样式(inline)
+- **行内样式(inline)**
 	- 在HTML标签内直接引入style:`<body style="background-color: orange;">` 
 	- 优先级最高，会覆盖`Internal`和`External`指定的css样式
 
-- 内部样式(Internal)
+- **内部样式(Internal)**
 	- 定义在`<head>`中:
 
-```html	
-<style type="text/css">
-	header{ background-color: orange;}
-	p {
-		font-size: 20px;
-		font-weight: bold;
-	}
-	h1{
-		font-size: 90px;
-		color: red;
-	}
-</style>
-```
+	```html	
+	<style type="text/css">
+		header{ background-color: orange;}
+		p {
+			font-size: 20px;
+			font-weight: bold;
+		}
+		h1{
+			font-size: 90px;
+			color: red;
+		}
+	</style>
+	```
 
-- 外部样式(External)
-	- 在`<head>`中加入:`	<link rel="stylesheet" type="text/css" href="css/style.css">`
-	- 这时浏览器会去请求`css/style.css`这个资源，**一个网页可以引入多个css文件，但一般不超过3个**
+- **外部样式(External)**
+	
+	- 在`<head>`中加入:
+
+	```HTML
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	```
+	- 这时浏览器会去请求`css/style.css`这个资源
+		- **一个网页可以引入多个css文件，但一般不超过3个**
 
 - 导入样式（不建议用）
 	- 另一种引入CSS文件的方式是`@import`, 同样每次获取的时候都要发送一次请求
 
 ### Selector定义
-
-- 定义:
 
 ```css
 selector{
@@ -54,14 +62,11 @@ selector{
 }
 ```
 
-- **Element Selector**，为指定标签类型应用特定样式
+- **Element Selector**
+
+为指定标签类型应用特定样式
 
 ```css
-<!-- HTML -->
-<div>
-	<p>You say yes</p>
-</div>
-<!-- CSS -->
 div{
 	background: purple;
 }	
@@ -69,45 +74,28 @@ p{
 	color: yellow;
 }
 ```
-- **ID Selector** 为指定标签ID应用特定样式。格式为：`# + 名字`
- - 一个元素只能有一个ID
- - 一个页面中可以有多个ID，ID不能重复 
 
-```html
-<div>
-	<p id="special">You say yes</p>
-</div>
-```
-	
+- **ID Selector** 
+
+为指定标签ID应用特定样式。格式为：`# + 名字`, 一个元素只能有一个ID, 一个页面中可以有多个ID，ID不能重复 
+
 ```css
-div{
-	background: purple;
-}
-	
 #special {
 	color: yellow;
 }
 ```
 
-- **Class Selector**: 为具有同一种类型的多个标签应用特定样式, 格式为`. + 类名`:
+- **Class Selector**
 
-```html
-<div>
-	<p class="special">You say yes</p>
-</div>
-```
-	
+为具有同一种类型的多个标签应用特定样式, 格式为`. + 类名`
+
 ```css
-div{
-	background: purple;
-}
-	
 .special {
 	color: yellow;
 }
 ```
 
-- 其它使用selector的方式
+- **Selector应用**
 
 ```css
 /*Star*/
@@ -149,30 +137,152 @@ li:nth-of-type(even){
 h1:hover{
     color: blue;
 }
-
 /*Make the <a> element's that have been visited gray */
 a:visited{
     color: grey;
 }
+.btn:focus{
+	//focus状态下应用某种样式
+}
+.btn:hover{
+	//hover状态下应用某种样式
+}
 ```
+### 冲突解决
 
-- **优先级**: 
-	1. @import  
-	2. inline selector
-	3. ID selector  
-	4. Class selector, Attribute Selector, Pseudo-Class Selector
-		- `.hello {}`
-		- `input[type="text"]{}`
-		- `input:email{}` 
-	5. Type Selector
-		- `li + a{}`
-		- `li a{}`
-		- `li {}` 
-	6. 伪对象
-	7. 父类  
-	8.  通配符 
+- 三个来源
+	- Author: 开发者指定的属性
+	- User: 用户通过浏览器设定的属性（比如字体等）
+	- Browser: 浏览器自身的属性(比如`a`标签是蓝色的)  
+- 冲突解决顺序
+	1. **Importance**（权重）
+		- User `!important` declarations
+		- Author `!important` declarations
+		- Author declarations
+		- User declarations
+		- Default browser declarations
+	2. **Specificity** 
+		- Inline styles
+		- IDs
+		- Classes, pseudo-classes, attribute
+		- Elements, pseduo-elements
+	3. **Source Order**
+		- 最后的声明覆盖之前的声明 
+
+- 小结
+	- CSS declarations marked with `!important`有最高优先级
+		- 尽量少使用`!important`，不利于代码维护和扩展
+	- **Inline Style**比样式表优先级高，同样不利于代码扩展
+	- **ID > classes > elements**
+	- <strong>*</strong>通配符优先级最低，CSS值为(0,0,0,0)，可被任何样式覆盖
+	- **spcificity** 比 书写顺序重要
+	- 对于第三方引入的样式表，自己的样式表要放在最后
 	
+### 属性的继承
 
+- 如果元素某个属性的值没有指定，如果该属性可以被继承，则寻找其父容器中的值
+	- 文字的属性可以被继承 
+		- `font-family`, `font-size`,`color`,etc.
+	- 需要计算的属性可以被继承，声明的固定的值不被继承
+- 使用`inherit`关键字可以强制继承某属性
+
+## Box Model
+
+元素layout规则
+
+<img class="img-center" src="/assets/images/2007/08/box-model.png">
+
+- 涉及到
+	- **Dimensions of boxes**: the box model
+	- **Box type**: `inline`, `block` and `inline-block` 
+	- **Positioning scheme**: `floats` and `positioning`
+	- **Stacking contexts**
+	- Other elements in the render tree.
+	- Viewport size, dimensions of images, etc.
+
+- Box-Sizing
+	- border-box
+		- 元素宽高计算不包括padding和border
+		- **total width** = specified width 
+		- **tottal height** = specified height
+
+- Box model
+	- **total width** = right border + right padding + specified width + left padding + left border
+	- **tottal height** = top border + top padding + specified height + bottom padding + bottom border
+	- **margin**
+		- 参数顺序
+			- top,left,bottom,right
+		- auto
+			- 在auto方向上将剩余空间两边均分，即在auto方向上居中
+			- `margin: 0 auto 0 auto`：垂直方向margin为0，水平方向居中
+			- `margin: 0 auto`：垂直方向margin为0，水平方向为`auto`
+
+- Box Type
+	- 行内元素(Inline)
+		- `display: inline` 
+		- 元素行在内显示，自适应宽高
+		- 无法应用`height`和`width`
+		- `padding`和`margin`只在水平方向有用
+	- 块级元素(Block-Level)  
+		- `display: block`
+		- 默认撑满父级元素的宽度(100% parent's width)
+		- 元素间垂直排列
+		- 盒模型算法适用，可指定`width`,`height`
+	- Inline-Block
+		- 可以在行内使用的块级元素，兼具上述两种元素的特征
+		- 元素行在内显示，自适应宽高
+		- 盒模型算法适用，可指定`width`,`height`
+	
+- Positions
+	- **Relateive**
+		- `position: relative`
+		- 元素默认的Position方式，相对于自己的位置，类似layer的anchorPoint
+		- **NOT** floated
+		- **NOT** absolutely positioned
+		- Elements laid out according to their source order
+	- **Absolute**
+		- `position: absolute`,`postion: fixed`
+		- 相对于父容器的位置，使用`top`,`bottom`,`left`,`right` 指定相对父容器的offset
+		- 父容器需显式指定`position`的值，如果父容器没有指定`position`属性，则以浏览器为父容器
+	- **Float**
+		- 元素脱离Normal Flow，用来块级元素转成行内元素
+		- 保留元素的宽，高度自适应，`height`属性失效
+		- `float:left`,`float:right` //左上角对齐，右上角对齐
+		- [All About Floats](https://css-tricks.com/all-about-floats/)
+
+### 单位换算
+
+![](/assets/images/2007/08/value-processing.png)
+
+- CSS每种属性都有一个inital value
+- 浏览器会指定一个默认的**root font size** （通常是16px）
+- 百分比和相对单位会被转化成像素单位
+- 百分比
+	- 如果修饰`font-size`，是相对于父类`font-size`的值
+	- 如果修饰`length`上，是相对于父类`width`的值
+- `em`
+	- 如果修饰`font-size`，是相对于父类`font-size`的值
+	- 如果修饰`length`，是相对于当前的`font-size`的值	
+	- 相对于`document's root`的`font-size` 
+- `vh`和`vw`
+	- 相对于viewport's `height`和`width` 
+
+
+## Resources
+
+- [MDN](https://developer.mozilla.org/zh-CN/)
+- [WebPlatform.org](https://docs.webplatform.org/wiki/Main_Page)
+- [W3C](http://www.w3.org/)
+- [Can I Use](http://caniuse.com/)
+- [CSS Zen Garden](http://www.csszengarden.com/)
+- [FlexBox Guide](https://css-tricks.com/snippets/css/a-guide-to-flexbox/)
+- [Style Guide](http://codeguide.co)
+- [BEM](http://getbem.com/naming/)
+- [7-1 Pattern](https://gist.github.com/rveitch/84cea9650092119527bc) 
+- [All About Floats](https://css-tricks.com/all-about-floats/)
+
+
+## 附|常用元素的属性
 
 ### 颜色
 
@@ -240,71 +350,3 @@ h2 {
 	- `border-collapse` 
 		- `separate`：边框独立
 		- `collapse`：相邻边被合并 
-
-
-
-### 盒子模型
-
-![](/assets/images/2007/04/box-model.png)
-
-- `margin`
-	- `margin: 20px 40px 500px 100px`：top,right,bottom,right
-	- 在auto方向上将剩余空间两边均分，即在auto方向上居中
-		- `margin: 0 auto 0 auto`：垂直方向margin为0，左右方向居中
-		- `margin: 0 auto` => `top-bottom=0`, `left-right=auto`
-
-
-- 块级元素和行内元素的转换
-	- **块级元素转行内元素**，使用`inline`。如果使用了`inline`会忽略元素的`width`和`height`属性
-	
-	```html
-	<div style="display:inline;">123</div>
-	<div style="display:inline;">abc</div>
-	```
-	- **行内元素转块级元素**，使用`block`。如果使用了`block`会忽略元素的`width`和`height`属性
-	
-	```html
-	<span style="display: block;">123</span>
-	<span style="display: block;">abc</span>
-	```
-
-- **使用float**
-	-  实现块级元素转成行内元素，保留元素的宽，高度自适应
-	- `float:left`：向左对齐
-	- `float:right`：向右对齐
-
-- **使用position**
-	- `relative`:相对于自己的位置，类似layer的anchorPoint
-	- `absolute`:相对于父容器的位置，如果父容器没有指定`position`属性，则以浏览器为父容器
-	- 如果有元素的`position`设为`inline-block`，那么所有inline的元素都底部对齐
-
-
-### H5新增布局
-
-```css
-<div id = "header">
-<div id = "nav">
-<div class="article"> <div class="sidebar">
-<div class="section"> <div class="address">
-<div id="footer">
-```
-
-## CSS Best Practice
-
-### Normalized CSS
-
-
-
-### BEM
-
-
-
-
-
-## Resources
-
-- [MDN](https://developer.mozilla.org/zh-CN/)
-- [WebPlatform.org](https://docs.webplatform.org/wiki/Main_Page)
-- [W3C](http://www.w3.org/)
-- [Can I Use](http://caniuse.com/)
-- [CSS Zen Garden](http://www.csszengarden.com/)

@@ -44,16 +44,6 @@ title: Python3 Basic Syntax
     - NotImplemented
     - Ellipsis(...)
 
-## Strings
-
-## Naming Conventions
-
-## Conditionals
-
-## Functions
-
-## Loops
-
 ### Printing
 
 - 链接字符串
@@ -129,8 +119,6 @@ def func:
     #查看函数内的局部变量
     print(locals()) #{'b': 1, 'a': 's'}
 ```
-
-
 ### Datastructures
 
 - **Numbers**   
@@ -166,21 +154,21 @@ def func:
 
     - 获取字串
         - 使用`[]`索引,格式为`[起始index:结束index:步长]`
+        - 左开右闭区间，类似C++中的迭代器
 
         ```python
         a="hello"
         a[1:] #ello, 包括第一个字符
         a[:3] #hel, 不包括第三个字符
         a[1:3] #el
-        a[1:-1] #ell
+        a[1:-1] #ell，负数表示从后向前，-1表示倒数第1个字符l，因此区间为[1:4)
         a[:] #hello
         a[::] #hello
         a[::2] #hlo 步长是2，抽取字串
         a[1:-1:2] #el,起始1，终点-1，步长2
         a[::-1]#olleh, 反转字符串
         ```
-    - 正则表达
-        
+    - 分割字符串
         ```python
         s = 'hello'
         s.split('e') #['h','llo']
@@ -1025,6 +1013,8 @@ timeit.timeit('"-".join(str(n) for n in range(100))', number=1000)#0.03495853603
 ```
 
 ### Regular Expression
+
+- 正则表达式字符串以`r"regex"`表示
 
 ```py
 # List of patterns to search for

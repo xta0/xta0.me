@@ -4,7 +4,6 @@ list_title: Web Dev Bootcamp Part 3-1 | DOM & JQuery
 layout: post
 ---
 
-	
 ### DOM 节点操作
 
 - 创建DOM节点
