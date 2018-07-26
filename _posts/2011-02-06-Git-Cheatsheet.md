@@ -18,6 +18,17 @@ list_title: Git简明操作 | Git Commands
     git config user.email ""
     ```
 
+### Stash
+
+- stash所有修改
+```
+git add -A
+```
+- 从stash文件中删除一个
+```
+git reset path_to_the_file
+```
+
 ### Commit
 
 - 恢复到上一次commit的状态
@@ -39,7 +50,36 @@ list_title: Git简明操作 | Git Commands
     git remote set-url origin https://xxxx.git
     ```
 
-### Conflict
+### Branch
+
+- 创建新分支
+
+```
+//本地创建新分支
+git branch some_branch
+//push
+git push origin some_branch
+```
+
+- 切分支
+
+```
+git branch branch_name
+```
+
+- 删除分支
+
+```
+git branch -d branch_name
+```
+
+- 合并
+
+```
+git merge branch_to_merge
+```
+
+- 解决合并冲突
 
 - `grep -lr '<<<<<<<' . | xargs git checkout --ours`
 - `grep -lr '<<<<<<<' . | xargs git checkout --theirs`

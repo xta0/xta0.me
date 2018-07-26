@@ -347,8 +347,6 @@ setInterval(function(){
 	console.log("fired");
 },2000);	
 ```
-
-
 ### OOP
 
 - **构造函数**

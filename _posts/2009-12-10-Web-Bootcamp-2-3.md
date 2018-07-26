@@ -59,3 +59,43 @@ list_title: Web Dev Bootcamp Part 2 - 3 | CSS Best Practice
 	- 不同的组件版本
 	- a different version of a block or an element.
 	- `.block--modifier {}`
+
+
+## Tips & Tricks
+
+### Center Element
+
+- 水平居中
+	- block element
+		- `text-align: center`
+			- 用于文本相关标签
+			- `p,h1,...`
+		- `margin-left:auto; margin-right:auto`
+			- 用在container上，比如`div`套一个`img`
+			- parent和child需要指定宽度或者有默认宽度
+
+```html
+<body>
+    <div class="text-wrap">
+        <div class="center">
+            <h1>Center Heading</h1>
+            <p>All my text in this section would be aligned left as default</p>
+        </div>
+    </div>
+</body>
+```
+```css
+.text-wrap {
+  width: 100%;
+}
+
+.center {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h1 {
+  text-align: center;
+}
+```
