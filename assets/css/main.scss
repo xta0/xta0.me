@@ -1,6 +1,19 @@
 ---
+
 ---
 
-// // @import "_base/base.scss"
-// @import "_base/variables";
-// @import "_base/mixins";
+@import "base/_variables";
+@import "base/_base";
+@import "base/_mixins";
+@import "components/_site-container";
+@import "components/_site-header";
+@import "components/_site-menu";
+@import "components/_wrapper";
+@import "components/_site-main";
+@import "components/_content-wrapper";
+@import "components/_site-footer";
+@import "components/_site-posts";
+
+
+
+

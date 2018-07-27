@@ -5,3 +5,26 @@
         clear:both;
     }
 }
+@mixin mobile() {
+    @media (max-width: 767px) {
+      @content;
+    }
+  }
+  
+  @mixin tablet() {
+    @media (min-width: 768px) and (max-width: 991px) {
+      @content;
+    }
+  }
+  
+  @mixin desktop() {
+    @media (min-width: 992px) {
+      @content;
+    }
+  }
+  
+  @mixin desktop-large() {
+    @media (min-width: 1600px) {
+      @content;
+    }
+  }

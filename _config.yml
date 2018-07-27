@@ -4,9 +4,15 @@
 # ---------------------------------------------------------------
 
 title: Visionary Lab
+version: 1.0.0
 subtitle:
 description:
 author: xta0
+# Put your favicon.ico into `assets/` directory.
+favicon: /assets/favicon.ico
+# Footer `powered-by` and `theme-info` copyright
+copyright: true
+
 
 language: en
 date_format: '%m-%d-%Y'
@@ -22,22 +28,17 @@ permalink: pretty
 # Handling Reading
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md", "Gemfile", "Gemfile.lock", "README_en.md","bower_components","bower.json","package.json","node_modules"]
 
-
-
-
-
-
-# Assets
-css: assets/css
-js: assets/js
-images: assets/images
+#Assets
+sass:
+  sass_dir: _sass
+  style: :compressed
 
 # markdown
 markdown: kramdown
 highlighter: none
 kramdown:
-   syntax_highlighter_opts:
-      disable : true
+  syntax_highlighter_opts:
+    disable : true
 
 # front matter
 # ref: https://jekyllrb.com/docs/configuration/#front-matter-defaults
@@ -52,12 +53,6 @@ defaults:
 # Docs: https://help.github.com/articles/configuring-jekyll-plugins/
 # plugins:
 #  - jekyll-sitemap
-
-# Put your favicon.ico into `assets/` directory.
-favicon: /assets/favicon.ico
-
-# Footer `powered-by` and `theme-info` copyright
-copyright: true
 
 # ---------------------------------------------------------------
 # Post  Settings
@@ -83,23 +78,11 @@ post_copyright:
   license: CC BY-NC-SA 3.0
   license_url: https://creativecommons.org/licenses/by-nc-sa/3.0/
 
-# ---------------------------------------------------------------
-# 3rd partyl lib
-# ---------------------------------------------------------------
 
-# MathJax Support
-mathjax:
-  enable: true
-  per_page: false
-  cdn: //cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML
-    
-# //cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
-    
-  
 
-# ---------------------------------------------------------------
-# Menu Settings
-# ---------------------------------------------------------------
+###############################
+# Menus
+###############################
 
 # When running the site in a subdirectory (e.g. domain.tld/blog), remove the leading slash (/archives -> archives)
 menu:
@@ -112,6 +95,7 @@ menu:
   #commonweal: /404.html
 menu_icons:
   enable: true
+
   #KeyMapsToMenuItemKey: NameOfTheIconFromFontAwesome
   home: home
   about: user
@@ -119,8 +103,96 @@ menu_icons:
   schedule: calendar
   tags: tags
   archives: archive
-  sitemap: sitemap
-  commonweal: heartbeat
+  # sitemap: sitemap
+  # commonweal: heartbeat
 
-  # Theme version
-  version: 0.0.1
+
+###############################
+# Side bar 
+###############################
+sidebar:
+  # Sidebar Position, available value: left | right
+  position: left
+
+  # Sidebar Display, available value:
+  #  - post    expand on posts automatically. Default.
+  #  - always  expand for all pages automatically
+  #  - hide    expand only when click on the sidebar toggle icon.
+  #  - remove  Totally remove sidebar including sidebar toggle.
+  # display: post
+  display: always
+  #display: hide
+  #display: remove
+
+  # Sidebar offset from top menubar in pixels.
+  offset: 12
+  offset_float: 0
+
+  # Back to top in sidebar
+  b2t: false
+
+  # Scroll percent label in b2t button
+  scrollpercent: false
+  
+# ---------------------------------------------------------------
+# Font Settings
+# - Find fonts on Google Fonts (https://www.google.com/fonts)
+# - All fonts set here will have the following styles:
+#     light, light italic, normal, normal italic, bold, bold italic
+# - Be aware that setting too much fonts will cause site running slowly
+# - Introduce in 5.0.1
+# ---------------------------------------------------------------
+font:
+  enable: true
+
+  # Uri of fonts host. E.g. //fonts.googleapis.com (Default)
+  host:
+
+  # Global font settings used on <body> element.
+  global:
+    # external: true will load this font family from host.
+    external: true
+    family: Lato
+
+  # Font settings for Headlines (h1, h2, h3, h4, h5, h6)
+  # Fallback to `global` font settings.
+  headings:
+    external: true
+    family:
+
+  # Font settings for posts
+  # Fallback to `global` font settings.
+  posts:
+    external: true
+    family:
+
+  # Font settings for Logo
+  # Fallback to `global` font settings.
+  # The `size` option use `px` as unit
+  logo:
+    external: true
+    family:
+    size:
+
+  # Font settings for <code> and code blocks.
+  codes:
+    external: true
+    family:
+    size:
+
+# ---------------------------------------------------------------
+# 3rd partyl lib
+# ---------------------------------------------------------------
+
+# MathJax Support
+mathjax:
+  enable: true
+  per_page: false
+  cdn: //cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML
+    
+# //cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+
+vendors:
+  # Internal path prefix. Please do not edit it.
+  _internal: assets/lib
+

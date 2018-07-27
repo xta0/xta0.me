@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: Data Structre Part 10 | 索引-2 | Indexing-2
-title: 动态索引 | Dynamic Indexing
+list_title: Data Structre Part 10 | 索引-2 | B+ Tree
+title: B树 和 B+ 树
 mathjax: true
 ---
 
@@ -11,7 +11,10 @@ mathjax: true
 
 ### B树
 
-B树是一种平衡的多分树(Balanced Tree)
+B树是一种平衡的多分树(Balanced Tree)，它有以下性质
 
+1. 
+
+<img class="img-center" src="/assets/images/2008/09/B-Tree-1.png">
 
 ## 位索引

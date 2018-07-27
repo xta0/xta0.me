@@ -1,5 +1,14 @@
 ---
 layout: default
 ---
-{% assign __ = site.data.languages[site.language] %}
-{% include index.html %}
+{% assign posts = site.posts %}
+{% if site.paginate > 0 %}
+    {% assign posts = paginator.posts %}
+{% endif %}
+
+<section id="posts" class="posts-expand">
+    {% for post in posts %}
+        {% include _macro/post.html %}
+    {% endfor %}
+</section>
+{% include _partials/pagination.html %}

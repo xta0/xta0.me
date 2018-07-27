@@ -40,8 +40,6 @@ $link-decoration-hover-color  : $black-deep;
 // Typography
 // Font, line-height, and elements colors.
 // --------------------------------------------------
-
-
 // Font Weight
 $font-weight-lighter      : 200;
 $font-weight-light        : 300;
@@ -56,3 +54,14 @@ $font-size-small          : $font-size-base - 2px;
 $font-size-smaller        : $font-size-base - 4px;
 $font-size-large          : $font-size-base + 2px;
 $font-size-larger         : $font-size-base + 4px;
+
+//Font families
+// $font-family-chinese      : "PingFang SC", "Microsoft YaHei";
+// $font-family-base         : $font-family-chinese, sans-serif;
+$font-family-base         : Helvetica, arial, sans-serif;
+$font-family-logo         : $font-family-base;
+$font-family-headings     : $font-family-base;
+$font-family-posts        : $font-family-base;
+// $font-family-monospace    : consolas, Menlo, $font-family-chinese, monospace;
+$font-family-monospace    : consolas, Menlo, monospace;
+$font-family-icons        : 'FontAwesome';

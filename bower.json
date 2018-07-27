@@ -19,7 +19,13 @@
     "bower_components",
     "assets/lib",
     "test",
-    "tests"
+    "tests",
+    "*.md",
+    "*.MD",
+    "*.github",
+    "docs/"
   ],
-  "dependencies": {}
+  "dependencies": {
+    "components-font-awesome": "^5.0.6"
+  }
 }
