@@ -3,9 +3,16 @@ layout: default
 ---
 
 {% assign posts = site.posts %}
-<section class="index-main">
+{% assign year = 0 %}
+<section class="page-home__main">
+    <h1 class="page-home__main__title"> Visionary Lab </h1>
     <ul>
     {% for post in posts %}
+        {% assign post_year = post.date | date: "%Y" %}
+        {% if post_year != year %}
+            {% assign year = post_year %}
+            <h2 style="text-align: center">{{post_year}}</h2>
+        {%endif%}
         <li>{% include _partials/index-date.html %}<a href="{{post.url}}">{{post.list_title}}</a></li>
     {% endfor %}
     </ul>

@@ -66,6 +66,7 @@ post_copyright:
 # Menus
 ###############################
 menu:
+  home: /
   archives: /archives/
   about: /about/
   # tags: /tags/

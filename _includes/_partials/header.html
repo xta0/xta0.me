@@ -1,18 +1,16 @@
-
-<div class="site-header">
-    {% assign lang = site.data.languages[site.language] %}
-    <div class="site-header__logo">
-        <a href="{{ site.root }}/" class="logo"><span>{{ site.title }}</span></a>
-    </div>    
-    <div class="site-header__nav">
-        {% for name_path in site.menu %} 
-        {% assign name = name_path[0] %} 
-        {% assign path = name_path[1] %}
-        {% assign icon_name = name | downcase %}
-        {% assign item_name = lang.menu[icon_name] %}
-        <div class="menu-item">
-            <a href="{{ site.root }}{{path}}"><i class="fa fa-fw fa-{{site.menu_icons[icon_name]}}"></i>{{item_name}}</a>
-        </div> 
-    {% endfor %}
-    </div>
+{% assign lang = site.data.languages[site.language] %}
+<!-- <div class="site-header__logo">
+    <a href="{{ site.root }}/" class="logo"><span>{{ site.title }}</span></a>
+</div>     -->
+<div class="site-header__nav">
+    {% for name_path in site.menu %} 
+    {% assign name = name_path[0] %} 
+    {% assign path = name_path[1] %}
+    {% assign icon_name = name | downcase %}
+    {% assign item_name = lang.menu[icon_name] %}
+    <div class="menu-item">
+        <a href="{{ site.root }}{{path}}"><i class="fa fa-fw fa-{{site.menu_icons[icon_name]}}"></i>{{item_name}}</a>
+    </div> 
+{% endfor %}
 </div>
+

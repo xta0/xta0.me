@@ -1,14 +1,30 @@
 
 //
-// Sizes
+// Layout Sizes
 // =================================================
-$content_width: 900px;
+
+// $main-desktop                   : 960px;
+// $main-desktop-large             : 1200px;
+// $content-desktop                : 700px;
+// $content-desktop-large          : 900px;
+// $content-desktop-padding        : 40px;
+
+// $sidebar-desktop                : 240px;
+
+// $footer-height                  : 50px;
+
+// $gap-between-main-and-footer    : 100px;
+
+
+$content-desktop: 900px;
 // large-screen
 $header-width: 260px;
 $header-padding: 40px;
 
 // small screen
 $header_height: 60px;
+
+$small-gap: 12px;
 
 // Colors
 // colors for use across theme.
@@ -121,7 +137,6 @@ $table-row-odd-bg-color         : #f9f9f9;
 $table-row-hover-bg-color       : $whitesmoke;
 
 
-
 // Code & Code Blocks
 // --------------------------------------------------
 $code-font-family               : $font-family-monospace;
@@ -132,12 +147,10 @@ $code-foreground                : $black-light;
 $code-background                : $gainsboro;
 
 
-
 // Buttons
 // --------------------------------------------------
 
 $btn-font-weight                : normal;
-
 $btn-default-radius             : 0;
 $btn-default-bg                 : $black-deep;
 $btn-default-color              : white;
@@ -154,15 +167,12 @@ $btn-default-hover-border-color : $black-deep;
 // --------------------------------------------------
 
 $pagination-border              : $gainsboro;
-
 $pagination-link-bg             : transparent;
 $pagination-link-color          : $link-color;
 $pagination-link-border         : $gainsboro;
-
 $pagination-link-hover-bg       : transparent;
 $pagination-link-hover-color    : $link-color;
 $pagination-link-hover-border   : $black-deep;
-
 $pagination-active-bg           : $grey-light;
 $pagination-active-color        : white;
 $pagination-active-border       : $grey-light;
@@ -172,16 +182,4 @@ $pagination-active-border       : $grey-light;
 // Layout sizes
 // --------------------------------------------------
 
-$main-desktop                   : 960px;
-$main-desktop-large             : 1200px;
-
-$content-desktop                : 700px;
-$content-desktop-large          : 900px;
-$content-desktop-padding        : 40px;
-
-$sidebar-desktop                : 240px;
-
-$footer-height                  : 50px;
-
-$gap-between-main-and-footer    : 100px;
 

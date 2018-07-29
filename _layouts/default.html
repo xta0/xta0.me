@@ -6,23 +6,24 @@
     {% include _partials/head.html %}
     <title>{{page.title}}</title>
 </head>
-<body itemscope itemtype="http://schema.org/WebPage"  lang="{{ page.lang | default: page.language | default: site.language }}">
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="{{ page.lang | default: page.language | default: site.language }}">
     {% assign lang = site.data.languages[site.language] %}
-    <div id="container" class="site-container">
-        <div class="wrapper">
-            <div class="wrapper__content">
-                <header itemscope itemtype="http://schema.org/WPHeader">
-                    {% include _partials/header.html %}
-                </header>
-                <main id="main" class="site-main">
+    <div class="site-container">
+        <div class="site-container__content">
+            <header class="site-header" itemscope itemtype="http://schema.org/WPHeader">
+                {% include _partials/header.html %}
+            </header>
+            <main class="site-main">
+                <div class="{{page_class}}">
                     {{content}}
-                </main>
-            </div>
-            <div class="wrapper__footer">
-                <footer id="footer" class="site-footer">
-                    {% include _partials/footer.html %}
-                </footer>
-            </div>
+                </div>
+            </main>
+        </div>
+        <div class="site-container__footer">
+            <footer class="site-footer">
+                {% include _partials/footer.html %}
+            </footer>
         </div>
     </div>
 
