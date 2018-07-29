@@ -1,51 +1,36 @@
 <!DOCTYPE html> 
-{% include _blocks/page_class.html %}
+{% include _blocks/page_class.html %} 
 {% include _blocks/sidebar.html %}
 <html>
 
 <head>
-    {% include _partials/head/head.html %}
+    {% include _partials/head.html %}
     <title>{{page.title}}</title>
-    <link rel="stylesheet" href="{{site.baseurl}}/assets/css/post-theme/github2.css">
-    <!-- <link rel="stylesheet" href="{{site.baseurl}}/assets/css/post-theme/clearness.css"> -->
-
 </head>
 <!-- lang="{{ page.lang | default: page.language | default: site.language }}" -->
 
 <body itemscope itemtype="http://schema.org/WebPage">
-    
+
     {% assign container_class = "site-container"%}
     <!-- side bar -->
-    {% if site.sidebar.position %} 
-    {% endif %} 
-    
-    <div id="header" class="{{container_class}} {{page_class}}">
-        <header class="site-header" itemscope itemtype="http://schema.org/WPHeader">
-            <div class="wrapper">{% include header.html %}</div>
-        </header>
-        <main id="main" class="site-main">
-            <div class="wrapper">
-                <div class="content-wrapper">
-                    <div class="content-wrapper__content">
-                        {{content}}
-                    </div>
-                    <!-- comments -->
-                </div>
-                <!-- side bar -->
-                {% if site.sidebar.display != 'remove' %} 
-                    {{ sidebar }} 
-                {% endif %}
-            </div>
-        </main>
-        <footer id="footer" class="site-footer">
-            <div class="wrapper">
-                {% include footer.html %}
-            </div>
-        </footer>
+    {% if site.sidebar.position %} {% endif %}
+
+    <div id="container" class="{{container_class}} {{page_class}}">
+        <div class="wrapper">
+            <header itemscope itemtype="http://schema.org/WPHeader">
+                {% include _partials/header.html %}
+            </header>
+            <main id="main" class="site-main">
+                {{content}}      
+            </main>
+            <footer id="footer" class="site-footer">
+                {% include _partials/footer.html %}
+            </footer>
+        </div>
     </div>
 
     <!-- third party -->
-    {% include _third-party/prism.html %}
+    {% include _third-party/prism.html %} 
     {% include _third-party/mathjax.html %}
 
 </body>

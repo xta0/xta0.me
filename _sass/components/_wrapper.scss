@@ -1,3 +1,13 @@
-.wrapper{
-    
+.wrapper {
+    overflow: hidden;
+    max-width: $content_width;
+    margin-left: auto;
+    margin-right: auto;
+
+    &--medium {
+        max-width: 976px;
+    }
+    &--narrow {
+        max-width: 470px;
+    }
 }

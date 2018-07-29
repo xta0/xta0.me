@@ -1,19 +1,18 @@
 ---
 
 ---
-
-@import "base/_variables";
+@import "vendor/normalize.scss";
 @import "base/_base";
 @import "base/_mixins";
+@import "base/global";
 @import "components/_site-container";
 @import "components/_site-header";
 @import "components/_site-menu";
 @import "components/_wrapper";
 @import "components/_site-main";
-@import "components/_content-wrapper";
 @import "components/_site-footer";
 @import "components/_site-posts";
-
+@import "components/_menu-item";
 
 
 

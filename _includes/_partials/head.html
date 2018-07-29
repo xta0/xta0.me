@@ -3,15 +3,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
 
-{% assign font_awesome_uri = site.vendors._internal | append: '/components-font-awesome/css/fontawesome.min.css' | relative_url %}
-{% if site.vendors.fontawesome %}
-  {% assign font_awesome_uri = site.vendors.fontawesome %}
-{% endif %}
-<link href="{{ font_awesome_uri }}" rel="stylesheet" type="text/css" />
 <!-- link css  -->
 <link href="{{ site.css | relative_url }}/assets/css/main.css" rel="stylesheet" type="text/css" />
+<link href="{{ site.css | relative_url }}/assets/lib/fontawesome/css/all.css" rel="stylesheet"> 
 
-
+<!--  -->
 <script type="text/javascript" id="viz.configuration">
     var CONFIG = {
         root: '{{site.baseurl}}',

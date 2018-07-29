@@ -1,3 +1,16 @@
 .site-header{
-    background-color:#f5f5f5;
+    background-color:$gray-lighter;
+    height: $header_height;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    &__logo{
+        display: flex;
+    }
+    
+    &__nav{
+        display: flex;
+    }
 }

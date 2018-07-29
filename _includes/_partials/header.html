@@ -1,0 +1,17 @@
+<div class="site-header">
+    <div class="site-header__logo">
+        <a href="{{ site.root }}/" class="site-logo" rel="start">
+            <span class="site-title">{{ site.title }}</span>
+        </a>
+    </div>    
+    <div class="site-header__nav">
+        {% for name_path in site.menu %} 
+        {% assign name = name_path[0] %} 
+        {% assign path = name_path[1] %}
+         {% assign icon = name | downcase %}
+        <div class="menu-item">
+            <a href="{{ site.root }}{{path}}"><i class="fa fa-fw fa-{{site.menu_icons[icon]}}"></i>{{name}}</a>
+        </div> 
+    {% endfor %}
+    </div>
+</div>
