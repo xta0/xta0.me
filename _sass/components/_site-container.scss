@@ -1,3 +1,16 @@
 .site-container{
-    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+    max-width: $content_width;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: $gray-lighter;
+    &--medium {
+        max-width: 976px;
+    }
+    &--narrow {
+        max-width: 470px;
+    }
 }

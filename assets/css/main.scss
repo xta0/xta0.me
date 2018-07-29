@@ -6,13 +6,16 @@
 @import "base/_mixins";
 @import "base/global";
 @import "components/_site-container";
-@import "components/_site-header";
-@import "components/_site-menu";
 @import "components/_wrapper";
+@import "components/_site-header";
+@import "components/_logo";
 @import "components/_site-main";
+@import "components/_index-main";
+@import "components/_site-menu";
 @import "components/_site-footer";
 @import "components/_site-posts";
 @import "components/_menu-item";
+@import "components/_date";
 
 
 

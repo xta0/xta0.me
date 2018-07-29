@@ -1,16 +1,17 @@
 .site-header{
-    background-color:$gray-lighter;
-    height: $header_height;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
+    display: flex;    
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+    padding: 16px 20px;
     &__logo{
-        display: flex;
+        margin: 30px 0px;   
+        text-align: right;
     }
-    
     &__nav{
         display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-end;
     }
 }

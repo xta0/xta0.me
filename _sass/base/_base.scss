@@ -2,7 +2,12 @@
 //
 // Sizes
 // =================================================
-$content_width: 800px;
+$content_width: 900px;
+// large-screen
+$header-width: 260px;
+$header-padding: 40px;
+
+// small screen
 $header_height: 60px;
 
 // Colors
@@ -39,7 +44,7 @@ $link-decoration-hover-color  : $black-deep;
 // Global border color.
 $border-color                 : $grey-light;
 // Background color for <body>
-$body-bg-color                : white;
+$body-bg-color                : $gray-lighter;
 // Selection
 $selection-bg                 : $blue-deep;
 $selection-color              : white;
@@ -75,6 +80,7 @@ $font-size-small          : $font-size-base - 2px;
 $font-size-smaller        : $font-size-base - 4px;
 $font-size-large          : $font-size-base + 2px;
 $font-size-larger         : $font-size-base + 4px;
+$font-size-logo           : 24px;  
 
 // Headings font size
 $font-size-headings-step    : 2px;

@@ -1,13 +1,14 @@
 .wrapper {
-    overflow: hidden;
-    max-width: $content_width;
-    margin-left: auto;
-    margin-right: auto;
-
-    &--medium {
-        max-width: 976px;
+    width: $content_width;
+    background-color: white;
+    padding: 20px 0;
+    .wrapper__content{
+        display: flex;
+        flex-direction: row;
     }
-    &--narrow {
-        max-width: 470px;
+    .wrapper__footer{
+        display: flex;
+        justify-content: center;
+
     }
 }

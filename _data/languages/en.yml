@@ -1,10 +1,3 @@
-title:
-  archive: Archive
-  category: Category
-  tag: Tag
-  schedule: Schedule
-
-author: Author
 
 menu:
   home: Home
@@ -88,3 +81,8 @@ symbol:
   comma: ', '
   period: '. '
   colon: ':'
+
+index:
+  title: 
+
+
