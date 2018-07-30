@@ -34,50 +34,50 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: bold;
     line-height: 1.5;
     font-family: $font-family-headings;
-    margin-bottom: 10px;
-}
-
-@for $headline from 1 through 6 {
+  }
+  
+  h2, h3, h4, h5, h6 { margin: 20px 0 15px; }
+  
+  @for $headline from 1 through 6 {
     h#{$headline} {
-        font-size: $font-size-headings-base - $font-size-headings-step * $headline;
+      font-size: $font-size-headings-base - $font-size-headings-step * $headline;
     }
-
-    @include mobile {
-        h#{$headline} {
-            font-size: $font-size-headings-base - $font-size-headings-step * $headline - 4px;
-        }
+  
+    @include mobile() {
+      h#{$headline} {
+        font-size: $font-size-headings-base - $font-size-headings-step * $headline - 4px;
+      }
     }
-}
-
-p {
-    margin: 0 0 25px 0;
-    line-height: 1.8;
-}
-
-a {
+  }
+  
+  p { margin: 0 0 25px 0; }
+  
+  a {
     color: $link-color;
     text-decoration: none;
     border-bottom: 1px solid $grey-dark;
     word-wrap: break-word;
-
+  
     &:hover {
-        color: $link-hover-color;
-        border-bottom-color: $link-decoration-hover-color;
+      color: $link-hover-color;
+      border-bottom-color: $link-decoration-hover-color;
     }
-}
-
-blockquote {
+  }
+  
+  blockquote {
     margin: 0;
     padding: 0;
-}
-
-img {
+  }
+  
+  img {
     display: block;
     margin: auto;
     max-width: 100%;
     height: auto;
-}
-hr {
+  }
+  
+  
+  hr {
     margin: 40px 0;
     height: 3px;
     border: none;
@@ -108,3 +108,4 @@ hr {
     margin: 0;
     padding: 0;
   }
+  

@@ -2,6 +2,8 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding-left: 12px;
+    // tricy, don't know why
+    flex-grow: 1;
+    width: 0;
     
 }

@@ -1,0 +1,30 @@
+.page-post{
+    
+    font-family: $font-family-posts;
+    padding-left: 40px;
+    padding-right: 20px;
+
+    @include mobile() {
+        word-break: break-word;
+      }
+
+    &__header{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 60;
+
+        &__title{
+   
+        }
+        &__mata{
+            text-align: center;
+            margin-top: 0 12px;
+
+            &__icon{
+                
+            }
+        }
+    }
+}

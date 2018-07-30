@@ -4,16 +4,20 @@
 
 @import "base/_base";
 @import "base/_mixins";
-@import "base/global";
-@import "components/_site-container";
-@import "components/_site-header";
-@import "components/_site-footer";
-@import "components/_site-main";
-@import "components/_page-home.scss";
-@import "components/_page-about.scss";
-@import "components/_page-post.scss";
-@import "components/_page-archive.scss";
-
+@import "base/_global";
+@import "base/_table";
+@import "base/_highlight";
+@import "base/base";
+@import "components/site/_site-container";
+@import "components/site/_site-header";
+@import "components/site/_site-footer";
+@import "components/site/_site-main";
+@import "components/page/_page-home";
+@import "components/page/_page-about";
+@import "components/page/_page-post";
+@import "components/page/_page-archive";
+@import "components/post/_post-title";
+@import "components/post/_post-meta";
 @import "components/_logo";
 @import "components/_date";
 @import "components/_menu-item";

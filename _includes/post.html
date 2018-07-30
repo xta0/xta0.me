@@ -1,0 +1,35 @@
+<div class="page-post__header">
+    <h2 class="post-title">
+        {{page.title}}
+    </h2>
+    <div class="post-meta">
+        <span class="post-time">
+            <!-- craated -->
+            <span class="page-meta__icon">
+                <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta__item-text">{{ __.post.posted }}</span>
+            <time title="{{ __.post.created }}" itemprop="dateCreated datePublished" datetime="{{ post.date | date_to_xmlschema }}">
+                <span>{{ page.date | date: site.date_format }} </span>
+            </time>
+            <span class="post-meta__divider">|</span>
+
+            <!-- updated -->
+            <span class="page-meta__icon">
+                <i class="fa fa-calendar-check-o"></i>
+            </span>
+            <span class="post-meta__item-text">{{ __.post.modified }}</span>
+            <time title="{{ __.post.modified }}" itemprop="dateModified" datetime="{{ post.updated | date: site.date_format }}">
+                {{ page.updated | date: site.date_format }}
+            </time>
+            <span class="post-meta__divider">|</span>
+        </span>
+        
+    </div>
+</div>
+<div class="page-post__content">
+    {{page.content}}
+</div>
+<div class="page-post__footer">
+
+</div>

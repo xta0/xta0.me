@@ -10,6 +10,7 @@ description:
 author: xta0
 # support en, zh-Hans
 language: zh-Hans
+date_format: '%Y-%m-%d'
 
   # Put your favicon.ico into `assets/` directory.
 favicon: /assets/favicon.ico
@@ -31,11 +32,10 @@ sass:
   style: :compressed
 
 # markdown
-markdown: kramdown
-highlighter: none
-kramdown:
-  syntax_highlighter_opts:
-    disable : true
+highlighter: rouge
+highlight:
+  line_number: true
+
 # ---------------------------------------------------------------
 # Post  Settings
 # ---------------------------------------------------------------

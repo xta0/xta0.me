@@ -19,19 +19,16 @@
 $content-desktop: 900px;
 // large-screen
 $header-width: 260px;
-$header-padding: 40px;
-
 // small screen
 $header_height: 60px;
-
-$small-gap: 12px;
 
 // Colors
 // colors for use across theme.
 // -------------------------------------------------
 $whitesmoke   : #f5f5f5;
 $gainsboro    : #eee;
-$gray-lighter : #f2f2f2;
+$grey-lighter : #f8f8f8;
+$gray-lighter : #f8f8f8;
 $grey-light   : #ccc;
 $grey         : #bbb;
 $grey-dark    : #999;
@@ -60,7 +57,7 @@ $link-decoration-hover-color  : $black-deep;
 // Global border color.
 $border-color                 : $grey-light;
 // Background color for <body>
-$body-bg-color                : $gray-lighter;
+$body-bg-color                : $grey-lighter;
 // Selection
 $selection-bg                 : $blue-deep;
 $selection-color              : white;
@@ -125,14 +122,14 @@ $zindex-5       : 1050;
 // Table
 // --------------------------------------------------
 $table-width                    : 100%;
-$table-border-color             : $gray-lighter;
+$table-border-color             : $grey-lighter;
 $table-font-size                : 14px;
 $table-content-alignment        : left;
 $table-content-vertical         : middle;
 $table-th-font-weight           : 700;
 $table-cell-padding             : 8px;
 $table-cell-border-right-color  : $gainsboro;
-$table-cell-border-bottom-color : $gray-lighter;
+$table-cell-border-bottom-color : $grey-lighter;
 $table-row-odd-bg-color         : #f9f9f9;
 $table-row-hover-bg-color       : $whitesmoke;
 
