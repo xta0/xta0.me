@@ -6,7 +6,7 @@ categories: 随笔
 
 ---
 
-<em>所有文章均为作者原创，转载请注明出处</em>
+<em></em>
 
 最近大家都在探讨iOS7的blur effect，用的最多的基本上是apple在<a href="https://developer.apple.com/downloads/index.action?name=WWDC%202013">WWDC2013中的demo</a>。其实现思路是：高斯模糊+一层白色的mask，再调整一下饱和度。出于性能考虑，demo采用了Accelerate framework中的<a href="https://developer.apple.com/library/mac/documentation/performance/Conceptual/vImage/Introduction/Introduction.html">vImage</a>，vImage提供了模版运算的api，可以直接通过openGL做向量运算，因此demo采用了<a href="http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement">三次均值滤波去逼近高斯滤波的效果</a>，误差有3%。但却能大大提高计算效率。
 

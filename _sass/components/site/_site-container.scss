@@ -11,17 +11,8 @@
     &__content{
         display: flex;
         flex-direction: row;
+        justify-content: space-between;
         margin-top: 60px;
         margin-bottom: 20px;
     }
-    &__header{
-
-    }
-    &__footer{
-        display: flex;
-        justify-content: center;
-    }
-    // &--narrow {
-    //     max-width: 470px;
-    // }
 }

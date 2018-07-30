@@ -3,7 +3,7 @@ layout: post
 list_title: Lua Part 1 - C API
 ---
 
-<em> 所有文章均为作者原创，转载请注明出处 </em>
+<em>  </em>
 
 > From "Programming in Lua"
 

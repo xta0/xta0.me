@@ -7,7 +7,7 @@ categories: 随笔
 ---
 
 
-<em>所有文章均为作者原创，转载请注明出处</em>
+<em></em>
 
 最近被迫在大量的使用__unsafe_unretained pointer，用起来坑太多了
 先看一段必然会crash的代码：

@@ -1,11 +1,9 @@
+author: 徐韬
 title:
   archive: 归档
   category: 分类
   tag: 标签
   schedule: 日程表
-
-author: 博主
-
 menu:
   home: 首页
   archives: 归档
@@ -34,11 +32,11 @@ post:
   wordcount: 字数统计
   min2read: 阅读时长
   copyright:
-    author: 本文作者
-    link: 本文链接
+    author: 徐韬
+    link: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
     license_title: 版权声明
-    license_content: '本博客所有文章除特别声明外，均采用
-      <a href="%s" rel="external nofollow" target="_blank">%s</a> 许可协议。转载请注明出处！'
+    license_content: 本站点采用知识共享 署名-非商业性使用-相同方式共享 4.0 国际 许可协议
+
 
 page:
   totally: 共有

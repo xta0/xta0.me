@@ -7,7 +7,7 @@ categories: 随笔
 ---
 
 
-<em>所有文章均为作者原创，转载请注明出处</em>
+<em></em>
 
 最近看了一篇很有趣文章，<a href="http://blog.parse.com/2013/02/05/objective-c-blocks-quiz/">关于block的quiz</a>，5道题答错了两道。之前理解block可以在heap和stack上alloc，看了这篇文章才发现原来还有global的block。想想也是，这种block不引用任何variable，在编译的时候就可以确定下来了。
 

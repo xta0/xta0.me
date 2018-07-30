@@ -9,22 +9,19 @@
       }
 
     &__header{
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 60;
-
-        &__title{
-   
+        hr {            
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 12px;
+            margin-bottom: 20px;
+            border-top: solid 1px $grey-dark;
+            width: 300px;
         }
-        &__mata{
-            text-align: center;
-            margin-top: 0 12px;
+    }
+    &__content{
+        margin-top: 20px;
+    }
+    &__footer{
 
-            &__icon{
-                
-            }
-        }
     }
 }

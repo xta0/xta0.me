@@ -6,7 +6,7 @@ categories: PL
 tags: Ruby
 ---
 
-> 所有文章均为作者原创，转载请注明出处
+> 
 
 ## Ruby中的正则表达式
 

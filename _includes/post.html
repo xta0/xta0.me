@@ -3,10 +3,10 @@
         {{page.title}}
     </h2>
     <div class="post-meta">
-        <span class="post-time">
+        <span class="post-meta-time">
             <!-- craated -->
             <span class="page-meta__icon">
-                <i class="fa fa-calendar-o"></i>
+                <i class="fas fa-calendar"></i>
             </span>
             <span class="post-meta__item-text">{{ __.post.posted }}</span>
             <time title="{{ __.post.created }}" itemprop="dateCreated datePublished" datetime="{{ post.date | date_to_xmlschema }}">
@@ -16,7 +16,7 @@
 
             <!-- updated -->
             <span class="page-meta__icon">
-                <i class="fa fa-calendar-check-o"></i>
+                <i class="fas fa-calendar-check"></i>
             </span>
             <span class="post-meta__item-text">{{ __.post.modified }}</span>
             <time title="{{ __.post.modified }}" itemprop="dateModified" datetime="{{ post.updated | date: site.date_format }}">
@@ -24,8 +24,32 @@
             </time>
             <span class="post-meta__divider">|</span>
         </span>
-        
+        <span class="post-meta-category">
+            <!-- category  -->
+            <span class="page-meta__icon">
+                <i class="fas fa-folder"></i>
+            </span>
+            <span class="post-meta__item-text">{{ __.post.in }}</span>
+            {% for cat in page.categories %}
+            {% assign cat_url_encode = cat | url_encode | replace: '+', '%20' %}
+            <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+              <a href="{{ '/category/#/' | relative_url | append: cat_url_encode }}" itemprop="url" rel="index">
+                <span itemprop="name">{{ cat }}</span>
+              </a>
+            </span>
+            {% assign cat_length = page.categories.size %}
+            {% if cat_length > 1 and forloop.index != cat_length %}
+              {{ __.symbol.comma }}
+            {% endif %}
+          {% endfor %}
+        </span>
     </div>
+    <div class="post-author">
+        <span class="post-author__content" >
+            {{__.author}} / {{page.date | date: site.date_format}}
+        </span>
+    </div>
+    <hr>
 </div>
 <div class="page-post__content">
     {{page.content}}

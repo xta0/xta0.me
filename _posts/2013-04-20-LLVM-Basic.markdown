@@ -6,7 +6,7 @@ categories: 随笔
 
 ---
 
-<em>所有文章均为作者原创，转载请注明出处</em>
+<em></em>
 
 最近在用LLDB，感到很乏力，和GDB的命令差很多，因此想好好研究下iOS代码的编译环境——<a href="llvm.org">LLVM</a>（low level virtual machine）。
 

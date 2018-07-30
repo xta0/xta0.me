@@ -3,7 +3,7 @@ layout: post
 list_title: Ubuntu上部署ROR 
 ---
 
-<em>所有文章均为作者原创，转载请注明出处</em>
+<em></em>
 
 
 >更新于 2014/05/02

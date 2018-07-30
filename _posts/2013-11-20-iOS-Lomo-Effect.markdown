@@ -6,7 +6,7 @@ categories: 随笔
 
 ---
 
-<em>所有文章均为作者原创，转载请注明出处</em>
+<em></em>
 
 lomo效果，是一种很流行的滤镜效果，许多开源的工程都能实现，比如很cool的GPUImage。但是想实现instagram的效果却有点难，其实从图像处理的角度出发，实现instagram的lomo效果并不复杂，难点在一些性能优化上。因此，我准备从图像处理的角度出发，从理论上实现instagram滤镜的hefe效果。
 

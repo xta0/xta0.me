@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: VSCode Tips
 list_title: VSCode Tips
 ---

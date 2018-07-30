@@ -6,7 +6,7 @@ categories: 随笔
 
 ---
 
-<em>所有文章均为作者原创，转载请注明出处</em>
+<em></em>
 
 想象一下，有一个小车，上面绑上摄像头，可以用iPhone控制，实时采集视频，发送到手机上。类似[这种](http://blog.miguelgrinberg.com/post/building-an-arduino-robot-part-i-hardware-components)。基本上采用Arduino和它上面一些扩展的shield就能实现。在淘宝上买了Arduino，摆弄了一阵，开始还以为和c51，DSP一样，需要一堆堆的汇编呢，上手发现arduino居然提供api，IDE也很友好。动手写了一些demo，复习了一些数电模电的知识，还想了半天面包板该怎么插，想通了之后，后面就很容易了，但烧坏了一支LED。
 

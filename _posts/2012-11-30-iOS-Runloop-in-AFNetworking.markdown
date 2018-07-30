@@ -5,7 +5,7 @@ layout: post
 ---
 
 
-<em>所有文章均为作者原创，转载请注明出处</em>
+<em></em>
 
 最近大家都开始用<a href="https://github.com/AFNetworking/AFNetworking">AFNetworking</a>，今天看了下它网络请求的代码，采用的也是NSOperation+NSURLConnetion并发模型。一般使用这种模型都要解决一个问题：
 NSURLConnection对象在下载完前，所在线程就退出了，NSOperation对象也就接收不到回调。

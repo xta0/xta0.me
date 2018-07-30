@@ -5,7 +5,7 @@ meta: AsyncDisplayKit是Facebook开源的一套异步绘制UI的framework，用�
 category: iOS
 ---
 
-<em>所有文章均为作者原创，转载请注明出处</em> 
+<em></em> 
 
 
 ##AsyncDisplayKit简介

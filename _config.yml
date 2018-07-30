@@ -11,11 +11,8 @@ author: xta0
 # support en, zh-Hans
 language: zh-Hans
 date_format: '%Y-%m-%d'
-
-  # Put your favicon.ico into `assets/` directory.
 favicon: /assets/favicon.ico
-# Footer `powered-by` and `theme-info` copyright
-copyright: true
+
 # site url
 url:
 baseurl: 
@@ -40,13 +37,6 @@ highlight:
 # Post  Settings
 # ---------------------------------------------------------------
 
-# Post meta display settings
-post_meta:
-  item_text: true
-  created_at: true
-  updated_at: false
-  categories: true
-
 # Post wordcount display settings
 post_wordcount:
   item_text: true
@@ -68,6 +58,7 @@ post_copyright:
 menu:
   home: /
   archives: /archives/
+  categories: /category/
   about: /about/
   # tags: /tags/
   #sitemap: /sitemap.xml
@@ -99,3 +90,13 @@ vendors:
   # Internal path prefix. Please do not edit it.
   _internal: assets/lib
 
+
+copyright:
+  author: Tao Xu
+  link: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+  license_title: © Tao Xu 2007 - 2018 All Rights Reserved
+  license_content: "Content on this site is licensed under a Creative Commons Attribution 4.0 International license"
+  jekyll: "https://jekyllrb.com/"
+  linode: "https://www.linode.com/"
+  github: "https://github.com/xta0/xta0.me"
+  last_gen: "Site last generated: Jul 30,2018"

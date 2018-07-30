@@ -5,7 +5,7 @@ tag: Ruby
 categories: [pl,cheatsheet]
 ---
 
-<em>所有文章均为作者原创，转载请注明出处</em>
+<em></em>
 
 > ###Ruby 2.0 简明语法整理
 

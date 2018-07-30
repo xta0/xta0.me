@@ -1,8 +1,0 @@
-{% assign post_class = 'post post-type-' | append: post.type | default: 'normal' %}
-{% assign post_class = post_class | append: ' ' | append: post_extra_class | default: '' %}
-
-<article class="site-post" itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="{{ post.url | absolute_url }}">
-    
-
-</article>

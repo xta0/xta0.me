@@ -1,4 +1,4 @@
-
+author: "Tao(Jason) Xu"
 menu:
   home: Home
   archives: Archives
@@ -28,11 +28,10 @@ post:
   wordcount: Words count in article
   min2read: Reading time
   copyright:
-    author: Post author
-    link: Post link
+    author: Tao Xu
+    link: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
     license_title: Copyright Notice
-    license_content: 'All articles in this blog are licensed under
-      <a href="%s" rel="external nofollow" target="_blank">%s</a> unless stating additionally.'
+    license_content: 'Except where otherwise noted, content on this site is licensed under a Creative Commons Attribution 4.0 International license'
 
 page:
   totally: Totally
@@ -84,5 +83,7 @@ symbol:
 
 index:
   title: 
+
+  
 
 

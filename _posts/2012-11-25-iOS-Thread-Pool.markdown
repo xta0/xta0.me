@@ -6,7 +6,7 @@ categories: 随笔
 
 ---
 
-<em>所有文章均为作者原创，转载请注明出处</em>
+<em></em>
 
 在GCD和NSOperationQueue之前，iOS使用线程一般是用NSThread，而NSThread是对<a title="POSIX THREAD" href="http://en.wikipedia.org/wiki/POSIX_Threads">POSIX thread</a>的封装,也就是pthread，本文最后会面附上一段使用pthread下图片的代码，现在我们还是继续上面的讨论。使用NSThread的一个最大的问题是：直接操纵线程，线程的生死完全交给developer控制，在大的工程中，模块间相互独立，假如A模块并发了8条线程，B模块同样需要6条线程，以此类推，线程数量会持续增长，最终会导致难以控制的结果。
 

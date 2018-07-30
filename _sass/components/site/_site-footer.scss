@@ -1,3 +1,25 @@
 .site-footer{
-    
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+    &__item{
+        max-width: 350px;
+        color: $grey-dark;
+        font-size: 12px;
+        text-align: center;
+    }
+    a  {
+        color: $grey-dark;
+    }
+    hr {            
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border-top: solid 1px $grey-dark;
+        width: 300px;
+    }   
 }

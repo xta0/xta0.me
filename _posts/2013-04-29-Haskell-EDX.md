@@ -6,7 +6,7 @@ categories: PL
 
 ---
 
-<em> 所有文章均为作者原创，转载请注明出处 </em>
+<em>  </em>
 
 > http://www.cs.nott.ac.uk/~gmh/book.html
 
