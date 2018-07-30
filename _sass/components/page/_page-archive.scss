@@ -1,0 +1,23 @@
+.page-archive {
+    padding: 0 12px;
+    &__main {
+        ul {
+            margin: 0;
+            padding: 0;
+        }
+        li {
+            list-style: none;
+            padding-left: 7px;
+            margin-bottom: 10px;
+        }
+        &__year{
+            text-align: center;
+        }
+        &__title{
+            text-align: center;
+            margin: 0px 0;
+            font-size: 36px;
+            font-weight: $font-weight-normal ;
+        }
+    }
+}

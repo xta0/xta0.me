@@ -1,14 +1,16 @@
 .site-container{
     background-color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
     overflow: hidden;
     max-width: $content-desktop;
     margin-left: auto;
     margin-right: auto;
+    // height: 100%;
+    // only have 1 child
+    display:flex;
+    flex-direction: column;
 
     &__content{
+        flex-grow:1;
         display: flex;
         flex-direction: row;
         justify-content: space-between;

@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/xta0/xta0.me/issues"
   },
-  "homepage": "https://github.com/xta0/xta0.me#readme"
+  "homepage": "https://github.com/xta0/xta0.me#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1"
+  }
 }

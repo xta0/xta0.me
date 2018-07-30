@@ -1,6 +1,7 @@
 ## xta0.me
 
-xta0.me is a static web site built using Jekyll3
+This webpage is 
+
 
 ### Themes
 
@@ -9,6 +10,13 @@ xta0.me is a static web site built using Jekyll3
 
 ### Miscellaneous
 
-- MathJax
+- MathJax for display math equations
+- Prism for code highlight
+
+### Todo
+
+- Gulp task tools
+- Category Page
+
 
 

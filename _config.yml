@@ -58,8 +58,9 @@ post_copyright:
 menu:
   home: /
   archives: /archives/
-  categories: /category/
   about: /about/
+  # categories: /category/
+  
   # tags: /tags/
   #sitemap: /sitemap.xml
   #commonweal: /404.html
