@@ -58,8 +58,8 @@ post_copyright:
 ###############################
 menu:
   home: /
-  archives: /archives/
-  about: /about/
+  archives: /src/archives/
+  about: /src/about/
   # categories: /category/
   
   # tags: /tags/

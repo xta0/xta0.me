@@ -25,5 +25,5 @@ Anyway，我个人对这个领域一直很关注，也很有兴趣从事这方�
 
 ### How a Self-Driving Car Works
 
-<img class='img-center' src='/assets/images/2018/07/sde-1.png'>
+<img class='md-img-center' src='/assets/images/2018/07/sde-1.png'>
 

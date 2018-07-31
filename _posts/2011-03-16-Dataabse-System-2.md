@@ -631,7 +631,7 @@ ON a.first_name = b.last_name;
 
 - Demo
 
-    <img class='img-center' src="/assets/images/2011/03/sql-db-1.png">
+    <img class='md-img-center' src="/assets/images/2011/03/sql-db-1.png">
     
     ```SQL
     CREATE TABLE account(

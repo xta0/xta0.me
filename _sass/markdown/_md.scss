@@ -1,0 +1,16 @@
+.md-img-center{
+    display: block;
+    margin: auto;
+    max-width: 100%;
+    height: auto;
+}
+.md-container-h{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+.md-container-v{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}

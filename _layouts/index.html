@@ -1,4 +1,6 @@
 <!DOCTYPE html> 
+{% include _blocks/page_class.html %}
+{% assign content_page = page.layout | append: ".html" %}
 <html lang="{{ site.language }}">
 <head>
     {% include _partials/head.html %}
@@ -12,8 +14,8 @@
                 {% include _partials/header.html %}
             </header>       
             <article class="site-main">
-                <main class="page-home">
-                    {% include index.html %}
+                <main class={{page_class}}>
+                    {% include {{content_page}} %}
                 </main>
                 <footer class="site-footer">
                     {% include _partials/footer.html %}

@@ -15,6 +15,6 @@ B树是一种平衡的多分树(Balanced Tree)，它有以下性质
 
 1. 
 
-<img class="img-center" src="/assets/images/2008/09/B-Tree-1.png">
+<img class="md-img-center" src="/assets/images/2008/09/B-Tree-1.png">
 
 ## 位索引

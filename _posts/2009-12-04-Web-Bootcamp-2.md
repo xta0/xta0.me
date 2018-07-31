@@ -12,7 +12,7 @@ list_title: Web Dev Bootcamp Part 2 | CSS Basics
 
 ### Browser work flow 
 
-<img class="img-center" src="/assets/images/2007/08/work-flow.png">
+<img class="md-img-center" src="/assets/images/2007/08/work-flow.png">
 
 ### 引入CSS
 
@@ -190,7 +190,7 @@ a:visited{
 
 元素layout规则
 
-<img class="img-center" src="/assets/images/2007/08/box-model.png">
+<img class="md-img-center" src="/assets/images/2007/08/box-model.png">
 
 - 涉及到
 	- **Dimensions of boxes**: the box model

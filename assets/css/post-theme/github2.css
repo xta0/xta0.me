@@ -223,7 +223,7 @@ table tr th :last-child, table tr td :last-child {
 img {
   max-width: 100%;
 }
-.img-center{
+.md-img-center{
   display: block;
   margin-left:auto;
   margin-right:auto;
