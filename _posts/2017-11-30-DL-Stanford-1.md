@@ -1,6 +1,11 @@
 ---
-list_title: Deep Learning
+updated: '2017-11-30'
+list_title: 深度学习 
+list_title_en:  Deep Learning Overview
+title: 深度学习概述 
+title_en: Deep Learning Overview;
 layout: post
+categories: ["AI", "Machine Learning"]
 ---
 
 ### Course Sequence

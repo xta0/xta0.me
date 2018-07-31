@@ -13,34 +13,39 @@
             <span class="post-meta__divider">|</span>
 
             <!-- updated -->
-            <span class="page-meta__icon">
-                <i class="fas fa-calendar-check"></i>
-            </span>
-            <span class="post-meta__item-text">{{ __.post.modified }}</span>
-            <time title="{{ __.post.modified }}" itemprop="dateModified" datetime="{{ post.updated | date: site.date_format }}">
-                {{ page.updated | date: site.date_format }}
-            </time>
-            <span class="post-meta__divider">|</span>
-        </span>
-        <span class="post-meta-category">
-            <!-- category  -->
-            <span class="page-meta__icon">
-                <i class="fas fa-folder"></i>
-            </span>
-            <span class="post-meta__item-text">{{ __.post.in }}</span>
-            {% for cat in page.categories %}
-            {% assign cat_url_encode = cat | url_encode | replace: '+', '%20' %}
-            <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-              <a href="{{ '/category/#/' | relative_url | append: cat_url_encode }}" itemprop="url" rel="index">
-                <span itemprop="name">{{ cat }}</span>
-              </a>
-            </span>
-            {% assign cat_length = page.categories.size %}
-            {% if cat_length > 1 and forloop.index != cat_length %}
-              {{ __.symbol.comma }}
+            {% if page.updated %}
+                <span class="page-meta__icon">
+                    <i class="fas fa-calendar-check"></i>
+                </span>
+                <span class="post-meta__item-text">{{ __.post.modified }}</span>
+                <time title="{{ __.post.modified }}" itemprop="dateModified" datetime="{{ post.updated | date: site.date_format }}">
+                    {{ page.updated | date: site.date_format }}
+                </time>
+                
             {% endif %}
-          {% endfor %}
         </span>
+        {% if page.categories %}
+            <span class="post-meta-category">
+                <span class="post-meta__divider">|</span>
+                <!-- category  -->
+                <span class="page-meta__icon">
+                    <i class="fas fa-folder"></i>
+                </span>
+                <span class="post-meta__item-text">{{ __.post.in }}</span>
+                {% for cat in page.categories %}
+                {% assign cat_url_encode = cat | url_encode | replace: '+', '%20' %}
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                <a href="{{ '/category/#/' | relative_url | append: cat_url_encode }}" itemprop="url" rel="index">
+                    <span itemprop="name">{{ cat }}</span>
+                </a>
+                </span>
+                {% assign cat_length = page.categories.size %}
+                {% if cat_length > 1 and forloop.index != cat_length %}
+                {{ __.symbol.comma }}
+                {% endif %}
+            {% endfor %}
+            </span>
+        {% endif %}
     </div>
     <div class="post-author">
         <span class="post-author__content" >

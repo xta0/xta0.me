@@ -4,13 +4,23 @@
     max-width: 100%;
     height: auto;
 }
-.md-container-h{
+.md-flex-h{
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
 }
-.md-container-v{
+.md-flex-v{
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    align-items: flex-start;
+}
+.md-h2-center{
+    text-align: center;
+    margin-bottom: 8px;
+}
+.md-div-clear-ol-padding{
+    ol{
+        padding-left: 0;
+    }
 }
