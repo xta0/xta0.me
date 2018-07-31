@@ -1,8 +1,12 @@
 {% assign lang = site.data.languages[site.language] %}
-<!-- <div class="site-header__logo">
-    <a href="{{ site.root }}/" class="logo"><span>{{ site.title }}</span></a>
-</div>     -->
-<div class="site-header__nav">
+{% assign nav_class = "site-header__nav" %}
+{% if page.layout == 'index'%}
+{% assign nav_class = "site-header__nav-logo" %}
+<div class="site-header__logo">
+    <img src="/assets/images/mario.png">
+</div>    
+{% endif %}
+<div class={{nav_class}}>
     {% for name_path in site.menu %} 
     {% assign name = name_path[0] %} 
     {% assign path = name_path[1] %}

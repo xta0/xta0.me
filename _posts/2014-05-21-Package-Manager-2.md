@@ -1,6 +1,9 @@
 ---
-list_title: Package Manager Part 2
+updated: "2014-05-21"
+title: 使用Dotfile | Making your own dotfile
+list_title: 使用Dotfile | Making your own dotfile
 layout: post
+categories: [UNIX]
 ---
 
 ## Dotfile
@@ -30,10 +33,13 @@ Dotfile的结构因人而异，没有什么固定的套路，本质上就是一�
 ├── system
 └── uninstall.sh
 ```
+截图如下：
 
-<img src="/assets/images/2014/05/dotfile-1.png"  width="60%" />
-
+![](/assets/images/2014/05/dotfile-1.png)
 
 ### Resoures
 
 - [Dotfiles](https://dotfiles.github.io/)
+
+
+

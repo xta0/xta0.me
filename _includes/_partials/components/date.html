@@ -1,6 +1,8 @@
 {% assign lang = site.language %}
-{% if lang == "zh-Hans" %}
-    <span class="date">{{ post.date | date: '%Y-%m-%d' }}</span>
+{% if lang == "en" %}
+    {% assign format = '%m-%d-%Y' %}
 {% else %}
-    <span>{{ post.date | date: '%m-%d-%Y' }}</span>
+    {% assign format = '%Y-%m-%d' %}
 {% endif %}
+
+<span class="date">{{ post.date | date: format }}</span>
