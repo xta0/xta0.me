@@ -1,11 +1,13 @@
 ---
 layout: post
-list_title: Database System Part 3 | NO SQL
+list_title: Database System Part 4 | Distributed Database Systems
 title: NO SQL Database
 mathjax: true
 ---
 
-- FLexible schema
-- Quicker/cheaper to set up
-- Massive scalability
-- Relaxed consistenty -> high performance & availability
+### Why Distribution
+
+- Availability
+- Scalability
+- Reliability/Fault Tolerance
+- Transparancy

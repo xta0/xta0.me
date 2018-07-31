@@ -2,7 +2,7 @@
     
     font-family: $font-family-posts;
     padding-left: 40px;
-    padding-right: 20px;
+    padding-right: 40px;
 
     @include mobile() {
         word-break: break-word;
@@ -21,7 +21,5 @@
     &__content{
         margin-top: 20px;
     }
-    &__footer{
 
-    }
 }

@@ -1,13 +1,13 @@
 .site-header{
+    flex-basis: 160px;
     flex-shrink: 0;
     display: flex;    
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-end;
     border-right: 2px solid $grey-dark;
-    flex-basis: 160px;
-    margin-top: 100px;
     padding: 0 12px;
+    
     &__logo{
         margin: 0 0 60px 0px;   
         text-align: right;
@@ -15,9 +15,7 @@
     &__nav{
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
-        align-items: flex-end;
-        margin-top: 24px;
-        margin-right: 20px;
+        justify-content: flex-start;
+        margin: 84px 20px;
     }
 }

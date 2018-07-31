@@ -6,10 +6,7 @@
 * {
     box-sizing: border-box;
 }
-html,body{
-  width: 100%;
-  height: 100%;
-}
+html, body { height: 100%; }
 body {
     font-family: $font-family-base;
     font-size: $font-size-base;
@@ -79,20 +76,27 @@ h1, h2, h3, h4, h5, h6 {
     height: auto;
   }
   
-  
-  hr {
-    margin: 40px 0;
-    height: 3px;
-    border: none;
-    background-color: $gray-lighter;
-    background-image: repeating-linear-gradient(
-      -45deg,
-      white,
-      white 4px,
-      transparent 4px,
-      transparent 8px
-    );
-  }
+  hr {            
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-top: solid 1px $grey-dark;
+    width: 300px;
+}     
+  // hr {
+  //   margin: 40px 0;
+  //   height: 3px;
+  //   border: none;
+  //   background-color: $gray-lighter;
+  //   background-image: repeating-linear-gradient(
+  //     -45deg,
+  //     white,
+  //     white 4px,
+  //     transparent 4px,
+  //     transparent 8px
+  //   );
+  // }
   
   blockquote {
     padding: 0 15px;
