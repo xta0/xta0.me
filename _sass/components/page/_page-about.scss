@@ -4,32 +4,17 @@
         margin-top: 0px;
     }
 }
-.showcase{
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    &__row{
-        height: 300px;
-        flex-grow: 1;
-        flex-basis: auto;
-        
-        display: flex;
-        flex-direction: row;
-    }
+.about-h2{
+    margin-top: 20px;
 }
-.showcase-item{
-    padding: 20px;
-    flex: 1 1 auto;
-    // border: 0.5px solid $grey-light;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    flex-basis: 50%;
-    p{
-        margin-top:12px;
-    }
+.about-logo-wrapper{
+    flex-shrink: 0;
 }
+.about-logo{
+    border-radius: 8px;
+    width: 68px;
+}
+.about-exp-section{
+    margin-top: 20px;
+}
+

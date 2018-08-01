@@ -32,12 +32,9 @@ FlexLayout提供一组声明式(declarative)的API来描述一个UI组件(Node�
 接下来我们开始用代码描述每个node，习惯上，我们先从粒度最小的node开始，自底向上构建，以上面的cell为例，我们先从第一个红框开始
 
 ```cpp
-
 using namespace o2o::flex;
 - (FlexLayout )titleLayout:(NSString* )name Time:(NSString* )time Score:(float)score{
-
-    return FlexLayout{
-
+    return FlexLayout
         //children元素之间的间隔
         .direction = FlexDirection::Horizontal,
         .spacing = 5,
