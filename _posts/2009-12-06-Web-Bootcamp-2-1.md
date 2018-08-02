@@ -32,7 +32,6 @@ nav{
 - 支持嵌套结构
 
 ```css
-
 .navigation{
   list-style: none;
   float: left;
@@ -49,7 +48,6 @@ nav{
     }
   }
 }
-
 ```
 
 ### Mixin
@@ -80,8 +78,4 @@ background-color: lighten($color-tertiary,15%);
 @function divide($a, $b){
   @return $a/$b;
 }
-
 ```
-
-
-### Debug

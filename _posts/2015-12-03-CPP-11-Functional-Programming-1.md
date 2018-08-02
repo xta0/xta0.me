@@ -17,7 +17,6 @@ vector<T> transform_vec(F f, const vector<T>& xs){
 ///usr/bin/time --format="%e s" ./a.out
 ```
 
-- 
 
 
 
