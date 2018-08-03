@@ -1,6 +1,7 @@
 ---
 layout: post
 list_title: Compiler Part 1 | 概述 |  Overview
+title: Compiler Overview
 title: Compiler Part 1 - Overview
 mathjax: true
 ---
