@@ -16,10 +16,17 @@ layout: post
 - 删除节点：
 	- `document.getElementId("id").parentNode.removeChild(node)` 
 	- 三种方式：
-		- `var node = document.getElementById("first"); node.parentNode.removeChilde(node);`
-		- `var node = document.getElementsByTagName("p")[0]; node.parentNode.removeChild(node)`
-		- `var parentNode = document.getElementById("body"); parentNode.removeChild(parentNode.firstChild)` 
 
+	```javascript
+	//by Id
+	var node = document.getElementById("first"); 
+	node.parentNode.removeChilde(node);
+	//by tag
+	var node = document.getElementsByTagName("p")[0]; 
+	node.parentNode.removeChild(node)
+	var parentNode = document.getElementById("body"); 
+	parentNode.removeChild(parentNode.firstChild)
+	```
 - Clone DOM节点
 	- Copying a node : `node.cloneNode()`
 	- Copying a branch : `node.cloneNode(true)`

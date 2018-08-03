@@ -121,3 +121,10 @@ li {
         margin-bottom: 8px;
     }
 }
+pre code {
+    margin: 0;
+    padding: 0;
+    white-space: pre;
+    border: none;
+    background: transparent;
+}

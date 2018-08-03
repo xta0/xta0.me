@@ -14,11 +14,17 @@
         margin-bottom: 25px;
     }
     &__nav{
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-end;
-        margin-top: 64px;
+        // display: flex;
+        // flex-direction: column;
+        // justify-content: flex-start;
+        // align-items: flex-end;
+        ul{
+            padding-left: 0px
+        }
+        li{
+            list-style-type: none;
+            text-decoration: none;
+        }
     }
     &__nav-logo{
         margin: 0 0;

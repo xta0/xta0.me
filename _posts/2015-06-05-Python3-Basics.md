@@ -1,7 +1,8 @@
 ---
-list_title: Python3 基本语法 | Basic Syntax
+title: Python Syntax
+list_title: Python Deep Dive - Part 1 | Syntax
 layout: post
-title: Python3 Basic Syntax
+categories: [Python]
 ---
 
 ## Language Overview
@@ -43,6 +44,24 @@ title: Python3 Basic Syntax
     - None
     - NotImplemented
     - Ellipsis(...)
+
+### Variabels
+
+- Name
+    - 数字字母下户线
+    - `[a-zA-Z_]+`
+- Conventions
+    - `_my_var`
+        - This convention to indicate "internal use" or "private" objects
+        - Objects named this way will not get imported by a statement such as:
+            - `from module import *`
+    - `__my_var`
+        - used for name mangling 
+        - "mangle" calss attributes - useful in inheritance chains
+    - `__my_var__`
+        - ussed for system-defined names that have a special meaning to interpreter
+    - PEP8 styles
+        - packages: short, all-lowercase names, preferably no underscores
 
 ### Printing
 

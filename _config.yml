@@ -9,15 +9,15 @@ subtitle:
 description:
 author: xta0
 # support en, zh-Hans
-language: zh-Hans
-# language: en
+# language: zh-Hans
+language: en
 date_format: '%Y-%m-%d'
 favicon: /assets/favicon.ico
 
 # site url
 url:
 baseurl: 
-permalink: pretty
+permalink: /:year/:month/:day/:title.html
 
 # Pagination
 # paginate: 10
@@ -60,6 +60,7 @@ menu:
   home: /
   archives: /src/archives/
   about: /src/about/
+  
   # categories: /category/
   
   # tags: /tags/
