@@ -10,10 +10,9 @@
             <time title="{{ __.post.created }}" itemprop="dateCreated datePublished" datetime="{{ post.date | date_to_xmlschema }}">
                 <span>{{ page.date | date: site.date_format }} </span>
             </time>
-            <span class="post-meta__divider">|</span>
-
             <!-- updated -->
             {% if page.updated %}
+                <span class="post-meta__divider">|</span>
                 <span class="page-meta__icon">
                     <i class="fas fa-calendar-check"></i>
                 </span>

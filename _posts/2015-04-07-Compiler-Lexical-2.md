@@ -1,6 +1,9 @@
 ---
 layout: post
-list_title: Compiler Part 2
+list_title: 编译原理 | Compiler Part 2 | Lexical Analysis & Finate Automata
+title: Lexical Analysis & Finate Automata
+mathjax: true
+categories: [Compiler]
 ---
 
 ## Lexical Analysis
@@ -68,12 +71,14 @@ list_title: Compiler Part 2
 				- `A*` = `AAA....A`(重复i次)
 				- 如果`i=0`，那么上面式子变成`A0`，`A0 = e(Epsilon) = {""}` 
 				
-		- 正则表达式：在某个字符集(假如为Z)上，有一个最小的表达式集合，通过这个集合可以表征Z上任意字符的组合（可能的出现情况）。这个最小的表达式集合包括:
-			- R = `e` = `{""}`(epsilon)
-			- R = `c` c<Z
-			- R = R+R
-			- R = RR
-			- R = R*
+		- 正则表达式：在某个字符集(假如为Z)上，有一个最小的表达式集合，通过这个集合可以表征Z上任意字符的组合（可能的出现情况）。正则表达式的y语法（grammar）如下
+			- Baes cases
+				- R = `ε` = `{""}`(epsilon)
+				- R = {`c`}, c<Z
+			- Three compound expressions
+				- Union:  `R = R+R`
+				- Concatenation: `R = RR`
+				- Iteration: `R = R*`
 			
 		- 正则表达式的例子:
 			- `Z = {0,1}`
@@ -81,40 +86,54 @@ list_title: Compiler Part 2
 				- `(1+0)1`  = `{ab|a<1+0 and b<1} ` = `{11,01}`，意思是`(1+0)1`这个正则表达式可以表示`{11,01}`这两种情况的字符串
 				- `(0+1)*` = `"" + (0+1) + (0+1)(0+1) + ... + (0+1)...(0+1) ` = all string of 1's and 0's。意思是这个正则表达式可以表示字符集Z的任意字符组合。
 				- 表征同一字符集的正则表达式有不止一个，例如第1个例子`1*`也可以写作`1* +1 `第2个例子也可以写作`11+10`。
+- In Summary 小结
+	- Regular expressions specify regular languages 正则表达式是定义正则语言的基础
+	- 正则表达式的基础语法有5条
+		- Two base cases
+			- empty and 1-character strings
+		- Three compound expressions
+			- union, concatenation, iteration 
 
 
 ## Formal Languages
 
-- 定义: 假设Z是一个字符集，有一种语言用来描述基于Z的，符合某些条件的，字符串集合。
-	- 字符集 Z 为 English characters
-        - 字符集Z为 ASCII	    
-	- 语言为English sentences(sentence是character的集合)
-        - 语言为:C语言
-	
-- 我们不能脱离字符集Z来讨论Formal Language
-- 每种Formal Language都有Meaning function ：`L` maps syntax to semantics(将表达式转换为语义)
-	- L(expression) = M
-		- expression是某种syntax，比如正则表达式
-		- M是一个字符串集合
+- Formal language是计算机编程语言理论的基础
+- 定义
+	- 假设 $\sum$ 是一个字符集，Formal Languages是指建立在这个字符集之上的语言
+		- Alphabet = English characters, Language = English sentences
+		- Alphabet = ASCII, Language = C programs
+	- 不同的语言是建立在不同的字符集上，因此讨论某种Formal Language的前提是先确定其所在的字符集合
+
+### Meaning Function
+
+- 每种Formal Language都有Meaning function
+	- `L` maps syntax to semantics(将表达式转换为语义)
+
+		$$
+		L(e) \thinspace = \thinspace M 
+		$$
+
+		例如，对于正则语言来说，`e`为正则表达式，
 		
-	- 所有正则表达式都是expression,所有正则表达式描述的字符集都是M，因此需要有个Meaning Function来建立从express到字符集M的关系: 
-		
-		- 公式：`L:Exp -> Set of Strings`,例如：
+	- 对于正则语言来说，`e`为正则表达式，`M`为其所匹配的字符串集合，
 		- `L(e) = {""}`
 		- `L('c') = {"c"}`
 		- `L(A+B)` = `L(A) or L(B)`
 		- `L(AB)` = `{ab| a<L(A) and b<L(B)}`
-		- `L(A*)` = `{AA....AAAA}`
+		- `L(A*)` = `{"",A,AA,...,A...A}`
 		
-	- 为什么要定义meaning function？
-		- Makes clear what is syntax, what is semantics
-		- Allows us to consider notation as a separate issue: 语法（syntax）和语义（semantics）不是一回事
-		- Because expressions and meanings are not 1-1:描述同一字符集的正则表达式不唯一
-	- Meaning is many to one
-		- syntax和semantics是多对1的关系，描述相同的semantics可以通过不同的syntax
-		- never one to many
+- 为什么要定义meaning function？
+	- Makes clear what is syntax, what is semantics
+	- Allows us to consider notation as a separate issue ,分离语法(`e`)和语义(`L(e)`)
+	- Because expressions and meanings are not 1-1, 描述同一字符集的正则表达式不唯一
+		- 例如`0*`表示`{"",0,00,...}`该集合也可以用`0+0*`来描述
+	- 对应到编程语言
+		- 语法糖可以有很多，但是处理后得到的语义是相同的
+		- 不同变成语言定义变量的方式不同，但其语义均为在内存中定义一个变量
 			
 ## Lexical Specifications
+
+- 用
 
 - LA的具体表现:
 	- keyword: "if" or "else" or "then" or ...
