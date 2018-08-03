@@ -2,6 +2,7 @@
 .sass-cache
 .gist-cache
 .pygments-cache
+.jekyll-meta
 _deploy
 public
 sass.old
