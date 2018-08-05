@@ -1,8 +1,7 @@
 ---
 layout: post
 list_title: 计算投资（二）| Computational Investment Part 1
-title: 资产组合与市场机制
-sub_title: Portfolio Management and Market Mechanics
+title: Portfolio Management and Market Mechanics
 mathjax: true
 ---
 
@@ -18,25 +17,25 @@ mathjax: true
     - 2% of assets under management + 20% of the returns.
     - 1M with 20% per year = 60k per year
 - How/Why different?
-    - 共同基金或者ETF基金经理目标是增大基金数额来赚取管理费
-    - 私募基金或者对冲基金经理目标是提高基金收益
+    - The goal of a mutual fund or ETF fund manager is to increase the amount of the fund to earn management fees.
+    - The goal of private equity funds or hedge fund managers is to increase fund returns
 
 ### How to Attract Investors
 
-- 资金来源
+- Sources of funds
     - Individuals
-        - 个人投资者，资金占比较少
+        - Individual investors, less funds
     - Institusions
-        - 机构投资者
+        - corporate investor
             - Harvard Foundation
             - CalPERS
-    - Funds of Funds
-        - 来自其他基金的投资
-- Two Main Types of Fund Goals
-    - Reference to a benchmark
-        - 有指标参考，比如跑赢S&P500等
-    - Absolute return
-        - 低风险策略，只关注收益回报
+        - Funds of Funds
+    - Investment from other funds
+        - Two Main Types of Fund Goals
+            - Reference to a benchmark
+                - There are indicators reference, such as running out of S&P500, etc.
+        - Absolute return
+            - Low risk strategy, focusing only on return on revenue
 
 ### Metrics for Assessing Fund Performance
 
@@ -49,7 +48,8 @@ mathjax: true
             - `(110/100) -1 = 0.1 = 10%`
             - `(110-100)/100 = 0.1 = 10%`
     - Risk 
-        - 定义风险：<mark>Standard deviation of return</mark>
+        - Definition
+            - <mark>Standard deviation of return</mark>
             -  daily return
 
             ```
@@ -124,15 +124,15 @@ mathjax: true
 
 - Example
 
-假设有一只Fund，它参考Dow Jones指数的benchmark如下：
+Suppose there is a mutal fund, which refers to the benchmark of the Dow Jones index as follows:
 
 |      | Return | Sharpe | STDEV | D-down | Corr
 |------| -------|--------|-------|--------|------|
 | xxFund  | 33%	| .94	| 0.58%	| -8.67%	| 0.89  |
 |   $DJI  | 43%	| .63	| 1.23%	| -27.38%	| 1.00  |
 
-1. 该基金没有收益率没有跑赢大盘，但是Sharpe指数高于大盘，说明它的整体波动率较低，相对于收益的风险更小
-2. 同样，STDEV，D-down 数据也偏低，说明日均波动较小
+- The fund has no yield and has not outperformed the market, but the Sharpe index is higher than the broader market, indicating that its overall volatility is lower and its risk relative to earnings is smaller.
+- Similarly, STDEV, D-down data is also low, indicating that the average daily fluctuation is small
 
 ### Market Mechanics
 
@@ -145,24 +145,24 @@ mathjax: true
         - Sell short
     - More complex orders
 
-- The Order Book(买盘与卖盘)
+- The Order Book
     - Ask (Buy)
     - Bid (Sell)
 
 - Mechanics of Short Selling
-    1. Borrow the shares 像券商融券
-    2. 立刻卖掉融到的券
-        - 拿到现金
-        - 需要在未来归还券商融到的股票
-    3. 如果价格未来价格下跌
-        - 只需要支付较低价格来买回股票还给券商
-        - 差价即是利润
+    1. Borrow the shares 
+    2. Sell ​​shares immediately
+        - Get cash
+        - Need to return the stocks of brokers in the future
+    3. If the price falls in the future
+        - Just pay a lower price to buy back the stock and return it to the broker
+        - The difference of the price is the profit
 
 ### Computing Inside a Hedge Fund
 
 ![](/assets/images/2018/04/CI-1.jpg)
 
-上图是一个系统交易模型，
+The picture above is a system trading model.
 
 ## Company
 
@@ -174,9 +174,9 @@ mathjax: true
 
 - Future Value(Dividens)
 
-假设我们投资一家公司，这个公司每年一股能产生1美金的利润，那么我们现在应该以每股多少钱购入它的股票？换句话说，这个公司现在每股的价值该怎么计算，或者说这个公司的固执该怎么计算呢？为了比较，假设我们也可以把买这家公司股票的前钱存到银行，同样每年能赚取1美金。假设银行的利息是1分钱，那么我们需要向银行存入0.99美元，一年后能拿到1块钱。对于公司来说，它承担的风险比银行高，因此它的收益也比银行高，假设我们只需要投资0.95美元一年后即可得到1块钱收益。这意味着
+Suppose we invest in a company that generates $1 a year in profits, so how much should we buy its shares now? In other words, how does the company's value per share now calculate, or how does the company's stubbornness count? For comparison, let's say we can also deposit the money from the company's stock to the bank, and earn $1 a year. Assuming the bank's interest is 1 cent, then we need to deposit $0.99 into the bank and get a dollar a year later. For the company, it is more risky than the bank, so its income is higher than the bank, assuming we only need to invest 0.95 US dollars a year to get 1 dollar income. this means
 
-> 一年后1美元利润，现在只值0.95美元。而0.95/1这个比例值也叫做这个折现率（discount rate）
+> One dollar profit a year later, now only worth $0.95. And the ratio of 0.95/1 is also called the discount rate.
 
 ```
 |now          |year1      |year2     |year3
@@ -185,37 +185,39 @@ $0.95
 Bank   -----> $1.00 ----> $1.00 ---->$1.00 --->...
 $0.99
 ```
-注意，上面提到的折现率不仅仅是针对的一年的，而是无限长时间内的，而时间越长，1美元折现的价值越低, 如果过了几百年，1美元折现到现在基本上约等于0。这也意味着一家每年固定利润为1美金的公司，随着时间的增长，它的估值并不是无穷大的，因为未来的1美金对于现在来说，基本上就等于0
+Note that the discount rate mentioned above is not only for the year of the year, but for an indefinite period of time. The longer the time, the lower the value of the discount of $1. If it is over a few hundred years, the price is $1. It is now basically equal to zero. This also means that a company with a fixed profit of $1 a year will not be infinitely valued over time, as the future $1 is basically zero for the present.
 
 ```
 --->0.95---->0.95^2----->0.95^3......-->~0.0
     |year1  |year2      |year3       |year n
 ```
-我们可以通过折现率用下面公式计算一家公司的估值
+We can calculate the valuation of a company by the discount rate using the formula below.
 
 $$
 Value=Sum(dividen*gamma^i) = \sum_{i=1}^\infty dividen * gamma^i = {dividend * 1}/{(1-gamma)}
 $$
 
-其中$dividen$表示公司的每股利润（股息），$gamma$表示折现率，上面例子中，这家公司的估值为20美金
+Where, $dividen$ Represents the company's earnings per share, $gamma$ Indicates the discount rate. In the above example, the company is valued at $20.
 
 $$
 Value=\sum_{i=1}^\infty 1.00 * 0.95^i=\frac{1.00}{(1-0.95)}=20.00
 $$
 
 - Book Value
-    - 净资产
+    - Net assets
     - "Total" assets minus intangible assets and liabilities.
 
-综上所述，公司的价值为：<mark>未来估值+净资产</mark>。另一种更直观的计算方式为：#(outstanding shares) * price 即<mark>流通股数 * 股票价格</mark>
+In summary, the value of the company is
+- `Future valuation + net assets`
+-  Another more intuitive way to do this is `#(outstanding shares) * price`, ie. Shares times circulation Stock price
 
 ### CAPM
 
-CAPM是Capital Assets Pricing Model的缩写，翻译过来叫做<mark>资本资产定价模型</mark>。1966年由Jack Treynor, William Sharpe, John Linter和Jan Mossin共同提出，其中Sharpe,Markowitz和Merton Miller还因此共同获得了诺奖。这个理论的提出，改变了当时人们对投资的理念，基于这个模型和有效市场假说，有观点认为投资指数基金或者配置资产来跟踪指数是比较好的选择，也就是所谓的被动投资。
+CAPM is the abbreviation of Capital Assets Pricing Model. In 1966, Jack Treynor, William Sharpe, John Linter and Jan Mossin jointly proposed that Sharpe, Markowitz and Merton Miller also won the Nobel Prize. The introduction of this theory changed the idea of ​​investment at that time. Based on this model and the efficient market hypothesis, there is a view that investment index funds or allocation of assets to track the index is a better choice, which is called passive investment.
 
-> 本课程的投资观点（量化交易）是一种主动投资的理念，Tucker Balch指出基于这种理念也可以取得不错的汇报，但是CAPM模型影响力非常大，是各种投资产管理理论的基础，因此有必要仔细了解
+> The investment perspective of this course (quantitative trading) is an active investment concept. Tucker Balch pointed out that this concept can also achieve good reporting, but the CAPM model has a very strong influence and is the basis of various investment management theory. It is necessary to understand carefully
 
-- CAPM假说
+- CAPM hypothesis
     - Return of stock has two components:
         - Systematic (the market)
         - Residual
@@ -226,8 +228,14 @@ CAPM是Capital Assets Pricing Model的缩写，翻译过来叫做<mark>资本资
 <img src="/assets/images/2018/04/CI-2.png" width="70%"/>
 
 
-上图为BABA和NASDAQ近三个月的走势叠加图, 可以看到大部分时间BABA和NASDQ的走势基本持平。波动的部分则为BABA自身的股价变化。CAPM认为股价由两方面决定， 一方面市场波动，一方面是个股波动。他们之间的关系为
+The above picture shows the trend of BABA and NASDAQ in the past three months. It can be seen that the trend of BABA and NASDQ is basically the same for most of the time. The volatile part is the BABA's own stock price change. CAPM believes that stock prices are determined by two aspects. On the one hand, market fluctuations, on the other hand, individual stocks fluctuate. The relationship between them is
 
 $$ \gamma_i=\beta_i * \gamma_m + \alpha_i $$
 
-$\gamma_i$表示股价，它的值为市场波动系数$\beta_i$乘以前一天的价格加上个股当天波动的价格$\alpha_i$。按照CAPM理论，在大部分时间内，某家公司的股价应该随着指数的波动而波动，即$\alpha_i$的期望为0，而如果表现出偏离，则说明这家公司具备某些可以挖掘的信息。
+$\gamma_i$ Express the stock price, its value is the market fluctuation coefficient, $\beta_i$ i Take the previous day's price plus the price of the stock the day volatility $\alpha_i$。According to CAPM theory, most of the time, the stock price of a company should fluctuate with the fluctuation of the index, ie $\alpha_i$ The value of expectation is 0, if there is a deviation, the company has some information that can be digged.
+
+
+
+
+
+

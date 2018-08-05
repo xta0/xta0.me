@@ -1,8 +1,8 @@
 ---
-title: Python Syntax
-list_title: Python Deep Dive - Part 1 | Syntax
 layout: post
-categories: [Python]
+list_title: Python3 Syntax Quick Guide
+title: Python3 Syntax Quick Guide
+categories: [Python3]
 ---
 
 ## Language Overview
@@ -18,16 +18,11 @@ categories: [Python]
         - Fractions
 - **Collections**
     - Sequences
-        - Mutable
-            - Lists
-        - Immutable
-            - Tuples
-            - String
+        - Mutable Lists
+        - Immutable Tuples / String
     - Sets
-        - Mutable
-            - Sets
-        - Immutable
-            - Frozen Setes
+        - Mutable Sets
+        - Immutable Frozen Setes
     - Mappings
         - Dictionaries
 
@@ -45,23 +40,113 @@ categories: [Python]
     - NotImplemented
     - Ellipsis(...)
 
-### Variabels
+### Multiline Program
 
-- Name
-    - 数字字母下户线
-    - `[a-zA-Z_]+`
-- Conventions
-    - `_my_var`
-        - This convention to indicate "internal use" or "private" objects
-        - Objects named this way will not get imported by a statement such as:
-            - `from module import *`
-    - `__my_var`
-        - used for name mangling 
-        - "mangle" calss attributes - useful in inheritance chains
-    - `__my_var__`
-        - ussed for system-defined names that have a special meaning to interpreter
-    - PEP8 styles
-        - packages: short, all-lowercase names, preferably no underscores
+- Implicit
+    - list literals: `[]`
+    - tuple literals: `()`
+    - dictionary literals: `{}`
+    - set literals: `{}`
+    - function arguments/parameters
+
+
+<div class="highlight md-flex-h">
+<div>
+<pre class="highlight language-python md-height-full">
+<code class="language-python">
+[1, #item1      
+2, #item2
+3  #item3
+]
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight language-python md-height-full">
+<code class="language-python">
+def my_func(
+    a,
+    b,  #comment
+    c):
+    print(a,b,c)
+my_func(10, #comment
+        20,30)
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight language-python md-height-full">
+<code class="language-python">
+a = { 
+    'key1': 1, #value for key1
+    'leu2': 2, #value for key2
+}
+</code>
+</pre>
+</div>
+</div>
+
+- Explicit
+
+You can break up statements over multiple lines explicitly by using `\`(backslash) character, Multi-line statements are not implicitly converted to a single logical line, commnets cannot be part of a statment
+
+```python
+# WRONG!        #RIGHT          #WRONG
+if  a           if  a \         if  a \
+    and b           and b \         and b \ #Coment
+    and c:          and c:          and c: 
+```
+
+- Multi-Line String Literals
+
+Multi-line string iterals can be created using tirple delimiters (`'` or `"`)
+
+```
+'''This is                     """Thi is
+a multi-line string'''         a multi-line string"""
+```
+A multiline-line string is just a regular string. Be aware that non-visible characters such as newlines, tabs, etc. are actually part of the string-basically anything you type. 
+<div class="highlight md-flex-h">
+<div>
+<pre class="highlight language-python">
+<code class="language-python">
+a = ''' this is a string '''
+# 'this is a string'
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight language-python">
+<code class="language-python">
+a = '''this 
+is a string'''
+# 'this\nis a string'
+</code>
+</pre>
+</div>
+</div>
+
+Multiline-strings can be used as a special comments called **docstrings**.
+You can use escaped characters(e.g. `\n`, `\t`), using string formatting, etc.
+
+Escape | What it does.
+------------- | -------------
+`\\` |  Backslash (`\`)
+`\'` | Single-quote (`’`)
+`\"` | Double-quote (`”`)
+`\a` | ASCII bell (BEL)
+`\b` | ASCII backspace (BS)
+`\f` | ASCII formfeed (FF)
+`\n` | ASCII linefeed (LF)
+`\N` | {name} Character named name in the Unicode database (Unicode only)
+`\r` | Carriage Return (CR)
+`\t` | Horizontal Tab (TAB)
+`\uxxxx` | Character with 16-bit hex value `xxxx`
+`\Uxxxxxxxx` | Character with 32-bit hex value `xxxxxxxx`
+`\v` | ASCII vertical tab (VT)
+`\ooo` | Character with octal value `ooo`
+`\xhh` | Character with hex value `hh`
+
 
 ### Printing
 
@@ -104,23 +189,7 @@ print("Is it greater or equal?", 5 >= -2) #Is it greater or equal? True
     ```
 - 转义字符
 
-Escape | What it does.
-------------- | -------------
-`\\` |  Backslash (`\`)
-`\'` | Single-quote (`’`)
-`\"` | Double-quote (`”`)
-`\a` | ASCII bell (BEL)
-`\b` | ASCII backspace (BS)
-`\f` | ASCII formfeed (FF)
-`\n` | ASCII linefeed (LF)
-`\N` | {name} Character named name in the Unicode database (Unicode only)
-`\r` | Carriage Return (CR)
-`\t` | Horizontal Tab (TAB)
-`\uxxxx` | Character with 16-bit hex value `xxxx`
-`\Uxxxxxxxx` | Character with 32-bit hex value `xxxxxxxx`
-`\v` | ASCII vertical tab (VT)
-`\ooo` | Character with octal value `ooo`
-`\xhh` | Character with hex value `hh`
+
 
 
 ### Primary Types
@@ -502,101 +571,6 @@ else:
 
 ### Functions
 
-- 定义
-
-```python
-def name_of_function(args): #注意冒号
-    #some_code 
-    print("Hello")  #注意tab
-```
-- 可变参数
-    - `*args`: 将参数打包成tuple
-
-    ```python
-    def myfunc(*args): #可变参数，args是tuple
-        return sum(args)*0.05
-    myfunc(12,2,3)
-    ```
-    - `**kwargs`: 将参数打包成dictionary
-
-    ```python
-    def myfunc(**kwargs):
-        print(kwargs) #可变参数，kwargs是map
-        if 'fruit' in kwargs: #kargs中是否有key为fruit的参数
-            print(kwargs['fruit'])
-        else
-            print('I did not find any fruit')
-
-    myfunc(fruit='apple', veggie='lettuce')
-    ```
-    - 两者可以一起使用
-    
-    ```python
-    def myfunc(*args, **kwargs):
-        print(args)
-        print(kwargs)
-    myfunc(1,2,3,fruit='apple',veggie='lettuce')
-    ```
-    - unpack args
-
-    ```python
-    def print_two(*args)
-        arg1, arg2 = args
-        print(f"arg1: {arg1}, arg2: {arg2}")
-    ```
-
-- 函数性
-    - first-class object
-    
-    ```python
-    def hello():
-        return 1
-    greet = hello
-    greet() #1
-
-    del hello 
-    greet() #1, 删除hello，greet仍然有效
-    ```
-    - 函数对象做函数参数
-
-    ```python
-    def func1:
-        return 1
-    def func2(f):
-        f()
-    func2(func1)
-    ```
-    - 函数对象做范数返回值
-
-    ```python
-    def func():
-        def inner_func():
-            return 'inner_func() called!'
-        return inner_func
-
-    func()() #'inner_func() called!'
-    ```
-
-- Nested Function
-
-```python
-def hello(name="Jason"):
-    print('The hello() function has been executed!')
-
-    #nested function
-    def greet(): #greet()的作用域仅在hello内部
-        return '\t this is the greet() func inside hello!'
-    def welcome():
-        return '\t this is the welcome() func inside hello!'
-    
-    if name == 'Jason':
-        return greet
-    else:
-        return welcome
-
-new_func = hello('Jason')
-print(new_func) #this is the greet() func inside hello!
-```
 
 ### Decorators
 
