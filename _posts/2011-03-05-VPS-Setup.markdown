@@ -9,17 +9,54 @@ tag: UNIX
 
 ### Install Software Updates
 
-- `apt-get update && apt-get upgrade`
+- 查看Ubuntu自带的package: `cat /etc/apt/sources.list`
+- 检查并更新package: `apt-get upgrade&apt-get update`
+- 删除不需要的package: `sudo apt-get autoremove`
 - 设置hostname：`hostnamectl set-hostname example_hostname`
 - host文件在`/etc/hosts`
 - 关于host的命名:
 	- [Using Your System's hosts File](https://www.linode.com/docs/networking/dns/using-your-systems-hosts-file) 
 
 
+### Install Packages
+
+- [Ubuntu package list](https://packages.ubuntu.com/)
+- Install finger: `sudo apt install finger`，用户管理插件
+
+```
+//查看当前users
+xt@linode:~$ finger
+Login     Name       Tty      Idle  Login Time   Office     Office Phone
+xt        Xu Tao     pts/0          Aug  6 11:00 (198.24.30.144)
+//查看某个user
+xt@linode:~$ finger xt
+Login: xt             			Name: Xu Tao
+Directory: /home/xt                 	Shell: /bin/bash
+On since Mon Aug  6 11:00 (EDT) on pts/0 from 198.24.30.144
+No mail.
+No Plan.
+```
+所有用户信息保存在`/etc/passwd`下面，格式为
+
+`username:password:UID:GID:UID info:home directory:command/shell`
+
+1. **username**: the user’s login name
+2. **password**: the password, will simply be an x if it’s encrypted
+3. **user ID (UID)**: the user’s ID number in the system. 0 is root, 1-99 are for predefined users, and 100-999 are for other system accounts
+4. **group ID (GID)**: Primary group ID, stored in /etc/group.
+5. **user ID info**: Metadata about the user; phone, email, name, etc.
+6. **home directory**: Where the user is sent upon login. Generally /home/
+7. **command/shell**: The absolute path of a command or shell (usually /bin/bash). Does not have to be a shell though!
+
+
 ### Add User
 
 - 在/home下创建用户bob: `%adduser bob`
-- 为bob赋予临时root权限: `%gpasswd -a bob sudo`
+- 为bob赋予sudo权限: `%gpasswd -a bob sudo`
+- 查看哪些用户有sudo权限
+	- `%sudo cat /etc/sudoers`
+	- `%sudo ls /etc/sudoers.d`
+- 令用户密码过期： `%sudo passwd -e bob`
 - 退出server: `%exit`
 
 ### Add RSA key
@@ -36,8 +73,11 @@ tag: UNIX
 ```
 - 上传本地RSA公钥:`%scp ./id_rsa bob@123.456.78.9:~/`
 - 替换authorized_keys:`%mv id_rsa.pub .ssh/authorized_keys`
-- 限制权限:`%chmod 600 .ssh/authorized_keys`
+- 限制权限:`%chmod 644 .ssh/authorized_keys`
 - 重新用bob登录验证: `%ssh bob@123.456.78.9`
+- 验证成功后，关掉用户名密码登录
+	- `%sudo vim /etc/ssh/sshd_config`
+	- 修改`PasswordAuthentication`为`NO`
 
 ### Configure SSH
 
@@ -51,9 +91,13 @@ tag: UNIX
 ### Firewall Configuration
 
 - ubuntu自带防火墙工具`ufw`
-- 打开ssh:`sudo ufw allow ssh`
+- 查看`ufw`状态：`%sudo ufw status`
+- 打开ssh
+	- `sudo ufw allow ssh`
 	- 如果修改了ssh port，需要指定端口号:`sudo ufw allow 4444/tcp`
-- 打开HTTP,SSL/TLS: `sudo ufw allow 80/tcp`，`sudo ufw allow 443/tcp`
+- 打开HTTP,SSL/TLS:
+	-  `sudo ufw allow 80/tcp`
+	-  `sudo ufw allow 443/tcp`
 - 查看ufw规则：`sudo ufw show added` 
 - 开启ufw：`sudo ufw enable`
 - 关闭ssh:`sudo ufw disable`
@@ -73,14 +117,111 @@ tag: UNIX
 
 - 将linode提供给的name server关联到域名提供商(如godaday)，24~48小时生效  
 
-### Stup Nginx
+### Setup Nginx
 
 - install nginx: 
 	- `sudo apt-get update`
-	- `sudo  apt-get install nginx`
+	- `sudo apt-get install nginx`
 	- `sudo service nginx start`
 - 配置fail2ban
 	- 找到`[nginx-http-auth]`, 增加`enabled=true` 
+
+
+### Setup HTTPs
+
+这里使用Let's Encrypt类配置HTTPs
+
+1. 暂停nginx： `sudo service stop nginx`
+2. Install Let's Encrypt: 
+	- `sudo git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt`
+3. Obtain a certificate	
+	- `cd /opt/letsencrypt`
+	- `./letencrypt-auto certonly --standalone`
+4. 输入域名
+	- `abc.com www.abc.com`
+5. 查看钥证书路径
+	- `sudo ls /etc/letsencrypt/live/abc.com`
+	- 重要的两个证书
+		- `fullchain.pem`
+		- `privkey.pem`
+6. 配置Nginx
+	- 配置文件 `sudo vim /etc/nginx/sites-available/default`
+
+	```
+	#Forward HTTP request
+	server{
+		listen 80;
+		server_name xta0.me www.xta0.me;
+			return 301 https://$host$request_uri;
+	}
+	server {
+
+		#SSL configuration
+		listen 443 ssl default_server;
+		listen [::]:443 ssl default_server;
+
+		server_name xta0.me www.xta0.me;
+
+		ssl_certificate /etc/letsencrypt/live/xta0.me/fullchain.pem;
+		ssl_certificate_key /etc/letsencrypt/live/xta0.me/privkey.pem;
+
+		ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+		ssl_prefer_server_ciphers on;
+		ssl_ciphers 'ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384';
+
+		#root folder
+		root /var/www/html;
+
+		# Add index.php to the list if you are using PHP
+		index index.html index.htm index.nginx-debian.html;
+
+		location / {
+			# First attempt to serve request as file, then
+			# as directory, then fall back to displaying a 404.
+			try_files $uri $uri/ =404;
+		}
+		location ~ /.well-known
+			allow all;
+	}
+	```
+	- 重启nginx: `sudo service nginx restart`
+
+7. 测试HTTPs是否安装成功，访问域名
+8. 证书更新
+	- 在nginx配置文件最后面增加
+
+	```
+	location ~ /.well-known
+		allow all;
+	```	
+	- 创建更新脚本
+		- `sudo cp /opt/letsencrypt/examples/cli.ini /usr/local/etc/le-renew-webroot.ini`
+
+	- 修改更新脚本，注意域名书写方式和webroot_path和nginx配置保持一致
+
+	```
+	rsa-key-size = 4096
+	email = taoxu.dev@gmail.com
+	domain = xta0.me, www.xta0.me
+	webroot-path = /home/xt/html
+	```
+	- 执行更新脚本，renew证书 
+		- `./letsencrypt-auto certonly -a webroot --renew-by-default --config /usr/local/etc/le-renew-webroot.ini`
+
+9. 配置证书自动更新
+	- 下载脚本: `sudo curl -L -o /usr/local/sbin/le-renew-webroot http://do.co/le-nginx-renew`
+
+	- 设置执行权限：`sudo chmod +x /usr/local/sbin/le-renew-webroot`
+	- 测试脚本
+
+	```
+	$ sudo le-renew-webroot
+	Checking expiration date for xta0.me...
+	The certificate is up to date, no need for renewal (89 days left).
+	``
+	- 配置30天更新
+		- 配置`crontab`：`sudo crontab -e`
+		- 末尾加入: `30 2 * * 1 /usr/local/sbin/le-renew-webroot >> /var/log/le-renewal.log`
 
 
 ### Install RVM
@@ -93,3 +234,9 @@ tag: UNIX
 - install ruby
 	- `rvm install ruby_version` 
 
+
+
+## Resources
+
+- [LAMP" Stack (Linux, Apache, MySQL, PHP)](https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu-14-04)
+- ["LEMP" Stack (Linux, nginx, MySQL, PHP)](https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-ubuntu-14-04)
