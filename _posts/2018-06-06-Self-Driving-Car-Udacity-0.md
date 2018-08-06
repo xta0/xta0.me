@@ -1,8 +1,8 @@
 ---
 updated: "2018-07-10"
 layout: post
-list_title: Self Driving Car Part 1 | Overview
-title: Self Driving Overview
+list_title: 自动驾驶入门（一）| Udacity Autonomous Driving Part 1 | Bayers Rule
+title: 贝叶斯概率模型
 categories: [AI,Autonomous-Driving]
 mathjax: true
 ---

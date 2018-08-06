@@ -1,7 +1,8 @@
 ---
-list_title: Data Science Tools - Octave
+list_title: Octave语法速查 | Octave Quick Reference Guide
 layout: post
 title: Octave Cheatsheet
+categories: [Machine Learning]
 ---
 
 ## Octave Cheatsheet

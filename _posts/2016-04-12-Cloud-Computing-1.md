@@ -1,6 +1,8 @@
 ---
 layout: post
-list_title: Cloud Computing Part 1
+list_title: 云计算（一） | Cloud Computing Part 1 | Overview
+title: 云计算综述
+categories: [Cloud Compute]
 ---
 
 ### Course Overview

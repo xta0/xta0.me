@@ -1,6 +1,8 @@
 ---
 layout: post
-list_title: Data Science Course Part 1 - Overview
+list_title: 数据科学（一） | Data Science Course | Overview
+title: 综述
+categories: [Data Science]
 ---
 
 ## A Crash Course in Data Science

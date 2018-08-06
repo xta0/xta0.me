@@ -1,7 +1,8 @@
 ---
 layout: post
-list_title: Database System Part 2 | SQL Syntax
-title: SQL语法 | SQL Syntax
+list_title: 数据库原理（二） | Database System | SQL syntax
+title: SQL Syntax
+categories: [Database]
 mathjax: true
 ---
 

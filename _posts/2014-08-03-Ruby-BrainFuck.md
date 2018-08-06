@@ -1,8 +1,8 @@
 ---
-list_title: BrainFuck
+list_title: 解释一段BrainFuck代码 | Interprete BrainFuck
+title: 解释一段BrainFuck代码
 layout: post
-tag: Ruby
-categories: 随笔
+categories: [Ruby]
 ---
 
 <em>文章均为作者原创，转载请著名出处</em>

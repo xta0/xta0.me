@@ -1,7 +1,8 @@
 ---
 layout: post
-list_title: Database System Part 1 
-title: 数据库概述 | Core Database Concept
+list_title: 数据库原理（一） | Database System | Relational Algebra
+title: Relational Algebra
+categories: [Database]
 mathjax: true
 ---
 

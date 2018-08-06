@@ -1,6 +1,8 @@
 ---
 layout: post
-list_title: Ubuntu上部署ROR 
+title: Ubuntu上部署Ruby on Rails
+list_title: Ubuntu上部署ROR | Deploy Ruby on Rails in Ubuntu
+categories: [Linux]
 ---
 
 <em></em>

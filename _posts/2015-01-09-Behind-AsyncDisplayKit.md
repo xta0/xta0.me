@@ -1,19 +1,16 @@
 ---
 layout: post
 list_title:  Introduce to AsyncDisplayKit
-meta: AsyncDisplayKit是Facebook开源的一套异步绘制UI的framework，用来提高GUI的绘制效率。它最初和[POP](https://github.com/facebook/pop)一起被用在Facebook的Paper上，Paper在当时引起了强烈的反响，因为其引入了很多物理效果和流畅的动画表现。然后Facebook开源了它们的物理效果引擎[POP](https://github.com/facebook/pop)，同时也宣布会开源一套全新的UI绘制引擎，大概7个月前，Facebook宣布开源AsyncDisplayKit。
-category: iOS
+title: Facebook的AsyncDisplayKit
+categories: iOS
 ---
 
-<em></em> 
-
-
-##AsyncDisplayKit简介
+### AsyncDisplayKit简介
 
 [AsyncDisplayKit](https://github.com/facebook/AsyncDisplayKit)(后面简称AS)，是Facebook开源的一套异步绘制UI的framework，用来提高GUI的绘制效率。它最初和[POP](https://github.com/facebook/pop)一起被用在Facebook的Paper上，Paper在当时引起了强烈的反响，因为其引入了很多物理效果和流畅的动画表现。然后Facebook开源了它们的物理效果引擎[POP](https://github.com/facebook/pop)，同时也宣布会开源一套全新的UI绘制引擎，大概7个月前，Facebook宣布开源AsyncDisplayKit。
 
 
-##一段以前的故事
+### 一段以前的故事
 
 大概在2年多以前，我经历的一个项目是做一个SNS的APP，当时市面上的主流机型是iPhone4/4s，那时候我们面临的一个很大的技术问题是Timeline列表的UI性能问题，由于用户输入的内容都比较复杂，有文字，图片，表情，关键字，短连接等，因此在UI的呈现上也比较复杂。
 
@@ -31,14 +28,14 @@ category: iOS
 
 相比POP, AS并没有引起人们很大的关注，原因一方面是现在的硬件设备强大了，无论是CPU的计算速度还是GPU的渲染能力都变强了，对于一些对帧率不敏感的App，不做优化也还算流畅。第二个原因是很多人不太明白它究竟在解决什么问题，是干什么的，只有在这方面吃过苦，有过优化经验的人才明白它的价值。
 
-##Paper流畅的动画
+### Paper流畅的动画
 
 
 在谈AS之前，不得不先聊一聊Paper，Paper是[Facebook Creative Labs](https://www.facebook.com/labs)的第一个App，Facebook完成Paper用了两年的时间，两年前（2012年初）的主流设备是iPhone4, 这种硬件(ARMV6+PowerVRSGX)对于实现Paper的物理效果是非常困难的(那时候还没有UIKitDynamics)，因此Paper的开发人员不得不先花一年的时间来重新构建一套全新的动画引擎，然后又花了一年的时间来做上层业务的开发。两年过去了，Paper惊艳的问世了，POP也开源了，但同时Apple也发布了UIKitDynamics，二者孰优孰劣，暂时还没有评判的标准，但是对于支持iOS 5.0的App，显然POP是更好的选择。
 
 除了技术以外，让我感触比较深的是Facebook肯花两年的时间来打磨一个App，在技术上的投入就花了1年的时间，放眼望去国内的互联网公司，即使是BAT，有多少肯在一个项目上花超过1年的时间，尤其还是在没有产出的情况下。从这个角度说，Paper可以说是技术驱动的产品，没有POP和AS，就没有Paper，而技术驱动的产品，想要做出点样子，没有个一年半载的投入和潜心研究，成功的可能性是非常低的，显然这和国内强调敏捷，浮躁的技术氛围是背道而驰的。
 
-##POP与CoreAnimation
+### POP与CoreAnimation
 
 为什么说两年前想做出Paper这种App比较难呢，在iOS7之前，像Paper这种，全部基于手势的App很少，多数都是以静态动画为主的App：
 
@@ -75,7 +72,7 @@ category: iOS
 POP通过这种方式是实现了它的动画引擎，接下来的问题是如何高效的渲染每一帧
 
 
-##AsyncDisplayKit
+### AsyncDisplayKit的原理简介
 
 上面我们已经看到连续手势面临的挑战就是需要主线程实时处理每一帧，如果按照60fps的标准，每一帧大概有16ms的时间，刨除GPU的耗时，CPU大概只有~5ms的时间，那在5ms的时间内CPU要完成对View的创建，layout，绘制等等，显然压力巨大。因此需要有一种手段来保证渲染的高效性。于是便有了AS，AS面对是CPU和GPU两方面的优化。
 
@@ -132,15 +129,11 @@ Node的异步绘制过程(伪代码)：
 上手使用AS还是有一定的成本的，我推荐Ray上的这篇文章：[AsyncDisplayKit Tutorial](http://www.raywenderlich.com/86365/asyncdisplaykit-tutorial-achieving-60-fps-scrolling)。这是一篇从入门到高级玩法都讲到了的好文，耐心把它看完，实践完，仔细思考和体会过后，不知不觉间AS就上手了。
 
 
-##总结
+### 总结
 
 最后总结一下，AS适用于对主线程阻塞很敏感的场景，比如，绘制很复杂的文本，以及UIScrollView, UITableView, UICollectionView这种对帧率要求较高的UI场景。对于其它的场景，使用AS也会带来性能的提升。接下来，准备在项目中逐步应用AS，发挥它的威力。
 		
-
-
-
-
-##Further Reading:
+### Resources
 
 - [Paper Tech Talk](https://www.youtube.com/watch?v=OiY1cheLpmI&list=PLb0IAmt7-GS2sh8saWW4z8x2vo7puwgnR)
 - [NSLondon](http://vimeo.com/103589245)

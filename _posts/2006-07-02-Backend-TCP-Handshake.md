@@ -1,9 +1,8 @@
 ---
 layout: post
-list_title: TCP Handshake Notes
-tag: TCP/IP
-categories: 随笔
-
+list_title: TCP握手测试 | TCP Handshake Tests
+title: TCP Hand Shakes
+categories: [Network,Backend]
 ---
 
 <em></em>

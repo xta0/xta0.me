@@ -1,9 +1,9 @@
 ---
 layout: post
-list_title: Compiler Part 1 | 概述 |  Overview
-title: Compiler Overview
-title: Compiler Part 1 - Overview
+list_title: 编译原理| Compiler Theory | Overviwe
+title: Overview
 mathjax: true
+categories: [Compiler]
 ---
 
 ### 编译器和解释器的区别

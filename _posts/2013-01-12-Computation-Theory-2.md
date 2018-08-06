@@ -1,6 +1,7 @@
 ---
+list_title: 计算概论（三）| Computation Theory | Turing Machines
+title: Context-Free Grammar
 layout: post
-list_title: Computation Theory Part 2
+mathjax: true
 ---
 
-##  Turing machines

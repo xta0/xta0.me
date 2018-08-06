@@ -1,5 +1,6 @@
 ---
-list_title: Linode Setup CheetSheet
+list_title: Linode快速上手 | Linode Setup CheetSheet
+title: Linode快速上手
 categories: 随笔
 layout: post
 tag: UNIX

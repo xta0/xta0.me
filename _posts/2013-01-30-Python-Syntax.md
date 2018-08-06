@@ -1,8 +1,8 @@
 ---
 layout: post
-list_title: Python3 Syntax Quick Guide
-title: Python3 Syntax Quick Guide
-categories: [Python3]
+list_title: Python3 语法速查 | Python3 Syntax Quick Refernce
+title: Python3 语法速查
+categories: [Python]
 ---
 
 ## Language Overview

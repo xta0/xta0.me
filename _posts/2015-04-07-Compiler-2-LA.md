@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 编译原理 | Compiler Part 2 | Lexical Analysis & Finate Automata
+list_title: 编译原理 | Compiler Theory | Lexical Analysis & Finate Automata
 title: Lexical Analysis & Finate Automata
 mathjax: true
 categories: [Compiler]

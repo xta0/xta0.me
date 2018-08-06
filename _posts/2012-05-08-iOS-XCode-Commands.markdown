@@ -1,13 +1,9 @@
-------
-layout:Post
-list_title: XCode Commands
+---
+layout: post
+title: XCode的一些技巧
+list_title: XCode的一些技巧 | XCode Tips
 categories: [XCode,UNIX]
-tag: Commands
-
-----
-
-
-> 
+---
 
 ## LLDB
 

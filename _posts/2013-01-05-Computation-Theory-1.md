@@ -1,6 +1,7 @@
 ---
+list_title: 计算概论（二）| Computation Theory | Context Free Grammar
+title: Context-Free Grammar
 layout: post
-list_title: Computation Theory Part 1
+mathjax: true
 ---
 
-## Context-Free Grammar

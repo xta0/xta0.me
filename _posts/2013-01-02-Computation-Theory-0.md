@@ -1,11 +1,10 @@
 ---
-list_title: Computation Theory Part 1
+list_title: 计算概论（一）| Computation Theory | Finite Automata
+title: 有限自动机
 layout: post
 mathjax: true
 ---
 
-### Course Outline
-- Finite Automation
 
 ## Finite automata
  
