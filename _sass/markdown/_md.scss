@@ -56,6 +56,11 @@
     justify-content: flex-start;
     flex-wrap: wrap;
 }
+.md-flex-h-no-wrap{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
 .md-flex-v{
     display: flex;
     flex-direction: column;

@@ -13,19 +13,19 @@
         justify-content: center;
         align-items: center;
         font-size: $font-size-large;
-        margin-top: 100px;
+        margin-top: 80px;
     }
-
-    // p {
-    //     margin: 0;
-    // }
 }
 
 .page-home-p {
-    margin: 30px 0;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: $font-size-base;
+    &:last-of-type{
+        margin-bottom: 0px;
+    }
 }
 
-.page-home-video{
-    width: 100%;
-    flex-basis: 600px;
+.page-home-hr{
+    margin-bottom: 25px;
 }
