@@ -133,7 +133,11 @@ No Plan.
 
 1. 暂停nginx： `sudo service stop nginx`
 2. Install Let's Encrypt: 
-	- `sudo git clone https://github.com/letsencrypt/letsencrypt /opt/letsencrypt`
+
+	```
+	sudo git clone https://github.com/letsencrypt/letsencrypt 
+	/opt/letsencrypt
+	```
 3. Obtain a certificate	
 	- `cd /opt/letsencrypt`
 	- `./letencrypt-auto certonly --standalone`
@@ -195,7 +199,11 @@ No Plan.
 		allow all;
 	```	
 	- 创建更新脚本
-		- `sudo cp /opt/letsencrypt/examples/cli.ini /usr/local/etc/le-renew-webroot.ini`
+	
+	```
+	sudo cp /opt/letsencrypt/examples/cli.ini 
+	/usr/local/etc/le-renew-webroot.ini
+	```
 
 	- 修改更新脚本，注意域名书写方式和webroot_path和nginx配置保持一致
 
@@ -206,10 +214,19 @@ No Plan.
 	webroot-path = /home/xt/html
 	```
 	- 执行更新脚本，renew证书 
-		- `./letsencrypt-auto certonly -a webroot --renew-by-default --config /usr/local/etc/le-renew-webroot.ini`
+	
+	```
+	./letsencrypt-auto certonly -a webroot --renew-by-default 
+	--config /usr/local/etc/le-renew-webroot.ini
+	```
 
 9. 配置证书自动更新
-	- 下载脚本: `sudo curl -L -o /usr/local/sbin/le-renew-webroot http://do.co/le-nginx-renew`
+	- 下载脚本: 
+	
+	```
+	sudo curl -L -o 
+	/usr/local/sbin/le-renew-webroot http://do.co/le-nginx-renew
+	```
 
 	- 设置执行权限：`sudo chmod +x /usr/local/sbin/le-renew-webroot`
 	- 测试脚本
@@ -218,18 +235,27 @@ No Plan.
 	$ sudo le-renew-webroot
 	Checking expiration date for xta0.me...
 	The certificate is up to date, no need for renewal (89 days left).
-	``
+	```
 	- 配置30天更新
 		- 配置`crontab`：`sudo crontab -e`
-		- 末尾加入: `30 2 * * 1 /usr/local/sbin/le-renew-webroot >> /var/log/le-renewal.log`
-
+		- 末尾加入: 
+		
+		```
+		30 2 * * 1 /usr/local/sbin/le-renew-webroot 
+		>> /var/log/le-renewal.log
+		```
 
 ### Install RVM
 
 - install rvm:
-	- `gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB`
-	- `\curl -sSL https://get.rvm.io | bash`
-	- `source ~/.rvm/scripts/rvm`
+
+	```
+	% gpg --keyserver hkp://keys.gnupg.net 
+	--recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB`
+
+	% curl -sSL https://get.rvm.io | bash
+	% source ~/.rvm/scripts/rvm
+	```
 
 - install ruby
 	- `rvm install ruby_version` 
