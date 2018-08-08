@@ -10,4 +10,33 @@ mathjax: true
 > Course Notes from Udacity Self-Driving Car Nanodegree Program
 
 
-《复仇者联盟3：无限战争》是漫威电影宇宙10周年的历史性集结，将为影迷们带来史诗版的终极对决。面对灭霸突然发起的闪电袭击，复仇者联盟及其所有超级英雄盟友必须全力以赴，才能阻止他对全宇宙造成毁灭性的打击。
+
+## 附录
+
+- Solution python code for Project: Joy Ride
+
+```python
+car_parameters = {"throttle": 0, "steer": 0, "brake": 0}
+
+def control(pos_x, pos_y, time, velocity):
+    """ Controls the simulated car"""
+    global car_parameters
+    if(time < 3):
+        car_parameters["throttle"] = -1.0
+        car_parameters["steer"] = 25
+        car_parameters["brake"] = 0
+    elif(pos_y > 32):
+        car_parameters["throttle"] = -1.0
+        car_parameters["steer"] = -25
+        car_parameters["brake"] = 0
+    else:
+        car_parameters["throttle"] = 0
+        car_parameters["steer"] = 0
+        car_parameters["brake"] = 1
+    
+    return car_parameters
+    
+import src.simulate as sim
+sim.run(control)
+```
+- Video on [Youtube](https://www.youtube.com/watch?v=pYvCvNFZFMw)
