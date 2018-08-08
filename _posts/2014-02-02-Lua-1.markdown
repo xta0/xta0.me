@@ -1,6 +1,8 @@
 ---
 layout: post
-list_title: Lua Part 1 - C API
+list_title:  Lua中的C | C API in Lua
+title: Lua中的C
+categories: [Lua]
 ---
 
 <em>  </em>

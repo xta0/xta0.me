@@ -11,8 +11,9 @@ mathjax: true
 
 ### Prerequisite
 
-- Independent Probability 
-
+- [Independent Probability](https://en.wikipedia.org/wiki/Independence_(probability_theory)) 
+- [Conditional Probability](https://zh.wikipedia.org/wiki/%E6%9D%A1%E4%BB%B6%E6%A6%82%E7%8E%87)
+- [Total Probability](https://zh.wikipedia.org/wiki/%E5%85%A8%E6%A6%82%E7%8E%87%E5%85%AC%E5%BC%8F)
 
 ## 附录
 
@@ -42,4 +43,4 @@ def control(pos_x, pos_y, time, velocity):
 import src.simulate as sim
 sim.run(control)
 ```
-- Video on [Youtube](https://www.youtube.com/watch?v=pYvCvNFZFMw)
+- [Code simulation on Youtube](https://www.youtube.com/watch?v=pYvCvNFZFMw)

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Nginx Basics
+title: Nginx基本配置
 list_title: 配置Nginx（一） | Nginx Basic Configuration
 categories: [Linux, Nginx]
 ---
@@ -307,5 +307,47 @@ sendfile on;
 tcp_nopush on;
 ```
 
-### Add Dynamic Modules
+### Headers & Epires
+
+Nginx可以通过配置文件向HTTP response的Header中插入字段，一个常用的配置是对静态资源做浏览器级别的缓存，减少对server的频繁调用
+
+```yaml
+#正则匹配图片请求
+location  ~* \.(jpg|png|jpeg){
+    access_log off;
+    add_haeder Cache-Control public;
+    add_header Pragma public;
+    add_header Vary Accept-Encoding;
+    expires 60m; #60 mins
+}
+```
+
+### Gzip
+
+打开HTTP gzip module
+
+```yaml
+gzip on;
+#set to 3 or 4
+gzip_comp_level 3; 
+gzip_types text/css
+gzip_types text/javascript
+```
+
+### HTTP2
+
+HTTP2支持
+
+1. Binary Protol 传输二进制而不是plain/text
+2. Compressed Header 头部压缩，省空间
+3. Persistent Connections 短链改长链，减少频繁建立短连接的开销
+4. Multiplex Streaming 多路复用，合并资源请求
+5. Server Push 支持push
+
+## Resources
+
+- [Nginx Doc](https://nginx.org/en/docs/)
+- [Nginx Config Pitfalls](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/)
+- [Nginx Tutorial DigistalOCean](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
+- [Nginx Resources Github](https://github.com/fcambus/nginx-resources)
 

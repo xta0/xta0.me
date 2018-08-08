@@ -2,8 +2,7 @@
 title: Javascript Basics
 list_title: Web Dev Bootcamp Part 3 | Javascript Basics
 layout: post
-categories: [javascript]
-meta: Web Development Bootcamp. Basic Javascript usage
+categories: [Web]
 ---
 
 ### 引入JS的三种方式

@@ -1,12 +1,9 @@
 ---
 layout: post
 list_title: Data Structre Part 10 | Hashing | 散列
-title: 搜索(一)：散列 | Hashing
-# sub_title: Searching
+title: 散列 | Hashing
 mathjax: true
 ---
-
-![](/assets/images/2008/08/hash-header.png)
 
 ## 搜索概述
 

@@ -2,6 +2,7 @@
 layout: post
 title: SASS
 list_title: Web Dev Bootcamp Part 2 - 1 | SASS 
+categories: [Web]
 ---
 
 > Sass is a CSS **preprocessor**, an extension of CSS that adds power and elegance to the basic language

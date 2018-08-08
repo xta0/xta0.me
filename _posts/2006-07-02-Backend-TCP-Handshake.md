@@ -5,9 +5,7 @@ title: TCP Hand Shakes
 categories: [Network,Backend]
 ---
 
-<em></em>
-
-快速看一下TCP connection的具体过程，简单写了一个TCP server（python的twist简单而快速），和iOS的client（socket+NSStream）。配合`wireshark`来做一些分析：
+快速看一下TCP connection的具体过程，简单写了一个TCP server 配合`wireshark`来做一些分析：
 
 <h2>建立三步握手</h2>
 

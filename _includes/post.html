@@ -22,7 +22,7 @@
                 </time>
             {% endif %}
         </span>
-        {% if page.categories %}
+        {% if page.categories.size > 0 %}
             <span class="post-meta-category">
                 <span class="post-meta__divider">|</span>
                 <!-- category  -->
@@ -33,9 +33,9 @@
                 {% for cat in page.categories %}
                 {% assign cat_url_encode = cat | url_encode | replace: '+', '%20' %}
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                <a href="{{ '/category/#/' | relative_url | append: cat_url_encode }}" itemprop="url" rel="index">
+                <!-- <a href="{{ '/category/#/' | relative_url | append: cat_url_encode }}" itemprop="url" rel="index"> -->
                     <span itemprop="name">{{ cat }}</span>
-                </a>
+                <!-- </a> -->
                 </span>
                 {% assign cat_length = page.categories.size %}
                 {% if cat_length > 1 and forloop.index != cat_length %}

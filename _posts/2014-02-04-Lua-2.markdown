@@ -1,6 +1,8 @@
 ---
-list_title: Lua Part 2 - Coroutine
+list_title: Lua 中的协程 | Coroutine in Lua
+title: Lua 中的协程
 layout: post
+categories: [Lua]
 ---
 
 最早接触Coroutine是在<a href="http://www.lua.org/pil/">Programming in Lua</a>中，如今这本书已经出到第三版了，第9章介绍了lua中Coroutine的API，读过一遍后，没不太明白，后来又读了一篇关于这方面的<a href="http://www.inf.puc-rio.br/~roberto/docs/corosblp.pdf">论文</a>，作者也是原书的作者，论文将Coroutine机制阐述的很详细，读完后也是似懂非懂，于是我决定将我明白的Coroutine的内容先整理一下列出来，日后如果还有机会用到再来不断完善它。

@@ -2,6 +2,7 @@
 title: Javascript Basics
 list_title: Web Dev Bootcamp Part 3-1 | DOM & JQuery
 layout: post
+categories: [Web]
 ---
 
 ### DOM 节点操作
