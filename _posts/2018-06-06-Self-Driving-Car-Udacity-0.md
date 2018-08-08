@@ -1,7 +1,7 @@
 ---
 updated: "2018-07-10"
 layout: post
-list_title: 自动驾驶入门（一）| Udacity Autonomous Driving Part 1 | Bayers Rule
+list_title: 自动驾驶入门（一）| Udacity Autonomous Driving Part 1 | Bayesian Thinking
 title: 贝叶斯概率模型
 categories: [AI,Autonomous-Driving]
 mathjax: true
@@ -9,6 +9,9 @@ mathjax: true
 
 > Course Notes from Udacity Self-Driving Car Nanodegree Program
 
+### Prerequisite
+
+- Independent Probability 
 
 
 ## 附录
@@ -23,11 +26,11 @@ def control(pos_x, pos_y, time, velocity):
     global car_parameters
     if(time < 3):
         car_parameters["throttle"] = -1.0
-        car_parameters["steer"] = 25
+        car_parameters["steer"] = 1
         car_parameters["brake"] = 0
     elif(pos_y > 32):
         car_parameters["throttle"] = -1.0
-        car_parameters["steer"] = -25
+        car_parameters["steer"] = -1
         car_parameters["brake"] = 0
     else:
         car_parameters["throttle"] = 0
