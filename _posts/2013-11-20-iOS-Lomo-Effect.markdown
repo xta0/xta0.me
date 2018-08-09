@@ -13,16 +13,16 @@ lomo效果，是一种很流行的滤镜效果，许多开源的工程都能实�
 下面两张图分别为原图和instagram滤镜的hefe效果再叠加上水滴效果。
 
 <!--<div style="overflow: hidden; width: 100%;">
-<img style="display: block; float: left" src="/assets/images/2013/11/lomo_ori.png" alt="lomo_ori" width="204" height="360" />
-<img style="display: block; float:left;margin-left:30px" src="/assets/images/2013/12/lomo-hefe.png" alt="lomo-hefe" width="204" height="362"/>
+<img style="display: block; float: left" src="{{site.baseurl}}/assets/images/2013/11/lomo_ori.png" alt="lomo_ori" width="204" height="360" />
+<img style="display: block; float:left;margin-left:30px" src="{{site.baseurl}}/assets/images/2013/12/lomo-hefe.png" alt="lomo-hefe" width="204" height="362"/>
 </div>-->
 
 <div>
 	<div style="width:49%; float:left;">
-		<img src="/assets/images/2013/11/lomo_ori.png" width="200" height="360">
+		<img src="{{site.baseurl}}/assets/images/2013/11/lomo_ori.png" width="200" height="360">
 	</div>
 	<div style="width:49%; float:left">
-		<img src="/assets/images/2013/12/lomo-hefe.png" width="200" height="360">
+		<img src="{{site.baseurl}}/assets/images/2013/12/lomo-hefe.png" width="200" height="360">
 	</div>
 </div>
 
@@ -52,7 +52,7 @@ $$g\left ( x,y \right ) = T\left [ f\left ( x,y \right ) \right ]$$
 
 接下来我们的任务便是找到hefe效果的非线性映射的曲线，如果身边有设计师，可以让他们用PS调出hefe的效果，然后我们拿到它的RGB三通道的曲线：
 
-<a href="/assets/images/2013/12/hefe-rgb.png"><img src="/assets/images/2013/12/hefe-rgb.png" alt="hefe-rgb" width="193" height="192" class="alignnone size-full wp-image-567" /></a>
+<a href="/assets/images/2013/12/hefe-rgb.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe-rgb.png" alt="hefe-rgb" width="193" height="192" class="alignnone size-full wp-image-567" /></a>
 
 途中红色为R通道，绿色为G通道，蓝色为B通道，从曲线的变化来看，是一种非线性关系。
 
@@ -118,9 +118,9 @@ for (int i=0; i<srcBitmapHeight*srcBitmapRowBytes; i+=4) {
 首先我们把原图画出来，context指向了一块bitmap，然后根据我们刚才生成的映射表来改变bitmap中的像素点，最后把改变后的图片画出来。我们还以经典的lena256x256.png为例，左边是原图，右边是hefe拉伸的效果：
 
 <div style="overflow: hidden; width: 100%;">
-<a style="display: block; float:left" href="/assets/images/2013/12/hefe_lena_ori.png"><img src="/assets/images/2013/12/hefe_lena_ori.png" alt="hefe_lena_ori" width="200" height="200" class="alignnone size-full wp-image-577" /></a>
+<a style="display: block; float:left" href="/assets/images/2013/12/hefe_lena_ori.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena_ori.png" alt="hefe_lena_ori" width="200" height="200" class="alignnone size-full wp-image-577" /></a>
 
-<a style="display: block; float:left;margin-left:30px" href="/assets/images/2013/12/hefe_lena.png"><img src="/assets/images/2013/12/hefe_lena.png" alt="hefe_lena" width="200" height="200" class="alignnone size-full wp-image-578" /></a>
+<a style="display: block; float:left;margin-left:30px" href="/assets/images/2013/12/hefe_lena.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena.png" alt="hefe_lena" width="200" height="200" class="alignnone size-full wp-image-578" /></a>
 
 </div>
 
@@ -140,9 +140,9 @@ vImageBoxConvolve_ARGB8888(effectInBuffer, effectOutBuffer, NULL, 0, 0, 25, 25, 
 模糊结果如下：
 
 <div style="overflow: hidden; width: 100%;"> 
-<a style="display: block; float:left" href="/assets/images/2013/12/hefe_lena.png"><img src="/assets/images/2013/12/hefe_lena.png" alt="hefe_lena" width="200" height="200" class="alignnone size-full wp-image-578" /></a>
+<a style="display: block; float:left" href="/assets/images/2013/12/hefe_lena.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena.png" alt="hefe_lena" width="200" height="200" class="alignnone size-full wp-image-578" /></a>
 
-<a style="display: block; float:left;margin-left:30px" href="/assets/images/2013/12/hefe_lena_blur.png"><img src="/assets/images/2013/12/hefe_lena_blur.png" alt="hefe_lena_blur" width="200" height="200" class="alignnone size-full wp-image-582" /></a>
+<a style="display: block; float:left;margin-left:30px" href="/assets/images/2013/12/hefe_lena_blur.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena_blur.png" alt="hefe_lena_blur" width="200" height="200" class="alignnone size-full wp-image-582" /></a>
 
 </div>
 
@@ -210,19 +210,19 @@ command+R，来看看结果：
 
 <ul style="overflow: hidden; width: 100%; list-style: none; margin-left: 0px;">
 <li style="width: 48%; display:inline-block; ">
-<a style="float:left; " href="/assets/images/2013/12/hefe_lena.png"><img style="margin-left: 0;" src="/assets/images/2013/12/hefe_lena.png" alt="hefe_lena_ori" width="200" height="200" class="alignnone size-full wp-image-577" /></a>
+<a style="float:left; " href="/assets/images/2013/12/hefe_lena.png"><img style="margin-left: 0;" src="{{site.baseurl}}/assets/images/2013/12/hefe_lena.png" alt="hefe_lena_ori" width="200" height="200" class="alignnone size-full wp-image-577" /></a>
 </li>
 
 <li style="width: 48%; float: left; display:inline-block;">
-<a style="margin-left:4%;" href="/assets/images/2013/12/hefe_lena_ori.png"><img src="/assets/images/2013/12/hefe_lena_ori.png" alt="hefe_lena" width="200" height="200" class="alignnone size-full wp-image-578" /></a>
+<a style="margin-left:4%;" href="/assets/images/2013/12/hefe_lena_ori.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena_ori.png" alt="hefe_lena" width="200" height="200" class="alignnone size-full wp-image-578" /></a>
 </li>
 
 <li style="width: 48%; clear: left; display:inline-block; ">
-<a  href="/assets/images/2013/12/hefe_final.png"><img src="/assets/images/2013/12/hefe_final.png" alt="hefe_final" width="200" height="200" class="alignnone size-full wp-image-582" /></a>
+<a  href="/assets/images/2013/12/hefe_final.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_final.png" alt="hefe_final" width="200" height="200" class="alignnone size-full wp-image-582" /></a>
 </li>
 
 <li style="width: 48%; float: left; display:inline-block;">
-<a style="float: left; margin-left:4%;" href="/assets/images/2013/12/hefe_lena_blur.png"><img src="/assets/images/2013/12/hefe_lena_blur.png" alt="lean_blur" width="200" height="200" class="alignnone size-full wp-image-589" /></a>
+<a style="float: left; margin-left:4%;" href="/assets/images/2013/12/hefe_lena_blur.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena_blur.png" alt="lean_blur" width="200" height="200" class="alignnone size-full wp-image-589" /></a>
 </li>
 </ul>
 

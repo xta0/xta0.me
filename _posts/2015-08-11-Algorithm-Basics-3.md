@@ -136,7 +136,7 @@ mathjax: true
 	- <math><mi>n</mi><mo>!</mo><mo>=</mo><mi>ω</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mi>n</mi></msup><mo stretchy="false">)</mo></math>
 	- <math><mi>log(n!)</mi><mo>=</mo><mi>Θ</mi><mo stretchy="false">(</mo><mi>nlogn</mi><mo stretchy="false">)</mo></math>
 
-<img src="/assets/images/2007/08/bigo.png" width="60%"/>
+<img src="{{site.baseurl}}/assets/images/2007/08/bigo.png" width="60%"/>
 
 上图是上述几种函数的增长率曲线，由此不难看出：<math display="inline"><msup><mi>2</mi><mi>n</mi></msup><mo>></mo><msup><mi>n</mi><mi>2</mi></msup><mo>></mo><msubsup><mi>nlog</mi> <mi>2</mi> <mi>n</mi></msubsup> <mo>></mo><msubsup><mi>n</mi> <mi></mi> <mi></mi></msubsup><mo>></mo><msubsup><mi>log</mi> <mi>2</mi> <mi>n</mi></msubsup>     
 </math>

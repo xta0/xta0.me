@@ -15,7 +15,7 @@ $$
 
 节点的平衡因子可能取值为0,1（`+`）和-1（`-`）。
 
-<img src="/assets/images/2008/07/tree-15.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-15.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 可以证明，AVL树是适度平衡的，`height(AVL) = O(logn)`,即$N$个节点的AVL树，其高度是不超过$log{N}$的。
 
@@ -53,7 +53,7 @@ typedef TreeNode BinaryTreeNode<int>;
 
 考虑下面对某个节点增删的情况：
 
-<img src="/assets/images/2008/07/tree-16.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-16.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 
 当`M`插入后，虽然不会引起其父亲节点`K`的失衡，却会导致其祖先节点`N,R,G`相继失衡，而除了祖先之外的其它节点则不受影响。当删除`Y`后，只会影响到其父节点`R`，对其它祖先节点则无影响。
@@ -71,7 +71,7 @@ typedef TreeNode BinaryTreeNode<int>;
 3. `G`成为`P`的左孩子
 4. 将局部子树的根从`G`替换为`P`
 
-<img src="/assets/images/2008/07/tree-17.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-17.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 `G` 经过单选调整后，恢复平衡，子树高度复原，<mark>更高的祖先也必平衡，全树复衡</mark>。zag旋转的时间复杂度为$O(1)$，由于所有节点都在右侧，因此这种左旋操作也叫做**zagzag**，同理，如果所有节点均在左侧，则需要进行右旋操作，也叫**zigzig**
 
@@ -82,7 +82,7 @@ typedef TreeNode BinaryTreeNode<int>;
 1. 对`V`做zig右旋，过程与上面zag旋转相仿
 2. 对`G`做zag左旋，过程参照上面单旋
 
-<img src="/assets/images/2008/07/tree-18.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-18.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 - 实现
 
@@ -130,7 +130,7 @@ BST的另一个改进变种是伸展树，伸展树是一种自适应的数据�
 1. 如果`v`是`P`的左孩子，则对`P`进行右旋`zig(p)`
 2. 如果`v`是`P`的右孩子，则对`P`进行左旋`zag(p)`
 
-<img src="/assets/images/2008/07/tree-19.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-19.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 可见不论`V`在左还是右，通过旋转都可以让`V`上升一层，因此可以对`V`进行反复旋转，直到其转移至树根，这个过程中，`V`每前进磁层都要对整棵树进行伸展，这就是所谓伸展树的来历。但是上述过程存在一种最坏情况，即当BST为单链表结构时
 

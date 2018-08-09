@@ -42,7 +42,7 @@ categories: [Compiler]
 
 ## How Computer Works 
 
-<img src="/assets/images/2015/04/0-0.png" class="md-img-center" >
+<img src="{{site.baseurl}}/assets/images/2015/04/0-0.png" class="md-img-center" >
 
 ### Lexical Analysis
 
@@ -93,7 +93,7 @@ $$
 
 上述语句经过LA之后变成:`[ <id,1>, <=>, <id,2>, <+>, <id,3>, <*>, <60> ]`，其语法树结构如下：
 
-<img class="md-img-center" src="/assets/images/2015/04/0-2.png" width="30%"/>
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/04/0-2.png" width="30%"/>
 
 ### Parsing
 
@@ -105,7 +105,7 @@ This \thinspace line \thinspace is \thinspace a \thinspace long \thinspace sente
 $$
 
 
-<img class="md-img-center" src="/assets/images/2015/04/0-1.png" width="50%"/>
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/04/0-1.png" width="50%"/>
 
 我们分析代码语句成分也是类似的，例如下面语句：
 
@@ -117,7 +117,7 @@ else
 ```
 类似的树形结构为:
 
-<img src="/assets/images/2015/04/0-3.png" width="40%"/>
+<img src="{{site.baseurl}}/assets/images/2015/04/0-3.png" width="40%"/>
 
 ### Semantic Analysis:理解语义
 

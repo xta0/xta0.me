@@ -11,7 +11,7 @@ mathjax: true
 
 数学意义的图包含两个元素 $G=(V,E)$，顶点集合 $n = \| V \|$，边集合 $ e= \| E \| $。 假设一个图有三个顶点，彼此连通，则$V=\\{v_0,v_1,v_2\\}$，$E=\\{(v_1,v_2),(v_1,v_3),(v_2,v_3)\\}$。
 
-<img src="/assets/images/2008/08/graph-0.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/graph-0.png" style="margin-left:auto; margin-right:auto;display:block">
 
 - 邻接关系/关联关系
 
@@ -33,7 +33,7 @@ mathjax: true
 
 若邻接顶点$u$和$v$的次序无所谓，则$(u,v)$为无向边(undirected edge)，若图中的所有边均为无向边，则这个图称为**无向图**。反之，**有向图**(digraph)中均为有向边(directed edge)，$u,v$分别称作边$(u,v)$的尾，头，表示从$u$出发，到达$v$。
 
-<img src="/assets/images/2008/08/graph-5.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/graph-5.png" style="margin-left:auto; margin-right:auto;display:block">
 
 之前介绍的数据结构都可以看成是图的一种表现形式，比如二叉树是一种无权的有向无环图，节点的入度为1，出度最大为2，顶点之间只有一条路径。而单项链表也可以看成是一种无权的DAG，每个节点的入度出度都为1
 
@@ -102,7 +102,7 @@ public:
 
 上面我们已经了解了关于图的逻辑模型和基本接口，但是在计算机中该如何表示这个模型呢？方法有很多种，这里我们主要介绍三种，分别是边表(edge list)，邻接矩阵(adjacency matrix)和邻接表(adjacency list)。
 
-<img src="/assets/images/2008/08/graph-14.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/graph-14.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 ### 边表
 
@@ -128,7 +128,7 @@ $$
 
 如果顶点$i,j$相连，对于无向图，则$A[i,j]$和$A[j,i]$的值相同；对于有向图，则分别对应各自的$A[i,j]$和$A[j,i]$的值；如果是带权图，则矩阵中元素的值为权值$w$。
 
-<img src="/assets/images/2008/08/graph-2.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/graph-2.png" style="margin-left:auto; margin-right:auto;display:block">
 
 可见，对于一个$n$个顶点的图，邻接矩阵是一个对称阵（默认不考虑自环的情况，因此对角线的元素值为0)，空间代价为$O(n^2)$。
 
@@ -179,7 +179,7 @@ $$
 3. 权重值(可选)
 
 
-<img src="/assets/images/2008/08/graph-3.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/graph-3.png" style="margin-left:auto; margin-right:auto;display:block">
 
 上图分别为无向图，带权图和有向图的邻接表，对于有向图，有出度和入度两种邻接表，这里只给出了出度的邻接表，对于入度的情况类似。由上图的结构可以看出使用邻接表，对每个节点的相邻节点的访问是非常高效的，另外，邻接表的空间利用率也相对较高。
 
@@ -239,7 +239,7 @@ void DFS(Vertex v) { // 深度优先搜索的递归实现
 }
 ```
 
-<img src="/assets/images/2008/08/graph-4.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/graph-4.png" style="margin-left:auto; margin-right:auto;display:block">
 
 例如上图DFS的遍历次序为：`a b c f d e g`。这里有一点要注意，由于第二步对相邻节的未访问的节点选取规则不唯一（下图例子使用的是字母顺序），因此对全图进行遍历得到结果序列是不唯一的。类似的，如果使用DFS进行搜索，寻找两点间路径，得到的结果不一定是最短路径。
 
@@ -288,7 +288,7 @@ void BFS(Vertex v) {
 }
 ```
 
-<img src="/assets/images/2008/08/graph-6.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/graph-6.png" style="margin-left:auto; margin-right:auto;display:block">
 
 以上图为例，假设我们从`s`开始遍历：
 
@@ -327,7 +327,7 @@ function bfs(v1,v2):
 
 路径的权值在某些场合下是非常重要的，比如两地间飞机的票价，两个网络节点间数据传输的延迟等等。DFS和BFS在搜索两个节点路径时不会考虑边的权值问题，如果加入权值，那么两点间权值最小的路径不一定是BFS得到的最短路径，如下图中求$\\{a,f\\}$两点间的BFS的结果为$\\{a,e,f\\}$，cost为9，而cost最少的路径为$\\{a,d,g,h,f\\}$，其值为6
 
-<img src="/assets/images/2008/08/graph-9.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/graph-9.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 Dijkstra算法研究的是单源最短路径(single-source shortest paths)问题，即给定带权图 $G = <V，E>$，其中每条边 $(v_i，v_j)$ 上的权 $W[v_i，v_j]$ 是一个**非负实数**。计算从任给的一个源点$s$到所有其他各结点的最短路径。其基本思想是维护一张表，表中记录当前两点间的最短路径，然后不断更新路径值，直到找到最终解。
 
@@ -361,7 +361,7 @@ function dijkstra(v1,v2):
 
 上述是Dijkstra算法的伪码，我们通过下面一个例子看看它是如何工作的。如下图所示，假设我们要求从$\\{a,f\\}$的权值最短路径。
 
-<img src="/assets/images/2008/08/graph-10.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/graph-10.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 
 1. 初始化各节点的cost为无穷大，令`a`的cost为0，放入优先级队列pq
@@ -393,7 +393,7 @@ function dijkstra(v1,v2):
 
 所谓生成树(Spanning Tree)是连接无环图中所有顶点的边的集合。如下图所示，我们将左边的图去环后得到了右边的无环图，该图即是一棵生成树
 
-<img src="/assets/images/2008/08/graph-11.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/graph-11.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 所谓最小生成树，是图中所有生成树中权值之和最小的一棵,简称 MST(minimum-cost spanning tree)。
 
@@ -406,7 +406,7 @@ Kruskal算法是一种贪心算法，主要步骤如下：
 3. 在$E$中弹出权值最小边，如果该边的两个顶点在$T$中不连通，则将其加入到$E$中，否则忽略这条边
 4. 依次类推，直到$E$为空，此时就得到图$G$的一颗最小生成树
 
-<img src="/assets/images/2008/08/graph-12.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/graph-12.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 如上图所示，首先将所有边放入优先队列，则权值最小的`a`在堆顶，然后`a`出队，其两个顶点不连通，因此将该边放入图中（标红），当`e`出队的时候，我们发现`e`的两个顶点可以已通过`a,d`连通，因此`e`被忽略。按照此规则，以此类推，最终得到最小生成树（图中红色边）为:`a,b,c,d,f,h,i,k,p`总权值为`1+2+3+4+6+8+9+11+16 = 60`。不难看出，上述规则依旧是贪心法，每次选择权值最小的路径，其伪码如下：
 
@@ -446,7 +446,7 @@ Prim算法和上面算法类似，也是采用贪心的策略，不同的是Prim
 3. 如此进行下去，每次往 MST 里加一个顶点和一条权最小的边，直到把所有的顶点都包括进 MST 里
 4. 算法结束时, MST中包含了原图中的n-1条边
 
-<img src="/assets/images/2008/08/graph-13.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/graph-13.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 Prim 算法非常类似于 Dijkstra 算法，算法中的距离值不需要累积，直接用最小边，而确定代价最小的边就需要总时间$O(n^2)$；取出权最小的顶点后，修改 D 数组共需要时间$O(e)$，因此<mark>共需要花费$O(n^2)$的时间</mark>。Prim算法适合于稠密图，对于稀疏图，可以像 Dijkstra 算法那样用堆来保存距离值。
 
@@ -477,7 +477,7 @@ Prim 算法非常类似于 Dijkstra 算法，算法中的距离值不需要累�
     </table>
 </div>
 <div style="float:left;margin-left:10px;">
-    <img src="/assets/images/2008/08/graph-7.png" width="500px" />
+    <img src="{{site.baseurl}}/assets/images/2008/08/graph-7.png" width="500px" />
 </div>
 </div>
 

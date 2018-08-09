@@ -85,7 +85,7 @@ MVVM的好处是：
 
 ## MVC+
 
-<img src="/assets/images/2014/11/new_mvc.png" alt="new_mvc"/>
+<img src="{{site.baseurl}}/assets/images/2014/11/new_mvc.png" alt="new_mvc"/>
 
 这个图大概能说明我的想法，我再来梳理一下Rules:
 

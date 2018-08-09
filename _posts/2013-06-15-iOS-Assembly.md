@@ -38,7 +38,7 @@ bl _label =>lr = pc + 4; pc = _label
 
 函数调用是基于stack的，stack是从高到低生长的，假如函数A内部要调用B，首先要将A的sp存起来，然后在stack上开辟一块控件，执行B，执行万后在将sp取出来继续执行。整个过程如下图：
 
-<a href=/assets/images/2012/11/stack.png"><img src="/assets/images/2012/11/stack.png" alt="stack" width="558" height="354"/></a>
+<a href=/assets/images/2012/11/stack.png"><img src="{{site.baseurl}}/assets/images/2012/11/stack.png" alt="stack" width="558" height="354"/></a>
 
 <strong>parameter area：</strong>存放了B（callee）函数需要的参数，这一块空间需要由A来分配(caller),这个过程叫做Prologs：
 
@@ -263,11 +263,11 @@ Lfunc_end0:
 
 我们首先在fooFunction入口处打一个断断点：
 
-<a href="/assets/images/2013/06/assembly-break.png"><img src="/assets/images/2013/06/assembly-break.png" alt="assembly-break" width="419" height="190"/></a>
+<a href="/assets/images/2013/06/assembly-break.png"><img src="{{site.baseurl}}/assets/images/2013/06/assembly-break.png" alt="assembly-break" width="419" height="190"/></a>
 
 然后用真机调试程序，停在断点处：
 
-<a href="/assets/images/2013/06/assembly-break2.png"><img src="/assets/images/2013/06/assembly-break2.png" alt="assembly-break2" width="290" height="65"/></a>
+<a href="/assets/images/2013/06/assembly-break2.png"><img src="{{site.baseurl}}/assets/images/2013/06/assembly-break2.png" alt="assembly-break2" width="290" height="65"/></a>
 
 这时，我们先用<code>bt</code>查看当前线程的stack frame：
 
@@ -303,7 +303,7 @@ General Purpose Registers:
       cpsr = 0x20000030
 ```
 
-<a style = " float : left; margin-right:30px;" href="/assets/images/2013/06/assembly-stack1.png"><img src="/assets/images/2013/06/assembly-stack1.png" alt="assembly-stack1" width="155" height="277"/></a>
+<a style = " float : left; margin-right:30px;" href="/assets/images/2013/06/assembly-stack1.png"><img src="{{site.baseurl}}/assets/images/2013/06/assembly-stack1.png" alt="assembly-stack1" width="155" height="277"/></a>
 
 如图所示，r0,r1填好了入参50，51，sp指向栈底，lr指向下一条函数的入口地址
 好了，下面我们来分析stack：<code>memory read/6xw 0x27d1fcbc</code>从当前sp的位置向上6*4 = 24字节：
@@ -322,7 +322,7 @@ General Purpose Registers:
 接下来，我们执行addFunction:
 </p>
 
-<a href="/assets/images/2013/06/assembly-break3.png"><img src="/assets/images/2013/06/assembly-break3.png" alt="assembly-break3" width="432" height="69"/></a>
+<a href="/assets/images/2013/06/assembly-break3.png"><img src="{{site.baseurl}}/assets/images/2013/06/assembly-break3.png" alt="assembly-break3" width="432" height="69"/></a>
 
 
 再<code>bt</code>
@@ -359,7 +359,7 @@ General Purpose Registers:
 ```
 
 
-<a style = " float : left; margin-right:30px;" href="/assets/images/2013/06/assembly-stack2.png"><img src="/assets/images/2013/06/assembly-stack2.png" alt="assembly-stack2" width="157" height="388"/></a>
+<a style = " float : left; margin-right:30px;" href="/assets/images/2013/06/assembly-stack2.png"><img src="{{site.baseurl}}/assets/images/2013/06/assembly-stack2.png" alt="assembly-stack2" width="157" height="388"/></a>
 
 此时，r0，r1为入参，sp指向栈底，当前sp位置为0x27d1fcb0，和上图中的位置正好相差12字节！这12字节也就是addFunction的stack frame。此时lr指向了下一条函数入口：fooFunction。值为:0x000eab63，比我们bt出来的0x000eab62多一个字节。因为lr永远指向下一条函数入口地址的下一个字节。
 

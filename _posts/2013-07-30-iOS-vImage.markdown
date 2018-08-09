@@ -55,11 +55,11 @@ err = vImageBoxConvolve_ARGB8888(effectInBuffer, effectOutBuffer, NULL, 0, 0, 9,
 
 <div style="overflow: hidden; width: 100%;">
 
-<a style="display: block; float: left;" href="/assets/images/2013/11/lena_ave_o.png"><img alt="lena_ave_o" src="/assets/images/2013/11/lena_ave_o.png" width="200" height="200" /></a>
+<a style="display: block; float: left;" href="/assets/images/2013/11/lena_ave_o.png"><img alt="lena_ave_o" src="{{site.baseurl}}/assets/images/2013/11/lena_ave_o.png" width="200" height="200" /></a>
 
-<a style="display: block; float: left; margin-left: 30px;" href="/assets/images/2013/11/lena-5x5.png"><img alt="lena-5x5" src="/assets/images/2013/11/lena-5x5.png" width="200" height="200" /></a>
+<a style="display: block; float: left; margin-left: 30px;" href="/assets/images/2013/11/lena-5x5.png"><img alt="lena-5x5" src="{{site.baseurl}}/assets/images/2013/11/lena-5x5.png" width="200" height="200" /></a>
 
-<a style="display: block; float: left; margin-left: 30px;" href="/assets/images/2013/11/lena-9x9.png"><img alt="lena-9x9" src="/assets/images/2013/11/lena-9x9.png" width="200" height="200" /></a>
+<a style="display: block; float: left; margin-left: 30px;" href="/assets/images/2013/11/lena-9x9.png"><img alt="lena-9x9" src="{{site.baseurl}}/assets/images/2013/11/lena-9x9.png" width="200" height="200" /></a>
 
 </div>
 
@@ -90,9 +90,9 @@ Bias的意思是如果计算过程中如果有溢出（比如出现负数或者�
 
 <div style="overflow: hidden; width: 100%;">
 
-<a style="display: block; float: left;" href="/assets/images/2013/11/lena_ave_o.png"><img class="alignnone size-full wp-image-391" alt="lena_ave_o" src="/assets/images/2013/11/lena_ave_o.png" width="200" height="200" /></a>
+<a style="display: block; float: left;" href="/assets/images/2013/11/lena_ave_o.png"><img class="alignnone size-full wp-image-391" alt="lena_ave_o" src="{{site.baseurl}}/assets/images/2013/11/lena_ave_o.png" width="200" height="200" /></a>
 
-<a style="display: block; float: left; margin-left: 30px;" href="/assets/images/2013/11/lena-laplas-3x3.png"><img src="/assets/images/2013/11/lena-laplas-3x3.png" alt="lena-laplas-3x3" width="200" height="200" class="alignnone size-full wp-image-415"/></a>
+<a style="display: block; float: left; margin-left: 30px;" href="/assets/images/2013/11/lena-laplas-3x3.png"><img src="{{site.baseurl}}/assets/images/2013/11/lena-laplas-3x3.png" alt="lena-laplas-3x3" width="200" height="200" class="alignnone size-full wp-image-415"/></a>
 
 </div>
 

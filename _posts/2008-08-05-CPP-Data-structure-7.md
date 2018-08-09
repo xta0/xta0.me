@@ -12,7 +12,7 @@ mathjax: true
 
 前一节介绍了二叉树，它是一种特殊的树形结构，有很多应用的场景，但是我们没有回答一问题，为什么要有树这种结构？在树之前我们一直采用线性结构对数据进行存储和操作，包括数组和链表，但是对于这两种结构来说，它们都有各自的优势和劣势，对于数组，查找很快，但是插入删除要`O(n)`，对于列表，则反过来。有没有一种数据结构可以做到查找和插入删除操作效率都很高呢？答案就是使用树，对于树来说，可以把它看做是列表的列表`list<list<T>>`，即树的每个节点只有唯一一个前驱节点，而可能有多个后继节点，因此我们可以说树是一种“半线性”结构。而当树的每个节点只有一个子节点（后继）时，树则退化为链表。
 
-<img src="/assets/images/2008/08/tree-17.jpeg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/tree-17.jpeg" style="margin-left:auto; margin-right:auto;display:block">
 
 ### 树的特性
 
@@ -61,7 +61,7 @@ mathjax: true
 2. $B(F)$的左子树为$T_1$除去根节点后的子树组成的二叉树3
 3. $B(F)$的右子树为${T_2,T_3}$组成的二叉树。
 
-<img src="/assets/images/2008/08/tree-10.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/tree-10.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 
 如上图所示，不难发现将上面虚线部分是一个递归合并的过程(将两棵子树合并成一课二叉树，而每棵子树又有自己的子树)。对于任意两棵子树，其合并的过程为：
@@ -70,7 +70,7 @@ mathjax: true
 2. 对每个节点，去掉除了与第一个孩子之外的其他所有连线
 3. 调整位置
 
-<img src="/assets/images/2008/08/tree-11.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/tree-11.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
  - 二叉树转森林
 
@@ -86,7 +86,7 @@ mathjax: true
 2. 去掉所有父节点和其右子节点的连线
 3. 调整位置
 
-<img src="/assets/images/2008/08/tree-12.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/tree-12.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 ### 树的Interface
 
@@ -122,7 +122,7 @@ public:
 
 如果对于树中的节点，只需要知道它的父节点信息，不需要保存子节点的信息，则可以使用父节点表示法，使用一个数组来存储其所有节点，其节点存储顺序可以任意指定，父节点的位置通过数组下标来表示。
 
-<img src="/assets/images/2008/08/tree-15.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/tree-15.png" style="margin-left:auto; margin-right:auto;display:block">
 
 假如上面一棵树，可以使用下面数组来进行存储：
 
@@ -266,7 +266,7 @@ TreeNode<T>* Parent(TreeNode<T> *current){
 1. 先根遍历，对应二叉树的前序遍历
 2. 后根遍历，对应二叉树的中序遍历
 
-<img src="/assets/images/2008/08/tree-13.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/tree-13.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 例如上图中先根序列为：`A B C K D E H F J G`，后根序列`B K C A H E J F G D`
 
@@ -298,7 +298,7 @@ RootLastTraverse(TreeNode<T> * root) {
 2. 然后依次访问层数为1的节点
 3. 直到访问完最下一层的所有节点
 
-<img src="/assets/images/2008/08/tree-14.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/tree-14.png" style="margin-left:auto; margin-right:auto;display:block">
 
 上图中的广度优先遍历顺序为`A D B C E F G K H J`，其遍历顺序对应二叉树结构的右斜线，是一种右子节点优先的遍历方式，注意森林的广度优先遍历不等于二叉树的广度优先遍历，对应上图中，二叉树的广度优先遍历次序为`A B D C E K H F J G`
 
@@ -335,7 +335,7 @@ void WidthTraverse(TreeNode<T> * root) {
 
 我们可以使用树来表示一个集合（用父节点代替），每个节点的子节点为该集合的子集，如果两个节点处于同一棵树中，那么这两个节点代表的两个子集处于同一个集合。
 
-<img src="/assets/images/2008/08/tree-16.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/tree-16.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 如上图所示，有两个等价类集合$S_1,S_2$。在$S_1$中，有$<3,1>,<5,1>,<1,7>$ 三个等价对，由等价关系可知3,5,7彼此等价，并且它们具有相同的根节点1；$S_2$的情况通力同理，假如现在引入另一个等价对$<3,2>$，可以发现，3的根节点为2，不等于1，因此如果要建立等价关系，需要将$S_1,S_2$合并，这样两个集合中的元素都将有相同的根节点。
 
@@ -343,7 +343,7 @@ void WidthTraverse(TreeNode<T> * root) {
 
 假设有10名罪犯，他们两两形成犯罪团伙，形成了5个等价对$<A,B>,<C,K>,<J,F>,<H,E>,<D,G>$（这里的等价关系可以理解为：A和B都是罪犯，那么认为他们是等价的）。以第一个等价对为例，$<A,B>$表示罪犯B由罪犯A领导，于是我们可以用树来产生的一个等价类集合，结构如下
 
-<img src="/assets/images/2008/08/tree-18.jpg" style="margin-left:auto; margin-right:auto;display:block"/>
+<img src="{{site.baseurl}}/assets/images/2008/08/tree-18.jpg" style="margin-left:auto; margin-right:auto;display:block"/>
 
 使用父节点表示法，存储结构为
 
@@ -354,11 +354,11 @@ parent:    -1 0 -1 2 -1  8  9 4 -1 -1
 ```
 假如现在罪犯K和A相互勾结，E和G相互勾结，形成了两个新的犯罪团伙：$(K,A)$ 和 $(E,G)$。以$(K,A)$为例，由于K的大哥是C，于是A提议让C也加入，形成一个更大的犯罪团伙，于是A,B,C,K形成了一个新的犯罪团伙，大哥为A。这个过程就是一个Union操作，我们合并了两个集合，得到了一个更大的集合，这个集合中的元素互为等价，他们拥有一个共同的根节点A，$(E,G)$类似。合并后的结构如下图
 
-<img src="/assets/images/2008/08/tree-19.png" style="margin-left:auto; margin-right:auto;display:block"/>
+<img src="{{site.baseurl}}/assets/images/2008/08/tree-19.png" style="margin-left:auto; margin-right:auto;display:block"/>
 
 还是上面的例子，假如我们又新增加了一组等价对$(H,J)$，由于$J$和$H$的大哥（根节点）不同，因此要将这两棵树做union操作，根据上面规则，$F$有两个节点，$D$有4个节点，因此将$F$合并到$D$上（人多服从人少）。合并后的结构如下：
 
-<img src="/assets/images/2008/08/tree-20.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/tree-20.png" style="margin-left:auto; margin-right:auto;display:block">
 
 合并完我们发现原来5个小的犯罪团伙现在合并成两个大的了，对于警察来说，只需要找到其中任意一个小弟，即可找到这个犯罪团伙的大哥，例如，我们可以进行`find(J)`操作，则可根据J一路追溯到D。
 
@@ -476,7 +476,7 @@ info A B C K D E H F J G
 ltag 0 1 0 1 0 0 1 0 1 1
 ```
 
-<img src="/assets/images/2008/08/tree-21.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/tree-21.png" style="margin-left:auto; margin-right:auto;display:block">
 
 显然，将一棵树序列化是比较容易的，而反序列化则要麻烦很多，如果原先是先跟序列存储的，需要使用栈来做中间存储工具，如果是按照层次序列则需要用队列做中间存储工具。假如们有下面数据（按先根序存储），我们研究如何将其反序列化为一棵树
 
@@ -497,7 +497,7 @@ ltag 0 0 1 1 1 1 1 0 1 1
 10. 此时栈中只剩C，因此D要挂在到C的右结点
 11. D,X,I的恢复过程类似
 
-<img src="/assets/images/2008/08/tree-22.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/08/tree-22.png" style="margin-left:auto; margin-right:auto;display:block">
 
 
 ### Resource

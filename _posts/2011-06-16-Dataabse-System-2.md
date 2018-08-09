@@ -300,7 +300,7 @@ SELECT两个表中需要查询的column，A表中pka和c1字段，B表中pkb和c
 
 如果用文氏图表示，INNTER JOIN的关系可表示为下图：
 
-<img src="/assets/images/2011/03/sql-join-2.png" width="40%" style="display:block; margin-left:auto;margin-right:auto" />
+<img src="{{site.baseurl}}/assets/images/2011/03/sql-join-2.png" width="40%" style="display:block; margin-left:auto;margin-right:auto" />
 
 ```SQL
 <!-- Join customer table with payment table -->
@@ -357,7 +357,7 @@ id name         id name
 </pre>
 </div>
 
-<img style="float:left;margin-left:40px" src="/assets/images/2011/03/sql-join-3.png" width="40%"/>
+<img style="float:left;margin-left:40px" src="{{site.baseurl}}/assets/images/2011/03/sql-join-3.png" width="40%"/>
 </div>
 
 以一个实际例子看一下
@@ -391,7 +391,7 @@ null null       1   Rutabaga
 null null       3   Darth Vader
 </pre>
 </div>
-<img style="float:left;margin-left:40px" src="/assets/images/2011/03/sql-join-4.png" width="40%"/>
+<img style="float:left;margin-left:40px" src="{{site.baseurl}}/assets/images/2011/03/sql-join-4.png" width="40%"/>
 </div>
 
 - FULL OUTER JOIN WITH WHERE
@@ -422,7 +422,7 @@ null null       1   Rutabaga
 null null       3   Darth Vader
 </pre>
 </div>
-<img style="float:left;margin-left:40px" src="/assets/images/2011/03/sql-join-7.png" width="40%"/>
+<img style="float:left;margin-left:40px" src="{{site.baseurl}}/assets/images/2011/03/sql-join-7.png" width="40%"/>
 </div>
 
 
@@ -452,7 +452,7 @@ id name         id  name
 4  Spaghetti   null null
 </pre>
 </div>
-<img style="float:left;margin-left:40px" src="/assets/images/2011/03/sql-join-5.png" width="40%"/>
+<img style="float:left;margin-left:40px" src="{{site.baseurl}}/assets/images/2011/03/sql-join-5.png" width="40%"/>
 </div>
 
 看下面例子，从前面的schema表中可以看出，每个film_id对应多个inventory_id，即每个影片有多个拷贝保存在不同的店里，因此在inventory表中，同一个film_id会有多条记录，现在希望查找。每个film的所有拷贝的库存ID。
@@ -498,7 +498,7 @@ id name         id  name
 4  Spaghetti   null null
 </pre>
 </div>
-<img style="float:left;margin-left:40px" src="/assets/images/2011/03/sql-join-6.png" width="40%"/>
+<img style="float:left;margin-left:40px" src="{{site.baseurl}}/assets/images/2011/03/sql-join-6.png" width="40%"/>
 </div>
 
 接着上面的例子，如果要找出那些电影没有库存Id，只需要用Where语句进行过滤
@@ -524,7 +524,7 @@ FROM tbl_name_2
 
 UION的一个场景是合并多张表的数据，将数据拼接成一个row，假设有下面一个例子
 
-<img style="display:block;margin-left:auto;margin-right:auto" src="/assets/images/2011/03/sql-union-1.png" width="80%"/>
+<img style="display:block;margin-left:auto;margin-right:auto" src="{{site.baseurl}}/assets/images/2011/03/sql-union-1.png" width="80%"/>
 
 现在想统计每个员工全面的销售总额，因此，需要将几张表的数据进行UNION
 
@@ -632,7 +632,7 @@ ON a.first_name = b.last_name;
 
 - Demo
 
-    <img class='md-img-center' src="/assets/images/2011/03/sql-db-1.png">
+    <img class='md-img-center' src="{{site.baseurl}}/assets/images/2011/03/sql-db-1.png">
     
     ```SQL
     CREATE TABLE account(

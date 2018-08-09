@@ -2,7 +2,7 @@
 {% assign lang_cn = site.data.languages['zh-Hans'] %}
 
 <div class="site-header__logo">
-    <img class="logo" src="/assets/images/mario.png">
+    <img class="logo" src="{{site.baseurl}}/assets/images/mario.png">
 </div>    
 
 <div class="site-header__nav">    
@@ -13,7 +13,7 @@
     {% assign item_name_cn = lang_cn.menu[icon_name] %}
     {% assign item_name_en = lang_en.menu[icon_name] %}
     <div class="menu-item">
-        <a href="{{ site.root }}{{path}}"><i class="fa fa-fw fa-{{site.menu_icons[icon_name]}}"></i>{{item_name_cn}} | {{item_name_en}}</a>
+        <a href="{{ site.baseurl }}{{path}}"><i class="fa fa-fw fa-{{site.menu_icons[icon_name]}}"></i>{{item_name_cn}} | {{item_name_en}}</a>
     </div> 
     {% endfor %}
 </div>

@@ -13,7 +13,7 @@ title: 堆与霍夫曼树
 
 因此使用最小堆可以找出这组节点的最小值。推而广之，对于一组无序的数，可以将他们构建成堆来快速得到最大值或最小值，当有新元素进来时，堆也依然可以保持这种特性
 
-<img src="/assets/images/2008/07/tree-7.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-7.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 堆的核心操作有如下三种
 
@@ -91,7 +91,7 @@ void sift_up(size_t position){
 3. 从倒数第二层最右边的非叶子节点开始（完全二叉树数组`i=⌊n/2-1⌋`的元素），依次向前，进行递归SiftDown调整。
 
 
-<img src="/assets/images/2008/07/tree-8.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-8.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 例如上图中，我们有一组8个数的无序序列`{72,73,71,23,94,16,05,68}`，建堆步骤为
 
@@ -167,7 +167,7 @@ L(110),E(0)
 
 我们把具有这样性质的树叫做Huffman树，它是一种带权路径长度最短的二叉树，也称为最优二叉树。如下图中，左边树构建方式的带权路径和为：(2+7+24+32)x2 = 130, 右边树构建方式的带权路径和为：32x1+24x2 +(2+7)x3 = 107。
 
-<img src="/assets/images/2008/07/tree-10.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-10.png" style="margin-left:auto; margin-right:auto;display:block">
 
 - 构建Huffman树
 
@@ -181,7 +181,7 @@ L(110),E(0)
 
 假设有一组节点的优先级序列为: `2 3 5 7 11 13 17 19 23 29 31 37 41`，对应的Huffman树为：
 
-<img src="/assets/images/2008/07/tree-9.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-9.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 - 编码
 

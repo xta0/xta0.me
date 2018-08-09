@@ -223,7 +223,7 @@ CAPM是Capital Assets Pricing Model的缩写，翻译过来叫做<mark>资本资
     - Market return
         - Risk free rate of return + Excess return 
 
-<img src="/assets/images/2018/04/CI-2.png" width="70%"/>
+<img src="{{site.baseurl}}/assets/images/2018/04/CI-2.png" width="70%"/>
 
 
 上图为BABA和NASDAQ近三个月的走势叠加图, 可以看到大部分时间BABA和NASDQ的走势基本持平。波动的部分则为BABA自身的股价变化。CAPM认为股价由两方面决定， 一方面市场波动，一方面是个股波动。他们之间的关系为

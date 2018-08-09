@@ -55,7 +55,7 @@ $$
 
 显然顺序检索的时间复杂度在$\Theta(n)$量级，时间略长，优化方式可采用给数组排序后，进行二分检索。对于二分检索和其性能分析可参考[之前文章]()。二分检索过程可用一颗BST来表示，其中每个parent节点的值为数组每次二分mid位置对应的值：
 
-<img src="/assets/images/2007/09/BS.png" width="40%" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2007/09/BS.png" width="40%" style="margin-left:auto; margin-right:auto;display:block">
 
 观察这棵树可发现，其最大的检索位置为叶节点`22`的位置，推而广之，可知二分法最大检索长度为$\lfloor \log{n+1} \rfloor$。其失败的检索位置有`15,51,22,93`因此，最大失败检索长度也为$\lfloor \log{n+1} \rfloor$。则其平均检索长度为：
 

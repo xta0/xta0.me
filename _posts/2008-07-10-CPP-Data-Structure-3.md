@@ -145,7 +145,7 @@ public: // 队列的运算集
 		- 插入删除时间复杂度为`O(1)`
 		- 环形表示
 
-<img src="/assets/images/2008/07/queue1.png" style="display:block; margin-left:auto; margin-right:auto; width:50%"/>
+<img src="{{site.baseurl}}/assets/images/2008/07/queue1.png" style="display:block; margin-left:auto; margin-right:auto; width:50%"/>
 
 ```cpp
 template <class Elem> 

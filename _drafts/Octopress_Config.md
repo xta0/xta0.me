@@ -14,7 +14,7 @@
 	- `git push origin source`  
 
 - 修改head.html:
-	- 替换:`<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>` 为`  <script src="//libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>`
+	- 替换:`<script src="{{site.baseurl}}//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>` 为`  <script src="{{site.baseurl}}//libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>`
 
 - 新建blog
 	- `rake new_post["title"]`

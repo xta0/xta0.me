@@ -73,7 +73,7 @@ $$
 
 $$T(n) = 2 * fib(n+1)-1 = O(fib(n+1)) = O(\Phi^n) = O(2^n)$$
 
-<img src="/assets/images/2007/09/fib-1.png" width="70%"/>
+<img src="{{site.baseurl}}/assets/images/2007/09/fib-1.png" width="70%"/>
 
 显然它的时间复杂度递推式也是只呈指数级增长的，这类量级的算法在实际应用中显然是不适用的，实际测试可发现当`n>60`时，算法运行时间将变成秒级。
 
@@ -119,7 +119,7 @@ def fib3(n):
 
 改为迭代算法后，时间复杂度依然为$O(n)$，空间复杂度仅为$O(n)$。这种计算方式和使用递归+缓存的方式基本一致，不同的是计算方向，将递归这种自顶而下的计算方式改为了自底向上的迭代。也可以将其理解为是一种拓扑序列结构，项与项之间有依赖关系:
 
-<img src="/assets/images/2007/09/fib-2.png" width="50%" style="margin-left:auto; margin-right:auto;display:block"/>
+<img src="{{site.baseurl}}/assets/images/2007/09/fib-2.png" width="50%" style="margin-left:auto; margin-right:auto;display:block"/>
 
 
 - 启发
@@ -136,7 +136,7 @@ $$
 
 > A robot is located at the top-left corner of a m x n grid (marked 'Start' in the diagram below).The robot can only move either down or right at any point in time. The robot is trying to reach the bottom-right corner of the grid (marked 'Finish' in the diagram below).How many possible unique paths are there?
 
-<img src="/assets/images/2007/09/dp-1.png">
+<img src="{{site.baseurl}}/assets/images/2007/09/dp-1.png">
 
 上面问题是说，在一个`m x n`的棋盘上（n行，m列），在每一个格子上只能向右或者向下两种走法，那么从`start`(左上角)走到`finish`(右下角)有几种不同的走法？如上面例子中，到达`end`的路径有三条，分别是:
 
@@ -188,7 +188,7 @@ dfs(m,n,{1,1},{m,n},num);
 ```
 上述解法的确能够穷举出所有到达右下角的路径，然而效率确非常低。不难看出，上述算法是一种正向的，符合人类直觉的思考方式，即从起点出发穷举所有到达终点的可能性。我们来分析一下其时间复杂度，假设$m=3,n=2$，字母$R$表示向右走，字母$B$表示向下走，左上角为用`start`表示，右下角为`end`表示，则生成的递归树为：
 
-<img src="/assets/images/2007/09/dp-2.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2007/09/dp-2.png" style="margin-left:auto; margin-right:auto;display:block">
 
 上述递归树可以看出，在所有的叶节点中，只有3个是有效的，其余的均为无效搜索。从某一点出发均有两条路径，因此算法的时间复杂度是呈几何级数增长的
 

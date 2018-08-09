@@ -97,7 +97,7 @@ int f(int n){
 
 我们知道每次函数调用会开辟新的函数栈空间，递归调用也不例外，只不过编译器为其在栈里插入了一些辅助元素，比如递归返回的函数地址编号`rd`：
 
-<img src="/assets/images/2015/02/stack1.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2015/02/stack1.png" style="margin-left:auto; margin-right:auto;display:block">
 
 具体来说，其调用过程如下：
 

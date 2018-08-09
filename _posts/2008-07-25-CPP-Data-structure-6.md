@@ -13,7 +13,7 @@ title: 二叉搜索树
 4. 该节点的左右子树也是BST
 5. <mark>BST的中序遍历</mark>即是节点的正序排列（从小到大排列）
 
-<img src="/assets/images/2008/07/tree-5.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-5.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 二叉搜索树及其变种是内存中一种重要的树形索引（关于索引，在后面文章中会提到），常用的BST变种有红黑树，伸展树，AVL树等，从这篇文章开始将会依次介绍这些树的特性及其实际应用。
 
@@ -53,7 +53,7 @@ TreeNode* search(TreeNode* node, int target){
 2. 假如我们要插入`17`，如下图搜索树，直到遇到`19`搜索停止，`17`成为`19`左叶子节点。
 3. 插入新节点后的二叉树依然保持BST的性质和性能
 
-<img src="/assets/images/2008/07/tree-6.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-6.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 按照上面步骤，其插入的实现思路为:
 
@@ -88,7 +88,7 @@ void insert(TreeNode* node,int target){
 2. 如果该节点没有右子树，则使用左子树替换该节点
 3. 如果该节点既有左子树也有右子树，则找到右子树中最小的节点，将该节点的值替换为待删除节点的值，删除该节点
 
-<img src="/assets/images/2008/07/tree-11.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-11.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 ```cpp
 TreeNode* deleteNode(TreeNode* root, int key) {
@@ -133,7 +133,7 @@ TreeNode* deleteNode(TreeNode* root, int key) {
 
 上面介绍的关于BST的操作其性能受BST的结构影响很大，例如，如果随机的给一组数据，得到的BST可能是平衡的，其高度为$\log{N}$，其检索时间会达到最好的$O(log_2{N})$；而如果有序的给一组数，则BST会退化为线性链表，其检索的时间复杂度则退化为$O(N)$。
 
-<img src="/assets/images/2008/07/tree-14.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-14.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 从平均的意义而言，在BST上的一系列操作的时间是正比于BST树的高度，而BST的树高和关键码输入次序相关，显然为了降低复杂度，我们希望树的高度越低越好。
 
@@ -146,7 +146,7 @@ TreeNode* deleteNode(TreeNode* root, int key) {
 
 如果我们使用中序遍历来恢复一棵BST，会发现其往往存在歧义性，因为其结果往往不唯一，如下图所示的两棵BST，其中序遍历序列相同，但是拓扑结构却不同
 
-<img src="/assets/images/2008/07/tree-12.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-12.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 对于上面这样的两棵BST，我们称其为等价的BST，等价的BST虽然在拓扑结构上不同，但却有规律可循：
 
@@ -155,7 +155,7 @@ TreeNode* deleteNode(TreeNode* root, int key) {
 
 基于上面规律，我们怎么将一棵不平衡的BST调整为与其等价的且平衡的BST呢？答案是使用一种对节点的**旋转操作**，也叫做所谓的**ZigZag**操作，如下图所以，左图为对某节点的右旋操作(Zig)，右图为对某节点的左旋操作(Zag):
 
-<img src="/assets/images/2008/07/tree-13.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-13.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 参照上图，可以大致理解为，BST以节点`V`，进行右旋(左图`Zig`)，或者以节点`V`进行左旋(右图`Zag`)后得到的树是和原树等价的。有了这两种方式，我们即可将一棵非平衡的BST转化为BBST，但值得注意的是，这种旋转操作，最多只针对两个节点`V,C`进行操作，且时间在控制在常数。
 

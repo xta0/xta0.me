@@ -16,7 +16,7 @@ WWDC2011:session307介绍了LLVM的历史，在LLVM问世之前，apple是一直
 
 LLVM的体系结构如下：
 
-<a href="/assets/images/2013/11/llvm.png"><img src="/assets/images/2013/11/llvm.png" alt="llvm" width="491" height="67"/></a>
+<a href="/assets/images/2013/11/llvm.png"><img src="{{site.baseurl}}/assets/images/2013/11/llvm.png" alt="llvm" width="491" height="67"/></a>
 
 这个结构和GCC相比最大的优点是模块化，这意味着，每一块都可以做单独的优化和扩展，比如你想增加一种language（e.g.C,C++,Objective-C等），只需要对frontEnd进行扩展，如果你想增加一种新的平台（e.g. Intel,ARM,PowerPC等），只需要对backEnd进行扩展。
 

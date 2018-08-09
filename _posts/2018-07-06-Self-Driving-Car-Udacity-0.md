@@ -23,7 +23,7 @@ mathjax: true
 
 但是用文氏图却可以很直观的表达，例如我们想要表达在B发生的条件下A发生的概率，用文氏图可以表示如下
 
-<img class="md-img-center" src="/assets/images/2018/07/ad-1.jpg">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/ad-1.jpg">
 
 根据文氏图，可以很清楚地看到在事件B发生的情况下，事件A发生的概率就是P(A∩B)除以P(B)。即
 

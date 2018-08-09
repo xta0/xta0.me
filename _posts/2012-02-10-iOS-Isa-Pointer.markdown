@@ -60,7 +60,7 @@ Apple对clz_meta的描述是metaClass，也就是`Class`的class，这也不难�
 
 上面描述的结构如下图所示：
 
-<a href="/assets/images/2012/02/class_hierarchy.png"><img src="/assets/images/2012/02/class_hierarchy.png" alt="class_hierarchy"width="511" height="181"/></a>
+<a href="/assets/images/2012/02/class_hierarchy.png"><img src="{{site.baseurl}}/assets/images/2012/02/class_hierarchy.png" alt="class_hierarchy"width="511" height="181"/></a>
 
 然后问题是：
 
@@ -166,7 +166,7 @@ Nil是我们期待的结果
 
 到这里，我们应该把上面的图再改一改：
 
-<a href="/assets/images/2012/02/class_hierarchy-2.png"><img src="/assets/images/2012/02/class_hierarchy-2.png" alt="class_hierarchy-2" width="525" height="169"/></a>
+<a href="/assets/images/2012/02/class_hierarchy-2.png"><img src="{{site.baseurl}}/assets/images/2012/02/class_hierarchy-2.png" alt="class_hierarchy-2" width="525" height="169"/></a>
 
 That's all for today!
 

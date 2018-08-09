@@ -18,7 +18,7 @@ mathjax: true
 
 举一个网球比赛的例子，假设有一场五局三胜制的网球比赛，每局有六盘，每盘至少得4分才能赢，平分的情况下，一方连续得两份才能赢，我们希望用一种语言来记录每盘比赛比分的过程，改怎么做呢？由于每盘比赛可以产生的比分状态数量是有限的，因此我们可以设计一个有限状态机来描述一场网球比赛比分的所有过程。如下图
 
-<img src="/assets/images/2013/01/FA-01-tenis.jpg" style="display:block; margin-left:auto; margin-right:auto"/>
+<img src="{{site.baseurl}}/assets/images/2013/01/FA-01-tenis.jpg" style="display:block; margin-left:auto; margin-right:auto"/>
 
 我们以0-0处为起始点，到发球方胜利或者失败为终点，枚举了有所比分状态转移的情况，FA的任务就是处理一系列输入的字符来还原一场网球比赛的比分过程。加入我们有下面字符串
 

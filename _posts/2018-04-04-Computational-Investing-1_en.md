@@ -225,7 +225,7 @@ CAPM is the abbreviation of Capital Assets Pricing Model. In 1966, Jack Treynor,
     - Market return
         - Risk free rate of return + Excess return 
 
-<img src="/assets/images/2018/04/CI-2.png" width="70%"/>
+<img src="{{site.baseurl}}/assets/images/2018/04/CI-2.png" width="70%"/>
 
 
 The above picture shows the trend of BABA and NASDAQ in the past three months. It can be seen that the trend of BABA and NASDQ is basically the same for most of the time. The volatile part is the BABA's own stock price change. CAPM believes that stock prices are determined by two aspects. On the one hand, market fluctuations, on the other hand, individual stocks fluctuate. The relationship between them is

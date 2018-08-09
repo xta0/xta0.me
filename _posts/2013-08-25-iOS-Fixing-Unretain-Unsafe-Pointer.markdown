@@ -43,11 +43,11 @@ categories: 随笔
 
 多数情况下使用__unsafe_unretained指针是由于在iOS5.0下无法使用__weak，但又要解决使用block产生的retain-cycle。就上面那个例子来说，对象间的引用关系如下：
 
-<a href="/assets/images/2013/11/retain-1.png"><img src="/assets/images/2013/11/retain-1.png" alt="retain-1" width="222" height="105" class="alignnone size-full wp-image-330" /></a>
+<a href="/assets/images/2013/11/retain-1.png"><img src="{{site.baseurl}}/assets/images/2013/11/retain-1.png" alt="retain-1" width="222" height="105" class="alignnone size-full wp-image-330" /></a>
 
 当controller dealloc之后：
 
-<a href="/assets/images/2013/11/retain-2.png"><img src="/assets/images/2013/11/retain-2.png" alt="retain-2" width="211" height="110" class="alignnone size-full wp-image-331" /></a>
+<a href="/assets/images/2013/11/retain-2.png"><img src="{{site.baseurl}}/assets/images/2013/11/retain-2.png" alt="retain-2" width="211" height="110" class="alignnone size-full wp-image-331" /></a>
 
 一种通用的解决方案来是mike ash的这边文章<a href="http://www.mikeash.com/pyblog/friday-qa-2010-07-16-zeroing-weak-
 references-in-objective-c.html">MAZeroingWeakRef</a>。

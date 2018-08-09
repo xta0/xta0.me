@@ -11,7 +11,7 @@ title: 二叉树
     - 这个有限集合或者为空集 (empty)
     - 或者为由一个根节点 (root) 及两棵互不相交、分别称作这个根的左子树(left subtree)和右子树 (right subtree) 的二叉树组成的集合
 
-<img src="/assets/images/2008/07/tree-1.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-1.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 - 节点
     - 子节点、父节点、最左子节点
@@ -317,7 +317,7 @@ BinaryTreeNode<T>* Parent(BinaryTreeNode<T>* root, BinaryTreeNode<T>* current){
         - 我们可以根据一维数组的下标来定位节点的位置
     - 逻辑结构上仍然是二叉树结构 
 
-<img src="/assets/images/2008/07/tree-4.jpg" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-4.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
 - 下标公式
     - 当`2i+1<n`时，节点`i`的左孩子是节点`2i+1`，否则节点i没有左孩子
