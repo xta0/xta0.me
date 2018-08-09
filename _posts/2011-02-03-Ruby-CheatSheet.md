@@ -1,5 +1,6 @@
 ---
-list_title: Ruby Programming Language
+list_title: Ruby 语法速查 | Ruby Syntax Quick Reference
+title: Ruby语法速查
 layout: post
 tag: Ruby
 categories: [pl,cheatsheet]

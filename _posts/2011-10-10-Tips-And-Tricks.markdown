@@ -1,63 +1,43 @@
 ---
 layout: post
-list_title: Tips and Tricks
-categories: 随笔
-
+list_title: Tips and Tricks in iOS
+title: Tips and Tricks in iOS
+categories: [iOS]
 ---
-
-<em></em>
   
 <h3>使用Trunk提交cocoaPods</h3>
 
 2014年5月20日之后，cocoaPods不再接受pull Request的提交方式，而转为用[trunk](http://blog.cocoapods.org/CocoaPods-Trunk/)。使用trunk需要cocoapods的版本大于0.33。
 
-- 注册trunk:
-  
+- 注册trunk:  
   - 命令为: `pod trunk register orta@cocoapods.org 'Orta Therox' --description='macbook air'`
-
   - 例子: `pod trunk register jayson.xu@foxmail.com 'jayson' --verbose`
-
   - 注册成功后,会返回下面信息:
 
-  
-  ```
-
+  ```shell
   [!] Please verify the session by clicking the link in the verification email that has been sent to jayson.xu@foxmail.com
-  
-  
   ``` 
 
 - 在邮箱激活trunk
-
 - 查看注册信息:
-
   - `pod trunk me`
 
 - 提交pod,在podsepc的目录下: :
-
   - `pod spec lint NAME.podspec --verbose --allow-warnings`
-
   - `pod trunk push NAME.podspec --verbose --allow-warnings`
-
   - 成功后回返回podspec的json格式的url
-
 
 - 含lib的podspec ： 
 
 ```ruby
-
 pod spec lint --verbose --use-libraries --skip-import-validation --allow-warnings
 pod trunk push --verbose --use-libraries --skip-import-validation --allow-warnings
-
 ```
-
 
 <h3>查看RSA的FingerPrint</h3>
 
-
 ```
 ssh-keygen -l -f rsa_key.pub
-
 ```
 
 <h3>Mac OS 卸载 MySQL</h3>
@@ -72,7 +52,6 @@ rm -rf ~/Library/PreferencePanes/My*
 sudo rm -rf /Library/Receipts/mysql*
 sudo rm -rf /Library/Receipts/MySQL*
 sudo rm -rf /var/db/receipts/com.mysql.*
-
 ```
 
 <h3>Rake Commands</h3>
@@ -88,10 +67,9 @@ sudo rm -rf /var/db/receipts/com.mysql.*
 <em>update @2013/11/16</em> 
 
 - 首先代码注释要规范，通常以/**开头，以*/结尾。推荐xcode自动注释插件：<a href="https://github.com/onevcat/VVDocumenter-Xcode ">VVDocumenter</a>
-
 - 从github上clone appleDoc工程：
 
-```
+```shell
 git clone git://github.com/tomaz/appledoc.git
 cd appledoc
 sudo sh install-appledoc.sh
@@ -99,19 +77,15 @@ sudo sh install-appledoc.sh
 
 - 创建appleDoc的html文件，注意工程的绝对路径要带出来
 
-```
+```shell
 appledoc --no-create-docset --output ./docNew --project-name xxx --project-company "xxx" --company-id "com.xxx.xxx" ~/Desktop/tbcity-mvc/xxx/Universal/Libraries/xxx/Core/
-
 ```
-
 
 <h3>解决xcode找不到libtool问题</h3>
 
 <em>update @2013/10/1 </em>
 
-高版本的OSX，如果在app store上更新了Xcode，系统会把它当做普通的app，这个修改会导致和原来xcode的安装路径不一致。因此xcode会找到不到libtool。
-
-解决办法：
+高版本的OSX，如果在app store上更新了Xcode，系统会把它当做普通的app，这个修改会导致和原来xcode的安装路径不一致。因此xcode会找到不到libtool。解决办法：
 
 将usr/bin/libtool考到xcode要求那个目录
 

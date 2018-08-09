@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Git简明操作
-list_title: Git简明操作 | Git Commands
+list_title: Git简明操作 | Git Commands Quick Reference
 ---
 
 ### Config

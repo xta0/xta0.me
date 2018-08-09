@@ -1,12 +1,9 @@
 ---
 layout: post
 list_title:  Swift对象的内存模型 | Behind Swift Object
-title: Swift对象探寻
-tag: iOS
-categories: 随笔
+title: Swift Object Under the hood
+categories: [swift, iOS]
 ---
-
-<em></em>
 
 ## Memory Layout
 
