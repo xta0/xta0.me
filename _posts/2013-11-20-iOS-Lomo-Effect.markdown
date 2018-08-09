@@ -1,21 +1,15 @@
 ---
 list_title: 实现Lomo效果
+title: Implement Lomo Effect in iOS
 layout: post
-tag: iOS
-categories: 随笔
-
+categories: [iOS]
+mathjax: true;
 ---
 
-<em></em>
 
 lomo效果，是一种很流行的滤镜效果，许多开源的工程都能实现，比如很cool的GPUImage。但是想实现instagram的效果却有点难，其实从图像处理的角度出发，实现instagram的lomo效果并不复杂，难点在一些性能优化上。因此，我准备从图像处理的角度出发，从理论上实现instagram滤镜的hefe效果。
 
 下面两张图分别为原图和instagram滤镜的hefe效果再叠加上水滴效果。
-
-<!--<div style="overflow: hidden; width: 100%;">
-<img style="display: block; float: left" src="{{site.baseurl}}/assets/images/2013/11/lomo_ori.png" alt="lomo_ori" width="204" height="360" />
-<img style="display: block; float:left;margin-left:30px" src="{{site.baseurl}}/assets/images/2013/12/lomo-hefe.png" alt="lomo-hefe" width="204" height="362"/>
-</div>-->
 
 <div>
 	<div style="width:49%; float:left;">
@@ -40,26 +34,25 @@ lomo效果，是一种很流行的滤镜效果，许多开源的工程都能实�
 
 为了实现这个过程，我们不希望用Core Image或者类似的high-level的api，这种api你根本搞不清楚它里面做了什么。因此，我们用plain c code去实现这个模型，暂时不考虑性能的问题。
 
-
-
-##非线性拉伸
+## 非线性拉伸
 
 lomo的效果实际上是图像RGB三通道分别做非线性拉伸的效果。图像的拉伸描述了输入像素和输出像素的对应关系，一旦变换函数确定，则每一点的像素值就被确定下来：
 
-$$g\left ( x,y \right ) = T\left [ f\left ( x,y \right ) \right ]$$
+$$
+g\left ( x,y \right ) = T\left [ f\left ( x,y \right ) \right ]
+$$
 
 例如我们可以将[200~255]范围内的像素映射（map）到[50~100]，这样图像就会整体变暗，如果映射关系是符合线性的，那么就成为线性拉伸，如果映射关系是非线性的，就称为非线性拉伸。
 
 接下来我们的任务便是找到hefe效果的非线性映射的曲线，如果身边有设计师，可以让他们用PS调出hefe的效果，然后我们拿到它的RGB三通道的曲线：
 
-<a href="/assets/images/2013/12/hefe-rgb.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe-rgb.png" alt="hefe-rgb" width="193" height="192" class="alignnone size-full wp-image-567" /></a>
+<img src="{{site.baseurl}}/assets/images/2013/12/hefe-rgb.png">
 
 途中红色为R通道，绿色为G通道，蓝色为B通道，从曲线的变化来看，是一种非线性关系。
 
 接下来，我们可以根据上面的曲线产生一张离散的map表：
 
 ```c
-
 static UInt8 hefemap[]= 
 {0,0,0,255,
 0,0,1,255,
@@ -127,7 +120,7 @@ for (int i=0; i<srcBitmapHeight*srcBitmapRowBytes; i+=4) {
 到此，我们已经实现了上面5步中的前两步。
 
 
-##模糊
+### 模糊
 
 接下来我们要实现第三步，也就是模糊图像。
 
@@ -148,7 +141,7 @@ vImageBoxConvolve_ARGB8888(effectInBuffer, effectOutBuffer, NULL, 0, 0, 25, 25, 
 
 右图为模版5x5的均值模糊结果。
 
-##计算高斯权重
+### 计算高斯权重
 
 接下来是第四步，计算高斯权重。由于我们要实现的效果是以图片中心为最清楚的点，到图片四周以此模糊，最边缘的像素最模糊。实现这个效果，要求模糊要过度的很自然，因此我们就想到了使用正态分布。在retina上，上面的图片大小为1024*1024像素，因此我们要计算各个像素到(512,512)这个点的权重，越近的点自然权重越高，也就越清楚，越远的点则权重越低，越模糊。我们用<a href="http://zh.wikipedia.org/wiki/%E9%AB%98%E6%96%AF%E6%A8%A1%E7%B3%8A">二维高斯函数</a>:
 
@@ -178,7 +171,7 @@ for (int i=0; i<1024; i++)
 忽略性能和内存上的问题，首先开辟了一个wByte[1024][1024]来保存每个点的权重（当然这也不是个好办法，由于图片是正方对称的，理论上使用1/4的空间就足够了），然后根据二维高斯公式计算一个1024x1024的矩阵中各个点掉(512,512)的距离，最后将权重值保存下来。这时候我们来讨论sigma，基本上，sigma值取的越大，高斯分布峰值覆盖的范围就越大，中心处清楚的面积就越大，反之，sigma值越小，峰值覆盖的范围就越小，中心处清楚的面积就越小。
 
 
-##图像融合
+### 图像融合
 
 权重值也有了，我们就差最后一步了，也很简单。根据上面第5步的式子，我们首先需要两个context指向两块bitmap，第一块是hefe效果的bitmap，第二块是将hefe模糊的bitmap。然后根据公式，分别在RGB三通道计算新的像素值，最后再画一幅新的图片：
 

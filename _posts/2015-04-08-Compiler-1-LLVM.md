@@ -1,16 +1,11 @@
 ---
-list_title: 理解Apple的LLVM(1)
+list_title: 编译原理 | Compiler Theory | LLVM - A Case Study
+title: LLVM概述
 layout: post
-tag: iOS
-categories: 随笔
-
+categories: [compilers]
 ---
 
-<em></em>
-
-最近在用LLDB，感到很乏力，和GDB的命令差很多，因此想好好研究下iOS代码的编译环境——<a href="llvm.org">LLVM</a>（low level virtual machine）。
-
-其实LLVM跟virtual machine没有必然的联系，也不能直接说它是编译器，它自己给自己的定义是一个infrastructure，也就是编译器体系结构，里面包含了许多子模块，比如前端语法编译器（front-end）<a href="http://clang.llvm.org/">Clang</a>，后端机器码生成工具（back-end）<a href="http://dragonegg.llvm.org/">dragonegg</a>,调试器<a href="http://lldb.llvm.org/">LLDB</a>等。
+LLVM全称为[Low Level Virtual Machine](llvm.org), 但是实际上跟virtual machine没有必然的联系，也不能直接说它是编译器，它自己给自己的定义是一个infrastructure，也就是编译器体系结构，里面包含了许多子模块，比如前端语法编译器（front-end）<a href="http://clang.llvm.org/">Clang</a>，后端机器码生成工具（back-end）<a href="http://dragonegg.llvm.org/">dragonegg</a>,调试器<a href="http://lldb.llvm.org/">LLDB</a>等。
 
 WWDC2011:session307介绍了LLVM的历史，在LLVM问世之前，apple是一直用GCC的，但由GCC对很小众的Objective-C支持很慢，直白的说就是你给人家提需求，人家不改，导致Objective-C的一些新特性无法应用（我试着在windows下用GCC编译Objective-C代码，还必须要@synthesize property）。后来apple将GCC的前端编辑器单独抽出来，架在LLVM上，形成了GCC-LLVM的编译体系。但是由于GCC是一个从源代码编译到生成机器码（machine code）的完整过程，耦合性很高，想单独优化某一块很困难，因此这条路也没走通。后来苹果痛下决心，决定自己单独搞一套，找来了当时还在读本科的<a href="http://www.programmer.com.cn/9436/">Chris Lattner</a>,这哥们几乎以一己之力完成了LLVM的雏形，奠定了现在<a href="http://www.aosabook.org/en/llvm.html">LLVM现在的架构</a>。
 
@@ -34,10 +29,9 @@ int main(int argc, char *argv[]) {
 	printf("hello\n");
 	return 0;
 }
-
 ```
-```
-clang -ccc-print-phases hello.m 
+```shell
+%clang -ccc-print-phases hello.m 
 0: input, "hello.m", objective-c
 1: preprocessor, {0}, objective-c-cpp-output
 2: compiler, {1}, assembler
@@ -47,14 +41,14 @@ clang -ccc-print-phases hello.m
 
 ```
 
-###预处理
+### 预处理
 
 编译源码的第一步就是预处理，简单的说就是将宏展开，比如我们
 `#import "Foundation/Foundation.h"`
 编译器会把Foundation.h中的所有.h都展开：
 
 ```
-clang -E hello.m | less
+%clang -E hello.m | less
 # 1 "/usr/include/sys/cdefs.h" 1 3 4
 # 406 "/usr/include/sys/cdefs.h" 3 4
 # 1 "/usr/include/sys/_symbol_aliasing.h" 1 3 4
@@ -74,14 +68,12 @@ typedef signed char __int8_t;
 
 ```
 
-<h3>符号化</h3>
+### 符号化
 
-预处理完了之后，需要将这些string符号化:
+预处理完了之后，需要将这些string符号化, 我们先把<code>#import "Foundation/Foundation.h"</code>注释掉，然后：
 
-我们先把<code>#import "Foundation/Foundation.h"</code>注释掉，然后：
-
-```
-clang -Xclang -dump-tokens hello.m
+```shell
+%clang -Xclang -dump-tokens hello.m
 
 int 'int'	         [StartOfLine]	Loc= hello.m:3:1 
 identifier 'main'	 [LeadingSpace]	Loc= hello.m:3:5
@@ -98,12 +90,11 @@ r_paren ')'		                Loc= hello.m:3:32
 l_brace '{'	 [LeadingSpace]	        Loc= hello.m:3:34 
 identifier 'printf'	 [StartOfLine] [LeadingSpace]
 Loc= hello.m:4:2 
-
 ```
 
 我们可以看到，clang列出了符号所在的位置，当出错的时候，clang会指出具体的位置。
 
-<h3>生成语法树</h3>
+### 生成语法树
 
 有了这些token后，clan会将这些token解析成语法树，假设我们把代码修改一下： 
 
@@ -133,13 +124,13 @@ int main(int argc, char *argv[]) {
 
 然后使用命令：
 
-```
-clang -Xclang -ast-dump -fsyntax-only hello.m
+```shell
+%clang -Xclang -ast-dump -fsyntax-only hello.m
 
 ```
 忽略掉头文件：
 
-```
+```shell
 -ObjCInterfaceDecl 0x1041eb290 <hello.m:3:1, line:5:2> Objayc
 | |-super ObjCInterface 0x10236e430 'NSObject'
 | |-ObjCImplementation 0x1041eb430 'Objayc'
@@ -168,20 +159,19 @@ clang -Xclang -ast-dump -fsyntax-only hello.m
     |   `-DeclRefExpr 0x1041eba90 <col:3> 'Objayc *' lvalue Var 0x1041eb9e0 'obj' 'Objayc *'
     `-ReturnStmt 0x1041ebb20 <line:20:2, col:9>
       `-IntegerLiteral 0x1041ebb00 <col:9> 'int' 0
-
 ```
 
 @interface开始，每个节点依次展开，生成了语法树。
 
 语法树规则可以参考<a href="http://clang.llvm.org/docs/IntroductionToTheClangAST.html">官方指南</a>
 
-<h3>静态语法检查</h3>
+### 静态语法检查
 
 语法树生成后，clang会做静态的语法检测，包括数据类型，方法调用等一些编译器就能确定的事情。
 然而一些runtime的事情在这时候是无法检查的。
 一些高级的检测，比如某个局部变量创建了但没有使用或类似这种warn_arc_perform_selector_leaks的warning等等。
 
-<h3>汇编代码</h3>
+### 汇编代码
 
 我们再一次简化代码： 
 
@@ -193,12 +183,11 @@ int main(int argc, char *argv[]) {
 	printf("hello!");	
 	return 0;
 }
-
 ```
 
 <code>xcrun clang -S -o - hello.m | open -f</code>
 
-<h3>Mach-O 文件</h3>
+### Mach-O 文件
 
 有了汇编代码就离机器码不远了，然后我们
 
@@ -208,14 +197,14 @@ int main(int argc, char *argv[]) {
 
 mach-o文件由Header和Commands和Data三个部分组成：
 
-1，header ： 标识它是mach-o 文件
-2，Load commands ： 标识data的存放规则
-3，Data : 数据存放
+1. header ： 标识它是mach-o 文件
+2. Load commands ： 标识data的存放规则
+3. Data : 数据存放
 
 Data部分又分为两部分：
 
-1，Text Section ： 存放代码段，常量段等read-only数据
-2，Data Section :     数据段，如静态变量，全局变量等，是writable的
+1. Text Section ： 存放代码段，常量段等read-only数据
+2.Data Section :     数据段，如静态变量，全局变量等，是writable的
 
 分析mach-O文件，通常用otool。
 
@@ -223,7 +212,7 @@ Data部分又分为两部分：
 
 得到的commands如下：
 
-```
+```shell
 Segment __PAGEZERO: 0x100000000 (vmaddr 0x0 fileoff 0)
 Segment __TEXT: 0x1000 (vmaddr 0x100000000 fileoff 0)
 	Section __text: 0x37 (addr 0x100000f10 offset 3856)
@@ -247,7 +236,7 @@ total 0x100003000
 
 <code>xcrun otool -s __TEXT __text a.out </code>
 
-```
+```shell
 (__TEXT,__text) section
 0000000100000f10 55 48 89 e5 48 83 ec 20 48 8d 05 50 00 00 00 c7 
 0000000100000f20 45 fc 00 00 00 00 89 7d f8 48 89 75 f0 48 89 c7 
@@ -257,6 +246,7 @@ total 0x100003000
 
 汇编代码到机器码的对应关系可以在<a href="http://download.intel.com/products/processor/manual/325462.pdf">这里查到</a>
 
-Further Reading：
-<a href="http://llvm.org/docs/">llvm docset</a>
-<a href="http://llvm.org/docs/GettingStarted.html#example-with-clang">clang example</a>\
+## Resources
+
+- [LLVM Doc]("http://llvm.org/docs/")
+- [LLVM Example]("http://llvm.org/docs/GettingStarted.html#example-with-clang")
