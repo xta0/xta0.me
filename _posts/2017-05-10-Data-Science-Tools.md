@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据科学（一） | Data Science Course | Python Tools Stack
+list_title: 数据科学 | Data Science Course | Python Tools Stack
 title: 综述
 categories: [Data Science]
 ---

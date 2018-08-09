@@ -8,9 +8,9 @@ categories: [Linux, Nginx]
 
 ### HTTPs
 
-1. 登录[certbot](https://certbot.eff.org/)选择系统版本，安装certbot
+- 登录[certbot](https://certbot.eff.org/)选择系统版本，安装certbot
 
-```
+```shell
 sudo apt-get update
 sudo apt-get install software-properties-common
 sudo add-apt-repository ppa:certbot/certbot
@@ -18,14 +18,14 @@ sudo apt-get update
 sudo apt-get install python-certbot-nginx 
 ```
 
-2. 使用certbot安装SSL证书
+- 使用certbot安装SSL证书
 
-```
+```shell
 % certbot --nginx
 ```
 按提示修改nginx 配置文件
 
-```
+```ymal
 #SSL configuration
 listen 443 ssl default_server;
 listen [::]:443 ssl default_server;
@@ -36,11 +36,16 @@ include /etc/letsencrypt/options-ssl-nginx.conf; #managed by Certbot
 ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; #managed by Certbot
 ```
 
-3. 自动更新证书
-    1. `crontab -e`编辑task，末尾加入`@daily certbot renew`每日更新证书
-    2. `crontab -l`查看
+- 自动更新证书
 
+```shell
+%crontab -e
+#编辑task，每日更新证书
+@daily certbot renew
 
+#确认修改
+%crontab -l
+```
 
 ### Basic Auth
 
@@ -55,10 +60,11 @@ location / {
 ```
 用户名和密码可以使用`apach2-utils`：
 
-1. `% sudo apt-get install apache2-utils`
-2. `% htpasswd -c /etc/nginx/.htpasswd user_name`
-3. `% cat /etc/nginx/.htpasswd`
-
+```shell
+% sudo apt-get install apache2-utils
+% htpasswd -c /etc/nginx/.htpasswd user_name
+% cat /etc/nginx/.htpasswd
+```
 ### Other Security Options
 
 其它一些常用的安全配置
@@ -135,6 +141,7 @@ server{
 ## Resources
 
 - [Nginx Doc](https://nginx.org/en/docs/)
+- [Nginx Configuration Example](https://www.nginx.com/resources/wiki/start/topics/examples/full/)
 - [Nginx Config Pitfalls](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/)
 - [Nginx Tutorial DigistalOCean](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
 - [Nginx Resources Github](https://github.com/fcambus/nginx-resources)

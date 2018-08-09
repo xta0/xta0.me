@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据科学（一） | Data Science Course | Overview
+list_title: 数据科学 | Data Science Course | Overview
 title: 综述
 categories: [Data Science]
 ---
@@ -142,7 +142,10 @@ Finally, the last point is perhaps the most controversial. I view it as a succes
 - What is the question you are trying to answer with data?
 - Do you have the data to answer that question?
 - If you could answer the question? Could you use the answer?
-- Resources
-    - [THE END OF THEORY: THE DATA DELUGE MAKES THE SCIENTIFIC METHOD OBSOLETE](https://www.wired.com/2008/06/pb-theory/)
-    - [NETFLIX NEVER USED ITS $1 MILLION ALGORITHM DUE TO ENGINEERING COSTS](https://www.wired.com/2012/04/netflix-prize-costs/)
-    - [Google Flu Trends gets it wrong three years running](https://www.newscientist.com/article/dn25217-google-flu-trends-gets-it-wrong-three-years-running/)
+
+
+### Resources
+
+- [THE END OF THEORY: THE DATA DELUGE MAKES THE SCIENTIFIC METHOD OBSOLETE](https://www.wired.com/2008/06/pb-theory/)
+- [NETFLIX NEVER USED ITS $1 MILLION ALGORITHM DUE TO ENGINEERING COSTS](https://www.wired.com/2012/04/netflix-prize-costs/)
+- [Google Flu Trends gets it wrong three years running](https://www.newscientist.com/article/dn25217-google-flu-trends-gets-it-wrong-three-years-running/)

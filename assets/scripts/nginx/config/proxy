@@ -1,0 +1,5 @@
+server{
+    location /webhook{
+          return 200 "Hello webhook";
+    }
+}

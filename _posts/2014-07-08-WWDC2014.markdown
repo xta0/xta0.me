@@ -1,77 +1,61 @@
 ---
 layout: post
-list_title:  WWDC部分Session内容摘录
-tag: WWDC
-categories: 随笔
+list_title:  WWDC 2014 Notes
+title: WWDC 2014 Notes
+categories: [iOS]
 ---
 
+## Session 407
 
-##Session407:
-
-###id and AnyObject
+### id and AnyObject
 
 - Runtime Check
 
 Swift中的`AnyObject`相当于OC中的`id`。对于`id`来说，可在运行时接收消息：
 
 ```objc
-if([object respondsToSelector:@selector(removeFormSuperview)])
-{
+if([object respondsToSelector:@selector(removeFormSuperview)]){
 	[object removeFromSuperview];
 }
 
 ```
 对应到Swift，使用optional来做运行时的判断
 
-```java
+```swift
 let object:AnyObject = SomeClass()
-
 object.removeFromSuperview?()
-
 ```
 
 - Downcasting AnyObject
-
 	- AnyObject does not implicity downcast
 	
-	```java
+	```swift
 	let view:UIView = object //error:'AnyObject' cannot be implicitly downcast
-	
 	```
 	
 	- 使用"as"在运行时做类型转化
 	
-	```java
+	```swift
 	let view = object as UIView
-	
 	```
 	
 	- 使用"as?"
 	
 	```java
-	if let view = object as? UIView
-	{
+	if let view = object as? UIView{
 		// view is UIView
 	}
-	
 	```
 
-###Implicitly Unwrapped Optionals
+### Implicitly Unwrapped Optionals
 
 - From WWDC session 407:
-
 	- A value of class type in Swift is  never nil
-	
 	- Optional types generalize the notion of nil
-	
-	- Objective-C does not have a notion of a "never nil" pointer
-	
+	- Objective-C does not have a notion of a "never nil" pointer	
 	- "!" is an <em>implicitly unwrapped optional</em>
-	
 	- Can be tested explicity for nil
-	
 	- Can directly access properties/methods of the underlying value
-	
 	- Can be implicity converted to its underlying value(e.g. NSDate)
 
 - 做成员变量:	
@@ -80,87 +64,60 @@ object.removeFromSuperview?()
 
 - 做参数:
 
-用！声明的参数可以传`nil`这主要是为了兼容OC:
+用！声明的参数可以传`nil`这主要是为了兼容OC,由于OC中`name`允许为`nil`，对应到swift中，`name`要声明为`String!`类型，才可以接受`nil`
 
 ```objc
 - (NSString* )type:(NSString* )name operation:(UIDocumentSaveOperation)op;
-```
-
-对应Swift
-
-```java
+//swift
 func type(name:String!, operation: UIDocumentSaveOperation) -> String!
 ```
 
-由于OC中`name`允许为`nil`，对应到swift中，`name`要声明为`String!`类型，才可以接受`nil`
-
-
-###Protocols
+### Protocols
 
 - Objective-C
 
 ```objc
 @protocol UITableViewDataSource<NSObject>
-
 @optional
 - (NSInteger)numberOfSectionsInTableView:(UITableView)tableview;
-
 @required
 - (NSInteger)tableView:(UITableView* )tableView numberOfRowsInSection:(NSInteger)section;
-
 @end
 
 @property id<UITableViewDataSource> dataSource;
-
 ```
 
 - Swift
 
-```java
-@objc protocol UITableViewDataSource:NSObjectProtocol
-{
+```swift
+@objc protocol UITableViewDataSource:NSObjectProtocol{
 	func tableView(tableView:UITableView, numberOfRowsInSection: Int) -> Int
 	@optional func numberOfSectionsInTableView(tableView:UITableView) -> Int
-
 }
-
 var dataSource: UITableViewDataSource!
-
 ```
 
 - Downcast via `as?` to protocol type
 
-```java
-
-if let ds = object as? UITableViewDataSource
-{
+```swift
+if let ds = object as? UITableViewDataSource{
 	let rowsInFirstSection = ds.tableView(tableView,numberOfRowsInSection:0)
-
 }
-
 ```
 ### Swift Objects are the OC objects
 
 All Swift classes are "id compatible"
 
 - Same layout as an Objective-C class
-
 - Same basic infrastructure(retain/release/class/etc.)
+inheriate from Objective-C class to make your class directly visible in Objective-c, 继承Objective-C class使其能够被OC运行时发现
 
-inheriate from Objective-C class to make your class directly visible in Objective-c
+### getters and setters
 
-继承Objective-C class使其能够被OC运行时发现
-
-###getters and setters
-
-```java
+```swift
 var name:String{
-
 	get { return "b" }
-	
 	set {}
-
-
 }
 ```
 
@@ -168,68 +125,51 @@ Override the property itself not the getter or setter
 
 - getter:
 
-```java
+```swift
 override var name:String{
-	
 	return "this is my \(self.view) string"
-
 }
 ```
  
-###@objc
+### @objc
 
-"objc" attribute verifies that the declaration can be used in Objective-C
+"objc" attribute verifies that the declaration can be used in Objective-C。 `objc`关键字的作用本质上是让Swift中的某个数据结构(类，方法等)在OC的运行时可见。例如，对于Swift中返回tuple的函数，对于这种类型的Swift函数，编译器会给出错误。
 
-`objc`关键字的作用本质上是让Swift中的某个数据结构(类，方法等)在OC的运行时可见。
-
-- 对于Swift中返回tuple的函数
-
-```java
+```swift
 @objc func myGenericMethod<T>(x:T) -> (String,String){...} //error: not expressible in oc
-
 ```
 
-对于这种类型的Swift函数，编译器会给出错误。
+在OC的runtime中改变Swift中的数据结构名称
 
-- 在OC的runtime中改变Swift中的数据结构名称
-
-```java
-var enabled: Bool
-{
+```swift
+var enabled: Bool{
 	@objc(isEnabled)get{...}
 	set{...}
 }
-
 ```
 
 这样在OC的runtime中，`enable`的getter方法就变为了`isEnabled`
 
-```java
-@objc(ABCMyDocument) class MyDocument:UIDocument
-{
+```swift
+@objc(ABCMyDocument) class MyDocument:UIDocument{
 
 }
-
 ```
    
-###Unmanaged Object
+### Unmanaged Object
 
 Unmanaged<T> enables manual memory management
 
-```java
+```swift
 struct Unmanaged<T:AnyObject>{
 
 	func takeUnretainedValue() -> T
 	func takeRetainedValue() -> T
-
-
 }
-
 ```
 
 Use it to work with unaudited CF APIs
 
-```java
+```swift
 let color = CGColorGetRandomColor().takeUnretainedValue()
-
 ```

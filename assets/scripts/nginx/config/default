@@ -1,0 +1,36 @@
+server {
+
+    #SSL configuration
+    listen 443 ssl default_server;
+    listen [::]:443 ssl default_server;
+    server_name xta0.me www.xta0.me;
+    ssl_certificate /etc/letsencrypt/live/xta0.me/fullchain.pem; # managed by Certbot
+    ssl_certificate_key /etc/letsencrypt/live/xta0.me/privkey.pem; # managed by Certbot
+    include /etc/letsencrypt/options-ssl-nginx.conf; #managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; #managed by Certbot
+
+    #root folder
+    root /home/xt/site/;
+    index index.html index.htm index.md;
+
+    add_header X-Frame-Options SAMEORIGIN;
+    #Cross-site scripting protection
+    add_header X-XSS-Protection "1; mode-block";
+
+    location / {
+        # First attempt to serve request as file, then
+        # as directory, then fall back to displaying a 404.
+        try_files $uri $uri/ =404;
+    }
+
+    #For Static Images
+    location  ~* \.(jpg|png|jpeg){
+    	 access_log off;
+    	 add_header Cache-Control public;
+   	 add_header Pragma public;
+   	 add_header Vary Accept-Encoding;
+    	 expires 120m; #60 mins
+    }
+}
+
+include ./proxy.conf

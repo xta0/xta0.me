@@ -227,6 +227,7 @@ rewrite ^/usr/w+ /greet;  #将^/usr/w+ 路由到/greet
 			return 301 https://$host$request_uri;
 	}
     ```
+
 ### Logs
 
 查看log路径`ls -al /var/log/nginx`，可以根据不同的server配置不同的log
@@ -347,6 +348,7 @@ HTTP2支持
 ## Resources
 
 - [Nginx Doc](https://nginx.org/en/docs/)
+- [Nginx Configuration Example](https://www.nginx.com/resources/wiki/start/topics/examples/full/)
 - [Nginx Config Pitfalls](https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/)
 - [Nginx Tutorial DigistalOCean](https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts)
 - [Nginx Resources Github](https://github.com/fcambus/nginx-resources)
