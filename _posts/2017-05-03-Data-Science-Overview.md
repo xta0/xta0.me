@@ -1,13 +1,9 @@
 ---
 layout: post
-list_title: 数据科学 | Data Science Course | Overview
-title: 综述
+list_title: 数据科学 | Data Science | Overview
+title: Data Science Overview
 categories: [Data Science]
 ---
-
-## A Crash Course in Data Science
-
-> [Course Link](https://www.coursera.org/learn/data-science-course)
 
 ### Statistics
 

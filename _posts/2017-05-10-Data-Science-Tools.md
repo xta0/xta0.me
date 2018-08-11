@@ -1,16 +1,40 @@
 ---
 layout: post
-list_title: 数据科学 | Data Science Course | Python Tools Stack
-title: 综述
-categories: [Data Science]
+list_title: 数据科学 | Data Science | Python For Data Analysis
+title: Python For Data Analysis
+categories: [Data Science, Python, Machine Learning]
 ---
 
+## 概述
 
-## Python Stack
+这篇文章会重点介绍Python数据分析工具的关系以及一些核心的知识点，这篇文章不会cover一些具体的API用法，这些内容可以参考各自网站的API手册
 
-- Use Python3 
+## Python Stack Overview
 
-### Numpy
+- Python3 
+- Numpy
+- Pandas
+- Matplotlib
+- Scipy
+
+Python系统自带一些数值计算的API，[Numpy](https://www.python-course.eu/numpy.php)是Python数值计算API的封装，Pandas是Numpy的封装
+
+### Python3
+
+二维数组
+
+
+
+### Numpy & Pandas for 1D Data
+
+
+### Numpy & Pandas for 2D Data
+
+
+- ndarray
+
+```
+```
 
 - **Matrix**
 

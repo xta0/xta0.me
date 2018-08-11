@@ -1,11 +1,9 @@
 ---
-list_title: 解释一段BrainFuck代码 | Interprete BrainFuck
+list_title: 解释一段BrainFuck代码 | BrainFuck
 title: 解释一段BrainFuck代码
 layout: post
 categories: [Ruby]
 ---
-
-<em>文章均为作者原创，转载请著名出处</em>
 
 为了回答[这个问题](http://fun.coolshell.cn/first.html)用Ruby写了一个BrainFuck的解释器，代码不一定最优，却是最快想到的。
 
@@ -28,7 +26,7 @@ Ruby解释器代码如下：
 
 #!/usr/bin/ruby2.1.0
 # Brainfuck解释器
-# (C) Jayson.Xu
+# (C) Tao Xu
 
 
 f = File.open("./bf.txt","r")

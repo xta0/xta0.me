@@ -19,7 +19,7 @@ pip3 install virtualenv
 > virutalen proj -p python_path
 #activate & deactive
 > source bin/activate
-> deactive
+> deactivate
 ```
 由于改变了python路径，使用vscode可能会导致lint出错，配置新的python路径
 
@@ -32,3 +32,8 @@ pip3 install virtualenv
     "python.linting.pylintPath": "${workspace}/lib/python2.7/"    
 }
 ```
+
+
+### Resource
+
+- [Virtualenv Doc](https://docs.python.org/3/library/venv.html)
