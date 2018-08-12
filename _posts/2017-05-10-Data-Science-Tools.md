@@ -25,7 +25,13 @@ Python系统自带一些数值计算的API，[Numpy](https://www.python-course.e
 
 
 
-### Numpy & Pandas for 1D Data
+## Numpy & Pandas for 1D Data
+
+### N-Dimentional Array
+
+Numpy中的array称为`ndarray`,所谓nd是多维的意思，实际上是pyhton数组的封装
+
+
 
 
 ### Numpy & Pandas for 2D Data

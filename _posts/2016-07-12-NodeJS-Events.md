@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Node.js中的Event(一)| Event in Node.js
+list_title: Node.js中的Events| Event in Node.js
 title: Event
 categories: [Javascript，nodejs]
 ---
@@ -53,7 +53,7 @@ emtr.emit('greet')
 ```
 如果有过系统编程经验的同学，不论哪种语言，那种平台，对上述代码一定不陌生，这是个最基本的监听-广播模式，当然，上述代码仅仅是个demo，真正使用的时候还需要考虑线程同步问题与资源共享等问题，这里就不展开了。
 
-实际上，Node.js的Emitter的实现也是同样的思路，可以从源码`event.js`中看到其实现代码
+翻看Node.js的源码`event.js`可以发现，Node.js中的`Emitter`的实现思路和上面也是一样的，只不过它增加和很多corner case的判断，
 
 
 
