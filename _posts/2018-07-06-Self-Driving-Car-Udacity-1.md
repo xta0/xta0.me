@@ -1,7 +1,7 @@
 ---
 updated: "2018-07-10"
 layout: post
-list_title: 自动驾驶入门（一）| Udacity Autonomous Driving Part 1 | Bayesian Thinking
+list_title: 自动驾驶入门 | Autonomous Driving | 贝叶斯定理 | Bayesian Thinking
 title: 贝叶斯概率模型
 categories: [AI,Autonomous-Driving]
 mathjax: true
@@ -178,19 +178,8 @@ $$
 
 我们可以通过这些数据来重新矫正车的位置（虽然现在还不知道该如何矫正，但是可以获得一些感性的认识），上面的例子中，矫正之后的点是`D`点。从最初的不精确的GPS位置，到应用传感器数据做调整因子得到新的位置，这个矫正的过程就应用到了贝叶斯模型。
 
-### 
 
-
-
-
-
-
-
-
-
-
-
-
+<p class="md-h-center">(全文完)</p>
 
 ## Resources
 

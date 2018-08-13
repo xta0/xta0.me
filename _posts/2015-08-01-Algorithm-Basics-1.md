@@ -1,7 +1,9 @@
 ---
 layout: post
-list_title: Algorithms-1 | 概述 | Overview
+list_title: Algorithms | 概述 | Overview
+title: 算法概述 | Algorithm Overview
 mathjax: true
+categories: [Algorithms]
 ---
 
 ## 算法分析

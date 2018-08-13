@@ -1,7 +1,8 @@
 ---
 layout: post
-list_title: Algorithms-2 | 算法分析基础 | Algorithm Analysis Basics
-title: 算法分析基础
+list_title: Algorithms | 算法分析基础 | Algorithm Analysis Basics
+title: 算法分析基础 | Algorithm Analysis Basics
+categories: [Algorithms]
 mathjax: true
 ---
 

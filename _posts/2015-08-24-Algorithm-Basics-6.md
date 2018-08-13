@@ -1,6 +1,8 @@
 ---
 layout: post
-list_title: Algorithms-6 | 深搜与回溯 | DFS & Backtracking
+title: 深搜与回溯 | DFS & Backtracking
+list_title: Algorithms | 深搜与回溯 | DFS & Backtracking
+categories: [Algorithms]
 mathjax: true
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 计算投资（二）| Computational Investment Part 1
+list_title: 计算投资 | Computational Investment | 
 title: Portfolio Management and Market Mechanics
 mathjax: true
 ---

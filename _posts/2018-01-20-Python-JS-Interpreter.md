@@ -60,6 +60,6 @@ NameError: name 'func2' is not defined
 哪种设计合理呢？感觉Python解释器的设计更合理一些，JS在执行前要扫描并注册所有符号，其效率显然不如逐句解释来的快，并且一般有良好变成素养的程序员也不会写出上面的代码。
 
 
-
+<p class="md-h-center">(全文完)</p>
 
 

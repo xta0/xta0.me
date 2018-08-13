@@ -1,7 +1,8 @@
 ---
 layout: post
-list_title: Algorithms-8 | 分治法 | Divide and Conquer
+list_title: Algorithms | 分治法 | Divide and Conquer
 title: 分而治之 | Divide and Conquer
+categories: [Algorithms]
 mathjax: true
 ---
 

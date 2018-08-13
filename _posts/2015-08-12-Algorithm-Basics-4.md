@@ -1,7 +1,8 @@
 ---
 layout: post
-list_title: Algorithms-4 | 几种朴素算法 | Simple Algrorithms
-title: 几种朴素的算法思想
+list_title: Algorithms | 几种朴素算法 | Simple Algrorithms
+title: 几种朴素的算法思想 | Simple Algorithms
+categories: [Algorithms]
 mathjax: true
 ---
 
