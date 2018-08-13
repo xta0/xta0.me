@@ -191,7 +191,7 @@ greet.spanish();
 
 ### Native Modules
 
-在前一篇文章中我们分析了`require`的内部实现，其中在`module.load`的函数中，我们发现Node.js可以load native的module，其源码为：
+上面我们分析了`require`的内部实现，其中在`module.load`的函数中，我们发现Node.js可以load native的module，其源码为：
 
 ```javascript
 Module._load = function(request, parent, isMain) {
@@ -289,4 +289,4 @@ function greet(){
 > module.exports = greet; //执行这一句
 ```
 
-<p class="md-h-center">(完)</p>
+<p class="md-h-center">(全文完)</p>

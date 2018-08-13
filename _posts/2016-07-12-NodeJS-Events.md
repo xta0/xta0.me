@@ -1,5 +1,6 @@
 ---
 layout: post
+updated: "2017-10-11"
 list_title: Node.js中的Events| Event in Node.js
 title: Event
 categories: [Javascript，nodejs]
@@ -51,11 +52,61 @@ emtr.on('greet',function(){
 })
 emtr.emit('greet')
 ```
-如果有过系统编程经验的同学，不论哪种语言，那种平台，对上述代码一定不陌生，这是个最基本的监听-广播模式，当然，上述代码仅仅是个demo，真正使用的时候还需要考虑线程同步问题与资源共享等问题，这里就不展开了。
+这是个最基本的监听-广播模式，如果翻看Node.js关于Emitter的源码实现（`event.js`），可以发现，其基本思路和上面的代码是一样的。将上述代码中的`require('./emmiter')`改为使用系统的`require('events')`，结果是一样的
 
-翻看Node.js的源码`event.js`可以发现，Node.js中的`Emitter`的实现思路和上面也是一样的，只不过它增加和很多corner case的判断，
+### 自定义Emitter
 
+我们可以自定义一个`EventEmitter`继承于Nod.js中的`EventEmitter`
 
+```javascript
+var EventEmitter = require ('events')
+var util = require ('util')
 
-### Node Events
+function MyEmitter(){
+	EventEmitter.call(this)
+}
+util.inherits(MyEmitter, EventEmitter)
 
+MyEmitter.prototype.greet = function(key,data){
+	this.emit(key,data)
+}
+var emitter = new MyEmitter()
+emitter.on('Hello', function(data){
+	console.log('event triggered! msg: '+data)
+})
+emitter.greet('Hello','Some_data')
+
+```
+
+由于ES5中没有继承的概念，想要实现继承需要使用lib库中的`util.js`，其原理是使用Prototype Chain来模拟继承，感兴趣的可以阅读其源码或者参考之前介绍JavaScript的文章
+
+### ES6
+
+最近学习了ES6,将上述代码用ES6改写如下
+
+```javascript
+
+//MyEmitter.js
+'use strict';
+var EventEmitter = require ('events')
+module.exports = class MyEmitter extends EventEmitter{
+	constructor(){
+		super()
+	}
+	greet(key,data){
+		this.emit(key,data)
+	}
+}
+module.exports = MyEmitter
+
+//app.js
+var MyEmitter = require('./MyEmitter')
+
+var emitter = new MyEmitter()
+emitter.on('Hello', function(data){
+	console.log('event triggered! msg: '+data)
+})
+emitter.greet('Hello','Some_data')
+```
+
+<p class="md-h-center">(全文完)</p>
