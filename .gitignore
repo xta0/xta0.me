@@ -3,6 +3,10 @@
 .gist-cache
 .pygments-cache
 .jekyll-meta
+.jekyll-metadata
+.bundle/
+.sass-cache/
+.DS_Store
 _deploy
 _site.tar.gz
 public
@@ -16,3 +20,4 @@ Gemfile.lock
 _site/
 bower_components/
 node_modules/
+Gemfile.lock
