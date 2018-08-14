@@ -21,7 +21,8 @@ permalink: /:year/:month/:day/:title.html
 
 # Pagination
 # paginate: 10
-# Handling Reading
+
+
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md", "Gemfile", "Gemfile.lock", "README_en.md","bower_components","bower.json","package.json","node_modules"]
 
 #Assets
@@ -34,25 +35,6 @@ highlighter: rouge
 highlight:
   line_number: true
 
-# ---------------------------------------------------------------
-# Post  Settings
-# ---------------------------------------------------------------
-
-# Post wordcount display settings
-post_wordcount:
-  item_text: true
-  wordcount: false
-  min2read: false
-  separated_meta: true
-  
-  # Declare license on posts
-post_copyright:
-  enable: false
-  license: CC BY-NC-SA 3.0
-  license_url: https://creativecommons.org/licenses/by-nc-sa/3.0/
-
-
-
 ###############################
 # Menus
 ###############################
@@ -61,11 +43,6 @@ menu:
   archives: /src/archives/
   about: /src/about/
   
-  # categories: /category/
-  
-  # tags: /tags/
-  #sitemap: /sitemap.xml
-  #commonweal: /404.html
 menu_icons:
   enable: true
   home: home
@@ -74,8 +51,7 @@ menu_icons:
   schedule: calendar
   tags: tags
   archives: archive
-  # sitemap: sitemap
-  # commonweal: heartbeat
+ 
 
 # ---------------------------------------------------------------
 # 3rd partyl lib
@@ -86,12 +62,6 @@ mathjax:
   enable: true
   per_page: false
   cdn: //cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML
-    
-# //cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
-
-vendors:
-  # Internal path prefix. Please do not edit it.
-  _internal: assets/lib
 
 
 copyright:

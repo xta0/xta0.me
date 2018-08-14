@@ -1,7 +1,8 @@
 language: ruby
-cache: bundler
+rvm: 
+  - 2.3.3
 before_install:
+  - gem install jekyll
 script:
-  - bundle install
-  - bundle exec jekyll build
+  - jekyll build
 after_success:
