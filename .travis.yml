@@ -1,0 +1,9 @@
+language: ruby
+cache: bundler
+rvm:
+  - 2.3.3
+before_install:
+script:
+- bundle install
+- bundle exec jekyll build
+after_success:

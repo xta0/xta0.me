@@ -228,6 +228,8 @@ import * as greeter from 'greet';
 greeter.greet();
 ```
 
+<p class="md-h-center">(全文完)</p>
+
 ### 附录 tryLoadModule的实现
 
 `tryLoadModule`首先会执行`module.load`函数，如下
@@ -289,4 +291,3 @@ function greet(){
 > module.exports = greet; //执行这一句
 ```
 
-<p class="md-h-center">(全文完)</p>
