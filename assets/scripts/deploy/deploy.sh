@@ -1,12 +1,15 @@
 #!/bin/bash
 cd ../../../
 echo "directory: $(pwd)"
+echo "Build Website..."
 tar_file="_site.tar.gz"
 if [ -e $tar_file ]; then
     echo "Found: _site.tar.gz"
     rm -rf $tar_file
     echo "Remove _site.tar.gz"
 fi
+echo "Rebuild website"
+jekyll build
 echo "Create tar file..."
 tar -zcvf $tar_file _site
 echo "Deploy to server..."
