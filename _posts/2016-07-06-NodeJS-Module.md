@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Node.js中的Module | How Module works in Node.js
+list_title: 理解Node.js | Module 
 title: Node.js中的Module
 categories: [Javascript，nodejs]
 ---

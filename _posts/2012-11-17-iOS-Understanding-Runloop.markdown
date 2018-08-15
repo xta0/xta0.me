@@ -1,11 +1,8 @@
 ---
 layout: post
-list_title: 什么是Runloop | Runloop in iOS
+list_title: 理解iOS中的Runloop | Runloop in iOS
 title: 理解iOS中的Runloop
-sub_title: A brief introduction of how Runloop works in iOS
-categories: 随笔
-tag: Runloop
-
+categories: [iOS]
 ---
 
 ## Runloop的事件轮训

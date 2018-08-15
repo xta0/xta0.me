@@ -1,21 +1,16 @@
 ---
 layout: post
-list_title: 关于内存的理解
-tag: iOS
-categories: 随笔
-
+list_title: 使用Instrument调试内存问题（一） | Debuging Memory Issues in iOS Part 1
+title: 理解iOS中的内存结构
+categories: [iOS]
 ---
-
-<em></em>
 
 <em> updated @2014/01/10 : 补充了WWDC2013：session410 </em>
 
 排查内存问题，是每个项目都会遇到的。几个项目下来，总结下经验：
 
 - 要了解iOS内存模型的基本概念，懂了这些才能更有效的debug。
-
 - 需要学习一些使用Instrument调试的技巧。
-
 - 深入到内核看一看内存是如何分配的，能否从内核的角度来优化内存的分配和使用
 
 本文主要讨论是第一点

@@ -1,16 +1,11 @@
 ---
 layout: post
-list_title: 关于Method Overloading
-tag: Objective-C
-categories: 随笔
-
+list_title: iOS中的Method Overloading | Method Overloading in iOS
+title: iOS中的Method Overloading
+categories: [Objective-C,iOS]
 ---
 
-<em></em>
-
-objective-C的[...]语法来源于smallTalk，其设计初衷是希望它是一种动态的，在运行时决定函数的入口地址。
-
-由于objective-C本质上也还是C语言，因此[...]语法在编译后实际上是一条标准C函数：
+Objective-C的`[...]`语法来源于smallTalk，其设计初衷是希望它是一种动态的，在运行时决定函数的入口地址。由于objective-C本质上也还是C语言，因此[...]语法在编译后实际上是一条标准C函数：
 
 ```c
 id objc_msgSend(id self, SEl OP, ...)
@@ -39,8 +34,6 @@ void search_static(int type)
 }
 ```
 
-
-
 我们不让编译器去自动inline代码，searchProduct和searchShop在编译的时候地址已经确定了：
 
 ```
@@ -66,7 +59,6 @@ jmp _searchShop ## TAILCALL
 Ltmp22:</span>
 Lfunc_end2:
 .cfi_endproc
-
 ```
 
 如果把上面代码改写成下面这样：
@@ -115,7 +107,7 @@ struct objc_cache *cache
 ```
 例如：
 
-```
+```shell
 2   CoreFoundation                      0x01a0c903 -[NSObject(NSObject) doesNotRecognizeSelector:] + 275
 3   CoreFoundation                      0x0195f90b ___forwarding___ + 1019
 4   CoreFoundation                      0x0195f4ee _CF_forwarding_prep_0 + 14
@@ -128,13 +120,13 @@ struct objc_cache *cache
 
 虽然有cache或有一些优化在，但效率毕竟还是低于static binding，但对于现在的硬件条件来讲，这个也不算是瓶颈。
 
-终于说overloading
+### Overloading的问题
 
 使用Java或者C++，overloading是种很常见的策略，或者很多人习惯通过overloading的参数来区别方法的意思。但是这种技术在OC中却行不通，道理也很简单，overloading也是一种static binding。
 
 以Java代码为例：
 
-```
+```java
 class testObj
 {
 	public void searchProduct(String name)
@@ -162,7 +154,7 @@ public class main {
 
 可以看到main.class中，方法的入口地址也确定了。
 
-```
+```shell
 public static void main(java.lang.String[]);
   Code:
   Stack=2, Locals=2, Args_size=1
@@ -184,9 +176,10 @@ public static void main(java.lang.String[]);
 ```objc
 @selector(searchProduct:)
 ```
-
 如果有同名方法，谁知道该调用哪一个呢？
 
-That's all
+
+
+
 
 

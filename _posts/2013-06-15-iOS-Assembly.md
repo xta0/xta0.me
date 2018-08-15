@@ -1,5 +1,6 @@
 ---
-list_title: Assembly on ARM
+list_title: iOS中的汇编 | Assembly on ARM
+title: iOS中的汇编
 layout: post
 tag: Assembly
 categories: 随笔
@@ -34,7 +35,7 @@ b _label =>pc = _label
 bl _label =>lr = pc + 4; pc = _label
 ```
 
-- Stack Frame：
+### Stack Frame
 
 函数调用是基于stack的，stack是从高到低生长的，假如函数A内部要调用B，首先要将A的sp存起来，然后在stack上开辟一块控件，执行B，执行万后在将sp取出来继续执行。整个过程如下图：
 
@@ -51,9 +52,9 @@ bl _label =>lr = pc + 4; pc = _label
 <strong>local storage area：</strong>存放函数B需要的参数
 
 
-<h3>二，Assembly指令分析</h3>
+### Assembly指令分析
 
-All Right！Let's try this!
+查看下面代码
 
 ```c
 __attribute__((noinline))int addFunction(int a, int b) {
@@ -119,22 +120,22 @@ _fooFunction:
 	.cfi_startproc
 ```
 
-.globl声明的符号为外部符号，外部符号是.c或.m中可见的符号，_fooFunction为fooFunction()方法。
-.align 2代表后面的代码会以2的平方=4字节对齐，没有padding
-.code 16意思是下面的汇编指令集是Thumb的不是ARM的（32）。现代的ARM处理器有两种模式：ARM和Thumb，ARM是32bit宽，Thumb是16bit宽，Thumb的指令很少，使用Thumb模式，通常会使代码量更小，和更有效的CPU缓存
-.thumb_func 意思是告诉后面的_fooFunction中的指令是用Thumb编码的
+1. `.globl`声明的符号为外部符号，外部符号是.c或.m中可见的符号，`_fooFunction`为`fooFunction()`方法。
+2. `.align 2`代表后面的代码会以2的平方=4字节对齐，没有padding
+3. `.code 16`意思是下面的汇编指令集是Thumb的不是ARM的（32）。现代的ARM处理器有两种模式：ARM和Thumb，ARM是32bit宽，Thumb是16bit宽，Thumb的指令很少，使用Thumb模式，通常会使代码量更小，和更有效的CPU缓存
+4. .thumb_func 意思是告诉后面的_fooFunction中的指令是用Thumb编码的
 
 接下来就是_fooFunction的内容了，在汇编中：
 
-以冒号为结尾的行，如_fooFunction:  ，Lfunc_begin1:  ，Ltmp3：，Ltmp4：，Lfunc_end1：称为Labels
+以冒号为结尾的行，如`_fooFunction:  ，Lfunc_begin1:  ，Ltmp3：，Ltmp4：，Lfunc_end1` 称为`Labels`
 用来标识一段汇编代码的名字，为某段代码的入口地址，例如:_fooFunction:是函数的入口位置。
 程序中可以call 这些label，来执行函数。
 用_开头的是函数入口的label，用L开头的是函数中的内部跳转位置，包含在函数内部。
-注释是以@开头。
+注释是以`@`开头。
 
-一般函数开头都会以.cfi_startproc开始。cfi是call frame information的缩写。
+一般函数开头都会以`.cfi_startproc`开始。`cfi`是`call frame information`的缩写。
 
-good start，我们继续：
+我们继续：
 
 ```c
 Lfunc_begin1:
@@ -281,53 +282,47 @@ tid = 0x1bf859, 0x000eab5e ARMAssembly`fooFunction + 18 at main.m:20, queue = 'c
 
 然后我们再<code>register read</code>一下：
 
-```
-
+<div class="md-flex-h">
+<div><img src="{{site.baseurl}}/assets/images/2013/06/assembly-stack1.png"></div>
+<div class="md-margin-left-12"><pre>
 General Purpose Registers:
-        r0 = 0x00000032
-        r1 = 0x00000033
-        r2 = 0x27d1fd04
-        r3 = 0x27d1fd30
-        r4 = 0x00000000
-        r5 = 0x000eab81  ARMAssembly`main + 1 at main.m:25
-        r6 = 0x00000000
-        r7 = 0x27d1fcc8
-        r8 = 0x27d1fcf4
-        r9 = 0x3b347e30  
-       r10 = 0x00000000
-       r11 = 0x00000000
-       r12 = 0x80000028
-        sp = 0x27d1fcbc
-        lr = 0x000eab8f  ARMAssembly`main + 15 at main.m:26
-        pc = 0x000eab5e  ARMAssembly`fooFunction + 18 at main.m:20
-      cpsr = 0x20000030
-```
-
-<a style = " float : left; margin-right:30px;" href="/assets/images/2013/06/assembly-stack1.png"><img src="{{site.baseurl}}/assets/images/2013/06/assembly-stack1.png" alt="assembly-stack1" width="155" height="277"/></a>
+r0 = 0x00000032
+r1 = 0x00000033
+r2 = 0x27d1fd04
+r3 = 0x27d1fd30
+r4 = 0x00000000
+r5 = 0x000eab81  ARMAssembly`main + 1 at main.m:25
+r6 = 0x00000000
+r7 = 0x27d1fcc8
+r8 = 0x27d1fcf4
+r9 = 0x3b347e30  
+r10 = 0x00000000
+r11 = 0x00000000
+r12 = 0x80000028
+sp = 0x27d1fcbc
+lr = 0x000eab8f  ARMAssembly`main + 15 at main.m:26
+pc = 0x000eab5e  ARMAssembly`fooFunction + 18 at main.m:20
+cpsr = 0x20000030
+</pre></div>
+</div>
 
 如图所示，r0,r1填好了入参50，51，sp指向栈底，lr指向下一条函数的入口地址
 好了，下面我们来分析stack：<code>memory read/6xw 0x27d1fcbc</code>从当前sp的位置向上6*4 = 24字节：
 
-```
+```shell
 0x27d1fcbc: 0x2be8c384 0x27d1fcf4 0x00000000 0x27d1fcd8
 0x27d1fccc: 0x000eab8f 0x27d1fcfc
-
 ```
 此时的stack frame如右图所示：我们看到，lr和r7已经入栈。
 
-一切准备就绪！
+一切准备就绪！接下来，我们执行`addFunction:`
 
-
-<p style="clear: both;">
-接下来，我们执行addFunction:
-</p>
 
 <a href="/assets/images/2013/06/assembly-break3.png"><img src="{{site.baseurl}}/assets/images/2013/06/assembly-break3.png" alt="assembly-break3" width="432" height="69"/></a>
 
+再`bt`
 
-再<code>bt</code>
-
-```
+```shell
 * thread #1: tid = 0x1bf859, 0x000eab3e ARMAssembly`addFunction(a=50, b=51) + 6 at main.m:15, queue = 'com.apple.main-thread, stop reason = breakpoint 1.1
     frame #0: 0x000eab3e ARMAssembly`addFunction(a=50, b=51) + 6 at main.m:15
     frame #1: 0x000eab62 ARMAssembly`fooFunction + 22 at main.m:20
@@ -337,7 +332,7 @@ General Purpose Registers:
 我们看到多了一个frame是addFunction，此外，每个function的入口地址也发生了变化，这意味着lr中的地址也会相应发生变化！
 同样，我们再看一遍寄存器：<code>register read</code>
 
-```
+```shell
 General Purpose Registers:
         r0 = 0x00000032
         r1 = 0x00000033
@@ -359,13 +354,15 @@ General Purpose Registers:
 ```
 
 
-<a style = " float : left; margin-right:30px;" href="/assets/images/2013/06/assembly-stack2.png"><img src="{{site.baseurl}}/assets/images/2013/06/assembly-stack2.png" alt="assembly-stack2" width="157" height="388"/></a>
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2013/06/assembly-stack2.png">
 
 此时，r0，r1为入参，sp指向栈底，当前sp位置为0x27d1fcb0，和上图中的位置正好相差12字节！这12字节也就是addFunction的stack frame。此时lr指向了下一条函数入口：fooFunction。值为:0x000eab63，比我们bt出来的0x000eab62多一个字节。因为lr永远指向下一条函数入口地址的下一个字节。
 
 好了我们看看此时的栈的情况<code> memory read/3xw 0x27d1fcb0</code>：从栈底向上12字节，如图所示：每一个4字节单元保存了具体运算的数值，对照我们之前的分析，完全吻合。
 
 后面的过程，我们便可以依此方法去观察寄存器和stack情况，来印证我们上文的分析。
+
+{% include _partials/post-footer.html %}
 
 
 ### Resources

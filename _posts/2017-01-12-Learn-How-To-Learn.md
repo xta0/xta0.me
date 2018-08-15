@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 如果高效学习 | Learn How to Learn
+list_title: 如何高效学习 | Learn How to Learn
 title: 如何高效学习
 categories: [Life]
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: 机器学习 | Machine Learning | Debugging
-title: Machine Learning Debugging
+list_title: 机器学习 | Machine Learning | 调试 | Debugging
+title: 调试
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter5
 categories: [ml-stanford,course]
 mathjax: true

@@ -1,6 +1,6 @@
 ---
 title: 理解变量
-list_title: 深入理解Python| 变量 | Variables 
+list_title: 深入理解Python | 变量 | Variables 
 layout: post
 categories: [Python]
 ---

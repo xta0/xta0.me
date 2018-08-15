@@ -15,9 +15,6 @@ layout: post
 - etc: brew安装程序的配置文件默认存放路径
 - Library: Homebrew 系统自身文件夹
 
-
-## RVM & GEM
-
 ### RVM
 
 [rvm](https://rvm.io/rvm/basics)是Ruby的版本管理工具，项目中可以通过Rvm来创建多套ruby环境。
@@ -137,7 +134,6 @@ pod 'Paper'
 	- 代码打tag,push到仓库
 	- 创建podsepcs(以[VZInspector](https://github.com/akaDealloc/VZInspector)为例):
 		- `pod spec create VZInspector`
-
 		- 填写相关信息，可参照[AFNetworking的podspec](https://github.com/AFNetworking/AFNetworking)等等。
 
 		```ruby
@@ -173,31 +169,16 @@ pod 'Paper'
 	- 等待审核，[这里](https://github.com/CocoaPods/Specs/pulls)可以查看pull request的处理进度
 
 
-## NVM & Node
+### Lua
 
+[LuaRocks]("http://luarocks.org/")是Lua的包管理系统，对于管理lua的module很方便，类似Ruby的gem。如果是Mac安装的时候可以使用HomeBrew，也可以手动安装。手动安装要费一点劲儿，由于我机器上已经安装了Lua5.2，装LuaRocks时怎么都不成功，原因是不兼容Lua5.2的Module，解决办法是，回退到Lua 5.1版本。
 
-## Pip
-
-
-## Lua
-
-[LuaRocks]("http://luarocks.org/")是Lua的包管理系统，对于管理lua的module很方便，类似Ruby的gem。如果是Mac安装的时候可以使用HomeBrew，也可以手动安装。
-
-<手动安装要费一点劲儿，由于我机器上已经安装了Lua5.2，装LuaRocks时怎么都不成功，原因是不兼容Lua5.2的Module，解决办法是，回退到Lua 5.1版本。
-
-用法和gem相同:
+LuaRock的用法和gem相同:
 
 - 搜索: `luarocks search json`
-
 - 安装: `luarocks install json4lua` 
-
 - 查看: `luarocks list`
-
 - 查看某个包: `luarocks show json4lua`
-
 - 删除某个包: `luarocks remove json4lua`
 
 
-
-
-## 

@@ -1,33 +1,26 @@
 ---
-list_title: 一些提高UI绘制性能的技巧
+list_title: iOS中Rendering的性能分析 | Performant rendering in iOS
+title: iOS中Rendering的性能分析
 layout: post
-tag: iOS
-categories: 随笔
-
+categories: [iOS]
 ---
 
-<em></em>
 
 今天讨论下UI绘制的性能问题，通常来说，如果熟悉下面列出的内容基本上能解决80%以上的性能问题了：
 
 1. [UIView是如何渲染到屏幕上的](http://vizlabxt.github.io/blog/2012/10/22/UIView-Rendering/)
-
 2. WWDC2011:Session 318 - iOS Performance in Depth
-
 3. WWDC2012:Session 238 - iOS App Performance_ Graphics and Animations
-
 4. 熟练Instrument的Time Profiler和Core Animation
 
 接下来讨论三个我认为有价值的点：
 
 1. Twitter的这篇关于tableview优化的文章，是对还是错？
-
 2. CoreText最佳性能优化方案
-
 3. 异步绘制
 
 
-##Layer Trees v.s. Flat Drawing
+### Layer Trees v.s. Flat Drawing
 
 基本上，如果去优化UITableview的滚动性能，都会读到<a href="https://github.com/kennethreitz/osx-gcc-installer/">Twitter的这篇文章</a>。这篇文章其实就说了一件事：将cell上复杂的UI层次结构，简化为一个Layer。
 
@@ -35,14 +28,12 @@ categories: 随笔
 
 <a href="/assets/images/2013/07/cell.png"><img class="alignnone size-full wp-image-251" alt="cell" src="{{site.baseurl}}/assets/images/2013/07/cell.png" width="311" height="96" /></a>
 
-###传统的做法：
+### 传统的做法
 
 传统的做法是定义一个`cell`，在`cell`的`contentView`上添加UI元素：三个label，一个imagView：
 
 ```objc
-
 @implementation ETTableViewDemoAppStoreCell
-
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier 
 {
     if (self=[super initWithStyle:style reuseIdentifier:reuseIdentifier]) 
@@ -54,7 +45,6 @@ categories: 随笔
     }
     return self;
 }  
-
 - (void)setItem:(ETTableViewDemoAppStoreItem* )item
 {
     self.nameLabel.text = item.appName;
@@ -62,7 +52,6 @@ categories: 随笔
     self.summaryLabel.text = item.appSummary;
     [self.imgView setImageURL:item.appImageURL];
 }
-
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -74,16 +63,14 @@ categories: 随笔
 }
 
 @end
-
 ```
 
-###Twitter的做法：
+### Twitter的做法
 
 首先也是需要定义个cell：
 
 ```objc
 @interface ETTableViewDemoAppStoreFlatCell : ETTableViewSingleImageCell
-
 @end
 ```
 
@@ -169,13 +156,13 @@ categories: 随笔
 
 从上面的过程来看，显然，传统方式GPU的工作多一些，当layer-tree很复杂的时候，GPU的耗时也会增加，但是CPU的压力不大。twitter这种方式，CPU的压力大一些，因为Core Graphic的api是CPU在执行，但是由于之渲染一个bitmap，GPU的压力小很多。
 
-###结论：
+### 结论
 
 所以，这是一个test - measure的过程。twitter最开始使用这种方式而获得性能上的成功要追溯到2008年，那时候的iPhone还是低清屏的3gs，到了retina的时代，这种方式还适不适合，<a href="http://floriankugler.com/blog/2013/5/24/layer-trees-vs-flat-drawing-graphics-performance-across-ios-device-generations">这篇文章</a>给出了量化的结论：在retina的时代里，使用Core Graphic绘制的代价远高于GPU渲染layer-tree的代价，在iPhone4及以后的平台上使用这种方式绘制cell，时间反而会变长，twitter的这种方式过时了！
 
 但就我个人而言，我更喜欢使用这种方式，倒不是因为效率问题，而是这种写法很简单，项目里，一般不复杂的列表，没有性能问题的，都可以这么实现。但是如果很复杂的列表，有很多subview，使用这种方式就不太适合了，尤其在retina屏上，效率降低了。
 
-##CoreText Optimization
+### CoreText Optimization
 
 这一节主要来讨论使用CoreText绘制文本的优化，场景是这样的：
 
@@ -250,7 +237,7 @@ _label.layer.contents = (id)parser.preRenderedImage.CGImage;
 
 假如我们一次请求服务器获得了10条数据，那么在`tableview`刷新前，我们使用`parser`将每条数据的text渲染成图片，渲染完成后，通知`tableview`刷新，然后在`cell`绘制的时候为`label`的`layer.content`赋值。
 
-##Asynchronous Drawing
+### Asynchronous Drawing
 
 从刚才讨论的第一点我们能知道在retina屏幕上，使用Core Graphic绘制让人很失望
 
@@ -345,3 +332,4 @@ self.view.content.layer = (id)image.cgImage;
 
 > 2014年3月14日 注：`CALayer`的`renderInContext:`方法存在线程安全问题，不建议使用
 
+{% include _partials/post-footer.html %}

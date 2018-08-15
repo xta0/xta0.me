@@ -1,9 +1,8 @@
 ---
 layout: post
-list_title: 使用Instrument排查内存问题
-tag: iOS
-categories: 随笔
-
+list_title: 使用Instrument调试内存问题（二） | Debuging Memory Issues in iOS Part 2
+title: 使用Instrument调试内存问题
+categories: [iOS]
 ---
 
 <em></em>

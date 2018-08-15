@@ -301,6 +301,7 @@ for(int i=2; i<n; i++){
 
 
 
+## Resources
 
 - [MIT 6.006 Introduction to Algorithms, Fall 2011](https://www.youtube.com/watch?v=OQ5jsbhAv_M&t=1952s)
 - [MIT 6.046J Design and Analysis of Algorithms, Spring 2015](https://www.youtube.com/watch?v=Tw1k46ywN6E)

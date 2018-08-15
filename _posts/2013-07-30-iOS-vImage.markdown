@@ -1,12 +1,10 @@
 ---
-list_title: vImage
+list_title: iOS中的vImage | vImage in iOS
+title: iOS中的vImage
 layout: post
-tag: iOS
-categories: 随笔
-
+categories: [iOS]
+mathjax: true
 ---
-
-<em></em>
 
 最近大家都在探讨iOS7的blur effect，用的最多的基本上是apple在<a href="https://developer.apple.com/downloads/index.action?name=WWDC%202013">WWDC2013中的demo</a>。其实现思路是：高斯模糊+一层白色的mask，再调整一下饱和度。出于性能考虑，demo采用了Accelerate framework中的<a href="https://developer.apple.com/library/mac/documentation/performance/Conceptual/vImage/Introduction/Introduction.html">vImage</a>，vImage提供了模版运算的api，可以直接通过openGL做向量运算，因此demo采用了<a href="http://www.w3.org/TR/SVG/filters.html#feGaussianBlurElement">三次均值滤波去逼近高斯滤波的效果</a>，误差有3%。但却能大大提高计算效率。
 
@@ -27,7 +25,7 @@ Apple的vImage，最大的优势就是提供卷积运算和向量运算的api，
 （2）拉普拉斯锐化
 
 
-##均值滤波
+### 均值滤波
 
 均值滤波，也叫邻域平均是图像平滑去噪算法中最简单的一种，它将原图中的一个像素值和它周围临近的N个像素值相加，然后求得平均值，最为新图中该点的像素值，其数学公式为：
 
@@ -48,24 +46,26 @@ $$
 vImage对于这种权重相同的kernel提供了一个专门的api叫做vImageBoxConvolve_ARGB8888：
 
 ```c
-err = vImageBoxConvolve_ARGB8888(effectInBuffer, effectOutBuffer, NULL, 0, 0, 9, 9, bgColor, kvImageEdgeExtend);
+err = vImageBoxConvolve_ARGB8888(   effectInBuffer, 
+                                    effectOutBuffer, 
+                                    NULL, 
+                                    0, 0, 9, 9, 
+                                    bgColor, 
+                                    kvImageEdgeExtend);
 ```
 
 原图为256x256的ARGB，结果为：
 
-<div style="overflow: hidden; width: 100%;">
-
-<a style="display: block; float: left;" href="/assets/images/2013/11/lena_ave_o.png"><img alt="lena_ave_o" src="{{site.baseurl}}/assets/images/2013/11/lena_ave_o.png" width="200" height="200" /></a>
-
-<a style="display: block; float: left; margin-left: 30px;" href="/assets/images/2013/11/lena-5x5.png"><img alt="lena-5x5" src="{{site.baseurl}}/assets/images/2013/11/lena-5x5.png" width="200" height="200" /></a>
-
-<a style="display: block; float: left; margin-left: 30px;" href="/assets/images/2013/11/lena-9x9.png"><img alt="lena-9x9" src="{{site.baseurl}}/assets/images/2013/11/lena-9x9.png" width="200" height="200" /></a>
-
+<div class="md-flex-h">
+<div><img src="{{site.baseurl}}/assets/images/2013/11/lena_ave_o.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2013/11/lena-5x5.png" ></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2013/11/lena-9x9.png" ></div>
 </div>
+
 
 第一幅图为原图，第二幅为使用5x5模版的平滑结果，第三幅为使用9x9模版的平滑结果。显然这种方式在去掉了噪声的同时，也模糊了边缘。
 
-##拉普拉斯锐化
+### 拉普拉斯锐化
 
 和上面的平滑不同，锐化是消除图片中的低频分量，保留高频分量，是一种高通滤波器。从数学上讲，平滑是一种平均运算或积分运算，那么和它相反，锐化就是一种微分运算，而微分运算又可以说是梯度运算，表征了新号的变化快慢，因此可以用来检测图像的边缘信息。一般简单的锐化用梯度锐化就可以了，拉普拉斯锐化用的是拉普拉斯算子：
 
@@ -83,17 +83,22 @@ $$
 
 ```c
 int16_t kernel[9] = {1,1,1,1,-8,1,1,1,1};
-err = vImageConvolveWithBias_ARGB8888(effectInBuffer,effectOutBuffer, NULL, 0, 0, kernel, 3, 3, 1, 128, bgColor, kvImageEdgeExtend);
+err = vImageConvolveWithBias_ARGB8888(  effectInBuffer,
+                                        effectOutBuffer,
+                                        NULL, 
+                                        0, 0, kernel, 
+                                        3, 3, 1, 128, 
+                                        bgColor, 
+                                        kvImageEdgeExtend);
 ``` 
 
 Bias的意思是如果计算过程中如果有溢出（比如出现负数或者大于255），那么会自动纠正。结果如下：
 
-<div style="overflow: hidden; width: 100%;">
 
-<a style="display: block; float: left;" href="/assets/images/2013/11/lena_ave_o.png"><img class="alignnone size-full wp-image-391" alt="lena_ave_o" src="{{site.baseurl}}/assets/images/2013/11/lena_ave_o.png" width="200" height="200" /></a>
-
-<a style="display: block; float: left; margin-left: 30px;" href="/assets/images/2013/11/lena-laplas-3x3.png"><img src="{{site.baseurl}}/assets/images/2013/11/lena-laplas-3x3.png" alt="lena-laplas-3x3" width="200" height="200" class="alignnone size-full wp-image-415"/></a>
-
+<div class="md-flex-h">
+<div><img src="{{site.baseurl}}/assets/images/2013/11/lena_ave_o.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2013/11/lena-laplas-3x3.png"></div>
 </div>
 
+<p class="md-h-center">（全文完）</p>
 

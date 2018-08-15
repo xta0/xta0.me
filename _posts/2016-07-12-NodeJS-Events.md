@@ -1,7 +1,7 @@
 ---
 layout: post
 updated: "2017-10-11"
-list_title: Node.js中的Events| Event in Node.js
+list_title: 理解Node.js | Events
 title: Event
 categories: [Javascript，nodejs]
 ---

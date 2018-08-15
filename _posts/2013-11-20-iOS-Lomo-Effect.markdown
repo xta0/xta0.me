@@ -1,25 +1,19 @@
 ---
-list_title: 实现Lomo效果
-title: Implement Lomo Effect in iOS
+list_title: 实现Lomo效果 | Lomo Effect in iOS
+title: 实现Lomo效果
 layout: post
 categories: [iOS]
 mathjax: true;
 ---
 
-
 lomo效果，是一种很流行的滤镜效果，许多开源的工程都能实现，比如很cool的GPUImage。但是想实现instagram的效果却有点难，其实从图像处理的角度出发，实现instagram的lomo效果并不复杂，难点在一些性能优化上。因此，我准备从图像处理的角度出发，从理论上实现instagram滤镜的hefe效果。
 
 下面两张图分别为原图和instagram滤镜的hefe效果再叠加上水滴效果。
 
-<div>
-	<div style="width:49%; float:left;">
-		<img src="{{site.baseurl}}/assets/images/2013/11/lomo_ori.png" width="200" height="360">
-	</div>
-	<div style="width:49%; float:left">
-		<img src="{{site.baseurl}}/assets/images/2013/12/lomo-hefe.png" width="200" height="360">
-	</div>
+<div class="md-flex-h">
+<div><img src="{{site.baseurl}}/assets/images/2013/11/lomo_ori.png" ></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2013/12/lomo-hefe.png" ></div>
 </div>
-
 
 其中hefe效果也是lomo的一种，需要对原图RGB三通道分别进行非线性拉伸，实现起来比较简单。
 水滴效果是一种权重服从高斯分布的模糊：图片中心最清楚，边缘最模糊。
@@ -46,7 +40,7 @@ $$
 
 接下来我们的任务便是找到hefe效果的非线性映射的曲线，如果身边有设计师，可以让他们用PS调出hefe的效果，然后我们拿到它的RGB三通道的曲线：
 
-<img src="{{site.baseurl}}/assets/images/2013/12/hefe-rgb.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2013/12/hefe-rgb.png">
 
 途中红色为R通道，绿色为G通道，蓝色为B通道，从曲线的变化来看，是一种非线性关系。
 
@@ -110,15 +104,12 @@ for (int i=0; i<srcBitmapHeight*srcBitmapRowBytes; i+=4) {
 
 首先我们把原图画出来，context指向了一块bitmap，然后根据我们刚才生成的映射表来改变bitmap中的像素点，最后把改变后的图片画出来。我们还以经典的lena256x256.png为例，左边是原图，右边是hefe拉伸的效果：
 
-<div style="overflow: hidden; width: 100%;">
-<a style="display: block; float:left" href="/assets/images/2013/12/hefe_lena_ori.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena_ori.png" alt="hefe_lena_ori" width="200" height="200" class="alignnone size-full wp-image-577" /></a>
-
-<a style="display: block; float:left;margin-left:30px" href="/assets/images/2013/12/hefe_lena.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena.png" alt="hefe_lena" width="200" height="200" class="alignnone size-full wp-image-578" /></a>
-
+<div class="md-flex-h">
+<div><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena_ori.png" ></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena.png" ></div>
 </div>
 
 到此，我们已经实现了上面5步中的前两步。
-
 
 ### 模糊
 
@@ -132,11 +123,9 @@ vImageBoxConvolve_ARGB8888(effectInBuffer, effectOutBuffer, NULL, 0, 0, 25, 25, 
 
 模糊结果如下：
 
-<div style="overflow: hidden; width: 100%;"> 
-<a style="display: block; float:left" href="/assets/images/2013/12/hefe_lena.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena.png" alt="hefe_lena" width="200" height="200" class="alignnone size-full wp-image-578" /></a>
-
-<a style="display: block; float:left;margin-left:30px" href="/assets/images/2013/12/hefe_lena_blur.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena_blur.png" alt="hefe_lena_blur" width="200" height="200" class="alignnone size-full wp-image-582" /></a>
-
+<div class="md-flex-h">
+<div><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena.png" ></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena_blur.png" ></div>
 </div>
 
 右图为模版5x5的均值模糊结果。
@@ -197,30 +186,23 @@ UIImage* newImg = [UIImage imageWithCGImage:newImgRef];
 UIGraphicsEndImageContext();
 return newImg;
 ```
+结果如下：
 
-command+R，来看看结果：
-
-
-<ul style="overflow: hidden; width: 100%; list-style: none; margin-left: 0px;">
-<li style="width: 48%; display:inline-block; ">
-<a style="float:left; " href="/assets/images/2013/12/hefe_lena.png"><img style="margin-left: 0;" src="{{site.baseurl}}/assets/images/2013/12/hefe_lena.png" alt="hefe_lena_ori" width="200" height="200" class="alignnone size-full wp-image-577" /></a>
-</li>
-
-<li style="width: 48%; float: left; display:inline-block;">
-<a style="margin-left:4%;" href="/assets/images/2013/12/hefe_lena_ori.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena_ori.png" alt="hefe_lena" width="200" height="200" class="alignnone size-full wp-image-578" /></a>
-</li>
-
-<li style="width: 48%; clear: left; display:inline-block; ">
-<a  href="/assets/images/2013/12/hefe_final.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_final.png" alt="hefe_final" width="200" height="200" class="alignnone size-full wp-image-582" /></a>
-</li>
-
-<li style="width: 48%; float: left; display:inline-block;">
-<a style="float: left; margin-left:4%;" href="/assets/images/2013/12/hefe_lena_blur.png"><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena_blur.png" alt="lean_blur" width="200" height="200" class="alignnone size-full wp-image-589" /></a>
-</li>
-</ul>
+<div class="md-flex-v">
+<div class="md-flex-h">
+<div><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena_ori.png"></div>
+<div><img class="md-margin-left-12" src="{{site.baseurl}}/assets/images/2013/12/hefe_lena.png" ></div>
+</div>
+<div class="md-flex-h md-margin-top-12">
+<div><img src="{{site.baseurl}}/assets/images/2013/12/hefe_lena_blur.png" ></div>
+<div><img class="md-margin-left-12" src="{{site.baseurl}}/assets/images/2013/12/hefe_final.png" ></div>
+</div>
+</div>
 
 最后边的一张为最后的结果，效果和我们预期的一致：中心一圈最清楚（半径根据sigma调整），向外侧依次模糊，最外面一圈最模糊。
 
 后面我们可以通过调整sigma的值来控制模糊的权重值，从而达到我们想要的效果。
 
 至此，我们实现了lomo效果的原型，我们看到，代码简简单单，又很少，但是上面的代码仅仅是个demo。实际应用的的时候不仅算法需要优化，显示也需要交给openGL，我们在后面再来讨论如何用openGL实现上面的效果。
+
+{% include _partials/post-footer.html %}

@@ -1,7 +1,7 @@
 ---
 layout: post
 updated: "2017-10-13"
-list_title: Node.js中的异步| Asynchronous in Node.js
+list_title: 理解Node.js | Asynchronous I/O
 title: Asynchronous
 categories: [Javascript，nodejs]
 ---

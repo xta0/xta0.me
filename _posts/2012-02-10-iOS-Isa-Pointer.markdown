@@ -1,12 +1,9 @@
 ---
 layout: post
-list_title: 理解isa
-tag: Objective-C
-categories: 随笔
-
+list_title: 理解iOS中的"isa"指针 | "isa" pointer in iOS
+title: 理解iOS中的"isa"指针
+categories: [Objective-C]
 ---
-
-<em></em>
 
 这是个很奇怪的问题，这个问题困扰我的时间也最长，要先从id说起：
 
@@ -34,8 +31,7 @@ objc_class* clz = obj->isa
 
 objc_class这个结构体的定义为：
 
-```objc
-
+```c
 struct objc_class {
     Class isa  
     Class super_class                                       
@@ -166,7 +162,7 @@ Nil是我们期待的结果
 
 到这里，我们应该把上面的图再改一改：
 
-<a href="/assets/images/2012/02/class_hierarchy-2.png"><img src="{{site.baseurl}}/assets/images/2012/02/class_hierarchy-2.png" alt="class_hierarchy-2" width="525" height="169"/></a>
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2012/02/class_hierarchy-2.png">
 
-That's all for today!
+
 

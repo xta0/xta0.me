@@ -95,6 +95,10 @@ int expand(i) //其中i为队列的编号，0或1
     2) 如果adj 曾在队列q1-i中出现过, 则：输出找到的路径
 } 
 ```
+
+## Resources
+
+
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
 - [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)
 - [算法与数据结构-1-北大-Cousera](https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome)

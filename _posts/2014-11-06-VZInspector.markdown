@@ -1,196 +1,242 @@
 --- 
-list_title: VZInspector
+list_title: VZInspector开源了 | VZInspector has been open sourced
+title:  VZInspector开源了
 layout: post
-tag: VizLab
-categories: 随笔
+categories: [iOS]
 ---
 
-<em></em>
+感谢大家的努力，[Inspector终于开源了](https://github.com/xta0/VZInspector)! Inspector是一个可以在App内部运行的debugger，功能类似Instrument，可以监测App在运行时的状态信息。最开始在项目中运用，得到了团队成员的一致认可，因此我决定将它从业务中剥离出来，希望可以复用到每个独立的工程中。
 
-##VZInspector
+### 简介
 
-[VZInspector](https://github.com/akaDealloc/VZInspector) 是一个可以在App内部运行的debugger，功能类似Instrument，可以监测App在运行时的状态信息。最开始在项目中运用，得到了测试和服务端开发人员的一致认可，因此我决定将它从业务中剥离出来，希望可以复用到每个独立的工程中。
+VZInspector 是一个给 iOS 开发者使用的 debug 工具，包含日志查询、取色、控件检查、视觉稿比对等功能，同时提供了丰富的接口方便自行定制。
 
-<ul style="list-style:none;">
-	<li><img src="{{site.baseurl}}/assets/images/2014/12/vzi_1.png" alt="vzi_1.png" style="float: left; display:inline-block; width:45%;margin: 5px 5% 10px 0;"></li>
-	<li> <img src="{{site.baseurl}}/assets/images/2014/12/vzi_2.png" alt="vzi_2.png" style="float: left; display:inline-block; width:45%;margin: 5px 0 10px 0;"></li>
-	<li> <img src="{{site.baseurl}}/assets/images/2014/12/vzi_3.png" alt="vzi_3.png" style="float: left; display:inline-block; width:45%; margin: 5px 5% 10px 0;"></li>
-	<li> <img src="{{site.baseurl}}/assets/images/2014/12/vzi_4.png" alt="vzi_4.png" style="float: left; display:inline-block; width:45%; margin: 5px 0 10px 0;"></li>
-</ul>
+### 如何使用
 
-
-##Features：
-
-### 全局状态
-
-- 内存状态：
-
-![Alt text](/assets/images/2014/12/vzi_memory.png)
-
-如图所示，我们可以通过内存的起伏来判断页面消耗内存的情况，以及判断是否存在内存泄露。
-
-具体做法可以参考之前的[这篇文章](http://akadealloc.github.io/blog/2012/07/11/Debuging-Memory-Issues-2.html)。
-
-- 网络请求状态
-
-![Alt text](/assets/images/2014/12/vzi_network.png)
-
-如图所示，如果界面有网络请求，便会出现一个峰值。
-
-通过这个功能，测试人员可以脱离代码，快速了解到每个页面的网络请求状况。
-
-右上角会累计所有的HTTP请求的response字节数。便于评估一段时间的操作大概会产生多少流量。
-
-- 全局变量状态值
-
-![Alt text](/assets/images/2014/12/vzi_overview.png)
-
-如图所示，App可以通过VZInspector提供的接口来实时监控一些重要的全局数据状态。比如，地理位置，用户名，版本号等一些业务相关的信息。
-
-这个功能通常用在App出了问题，电脑又不在旁边时，可以先查看一下全局变量的状态值来初步定位问题。
-
-一个案例是，一次在饭店吃饭的过程中，打开APP发现数据有问题，通过查看全局的地理位置状态发现了是手机定位的问题。
-
-### 记录网络请求的Log
-
-- Request Log:
-
-![Alt text](/assets/images/2014/12/vzi_request_log.png)
-
-如图所示，我们可以在App内部实时抓取HTTP请求中的参数。
-
-这个功能的用处很多，实际项目中主要有两方面：
-
-(1) 在App出了问题，电脑又不在旁边时，我们可以先查看网络请求的参数是否正确
-
-(2) 服务端的开发人员可以通过这个功能来Debug自己的接口，来查看UI展示是否正确
-
-
-- Response Log:
-
-![Alt text](/assets/images/2014/12/vzi_response_log.png)
-
-如图所示，我们可以在App内部实时抓取HTTP请求的返回值。
-
-这个功能和上面的功能通常一起使用，便于在无法调试时定位是数据接口问题还是App的问题。
-
-
-### 命令行
-
-命令行这个功能非常强大，我们可以通过输入一些命令来获取我们想要的结果。
-
-- 查询Crash日志：
-
-命令为: `crash`
-
-通常情况下，我们在脱离调试环境时发生crash都无法及时查找原因。VZInspector会拦截crash产生的exception并将内容按照时间戳保存到本地的沙盒中，便于及时查看，如图：
-
-![Alt text](/assets/images/2014/12/vzi_crashes.png)
-
-
-- 查询Heap中仍然存活的object:
-
-命令为: `heap`
-
-这个功能类似于Instrument中的allocation，可以通过过滤类名前缀查看当前heap上活跃的object，从而可以判断出哪些对象没有被释放。如图：
-
-![Alt text](/assets/images/2014/12/vzi_heap.png)
-
-- 查询沙盒文件:
-
-命令为: `sandbox`
-
-这个功能可以实时查询沙盒内的文件:
-
-![Alt text](/assets/images/2014/12/vzi_sandbox.png)
-
-除了这几个功能外，VZInspector的命令行还具备如下功能:
-
-- `mw on/off` : 这个功能可以在App内部每隔1s触发一次低内存警告。
-
-- `grid` : 当前界面栅格化，方便设计师查看元素对其情况
-
-- `border`: 会拦截点击时间，并将其应用在响应的View上，会实时标红响应View的边框。
-
-- `help`: 显示所有命令
-
-
-### 环境切换
-
-通常一个项目中会有多套开发环境，比如开发环境，预发布环境和正式环境。VZInspector会提供接口，注入业务代码的规则，实现在App内部即时切换环境。省去重复编译代码的时间。如图:
-
-![Alt text](/assets/images/2014/12/vzi_setting.png)
-
-
-##用法
-
-- 使用cocoapods（v>0.34）:
-
-```ruby
-
-pod 'VZInspector', :configurations => ['Debug']
+使用 Cocoapods
 
 ```
+pod 'VZInspector'
+```
+VZInspector 在类加载时会被自动添加至状态栏，只需确保 VZInspector 被正确添加到工程即可。
 
-- 全局初始化:
+## 功能简介
+
+这部分按照 VZInspector 界面上的功能区块，分别介绍 VZInspector 内置的功能以及可自定义的功能。
+
+![](https://zos.alipayobjects.com/rmsportal/RPZQsqbWsOwTxWJOlmnu.png)
+
+### 内存占用
+
+App 当前内存占用显示在 Status 顶部，折线显示内存占用变化趋势。
+
+<img src="https://zos.alipayobjects.com/rmsportal/afguRqvEaRvWTWUqyQqT.png" width="42%" />
+
+### Dashboard
+
+这里显示一些常用信息，比如 uid、视图栈、特定 UserDefaults 的值等，默认显示设备信息和视图栈，可以通过以下代码自定义该区域内容。点击“R”按钮会重新获取该区域内容。
+
+```c
++ (void)setupVZInspector {
+    [VZInspector addObserveCallback:^NSString *{
+        //返回需要追加显示的信息
+    }];
+}
+```
+
+<img src="https://zos.alipayobjects.com/rmsportal/oYPnOnEaNHBpHFtZuYZC.png" width="42%">
+
+#### 自定义
+
+在 Memory Usage 区域上面有一个自定义区域，供你放置一些开关，例如我们在这里做了环境切换、清理内存缓存的功能，环境切换功能深受测试同学喜欢。自定义示例如下：
+
+<img src="https://zos.alipayobjects.com/rmsportal/FsTJcKeWkrnHbvJZSsWy.png" width="42%">
+
+```c
+//自定义 Dashboard 开关
+[VZInspector addDashboardSwitch:@"发布环境" Highlight:productEnv?:NO Callback:^{
+    //按钮点击动作
+}];
+```
+
+### Log
+
+Log 界面显示 NSLog 输出的信息，可以在不连接 Xcode 时直接查看日志，最新的日志在顶部显示。此外顶部提供了过滤功能；右下区域的三个按钮分别对应 `回到顶部`、`打开/关闭自动刷新` 和 `刷新` 操作。  
+
+<img src="https://zos.alipayobjects.com/rmsportal/PlhYfAHDWHckNlzDRxvC.png" width="42%">
+
+#### 自定义
+
+顶部搜索框可以进行简单过滤，为了避免每次输入相同关键词，你可以用下面的代码添加关键词过滤按钮。
+
+```c
+//设置 Log 过滤关键词
+[VZLogInspector sharedInstance].searchList = @[@"keyword1", @"keyword2"];
+```
+
+设置好的关键词会以按钮形式显示，点击即可显示相应关键词的过滤结果。
+
+<img src="https://zos.alipayobjects.com/rmsportal/EOeXOWnEXmUIJzhPPVcn.png" width="42%">
+
+### Toolbox
+
+Toolbox 界面提供了一些常用小工具，例如网络日志查看、控件检查、帧率监测。开关类的工具在打开时会在右上角显示 `ON`。
+
+<img src="https://zos.alipayobjects.com/rmsportal/NFjyyyDYlWranbwqqrGJ.png" width="42%">
+
+#### Logs
+
+Logs 用来实时查看网络请求的状态、返回等，需要自行配置网关信息，如下所示：
+
+```c
++ (void)setupNetworkMonitorConfig
+{
+    [VZInspector setShouldHookNetworkRequest:true];
+    
+    [[VZNetworkInspector sharedInstance] addTransactionTitleFilter:^NSString *(VZNetworkTransaction *transaction) {
+        if ([transaction.request.URL.host rangeOfString:@"YourGatewayKeyword"].location != NSNotFound) {
+            NSString *operationType = [transaction.request valueForHTTPHeaderField:@"Operation-Type"];
+            if (operationType.length == 0) {
+                NSData *bodyData = [transaction postBodyData];
+                NSString *body = [[NSString alloc] initWithData:bodyData encoding:NSUTF8StringEncoding];
+                
+                NSString *parten = @"operationType=([a-zA-Z0-9.]*)";
+                NSRegularExpression *reg = [NSRegularExpression regularExpressionWithPattern:parten options:kNilOptions error:nil];
+                NSTextCheckingResult* match = [reg firstMatchInString:body options:kNilOptions range:NSMakeRange(0, [body length])];
+                if (match) {
+                    operationType = [body substringWithRange:[match rangeAtIndex:1]];
+                }
+            }
+            if (operationType.length > 0) {
+                return operationType;
+            }
+        }
+        return nil;
+    }];
+    
+    [VZNetworkInspector setIgnoreDelegateClasses:[NSSet setWithObjects:@"ClassesYouWantToIgnore", nil]];
+}
+```
+
+<img src="https://zos.alipayobjects.com/rmsportal/CZsKCOoQqvVShvXuBvMe.gif" width="54%">
+
+### Crash
+
+可以捕获 App 的 Crash 日志，开启方法：
+
+```c
+//打开 crash 捕获
+[VZInspector setShouldHandleCrash:YES];
+```
+
+<img src="https://zos.alipayobjects.com/rmsportal/yiPVhgfTflDCNCppHbqW.gif" width="54%">
+
+### Sandbox
+
+用来展示应用沙盒文件，对于文本和图片文件，点击可以预览。
+
+#### Grid
+
+网格工具用来做视觉检查，比如简单的控件对齐、控件尺寸等。
+
+<img src="https://zos.alipayobjects.com/rmsportal/keAaCYqIrWXrDrIKTlle.png" width="42%">
+
+#### Border
+
+边框检查工具能显示当前界面所有控件的边框，可以用来进行视觉检查。此外你可以设置类前缀关键词，比如“O2O”，这样就会将所有“O2O”开头的类的类名显示出来。
+
+```c
+//自定义显示类名的控件类前缀
+[VZInspector setClassPrefixName:@"O2O"];
+```
+
+<img src="https://zos.alipayobjects.com/rmsportal/peZONIaIGMrgXVHRtoIX.png" width="42%">
+
+#### Warning
+
+Warning 用来模拟内存警告，可以帮你验证 `didReceiveMemoryWarning` 里的逻辑，当打开的时候，可以在 “Memory Usage” 区域看到红色闪烁标识。
+
+<img src="https://zos.alipayobjects.com/rmsportal/VrKmCCmDOtRDHDOpxplj.gif" width="42%">
+
+#### Image
+
+Image 工具用于检查界面上的图片，比如查看图片尺寸，图片 URL。
+
+<img width="375" src="https://zos.alipayobjects.com/rmsportal/sLcDoANhuJAnCJLGUUhu.png"/>  
+
+工具栏的按钮从左到右依次为：
+- **返回**
+- **分享**，可以在手机上把当前选择的图片 AirDrop 到电脑上
+- **复制**，可以把选择的图片和描述复制到剪切板，再按 Ctrl+C 从模拟器复制出来
+- **切换**，点击切换是否开启选择模式，关闭选择模式来操作界面
+ 
+选择图片后会把图片置顶显示，并显示出被裁剪的部分。  
+屏幕上方（或下方）显示图片和 View 的尺寸、scale、宽高比，图片帧数。另外 O2O 中额外增加了图片 URL 的显示。
+
+<img src="https://zos.alipayobjects.com/rmsportal/NilgLxXiNvseQvMWZrrw.gif" width="54%">
+
+如果点击的位置有多个重叠的图片，可以多次点击来切换选择的图片。
+
+#### Location
+
+Location 工具用来模拟经纬度，打开开关后输入经纬度即可。界面上也提供了一些常用城市的经纬度。
+
+<img src="https://zos.alipayobjects.com/rmsportal/SvxVXKmZCZdAKoIfNxKa.png" width="42%">
+
+#### FrameRate
+
+帧率监测工具可以将帧率显示在状态栏上。注：模拟器无法精准检测帧率，仅在真机上有效。
+
+<img src="https://zos.alipayobjects.com/rmsportal/CcYGjANpxFKwWGwClIfk.png" width="42%">
+ 
+#### ColorPicker
+
+提供屏幕取色的功能。
+- 按像素取值，并将颜色展示在下面控制板
+- 拖动底部的slider可以控制放大倍率（5 ~ 30倍)
+- 拖动取色器可以移动取色的位置，在取色器外滑动可以慢速移动，方便按像素取值移动
+
+<img src="https://zos.alipayobjects.com/rmsportal/aXzSooMHomzqjxPqfKlo.gif" width="54%">
+
+#### Design
+
+提供设计稿对比工具。演示可以查看这个 [视频](https://os.alipayobjects.com/rmsportal/sZLAZAuTqKqJXSdvDMQR.mp4)
+
+- 将设计稿存入相册后，点击选图，选中设计稿。
+- 打开调整开关，调整设计稿的透明度、大小和位置。
+- 关闭开关可以正常操作界面，并对比与设计稿的差异。
+
+#### 内存泄漏
+
+内存泄漏主要检查oc的循环依赖，提供如下功能。使用演示可以查看 [视频](https://os.alipayobjects.com/rmsportal/RvlURFYUUrzoSgdTSHNC.mp4)
+
+- 支持配置黑白名单，黑白名单均是是以hasPrefix 来判断前缀过滤的。只有前缀在白名单内的才能在工具上显示，前缀在黑名单里面的不会在工具里面显示。合理利用黑白名单，可以节省大量检查时间，具体操作如下：
 
 ```objc
+[[VZMermoryProfilerManager sharedManager] updateMermoryClassWhiteKeys:@[  
+@"O2O", @"VZF", @"VZA", @"VZT"]];
 
- #if DEBUG
- //should handle crash
-    [VZInspector setShouldHandleCrash:true];
-    
-    //config class prefix
-    [VZInspector setClassPrefixName:@"TBCity"];
-    
-    //config global info
-    [VZInspector setObserveCallback:^NSString *{
-       
-        NSString* appVer    = [[@"App ver: " stringByAppendingString:[TBCityGlobal version]?:@""] stringByAppendingString:@"\n"];
-        NSString* sysVer    = [[@"System Ver: " stringByAppendingString:[[UIDevice currentDevice] systemVersion]?:@""] stringByAppendingString:@"\n"];
-        
-        NSString* user_cord = [[@"user GPS: " stringByAppendingString: NSStringFromCGPoint(CGPointMake([TBCityGlobal userCoordinate].latitude, [TBCityGlobal userCoordinate].longitude))] stringByAppendingString:@"\n"];
-        
-        NSString* used_cord = [[@"default GPS: " stringByAppendingString: NSStringFromCGPoint(CGPointMake([TBCityGlobal usedCoordinate].latitude, [TBCityGlobal usedCoordinate].longitude))] stringByAppendingString:@"\n"];
-
-        NSString* userNick = [[@"userNick: " stringByAppendingString:[MTopLoginEngine userName]?:@""] stringByAppendingString:@"\n"];
- 
-        NSString* ret = [NSString stringWithFormat:@"%@\n%@\n%@\n%@\n%@\n%@\n%@\n%@",appVer,sysVer,user_cord,used_cord,userCity,usedCity,userNick,utdid];
-        
-        return ret;
-    }];
-    
-    //config log
-    [VZInspector setRequestLogNotificationIdentifier:@"SBRequestLog" urlKey:@"url"];
-    [VZInspector setResponseLogNotificationIdentifier:@"SBResponseLog" responseKey:@"json" errorKey:@"error"];
-    
-    //api-env：dev
-    [VZInspector setDevAPIEnvCallback:^{
-	[APIConfig SetAPIEnvironment:2];
-    }];
-    
-    //api-env：pre-release
-    [VZInspector setTestAPIEnvCallback:^{
-	[APIConfig SetAPIEnvironment:1];
-    }];
-    
-    //api-env：production
-    [VZInspector setProductionAPIEnvCallback:^{
-        [APIConfig SetAPIEnvironment:0];
-    }];
-    
-    //default api-env
-    [VZInspector setDefaultAPIEnvIndex:[APIConfig apiEnv]];
-    
-    //show a small icon on status bar
-    [VZInspector showOnStatusBar];
- #endif
-
+[[VZMermoryProfilerManager sharedManager] updateMermoryClassBlackKeys:@[  
+@"VZFStackNode", @"VZFBlockGesture", @"VZMermory"]];
 ```
 
+- 内存对象搜索功能
+- 点击内存对象，检查该对象下的循环依赖
+- 循环依赖对象筛选
+- 全部循环依赖对象检查，停止功能
+- 循环依赖总开关，开启才会纪录内存对象
 
-##小结
+### Plugin
 
-随着业务不断复杂，项目的不断迭代，代码不断增长，许多代码执行细节变的难以把控。我们需要一些手段来对App做这样的监控，和调试。同样随着挑战的不断增加，VZInspector会持续集成一些实用的功能进来。
+插件界面方便你在 VZInspector 中放置自己开发的插件，如下图所示。这部分完全是业务相关的工具，可以使用下面的代码进行自定义。
 
-That‘s all
+<img src="https://zos.alipayobjects.com/rmsportal/rppyFgFjBgKijArhvTOZ.png" width="42%">
+
+```c
+//添加自定义插件
+VZInspectorToolItem *scan = [VZInspectorToolItem itemWithName:@"scan" icon:icon callback:^{
+    //按钮点击动作
+}];
+[VZInspector addToolItem:scan];
+```
+

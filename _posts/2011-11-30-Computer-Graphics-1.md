@@ -1,6 +1,7 @@
 ---
 layout: post
-list_title: Computer Graphics Part 1
+list_title: 计算机图形学 | Computer Graphics | 数学基础
+title: 计算机视觉的书写
 mathjax: true
 ---
 
