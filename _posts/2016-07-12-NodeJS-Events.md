@@ -6,20 +6,12 @@ title: Event
 categories: [Javascript，nodejs]
 ---
 
-### 两种Event
+### Event Loop
 
-- System Events
-    - C++ Core
-        - libuv
-    - File Operation
-    - Network Opertaion
 
-- Custom Events
-    - Javascript Core
-        - Event Emitter
-    - Self-define event
 
-### 观察者与监听者
+
+### Event emitter
 
 我们可以快速手写一个简单的观察者与监听者模型
 
