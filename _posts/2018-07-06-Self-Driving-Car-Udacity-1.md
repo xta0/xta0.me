@@ -189,37 +189,6 @@ $$
 - [贝叶斯定理Wiki](https://zh.wikipedia.org/wiki/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9A%E7%90%86)
 - [贝叶斯推断及其互联网应用（一）：定理简介](http://www.ruanyifeng.com/blog/2011/08/bayesian_inference_part_one.html)
 
-### 使用Python模拟概率分布
-
-我们可以用Python来模拟掷骰子，观察其概率分布
-
-```python
-import random as rd
-import matplotlib.pyplot as plt
-
-def simulate_dice_rolls(N):
-    roll_counts = [0,0,0,0,0,0]
-    for i in range(N):
-        #产生1-6中的随机数
-        roll = rd.choice([1,2,3,4,5,6])
-        index = roll - 1
-        #统计1-6出现次数
-        roll_counts[index] += 1;
-    return roll_counts
-
-def visualize_one_die(roll_data):
-    roll_outcomes = [1,2,3,4,5,6]
-    fig, ax = plt.subplots()
-    ax.bar(roll_outcomes, roll_data)
-    ax.set_xlabel("Value on rolls")
-    ax.set_ylabel("# rolls")
-    ax.set_title("Simulated Counts of Rolls")
-    plt.show()
-    
-roll_data = simulate_dice_rolls(500)
-visualize_one_die(roll_data)
-```
-
 ### 附录
 
 Solution code for project Joy Ride:
