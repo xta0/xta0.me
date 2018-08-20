@@ -161,9 +161,8 @@ mathjax: true
 
 ### Computing Inside a Hedge Fund
 
-![](/assets/images/2018/04/CI-1.jpg)
+{% include _partials/components/lightbox-center.html param='/assets/images/2018/04/CI-1.jpg' param2='1' %}
 
-上图是一个量化交易系统模型
 
 ### Company Worth
 

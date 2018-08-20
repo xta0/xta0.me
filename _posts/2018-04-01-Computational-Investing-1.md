@@ -132,7 +132,7 @@ plt.show()
 ```
 上述代码需要注意的是，将股价归一化的算法是将行数据都除以其第一行的数据，这样四只股票的价格均从`1.0`开始，便于分析比较，得到结果如下
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/CI-0.png">
+{% include _partials/components/lightbox-center.html param='/assets/images/2018/04/CI-0.png' param2='1' %}
 
 从上图中可以看出，全年来看这三只股票均跑赢了S&P500, 其中FB涨幅最大，APPLE涨幅最小，APPL回调幅度最大，FB在四月份回调幅度也很大。后面我们会计算夏普比率来分析哪只股票的风险收益比最高，以及资产配比的最优化策略。
 

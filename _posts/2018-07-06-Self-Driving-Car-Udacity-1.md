@@ -160,9 +160,11 @@ $$
 贝叶斯定理在自动驾驶领域应用非常广泛也非常重要，我们可以通过某种先验信息-比如GPS定位，先得到车的一个初步位置，通常来说这个初步位置和真实位置有5m左右的误差(GPS误差)，如下图左边所示
 
 <div class="md-flex-h-no-wrap">
-<div><img src="{{site.baseurl}}/assets/images/2018/07/ad-3.png"></div>
-<div><img src="{{site.baseurl}}/assets/images/2018/07/ad-4.png"></div>
+<div>{% include _partials/components/lightbox.html param='/assets/images/2018/07/ad-3.png' param2='1' %}</div>
+<div>{% include _partials/components/lightbox.html param='/assets/images/2018/07/ad-4.png' param2='1' %}</div>
 </div>
+
+
 
 显然，5m的误差对于行驶在路上的汽车来说是不可接受的，因此我们还需要通过车各种传感器收集更多的收据来矫正车的位置，常用外部传感器有
 

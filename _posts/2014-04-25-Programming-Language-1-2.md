@@ -1,6 +1,6 @@
 ---
-list_title: 编程语言原理(一) | Programming Language Part 1 | Functions
-title: 编程语言原理(二)
+list_title: 编程语言原理 | Programming Language | Functions
+title: Functions
 layout: post
 ---
 

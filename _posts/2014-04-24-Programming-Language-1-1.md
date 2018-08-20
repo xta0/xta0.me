@@ -1,6 +1,6 @@
 ---
-list_title: 编程语言原理(一) | Programming Language Part 1 | SML
-title: 编程语言原理(一)
+list_title: 编程语言原理 | Programming Language | SML
+title: SML
 layout: post
 ---
 
