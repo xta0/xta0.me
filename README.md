@@ -14,7 +14,6 @@ I've been reading [Yihui Xie's](https://yihui.name/) articles for quite a few da
 - [x] Add .travis.yml
 - [x] Add Webhook for CI
 - [ ] Add Google Analysis
-- [ ] Gulp task tools
 - [ ] Category Page
 - [ ] Make it responsive
 - [ ] Add CSS animaiton effect
