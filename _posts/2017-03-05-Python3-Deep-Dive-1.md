@@ -129,6 +129,21 @@ print(object_by_id(id_b)) #Not Found
 print(ref_count(id_a)) #0
 print(ref_count(id_b)) #0
 ```
-最后需要注意的是，被回收之后的`a,b`其地址仍然存在，但该地址是无效的，因为对象已经不存在了
+最后需要注意的是，被回收之后的`a,b`其地址仍然存在，但该地址是无效的，因为对象已经不存在了。
+
+### Important Node
+
+上面讨论的内容，以及后面要讨论的内容均和Python的底层实现相关，这里我们是以标准的`CPython`作为引擎来研究Python。除了`CPython`之外，还有很多其他的Python引擎，比如
+
+- `Jython`可将python代码编译为JVM可识别的某种中间代码(类似`javac`)从可使其运行在JVM中
+- `IronPython`是用`C#`编写的，可以运行在`.net`平台上的Python引擎
+- `PyPy`是用Python写的一个Python解释器
+
+更多的Python引擎可以参考wiki
 
 <p class="md-h-center">(全文完)</p>
+
+### Resource
+
+- [Python wiki](https://en.wikipedia.org/wiki/List_of_Python_software#Python_implementations)
+- [Python的各种引擎](https://en.wikipedia.org/wiki/List_of_Python_software#Python_implementations)
