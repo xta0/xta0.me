@@ -62,10 +62,12 @@
     justify-content: flex-start;
     flex-wrap: wrap;
 }
-.md-flex-h-no-wrap{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
+.md-flex-space-between{
+    justify-content: space-between
+}
+
+.md-flex-no-wrap{
+    flex-wrap: nowrap
 }
 .md-flex-v{
     display: flex;
