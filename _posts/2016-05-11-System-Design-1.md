@@ -1,4 +1,5 @@
 ---
+updated: "2018-08-20"
 layout: post
 title: Load Balancer
 list_title: 系统设计 | System Design | 负载均衡 | Load Balancer
