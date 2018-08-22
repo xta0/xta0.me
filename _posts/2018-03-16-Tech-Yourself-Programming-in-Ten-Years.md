@@ -1,23 +1,31 @@
 ---
 layout: post
+updated: "2018-08-18"
 list_title: 十年学会编程 | Teach Yourself Programming in Ten Years 
 title:  Teach Yourself Programming in Ten Years
 categories: [Life,Translation]
 ---
 
-> Chinese translation of Peter Norvigs's essay [Teach Yourself Programming in 10 Years](http://norvig.com/21-days.html)
+> Chinese translation of Peter Norvigs's essay [Teach Yourself Programming in 10 Years](http://norvig.com/21-days.html).
+
+
+### 关于Peter Novig
+
+> Peter Norvig任职于Google，其职位是研究主管（Director of  Research). Peter Norvig是享誉世界的计算机科学家和人工智能专家。他是 AAAI 和 ACM 的会员，是业界内经典书籍《Artificial Intelligence: A Modern Approach 人工智能：一种现代方法》的作者之一。在加入Google之前，他曾经是NASA计算科学部门的主要负责人，并在南加州大学以及伯克利大学任教。
+
+
 
 ### 为什么大家都急于求成
 
-每当走进各大书店总能看到一些诸如《24小时自学Java开发》之类的书籍，类似的还有几小时内学会C,Ruby,SQL,Algorthms等等。如果使用亚马逊的高级索索功能[title: teach, yourself, hours, since: 2000](http://www.amazon.com/gp/search/ref=sr_adv_b/?search-alias=stripbooks&unfiltered=1&field-keywords=&field-author=&field-title=teach+yourself+hours&field-isbn=&field-publisher=&node=&field-p_n_condition-type=&field-feature_browse-bin=&field-subject=&field-language=&field-dateop=After&field-datemod=&field-dateyear=2000&sort=relevanceexprank&Adv-Srch-Books-Submit.x=16&Adv-Srch-Books-Submit.y=5) 可以找到512种这类书籍，在搜索结果的前十名中有九本是编程类书籍（其它的是关于记账类书籍）。如果把搜索词" yourself"换成"learn"，或者把"days"换成"hours"，搜索结果也是类似的。
+每当走进各大书店总能看到一些诸如《24小时自学Java开发》之类的书籍，类似的还有几小时内学会C,Ruby,SQL,Algorthms等等。如果使用亚马逊的高级索索功能[title: teach, yourself, hours, since: 2000](http://www.amazon.com/gp/search/ref=sr_adv_b/?search-alias=stripbooks&unfiltered=1&field-keywords=&field-author=&field-title=teach+yourself+hours&field-isbn=&field-publisher=&node=&field-p_n_condition-type=&field-feature_browse-bin=&field-subject=&field-language=&field-dateop=After&field-datemod=&field-dateyear=2000&sort=relevanceexprank&Adv-Srch-Books-Submit.x=16&Adv-Srch-Books-Submit.y=5) 可以找到512种这类书籍，在搜索结果的前十名中有九本是编程类书籍（其它的是关于记账类书籍）。如果把搜索词"yourself"换成"learn"，或者把"days"换成"hours"，搜索结果也是类似的。
 
-从上面的案例中我们能出的结论是，要么大家都非常着急的想学编程，或者学习编程和其它事情相比是一件很容易的完成的事。Felleisen et al.在它的[《How to Design Programs》](http://felleisen.org/matthias/)一书中也提到了这个问题，当然他们也是不认同这种思路的，他们的原话是："糟糕的编程很简单，傻瓜也可以在21天内学会，哪怕他们傻到家"。风靡网络的漫画公司[Abtruse Goose](https://abstrusegoose.com/249)也对此冷嘲热讽了一把，漫画如下
+从上面的案例中我们能出的结论是，要么大家都非常着急的想学编程，要么学习编程和其它事情相比是一件很容易的完成的事。Felleisen et al.在它的[《How to Design Programs》](http://felleisen.org/matthias/)一书中也提到了这个问题，当然他也是不认同这种思路的，他们的原话是："编写糟糕的程序很简单，傻瓜也可以在21天内学会，哪怕他们傻到家"。风靡网络的漫画公司[Abtruse Goose](https://abstrusegoose.com/249)也对此冷嘲热讽了一把，漫画如下
 
 <img class="md-img-center" src="/assets/images/2018/03/ars_longa_vita_brevis.png">
 
 让我们来一起分析一下《24小时学会C++》意味着什么
 
-- **自学**：在24小时内你甚至没有时间给你写几段像样的，有难度的程序，更不用说从中学习什么了。你也没有时间和有经验的C++程序员工作，不会了解真正的C++项目是怎样的。简而言之就是你没有时间学到很多东西，因此书中只能浅显的让你熟悉下语法，没法做更深入的讲解。就像 Alexander Pope 曾经说过的，浅尝辄止的学习是一件非常危险的事情。
+- **自学**：在24小时内你甚至没有时间写几段有难度的程序，更不用说从中学习什么了。你也没有时间和有经验的C++程序员工作，不会了解真正的C++项目是怎样的。简而言之就是你没有时间学到很多东西，因此书中只能浅显的让你熟悉下语法，没法做更深入的讲解。就像 Alexander Pope 曾经说过的，浅尝辄止的学习是一件非常危险的事情。
 
 - **C++**: 在24小时内只够你学习一些基本的C++语法（假设你已经有过其它编程语言的经验），但是无法学到该如何使用这门语言。简单的说，如果你曾经是一名BASIC程序员，你可能会学会如何将原来的BASIC代码按照C++的语法重写一遍，但却不清楚为什么要用C++，也不清楚这门语言的优点（或者缺点）在哪里。[Alan Perlis](http://pu.inf.uni-tuebingen.de/users/klaeren/epigrams.html)曾经说过，"如果一种语言不能改变你对编程的理解，那么这门语言就不值得学习"。现实生活中，一种可能的情况是，为了完成某种任务你需要快速学一点C++来对接某个三方库，但是这种并不是真正的学习某种语言，只是为了完成某种任务。
 
@@ -46,10 +54,26 @@ Malcolm Gladwell 曾经提出过一个很流行的理论，他聚焦于一万小
 
 考虑到上面所说的一切，你应该会觉得光靠看书学习是很难成功的。当我的第一个孩子出生的时候，我几乎阅读了市面上所有的《如何…》指南书籍，但是我读完了以后还是觉得自己是个没有头绪的新手。30个月以后，我的第二个孩子快出生时，我还要回去读书将所有的知识复习一遍吗？不，相反，我此时更依赖我的个人经验，这些经验相比于那些专家写的上千页的书更加有效和让我放心。
 
-Fred Brooks 在他的散文[No Silver Bullet](https://en.wikipedia.org/wiki/No_Silver_Bullet)中给出了一个寻找软件设计师的三步走计划：
+Fred Brooks 在他的散文[No Silver Bullet](http://worrydream.com/refs/Brooks-NoSilverBullet.pdf)中给出了一个寻找软件设计师的三步走计划：
 
 1. 尽早开始系统性的寻找找顶尖的软件设计师
-2. 
+2. 给有潜力的工程师指派一名职业规划导师，并仔细规划并记录他们的职业档案
+3. 为处在职业上升期中的软件设计师提供和互动交流的机会
+
+上面的讨论是假设某个人已经具备足够的能力成为一名软件设计师，那么他只需要一份工作去诱导他。Alan Perlis更简洁地指出，“每个人都可以被教会如何雕刻，但是对于米开朗基罗来说，反而不应该被“教会”，伟大程序员也是如此”。Perli认为所有伟大的人其内心都有一种内在的特质，这种特质往往可以超越训练，达到更高的高度。但是这些特质是从哪里来的呢？是天生的吗？还是他们通过后天的勤奋习得的？就像Auguste Gusteau（动画片《料理鼠王》里的厨师）所说的，“每个人都能成为厨师，但只有那些内心“无所畏惧”的人才能成为伟大的厨师。" 我认为伟大更多的是来自与愿意将自己全身心的投入达到某项事业中并保持刻意练习。也许“无所畏惧”可以概括这种精神。或者像 Gusteau's critic, Anton Ego所说的，“不是每个人都能成为伟大的艺术家，但是伟大的艺术家可以来自任何地方。”
+
+所以尽管去买 Java/Ruby/Javascript/PHP 这类的书吧；你可能会从中学到点儿东西。但作为一个程序员，你并不会在21天内或24小时内改变自己的人生，或你的综合水平。你是否想过努力不间断的学习超过24个月？如果是的话，那么恭喜你，你已经在路上了...
+
+<hr>
+
+### 参考文献
+
+- Bloom, Benjamin (ed.) [Developing Talent in Young People](http://www.amazon.com/exec/obidos/ASIN/034531509X), Ballantine, 1985.
+- Brooks, Fred, [No Silver Bullets](http://citeseer.nj.nec.com/context/7718/0), IEEE Computer, vol. 20, no. 4, 1987, p. 10-19.
+- Bryan, W.L. & Harter, N. "Studies on the telegraphic language: The acquisition of a hierarchy of habits. Psychology Review, 1899, 8, 345-375
+- Hayes, John R., [Complete Problem Solver](http://books.google.com/books?id=dYPSHAAACAAJ&dq=%22perception+in+chess%22+simon&ei=z4PyR5iIAZnmtQPbyLyuDQ) Lawrence Erlbaum, 1989.
+- Chase, William G. & Simon, Herbert A. "Perception in Chess" Cognitive Psychology, 1973, 4, 55-81.
+- Lave, Jean, [Cognition in Practice: Mind, Mathematics, and Culture in Everyday Life](https://www.amazon.com/exec/obidos/ASIN/0521357349), Cambridge University Press, 1988.
 
 <hr>
 
@@ -69,10 +93,39 @@ PC上一些常用操作的大概耗时
 |read 1MB sequentially from disk|	20,000,000 nanosec|
 |send packet US to Europe and back|	150 milliseconds = 150,000,000 nanosec|
 
+<hr>
+
+### 附录：语言的选择
+
+很多人询问如果要入门编程，应选择哪一门语言作为第一门编程语言。这个问题没有统一的答案，下面三点可供参考
+
+- 参考你的朋友们。当被问起“我该用哪种操作系统，Windows，Unix， 还是 Mac？”，我总是回答：“你朋友用什么，你就用什么。“ 你从朋友那学习得到的好处可以抵销不同操作系统或语言之间本质的差异。同样，你也要考虑你将来的朋友们：程序员社区，因为在未来如果你继续前行，你将会是他们中的一部分。你选择的语言是否有一个快速增长的社区？ 有没有书籍、网站或者论坛能解答你的问题？你喜欢论坛里的那些人吗？
+
+- 保持简单。像 C++ 和 Java 这样的语言是为具有丰富编程经验的开发团队设计的，他们更关注代码的执行效率。因此，这些语言为了优化性能，有些部分设计的非常复杂。 而你关注的是如何学会编程，不需要那些复杂的设计。你需要的是一些设计简单的，易于上手的语言。
+
+- 及时反馈。你偏爱哪种学弹钢琴的方式：是简单的互动的方式，你一按下琴键就能听到音符；还是完整的批量的模式，你只有弹完整首曲子才能听到音符？ 显然，用基于互动的学习更容易些，对编程也一样。坚持用支持交互模式的语言进行学习，这样可以得到快速反馈。
+
+参考上面几点，我推荐的第一个编程语言是[Python](https://www.python.org/) 或[Scheme](https://schemers.org/)。另一个选择是 Javascript，并不是因为它的设计对初学者很友好，而是因为有大量的在线教程，比如[Khan Academy’s tutorial](https://www.khanacademy.org/computing/cs/programming)。但是这些选择视个人情况而定，除了这几门语言之外也还有更好的选择。如果你的年纪是10岁以下，你可以尝试[Alice](http://www.alice.org/) 或 [Squeak](https://squeak.org/) 或 [Blockly](https://blockly-demo.appspot.com/static/demos/index.html) （大人们也可能会喜欢）关键是你下定决心后要快速行动。
+
+<hr>
+
+### 附录：编程书籍和其它资源
+
+很多人问我该看那些编程类的书籍或者学习哪些编程类的网站。我的回答是“书本上的知识是远远不够的”，但是我可以推荐下面一些书籍
+
+- **Scheme**: [Structure and Interpretation of Computer Programs (Abelson & Sussman) ](https://www.amazon.com/gp/product/0262011530)（译者注：中文名称为《计算机的构造与解释》），这本书可能是对于计算机科学入门来说最好的一本书了，它从理解计算机工作原理的角度来教你编程。你可在这里找到[在线视频](http://groups.csail.mit.edu/mac/classes/6.001/abelson-sussman-lectures/)和配套的[文本教材](http://mitpress.mit.edu/sicp/full-text/book/book.html)。但是这本书有一定的挑战性，会淘汰一些之前学习过其它语言的老手。
+- **Scheme**: [ How to Design Programs (Felleisen et al.)](https://www.amazon.com/gp/product/0262062186)，这本书可能是在所有介绍使用函数型语言设计程序的书中最好的一本
+- **Python**: [Python Programming: An Intro to CS (Zelle)](http://www.amazon.com/gp/product/1887902996)这本书是比较不错的一本入门Python的书籍
+- **Python**: [Python.org](Python.org.)上提供一系列[在线的教程](http://wiki.python.org/moin/BeginnersGuide)
+- **Oz**: [Concepts, Techniques, and Models of Computer Programming (Van Roy & Haridi)](http://www.amazon.com/gp/product/0262220695)这本书被某些人认为是对Abelson＆Sussman观点的传承。它对重要的编程理念进行了回顾，覆盖的内容比Abelson＆Sussman更广泛，也很容易读懂。它使用Oz语言，一门不常用但是适合学习编程的语言。
+
+<hr>
+
+### 备注
+
+T. Capey指出，在Amazon的[Complete Problem Solver](https://www.amazon.com/exec/obidos/ASIN/0805803092)的页面中，浏览“购买此书的用户还购买过这些产品”区域，看到了"Teach Yourself Bengali in 21 days"和"Teach Yourself Grammar and Style"这两本书。我估计浏览这两本书的大部分人是从这篇文章的链接过去的。感谢Ross Cohen的帮助。
 
 
 {% include _partials/post-footer-1.html %}
 
-### 关于Peter Novig
 
-Peter Norvig任职于Google，其职位是研究主管（Director of  Research). Peter Norvig是享誉世界的计算机科学家和人工智能专家。他是 AAAI 和 ACM 的会员，是业界内经典书籍《Artificial Intelligence: A Modern Approach 人工智能：一种现代方法》的作者之一。在加入Google之前，他曾经是NASA计算科学部门的主要负责人，并在南加州大学以及伯克利大学任教。
