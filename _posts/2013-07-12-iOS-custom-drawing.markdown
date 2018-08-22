@@ -332,4 +332,4 @@ self.view.content.layer = (id)image.cgImage;
 
 > 2014年3月14日 注：`CALayer`的`renderInContext:`方法存在线程安全问题，不建议使用
 
-{% include _partials/post-footer.html %}
+{% include _partials/post-footer-1.html %}

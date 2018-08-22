@@ -101,4 +101,4 @@ emitter.on('Hello', function(data){
 emitter.greet('Hello','Some_data')
 ```
 
-<p class="md-h-center">(全文完)</p>
+{% include _partials/post-footer-1.html %}

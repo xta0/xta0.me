@@ -77,4 +77,4 @@ Serial.println(val);
 
 <a href="/assets/images/2013/11/arduino.png"><img src="{{site.baseurl}}/assets/images/2013/11/arduino.png" alt="arduino" width="353" height="260" class="alignnone size-full wp-image-239" /></a>
 
-{% include _partials/post-footer.html %}
+{% include _partials/post-footer-1.html %}

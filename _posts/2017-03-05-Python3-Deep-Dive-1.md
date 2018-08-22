@@ -141,7 +141,7 @@ print(ref_count(id_b)) #0
 
 更多的Python引擎可以参考wiki
 
-<p class="md-h-center">(全文完)</p>
+{% include _partials/post-footer-1.html %}
 
 ### Resource
 

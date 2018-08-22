@@ -3,23 +3,25 @@ layout: about
 ---
 
 <section class="about-me">
-<h2 class="md-h-center about-h2">我是谁</h2>
+<h2 class="md-p-center about-h2">我是谁</h2>
 <hr>
 <p class="about-content">我叫徐韬，前阿里巴巴高级技术专家，现同家人在美国华盛顿(北弗吉尼亚)居住。</p>
 <p class="about-content">My name is Tao(Jason) Xu, I am a former tech lead(senior technologist) with Aliabba Group. Currently I'm living with my family in Washington, D.C. area</p>
-<div class="md-flex-v about-contact">
-<div><i class="fas fa-envelope"></i> | taoxu.dev@gmail.com </div>
- <div><i class="fab fa-github"></i> | <a href="https://github.com/xta0">xta0</a>
-</div>
-<div>
-<i class="fab fa-linkedin-in"></i> | <a href="https://www.linkedin.com/in/ta0xu/">Tao Xu</a>
-</div>
+<div class="md-flex-h">
+    <div class="md-flex-v about-contact">
+        <div><i class="fas fa-envelope"></i> | taoxu.dev@gmail.com </div>
+        <div><i class="fab fa-linkedin-in"></i> | <a href="https://www.linkedin.com/in/ta0xu/">Tao Xu</a></div>
+    </div>
+    <div class="md-flex-v about-contact">
+        <div><i class="fab fa-github"></i> | <a href="https://github.com/xta0">xta0</a></div>
+        <div><i class="fab fa-twitter"></i> | <a href="https://twitter.com/ecs_tee">xta0</a></div>
+    </div>
 </div>
 </section>
 
 
 <section class="about-exp">
-    <h2 class="md-h-center about-h2">工作经历</h2>
+    <h2 class="md-p-center about-h2">工作经历</h2>
     <hr>
     <div class="md-flex-h md-flex-no-wrap about-exp-item">
         <div  class="about-logo-wrapper">
@@ -75,7 +77,7 @@ layout: about
     </div>
 </section>
 <section class="about-github">
-    <h2 class="md-h-center about-h2">Github </h2>
+    <h2 class="md-p-center about-h2">Github </h2>
     <hr>
     <div class="md-flex-h md-flex-no-wrap">
         <div class="about-logo-wrapper">

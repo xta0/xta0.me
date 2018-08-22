@@ -100,5 +100,5 @@ Bias的意思是如果计算过程中如果有溢出（比如出现负数或者�
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2013/11/lena-laplas-3x3.png"></div>
 </div>
 
-<p class="md-h-center">（全文完）</p>
+<p class="md-p-center">（全文完）</p>
 

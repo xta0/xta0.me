@@ -71,7 +71,7 @@ PC上一些常用操作的大概耗时
 
 
 
-<p class="md-h-center">(全文完)</p>
+{% include _partials/post-footer-1.html %}
 
 ### 关于Peter Novig
 

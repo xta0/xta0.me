@@ -380,5 +380,5 @@ end = time.perf_counter()
 print('set:',end-start) #set: 0.04525098400000005
 ```
 
-<p class="md-h-center">(全文完)</p>
+{% include _partials/post-footer-1.html %}
 

@@ -136,7 +136,7 @@ plt.show()
 
 从上图中可以看出，全年来看这三只股票均跑赢了S&P500, 其中FB涨幅最大，APPLE涨幅最小，APPL回调幅度最大，FB在四月份回调幅度也很大。后面我们会计算夏普比率来分析哪只股票的风险收益比最高，以及资产配比的最优化策略。
 
-<p class="md-h-center">(全文完)</p>
+{% include _partials/post-footer-1.html %}
 
 ## Resources
 

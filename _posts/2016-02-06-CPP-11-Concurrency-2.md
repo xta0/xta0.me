@@ -540,7 +540,7 @@ function<int(int)> fib = [&fib](int n){
 //function<int(int)>表示输入为int，返回值为int的函数
 ```
 
-{% include _partials/post-footer.html %}
+{% include _partials/post-footer-1.html %}
 
 ## Resources
 

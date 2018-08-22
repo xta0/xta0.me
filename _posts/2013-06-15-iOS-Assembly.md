@@ -362,7 +362,7 @@ General Purpose Registers:
 
 后面的过程，我们便可以依此方法去观察寄存器和stack情况，来印证我们上文的分析。
 
-{% include _partials/post-footer.html %}
+{% include _partials/post-footer-1.html %}
 
 
 ### Resources

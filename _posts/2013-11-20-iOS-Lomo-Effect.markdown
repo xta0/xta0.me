@@ -205,4 +205,4 @@ return newImg;
 
 至此，我们实现了lomo效果的原型，我们看到，代码简简单单，又很少，但是上面的代码仅仅是个demo。实际应用的的时候不仅算法需要优化，显示也需要交给openGL，我们在后面再来讨论如何用openGL实现上面的效果。
 
-{% include _partials/post-footer.html %}
+{% include _partials/post-footer-1.html %}
