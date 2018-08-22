@@ -15,7 +15,7 @@ categories: [backend]
 
 ## Load Balancer
 
-我们先从负载均衡开始，由于这个概念较容易理解，这里不做过多介绍，只要记住它主要完成两个任务，一是负责分发请求，二是负责冗余，即某个server failed了，能够及时发现并redirect请求到其它server上。
+我们先从负载均衡开始，由于这个概念较容易理解，这里不做过多介绍，只要记住它主要完成两个任务，一是负责分发请求，二是处理冗余，即某个server failed了，能够及时发现并redirect请求到其它server上。
 
 ### Round-Robin
 
@@ -73,15 +73,15 @@ upstream php_servers{
 
 ### Least Connection
 
-Nginx提供的另一种基于最少链接(least_conn)的分配策略。我们知道轮询算法是把请求平均的转发给各个后端，使它们的负载大致相同。这有个前提，就是每个请求所占用的后端时间要差不多，如果有些请求占用的时间很长，会导致其所在的后端负载较高。在这种场景下，把请求转发给连接数较少的后端，能够达到更好的负载均衡效果，这就是least_conn算法。least_conn算法很简单，首选遍历后端集群，比较每个后端的conns/weight，选取该值最小的后端。如果有多个后端的conns/weight值同为最小的，那么对它们采用加权轮询算法。
+Nginx提供的另一种基于最少链接(least_conn)的分配策略。我们知道轮询算法是把请求平均的转发给各个后端，使它们的负载大致相同。这有个前提，就是每个请求所占用的后端时间要差不多，如果对于某台Server有些请求占用的时间很长，而Round-Robin并不会感知这种情况，依旧轮训该Server，并将请求投递过去，则该台Server的负载会持续升高。
+
+为了解决这个问题，Load Balancer需要感知这种情况，并把请求转发给连接数较少的后端，能够达到更好的负载均衡效果，这就是least_conn算法。least_conn算法很简单，首选遍历后端集群，比较每个后端的conns/weight，选取该值最小的后端。如果有多个后端的conns/weight值同为最小的，那么对它们采用加权轮询算法。
 
 为了模拟这种情况，我们假设Server #1此时流量升高，响应时间变慢，修改Server #1的代码为
 
 ```php
 <?php
-
 sleep(20);
-
 echo "Sleepy server finally done! \n";%
 ```
 修改Nginx负载均衡策略为：
