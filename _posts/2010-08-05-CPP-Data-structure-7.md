@@ -4,6 +4,7 @@ list_title: Data Structure Part 6 | 树 |Tree
 title: 树
 sub_title: Tree
 mathjax: true
+categories: [DataStructure]
 ---
 
 ## 树

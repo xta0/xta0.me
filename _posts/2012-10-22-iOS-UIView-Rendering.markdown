@@ -1,9 +1,8 @@
 ---
-list_title:  理解UIView的绘制
+list_title:  理解UIView的绘制原理 | Understand Drawing in iOS
+title:  理解UIView的绘制原理
 layout: post
-tag: iOS
 categories: 随笔
-
 ---
 
 <em></em>

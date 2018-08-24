@@ -1,9 +1,8 @@
 ---
-list_title:  理解iOS中的Quartz2D
+list_title:  理解iOS中的Quartz2D | Understand Quartz2D in iOS
+title: 理解iOS中的Quartz2D
 layout: post
-tag: iOS
-categories: 随笔
-
+categories: [iOS,Objective-C]
 ---
 
 <em></em>

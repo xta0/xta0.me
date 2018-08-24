@@ -2,7 +2,7 @@
 layout: post
 list_title: 数据库原理（二） | Database System | SQL syntax
 title: SQL Syntax
-categories: [Database]
+categories: [Database,Backend]
 mathjax: true
 ---
 

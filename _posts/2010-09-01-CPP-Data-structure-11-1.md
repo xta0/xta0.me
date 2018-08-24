@@ -3,6 +3,7 @@ layout: post
 list_title: Data Structre Part 10 | 索引-1 | Indexing-1
 title: 静态索引 | Static Indexing
 mathjax: true
+categories: [DataStructure]
 ---
 
 > 索引相当于图书馆的卡片目录，有了卡片目录之后，就不需要在整个书库中搜索某一本书，而可以在卡片目录中检索到该书的位置。

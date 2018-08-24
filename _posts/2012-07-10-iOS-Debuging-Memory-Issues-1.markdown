@@ -1,4 +1,5 @@
 ---
+updated: "2014-01-10"
 layout: post
 list_title: 使用Instrument调试内存问题（一） | Debuging Memory Issues in iOS Part 1
 title: 理解iOS中的内存结构

@@ -2,8 +2,7 @@
 list_title:  学习 Haskell (二) | Learn You a Haskell for Great Good | Basic 
 title: Learn You a Haskell for Great Good
 layout: post
-tag: Haskell
-categories: PL
+categories: [Haskell]
 ---
 
 >本文为"Learn You a Haskell for Great Good"读书笔记

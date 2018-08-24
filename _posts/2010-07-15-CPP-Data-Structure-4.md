@@ -4,6 +4,7 @@ list_title: Data Structure Part 4 | 字符串 | String
 title: 字符串
 sub_title: String Algorithms
 mathjax: true
+categories: [DataStructure]
 ---
 
 ## 字符串

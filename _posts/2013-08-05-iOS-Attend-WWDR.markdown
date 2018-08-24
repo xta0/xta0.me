@@ -1,9 +1,8 @@
 ---
 layout: post
-list_title: 参加WWDR
-tag: iOS
-categories: 随笔
-
+list_title: 参加WWDR | Attend WWDR
+title: 参加WWDR 
+categories: [iOS]
 ---
 
 <em></em>

@@ -1,9 +1,8 @@
 ---
 layout: post
-list_title: 理解Objective-C的Block
+list_title: 理解Objective-C的Block | Understand Block in Objective-C
 tag: Objective-C
-categories: 随笔
-
+categories: [iOS,Objective-C]
 ---
 
 

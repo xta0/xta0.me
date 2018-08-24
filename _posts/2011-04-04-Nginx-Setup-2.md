@@ -3,7 +3,7 @@ updated: '2016-08-04'
 layout: post
 title: Nginx配置反向代理和负载均衡
 list_title: 配置Nginx（二）| Security & Reverse Proxy
-categories: [Linux, Nginx]
+categories: [Linux, Nginx,Backend]
 ---
 
 ### HTTPs

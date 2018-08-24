@@ -3,6 +3,7 @@ layout: post
 list_title: Data Structure Part 6 | 二叉搜索树 | BST
 mathjax: true
 title: 二叉搜索树
+categories: [DataStructure]
 ---
 
 从这一篇开始我们将围绕一种特殊的二叉树及其变种进行长时间的讨论，先从最基本的二叉搜索树开始，所谓二叉搜索树（Binary Search Tree）是具有下列性质的二叉树：

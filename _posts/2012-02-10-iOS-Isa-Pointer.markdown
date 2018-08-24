@@ -2,7 +2,7 @@
 layout: post
 list_title: 理解iOS中的"isa"指针 | "isa" pointer in iOS
 title: 理解iOS中的"isa"指针
-categories: [Objective-C]
+categories: [Objective-C,iOS]
 ---
 
 这是个很奇怪的问题，这个问题困扰我的时间也最长，要先从id说起：

@@ -2,6 +2,7 @@
 layout: post
 title: Git简明操作
 list_title: Git简明操作 | Git Commands Quick Reference
+categories: [Git,Cheatsheet]
 ---
 
 ### Config

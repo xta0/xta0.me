@@ -3,6 +3,7 @@ layout: post
 list_title: Data Structure Part 5 | 二叉树 | Binary Tree
 mathjax: true
 title: 二叉树
+categories: [DataStructure]
 ---
 
 ## 基本概念

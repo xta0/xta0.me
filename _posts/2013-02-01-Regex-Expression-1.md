@@ -2,6 +2,7 @@
 layout: post
 list_title: Regular Expression-1 | 基本语法 | Syntax |
 title: Regular Expression - Syntax
+categories: [Regular Expression]
 ---
 
 ## Overview

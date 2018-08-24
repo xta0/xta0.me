@@ -4,6 +4,7 @@ list_title: Data Structure Part 1 | 向量 | Vector
 title: 向量
 sub_title: Vector
 mathml: true
+categories: [DataStructure]
 ---
 
 ### 基本概念

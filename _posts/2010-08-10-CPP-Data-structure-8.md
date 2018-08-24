@@ -3,6 +3,7 @@ layout: post
 list_title: Data Structure Part 7 | Graph | 图
 title: 图
 mathjax: true
+categories: [DataStructure]
 ---
 
 ### 术语

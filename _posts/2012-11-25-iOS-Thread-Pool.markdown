@@ -1,9 +1,8 @@
 ---
 layout: post
-list_title: 理解iOS中的线程池
-tag: iOS
-categories: 随笔
-
+list_title: 理解iOS中的线程池 | Thread Management in iOS
+title: 理解iOS中的线程池
+categories: [iOS]
 ---
 
 <em></em>

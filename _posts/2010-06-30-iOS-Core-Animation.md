@@ -1,11 +1,9 @@
 ---
 list_title: Core Animation Note 2010
-categories: 随笔
+title: Core Animation 2010
+categories: [iOS]
 layout: post
-tag: iOS
 ---
-
-# CoreAnimation Notes 2010
 
 ## Architechture
 
@@ -30,10 +28,9 @@ tag: iOS
 
 ![Alt text](/assets/images/2010/10/ca2.png)
 
-- Creating Layer:
+- Creating Layer
 
 ```objc
-
 #import <QuartzCore/QuartzCore.h>
 
 CALayer* layer = [CALayer layer];
@@ -41,14 +38,12 @@ layer.bounds = CGRectMake(0,0,w,h);
 layer.position = CGPointMake(30.0,67.0);
 layer.content = calogo;
 [self.layer addSubLayer:layer]; 
-
 ```
 - 几何关系
-
-- bounds : CGRect
-- position : CGPoint(super layer coordinates)
-- transform : CATransform3D
-- anchorPoint: CGPoint
+	- bounds : CGRect
+	- position : CGPoint(super layer coordinates)
+	- transform : CATransform3D
+	- anchorPoint: CGPoint
 
 ![Alt text](/assets/images/2010/10/ca3.png)
 
@@ -59,14 +54,9 @@ layer.content = calogo;
 - 使用delegate，实现`drawLayer:InContext:`
 - 继承CALayer，复写`drawInContext`
 
-### 使用OpenGL ES，AV Foundation
-
-## Animation
-
-###Implicit animation
+### Implicit animation
 
 - CATransaction:
- 
  - runloop中自动执行CATransaction:`myLayer.position = somePt;`这种情况是没有动画的。
  - All animations during next run-loop
  - CATransaction class
@@ -99,10 +89,9 @@ layer.content = calogo;
 	
 	- 注意，layer的Model Value（例如layer的position）没有改变,当动画结束后，下一个runloop到来时，layer会回到原来的位置
 
-###Presentation Layer
+### Presentation Layer
 
 - Model Layer是不会改变的
-
 - 获取layer实时位置需要通过presentationLayer
 
 ## Drop Shadows
@@ -113,11 +102,9 @@ layer.content = calogo;
 	- `@property CGPathRef shadowPath`
 	
 - 定义Layer中透明的部分
-
 - 缓存shadow的bitmap
 
 ```objc
-
 self.myLayer = [CALayer layer];
 self.myLayer.backgroundColor = [UIColor redColor].CGColor;
 self.myLayer.bounds = CGRectMake(0, 0, 50, 50);
@@ -130,7 +117,6 @@ CGPathRef shadowPath = [UIBezierPath bezierPathWithRect:self.myLayer.bounds].CGP
 self.myLayer.shadowPath = shadowPath;
     
 [self.view.layer addSublayer:self.myLayer];
-
 ``` 
 
 ## Shape Layers
@@ -148,9 +134,7 @@ self.myLayer.shadowPath = shadowPath;
 ## Bitmap Caching
 
 - Animated UIs on embedded devices can be challenging
-
 - Can now request that a layer subtree is flattened to bitmap，将layer的subtree变成一张bitmap：`layer.shouldRasterize = YES`
-
 - Bitmap version will be reused when possible
 
 ### Bitmap Caching Caveats
@@ -176,9 +160,7 @@ self.myLayer.shadowPath = shadowPath;
 ![Alt text](/assets/images/2010/10/ca6.png)
 
 - "backgroundColor" is two colored triangles
-
 - "contents" is two triangles with an image
-
 - Cached or masked layers draw offscreen
 
 ### GPU Performance Model
@@ -209,23 +191,19 @@ self.myLayer.shadowPath = shadowPath;
 
 - Ideally one rendering pass per frame
 
-## High DPI
+### High DPI
 
 低分的iPhone是320x480，一个点对应一个pixel。在retina屏幕上，当UIWindow创建时，会将1个point变成两个pixel。为了保持UIKit的兼容性，Window还是320x480，layer的`contentScale=1`。
 
 - 2x scale factor applied to your UIWindow
-	
 	- All your view geometry remains relative to 320x480
 	- Use contentScale = 2 for screen-resolution content
 	- When rasterizing layer, `layer.rasterizationScale=2`
 
 - To get back to the native 640x960 viewport
-
 	- Use a `scale = 0.5` matrix to cancel the implicit `scale = 2` matrix
 
-
-
-## Reference
+### Reference
 
 - [Core Animation in Practice, part1](https://developer.apple.com/videos/wwdc/2010/)
 - [Core Animation in Practice, part2](https://developer.apple.com/videos/wwdc/2010/)

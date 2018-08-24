@@ -4,6 +4,7 @@ list_title: Data Structre Part 8 | In-place Sort Algorithm-2 | 内排序-2
 title: 内排序算法（二）
 # sub_title: In-place Sort Algorithm
 mathjax: true
+categories: [DataStructure]
 ---
 
 前面介绍的几种排序方式主要是以元素比较作为为基本的运算单元，这种排序方式所能达到的上限是$O(N\log{N}$。另外一种排序思路是借助空间来换时间

@@ -2,7 +2,7 @@
 layout: post
 title: Nginx基本配置
 list_title: 配置Nginx（一） | Nginx Basic Configuration
-categories: [Linux, Nginx]
+categories: [Linux, Nginx,Backend]
 ---
 
 ### About Nginx

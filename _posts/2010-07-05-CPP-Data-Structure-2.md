@@ -3,6 +3,7 @@ layout: post
 list_title: DataStructure Part 2 | 连表 | List
 title: 链表
 sub_title: List
+categories: [DataStructure]
 ---
 
 ### 基本概念

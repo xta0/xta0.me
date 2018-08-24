@@ -1,7 +1,8 @@
 ---
-list_title: Python 3 工具 | Tools
+list_title: Python 工具 | Python Tools
+title: Python Tools
 layout: post
-title: Python 3 Tools
+categories: [Python]
 ---
 
 ### Virtualenv

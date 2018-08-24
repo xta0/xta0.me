@@ -2,6 +2,7 @@
 layout: post
 list_title: C++ Part 6-2 | STL Algorithms | STL 算法
 title: STL算法
+categories: [C++]
 ---
 
 STL中的算法是一个个函数模板，大多数在`<algorithm>`中定义。STL中提供能在各种容器中通用的算法，比如查找，排序等
