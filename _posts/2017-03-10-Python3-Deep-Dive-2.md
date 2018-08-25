@@ -76,7 +76,7 @@ b = a #0x10ac99130
 
 因此对于Immutable类型的变量，Python内存管理器会让变量共享内存以节约开销。下面的例子则更能说明这一点：
 
-<div class="md-flex-h md-margin-bottom-20">
+<div class="md-flex-h md-margin-bottom-24">
 <div>
 <pre class="highlight language-python md-no-padding-v md-height-full">
 <code class="language-python">
@@ -102,7 +102,7 @@ Python中的`None`对象也是共享内存的，所有被赋值为`None`的变�
 
 如果变量是mutbable的，这么做就有风险，例如下面代码对`a`指向内存的修改直接会影响b,因此对于mutbale类型的变量，Python内存管理器则不会让变量共享内存。
 
-<div class="md-flex-h md-margin-bottom-20">
+<div class="md-flex-h md-margin-bottom-24">
 <div>
 <pre class="highlight language-python md-no-padding-v md-height-full">
 <code class="language-python">
@@ -128,7 +128,7 @@ b = [1,2,3] #0x103a74488
 Python中有两种Equality，一种是内存地址相同（identity），用`is`来表示，另一种是使用`==`表示两个对象的"值"（内部state）是否相同（equality），与之相对应的不等关系则用`is not`和`!=`表示。我们看几个例子
 
 
-<div class="md-flex-h md-margin-bottom-20">
+<div class="md-flex-h md-margin-bottom-24">
 <div>
 <pre class="highlight language-python md-no-padding-v md-height-full">
 <code class="language-python">
@@ -311,7 +311,7 @@ if e in [1,2,3]:
 
 我们来看一个具体例子
 
-<div class="md-flex-h md-margin-bottom-20">
+<div class="md-flex-h md-margin-bottom-24">
 <div>
 <pre class="highlight language-python md-no-padding-v md-height-full">
 <code class="language-python">

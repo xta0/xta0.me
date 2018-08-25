@@ -9,7 +9,7 @@ categories: [Python, JavaScript]
 
 看下面代码，你觉得那个是正确的呢？还是都不正确或者都正确呢？
 
-<div class="highlight md-flex-h md-margin-bottom-20">
+<div class="highlight md-flex-h md-margin-bottom-24">
 <div>
 <pre class="highlight language-javascript md-no-padding-v md-height-full">
 <code class="language-python">
