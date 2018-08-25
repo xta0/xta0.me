@@ -8,7 +8,7 @@ categories: [iOS]
 
 今天讨论下UI绘制的性能问题，通常来说，如果熟悉下面列出的内容基本上能解决80%以上的性能问题了：
 
-1. [UIView是如何渲染到屏幕上的](http://vizlabxt.github.io/blog/2012/10/22/UIView-Rendering/)
+1. [UIView是如何渲染到屏幕上的](https://xta0.me/2012/10/22/iOS-UIView-Rendering.html)
 2. WWDC2011:Session 318 - iOS Performance in Depth
 3. WWDC2012:Session 238 - iOS App Performance_ Graphics and Animations
 4. 熟练Instrument的Time Profiler和Core Animation
@@ -19,10 +19,9 @@ categories: [iOS]
 2. CoreText最佳性能优化方案
 3. 异步绘制
 
-
 ### Layer Trees v.s. Flat Drawing
 
-基本上，如果去优化UITableview的滚动性能，都会读到<a href="https://github.com/kennethreitz/osx-gcc-installer/">Twitter的这篇文章</a>。这篇文章其实就说了一件事：将cell上复杂的UI层次结构，简化为一个Layer。
+基本上，如果去优化UITableview的滚动性能，都会读到[Twitter的这篇文章](https://blog.twitter.com/engineering/en_us/a/2012/simple-strategies-for-smooth-animation-on-the-iphone.html)。这篇文章其实就说了一件事：将cell上复杂的UI层次结构，简化为一个Layer。
 
 例如：要展示这样一个cell：
 
