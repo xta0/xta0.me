@@ -1,4 +1,5 @@
 ---
+updated: "2013-04-06"
 list_title:  理解UIView的绘制原理 | Understand Drawing in iOS
 title:  理解UIView的绘制原理
 layout: post
@@ -7,7 +8,7 @@ categories: [iOS]
 
 ### UIView 是如何显示到Screen上的
 
-也许要先从`Runloop`开始说，iOS的main`Runloop`是一个60fps的回调，也就是说每16.7ms会绘制一次屏幕，这个时间段内要完成view的缓冲区创建，view内容的绘制（如果重写了`drawRect`），这些CPU的工作。然后将这个缓冲区交给GPU渲染，这个过程又包括多个view的拼接(compositing)，纹理的渲染（Texture）等，最终显示在屏幕上。因此，如果在16.7ms内完不成这些操作，比如，CPU做了太多的工作，或者view层次过于多，图片过于大，导致GPU压力太大，就会导致“卡”的现象，也就是丢帧。
+iOS的屏幕刷新频率是每秒60帧，也就是说每每16.7ms会绘制一次屏幕，这个时间段内要完成view的缓冲区创建和view内容的绘制（如果重写了`drawRect`），这些CPU的工作。然后将这个缓冲区交给GPU渲染，这个过程又包括多个view的拼接(compositing)，纹理的渲染（Texture）等，最终显示在屏幕上。因此，如果在16.7ms内完不成这些操作，比如，CPU做了太多的工作，或者view层次过于多，图片过于大，导致GPU压力太大，就会导致“卡”的现象，也就是丢帧。
 
 苹果官方给出的最佳帧率是：60fps，也就是1帧不丢，当然这是理想中的绝佳的体验。
 
@@ -18,11 +19,11 @@ categories: [iOS]
 
 - 每一个`UIView`都有一个`layer`，每一个`layer`都有个`content`，这个`content`指向的是一块缓存，叫做backing store。
 - `UIView`的绘制和渲染是两个过程，当`UIView`被绘制时，CPU执行`drawRect`，通过context将数据写入backing store
-- 当backing store写完后，通过render server交给GPU去渲染，将backing store中的bitmap数据显示在屏幕上
+- 当backing store写完后，通过render server（另一个进程）提交给GPU去渲染，将backing store中的bitmap数据显示在屏幕上
 
 上面提到的从CPU到GPU的过程可用下图表示：
 
-<a href="/assets/images/2013/11/QQ20131123-1.png"><img alt="UIView Rendering" src="{{site.baseurl}}/assets/images/2013/11/QQ20131123-1.png" width="755" height="131" /></a>
+{% include _partials/components/lightbox-center.html param='{{site.baseurl}}/assets/images/2013/11/QQ20131123-1.png' %}
 
 下面具体来讨论下这个过程
 
@@ -105,7 +106,7 @@ label.text = @"hello world";
 
 CPU这一块最耗时的地方往往在Core Graphic的绘制上，关于Core Graphic的性能优化是另一个话题了，又会牵扯到很多东西，就不在这里讨论了。
 
-<h3> GPU bound：</h3>
+### GPU bound
 
 CPU完成了它的任务：将view变成了bitmap，然后就是GPU的工作了，GPU处理的单位是Texture。
 
