@@ -23,7 +23,7 @@ iOS的屏幕刷新频率是每秒60帧，也就是说每每16.7ms会绘制一次
 
 上面提到的从CPU到GPU的过程可用下图表示：
 
-{% include _partials/components/lightbox-center.html param='{{site.baseurl}}/assets/images/2013/11/QQ20131123-1.png' %}
+{% include _partials/components/lightbox-center.html param='/assets/images/2013/11/QQ20131123-1.png' %}
 
 下面具体来讨论下这个过程
 
