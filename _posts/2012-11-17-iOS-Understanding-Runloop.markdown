@@ -87,12 +87,12 @@ void runloopCallback(CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 2. `kCFRunLoopBeforeTimers`：Runloop准备处理timer事件
 3. `kCFRunLoopBeforeSources`：Runloop准备处理input sources
 4. `kCFRunLoopBeforeWaiting`：Runloop准备进入休眠
-5 `kCFRunLoopAfterWaiting`：Runloop被唤醒准备处理消息
+5. `kCFRunLoopAfterWaiting`：Runloop被唤醒准备处理消息
 6. `kCFRunLoopExit`：Runloop退出
 
 如果程序监听了`kCFRunLoopAllActivities`，那么当Runloop每轮训到某个activity的时候，程序会收该activity事件的回调。运行上面代码，观察下面的日志：
 
-```
+```shell
 [471507989.6447] activity:kCFRunLoopEntry
 [471507989.6448] activity:kCFRunLoopBeforeTimers
 [471507989.6448] activity:kCFRunLoopBeforeSources
@@ -114,7 +114,7 @@ void runloopCallback(CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 4. 重新进入休眠状态
 5. 当touch end的时候又会唤醒Runloop，重复上面的操作的操作。
 
-```
+```shell
 [471512170.7319] activity:kCFRunLoopBeforeSources
 VZRunloopSample[40478:3595823] touch began
 [471512170.7327] activity:kCFRunLoopBeforeSources

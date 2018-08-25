@@ -2,12 +2,10 @@
 list_title:  理解UIView的绘制原理 | Understand Drawing in iOS
 title:  理解UIView的绘制原理
 layout: post
-categories: 随笔
+categories: [iOS]
 ---
 
-<em></em>
-
-`UIView`是如何显示到Screen上的
+### UIView 是如何显示到Screen上的
 
 也许要先从`Runloop`开始说，iOS的main`Runloop`是一个60fps的回调，也就是说每16.7ms会绘制一次屏幕，这个时间段内要完成view的缓冲区创建，view内容的绘制（如果重写了`drawRect`），这些CPU的工作。然后将这个缓冲区交给GPU渲染，这个过程又包括多个view的拼接(compositing)，纹理的渲染（Texture）等，最终显示在屏幕上。因此，如果在16.7ms内完不成这些操作，比如，CPU做了太多的工作，或者view层次过于多，图片过于大，导致GPU压力太大，就会导致“卡”的现象，也就是丢帧。
 
@@ -19,9 +17,7 @@ categories: 随笔
 
 
 - 每一个`UIView`都有一个`layer`，每一个`layer`都有个`content`，这个`content`指向的是一块缓存，叫做backing store。
-
 - `UIView`的绘制和渲染是两个过程，当`UIView`被绘制时，CPU执行`drawRect`，通过context将数据写入backing store
-
 - 当backing store写完后，通过render server交给GPU去渲染，将backing store中的bitmap数据显示在屏幕上
 
 上面提到的从CPU到GPU的过程可用下图表示：
@@ -30,7 +26,7 @@ categories: 随笔
 
 下面具体来讨论下这个过程
 
-<h3> CPU bound：</h3>
+### CPU bound
 
 假设我们创建一个`UILabel`：
 
@@ -135,7 +131,7 @@ GPU大致的工作模式如下：
 
 这两个中瓶颈基本在第二点上。渲染Texture基本要处理这么几个问题：
 
-###Compositing：
+### Compositing
 
 Compositing是指将多个纹理拼到一起的过程，对应UIKit，是指处理多个view合到一起的情况，如
 
@@ -170,11 +166,11 @@ R = S+D*(1-Sa)
 
 因此，view的层级很复杂，或者view都是半透明的（alpha值不为1）都会带来GPU额外的计算工作。
 
-###Size
+### Size
 
 这个问题，主要是处理image带来的，假如内存里有一张400x400的图片，要放到100x100的imageview里，如果不做任何处理，直接丢进去，问题就大了，这意味着，GPU需要对大图进行缩放到小的区域显示，需要做像素点的sampling，这种smapling的代价很高，又需要兼顾pixel alignment。计算量会飙升。
 
-###Offscreen Rendering And Mask
+### Offscreen Rendering And Mask
 
 如果我们对layer做这样的操作：
  
