@@ -25,7 +25,7 @@ categories: [iOS]
 
 例如：要展示这样一个cell：
 
-<a href="/assets/images/2013/07/cell.png"><img class="alignnone size-full wp-image-251" alt="cell" src="{{site.baseurl}}/assets/images/2013/07/cell.png" width="311" height="96" /></a>
+![](/assets/images/2013/07/cell.png)
 
 ### 传统的做法
 
