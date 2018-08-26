@@ -367,11 +367,21 @@ $h_2(key)$尽量与$M$互质，这样可使发生冲突的同义词地址尽量�
 4. 若$M$为任意数，$h_1(k)= K \thinspace mod \thinspace p $, (除余法，$p$是小于$M$的最大素数)
     - $h_2(k) = k \thinspace mod \thinspace q+1$ (q是小于p的最大素数。+1为了避免0的出现)
 
-### 填充因子
-
-
 
 ### Bloom Filter
 
 
+
+
+
+## Resources 
+
+- [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
+- [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)
+- [算法与数据结构-1-北大-Cousera](https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome)
+- [算法与数据结构-2-北大-Cousera](https://www.coursera.org/learn/gaoji-shuju-jiegou/home/welcome)
+- [算法与数据结构-1-清华-EDX](https://courses.edx.org/courses/course-v1:TsinghuaX+30240184.1x+3T2017/course/)
+- [算法与数据结构-2-清华-EDX](https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/)
+- [算法设计与分析-1-北大-Cousera](https://www.coursera.org/learn/algorithms/home/welcome)
+- [算法设计与分析-2-北大-EDX](https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/)
 
