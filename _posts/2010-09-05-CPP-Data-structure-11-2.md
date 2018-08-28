@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: Data Structre Part 10 | 索引-2 | B+ Tree
-title: B树 和 B+ 树
+list_title: Data Structre Part 10 | B-树 | B-Tree
+title: B-树 
 mathjax: true
 categories: [DataStructure]
 ---
