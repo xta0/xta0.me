@@ -13,10 +13,14 @@
 
 <!-- third party -->
 {% include _third-party/prism.html %}
+{% include _third-party/mathjax.html %}
+{% include _third-party/lightbox.html %}
+<!-- customize header -->
+{% include _custom/head.html %}
 
+<!-- production mode config -->
+{% include _custom/head.html %}
 {% if jekyll.environment == 'production' %}
   {% include _third-party/google-analytics.html %}
 {% endif %}
 
-<!-- customize header -->
-{% include _custom/head.html %}
