@@ -378,13 +378,13 @@ $$
 \alpha \thinspace = \thinspace \frac {\# \thinspace of \thinspace  objects \thinspace in \thinspace hash  \thinspace table} {\# \thinspace of \thinspace buckets \thinspace of \thinspace hash \thinspace table}
 $$
 
-这个指标代表Hash Table的装载率，对于使用chaining实现的Hash Table这个$\alpha$数值可以大于1，这说明会有某些bucket的链表长度大于1。但通常情况下，最好保持这个值远小于1，这意味着，当插入的数据增加时，Hash Table的空位也要跟着增加，比如当$\alpha=0.5$时，可令空位增大一倍
+这个指标代表Hash Table的装载率，对于使用chaining实现的Hash Table这个$\alpha$数值可以大于1，这说明会有某些bucket的链表长度大于1。但通常情况下，最好保持这个值远小于1，这意味着，当插入的数据增加时，Hash Table的空位也要跟着增加，比如当$\alpha=0.5$时，可令空位数量跟着增大一倍
 
 ### Bloom Filter
 
-Bloom Filter是Burton Bloom在1970年开发的一种数据结构。它和Hash Table相比，它占用空间更小，查询速度更快，但是无法进行Key-Value存储，功能类似Hash Set；缺点是有一定的误识别率和删除困难。
+Bloom Filter是Burton Bloom在1970年发明的一种数据结构。它和Hash Table相比，它占用空间更小，查询速度更快，但是无法进行Key-Value存储，功能类似Hash Set，缺点是有一定的误识别率和删除困难。
 
-因此Bloom Filter适用的场景为：（1）对空间有限制 （2）对查询速度有要求 （3）允许一定的错误率。Blloom Filter最早被用来做拼写检查，检查一个单词是否在字典中
+Blloom Filter最早被用来做拼写检查，检查一个单词是否在字典中，这种场景要求对用户输入的单词做快速的检查，因此速度是第一位的，同时也允许有一定的查询错误。另一个场景是用来检查用户输入的密码是否在无效的密码列表中，做法是预先向Bloom Filter中存入可能的无效密码，当用户输入密码时，实时在Bloom Filter中进行匹配，这种场景同样也要求速度快，也允许有一定的错误率，比如错误率为0.1%，即1000个人中有一个人输入了正确的密码但被判定为错误密码，这种情况下对用户的操作不会带来太大的影响。在现代的应用中，Bloom Filter可以用来实现network router，对Packet进行实时过滤。总的来说，Bloom Filter适用的场景为：（1）对空间有限制 （2）对查询速度有要求 （3）允许一定的错误率。
 
 
 
