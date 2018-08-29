@@ -1,8 +1,8 @@
 ---
 updated: "2018-08-20"
 layout: post
-title: Scalability Overview
-list_title: 系统设计 | System Design | Overview
+title: Scalability Overview For Dummies
+list_title: 系统设计 | System Design | Scalability Overview For Dummies
 categories: [backend]
 ---
 
@@ -22,20 +22,20 @@ Github上有一个很全面的[System Design学习资料](https://github.com/don
 
 ### DNS
 
-DNS就是域名系统，通常的理解就是将域名解析为IP，通常DNS服务是由电信运营商提供。其原理简单来说就查表，每台DNS服务器看自己的缓存中是否有有该域名的信息，如果有则返回，如果没有则会去查ROOT DNS Server。当浏览器或者OS拿到DNS结果后，会根据TTL的时间对IP地址进行缓存。
+DNS是域名系统，用来将域名解析为IP，通常DNS服务是由电信运营商提供。其原理简单来说就查表，每台DNS服务器检查自己的缓存中是否有有该域名所对应的IP，如果有则返回，如果没有则会去查ROOT DNS Server。当浏览器或者OS拿到DNS结果后，会根据TTL的时间对IP地址进行缓存。
 
-例如，Chrome可通过`chrome://net-internals/#dns`地址查看缓存的DNS信息，对于OSX可通过下面命令查看某域名对应的IP,如果要查看完整的DNS缓存，可参考文章最后一节的参考文献。
+例如，Chrome可通过`chrome://net-internals/#dns`地址查看缓存的DNS信息，对于OSX可通过下面命令查看某域名对应的IP地址，如果要查看完整的DNS缓存，可参考文章最后一节的参考文献。
 
 ```shell
 ➜  ~ host -t a youtube.com
 youtube.com has address 172.217.15.110
 ```
 
-DNS服务的维护非常复杂，通常由政府或者运营商完成。DNS也容易被DDos攻击，一旦被攻击（如果不知道Twitter的IP地址），则无法通过域名进行访问。更多关于DNS的架构内容可参考文章最后一节的参考文献。
+DNS服务的维护非常复杂，通常由政府或者运营商完成。DNS也容易被DDos攻击，一旦被攻击（如果不知道网站的IP地址），则无法通过域名进行访问。更多关于DNS的架构内容可参考文章最后一节的参考文献。
 
 ### CDN
 
-CDN这个感念也不陌生，它是基于地理位置的分布式proxy server。主要作用是代理用户请求以及支持用户对静态文件的访问。打个比方，假设你开一家鞋店，你的App Server是总店，各个地区的CDN节点就是分店，由于是分店，鞋的种类、型号肯定没有总店那么全，但也基本包含了最热销的款式，所以只要不是特别独特的需求，分店是完全可以满足的，这样既缓解了总店和交通的压力，也提高了用户的购物体验。
+CDN是基于地理位置的分布式proxy server。主要作用是代理用户请求以及支持用户对静态文件的访问。打个比方，假设你开一家鞋店，你的App Server是总店，各个地区的CDN节点就是分店，由于是分店，鞋的种类、型号肯定没有总店那么全，但也基本包含了最热销的款式，所以只要不是特别独特的需求，分店是完全可以满足的，这样既缓解了总店和交通的压力，也提高了用户的购物体验。
 
 具体来说，用户的请求首先到达DNS，DNS会将请求转发到离自己最近的CDN节点，如果该请求不带有任何Session信息，仅仅是浏览，那么该请求是不会到达后端的，如果带有用户信息，则由该CDN节点转发请求到后端的App Server。另外，当处理大促秒杀等场景时，CDN同样可以拦截掉大部分请求，从而达到控制流量的目的。
 
@@ -47,28 +47,28 @@ CDN的关键技术是对资源的管理和分发，按照分发的模式，可�
 
 - Push CDNs
 
-Push是由管理人员主动upload资源到各个CDN节点，并将资源地址指向CDN节点，还要配置资源过期时间等。PUSH的内容一般是比较热点的内容，这种方式需要考虑的主要问题是分发策略，即在什么时候分发什么内容；对于流量小的网站，对资源的更新不会很频繁，因此适合采用这种方式，如果流量大的网站，使用这种方式则会带来较高操作成本。
+Push是由管理人员主动upload资源到各个CDN节点，并修改资源地址指向CDN节点，还要配置资源过期时间等。PUSH的内容一般是比较热点的内容，这种方式需要考虑的主要问题是分发策略，即在什么时候分发什么内容；对于流量小的网站，对资源的更新不会很频繁，因此适合采用这种方式，如果流量大的网站，使用这种方式则会带来较高操作成本。
 
 - Pull CDNs
 
-Pull的方式是被动的按需加载，当获取静态资源的请求到达CDN后，CDN发现没有该资源，则会"回源"，向App Server询问，在得到资源后，CDN将该资源缓存在自己的节点上。
-
-使用这种方式CDN往往需要一个预热的阶段，通过一系列少量请求将资源推到CDN节点上，然后再开放给大量的用户，如果不经过预热，则会导致大规模的"回源"请求，很容易给内部的Server带来较高的负载。因此这种方式适用于流量较高的网站，当运行一段时间后，CDN将保留当前最新的最热门的资源。
+Pull的方式是被动的按需加载，当获取静态资源的请求到达CDN后，CDN发现没有该资源，则会"回源"，向后端Server询问，在得到资源后，CDN则将该资源缓存起来。如果使用这种方式，CDN往往需要一个预热的阶段，通过一系列少量请求将资源推到CDN节点上，然后再开放给大量的用户，如果不经过预热，则会导致大规模的"回源"请求，很容打挂后端的Server。因此Pull的方式更适用于流量较高的网站，当CDN预热一段时间后，CDN将保留当前最新的最热门的资源。
 
 ### Load Balancer
 
-负载均衡是一个非常重要的系统，也可以说是无处不在的一个系统，比如在DNS中可以使用负载均衡动态分配请求到不同的CDN上，对于内部App Server的集群也需要使用负载均衡动态分配请求到不同Server上。
+负载均衡是一个非常重要的系统，也可以说是无处不在的一个系统，比如在DNS中可以使用负载均衡动态分配请求到不同的CDN上，对于内部App Server的集群也需要使用负载均衡来管理请求的转发。除了转发请求以外，Load Balancer还可以用来检测单点
 
 
 ### App Servers
 
-由前面小节的讨论可知，当用户处于非登录状态时，可直接访问CDN获取静态资源，但是如果用户是登录状态，则请求会通过Load Balancer路由到Web Server的cluster上。而对于所有cluster中的Web Server它们代码相同，是彼此的clone。最重要的是，它们不能在本地存储任何用户相关信息以及状态。
+由前面小节的讨论可知，当用户处于非登录状态时，可直接访问CDN上的取静态资源（网页），但是如果用户是登录状态，则请求会通过Load Balancer路由到内部的App Server集群上。对于集群中的所有的App Server，它们上面跑的代码相同（每台Server均是彼此的clone），理想情况下负责处理“无状态”的业务逻辑，不会在本地存储任何用户相关信息以及各种其他的状态。
 
-用户的Session应该统一存放在一个外部的缓存中，比如Redis server。如何维护以及更新Session的状态后面文章中将会详细讨论。另外，对于分布式Server的代码同步以及部署也是一个问题，好在目前有很多开源项目可以解决这个问题，比如Ruby体系的Capistrano等
+{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-4.png' param2='sd-3' %}
+
+那么对于分布式系统，用户Session之类的状态信息应该统一存放在一个外部的缓存中，比如Redis server。如何维护以及更新Session的状态后面文章中将会详细讨论。另外，对于分布式Server的代码同步以及部署也是一个问题，好在目前有很多开源项目可以解决这个问题，比如Ruby体系的Capistrano等
 
 这种基于Load Balancer + 分布式Server的扩展方式可以称为horizontally scale。这种方式可以handle大量的并发请求，但是如果后端只有一两个Database，那么数据库的读写将会很快成为瓶颈。
 
-### Databases
+### Database
 
 对于数据库的扩展可以选择两种方式，一种方式是使用Master-Slave的架构来复制出多份数据库，如上图中所示，让所有读请求打到Slave上，写请求路由到Master上。这种方式会随着业务不断的变复杂，数据表字段不断增加，查询速度也会变得越来越复杂，尤其是JOIN操作将会非常耗时，这时可能需要一个DBA要对数据库进行sharding（分库分表），做SQL语句调优等一系列优化，但这些优化并不解决根本问题。
 
@@ -101,7 +101,7 @@ Pull的方式是被动的按需加载，当获取静态资源的请求到达CDN�
 ### Resource
 
 - [CS75 (Summer 2012) Lecture 9 Scalability Harvard Web Development David Malan](https://www.youtube.com/watch?v=-W9F__D3oY4&t=955s)
-- [HOw to view DNS cache in OSX](https://stackoverflow.com/questions/38867905/how-to-view-dns-cache-in-osx)
+- [How to view DNS cache in OSX](https://stackoverflow.com/questions/38867905/how-to-view-dns-cache-in-osx)
 - [DNS Architechture](https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/dd197427(v=ws.10))
 - [Scalability for Dummies](http://www.lecloud.net/post/7295452622/scalability-for-dummies-part-1-clones)
 - [System Design Primer](https://github.com/donnemartin/system-design-primer)
