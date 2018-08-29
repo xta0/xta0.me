@@ -2,7 +2,7 @@
 updated: "2018-08-20"
 layout: post
 title: 系统设计 | Load Balancer
-list_title: 系统设计 | System Design | 负载均衡 | Load Balancer
+list_title: 系统设计 | System Design | Load Balancer
 categories: [backend]
 ---
 

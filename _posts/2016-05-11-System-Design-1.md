@@ -14,13 +14,13 @@ categories: [backend]
 
 Github上有一个很全面的[System Design学习资料](https://github.com/donnemartin/system-design-primer)，本文及后面的一系列文章将是个人对这些学习资料的实践与总结。
 
-### Overview
+## Overview
 
 {% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-0.png' param2='sd-0' %}
 
 <p class="md-p-center"><a href="https://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer">source: Introduction to architecting systems for scale.</a></p>
 
-### DNS
+## DNS
 
 DNS是域名系统，用来将域名解析为IP，通常DNS服务是由电信运营商提供。其原理简单来说就查表，每台DNS服务器检查自己的缓存中是否有有该域名所对应的IP，如果有则返回，如果没有则会去查ROOT DNS Server。当浏览器或者OS拿到DNS结果后，会根据TTL的时间对IP地址进行缓存。
 
@@ -33,7 +33,7 @@ youtube.com has address 172.217.15.110
 
 DNS服务的维护非常复杂，通常由政府或者运营商完成。DNS也容易被DDos攻击，一旦被攻击（如果不知道网站的IP地址），则无法通过域名进行访问。更多关于DNS的架构内容可参考文章最后一节的参考文献。
 
-### CDN
+## CDN
 
 CDN是基于地理位置的分布式proxy server。主要作用是代理用户请求以及支持用户对静态文件的访问。打个比方，假设你开一家鞋店，你的App Server是总店，各个地区的CDN节点就是分店，由于是分店，鞋的种类、型号肯定没有总店那么全，但也基本包含了最热销的款式，所以只要不是特别独特的需求，分店是完全可以满足的，这样既缓解了总店和交通的压力，也提高了用户的购物体验。
 
@@ -53,7 +53,7 @@ Push是由管理人员主动upload资源到各个CDN节点，并修改资源地�
 
 Pull的方式是被动的按需加载，当获取静态资源的请求到达CDN后，CDN发现没有该资源，则会"回源"，向后端Server询问，在得到资源后，CDN则将该资源缓存起来。如果使用这种方式，CDN往往需要一个预热的阶段，通过一系列少量请求将资源推到CDN节点上，然后再开放给大量的用户，如果不经过预热，则会导致大规模的"回源"请求，很容打挂后端的Server。因此Pull的方式更适用于流量较高的网站，当CDN预热一段时间后，CDN将保留当前最新的最热门的资源。
 
-### Load Balancer
+## Load Balancer
 
 负载均衡是一个非常重要的系统，也可以说是无处不在的一个系统，比如在DNS中可以使用负载均衡动态分配请求到不同的CDN上，对于内部App Server的集群也需要使用负载均衡来管理请求的转发。除了转发请求以外，Load Balancer还可以用来检测单点故障，当某个Server挂掉后，及时将请求转移其它Server上。
 
@@ -92,16 +92,18 @@ Load Balancer的路由策略有很多种，常用的有如下几种，
 - 反向代理对于管理单机运行多个服务非常有用
 - Nginx或者HAProxy即可作为反向代理，又可作为负载均衡来使用
 
-### App Servers
+## App Servers
 
-由前面小节的讨论可知，当用户处于非登录状态时，可直接访问CDN上的取静态资源（网页），但是如果用户是登录状态，则请求会通过Load Balancer路由到内部的App Server集群上。对于集群中的所有的App Server，它们上面跑的代码相同（每台Server均是彼此的clone），理想情况下负责处理“无状态”的业务逻辑，不会在本地存储任何用户相关信息以及各种其他的状态。
+由前面小节的讨论可知，当用户处于非登录状态时，可直接访问CDN上的取静态资源（网页），但是如果用户是登录状态，则请求会通过Load Balancer路由到内部的App Server集群上。对于集群中的所有的App Server，它们上面跑的代码相同（每台Server均是彼此的clone），理想情况下各自负责处理“无状态”的业务逻辑，不会在本地存储任何用户相关信息以及各种其他的状态。对于全局的状态细信息，比如Seesion，则会统一的存到分布式缓存中，对于缓存，我们后面还会专门介绍
 
 {% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-4.png' param2='sd-4' %}
 {% include _partials/components/pic-from.html param='http://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer' param2='Source: Intro to architecting systems for scale'%}
 
-对于分布式系统，用户Session之类的状态信息应该统一存放在一个外部的缓存中，比如Redis server。如何维护以及更新Session的状态后面文章中将会详细讨论。另外，对于分布式Server的代码同步以及部署也是一个问题，好在目前有很多开源项目可以解决这个问题，比如Ruby体系的Capistrano等
+Server集群的另一个问题是，这些server节点该如何管理，如何上线或者下架一台server，众多的server之间该如何通信，server之间的状态如何同步，以及当某台server出问题之后，怎么能快速恢复等等。显然靠人工取解决这些问题是不现实的，因此，最好有一套统一的服务框架或者配置中心可以将这些Server的声明周期以及通信一并管理起来。针对这个问题，业界常用的解决方案有 [Consul](https://www.consul.io/docs/index.html), [Etcd](https://coreos.com/etcd/docs/latest/), 和[Zookeeper](https://zookeeper.apache.org/)。这里推荐使用Zookeeper，很多大型网站内部也都在使用ZooKeeper，更多关于数据一致性的问题，我们后面的文章会单独讲解。
 
-这种基于Load Balancer + 分布式Server的扩展方式可以称为**horizontally scale**。这种方式的<mark>优点</mark>是可以处理大量的并发请求，但是<mark>缺点</mark>是如果后端只有一两个Database，那么数据库的读写将会很快成为瓶颈。
+另外，对于分布式Server的代码同步以及部署也是一个问题，好在目前有很多开源项目可以解决这个问题，比如Ruby体系的Capistrano等
+
+以上这种基于Load Balancer + 分布式Server的扩展方式可以称为**horizontally scale**。这种方式的<mark>优点</mark>是可以处理大量的并发请求，但是<mark>缺点</mark>是如果后端只有一两个Database，那么数据库的读写将会很快成为瓶颈。
 
 ### Database
 
@@ -109,7 +111,9 @@ Load Balancer的路由策略有很多种，常用的有如下几种，
 
 第二种方式是在开始的时候就使用NoSQL数据库，比如MongoDB，CouchDB。使用这类数据库，JOIN操作可以在应用层代码中实现，从而减少DB操作的时间。但是无论哪种方式，随着数据量增多，业务不断复杂化，对DB的查询依旧会变得越来越慢，这时候就要考虑使用缓存。
 
-### Cache
+对于更多分布式数据库存储的问题，后面还会专门写一篇文章来分析
+
+## Cache
 
 这里说的缓存指的是内存级别的缓存，比如Memcached或者Redis。永远不要做文件级别的缓存，这对server的clone或者scale都非常不利。
 
@@ -125,7 +129,9 @@ Load Balancer的路由策略有很多种，常用的有如下几种，
 
 缓存的内容可以包括用户的session信息（不要存到数据库中），静态页面，用户-朋友关系等。另外，使用Redis起单独的server做缓存要好过在同一个App Server中使用memcached，后者在维护数据一致性方面难度很大。在某些条件下，甚至可以使用Redis取代DB做持久化存储。
 
-### Asynchronism
+对于更多分布式缓存的问题，后面还会专门写一篇文章来分析
+
+## Asynchronism
 
 如果网站的流量大了，所有的操作尽量异步。异步操作又分为很多种，这里讨论两种，一种是异步任务，一种是定时任务。
 
@@ -134,18 +140,36 @@ Load Balancer的路由策略有很多种，常用的有如下几种，
 {% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-6.png' param2='sd-6' %}
 {% include _partials/components/pic-from.html param='http://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer' param2='Source: Intro to architecting systems for scale'%}
 
+另一种就是所谓的异步任务，这种异步操作对时效性有要求，同时又消耗大量的计算资源，用户需要留在前台等待计算结果。这时候需要首先一个任务队列或者消息队列（如上图中所示）来调度异步任务。
 
-另一种就是所谓的异步任务，这种异步操作对时效性有要求，同时又消耗大量的计算资源，用户需要留在前台等待计算结果。这时候需要首先一个任务队列或者消息队列（如上图中所示）来调度异步任务
+所谓的消息队列和任务队列，并没有本质的区别，任务队列在实现上可能封装的更好些，但总的来说，二者都是用来处理异步任务的，其流程如下：
+
+1. 应用程序向消息/任务队列中投递任务，注册回调
+2. Message Broker负责监听消息队列的状态，分配任务给Worker Thread/Process执行，当任务完成后，负责通知应用程序
+
+常用的消息队列有：
+
+- Redis 可用作简单的消息队列，但有可能丢消息
+- [RabbitMQ](http://www.rabbitmq.com/)是比较流行的，但是需要实现`AMQP`协议，并且需要管理自己的节点
+- Apache的[ActiveMQ](http://activemq.apache.org/)
+- Amazon的SQS 延迟较高，并且会有消息重复投递的问题
+
+常用的任务队列有:
+
+- Celery
+- Resque
+- Kue
+
+### Back Presure
 
 
 
+## A Case Study - Reddit System Architecture Overview
 
+最后我们可以分析一下Reddit网站的架构设计，这部分内容来自两部分，一是我对Huffman在Udacity[课程上视频的整理](https://www.youtube.com/playlist?list=PLEJuDSAS60yBW1OpIRqIG2T7S5GG3PTvr)。二是[Neil Williams在QCon上的分享](https://www.youtube.com/watch?v=nUcO7n4hek4&t=799s)。由于没有正式的文章，因此部分细节可能不完全正确，权且作为学习这部分内容的一个小结
 
-常用的消息队列有[RabbitMQ](http://www.rabbitmq.com/),Apache 家族的[ActiveMQ](http://activemq.apache.org/)，Node.js基于Redis的[Kue](https://github.com/Automattic/kue)，以及Amazon的SQS等等。
+{% include _partials/components/lightbox-center.html param='/assets/images/2016/07/reddit-1.png' param2='1' %}
 
-消息队列主要做两件事
-
-1. 
 
 ### Resource
 
@@ -157,6 +181,7 @@ Load Balancer的路由策略有很多种，常用的有如下几种，
 - [WHAT IS LAYER 4 LOAD BALANCING?](https://www.nginx.com/resources/glossary/layer-4-load-balancing/)
 - [WHAT IS LAYER 7 LOAD BALANCING?](https://www.nginx.com/resources/glossary/layer-7-load-balancing/)
 - [Reverse proxy vs load balancer](https://www.nginx.com/resources/glossary/reverse-proxy-vs-load-balancer/)
+- [introduction-to-apache-zookeeper](https://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper)
 - [Scalability for Dummies](http://www.lecloud.net/post/7295452622/scalability-for-dummies-part-1-clones)
 - [System Design Primer](https://github.com/donnemartin/system-design-primer)
 

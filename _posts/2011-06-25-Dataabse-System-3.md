@@ -6,9 +6,3 @@ categories: [Database,Backend]
 mathjax: true
 ---
 
-### Why Distribution
-
-- Availability
-- Scalability
-- Reliability/Fault Tolerance
-- Transparancy
