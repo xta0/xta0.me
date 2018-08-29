@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: Tips and Tricks in iOS
-title: Tips and Tricks in iOS
+list_title: iOS中的一些小技巧 | Tips and Tricks in iOS
+title: iOS中的一些小技巧 | Tips and Tricks in iOS
 categories: [iOS]
 ---
   
@@ -34,11 +34,6 @@ pod spec lint --verbose --use-libraries --skip-import-validation --allow-warning
 pod trunk push --verbose --use-libraries --skip-import-validation --allow-warnings
 ```
 
-<h3>查看RSA的FingerPrint</h3>
-
-```
-ssh-keygen -l -f rsa_key.pub
-```
 
 <h3>Mac OS 卸载 MySQL</h3>
 
@@ -85,17 +80,13 @@ appledoc --no-create-docset --output ./docNew --project-name xxx --project-compa
 
 <em>update @2013/10/1 </em>
 
-高版本的OSX，如果在app store上更新了Xcode，系统会把它当做普通的app，这个修改会导致和原来xcode的安装路径不一致。因此xcode会找到不到libtool。解决办法：
-
-将usr/bin/libtool考到xcode要求那个目录
+高版本的OSX，如果在app store上更新了Xcode，系统会把它当做普通的app，这个修改会导致和原来xcode的安装路径不一致。因此xcode会找到不到libtool。解决办法：<mark>将`usr/bin/libtool`考到xcode要求那个目录</mark>
 
 <h3>Framework和静态库</h3>
 
 - Framework和静态库的区别：
 
-本质都是相同的，都是静态的代码。
-
-framework使用更方便，可以将头文件,资源文件等打包使用。
+本质都是相同的，都是静态的代码。framework使用更方便，可以将头文件,资源文件等打包使用。
 
 静态库的.a只是.m文件打包的二进制代码，因此，还需要自己将.h引入进来才能编译过，同样，资源文件也需要单独引入。
 
@@ -106,7 +97,6 @@ framework使用更方便，可以将头文件,资源文件等打包使用。
 里面有两种方案：
 
 1. fakeFramework ：思路是创建一个bundle，将bundle中的文件格式改成和framework相同的格式。
-
 2. real Framework：运行一段脚本，给Xcode打补丁，重启xcode后即可看到有framework的模版出来。
 
 - xcode打静态库的方法：
@@ -118,16 +108,11 @@ framework使用更方便，可以将头文件,资源文件等打包使用。
 <em>update @2013/05/10 </em> 
 
 我们知道如果两个object是equal的，那么他们的hash value一定相同。
-但是hash value相同的两个object却不一定是equal的。
+但是hash value相同的两个object却不一定是equal的。NSString就是个例子：
 
-NSString就是个例子：
+> 当string长度长度大于96个字符时，NSString会为其生成相同的hash value
 
-当string长度长度大于96个字符时，NSString会为其生成相同的hash value
-
-http://www.abakia.de/blog/2012/12/05/nsstring-hash-is-bad/
-
-这种情况可以用sha1算法代替
-
+这种情况可以用sha1算法代替，[参考这里](http://www.abakia.de/blog/2012/12/05/nsstring-hash-is-bad/)
 
 <h3>使用NSCache</h3>
 
@@ -168,10 +153,7 @@ http://www.abakia.de/blog/2012/12/05/nsstring-hash-is-bad/
 
 基本上使用NSCache可以解决大部分的问题：你可以尽情的向cache中塞图片，当内存不足时，你可以选择手动释放掉NSCache中所有图片，也可以默认NSCache自己的策略：根据LRU规则释放掉最不活跃的图片。当app退到后台时，NSCache会自动释放掉图片，腾出空间给其它app。
 
-
-
 <h3>Objective-C中的copy</h3>
-
 
 UIKit和Foundation对象的copy都是shallow copy（浅拷贝）。比如UIImage：
 
@@ -193,29 +175,22 @@ NSLog(@"%p,%p,%p,%p",img,img_copy,&img,&img_copy);
 
 对于自定义对象，比如`ETSomeItem:NSObject`，这种对象要实现`<NSCopy>`，对这种对象的`copy`操作为`deep copy`
 
-###NSNull和Nil
+### NSNull和Nil
 
 ```objc
-
 NSString* null = [NSString stringWithFormat:@"%@",[NSNull null]];
 NSString* nill = [NSString stringWithFormat:@"%@",nil];
-
 ```
 输出为：
 
 - `"<null>"`
-
 - `"(null)"`
 
 <h3>NSLog:C语言中的可变参数</h3>
 
 <em>update @2012/07/05/</em>
 
-NSLog的实现用到了C语言中的可变参数：
-
-void NSLog(NSString *format, ...) 
-
-我们可以自己实现一个NSLog：
+NSLog的实现用到了C语言中的可变参数：`void NSLog(NSString *format, ...) `，我们可以自己实现一个NSLog：
 
  
 ```c
@@ -229,73 +204,30 @@ void mySBLog(NSString* format,...)
 }
 ```
 
-###关于@Synchronized
+### 关于@Synchronized
 
 @synchronized{...}相当于使用NSLock：
 
-```
+```objc
  @synchronized(self) {
   	NSLog(@"");
  }
-
 ```
 相当于
 
-```
+```objc
 [NSLock lock];
-
 NSLog(@"");
-
 [NSLock unlock]
-
 ```
 
-###Linux/Mac OS下文件夹的含义
-
-[Answer](http://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard)
-
-###改变Git Repo的作者和email
-
-- `cd proj`
-
-- `git config user.name "jack"`
-
-- `git config user.email "jack@gmail.com"`
-
-查看全局的git账户信息:
-
-- `git config --global user.name`
-
-- `git config --global user.email`
-
-改变commit的username和emal
-
-- `git commit --amend --author="Author Name <email@address.com>"`
-
-###Git 命令行解决冲突
-
-- `grep -lr '<<<<<<<' . | xargs git checkout --ours`
-- `grep -lr '<<<<<<<' . | xargs git checkout --theirs`
-
-How this works: `grep` will search through every file in the current directory (the `.`) and subdirectories recursively (the `-r` flag) looking for conflict markers (the string '<<<<<<<')
-
-the `-l` or `--files-with-matches` flag causes grep to output only the filename where the string was found. Scanning stops after first match, so each matched file is only output once.
-
-The matched file names are then piped to `xargs`, a utility that breaks up the piped input stream into individual arguments for `git checkout --ours` or `--theirs`
-
-
-
-###XCode编译C++
+### XCode编译C++
 
 使用XCode编译C++头文件，例如`Header.h`:
 
 ```c++
-namesapce TP
-{
-
-
+namesapce TP{
 }
-
 ```
 
 如果直接编译会报错:`unknown type name namespace`
@@ -305,35 +237,27 @@ namesapce TP
 解决这个问题，有两个方法:
 
 - 将`compile source AS`改成`Objective-C++`，这种方式将所有源码按照`OC++`编译
-
 - 使用`__cplusplus`做条件编译，只有`C++/Objective-C++`类型的文件，才能编译`Header.h`：
 
 将`Header.h`修改为：
 
 ```c++
-
 #ifdef __cplusplus
 extern "C"{
 #endif
-    
-    namespace TP
-    {
-    
-    }
+  namespace TP{
+  }
     
 #ifdef __cplusplus
-}
+ }
 #endif
-
 ```
 - 对于非`C++/Objective-C++`类型的文件:
 
 ```c++
-
 #ifdef __cplusplus
 #include "Header.h"
 #endif
-
 ```
 
 - 对于``C++/Objective-C++`类型的文件，直接import即可

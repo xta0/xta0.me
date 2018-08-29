@@ -16,9 +16,9 @@ Github上有一个很全面的[System Design学习资料](https://github.com/don
 
 ### Overview
 
-{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-1.png' param2='sd-1' %}
+{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-0.png' param2='sd-0' %}
 
-<p class="md-p-center"><a href="https://github.com/donnemartin/system-design-primer">source: System Design Primer</a></p>
+<p class="md-p-center"><a href="https://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer">source: Introduction to architecting systems for scale.</a></p>
 
 ### DNS
 
@@ -55,19 +55,53 @@ Pull的方式是被动的按需加载，当获取静态资源的请求到达CDN�
 
 ### Load Balancer
 
-负载均衡是一个非常重要的系统，也可以说是无处不在的一个系统，比如在DNS中可以使用负载均衡动态分配请求到不同的CDN上，对于内部App Server的集群也需要使用负载均衡来管理请求的转发。除了转发请求以外，Load Balancer还可以用来检测单点故障，当某个Server挂掉后，及时将请求转移其它Server上，
+负载均衡是一个非常重要的系统，也可以说是无处不在的一个系统，比如在DNS中可以使用负载均衡动态分配请求到不同的CDN上，对于内部App Server的集群也需要使用负载均衡来管理请求的转发。除了转发请求以外，Load Balancer还可以用来检测单点故障，当某个Server挂掉后，及时将请求转移其它Server上。
 
+Load Balancer的实现可以用硬件，比如[Citrix NetScaler](https://www.citrix.com/products/?contentID=21679)旗下的产品，使用硬件的好处是稳定且速度快，缺点是非常贵。当然Load Balancer也可以用软件实现，比如Ngixn或者HAProxy，这种方式仍是目前的主流方式。
+
+Load Balancer的路由策略有很多种，常用的有如下几种，
+
+- Random
+- Least Loaded
+- Session/cookies
+- Round robin or weighted round robin
+- Layer 4
+    - 所谓Layer4策略是指根据传输层的某些特征进行路由，不需要感知数据包中的传输内容。
+- Layer 7
+    - 同理，Layer7策略是根据应用层信息来路由请求，比如播放视频的请求会被投递到视频服务器上，而用户支付的请求则会被投递到处理支付业务的服务器上
+
+其中Round-Robin,Least Loaded以及基于Session/cookie的路由策略，我们在后面的文章中会做更详细的分析。需要注意的是，负载均衡如果配置不当可能成为系统的瓶颈，另外如果只有一个Load Balancer Server，那么它极容易成为最大的单点，因此实际应用中还需要考虑配置多个Load Balancer来防止单点故障
+
+### Reverse Proxy
+
+和负载均衡类似的概念是反向代理，所谓反向代理代理的是内部的server，当外部请求过来后，Reverse Proxy可根据路径将请求动态分配给内部的server。
+
+{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-5.png' param2='sd-5' %}
+{% include _partials/components/pic-from.html param='https://upload.wikimedia.org/wikipedia/commons/6/67/Reverse_proxy_h2g2bob.svg' param2='Source: Wikipedia'%}
+
+反向代理除了路由请求外，还可作为中间层对所有进来的request和出去的response进行一些加工，比如：
+
+- 可为站内所有HTTP服务做SSL加密
+- 统一处理站内所有HTTP Response的压缩，缓存等
+- 统一配置静态资源(HTML/CSS/JS/Image/Videos...)路径
+- 增加安全性，Hide掉内部Server的一些信息等
+
+反向代理和负载均衡的区别如下:
+
+- 当网站流量大，需要有多台App Server构成集群时，使用负载均衡
+- 反向代理对于管理单机运行多个服务非常有用
+- Nginx或者HAProxy即可作为反向代理，又可作为负载均衡来使用
 
 ### App Servers
 
 由前面小节的讨论可知，当用户处于非登录状态时，可直接访问CDN上的取静态资源（网页），但是如果用户是登录状态，则请求会通过Load Balancer路由到内部的App Server集群上。对于集群中的所有的App Server，它们上面跑的代码相同（每台Server均是彼此的clone），理想情况下负责处理“无状态”的业务逻辑，不会在本地存储任何用户相关信息以及各种其他的状态。
 
-{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-4.png' param2='sd-3' %}
+{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-4.png' param2='sd-4' %}
 {% include _partials/components/pic-from.html param='http://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer' param2='Source: Intro to architecting systems for scale'%}
 
 对于分布式系统，用户Session之类的状态信息应该统一存放在一个外部的缓存中，比如Redis server。如何维护以及更新Session的状态后面文章中将会详细讨论。另外，对于分布式Server的代码同步以及部署也是一个问题，好在目前有很多开源项目可以解决这个问题，比如Ruby体系的Capistrano等
 
-这种基于Load Balancer + 分布式Server的扩展方式可以称为horizontally scale。这种方式可以handle大量的并发请求，但是如果后端只有一两个Database，那么数据库的读写将会很快成为瓶颈。
+这种基于Load Balancer + 分布式Server的扩展方式可以称为**horizontally scale**。这种方式的<mark>优点</mark>是可以处理大量的并发请求，但是<mark>缺点</mark>是如果后端只有一两个Database，那么数据库的读写将会很快成为瓶颈。
 
 ### Database
 
@@ -93,15 +127,36 @@ Pull的方式是被动的按需加载，当获取静态资源的请求到达CDN�
 
 ### Asynchronism
 
-如果网站的流量大了，所有的操作尽量异步。异步操作又分为很多种，这里讨论两种，一种是异步任务，一种是定时任务。所谓定时任务是指将一些时效性不是特别强，但是却消耗资源，消耗时间的计算（比如投票，日志收集等）提前做好，或者每一到两个小时执行一次，然后将得到结果缓存，缓存的方法有很多，比如将计算结果更新到数据库中，或者upload静态页面到CDN上，等等
+如果网站的流量大了，所有的操作尽量异步。异步操作又分为很多种，这里讨论两种，一种是异步任务，一种是定时任务。
 
-另一种就是所谓的异步任务，这种异步操作对时效性有要求，同时又消耗大量的计算资源，用户需要留在前台等待计算结果。这时候需要首先一个任务队列（如上图中所示）来缓存异步任务，常用的有[RabbitMQ](http://www.rabbitmq.com/),Apache 家族的[ActiveMQ](http://activemq.apache.org/)，基于Redis的[Kue](https://github.com/Automattic/kue)等等。
+所谓定时任务是指将一些时效性不是特别强，但是却消耗资源，消耗时间的计算（比如投票，日志收集等）提前做好，或者每一到两个小时执行一次，然后将得到结果缓存，缓存的方法有很多，比如将计算结果更新到数据库中，或者upload静态页面到CDN上，等等
+
+{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-6.png' param2='sd-6' %}
+{% include _partials/components/pic-from.html param='http://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer' param2='Source: Intro to architecting systems for scale'%}
+
+
+另一种就是所谓的异步任务，这种异步操作对时效性有要求，同时又消耗大量的计算资源，用户需要留在前台等待计算结果。这时候需要首先一个任务队列或者消息队列（如上图中所示）来调度异步任务
+
+
+
+
+
+常用的消息队列有[RabbitMQ](http://www.rabbitmq.com/),Apache 家族的[ActiveMQ](http://activemq.apache.org/)，Node.js基于Redis的[Kue](https://github.com/Automattic/kue)，以及Amazon的SQS等等。
+
+消息队列主要做两件事
+
+1. 
 
 ### Resource
 
 - [CS75 (Summer 2012) Lecture 9 Scalability Harvard Web Development David Malan](https://www.youtube.com/watch?v=-W9F__D3oY4&t=955s)
+- [Introduction to architecting systems for scale](https://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer)
 - [How to view DNS cache in OSX](https://stackoverflow.com/questions/38867905/how-to-view-dns-cache-in-osx)
 - [DNS Architechture](https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2008-R2-and-2008/dd197427(v=ws.10))
+- [HAProxy architecture guide](http://www.haproxy.org/download/1.2/doc/architecture.txt)
+- [WHAT IS LAYER 4 LOAD BALANCING?](https://www.nginx.com/resources/glossary/layer-4-load-balancing/)
+- [WHAT IS LAYER 7 LOAD BALANCING?](https://www.nginx.com/resources/glossary/layer-7-load-balancing/)
+- [Reverse proxy vs load balancer](https://www.nginx.com/resources/glossary/reverse-proxy-vs-load-balancer/)
 - [Scalability for Dummies](http://www.lecloud.net/post/7295452622/scalability-for-dummies-part-1-clones)
 - [System Design Primer](https://github.com/donnemartin/system-design-primer)
 

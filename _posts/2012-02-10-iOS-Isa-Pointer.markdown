@@ -18,13 +18,13 @@ typedef struct objc_class *Class;
 OC中的对象都是id，id是一个objc_object结构体指针，这个结构体中只有一个成员是isa。isa代表了这个对象的类型：
 这句代码：
 
-```
+```objc
 Class clz = [obj Class];
 ```
 
 等价于：
 
-```
+```objc
 objc_class* clz = obj->isa
 
 ```
@@ -48,7 +48,7 @@ struct objc_class {
 
 那么就有:
 
-```
+```objc
 objc_class* clz_meta = obj->isa->isa。
 ```
 
@@ -56,26 +56,18 @@ Apple对clz_meta的描述是metaClass，也就是`Class`的class，这也不难�
 
 上面描述的结构如下图所示：
 
-<a href="/assets/images/2012/02/class_hierarchy.png"><img src="{{site.baseurl}}/assets/images/2012/02/class_hierarchy.png" alt="class_hierarchy"width="511" height="181"/></a>
+![](/assets/images/2012/02/class_hierarchy.png)
 
-然后问题是：
-
-```
-obj->isa->isa->isa
-```
-
-指向哪里？
+然后问题是：`obj->isa->isa->isa`指向哪里？
 
 想不明白就来动手试试：
  
-<pre class="theme:tomorrow-night lang:objc decode:true " >@interface SomeClass : NSObject
-
+```objc
+@interface SomeClass : NSObject
 @property(nonatomic,assign) int a;
-
 @end
 
 @implementation SomeClass
-
 @end
 
 int main(int argc, char *argv[])
@@ -84,23 +76,21 @@ int main(int argc, char *argv[])
     [obj release];
     obj = nil;
     return 0;
-}</pre> 
+}
+```
 
 然后我们用GDB调试：
 
-```
+```shell
 (gdb) p (Class)[obj class]
 $3 = (Class) 0x3668
 (gdb) p obj->isa
 $2 = (Class) 0x3668
-
 ```
 
-这说明[obj Class]等价于obj->isa
+这说明`[obj Class]`等价于`obj->isa`，然后我们看看`objc_class`这个结构体中的状态：
 
-然后我们看看objc_class这个结构体中的状态：
-
-```
+```shell
 (gdb) p *obj->isa
 $7 = {
   isa = 0x3654, 
@@ -118,14 +108,14 @@ $7 = {
 
 我们看到了metaClass也就是obj->isa->isa指向了0x3654，我们用GDB调试下：
 
-```
+```shell
 (gdb) p obj->isa->isa
 $8 = (Class) 0x3654
 ```
 
 接着，我么再看看metaClass的objc_class结构体：
 
-```
+```shell
 (gdb) p *obj->isa->isa
 $6 = {
   isa = 0x11d4bd4, 
@@ -147,22 +137,18 @@ $6 = {
 (gdb) po obj->isa->isa->isa
 NSObject
 ```
-
-That's it !! That solved mystery!!
-
-But wait ! MetaClass对象的isa指向了super_class，那super_class的父类，也就是NSObject的MetaClass对象的super_class指向哪里？
+MetaClass对象的isa指向了super_class，那super_class的父类，也就是NSObject的MetaClass对象的super_class指向哪里？
 
 ```
 (gdb) po obj->isa->isa->isa->super_class->super_class
 Can't print the description of a NIL object.
-
 ```
 
-Nil是我们期待的结果
+Nil是我们期待的结果，到这里，我们应该把上面的图再改一改：
 
-到这里，我们应该把上面的图再改一改：
+![](/assets/images/2012/02/class_hierarchy-2.png)
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2012/02/class_hierarchy-2.png">
+{% include _partials/post-footer-1.html %}
 
 
 

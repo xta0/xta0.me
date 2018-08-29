@@ -1,11 +1,11 @@
 ---
-list_title: Core Animation Note 2010
-title: Core Animation 2010
+list_title: iOS Core Animation Note | From WWDC 2010
+title: iOS Core Animation | From WWDC 2010
 categories: [iOS]
 layout: post
 ---
 
-## Architechture
+## Core Animation Architechture
 
 ![Alt text](/assets/images/2010/10/ca1.png)
 

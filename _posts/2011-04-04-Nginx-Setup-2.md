@@ -1,8 +1,8 @@
 ---
 updated: '2016-08-04'
 layout: post
-title: Nginx配置反向代理和负载均衡
-list_title: 配置Nginx（二）| Security & Reverse Proxy
+title: Nginx配置HTTPs和反向代理
+list_title: 配置Nginx（二）| Setup HTTPs & Reverse Proxy
 categories: [Linux, Nginx,Backend]
 ---
 
@@ -133,10 +133,6 @@ server{
     }
 }
 ```
-
-
-
-
 
 ## Resources
 
