@@ -55,7 +55,7 @@ Pull的方式是被动的按需加载，当获取静态资源的请求到达CDN�
 
 ### Load Balancer
 
-负载均衡是一个非常重要的系统，也可以说是无处不在的一个系统，比如在DNS中可以使用负载均衡动态分配请求到不同的CDN上，对于内部App Server的集群也需要使用负载均衡来管理请求的转发。除了转发请求以外，Load Balancer还可以用来检测单点
+负载均衡是一个非常重要的系统，也可以说是无处不在的一个系统，比如在DNS中可以使用负载均衡动态分配请求到不同的CDN上，对于内部App Server的集群也需要使用负载均衡来管理请求的转发。除了转发请求以外，Load Balancer还可以用来检测单点故障，当某个Server挂掉后，及时将请求转移其它Server上，
 
 
 ### App Servers
@@ -63,8 +63,9 @@ Pull的方式是被动的按需加载，当获取静态资源的请求到达CDN�
 由前面小节的讨论可知，当用户处于非登录状态时，可直接访问CDN上的取静态资源（网页），但是如果用户是登录状态，则请求会通过Load Balancer路由到内部的App Server集群上。对于集群中的所有的App Server，它们上面跑的代码相同（每台Server均是彼此的clone），理想情况下负责处理“无状态”的业务逻辑，不会在本地存储任何用户相关信息以及各种其他的状态。
 
 {% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-4.png' param2='sd-3' %}
+{% include _partials/components/pic-from.html param='http://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer' param2='Source: Intro to architecting systems for scale'%}
 
-那么对于分布式系统，用户Session之类的状态信息应该统一存放在一个外部的缓存中，比如Redis server。如何维护以及更新Session的状态后面文章中将会详细讨论。另外，对于分布式Server的代码同步以及部署也是一个问题，好在目前有很多开源项目可以解决这个问题，比如Ruby体系的Capistrano等
+对于分布式系统，用户Session之类的状态信息应该统一存放在一个外部的缓存中，比如Redis server。如何维护以及更新Session的状态后面文章中将会详细讨论。另外，对于分布式Server的代码同步以及部署也是一个问题，好在目前有很多开源项目可以解决这个问题，比如Ruby体系的Capistrano等
 
 这种基于Load Balancer + 分布式Server的扩展方式可以称为horizontally scale。这种方式可以handle大量的并发请求，但是如果后端只有一两个Database，那么数据库的读写将会很快成为瓶颈。
 
@@ -95,8 +96,6 @@ Pull的方式是被动的按需加载，当获取静态资源的请求到达CDN�
 如果网站的流量大了，所有的操作尽量异步。异步操作又分为很多种，这里讨论两种，一种是异步任务，一种是定时任务。所谓定时任务是指将一些时效性不是特别强，但是却消耗资源，消耗时间的计算（比如投票，日志收集等）提前做好，或者每一到两个小时执行一次，然后将得到结果缓存，缓存的方法有很多，比如将计算结果更新到数据库中，或者upload静态页面到CDN上，等等
 
 另一种就是所谓的异步任务，这种异步操作对时效性有要求，同时又消耗大量的计算资源，用户需要留在前台等待计算结果。这时候需要首先一个任务队列（如上图中所示）来缓存异步任务，常用的有[RabbitMQ](http://www.rabbitmq.com/),Apache 家族的[ActiveMQ](http://activemq.apache.org/)，基于Redis的[Kue](https://github.com/Automattic/kue)等等。
-
-### CAP 理论
 
 ### Resource
 
