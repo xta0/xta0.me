@@ -123,7 +123,7 @@ PC上一些常用操作的大概耗时
 
 ### 备注
 
-T. Capey指出，在Amazon搜索[Complete Problem Solver](https://www.amazon.com/exec/obidos/ASIN/0805803092)的结果页面中，查看浏览“购买此书的用户还购买过这些产品”区域，会发现"Teach Yourself Bengali in 21 days"和"Teach Yourself Grammar and Style"这两本书。我估计浏览这两本书的大部分人是从这篇文章的链接过去的。感谢Ross Cohen的帮助。
+T. Capey指出，在Amazon的[Complete Problem Solver](https://www.amazon.com/exec/obidos/ASIN/0805803092)的商品页面中，查看浏览“购买此书的用户还购买过这些产品”区域，会发现"Teach Yourself Bengali in 21 days"和"Teach Yourself Grammar and Style"这两本书。我估计浏览这两本书的大部分人是从这篇文章的链接过去的。感谢Ross Cohen的帮助。
 
 
 {% include _partials/post-footer-1.html %}
