@@ -111,9 +111,12 @@ Server集群的另一个问题是，这些server节点该如何管理，如何�
 
 第二种方式是在开始的时候就使用NoSQL数据库，比如MongoDB，CouchDB。使用这类数据库，JOIN操作可以在应用层代码中实现，从而减少DB操作的时间。但是无论哪种方式，随着数据量增多，业务不断复杂化，对DB的查询依旧会变得越来越慢，这时候就要考虑使用缓存。
 
-对于更多分布式数据库存储的问题，后面还会专门写一篇文章来分析
+对于更多分布式数据库存储的问题，后面还会做详细的讨论。
 
 ## Cache
+
+{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-7.png' param2='sd-7' %}
+{% include _partials/components/pic-from.html param='http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html' param2='Source: Scalable system design patterns'%}
 
 这里说的缓存指的是内存级别的缓存，比如Memcached或者Redis。永远不要做文件级别的缓存，这对server的clone或者scale都非常不利。
 
@@ -142,7 +145,7 @@ Server集群的另一个问题是，这些server节点该如何管理，如何�
 
 另一种就是所谓的异步任务，这种异步操作对时效性有要求，同时又消耗大量的计算资源，用户需要留在前台等待计算结果。这时候需要首先一个任务队列或者消息队列（如上图中所示）来调度异步任务。
 
-所谓的消息队列和任务队列，并没有本质的区别，任务队列在实现上可能封装的更好些，但总的来说，二者都是用来处理异步任务的，其流程如下：
+所谓的消息队列和任务队列，并没有本质的区别，从功能上看，消息队列仅负责投递消息，任务队列负责异步执行耗时任务，但总的来说，二者都是用来处理异步任务的，其流程如下：
 
 1. 应用程序向消息/任务队列中投递任务，注册回调
 2. Message Broker负责监听消息队列的状态，分配任务给Worker Thread/Process执行，当任务完成后，负责通知应用程序
@@ -160,15 +163,13 @@ Server集群的另一个问题是，这些server节点该如何管理，如何�
 - Resque
 - Kue
 
-### Back Presure
-
-
+如果队列任务投递的速度远超过消耗的速度，则队列的size将会显著增长，此时内存消耗过快会导致内存耗尽，而内存的消耗又可能导致cache工作异常，进而导致大量的磁盘读写或者DB请求，从而拖慢整条链路的速度。这种情况下，需要考虑使用[Back Pressure](https://mechanical-sympathy.blogspot.com/2012/05/apply-back-pressure-when-overloaded.html)来限制队列size的大小。当消息队列满负荷时，clients的请求会返回HTTP 503提示稍后尝试。
 
 ## A Case Study - Reddit System Architecture Overview
 
 最后我们可以分析一下Reddit网站的架构设计，这部分内容来自两部分，一是我对Huffman在Udacity[课程上视频的整理](https://www.youtube.com/playlist?list=PLEJuDSAS60yBW1OpIRqIG2T7S5GG3PTvr)。二是[Neil Williams在QCon上的分享](https://www.youtube.com/watch?v=nUcO7n4hek4&t=799s)。由于没有正式的文章，因此部分细节可能不完全正确，权且作为学习这部分内容的一个小结
 
-{% include _partials/components/lightbox-center.html param='/assets/images/2016/07/reddit-1.png' param2='1' %}
+{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/reddit.png' param2='1' %}
 
 
 ### Resource
@@ -182,6 +183,7 @@ Server集群的另一个问题是，这些server节点该如何管理，如何�
 - [WHAT IS LAYER 7 LOAD BALANCING?](https://www.nginx.com/resources/glossary/layer-7-load-balancing/)
 - [Reverse proxy vs load balancer](https://www.nginx.com/resources/glossary/reverse-proxy-vs-load-balancer/)
 - [introduction-to-apache-zookeeper](https://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper)
+- [Applying Back Pressure When Overloaded](https://mechanical-sympathy.blogspot.com/2012/05/apply-back-pressure-when-overloaded.html)
 - [Scalability for Dummies](http://www.lecloud.net/post/7295452622/scalability-for-dummies-part-1-clones)
 - [System Design Primer](https://github.com/donnemartin/system-design-primer)
 
