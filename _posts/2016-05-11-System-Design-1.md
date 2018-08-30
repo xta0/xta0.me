@@ -128,7 +128,7 @@ Server集群的另一个问题是，这些server节点该如何管理，如何�
 
 - 缓存Objects
 
-这种方式是个人比较推荐的一种方式，它将从DB取出的数据进行ORM，将得到的Object存入到缓存中。假设有一个类`Product`，它有几个property分别是`prices`,`reviews`,`category`等等，现在需要根据某个ID来查询某个Product，显然首先要从DB里根据查出这个ID对应的一系列上述propertiy的值，然后利用查出来的这些数据构建一个类型为Product的Object，最后将这个Object放入缓存中。这样当每次数据库中数据发生变化时，App Server可以监听到这个Event，然后异步的对缓存中的Obejct进行更新，而不是像第一种方式一样去删除某条缓存。这种缓存方式显然更高效。
+这种方式是个人比较推荐的一种方式，它将从DB取出的数据进行ORM，将得到的Object存入到缓存中。假设有一个类`Product`，它有几个property分别是`prices`,`reviews`,`category`等等，现在需要根据某个ID来查询某个Product，显然首先要从DB里查出这个ID对应的一系列上述propertiy的值，然后利用查出来的这些数据构建一个类型为Product的Object，最后将这个Object放入缓存中。这样当每次数据库中数据发生变化时，App Server可以监听到这个Event，然后异步的对缓存中的Obejct进行更新，而不是像第一种方式一样去删除某条缓存。这种缓存方式显然更高效。
 
 缓存的内容可以包括用户的session信息（不要存到数据库中），静态页面，用户-朋友关系等。另外，使用Redis起单独的server做缓存要好过在同一个App Server中使用memcached，后者在维护数据一致性方面难度很大。在某些条件下，甚至可以使用Redis取代DB做持久化存储。
 

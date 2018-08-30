@@ -46,7 +46,7 @@ $$
 |1984-09-10|26.50|26.62|25.87|26.37|2346400|3.01|
 |1984-09-07|26.50|26.87|26.25|26.50|2981600|3.02|
 
-如果熟悉股票投资，应该可以大致了解每一列数据的函数，比如开盘价，收盘价，盘中最高，最低价，成交量等。现在有了这些数据，我们就可以用Python来对数据做一些简单的处理。比如我们可以统计出从1984年到2008年股价的最高点和成交量的中位数，并将收盘价格画出来
+如果熟悉股票投资，应该可以大致了解每一列数据的含义，比如开盘价，收盘价，盘中最高，最低价，成交量等。现在有了这些数据，我们就可以用Python来对数据做一些简单的处理。比如我们可以统计出从1984年到2008年股价的最高点和成交量的中位数
 
 ```python
 import pandas as pd
@@ -109,9 +109,7 @@ for name in symbols:
 
 ```
 
-上面的例子是统计Apple,Google,Facebook三家公司过去一年的收盘价，参照标准是标准普尔500指数。上述代码中，可以将`GOOG,FB,AAPL`看成三张表，三张表进行JOIN的key是date，上述代码可达下面的数据
-
-> 这里要注意一点的是，上面JOIN语法和SQL的JOIN略有区别，SQL的JOIN需要指定key，这里默认使用主键来JOIN，因此创建DataFrame的时候需要指定主键的key
+上面的例子是统计Apple,Google,Facebook三家公司过去一年的收盘价，参照标准是标准普尔500指数。上述代码中，可以将`GOOG,FB,AAPL`看成三张表，三张表进行JOIN的key是date，上述代码可得出下面的数据
 
 ```shell            
                    SPY         GOOG          FB        AAPL
@@ -120,7 +118,11 @@ for name in symbols:
 2018-03-05  269.892303  1090.930054  180.399994  175.525208
 2018-03-06  270.576477  1095.060059  179.779999  175.376297
 ```
-这样我们就可以同时期的比较多个股票的价格走势，数据比较不直观，切无法比较全年数据，我们也可使用`matplotlib`将其可视化
+
+> 这里要注意一点的是，上面JOIN语法和SQL的JOIN略有区别，SQL的JOIN需要指定key，这里默认使用主键来JOIN，因此创建DataFrame的时候需要指定主键的key
+
+
+这样我们就可以同时期的比较多个股票的价格走势，数据比较不直观，且无法比较全年数据，我们也可使用`matplotlib`将其可视化
 
 ```python
 #normalized data
@@ -144,6 +146,6 @@ plt.show()
 - [Active Portfolio Management](https://www.amazon.com/Active-Portfolio-Management-Quantitative-Controlling/dp/0070248826/ref=sr_1_1?ie=UTF8&s=books&qid=1263182044&sr=1-1)
 - [All about Hedge Funds](https://www.amazon.com/All-About-Hedge-Funds-Started/dp/0071393935)
 - [Applied Quantitative Methods for Trading and Investment](https://www.amazon.com/Applied-Quantitative-Methods-Trading-Investment/dp/0470848855/ref=sr_1_1?ie=UTF8&s=books&qid=1263181752&sr=8-1)
-- [Other Resources](https://www.coursera.org/learn/computational-investing/supplement/TPxSD/course-resources))
+- [Other Resources](https://www.coursera.org/learn/computational-investing/supplement/TPxSD/course-resources)
 
 
