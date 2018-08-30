@@ -163,7 +163,7 @@ Server集群的另一个问题是，这些server节点该如何管理，如何�
 - Resque
 - Kue
 
-如果队列任务投递的速度远超过消耗的速度，则队列的size将会显著增长，此时内存消耗过快会导致内存耗尽，而内存的消耗又可能导致cache工作异常，进而导致大量的磁盘读写或者DB请求，从而拖慢整条链路的速度。这种情况下，需要考虑使用[Back Pressure](https://mechanical-sympathy.blogspot.com/2012/05/apply-back-pressure-when-overloaded.html)来限制队列size的大小。当消息队列满负荷时，clients的请求会返回HTTP 503提示稍后尝试，等待时间可采用指[数退避算法](https://en.wikipedia.org/wiki/Exponential_backoff)，即等待时间是随指数增长，从而避免频繁的重试。
+如果队列任务投递的速度远超过消耗的速度，则队列的size将会显著增长，此时内存消耗过快会导致内存耗尽，而内存的消耗又可能导致cache工作异常，进而导致大量的磁盘读写或者DB请求，从而拖慢整条链路的速度。这种情况下，需要考虑使用[Back Pressure](https://mechanical-sympathy.blogspot.com/2012/05/apply-back-pressure-when-overloaded.html)来限制队列size的大小。当消息队列满负荷时，clients的请求会返回HTTP 503提示稍后尝试，等待时间的选择可采用指[数退避算法](https://en.wikipedia.org/wiki/Exponential_backoff)，即等待时间是随指数增长，从而避免频繁的重试。
 
 ## A Case Study - Reddit System Architecture Overview
 
