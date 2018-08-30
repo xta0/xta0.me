@@ -18,11 +18,12 @@ There are lots of ways to implement CI for Jekyll, the most common way is to use
 - [x] Add .travis.yml
 - [x] Add Webhook for CI
 - [x] Add Google Analysis
-- [ ] Category Page
+- [ ] Add sidebar
+- [ ] Add Pagination
+- [ ] Add category page
 - [ ] Make it responsive
 - [ ] Add CSS animaiton effect
-- [ ] English Version
-- [ ] Mario Game
+- [ ] English Translation
 
 ## License
 
