@@ -3,7 +3,7 @@ layout: post
 list_title: 机器学习 | Machine Learning | 异常检测 | Anomaly Detection
 title : 异常检测
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter8
-categories: [ml-stanford,course]
+categories: [Machine Learning,AI]
 mathjax: true
 ---
 

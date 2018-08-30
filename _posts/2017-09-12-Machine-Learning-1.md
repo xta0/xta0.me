@@ -3,7 +3,7 @@ layout: post
 list_title: 机器学习 | Machine Learning | Overview
 title: Machine Learning Overview
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter1
-categories: [Machine Learning,course]
+categories: [Machine Learning,AI]
 mathjax: true
 ---
 

@@ -3,7 +3,7 @@ layout: post
 list_title: 机器学习 | Machine Learning | 线性回归 | Linear Regression 
 title: 线性回归   
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter2
-categories: [ml-stanford,course]
+categories: [Machine Learning,AI]
 mathjax: true
 ---
 

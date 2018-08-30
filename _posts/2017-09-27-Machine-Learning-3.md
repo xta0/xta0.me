@@ -3,7 +3,7 @@ layout: post
 list_title: 机器学习 | Machine Learning | 分类 | Classification
 title: 分类
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter3
-categories: [ml-stanford,course]
+categories: [Machine Learning,AI]
 mathjax: true
 ---
 
