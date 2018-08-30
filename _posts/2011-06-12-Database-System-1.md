@@ -8,61 +8,61 @@ mathjax: true
 
 ### Relational Algebra
 
-Relational Algebra是一种formal language，是SQL底层实现。对一个关系型结构的查询结果仍旧是一个关系型结构
+Relational Algebra是一种formal language，是SQL语句的底层逻辑。
+
+### Relational Operators
 
 假设有一个大学数据库管理系统，其三个实体为
 
 ```
 college(cName, state, enrollment)
 student(sID sName, GPA, sizeHS)
-Apply(sID cName, major, description)
+Apply(sID cName, major)
 ```
 
-<div style=" content:''; display: table; clear:both; height=0">
-    <div style="float:left">
-        <table>
-                <caption> college</caption>
-                <thead>
-                    <tr><th>cName</th><th>state</th><th>enr</th></tr>
-                </thead>
-                <tbody>
-                    <tr> <td></td><td></td><td></td></tr>
-                    <tr> <td></td><td></td><td></td></tr>
-                    <tr> <td></td><td></td><td></td></tr>
-                </tbody>
-        </table> 
-    </div>
-    <div style="float:left;margin-left:40px;">
-        <table>
-                <caption> student</caption>
-                <thead>
-                    <tr><th>sID</th><th>sName</th><th>GPA</th><th>HS</th></tr>
-                </thead>
-                <tbody>
-                    <tr> <td></td><td></td><td></td><td></td></tr>
-                    <tr> <td></td><td></td><td></td><td></td></tr>
-                    <tr> <td></td><td></td><td></td><td></td></tr>
-                </tbody>
-        </table>
-    </div>
-    <div style="float:left;margin-left:40px;">
-        <table>
-                <caption> Apply</caption>
-                <thead>
-                    <tr><th>sID</th><th>cName</th><th>major</th><th>dec</th></tr>
-                </thead>
-                <tbody>
-                    <tr> <td></td><td></td><td></td><td></td></tr>
-                    <tr> <td></td><td></td><td></td><td></td></tr>
-                    <tr> <td></td><td></td><td></td><td></td></tr>
-                </tbody>
-        </table>
-    </div>
+<div class="md-flex-h md-flex-no-wrap">
+<div>
+    <table>
+        <caption> college</caption>
+        <thead>
+            <tr><th>cName</th><th>state</th><th>enr</th></tr>
+        </thead>
+        <tbody>
+            <tr> <td>Jason</td><td>VA</td><td></td></tr>
+            <tr><td>Alice</td><td>MD</td><td></td></tr>
+            <tr> <td>Junze</td><td>VA</td><td></td></tr>
+        </tbody>
+    </table> 
+</div>
+<div class="md-margin-left-6">
+    <table>
+            <caption> student</caption>
+            <thead>
+                <tr><th>sID</th><th>sName</th><th>GPA</th><th>HS</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>001</td><td>Jason</td><td>3.8</td><td></td></tr>
+                <tr> <td>002</td><td>Alice</td><td>4.5</td><td></td></tr>
+                <tr> <td>003</td><td>Junze</td><td>4.8</td><td></td></tr>
+            </tbody>
+    </table>
+</div>
+<div class="md-margin-left-6">
+    <table>
+        <caption> Apply</caption>
+        <thead>
+            <tr><th>sID</th><th>cName</th><th>major</th></tr>
+        </thead>
+        <tbody>
+            <tr> <td></td><td></td><td></td></tr>
+            <tr> <td></td><td></td><td></td></tr>
+            <tr> <td></td><td></td><td></td></tr>
+        </tbody>
+    </table>
+</div>
 </div>
 
-### Operators
-
-- Select
+### Select
 
 Select用于获取一系列行数据，使用 $\sigma$符号表示，通用形式为
 
@@ -73,11 +73,11 @@ $$
 1. Students with GPA>3.7
     - $ \sigma_{GPA>3.7} \quad student $
 2. Students with GPA>3.7 and HS < 1000
-    - $ \sigma_{GPA>3.7 \^ \thinspace HS \thinspace < 1000} \quad student $
+    - $ \sigma_{GPA>3.7 ^ \thinspace HS \thinspace < 1000} \quad student $
 3. Applications to Stanford CS major
     - $ \sigma_{cname ='stanford' \thinspace ^ \thinspace major='cs'} \quad student $
 
-- Project
+### Project
 
 Project用来获取列数据，使用$\pi$表示
 
@@ -86,6 +86,10 @@ Project用来获取列数据，使用$\pi$表示
 2. slice
 
 3. combine
+
+## ER Model
+
+ER图是一种表示数据库实体之间关系的模型图。
 
 
 ### Types
