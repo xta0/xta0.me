@@ -2090,8 +2090,10 @@ end
 
 
 - 加上Regularization项得到最终的θ矩阵
-	- <math xmlns="http://www.w3.org/1998/Math/MathML"> <msubsup> <mi>D</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> <mo>,</mo> <mi>j</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo>:=</mo> <mstyle displaystyle="true"> <mfrac> <mn>1</mn> <mi>m</mi> </mfrac> </mstyle> <mfenced open="(" close=")"> <mrow> <msubsup> <mi mathvariant="normal">&#x0394;<!-- Δ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> <mo>,</mo> <mi>j</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo>+</mo> <mi>&#x03BB;<!-- λ --></mi> <msubsup> <mi mathvariant="normal">&#x0398;<!-- Θ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> <mo>,</mo> <mi>j</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfenced> </math> ， if j≠0.
-	<br></br>
+  - 当j$ D_{i,j}^{(l)} \thinspace := \thinspace \frac{1}{m}(\Delta_{i,j}^{(l)} + \lambda \Theta_{i,j}^{(l)}), \thinspace if \thinspace j≠0 $
+
+	
+
 	- <math xmlns="http://www.w3.org/1998/Math/MathML"> <msubsup> <mi>D</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> <mo>,</mo> <mi>j</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo>:=</mo> <mstyle displaystyle="true"> <mfrac> <mn>1</mn> <mi>m</mi> </mfrac> </mstyle> <msubsup> <mi mathvariant="normal">&#x0394;<!-- Δ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> <mo>,</mo> <mi>j</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> </math>，if j=0.
 
 大写的D矩阵用来表示θ矩阵的计算是不断叠加的，我们最终得到的偏导式子为：
