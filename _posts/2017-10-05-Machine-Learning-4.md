@@ -2090,56 +2090,14 @@ end
 
 
 - 加上Regularization项得到最终的θ矩阵
-  - 当j$ D_{i,j}^{(l)} \thinspace := \thinspace \frac{1}{m}(\Delta_{i,j}^{(l)} + \lambda \Theta_{i,j}^{(l)}), \thinspace if \thinspace j≠0 $
-
-	
-
-	- <math xmlns="http://www.w3.org/1998/Math/MathML"> <msubsup> <mi>D</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> <mo>,</mo> <mi>j</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo>:=</mo> <mstyle displaystyle="true"> <mfrac> <mn>1</mn> <mi>m</mi> </mfrac> </mstyle> <msubsup> <mi mathvariant="normal">&#x0394;<!-- Δ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> <mo>,</mo> <mi>j</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> </math>，if j=0.
+  - 当 j≠0 时，$ D_{i,j}^{(l)} \thinspace := \thinspace \frac{1}{m}(\Delta_{i,j}^{(l)} + \lambda \Theta_{i,j}^{(l)}), \thinspace if \thinspace $
+  - 当 j=0 时，$ D_{i,j}^{(l)} \thinspace := \thinspace \frac{1}{m}\Delta_{i,j}^{(l)} $
 
 大写的D矩阵用来表示θ矩阵的计算是不断叠加的，我们最终得到的偏导式子为：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mfrac>
-    <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi>
-    <mrow>
-      <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi>
-      <msubsup>
-        <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi>i</mi>
-          <mi>j</mi>
-        </mrow>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mo stretchy="false">(</mo>
-          <mi>l</mi>
-          <mo stretchy="false">)</mo>
-        </mrow>
-      </msubsup>
-    </mrow>
-  </mfrac>
-  <mi>J</mi>
-  <mo stretchy="false">(</mo>
-  <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-   <msubsup>
-    <mi>D</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>i</mi>
-      <mi>j</mi>
-    </mrow>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>l</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msubsup>
-</math>
-
-- Octave Demo
-
-
-
+$$
+\frac{\partial{J(\Theta)}}{\partial\Theta_{ij}^{(l)}} \thinspace = \thinspace D_{(ij)}^{(l)}
+$$
 
 ### Backpropagation Intuition
 
