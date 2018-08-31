@@ -2,13 +2,12 @@
 layout: post
 list_title: Javascript ES6-1
 title: Javascript ES6 Part 1
+categories: [JavaScript]
 ---
 
 ### Motavition
 
-补习一下ES6的知识，升级一下JavaScript的技能包。
-
-> 这篇及后面的文章不会覆盖所有ES6的特性
+补习一下ES6的知识，本文及后面的文章不会覆盖所有ES6的特性
 
 ### Let and Const
 
@@ -83,6 +82,7 @@ const savedFile = {
 function fileSummary({name,extension,size}){
     return `The file ${name}.${extension} is of size ${size}`
 }
+fileSummary(savedFile)
 ```
 如果`object`中有函数作为成员的话，destructing要格外小心，例如
 
@@ -105,7 +105,36 @@ getArea() //NaN
 ```
 此时当调用该函数时，由于对象并未创建，this指针并不存在，因此输出`NaN`
 
+### Spread operator
 
+ES6引入了`...`符号做集合类对象的展开，例如
+
+```javascript
+const books = ["Don Quixote", "The Hobbit", "Alice in Wonderland", "Tale of Two Cities"];
+console.log(...books); //Don Quixote The Hobbit Alice in Wonderland Tale of Two Cities
+```
+
+上述代码中，相当于取出了`books`中的所有object。再看一个例子，如果要连接两个Array，以前的做法为
+
+```javascript
+const fruits = ["apples", "bananas", "pears"];
+const vegetables = ["corn", "potatoes", "carrots"];
+const produce = fruits.concat(vegetables);
+console.log(produce);
+```
+使用Spread操作则可以将`fruits`和`vegetables`两个Array依次展开后再拼接
+
+```javascript
+const produce = [...fruits,...vegetables];
+console.log(produce); //[ 'apples', 'bananas', 'pears', 'corn', 'potatoes',` 'carrots' ]
+```
+
+
+### Resource
+
+- [Udacity ES6 Tutorial](https://classroom.udacity.com/courses/ud356)
+- [Udemy ES6 Tutorial](https://www.udemy.com/javascript-es6-tutorial)
+- [ECMAScript 6 入门](http://es6.ruanyifeng.com/)
 
 
 
