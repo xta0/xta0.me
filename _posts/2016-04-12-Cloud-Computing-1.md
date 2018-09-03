@@ -104,7 +104,7 @@ categories: [Cloud Compute]
     (reduce +'(1 4 9 6))
     ```
 
-### Map
+- **Map**
 
 Let's consider a sample application: Wordcount
 
@@ -157,7 +157,7 @@ public static class MapClass extands MapReduceBase implements Mapper<LongWritabl
 }
 ```
 
-### Reduce
+- **Reduce**
 
 Reduce processes and merges all the intermediate values associated per key
 
@@ -204,17 +204,17 @@ public static class ReduceClass extands MapReduceBase implements Reducer<Text,In
 
 ### Some Applications of MapReduce 
 
-- Distributed Grep:
+- **Distributed Grep**
     - Input: large set of files
     - Output: lines that match pattern
     - Map: Emits a line if it matches the supplied pattern
     - Reduce: Copies the intermediate data to output
-- Reverse Web-Link Graph
+- **Reverse Web-Link Graph**
     - Input: Web graph: tuples(a,b) where (page a -> page b)
     - Output: For each page, list of pages that link to it 
     - Map: Process web log and for each input`<source, target>`, outputs `<target, source>`
     - Reduce: emits `<target, list(source)>`
-- Sort
+- **Sort**
     - Input: Series of (key,value) pairs
     - Output: Sorted `<value>s`
     - Map: `<key,value>` -> `<value,_>`
@@ -228,11 +228,11 @@ public static class ReduceClass extands MapReduceBase implements Reducer<Text,In
 
 ### MapReduce Scheduling
 
-- For User:
+- **For User**
     1. Write a Map program(short), write a Reduce program(short)
     2. Submit job: wait for the result
     3. Need to know nothing about distributed programming
-- For System(Hadoop):
+- **For System(Hadoop)**
     1. Parallelize Map
     2. Transfer data from Map to Reduce
     3. Parallelize Reduce
