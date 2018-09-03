@@ -131,7 +131,7 @@ print(ref_count(id_b)) #0
 ```
 最后需要注意的是，被回收之后的`a,b`其地址仍然存在，但该地址是无效的，因为对象已经不存在了。
 
-### Important Node
+### Important Note
 
 上面讨论的内容，以及后面要讨论的内容均和Python的底层实现相关，这里我们是以标准的`CPython`作为引擎来研究Python。除了`CPython`之外，还有很多其他的Python引擎，比如
 
@@ -146,4 +146,5 @@ print(ref_count(id_b)) #0
 ### Resource
 
 - [Python wiki](https://en.wikipedia.org/wiki/List_of_Python_software#Python_implementations)
+- [Python Garbage collection in Python: things you need to know](https://rushter.com/blog/python-garbage-collector/)
 - [Python的各种引擎](https://en.wikipedia.org/wiki/List_of_Python_software#Python_implementations)

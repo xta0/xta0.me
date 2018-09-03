@@ -225,7 +225,7 @@ c #5
 
 ### Interning
 
-回顾前面的例子，对于两个具有相同值的Immutable对象，它们的内存是共享的，但某些情况下，却有例外，如右边代码所示
+回顾前面的例子，对于两个具有相同值的Immutable对象，它们的内存是共享的，但某些情况下，却有例外，如下面代码所示
 
 ```python
 a = 10 #0x10375e130
@@ -234,7 +234,7 @@ b = 10 #0x10375e130
 a=500 #0x1015ed110
 b=500 #0x1015ed030
 ```
-解释这个问题，需要理解Python的Interning机制，所谓Interning是Python编译器中的一种内存优化技术，它会"按需"的重用对象。不同版本的Python引擎对这个机制的实现不同，以标准的CPython为例，当执行Python代码前，会提前创建一批整型单例(Singletons)对象(范围从`[-5, 256]`)，并将他们缓存起来，当程序中需要使用这些数值，直接从缓存中取出而不会重新创建对象，这就是为什么`a,b`指向同一块内存地址的原因，对于缓存中没有的数值，则会重新创建一份，这是为什么`a,b`的值为`500`之后，它们各自指向了不同的地址。
+为了解释这个问题，需要理解Python的Interning机制，所谓Interning是Python编译器中的一种内存优化技术，它会"按需"的重用对象。不同版本的Python引擎对这个机制的实现不同，以标准的CPython为例，当执行Python代码前，会提前创建一批整型单例(Singletons)对象(范围从`[-5, 256]`)，并将他们缓存起来，当程序中需要使用这些数值，直接从缓存中取出而不会重新创建对象，这就是为什么`a,b`指向同一块内存地址的原因，对于缓存中没有的数值，则会重新创建一份，这是为什么`a,b`的值为`500`之后，它们各自指向了不同的地址。
 
 ```python
 a = -5 #0x10107af50
@@ -288,7 +288,7 @@ def my_func():
     f = ['a','b']*3
 ```
 
-对上述函数，Python会对其内存的常量进行提前求值，结果可以通过`my_func.__code__.co_consts`输出
+对上述函数，编译器会对函数中的常量表达式进行提前求值，求值结果可以通过`my_func.__code__.co_consts`输出
 
 ```
 (None, 
@@ -382,3 +382,8 @@ print('set:',end-start) #set: 0.04525098400000005
 
 {% include _partials/post-footer-1.html %}
 
+### Resource
+
+- [CPython](https://github.com/python/cpython)
+- [The internals of Python string interning](http://guilload.com/python-string-interning/)
+- [A Peephole Optimizer for Python](https://pdfs.semanticscholar.org/a456/b29641318e078c3780289a9ee688ff09e5d7.pdf)
