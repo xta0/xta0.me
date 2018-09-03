@@ -34,50 +34,43 @@ categories: [Cloud Compute]
     - Many, many more
 
 - Four features in Today's clouds
-
-1. Massive Scale
-2. On-demand access
-3. Data-Intensive Nature
-    - What was MBs has now become TBs, PBs and XBs
-4. New Cloud Programming Paradigms:
-
-
-- Massive Scale
-    - Facebook
-        - 30k servers in 2009
-        - 60k in 2010
-        - 180k in 2012
-    - Microsoft has 150k servers in 2008, growth rate of 10k per month, 80K total running Bing
+    1. **Massive Scale**
+        - Facebook
+            - 30k servers in 2009
+            - 60k in 2010
+            - 180k in 2012
+        - Microsoft has 150k servers in 2008, growth rate of 10k per month, 80K total running Bing
     - AWS EC2
         - 40k machines
         - 8 cores/machine
     - eBay
         - 50k machines
-
-- ON-Demand Access: *AAS
-    - HaaS: Hardware as a Service
-    - IaaS: Infrastructure as a Service
-        - You get access to flexible computing and storage infrastructure.Virtualization is one way of achieving this
-        - Amazon EC2, S3, Microsoft AZure
-    - Platform as a Service
-        - You get access to flexible computing and storage, coupled with a software platform
-        - Google's AppEngine(Python,Java,Go)
-    - SaaS: Software as a Service
-        - YOu get access to software services, when you need them.
-        - Google docs, MS Office on demand
-
-- New Cloud Programming Paradigms
-    - Google: MapReduce
-    - Amazon: Elastic MapReduce service(pay as you go)
-    - Google(MapReduce)
-        - Indexing a chain of 24 MapReducer Jobs
-        - 200k mapreduce jobs processing 50PB/month (in 2006)
-    - Yahoo(Hadoop + Pig)
-        - WebMap: a chain of 100 MapReduce jobs
-    - Facebook(Hadoop + Hive)
-        - 300 Tb total, adding 2TB/day (in 2008)
-        - 3k jobs processing 55TB/day
-    - NoSQL: MySQL is an industry standard, but Cassandra is 2400 times faster!
+    2. **On-demand access**
+        - HaaS: Hardware as a Service
+        - IaaS: Infrastructure as a Service
+            - You get access to flexible computing and storage infrastructure.Virtualization is one way of achieving this
+            - Amazon EC2, S3, Microsoft AZure
+        - Platform as a Service
+            - You get access to flexible computing and storage, coupled with a software platform
+            - Google's AppEngine(Python,Java,Go)
+        - SaaS: Software as a Service
+            - You get access to software services, when you need them.
+            - Google docs, MS Office on demand
+    3. **Data-Intensive Nature**
+        - What was MBs has now become TBs, PBs and XBs
+    4. **New Cloud Programming Paradigms**
+        - Google: MapReduce
+        - Amazon: Elastic MapReduce service(pay as you go)
+        - Google(MapReduce)
+            - Indexing a chain of 24 MapReducer Jobs
+            - 200k mapreduce jobs processing 50PB/month (in 2006)
+        - Yahoo(Hadoop + Pig)
+            - WebMap: a chain of 100 MapReduce jobs
+        - Facebook(Hadoop + Hive)
+            - 300 Tb total, adding 2TB/day (in 2008)
+            - 3k jobs processing 55TB/day
+        - NoSQL
+            - MySQL is an industry standard, but Cassandra is 2400 times faster!
 
 ### Distributed Systems
 
