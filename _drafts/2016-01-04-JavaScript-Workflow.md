@@ -1,0 +1,2 @@
+- [Setting up a TypeScript + Visual Studio Code development environment](http://blog.wolksoftware.com/setting-up-your-typescript-vs-code-development-environment)
+- [Gulp TypeScript](https://www.typescriptlang.org/docs/handbook/gulp.html)
