@@ -7,13 +7,62 @@ categories: [JavaScript]
 
 ### Symbol
 
-Symbol是新加入的原生数据类型，用来解决属性名冲突的问题，Symbol 值通过Symbol函数生成。这就是说，对象的属性名现在可以有两种类型，一种是原来就有的字符串，另一种就是新增的 Symbol 类型。凡是属性名属于 Symbol 类型，就都是独一无二的，可以保证不会与其他属性名产生冲突。
+Symbol是ES6中新加入的原生数据类型。一个Symbol类型的对象可以通过`Symbol`函数生成。`Symbol`函数也可以传入字符串，作为Symbol的名称，但是相同名字的Symbol彼此也是不同的对象
 
 ```javascript
+//create a symbol
+let s = Symbol();
+console.log(typeof s) // "symbol"
+
+//create a symbo with name
 const sym1 = Symbol('banana');
 const sym2 = Symbol('banana');
 console.log(sym1 === sym2); //false
 ```
+Symbol的这个特性可以用来取代硬编码的字符后者数字常量
+
+```javascript
+const COLOR_RED    = Symbol();
+const COLOR_GREEN  = Symbol();
+
+function getComplement(color) {
+  switch (color) {
+    case COLOR_RED:
+      return COLOR_GREEN;
+    case COLOR_GREEN:
+      return COLOR_RED;
+    default:
+      throw new Error('Undefined color');
+    }
+}
+```
+
+我们还可以使用Symbol消除同名属性
+
+```javascript
+const key1 = Symbol('greet');
+const key2 = Symbol('greet');
+let person = {
+    name: "James"
+}
+person[key1] = function(){
+    return this.name
+}
+person[key2] = function(msg){
+    return msg
+}
+console.log(person[key1]()) //James
+console.log(person[key2]("Some Message"))
+```
+上述代码为`person`添加两个同名的`greet`方法，由于使用`Symbol`方式添加，因此并不会造成同名函数的覆盖。注意，Symbol需要使用`[]`符号进行赋值或访问。
+
+使用Symbol添加的属性不会出现在`Object.keys(person)`、`Object.getOwnPropertyNames()`以及`JSON.stringify()`之中。但是，Symbol也不是私有属性，有一个`Object.getOwnPropertySymbols`方法，可以获取指定对象的所有 Symbol 属性名。
+
+```javascript
+console.log(Object.getOwnPropertySymbols(person));
+//[ Symbol(greet), Symbol(greet) ]
+```
+
 
 ### 迭代器
 
@@ -52,6 +101,27 @@ const task = new Promise((resolve, reject)=>{
 ### Proxy
 
 
+### Generator
+
+Generator是ES6引入的一种被动求值技术
+
+```javascript
+//generator function
+function* getEmployee() {
+    console.log('the function has started');
+
+    const names = ['Amanda', 'Diego', 'Farrin', 'James', 'Kagure', 'Kavita', 'Orit', 'Richard'];
+
+    for (const name of names) {
+        console.log(name);
+        yield; //new keyword
+    }
+
+    console.log('the function has ended');
+}
+```
+
+Generator和`for...of`
 
 ### Resource
 

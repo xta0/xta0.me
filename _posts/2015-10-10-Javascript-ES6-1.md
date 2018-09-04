@@ -395,8 +395,7 @@ myMaple.gatherSyrup();
 myMaple.changeSeason('spring');
 ```
 
-
-
+另外需要注意的一点是，在同一个class内，不允许同名函数的存在，即是它们签名不同，这点和ES5是相同的。
 
 ### Resource
 
