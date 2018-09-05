@@ -17,6 +17,7 @@ body {
     line-height: $line-height-base;
     color: $text-color;
     background: $body-bg-color;
+    font-weight: $font-weight-normal;
 
     @include mobile {
         padding-right: 0 !important;
