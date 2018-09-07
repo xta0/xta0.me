@@ -17,11 +17,11 @@ Coroutine翻译过来叫做<a href="http://zh.wikipedia.org/wiki/%E5%8D%8F%E7%A8
 
 > 设计编程语言的人缺乏对Coroutine的有效理解，而提出Coroutine的作者（Marlin）也只是在Simula中实现了Coroutine而且实现的超复杂。
 
-后来，有两伙人开始重拾Coroutine，一伙人提出了用Coroutine来实现非抢占式（non-preemptive）多线程，还取了一个名字叫：collaborative multithreading——协作式多线程。和传统的抢占式多线程（preemptive）相比，这种方式开销很小（因为不涉及到内核，所以不存在context switching带来的开销），又能规避线程带来的很多问题，在某些场景很有用。其中最具代表性的是Windows中的Fiber机制，<a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682661(v=vs.85).aspx">在MSDN中有描述</a>。另一伙人将Coroutine用到了脚本语言中，包括Python，Perl和Lua等，Python中的Generator的实现采用的就是Coroutine机制。在脚本语言中实现它的目的在于：可以摆脱对操作系统（内核）的依赖，而又能使脚本语言具有多线程编程的能力。
+后来，有两伙人开始重拾Coroutine，一伙人提出了用Coroutine来实现非抢占式（non-preemptive）多线程，还取了一个名字叫：collaborative multithreading——协作式多线程。和传统的抢占式多线程（preemptive）相比，这种方式开销很小（因为不涉及到内核，所以不存在context switching带来的开销），又能规避线程带来的很多问题，在某些场景很有用。其中最具代表性的是Windows中的Fiber机制，<a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682661(v=vs.85).aspx">在MSDN中有描述</a>。另一伙人将Coroutine用到了脚本语言中，包括Python，Perl和Lua等，Lua在当时是为数不多支持协程的语言，但是没有多少人知道，直到现在去Google搜索什么是协程，大多数的答案仍是以Python的Generator为分析的例子，而对于JavaScript，更是在ES6出来后，才提供了对协程的API（generator）的支持。这一方面说明Lua的小众，另一方面说明在Lua的应用场景中需要用到并发，而使用协程可以摆脱语言对操作系统（内核）的依赖，轻量级的实现多线程。
 
 ## Lua中的Coroutine
 
-Lua在当时是为数不多支持协程的语言，JavaScript在ES6出来后，才提供了Generator的API，其本质就是协程。接着我们来看看如何用Lua的语法来描述它，
+。接着我们来看看如何用Lua的语法来描述它，
 
 ```lua
 --learning lua--
