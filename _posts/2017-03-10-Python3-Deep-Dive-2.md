@@ -1,13 +1,9 @@
 ---
 title: 对变量的编译优化
-list_title: 深入理解Python | 对变量的编译优化 | Variables compiler optimizations
+list_title: 深入理解Python | 变量与内存(二) | Variables and Memory Part 2
 layout: post
 categories: [Python]
 ---
-
-## 常识
-
-在介绍Python对变量的编译优化前，我们先来复习下变量在Python中的一些常识
 
 ### Mutable & Immutable
 

@@ -1,7 +1,7 @@
 ---
 updated: "2016-08-06"
 title: 理解内存模型
-list_title: 深入理解Python | 内存模型 | Memory Model in Python
+list_title: 深入理解Python | 变量与内存(一) | Variables and Memory Part 1
 layout: post
 categories: [Python]
 ---
