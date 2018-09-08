@@ -1,6 +1,6 @@
 ---
 layout: post
-categories: [Web]
+categories: [HTML]
 title: HTML Basics
 list_title: Web Dev Bootcamp Part 1 | HTML Basics
 ---
@@ -183,7 +183,7 @@ list_title: Web Dev Bootcamp Part 1 | HTML Basics
 	- 使用`id`，`for`属性互相绑定 :`<input id="abc" type="text"> <label for="abc">username</label>`
 
 
-- 表单校验：使用`require`关键字
+- 表单校验,使用`require`关键字
 	- `<input type="email" required>`校验输入的是email格式
 	- `<input type="password" pattern=".{5,10}" required title="pwd must be between 5 and 10 characters">` 校验密码在5到10个字符
 
@@ -254,5 +254,8 @@ list_title: Web Dev Bootcamp Part 1 | HTML Basics
     <input type="password" name="password">
     <input type="submit" >
 </form>
-
 ```
+
+### Resource
+
+

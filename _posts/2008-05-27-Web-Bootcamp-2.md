@@ -2,6 +2,7 @@
 layout: post
 title: CSS Basics
 list_title: Web Dev Bootcamp Part 2 | CSS Basics
+categories: [CSS]
 ---
 
 ### 历史
@@ -10,7 +11,7 @@ list_title: Web Dev Bootcamp Part 2 | CSS Basics
 - 1998年5月第二个版本
 - 2007年第三个版本
 
-### Browser work flow 
+### Browser Workflow 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2007/08/work-flow.png">
 
@@ -350,3 +351,178 @@ h2 {
 	- `border-collapse` 
 		- `separate`：边框独立
 		- `collapse`：相邻边被合并 
+
+## Sass
+
+> Sass is a CSS **preprocessor**, an extension of CSS that adds power and elegance to the basic language
+
+### Features
+
+- **Variables**: for reusable values such as colors, font-sizes, spacing, etc;
+- **Nesting**: to nest selectors inside of one another, allowing us to write less code.
+- **Operators**: for mathematical operations right inside of CSS;
+- **Partials and imports**: to write CSS in different files and importing them all into one single file;
+- **Mixins**: to write reusable pieces of CSS code;
+- **Functions**: Similar to mixins, with the difference that they produce a value that can than be used;
+- **Extends**: to make different selectors inherit declarations that are common to all of them;
+- **Control directives**
+
+### Variable
+
+- SCSS允许在CSS文件中定义变量后使用：
+
+```css
+$color-primary: #f9ed69; //yellow
+
+nav{
+  background-color: $color-primary;
+ }
+```
+
+- 支持嵌套结构
+
+```css
+.navigation{
+  list-style: none;
+  float: left;
+  li {
+    display: inline-block;  
+    margin-left: 30px;
+    /* & 代表li */
+    &:first-child{
+      margin: 0;
+    }
+    a{
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+  }
+}
+```
+
+### Mixin
+
+提取公共样式组件,可传参
+
+```css
+@mixin style-link-text($color){
+  text-declaration: none;
+  text-transform: uppercase;
+  color: $color
+}
+```
+
+### Function
+
+- 使用内置function
+
+```css
+&:hover{
+background-color: lighten($color-tertiary,15%);
+}
+```
+
+- 使用自定义function
+
+```css
+@function divide($a, $b){
+  @return $a/$b;
+}
+```
+
+## Best Practice 
+
+### Overall Rules
+
+- Responsive Design
+	- Fluid layouts
+	- Media Queries
+	- Responsive images
+	- Correct units
+	- Mobile-first
+		- Font
+			- `@media`
+		- Responsive Image
+			- `picture`
+		
+- Maintainable and Scalable Code
+	- Clean
+	- Easy-to-understand
+	- Growth
+	- Reusable
+	- How to organize files
+	- How to name Classes
+	- How to structure HTML
+
+- Web Performance
+	- Less HTTP requests
+	- Less code
+	- Compress code 
+	- Use a CSS preprocessor
+	- Less images
+	- Compress images
+
+### Organize CSS Files
+
+- **7-1 Pattern**
+	- `base/`
+	- `components/`
+	- `layout/`
+	- `pages/`
+	- `themes/` 
+	- `abstracts/`
+	- `vendors/`
+
+### BEM Rule
+
+- **Block**
+	- 组件
+	- standalone component that is meaningful on its own
+	- `.block {}`
+- **Element**
+	- 组件中的元素
+	- part of a block that has no standalone meaning
+	- `.block__element {}`
+- **Modifier**
+	- 不同的组件版本
+	- a different version of a block or an element.
+	- `.block--modifier {}`
+
+### Center Element
+
+- 水平居中
+	- block element
+		- `text-align: center`
+			- 用于文本相关标签
+			- `p,h1,...`
+		- `margin-left:auto; margin-right:auto`
+			- 用在container上，比如`div`套一个`img`
+			- parent和child需要指定宽度或者有默认宽度
+
+```html
+<body>
+    <div class="text-wrap">
+        <div class="center">
+            <h1>Center Heading</h1>
+            <p>All my text in this section would be aligned left as default</p>
+        </div>
+    </div>
+</body>
+```
+```css
+.text-wrap {
+  width: 100%;
+}
+
+.center {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h1 {
+  text-align: center;
+}
+```
+
+## Resources
