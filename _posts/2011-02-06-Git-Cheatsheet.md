@@ -57,21 +57,25 @@ git reset path_to_the_file
 
 ```
 //本地创建新分支
-git branch some_branch
-//push
-git push origin some_branch
+git branch <branchName>
+//推动到远端
+git push origin <branchName>
 ```
 
-- 切分支
+- Checkout Remote Branch
 
 ```
-git branch branch_name
+git fetch
+git checkout -b <branchName>
 ```
 
 - 删除分支
 
 ```
-git branch -d branch_name
+//删除本地分支
+git branch -d <branchName>
+//删除远程分支
+git push origin --delete <branchName>
 ```
 
 - 合并

@@ -71,7 +71,10 @@
     flex-wrap: wrap;
 }
 .md-flex-space-between{
-    justify-content: space-between
+    justify-content: space-between;
+}
+.md-flex-space-around{
+    justify-content: space-around;
 }
 
 .md-flex-no-wrap{
