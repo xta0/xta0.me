@@ -133,8 +133,6 @@ categories: [Compiler]
 			
 ## Lexical Specifications
 
-- 用
-
 - LA的具体表现:
 	- keyword: "if" or "else" or "then" or ...
 		- 正则： `'i''f' + 'e''l''s''e'`
