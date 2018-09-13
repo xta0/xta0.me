@@ -141,6 +141,9 @@ def valid_pw(name,pw,hash_code):
     salt = h.split(',')[1]
     return h == make_pwd_hash(name,pwd,salt)
 ```
-在密码的加密算法上，sha256比较慢，可以选择使用bcrypt
+在密码的加密算法上，sha256比较慢，可以选择使用bcrypt。许多成熟的web framework自带`bcrypt`方法，
 
-<p class="md-center-p">（）</p>
+### Resource
+
+- [Intro to backend]()
+- []
