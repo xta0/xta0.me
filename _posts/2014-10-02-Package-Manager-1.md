@@ -212,11 +212,30 @@ $ pod deintegrate
 $ pod clean
 ```
 
+### 管理Pod Repo
+
+```shell
+pod repo list #查看pod源列表
+pod repo add xxx #增加源
+pod repo remote xxx #删除源
+```
+
 ### Resources
 
 - [Uninstalling PodFile form the Xcode project](https://medium.com/@satishios25/uninstalling-podfile-form-the-xcode-project-7e96874ae7f4)
 
-### Lua
+
+## NVM
+
+NVM是node.js的包管理系统
+
+### 解决VSCode命令行问题
+
+- [The Reason](https://github.com/Microsoft/vscode-docs/blob/master/docs/editor/integrated-terminal.md#why-is-nvm-complaining-about-a-prefix-option-when-the-integrated-terminal-is-launched)
+- [The Fix](https://github.com/creationix/nvm/issues/855)
+
+
+## Lua
 
 [LuaRocks]("http://luarocks.org/")是Lua的包管理系统，对于管理lua的module很方便，类似Ruby的gem。如果是Mac安装的时候可以使用HomeBrew，也可以手动安装。手动安装要费一点劲儿，由于我机器上已经安装了Lua5.2，装LuaRocks时怎么都不成功，原因是不兼容Lua5.2的Module，解决办法是，回退到Lua 5.1版本。
 
