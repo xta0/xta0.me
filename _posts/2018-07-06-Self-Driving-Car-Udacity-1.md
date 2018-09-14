@@ -7,6 +7,8 @@ categories: [AI,Autonomous-Driving]
 mathjax: true
 ---
 
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/sde-1.png">
+
 > Course Notes from Udacity Self-Driving Car Nanodegree Program
 
 ### 贝叶斯模型概述
@@ -178,6 +180,10 @@ $$
 3. 车轮指向右边
 
 我们可以通过这些数据来重新矫正车的位置（虽然现在还不知道该如何矫正，但是可以获得一些感性的认识），上面的例子中，矫正之后的点是`A`点。
+
+### 概率模型的Python实现
+
+接下来我们来用Python实现贝叶斯模型，首先需要明确的是如何用Python表示概率
 
 
 {% include _partials/post-footer-1.html %}

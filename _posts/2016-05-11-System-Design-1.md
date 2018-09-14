@@ -22,7 +22,7 @@ Github上有一个很全面的[System Design学习资料](https://github.com/don
 
 ## DNS
 
-DNS是域名系统，用来将域名解析为IP，通常DNS服务是由电信运营商提供。其原理简单来说就查表，每台DNS服务器检查自己的缓存中是否有有该域名所对应的IP，如果有则返回，如果没有则会去查ROOT DNS Server。当浏览器或者OS拿到DNS结果后，会根据TTL的时间对IP地址进行缓存。
+DNS是域名系统，用来将域名解析为IP，通常DNS服务是由电信运营商提供。其原理简单来说就查表，每台DNS服务器检查自己的缓存中是否有有该域名所对应的IP，如果有则返回，如果没有则会去查ROOT DNS Server，如果ROOT DNS Server还是没有，则返回`DNS unresolved error`。当浏览器或者OS拿到DNS结果后，会根据TTL的时间对IP地址进行缓存。
 
 例如，Chrome可通过`chrome://net-internals/#dns`地址查看缓存的DNS信息，对于OSX可通过下面命令查看某域名对应的IP地址，如果要查看完整的DNS缓存，可参考文章最后一节的参考文献。
 
