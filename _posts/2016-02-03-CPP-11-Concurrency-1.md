@@ -92,10 +92,11 @@ void runCode(){
 
 ### Join & Detach
 
-`join()`是`launch_thread`和`worker_thread`一个线程同步点，`launch_thread`会在调用`join()`后等待`worker_thread`执行完成后继续执行
+`join()`是`launch_thread`和`worker_thread`的一个线程同步点，`launch_thread`会在调用`join()`后等待`worker_thread`执行完成后继续执行
 
 ```cpp
 std::string p = "lambda";
+//using lambda expression as a callback function
 std::thread td([p]{cout<<p<<" thread is running"<<endl;});
 cout<<"lanched thread is running"<<endl;
 td.join();
