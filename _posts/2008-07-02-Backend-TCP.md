@@ -1,15 +1,15 @@
 ---
 layout: post
-list_title: TCP握手测试 | TCP Handshake Tests
+list_title: 端到端通信（一）| Client Server Communiction - TCP Handshake
 title: TCP Hand Shakes
 categories: [Network,Backend]
 ---
 
 快速看一下TCP connection的具体过程，简单写了一个TCP server 配合`wireshark`来做一些分析：
 
-<h2>建立三步握手</h2>
+### 建立三步握手
 
-- SYN
+- **SYN**
 
 C(client)向S（server）发送请求，SYN标志位为1，产生一个随机的32bit Seq Num:0x0b97d19c，TCP header如下：
 
@@ -25,7 +25,7 @@ Window size value: 65535
 Checksum: 0xfc9c [validation disabled]
 ```
 
-- ACK+SYN
+- **ACK+SYN**
 
 S收到后，将SYN和ACK标志位至为1，同时产生一个新的Seq Num：0x0f8baa6e和一个Ack Num：0x0b97d19d（C的Seq Num+1）
 
@@ -42,7 +42,7 @@ Window size value: 65535
 Checksum: 0xb0cc [validation disabled]
 ```
 
-- ACK
+- **ACK**
 
 C收到后，先校验Seq Num对不对，如果正确，将ACK标志位至为1，同时产生新的Ack Num为0x0f8baa6f(S的Seq Num+1)。
 
@@ -77,7 +77,7 @@ Checksum: 0xcf34 [validation disabled]
 Options: (12 bytes), No-Operation (NOP), No-Operation (NOP), Timestamps
 ```
 
-<h2>数据传输</h2>
+### 数据传输
 
 4个包交换完毕后，链接已经建立，然后C向S发数据："iam:a"。这个时候，PSH和ACK两个flag被置为1，PSH通知S有数据到来，需要写入。同时将数据装入TCP的data部分。由于有了data，下一条seq num的值要加上data的size（5）
 
@@ -121,7 +121,7 @@ Options: (12 bytes), No-Operation (NOP), No-Operation (NOP), Timestamps
 
 随后的一个包是S向C发的[PSH,ACK]，然后C应答[ACK]。过程同上。
 
-<h2>四次挥手</h2>
+### 四次挥手
 
 TCP结束时需要四个包，假设C向S请求关闭连接。S会向C发送[FIN,ACK]:
 
@@ -156,3 +156,5 @@ Checksum: 0x3485 [validation disabled]
 ```
 
 S收到后，会给C一个[ACK]，然后连接终止。
+
+## Resources

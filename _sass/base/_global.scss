@@ -58,6 +58,10 @@ h2, h3, h4, h5, h6 {
     }
 }
 
+h2 {
+    border-bottom: solid 1px $grey-light;
+}
+
 p {
     margin: 0 0 20px 0;
 }
@@ -117,7 +121,7 @@ dd {
     padding: 0;
 }
 
-ol,ul{
+ol,ul {
     padding-left: 20px;
 }
 

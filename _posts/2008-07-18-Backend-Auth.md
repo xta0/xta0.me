@@ -1,8 +1,8 @@
 ---
 updated: "2018-08-04"
 layout: post
-title: Cookies
-list_title: Backend用户认证 | Cookies
+title: Authentication
+list_title: 端到端通信（三）| Client Server Communiction - Authentication
 categories: [Network,Backend]
 ---
 
@@ -105,7 +105,7 @@ hash_code = hmac.new(secret_key,cookie).hexdigest()
 #f2b280549c1c9edb18d5500d6c01ea51
 ```
 
-### Password
+## Password
 
 Hash password的方法和cookie类似，对明文密码 + 一个随机数（salt）进行hash
 
@@ -143,7 +143,23 @@ def valid_pw(name,pw,hash_code):
 ```
 在密码的加密算法上，sha256比较慢，可以选择使用bcrypt。许多成熟的web framework自带`bcrypt`方法，
 
-### Resource
+## OAuth2
+
+OAuth是使用第三方平台进行认证，其认证流程图如下
+
+{% include _partials/components/lightbox.html param='/assets/images/2008/07/oauth2-passport.png' param2='1' %}
+
+如果使用Node.js，可以使用`passport`帮助我们完成绝大部分的工作，`passport`由两部分构成，一部分是`passport`核心库，用来处理登录逻辑，另一部分是`passpoart strategy`用来支持各类登录策略，比如JWT，OAuth等等。上述两个framework分别为
+
+```shell
+npm install --save passport passport-google-oauth20
+```
+
+
+## JWT
+
+JWT是JSON Web Token的缩写，它可以解决
+
+## Resource
 
 - [Intro to backend]()
-- []
