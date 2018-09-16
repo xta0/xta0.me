@@ -1,8 +1,8 @@
 ---
 layout: post
-list_title: 谈谈 C++ 中的多线程 | Concurrency in C++ | 线程管理 | Thread management
+list_title: 谈谈 C++ 中的多线程 | Concurrency in C++ | 线程管理 | Managing Threads
 title: 线程管理 
-sub_title: Thread management & Share data between threads
+categories: [C++, Concurrency, Thread]
 ---
 
 ### Lunching Thread
@@ -62,7 +62,7 @@ int __libcpp_thread_create(__libcpp_thread_t *__t, void *(*__func)(void *),
   return pthread_create(__t, 0, __func, __arg);
 }
 ```
-`std::thread`的构造函数中前两个参数均为右值引用，第二个参数将传入的lambda表达式或者functor通过`__thread_proxy<_Gp>`转化成C函数指针（`void *(*__func)(void *)`，这个问题可参考[之前对C++11中 `move`语义的介绍]()。`std::thread`对象在创建后，如果不做其它操作，线程立刻执行，这里称这个线程为`worker_thread`，称发起`worker_thread`的线程为`launch_thread`。
+`std::thread`的构造函数中前两个参数均为右值引用，第二个参数将传入的lambda表达式或者functor通过`__thread_proxy<_Gp>`转化成C函数指针（`void *(*__func)(void *)`，这个问题可参考[之前对C++11中 `move`语义的介绍](https://xta0.me/2009/08/30/CPP-Basics-3.html)。`std::thread`对象在创建后，如果不做其它操作，线程立刻执行，这里称这个线程为`worker_thread`，称发起`worker_thread`的线程为`launch_thread`。
 
 如果`std::thread`对像在被销毁前未执行`join()`或`detach()`操作，则在其析构函数中会调用`std::terminate`造成系统崩溃。因此需要确保所有创建的`std::thread`对象都能被正常释放，在《C++ Concurrency in Action》中，提到了一种方法：
 
