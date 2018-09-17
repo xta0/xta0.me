@@ -7,7 +7,11 @@ categories: [Regular Expression]
 
 ## Overview
 
--  Regular Expressions Engines
+- 1956年 早起版本的正则语言首次出现，并运用到有限状态机理论中
+- 1968年 正则表达式开始兴起，在文本编辑器和语义分析中
+- 1980年 Perl中正则表达式提供了更多功能，并逐步标准化
+- 1997年 Perl Compatible Regular Expressions被提出，统一了正则表达式的实现方式
+- Regular Expressions Engines
     - C/C++
     - .NET
     - PHP
@@ -36,20 +40,7 @@ categories: [Regular Expression]
     - Multi Line Mode: `/regex/m`
 
 - Meta Characters
-    - `*`
-    - `+`
-    - `-`
-    - `!`
-    - `=`
-    - `()`
-    - `{}`
-    - `[]`
-    - `^`
-    - `$`
-    - `|`
-    - `?`
-    - `:`
-    - `\`
+    - [`*`,`+`,`-`,`!`,`=`,`()`,`{}`,`[]`,`^`,`$`,`|`,`?`,`:`,`\`]
 
 ## Syntax
 

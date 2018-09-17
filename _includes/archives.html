@@ -7,7 +7,7 @@
             {% assign post_year = post.date | date: "%Y" %}
             {% if post_year != year %}
                 {% assign year = post_year %}
-                <h2 class="page-archive__main__year">{{post_year}}</h2>
+                <h3 class="page-archive__main__year">{{post_year}}</h3>
             {%endif%}
             <li>{% include _partials/components/date.html %}<a href="{{site.baseurl}}{{post.url}}">{{post.list_title}}</a></li>
         {% endunless %}

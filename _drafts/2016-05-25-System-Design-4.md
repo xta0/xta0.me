@@ -14,7 +14,10 @@ categories: [backend]
 - Transparancy
 
 
-### NoSQL Systems
+### NoSQL DataBase
+
+
+### Consistent Hashing
 
 
 

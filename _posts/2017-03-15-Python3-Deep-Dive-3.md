@@ -1,5 +1,5 @@
 ---
-title: 对变量的编译优化
+title: Python中的函数（一）
 list_title: 深入理解Python | 函数（一) | Function Part 1
 layout: post
 categories: [Python]

@@ -1,8 +1,8 @@
 ---
 layout: post
-list_title: 谈谈 C++ 中的多线程 | Concurrency in C++ | 数据共享 | Mutex
+list_title: 谈谈 C++ 中的多线程 | Concurrency in C++ | 数据共享 | Sharing Data
 title: 线程间共享数据 
-categories: [C++]
+categories: [C++, Concurrency, Thread]
 ---
 
 如果有某种数据需要被两个线程共享，如果该数据是`read-only`则没有问题，如果是可读写的，则会有几率出现`race condition`的情况，即一个线程在进行读操作时，另一个线程在进行写操作，这时对于读操作的线程将有机率读到不完整的数据。共享数据对于多线程来说是一个很经典的问题，解决这个问题的办法有很多种，比如设计无锁的数据结构，使用原子操作等，这些将在后面的文章中做具体分析，本节将先介绍最基本的互斥锁

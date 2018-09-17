@@ -7,7 +7,7 @@ categories: [iOS]
 
 iOS开发中的UI位置计算是一直是一件令人头痛的事情，尤其是对于比较复杂的页面，一个UI元素的位置的计算需要依赖其它UI元素，而且布局规则复杂，边界条件很多，这种情况下写出来的代码不仅难以阅读，而且更难维护，相信很多iOS程序员都曾遇到过这种情况。
 
-FlexLayout是我们团队研发的一套基于[flex模型](https://css-tricks.com/snippets/css/a-guide-to-flexbox/)的相对布局系统，它可以有效的降低View位置计算的复杂度。在iOS上实现真正意义上的相对布局。
+[FlexLayout](https://github.com/Vizzle/VZFlexLayout)是我们团队研发的一套基于[CSS FlexBox模型](https://css-tricks.com/snippets/css/a-guide-to-flexbox/)的相对布局系统，它可以有效的降低View位置计算的复杂度。在iOS上实现真正意义上的相对布局。
 
 FlexLayout提供一组声明式(declarative)的API来描述一个UI组件(Node或Component)的结构，属性，相对位置等信息；通过一个pure function将数据映射为一组对数据的描述；开发者只需要像设计师一样描绘页面"长什么样"而不用思考具体的实现方式。
 
