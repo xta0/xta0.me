@@ -14,7 +14,7 @@ GCD和NSOperationQueue出来以后，developer可以不直接操纵线程，而�
 
 推荐一个不错的<a href="http://www.collegedj.net/wp-content/uploads/">图片测试网站</a>。
 
-### 非并发
+### 异步下载
 
 先从NSOperationQueue最简单的用法开始：
 
@@ -28,22 +28,16 @@ GCD和NSOperationQueue出来以后，developer可以不直接操纵线程，而�
     }];
 ```
 
-上面我们直接用main queue去下图，因此这段代码并没有实现异步的效果，下载图片是在主线程中完成的：
-log输出为：
+上面我们直接用主线程去下图，因此这段代码并没有实现异步的效果log输出为：
 
-<code> is main thread : 1</code>
+```shell
+is main thread : 1
+```
 
-我们通常不会在主线程中去下图片。
-因此我们想到了把上面代码改一改，改成异步的：
-
-首先创建一个NSOperationQueue：
+常识告诉我们，不要在主线程中去下图片，于是我们想到了把上面代码改成使用异步线程去完成下载工作，我们先考虑使用`NSOperationQueue`:
 
 ```objc
 _opQueue = [[NSOperationQueue alloc]init];
-```
-然后将上面代码改成：
-
-```objc 
 [_opQueue addOperationWithBlock:^{
        
         NSThread* thread = [NSThread currentThread];
@@ -58,29 +52,24 @@ _opQueue = [[NSOperationQueue alloc]init];
     }];
 ```
 
-bingo!
-
-但使用这种方式基本上和使用GCD相比没任何优势，使用GCD代码还更顺手：
+这种写法和使用GCD相比没任何优势，使用GCD代码写起来还更顺手：
 
 ```objc
 - (void)downloadWithGCD
 {
     dispatch_async(_gcdQueue, ^{
-        
         NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url4]];
-       
         dispatch_async(dispatch_get_main_queue(), ^{
-            
             self.imgv4.image = [UIImage imageWithData:data];
              NSLog(@"done downloading 3rdimage ");
-            
         });
-        
     });
 }
 ```
 
-下面我们再来讨论下NSOperationQueue的控制性：假设我们有两张图要下载，第二张要在第一张完成后再去下载：
+## 线程同步
+
+接下来我们再对比一下GCD和NSOperation对线程的控制性，假设我们有两张图要下载，第二张要在第一张完成后再去下载，显然这是一个线程同步的问题，我们先用NSOperation来实现
 
 ```objc
 - (void)downloadWithNSOperationDependency
@@ -108,26 +97,22 @@ bingo!
 }
 ```
 
-同样的,使用GCD也可以实现类似的控制，我们用GCD来实现上面的代码：
+上述代码中`op2`将在`op1`执行完成后执行。接下来我们使用GCD来完成同样的任务，仅就上面的case来说，使用GCD有很多种方式，比如最常用的就是使用一个串行队列，当第一个下载block执行完后在启动第二个block进行下载，这种方式太过简单，这里就不做过多介绍，下面给出一种使用`dispatch_group`的方式，这种方式略显笨拙，但是可以展示如何使用GCD来做线程同步
 
-```
+```objc
 - (void)downloadWithGCDGroups
 {
     dispatch_group_t group = dispatch_group_create();
     dispatch_queue_t queue = dispatch_get_global_queue(0, 0);
     dispatch_group_async(group, queue, ^(){
-        
         NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url3]];
         dispatch_group_async(group, dispatch_get_main_queue(), ^(){
             self.imgv3.image = [UIImage imageWithData:data];
         });
     });
-    
     // This block will run once everything above is done:
-    dispatch_group_notify(group, dispatch_get_main_queue(), ^(){
-        
+    dispatch_group_notify(group, dispatch_get_main_queue(), ^(){ 
         dispatch_async(_gcdQueue, ^{
-            
             NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url4]];
             dispatch_async(dispatch_get_main_queue(), ^{
                 self.imgv4.image = [UIImage imageWithData:data];   
@@ -136,12 +121,34 @@ bingo!
     });
 }
 ``` 
+在实际项目中，我们不会书类似写上面的代码。实际上`dispatch_group`的作用很大，它上提供了一个线程同步点，即当`group`内的所有线程都执行完成后，再通知外部。因此，通常情况下，`dispatch_group`的用法如下：
 
-复杂度是不是差不多？
+```objc
+dispatch_queue_t queue = dispatch_get_global_queue( 0, 0 );
+    dispatch_group_t group = dispatch_group_create();
+    dispatch_group_enter(group);
+    dispatch_async( queue, ^{
+        NSLog( @"task 1 finished: %@", [NSThread currentThread] );
+        dispatch_group_leave(group);
+    } );
+    dispatch_group_enter(group);
+    dispatch_async( queue, ^{
+        NSLog( @"task 2 finished: %@", [NSThread currentThread] );
+        dispatch_group_leave(group);
+    } );
+    dispatch_group_notify( group, queue, ^{
+        NSLog( @"all task done: %@", [NSThread currentThread] );
+    } );
+```
+如果考虑控制线程，相比GCD来说NSOperation是个更好的选择，它提供了很多GCD没有的高级用法：
 
-因此，我个人觉得，在非并发的情况下，使用NSOperationQueue的优势不大，使用GCD还更顺手些。
+1. Operation之间可指定依赖关系
+2. 可指定Operation的优先级
+3. 可以Cancel正在执行的任务
+4. 可以使用KVO观察对任务状态：`isExecuteing`、`isFinished`、`isCancelled`
 
-### 并发
+
+### NSOperationQueue与线程池
 
 下面我们在来观察并发的情况，这也是今天重点要讨论的。我们先从NSOperationQueue的并发模型开始：
 
