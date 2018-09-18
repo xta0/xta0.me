@@ -5,8 +5,6 @@ title: 理解iOS中的线程池
 categories: [iOS]
 ---
 
-<em></em>
-
 在GCD和NSOperationQueue之前，iOS使用线程一般是用NSThread，而NSThread是对<a title="POSIX THREAD" href="http://en.wikipedia.org/wiki/POSIX_Threads">POSIX thread</a>的封装,也就是pthread，本文最后会面附上一段使用pthread下图片的代码，现在我们还是继续上面的讨论。使用NSThread的一个最大的问题是：直接操纵线程，线程的生死完全交给developer控制，在大的工程中，模块间相互独立，假如A模块并发了8条线程，B模块同样需要6条线程，以此类推，线程数量会持续增长，最终会导致难以控制的结果。
 
 GCD和NSOperationQueue出来以后，developer可以不直接操纵线程，而是将所要执行的任务封装成一个unit丢给线程池去处理，线程池会有效管理线程的并发，控制线程的生死。因此，现在如果考虑到并发场景，基本上是围绕着GCD和NSOperationQueue来展开讨论。GCD是一种轻量的基于block的线程模型，使用GCD一般要注意两点：一是线程的priority，二是strong reference cycle的问题。NSOperationQueue是对GCD更上一层的封装，它对线程的控制更好一些，但是用起来也麻烦一些。关于这两个孰优熟劣，仁者见仁智者见智了：<a title="GCD vs NSOperation" href="http://stackoverflow.com/questions/10373331/nsoperation-vs-grand-central-dispatch">stackoverflow:GCD vs NSopeartionQueue</a>。
@@ -16,7 +14,7 @@ GCD和NSOperationQueue出来以后，developer可以不直接操纵线程，而�
 
 推荐一个不错的<a href="http://www.collegedj.net/wp-content/uploads/">图片测试网站</a>。
 
-###Non-concurrent Situation###
+### 非并发
 
 先从NSOperationQueue最简单的用法开始：
 
@@ -143,25 +141,22 @@ bingo!
 
 因此，我个人觉得，在非并发的情况下，使用NSOperationQueue的优势不大，使用GCD还更顺手些。
 
-###Concurrent Situation###
+### 并发
 
-下面我们在来观察并发的情况，这也是今天重点要讨论的。
-我们先从NSOperationQueue的并发模型开始：
+下面我们在来观察并发的情况，这也是今天重点要讨论的。我们先从NSOperationQueue的并发模型开始：
 
-这里是apple关于并发NSOperationQueue的<a href="https://developer.apple.com/library/mac/documentation/general/conceptual/concurrencyprogrammingguide/OperationObjects/OperationObjects.html#//apple_ref/doc/uid/TP40008091-CH101-SW1">Guideline</a>：
+这里是apple关于并发NSOperationQueue的[Guideline]("https://developer.apple.com/library/mac/documentation/general/conceptual/concurrencyprogrammingguide/OperationObjects/OperationObjects.html#//apple_ref/doc/uid/TP40008091-CH101-SW1");
 
 总结一下，要点有这么几条：
 
-- 如果要求concurrent，那么NSOperation的生命周期要自己把控
-
-- 并发的operation要继承NSOperation而且必须override这几个方法：
-start，isExecuting，isFinished，isConcurrent
-
-- 复写isExecuting和isFinished要求：
+1. 如果要求concurrent，那么NSOperation的生命周期要自己把控
+2. 并发的operation要继承NSOperation而且必须override这几个方法：
+    - `start`，`isExecuting`，`isFinished`，`isConcurrent`
+3. 复写`isExecuting`和`isFinished`要求：
 	- 线程安全
 	- 手动出发kvo通知
 
-满足这三点，就可以使用NSOperationQueue并发了，我们先按照guide line创建一个NSOperation：
+满足这三点，就可以使用NSOperationQueue并发了，我们先按照上面的要求创建一个`NSOperation`：
 
 
 ```objc 
@@ -251,16 +246,16 @@ start，isExecuting，isFinished，isConcurrent
 @end
 ```
 
-首先我们按照apple的guide line完成了MXOperation的并发代码。其次我们在start的方法中，给当前线程增加了name，方便观察。然后使用NSData去下载图片，图片下载完成后通过KVO通知OperationQueue任务完成。最后我们在delloc的方法中，观察当前active的线程情况。
+首先我们按照要求完成了`MXOperation`的并发代码。其次我们在`start`的方法中，给当前线程增加了name，方便观察。然后使用`NSData`去下载图片，图片下载完成后通过`KVO`通知`OperationQueue`任务完成。最后我们在`delloc`的方法中，观察当前`active`的线程情况。
 
-currentThreadInfo和dumpThreads两个工具函数，涉及到了kernel的一些api，作用是用来查看当前线程的状态：
+`currentThreadInfo`和`dumpThreads`两个工具函数，涉及到了kernel的一些API，作用是用来查看当前线程的状态：
 
-```
+```c
 static inline void currentThreadInfo(NSString* str)
 {
     if (str)
         NSLog(@"---------%@----------",str);
-    
+
     NSThread* thread = [NSThread currentThread];
     mach_port_t machTID = pthread_mach_thread_np(pthread_self());
     NSLog(@"current thread num: %x thread name:%@", machTID,thread.name);
@@ -290,7 +285,7 @@ static inline void dumpThreads(NSString* str) {
 
 然后我们来并发下载4张图片，图片大小在100kb左右：
 
-```
+```objc
 // Do any additional setup after loading the view, typically from a nib.
    NSArray* urls = @[@"http://www.collegedj.net/wp-content/uploads/2010/10/6.jpg",
                      @"http://www.collegedj.net/wp-content/uploads/2010/10/Rihanna.jpg",
@@ -305,13 +300,9 @@ static inline void dumpThreads(NSString* str) {
    }
     
 ```
+观察日志输出:
 
-Finally！
-Command + B ! Command + R ！
-
-log:
-
-```
+```shell
 ---------start----------
 ---------start----------
 ---------start----------
@@ -384,47 +375,44 @@ mach thread 6303: getname: com.apple.CFSocket.private
 
 有种眼花缭乱的感觉，静下心慢慢看：
 
-我们首先并发了4个线程：
+1. 我们首先并发了4个线程：
 
-```
----------start----------
-current thread num: 1403 thread name:0
----------start----------
-current thread num: 3307 thread name:1
----------start----------
-current thread num: 3603 thread name:2
----------start----------
-current thread num: 3703 thread name:3
+    ```shell
+    ---------start----------
+    current thread num: 1403 thread name:0
+    ---------start----------
+    current thread num: 3307 thread name:1
+    ---------start----------
+    current thread num: 3603 thread name:2
+    ---------start----------
+    current thread num: 3703 thread name:3
+    ```
 
-```
+线程`id`是系统分配的，线程名字是我们自定义的，用`0-3`去标识
 
-线程id是系统分配的，线程名字是我们自定义的，用0-3去标识
+2. 然后，图片下载完成后，`MXOperation`被释放掉：
 
-然后，图片下载完成后，MXOperation被释放掉：
+    ```shell
+    ---------dealloc----------
+    current thread num: 1403 thread name:0
+    mach thread a0b: getname: 
+    mach thread d03: getname: 
+    mach thread 1403: getname: 0
+    mach thread 3307: getname: 1
+    mach thread 3603: getname: 2
+    mach thread 3703: getname: 3
+    mach thread 3f03: getname: com.apple.NSURLConnectionLoader
+    mach thread 4007: getname: 
+    mach thread 4707: getname: 
+    mach thread 6203: getname: 
+    mach thread 6303: getname: com.apple.CFSocket.private
+    ```
 
-```
----------dealloc----------
-current thread num: 1403 thread name:0
-mach thread a0b: getname: 
-mach thread d03: getname: 
-mach thread 1403: getname: 0
-mach thread 3307: getname: 1
-mach thread 3603: getname: 2
-mach thread 3703: getname: 3
-mach thread 3f03: getname: com.apple.NSURLConnectionLoader
-mach thread 4007: getname: 
-mach thread 4707: getname: 
-mach thread 6203: getname: 
-mach thread 6303: getname: com.apple.CFSocket.private
+这个时候可以看到：当前线程`id`为`1403`，我们标识其为0号，同时存在的线程还有1，2，3和一些包括主线程在内，获取不到名字的线程。然后有两个是网络请求的线程。
 
-```
-
-这个时候可以看到：当前线程id为1403，我们标识其为0号，同时存在的线程还有1，2，3和一些包括主线程在内，获取不到名字的线程。然后有两个是网络请求的线程。
-
-So far， So good，没什特别的地方。然后我们再下载两张图：
+到目前为止，结果复合预期，没什特别的地方。接着我们再下载两张图：
 
 ```objc
-
 NSArray* urls = @[ @"http://www.collegedj.net/wp-content/uploads/2010/10/3-150x150.jpg",
                        @"http://www.collegedj.net/wp-content/uploads/2010/10/3-300x199.jpg"];
     
@@ -434,12 +422,9 @@ NSArray* urls = @[ @"http://www.collegedj.net/wp-content/uploads/2010/10/3-150x1
      [_queue addOperation:operation];
  }
 ```
-注意，这里并没有指定其name，我们要验证thread id
+注意，这里并没有指定其name，我们要验证thread id，观察日志输出结果：
 
-Command + B ! Command + R ！
-log:
-
-```
+```shell
 --------again-----------
 ---------start----------
 ---------start----------
@@ -485,13 +470,11 @@ mach thread 6b03: getname:
 
 我们发现重新下载的两条线程id分别为：
 
-```
-
+```shell
 ---------start----------
 current thread num: 1403 thread name:
 ---------start----------
 current thread num: 3307 thread name:
-
 ```
 
 这说明NSOperationQueue的线程池起了作用，1403和3307线程在下载完后，率先进入休眠状态，有新任务来时，两条线程再次被唤醒，而不是重新再起线程。为了验证这个的判断，我们来改一下NSOperationQueue的并发数：
@@ -502,7 +485,7 @@ _queue.maxConcurrentOperationCount = 3;
 ```
 然后我们下载6张图：
 
-```
+```objc
 NSArray* urls = @[@"http://www.collegedj.net/wp-content/uploads/2010/10/1-150x150.jpg",
                       @"http://www.collegedj.net/wp-content/uploads/2010/10/Rihanna.jpg",
                       @"http://www.collegedj.net/wp-content/uploads/2010/10/chris-brown.jpg",
@@ -512,8 +495,7 @@ NSArray* urls = @[@"http://www.collegedj.net/wp-content/uploads/2010/10/1-150x15
                     ];
 ```
 
-Command + B ! Command + R ！
-log:
+再次观察日志:
 
 ```
 ---------start----------
@@ -542,7 +524,7 @@ current thread num: 3d07 thread name:5
 
 最后，我们图片全部下载完，清空这个线程池：
 
-``` 
+``` objc
 [_queue cancelAllOperations];
     _queue = nil;
     dumpThreads(@"finish");
@@ -561,11 +543,7 @@ mach thread 5b03: getname: com.apple.CFSocket.private
 ```
 这个结果也在我们意料之中，所有线程池创建的线程全被销毁，只留下一个主线程，一个不知道名字的线程，两个网络请求的线程。
 
-以上我们通过log将NSOperationQueue调度线程的过程完整的展示了一遍。
-
-That's all
-
------------------------------------------------------------------------------------
+## Resource
 
 //附：pthread代码：
 

@@ -208,12 +208,3 @@ Alice向Bob索要证书的过程称为TLS的握手阶段，握手流程如下：
 - [SSL Handshakes and HTTPs Bindings on IIS](https://blogs.msdn.microsoft.com/kaushal/2013/08/02/ssl-handshake-and-https-bindings-on-iis/)
 
 
-
-
-
-
-
-## Resources 
-
-
-
