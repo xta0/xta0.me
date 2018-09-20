@@ -122,11 +122,55 @@ void traverse (BinaryTreeNode<T>* root){
 
 上面介绍的递归遍历是一种简洁并很好理解的算法，而且编译器也会在递归过程中做一些优化，因此效率并不会太差，但是对树层次很深的情况下，可能会有StackOverflow的隐患，此时可以将递归解法转为非递归的迭代解法。
 
-对于二叉树的迭代遍历，有很多种方法，这里重点介绍一种左支链下降法，其余方法附在本文最后
-
 - 前序遍历
 
-前序遍历比较简单，这里还有另一种沿左链下降的方法
+```cpp
+template<class T>
+void BinaryTree<T>::None_Recursive_1(BinaryTreeNode<T>* root){
+    stack<BinaryTreeNode<T>* > ss;
+    BinaryTreeNode<T>* pointer = root;
+    ss.push(NULL);// 栈底监视哨
+    while(pointer){
+        Visit(pointer->value()); //遍历节点
+        if(pointer->rightchild()!=NULL){
+            ss.push(pointer->rightchild()); //如果该节点有右子树，入栈
+        }
+        if(pointer->leftchild()!=NULL){ //循环遍历左子树
+            pointer = pointer->leftchild();
+        }else{
+            pointer = ss.top(); //右子树
+            ss.pop();
+        }
+    }
+}
+```
+
+也可以通过判断栈是否为空作为循环条件，思路为：
+
+1. 将根节点放入栈中
+2. 判断栈是否为空，如果不空，取出栈顶节点访问
+3. 如果该节点有右子树，入栈右子树
+4. 如果该节点有左子树，入栈左子树
+5. 重复第2步
+
+```cpp
+template<class T>
+void BinaryTree<T>::None_Recursive_2(BinaryTreeNode<T>* root){
+    stack<BinaryTreeNode<T>* > ss;
+    ss.push(node);
+    while(!ss.empty()){
+        BinaryTreeNode<T>* top = ss.top();
+        Visit(top);
+        ss.pop();
+        if(top->right){
+            ss.push(top->right); //先入栈右子树节点
+        }
+        if(top->left){ 
+            ss.push(top->left); //后入栈左子树节点
+        }
+    }
+}
+```
 
 - 中序遍历
 
@@ -331,69 +375,6 @@ BinaryTreeNode<T>* Parent(BinaryTreeNode<T>* root, BinaryTreeNode<T>* current){
 
 ### Resources
 
-- [How Gzip uses Huffman coding](https://jvns.ca/blog/2015/02/22/how-gzip-uses-huffman-coding/)
-- [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
-- [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)
-- [算法与数据结构-1-北大-Cousera](https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome)
-- [算法与数据结构-2-北大-Cousera](https://www.coursera.org/learn/gaoji-shuju-jiegou/home/welcome)
-- [算法与数据结构-1-清华-EDX](https://courses.edx.org/courses/course-v1:TsinghuaX+30240184.1x+3T2017/course/)
-- [算法与数据结构-2-清华-EDX](https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/)
-- [算法设计与分析-1-北大-Cousera](https://www.coursera.org/learn/algorithms/home/welcome)
-- [算法设计与分析-2-北大-EDX](https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/)
-
-### 附：二叉树的几种迭代遍历方法
-
-- 前序遍历
-
-```cpp
-template<class T>
-void BinaryTree<T>::None_Recursive_1(BinaryTreeNode<T>* root){
-    stack<BinaryTreeNode<T>* > ss;
-    BinaryTreeNode<T>* pointer = root;
-    ss.push(NULL);// 栈底监视哨
-    while(pointer){
-        Visit(pointer->value()); //遍历节点
-        if(pointer->rightchild()!=NULL){
-            ss.push(pointer->rightchild()); //如果该节点有右子树，入栈
-        }
-        if(pointer->leftchild()!=NULL){ //循环遍历左子树
-            pointer = pointer->leftchild();
-        }else{
-            pointer = ss.top(); //右子树
-            ss.pop();
-        }
-    }
-}
-```
-
-也可以通过判断栈是否为空作为循环条件，思路为：
-
-1. 将根节点放入栈中
-2. 判断栈是否为空，如果不空，取出栈顶节点访问
-3. 如果该节点有右子树，入栈右子树
-4. 如果该节点有左子树，入栈左子树
-5. 重复第2步
-
-```cpp
-template<class T>
-void BinaryTree<T>::None_Recursive_2(BinaryTreeNode<T>* root){
-    stack<BinaryTreeNode<T>* > ss;
-    ss.push(node);
-    while(!ss.empty()){
-        BinaryTreeNode<T>* top = ss.top();
-        Visit(top);
-        ss.pop();
-        if(top->right){
-            ss.push(top->right); //先入栈右子树节点
-        }
-        if(top->left){ 
-            ss.push(top->left); //后入栈左子树节点
-        }
-    }
-}
-```
-
-### Resources
 
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
 - [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)
