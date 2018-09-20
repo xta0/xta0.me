@@ -1,8 +1,8 @@
 ---
 layout: post
-list_title: 数据库原理（二） | Database System | SQL syntax
+list_title: SQL简明操作 | SQL Syntax Quick Reference
 title: SQL Syntax
-categories: [Database,Backend]
+categories: [Database,Backend,SQL]
 mathjax: true
 ---
 

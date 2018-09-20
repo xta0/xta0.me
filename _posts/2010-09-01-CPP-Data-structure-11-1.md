@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Data Structre Part 10 | 索引-1 | Indexing-1
+list_title: Data Structre Part 10 | 索引 | Indexing
 title: 静态索引 | Static Indexing
 mathjax: true
 categories: [DataStructure]
