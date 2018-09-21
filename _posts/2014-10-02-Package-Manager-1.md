@@ -58,7 +58,7 @@ gem 'sqlite3'
 gem 'mysql2'
 ```
 
-### gemspec
+### Gemspec 
 
 - 创建Gem包需要提供gemspec, gemspec是一段Ruby代码:
 
@@ -159,41 +159,34 @@ pod 'Paper'
 - 需要README.md
 - 需要项目的Example
 - 代码打tag,push到仓库
-- 创建podsepcs(以[VZInspector](https://github.com/akaDealloc/VZInspector)为例):
-  - `pod spec create VZInspector`
-  - 填写相关信息，可参照[AFNetworking的podspec](https://github.com/AFNetworking/AFNetworking)等等。
+- 创建podsepcs
+  - `pod spec create PROJ_NAME`
 
-  ```ruby
-  Pod::Spec.new do |s|
+> 2014年5月20日之后，cocoaPods不再接受pull Request的提交方式，而转为用[trunk](http://blog.cocoapods.org/CocoaPods-Trunk/)。使用trunk需要cocoapods的版本大于0.33。
 
-        s.name         = "VZInspector"
-        s.version      = "0.0.1"
-        s.summary      = "an iOS app runtime debugger"
-        s.homepage     = "http://akadealloc.github.io/blog/2014/11/06/VZInspector.html"
-        s.license      = "MIT"
-        
-        s.author       = { "akadealloc" => "http://akadealloc.github.io/blog/" }
+- 注册trunk:  
+  - 命令为: `pod trunk register orta@cocoapods.org 'Orta Therox' --description='macbook air'`
+    - `pod trunk register JohnDoe@gmail.com 'John' --verbose`
+  - 注册成功后,会返回下面信息:
 
-        s.platform     = :ios, "5.0"
-        s.ios.deployment_target = "5.0"
+  ```shell
+  [!] Please verify the session by clicking the link in the verification email that has been sent to JohnDoe@gmail.com
+  ``` 
 
-        s.source       = { :git => "https://github.com/akaDealloc/VZInspector.git", :tag => "0.0.1" }
-        s.requires_arc = true
-        s.source_files  = "VZInspector/*"
-  end
-  ```
+- 在邮箱激活trunk, 查看注册信息:
+  - `pod trunk me`
 
-  - 注意pod的版本号最好和tag的版本号一致
-  - `set the new version to 0.0.1` (代码版本号)
-  - `set the new tag to 0.0.1 `(tag版本号) 
-  - `pod lib lint` 检查podspecs是否正确
+- 提交pod,在podsepc的目录下: :
+  - `pod spec lint NAME.podspec --verbose --allow-warnings`
+  - `pod trunk push NAME.podspec --verbose --allow-warnings`
+  - 成功后回返回podspec的json格式的url
 
-- fork cocoapods的[sepc](https://github.com/CocoaPods/Specs)库
-- clone fork下来的repo到本地
-- 在Specs下增加VZInspector/0.0.1/VZInspector.podspec
-- push到repo
-- 创建pull request
-- 等待审核，[这里](https://github.com/CocoaPods/Specs/pulls)可以查看pull request的处理进度
+- 含lib的podspec  
+
+```ruby
+pod spec lint --verbose --use-libraries --skip-import-validation --allow-warnings
+pod trunk push --verbose --use-libraries --skip-import-validation --allow-warnings
+```
 
 ### 删除项目中的Podfile
 

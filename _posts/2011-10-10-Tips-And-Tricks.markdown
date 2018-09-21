@@ -4,35 +4,7 @@ list_title: iOS中的一些小技巧 | Tips and Tricks in iOS
 title: iOS中的一些小技巧 | Tips and Tricks in iOS
 categories: [iOS]
 ---
-  
-<h3>使用Trunk提交cocoaPods</h3>
 
-2014年5月20日之后，cocoaPods不再接受pull Request的提交方式，而转为用[trunk](http://blog.cocoapods.org/CocoaPods-Trunk/)。使用trunk需要cocoapods的版本大于0.33。
-
-- 注册trunk:  
-  - 命令为: `pod trunk register orta@cocoapods.org 'Orta Therox' --description='macbook air'`
-  - 例子: `pod trunk register jayson.xu@foxmail.com 'jayson' --verbose`
-  - 注册成功后,会返回下面信息:
-
-  ```shell
-  [!] Please verify the session by clicking the link in the verification email that has been sent to jayson.xu@foxmail.com
-  ``` 
-
-- 在邮箱激活trunk
-- 查看注册信息:
-  - `pod trunk me`
-
-- 提交pod,在podsepc的目录下: :
-  - `pod spec lint NAME.podspec --verbose --allow-warnings`
-  - `pod trunk push NAME.podspec --verbose --allow-warnings`
-  - 成功后回返回podspec的json格式的url
-
-- 含lib的podspec ： 
-
-```ruby
-pod spec lint --verbose --use-libraries --skip-import-validation --allow-warnings
-pod trunk push --verbose --use-libraries --skip-import-validation --allow-warnings
-```
 
 
 <h3>Mac OS 卸载 MySQL</h3>
