@@ -143,17 +143,64 @@ def valid_pw(name,pw,hash_code):
 ```
 在密码的加密算法上，sha256比较慢，可以选择使用bcrypt。许多成熟的web framework自带`bcrypt`方法，
 
-## OAuth2
+## OAuth 认证
 
-OAuth是使用第三方平台进行认证，其认证流程图如下
+前面介绍了使用Email + Password的登录流程，除了这种登录方式以外，目前比较流行的还有使用第三方平台账号登录，以及使用JSON Web Token的方式。这一节先来介绍使用OAuth 2.0的登录方式，后面一节会介绍如何使用JSON Web Token。
+
+OAuth是使用第三方平台账号进行认证，其认证流程图（假设使用Google账号登录）如下
 
 {% include _partials/components/lightbox.html param='/assets/images/2008/07/oauth2-passport.png' param2='1' %}
 
-如果使用Node.js，可以使用`passport`帮助我们完成绝大部分的工作，`passport`由两部分构成，一部分是`passport`核心库，用来处理登录逻辑，另一部分是`passpoart strategy`用来支持各类登录策略，比如JWT，OAuth等等。上述两个framework分别为
+上面的认证过程分为两部分，一部分是从Google获取登录信息，一部分是将得到的登录信息进行处理，生成cookie，存到自己的Server上。第一部分的任务流程相对标准化，基本上每个平台都有相应的三方库支持，比如Node.js可以使用`passport`(图中虚线部分)
+
+`passport`由两部分构成，一部分是`passport`核心库，用来处理登录逻辑，另一部分是`passpoart strategy`用来支持各类登录策略，比如JWT，OAuth等等。上述两个framework分别为
 
 ```shell
 npm install --save passport passport-google-oauth20
 ```
+
+### Config Passport 
+
+我们以Google的OAuth认证为例，介绍如何使用Passport完成OAuth流程。首先需要对`Passport`进行初始化：
+
+```javascript
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: keys.googleClientID,
+      clientSecret: keys.googleClientSecret,
+      callbackURL: '/auth/google/callback'
+    },
+    accessToken => {
+      console.log(accessToken);
+    }
+  )
+);
+```
+上述代码初始化`passport`，传入`client_id`和`secret`以及`callbackURL`，注意`callbackURL`需要在Google Account中预先配置好，当OAuth请求成功后，Google会使用这个URL返回token。接下来，在server上配置OAuth登录API:
+
+```javascript
+app.get(
+  '/auth/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'] //允许访问用户的profile和email信息
+  })
+);
+```
+此时，当我们访问`/auth/google`时，`passport`会将上述请求的URL替换为：
+
+```
+https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=999661698345-ivms5t1s778qp5n4k55sep4odp7t4her.apps.googleusercontent.com
+```
+接下来我们还要定义Callback API处理回调，Passport内部通过url中是否存在`code`字段来区分该请求是否是callback请求
+
+```javascript
+//callback API
+app.get('/auth/google/callback', passport.authenticate('google'));
+```
+
+此时，我们再访问`/auth/google`，选择一个账号登录，Google会通过callback URL返回登录等一些相关信息，这些信息中除了登录用的token之外，还会返回一个refreshToken，用来更新登录的token
+
 
 
 ## JWT
