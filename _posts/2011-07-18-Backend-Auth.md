@@ -11,7 +11,7 @@ categories: [Network,Backend]
 a small piece of data stored in the browser for a website, key-value paires, 20 cookies per website
 
 ```
-browser                 server
+browser                 Server
     |   --- post --->     |
     |                     |
     |    {uid = 1234}     |
@@ -34,7 +34,7 @@ HTTP Request
 cookie: user_id = 12345; last-seen=Dec 25 1985
 ```
 
-我们可以实际查看一下server返回的Cookie
+我们可以实际查看一下Server返回的Cookie
 
 ```
 ➜  curl -I www.google.com
@@ -65,10 +65,10 @@ key = key.encode('utf-8')
 x = hashlib.sha256(key)
 x.hexdigest() #
 ```
-可以使用Hash来校验Cookie，假设cookie的格式为`{visits | hashcode}`其中visits表示访问server的次数
+可以使用Hash来校验Cookie，假设cookie的格式为`{visits | hashcode}`其中visits表示访问Server的次数
 
 ```python
-#server
+#Server
 #-----------
 #set-cookie: {5|e4da3b7fbbce2345d7772b0674a318d5}
 
@@ -141,7 +141,7 @@ def valid_pw(name,pw,hash_code):
     salt = h.split(',')[1]
     return h == make_pwd_hash(name,pwd,salt)
 ```
-在密码的加密算法上，sha256比较慢，可以选择使用bcrypt。许多成熟的web framework自带`bcrypt`方法，
+在密码的加密算法上，sha256比较慢，可以选择使用bcrypt。许多成熟的web framework均自带`bcrypt`方法。
 
 ## OAuth 认证
 
@@ -177,7 +177,7 @@ passport.use(
   )
 );
 ```
-上述代码初始化`passport`，传入`client_id`和`secret`以及`callbackURL`，注意`callbackURL`需要在Google Account中预先配置好，当OAuth请求成功后，Google会使用这个URL返回token。接下来，在server上配置OAuth登录API:
+上述代码初始化`passport`，传入`client_id`和`secret`以及`callbackURL`，注意`callbackURL`需要在Google Account中预先配置好，当OAuth请求成功后，Google会使用这个URL返回token。接下来，在Server上配置OAuth登录API:
 
 ```javascript
 app.get(
@@ -190,7 +190,10 @@ app.get(
 此时，当我们访问`/auth/google`时，`passport`会将上述请求的URL替换为：
 
 ```
-https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fauth%2Fgoogle%2Fcallback&scope=profile%20email&client_id=999661698345-ivms5t1s778qp5n4k55sep4odp7t4her.apps.googleusercontent.com
+https://accounts.google.com/o/oauth2/v2/auth?response_type=code
+&redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fauth%2Fgoogle%2Fcallback
+&scope=profile%20email
+&client_id=999661698345-ivms5t1s778qp5n4k55sep4odp7t4her.apps.googleusercontent.com
 ```
 接下来我们还要定义Callback API处理回调，Passport内部通过url中是否存在`code`字段来区分该请求是否是callback请求
 
@@ -199,14 +202,54 @@ https://accounts.google.com/o/oauth2/v2/auth?response_type=code&redirect_uri=htt
 app.get('/auth/google/callback', passport.authenticate('google'));
 ```
 
-此时，我们再访问`/auth/google`，选择一个账号登录，Google会通过callback URL返回登录等一些相关信息，这些信息中除了登录用的token之外，还会返回一个refreshToken，用来更新登录的token
+此时，我们再访问`/auth/google`，选择一个账号登录，Google会通过callback URL返回登录token以及一些用户相关信息，用户信息中重要的是用户`id`，我们后面会用这个`id`来生成cookie
+
+```javascript
+//token
+ya29.GlsgBiHIcv4rAhcYaxNkAn7nJadfm1oNQpCbnz1FO3QczeEke9zdWGc0ZExklr0b6WSJVQEuv_x6oe_cH5YAYrj9cNXeLWLjo3ATvZ_0pM0agI4_ju8-KxhUxIkhG
+
+//user profile
+{ id: '1128784079818168156265',
+  displayName: 'JOHN DOE',
+  name: { familyName: 'DOE', givenName: 'JOHN' },
+  emails: [ { value: 'johndoe@gmail.com', type: 'account' } ],
+}
+```
+
+### Cookie Management
+
+通过OAuth拿到`token`和用户`id`之后，我们就可以为用户生成cookie，这个过程同样也是被`passport`在内部封装了，我们只需要在代码中做一些简单的配置即可。首先初始化`passport`中间件：
+
+```javascript
+//cookie
+app.use(
+  cookieSession({ //cookieSesssion
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+    keys: [keys.cookieKey]
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+```
+`cookieSession`是一个用来从生成以及解析cookie的三方库，参考前面一节对cookie的介绍可知我们需要在Server上放一个私钥同来对cookie进行非对称加密解密。接下来当拿到Google返回的token后，需要根据用户信息来生成cookie
+
+```javascript
+
+
+```
+
+
+当用户browser已经有cookie后，当用户再次访问Server时，将走下面的流程：
+
+<img src="{{site.baseurl}}/assets/images/2011/07/cookie-1.png">
 
 
 
 ## JWT
 
-JWT是JSON Web Token的缩写，它可以解决
+JWT是JSON Web Token的缩写，它可以有效解决跨域问题，
 
 ## Resource
 
 - [Intro to backend]()
+- [Learn JSON Web Tokens](https://auth0.com/learn/json-web-tokens/)
