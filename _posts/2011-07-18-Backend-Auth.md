@@ -215,26 +215,28 @@ app.use(passport.session());
     });
 }
 ```
-在回调函数中，我们从DB查询user并将得到的结果会传给`Passport`，这一步很关键，`Passport`会通过`user.id`生成Cookie并将Cookie和当前user进行一对一的关联:
+在回调函数中，我们从DB查询user并将得到的结果会传给`Passport`，这一步很关键，`Passport`会使用`user`中的内容来生成Cookie并返回给Browser。
 
 ```javascript
 passport.serializeUser((user, done) => { 
   done(null, user.id); //{Cookie, user.id}
 });
 ```
+上面代码中指定`user.id`的意义在于告诉`passport`，在后满的通信中使用`user.id`作为通信的session。后面的内容还会提到这个session的作用。
 
-至此，OAuth的完整流程就走完了。接下来，当用户的Browser已经存有当前Server的Cookie时，如果该用户再次访问，将走下面的流程：
+至此，OAuth认证的完整流程就走完了。接下来，当用户的Browser已经存有当前Server的Cookie时，如果该用户再次访问，将走下面的流程：
 
 <img src="{{site.baseurl}}/assets/images/2011/07/Cookie-1.png">
 
 此时当Server收到请求后，`CookieSession`会先解析出Request Header中的Cookie，然后`Passport`会根据解析得到的Cookie找到对相应的user，然后将`user`绑定到`req.user`，将`user.id`绑定到`req.session`上。
 
-虽然整个过程逻辑上说的通，但是这里有一个疑问，就是`Passport`如何根据Cookie找到对应的`user`的。能想到的是，一种做法是将Cookie存起来，其中key为Cookie的值，value为`user.id`，当查询时，首先根据Cookie找到`user.id`，再根据`user.id`去获取`user`其它信息。但是我们并没告诉`Passport`在哪里存Cookie，显然上述过程使用的不是这种方式。
+虽然整个过程逻辑上说的通，但是这里有一个疑问，就是`Passport`如何根据Cookie找到对应的`user`的。能想到的是，一种做法是将Cookie存起来，其中key为Cookie的值，value为`user.id`。当有请求到来时，首先根据Cookie找到`user.id`，再根据`user.id`去获取`user`其它信息。但是我们并没告诉`Passport`在哪里存Cookie，显然上述过程使用的不是这种方式。
 
 另一种方式则是不存放Cookie, 而是将用户信息`user`通过某种方式encode到Cookie中，成为Cookie的一部分。当用户带着Cookie访问时，从Cookie中decode出来，显然上面的过程使用的是这种方式。
 
-> 在Node.js中第一种方式对应express-session, 第二种方式对应cookie-session
+> 在Node.js中第一种方式对应express-session库, 第二种方式对应cookie-session库
 
+上述两种方式各有优劣，选用那种方式要看实际应用场景，如果是大规模的分布式系统，用户数据很庞大，建议使用第一种方式；如果是轻量级的小应用，`user`信息不复杂，则可以使用第二种方式。
 
 ## JWT
 
