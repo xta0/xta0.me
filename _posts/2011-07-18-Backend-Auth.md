@@ -11,14 +11,16 @@ categories: [Network,Backend]
 a small piece of data stored in the browser for a website, key-value paires, 20 Cookies per website
 
 ```
-browser                 Server
-    |   --- post --->     |
+Browser                 Server
+    |   --- login --->    |
     |                     |
     |    {uid = 1234}     |
     |   <--- Cookie ---   |
     |                     |
     |    {uid = 1234}     |
     |   --- Cookie --->   |
+    |                     |
+    |   <--- User Data--- |
     |                     |
 ```
 Cookies are sent in HTTP headers, something like this:
@@ -106,9 +108,46 @@ hash_code = hmac.new(secret_key,Cookie).hexdigest()
 ```
 ### 使用Cookie
 
-上面介绍了服务端如何生成Cookie，当生成Cookie之后
+上面介绍了服务端如何生成Cookie，这一节介绍浏览器如何使用Cookie。RFC6265定义了Cookie的一些属性，包含`Expires`、`Max-Age`、`Domain`、`Path`、`Secure`、`HttpOnly`等。这些属性决定浏览器是否接受Server端传来的Cookie
+
+对于浏览器来说，Domain、Path、Name三者唯一确定一个cookie。在浏览器在使用cookie时，不区分Http/Https和端口号。
+
+- Domain是向上通配的
+
+```shell
+#写入（Set-Cookie）访问www.example.com
+Set-Cookie: sid1=a; domain=example.com; path=/; #接受
+Set-Cookie: sid2=b; domain=www.example.com; path=/; #接受
+Set-Cookie: sid3=c; domain=pay.example.com; path=/; #拒绝
+
+#读取（Cookie）
+#访问pay.example.com
+Cookie: sid1=a
+        
+#访问www.example.com
+Cookie: sid1=a; sid2=b;
+```
+- Path是向下通配的
 
 
+```shell
+#写入（Set-Cookie）
+
+Set‐Cookie: sid1=a; domain=example.com; path=/;
+Set‐Cookie: sid2=b; domain=example.com; path=/test/;
+
+#读取（Cookie）
+#访问http://example.com/
+Cookie: sid1=a;
+    
+#访问http://example.com/test/
+Cookie: sid1=a; sid2=b
+```
+`Expires`、`Max-Age`可以指定Cookie的有效期，不指定有效期时，Cookie默认为当前session有效，当前session有效指关闭浏览器时Cookie失效。
+
+### Cookie的安全问题
+
+如何盗取Cookie一直是一个热门且重要的安全问题，常用的攻击手段有中间人拦截，XSS，CSRF等等，关于这部分内容和本文主题无关，我们将在后面一篇文章中重点讨论Web Security的问题。
 
 ## OAuth 认证
 
@@ -226,7 +265,7 @@ passport.serializeUser((user, done) => {
 
 至此，OAuth认证的完整流程就走完了。接下来，当用户的Browser已经存有当前Server的Cookie时，如果该用户再次访问，将走下面的流程：
 
-<img src="{{site.baseurl}}/assets/images/2011/07/Cookie-1.png">
+<img src="{{site.baseurl}}/assets/images/2011/07/cookie-1.png">
 
 此时当Server收到请求后，`CookieSession`会先解析出Request Header中的Cookie，然后`Passport`会根据解析得到的Cookie找到对相应的user，然后将`user`绑定到`req.user`，将`user.id`绑定到`req.session`上。
 
@@ -238,11 +277,7 @@ passport.serializeUser((user, done) => {
 
 上述两种方式各有优劣，选用那种方式要看实际应用场景，如果是大规模的分布式系统，用户数据很庞大，建议使用第一种方式；如果是轻量级的小应用，`user`信息不复杂，则可以使用第二种方式。
 
-## JWT
-
-JWT是JSON Web Token的缩写，它可以有效解决跨域问题，
 
 ## Resource
 
 - [Intro to backend]()
-- [Learn JSON Web Tokens](https://auth0.com/learn/json-web-tokens/)

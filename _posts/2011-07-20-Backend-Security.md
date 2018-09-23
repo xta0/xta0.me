@@ -72,3 +72,4 @@ def valid_pw(name,pw,hash_code):
 ## Resources
 
 - [Same Origin Policy](https://www.w3.org/Security/wiki/Same_Origin_Policy)
+- [Learn JSON Web Tokens](https://auth0.com/learn/json-web-tokens/)
