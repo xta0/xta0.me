@@ -31,6 +31,44 @@ CORS是一种可以规避掉同源策略的方案，在CORS之前，普遍使用
 ### XSS(Cross-site Scripting)
 
 
+## Password
+
+保存用户密码的策略和上一篇文章中介绍计算Cookie的策略类似，都是使用哈希函数，对明文密码 + 一个随机数（salt）进行hash
+
+```python
+import random
+import string
+
+def make_salt():
+    seed = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+=-"
+    sa = []
+    salt=''
+    for i in range(5):
+        sa.append(random.choice(seed))
+    salt = ''.join(sa)
+    return salt
+
+>>> print(make_salt())
+vZMV1
+```
+上述代码可以生成5个字符的随机字符串, 用该字符串对密码进行加密，密码加密以及用户登录校验密码的逻辑如下
+
+```python
+def make_pwd_hash(name,pwd,salt=None):
+    if not salt:
+        salt = make_salt()
+    key = (name+pwd+salt).encode('utf-8')
+    hash_code = hashlib.sha256(key).hexdigest()
+    return f"{hash_code},{salt}"
+
+#check user password
+#hash_code comes from database
+def valid_pw(name,pw,hash_code):
+    salt = h.split(',')[1]
+    return h == make_pwd_hash(name,pwd,salt)
+```
+在密码的加密算法上，sha256比较慢，可以选择使用bcrypt。许多成熟的web framework均自带`bcrypt`方法。
+
 ## Resources
 
 - [Same Origin Policy](https://www.w3.org/Security/wiki/Same_Origin_Policy)

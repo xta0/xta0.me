@@ -8,17 +8,17 @@ categories: [Network,Backend]
 
 ## Cookies
 
-a small piece of data stored in the browser for a website, key-value paires, 20 cookies per website
+a small piece of data stored in the browser for a website, key-value paires, 20 Cookies per website
 
 ```
 browser                 Server
     |   --- post --->     |
     |                     |
     |    {uid = 1234}     |
-    |   <--- cookie ---   |
+    |   <--- Cookie ---   |
     |                     |
     |    {uid = 1234}     |
-    |   --- cookie --->   |
+    |   --- Cookie --->   |
     |                     |
 ```
 Cookies are sent in HTTP headers, something like this:
@@ -26,12 +26,12 @@ Cookies are sent in HTTP headers, something like this:
 ```
 HTTP Response
 --------------
-set-cookie: user_id = 12345
-set-cookie: last_seen = Dec 25 1985
+set-Cookie: user_id = 12345
+set-Cookie: last_seen = Dec 25 1985
 
 HTTP Request
 -------------
-cookie: user_id = 12345; last-seen=Dec 25 1985
+Cookie: user_id = 12345; last-seen=Dec 25 1985
 ```
 
 我们可以实际查看一下Server返回的Cookie
@@ -65,18 +65,18 @@ key = key.encode('utf-8')
 x = hashlib.sha256(key)
 x.hexdigest() #
 ```
-可以使用Hash来校验Cookie，假设cookie的格式为`{visits | hashcode}`其中visits表示访问Server的次数
+可以使用Hash来校验Cookie，假设Cookie的格式为`{visits | hashcode}`其中visits表示访问Server的次数
 
 ```python
 #Server
 #-----------
-#set-cookie: {5|e4da3b7fbbce2345d7772b0674a318d5}
+#set-Cookie: {5|e4da3b7fbbce2345d7772b0674a318d5}
 
 #client
 #-----------
-#cookie: {5|e4da3b7fbbce2345d7772b0674a318d5}
+#Cookie: {5|e4da3b7fbbce2345d7772b0674a318d5}
 
-# check cookie 
+# check Cookie 
 def hash_str(s):
     return hashlib.md5(s.encode('utf-8')).hexdigest()
 
@@ -93,70 +93,35 @@ def check_secure_val(h):
 可以对上述方法做个修改，在计算hash时，加入一个secret key
 
 ```
-Hash(secret_key,cookie) = hash_code
+Hash(secret_key,Cookie) = hash_code
 ```
 
 Python的hash库中提供HMAC(Hash-based Meesage Authentication Code)的API来应对上述场景
 
 ```python
 secret_key = bytes([0x13, 0x00, 0x00, 0x00, 0x08, 0x00])
-cookie = "some_cookie".encode('utf-8')
-hash_code = hmac.new(secret_key,cookie).hexdigest()
+Cookie = "some_Cookie".encode('utf-8')
+hash_code = hmac.new(secret_key,Cookie).hexdigest()
 #f2b280549c1c9edb18d5500d6c01ea51
 ```
+### 使用Cookie
 
-## Password
+上面介绍了服务端如何生成Cookie，当生成Cookie之后
 
-Hash password的方法和cookie类似，对明文密码 + 一个随机数（salt）进行hash
 
-```python
-import random
-import string
-
-def make_salt():
-    seed = "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_+=-"
-    sa = []
-    salt=''
-    for i in range(5):
-        sa.append(random.choice(seed))
-    salt = ''.join(sa)
-    return salt
-
->>> print(make_salt())
-vZMV1
-```
-上述代码可以生成5个字符的随机字符串, 用该字符串对密码进行加密，密码加密以及用户登录校验密码的逻辑如下
-
-```python
-def make_pwd_hash(name,pwd,salt=None):
-    if not salt:
-        salt = make_salt()
-    key = (name+pwd+salt).encode('utf-8')
-    hash_code = hashlib.sha256(key).hexdigest()
-    return f"{hash_code},{salt}"
-
-#check user password
-#hash_code comes from database
-def valid_pw(name,pw,hash_code):
-    salt = h.split(',')[1]
-    return h == make_pwd_hash(name,pwd,salt)
-```
-在密码的加密算法上，sha256比较慢，可以选择使用bcrypt。许多成熟的web framework均自带`bcrypt`方法。
 
 ## OAuth 认证
 
-前面介绍了使用Email + Password的登录流程，除了这种登录方式以外，目前比较流行的还有使用第三方平台账号登录，以及使用JSON Web Token的方式。这一节先来介绍使用OAuth 2.0的登录方式，后面一节会介绍如何使用JSON Web Token。
-
-OAuth是使用第三方平台账号进行认证，其认证流程图（假设使用Google账号登录）如下
+有了前面Cookie的铺垫，我们可以谈一谈目前比较流行的OAuth认证。所谓OAuth是指使用第三方平台账号进行认证，其认证流程图（以Google为例）如下
 
 {% include _partials/components/lightbox.html param='/assets/images/2008/07/oauth2-passport.png' param2='1' %}
 
-上面的认证过程分为两部分，一部分是从Google获取登录信息，一部分是将得到的登录信息进行处理，生成cookie，存到自己的Server上。第一部分的任务流程相对标准化，基本上每个平台都有相应的三方库支持，比如Node.js可以使用`passport`(图中虚线部分)
+上面的认证过程分为两部分，一部分是从Google获取登录信息，一部分是将得到的登录信息进行处理，生成Cookie，存到自己的Server上。第一部分的任务流程相对标准化，基本上每个平台都有相应的三方库支持，比如Node.js可以使用`Passport`(图中虚线部分)
 
-`passport`由两部分构成，一部分是`passport`核心库，用来处理登录逻辑，另一部分是`passpoart strategy`用来支持各类登录策略，比如JWT，OAuth等等。上述两个framework分别为
+`Passport`由两部分构成，一部分是`Passport`核心库，用来处理登录逻辑，另一部分是`passpoart strategy`用来支持各类登录策略，比如JWT，OAuth等等。上述两个framework分别为
 
 ```shell
-npm install --save passport passport-google-oauth20
+npm install --save Passport Passport-google-oauth20
 ```
 
 ### Config Passport 
@@ -177,7 +142,7 @@ passport.use(
   )
 );
 ```
-上述代码初始化`passport`，传入`client_id`和`secret`以及`callbackURL`，注意`callbackURL`需要在Google Account中预先配置好，当OAuth请求成功后，Google会使用这个URL返回token。接下来，在Server上配置OAuth登录API:
+上述代码初始化`Passport`，传入`client_id`和`secret`以及`callbackURL`，注意`callbackURL`需要在Google Account中预先配置好，当OAuth请求成功后，Google会使用这个URL返回token。接下来，在Server上配置OAuth登录API:
 
 ```javascript
 app.get(
@@ -187,7 +152,7 @@ app.get(
   })
 );
 ```
-此时，当我们访问`/auth/google`时，`passport`会将上述请求的URL替换为：
+此时，当我们访问`/auth/google`时，`Passport`会将上述GET请求的URL替换为：
 
 ```
 https://accounts.google.com/o/oauth2/v2/auth?response_type=code
@@ -195,14 +160,14 @@ https://accounts.google.com/o/oauth2/v2/auth?response_type=code
 &scope=profile%20email
 &client_id=999661698345-ivms5t1s778qp5n4k55sep4odp7t4her.apps.googleusercontent.com
 ```
-接下来我们还要定义Callback API处理回调，Passport内部通过url中是否存在`code`字段来区分该请求是否是callback请求
+当请求OAuth请求成功后，Google会调用callback URL，因此我们需要处理该请求的回调(`Passport`内部会通过URL中是否存在`code`字段来区分该请求是否是callback请求）
 
 ```javascript
 //callback API
 app.get('/auth/google/callback', passport.authenticate('google'));
 ```
 
-此时，我们再访问`/auth/google`，选择一个账号登录，Google会通过callback URL返回登录token以及一些用户相关信息，用户信息中重要的是用户`id`，我们后面会用这个`id`来生成cookie
+此时，我们再访问`/auth/google`，选择一个账号登录，Google会通过callback URL返回登录信息和用户信息，用户信息中重要的是用户`id`，我们后面会用这个`id`来生成Cookie
 
 ```javascript
 //token
@@ -216,33 +181,59 @@ ya29.GlsgBiHIcv4rAhcYaxNkAn7nJadfm1oNQpCbnz1FO3QczeEke9zdWGc0ZExklr0b6WSJVQEuv_x
 }
 ```
 
-### Cookie Management
+### Cookie Management in passport.js
 
-通过OAuth拿到`token`和用户`id`之后，我们就可以为用户生成cookie，这个过程同样也是被`passport`在内部封装了，我们只需要在代码中做一些简单的配置即可。首先初始化`passport`中间件：
+通过OAuth拿到登录信息和用户信息之后，我们就可以为用户生成Cookie，这个过程同样也是被`Passport`在内部封装了，我们只需要在代码中做一些简单的配置即可。首先初始化`Passport`中间件：
 
 ```javascript
-//cookie
+//Cookie
 app.use(
-  cookieSession({ //cookieSesssion
+  CookieSession({ //CookieSesssion
     maxAge: 30 * 24 * 60 * 60 * 1000,
-    keys: [keys.cookieKey]
+    keys: [keys.CookieKey]
   })
 );
 app.use(passport.initialize());
 app.use(passport.session());
 ```
-`cookieSession`是一个用来从生成以及解析cookie的三方库，参考前面一节对cookie的介绍可知我们需要在Server上放一个私钥同来对cookie进行非对称加密解密。接下来当拿到Google返回的token后，需要根据用户信息来生成cookie
+`CookieSession`是一个用来从生成以及解析Cookie的三方库，参考前面一节对Cookie的介绍可知我们需要在Server上放一个私钥同来对Cookie进行非对称加密解密。
+
+接下来，当OAuth请求成功后，`Passport`会调用之前注册的回调函数
 
 ```javascript
+(accessToken, refreshToken, profile, done) => {
+    const googleId = profile.id;
+    //Get user from mongoDB
+    User.findOne({ googleId }).then(user => {
+    if (!user) {
+        new User({ googleId }).save().then(user => {
+        done(null, user);
+        });
+    } else {
+        done(null, user); //if found user, save it
+    }
+    });
+}
+```
+在回调函数中，我们从DB查询user并将得到的结果会传给`Passport`，这一步很关键，`Passport`会通过`user.id`生成Cookie并将Cookie和当前user进行一对一的关联:
 
-
+```javascript
+passport.serializeUser((user, done) => { 
+  done(null, user.id); //{Cookie, user.id}
+});
 ```
 
+至此，OAuth的完整流程就走完了。接下来，当用户的Browser已经存有当前Server的Cookie时，如果该用户再次访问，将走下面的流程：
 
-当用户browser已经有cookie后，当用户再次访问Server时，将走下面的流程：
+<img src="{{site.baseurl}}/assets/images/2011/07/Cookie-1.png">
 
-<img src="{{site.baseurl}}/assets/images/2011/07/cookie-1.png">
+此时当Server收到请求后，`CookieSession`会先解析出Request Header中的Cookie，然后`Passport`会根据解析得到的Cookie找到对相应的user，然后将`user`绑定到`req.user`，将`user.id`绑定到`req.session`上。
 
+虽然整个过程逻辑上说的通，但是这里有一个疑问，就是`Passport`如何根据Cookie找到对应的`user`的。能想到的是，一种做法是将Cookie存起来，其中key为Cookie的值，value为`user.id`，当查询时，首先根据Cookie找到`user.id`，再根据`user.id`去获取`user`其它信息。但是我们并没告诉`Passport`在哪里存Cookie，显然上述过程使用的不是这种方式。
+
+另一种方式则是不存放Cookie, 而是将用户信息`user`通过某种方式encode到Cookie中，成为Cookie的一部分。当用户带着Cookie访问时，从Cookie中decode出来，显然上面的过程使用的是这种方式。
+
+> 在Node.js中第一种方式对应express-session, 第二种方式对应cookie-session
 
 
 ## JWT
