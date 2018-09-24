@@ -7,7 +7,7 @@ categories: [iOS]
 
 ## Runloop的事件轮训
 
-了解Runloop的工作方式很重要，以前一直以为Main Runloop是一个60fps的回调，后来发现这种理解是不对的，60fps是屏幕的刷新频率，工作在更底层，它和Runloop并没有直接对应的关系。Runloop实质上是一种由操作系统控制的事件轮训机制，类似的消息模型每个GUI操作系统都有，比如早期Windows程序中(MFC)有：
+了解Runloop的工作方式很重要，以前一直以为Main Runloop是一个60fps的回调，后来发现这种理解是不对的，60fps是屏幕的刷新频率，工作在更底层，它和Runloop并没有直接对应的关系。Runloop实质上是一种Event Loop，类似的消息模型每个GUI操作系统都有，比如早期Windows程序中(MFC)有：
 
 ```c++
 while(GetMessage(&msg,NULL,0,0))
@@ -32,11 +32,11 @@ void CFRunLoopRun(void) {	/* DOES CALLOUT */
 
 > A run loop receives events from two different types of sources. Input sources deliver asynchronous events, usually messages from another thread or from a different application. Timer sources deliver synchronous events, occurring at a scheduled time or repeating interval. Both types of source use an application-specific handler routine to process the event when it arrives.
 
-Runloop只检测两种类型的消息，一种是Input Sources，通常是来自其它线程或进程。另一种是同步事件，来自Timer。这两种事件都可以在app中被获取并做处理：
+Runloop只检测两种类型的事件，一种是Input Sources，通常是来自其它线程或进程。另一种是同步事件，来自Timer。这两种事件都可以在app中被获取并做处理：
 
 <img src="{{site.baseurl}}/assets/images/2012/11/runloop.png" width="496" height="262">
 
-如果想要获取Runloop每一次扫描的回调，可以注册observer:
+如果想要获取Runloop事件的回调，可以注册observer:
 
 ```c
 CFRunLoopObserverContext context = {
@@ -90,7 +90,7 @@ void runloopCallback(CFRunLoopObserverRef observer, CFRunLoopActivity activity, 
 5. `kCFRunLoopAfterWaiting`：Runloop被唤醒准备处理消息
 6. `kCFRunLoopExit`：Runloop退出
 
-如果程序监听了`kCFRunLoopAllActivities`，那么当Runloop每轮训到某个activity的时候，程序会收该activity事件的回调。运行上面代码，观察下面的日志：
+如果程序监听了`kCFRunLoopAllActivities`，那么当Runloop中某个event触发的时候，程序会收该event事件的回调。运行上面代码，观察下面的日志：
 
 ```shell
 [471507989.6447] activity:kCFRunLoopEntry
@@ -190,7 +190,7 @@ struct __CFRunLoop {
     pthread_mutex_t _lock;			/* locked for accessing mode list */
     __CFPort _wakeUpPort;			// used for CFRunLoopWakeUp 
     Boolean _unused;
-    volatile _per_run_data *_perRunData;              // reset for runs of the run loop
+    volatile _per_run_data *_perRunData; // reset for runs of the run loop
     pthread_t _pthread;
     uint32_t _winthread;
     CFMutableSetRef _commonModes;
@@ -220,7 +220,7 @@ entries =>
 }
 ```
 
-每一个`CFRunloop`中都包含一个`_commonModeItems`集合，它用来保存某个Mode中支持的消息源，包括`Timer/Input Source/Observers`, 类型为`CFRunLoopSourceRef`。每当有一个上述对象添加进来时，便向这个集合增加一个元素:`CFSetAddValue(rl->_commonModeItems, rls);`。在默认情况下，当Runloop启动后，系统会自动在`_commonModeItems`中添加一些列Source和Observer。
+每一个`CFRunloop`中还包含一个`_commonModeItems`集合，它用来保存某个Mode中支持的消息源，包括`Timer/Input Source/Observers`, 类型为`CFRunLoopSourceRef`。每当有一个上述对象添加进来时，便向这个集合增加一个元素:`CFSetAddValue(rl->_commonModeItems, rls);`。在默认情况下，当Runloop启动后，系统会自动在`_commonModeItems`中添加一些列Source和Observer。
 
 此外，每一个`CFRunloop`中还包含一个`_currentMode`表示当前运行在的Mode，通过`CFRunLoopCopyCurrentMode(CFRunloopRef runloop)`这个API可以看到系统默认预置进来的几种Mode:
 
