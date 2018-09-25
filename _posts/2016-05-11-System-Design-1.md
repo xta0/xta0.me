@@ -2,7 +2,7 @@
 updated: "2018-08-20"
 layout: post
 title: 概述
-list_title: 系统设计（一）| System Design | 概述 | Overview For Dummies
+list_title: 系统设计 | System Design | 概述 | Overview For Dummies
 categories: [backend]
 ---
 
