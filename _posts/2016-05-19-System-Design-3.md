@@ -2,7 +2,7 @@
 updated: "2018-08-23"
 layout: post
 title: CAP 理论
-list_title: 系统设计 | System Design | 高性能，高可用与可扩展 | CAP理论 | CAP Theorem
+list_title: 系统设计（三） | CAP理论 | CAP Theorem
 categories: [backend]
 ---
 
