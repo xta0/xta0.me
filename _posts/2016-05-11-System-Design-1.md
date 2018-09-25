@@ -25,7 +25,7 @@ categories: [backend]
 
 ## Overview
 
-{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-0.png' param2='sd-0' %}
+{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-1.png' param2='sd-1' %}
 
 <p class="md-p-center"><a href="https://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer">source: Introduction to architecting systems for scale.</a></p>
 

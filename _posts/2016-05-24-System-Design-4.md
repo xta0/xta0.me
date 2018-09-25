@@ -14,7 +14,7 @@ categories: [backend]
 
 <p class="md-p-center"><a href="http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html">source: Scalable System Design Patterns</a></p>
 
-### Round-Robin
+### 轮训 Round-Robin
 
 Round-Robin是一种简单高效的策略，我们熟悉的DNS服务，P2P网络均适用这种策略。简单的说Roound-Robin算法就是维护一个机器列表，当请求过来时，对当前的列表进行轮训，找到下一个可投递的机器进行路由。
 
