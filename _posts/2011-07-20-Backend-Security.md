@@ -25,7 +25,7 @@ No 'Access-Control-Allow-Origin' header is present on the requested resource.
 
 虽然这些限制是必要的，但是有时很不方便，但有时合理的用途也受到影响，比如前后端分离后，前端调用页面后端的API就会遇到同源问题。
 
-### CORS
+### CORS跨域通信的基本原理
 
 CORS是一个W3C标准，全称是"跨域资源共享"（Cross-origin resource sharing）。它允许浏览器向非同源的地址发送请求，从而克服了AJAX请求只能同源的问题。但实际操作起来却没那么简单，要完成CORS跨域，前端后端均需要配合改动，具体做法是在Request和Response Header中添加一些跨域协商信息，有时在请求之前还会多出一次附加请求用于协商跨域，因此，实现CORS通信的关键是服务器，只要服务器实现了CORS接口，就可以跨源通信。
 
@@ -131,9 +131,34 @@ fetch('http://127.0.0.1:9000', {credentials: 'include'})
 
 非简单请求是那种对服务器有特殊要求的请求，比如请求方法是PUT或DELETE，或者`Content-Type`字段的类型是`application/json`。此时在正式通信之前，浏览器和Server之前会增加一次HTTP的OPTION请求，称为"preflight"。
 
-我们继续修改上面的例子，在客户端请求的Header中增加``
+我们继续修改上面的例子，在客户端请求的Header中增加`"Content-Type:application/json"`，此时客户端和Server在GET请求前会先发一次OPTIONS请求，交换跨域信息，Request header中多出了下面两个字段
 
+```shell
+Access-Control-Request-Headers: content-type
+Access-Control-Request-Method: GET
+```
 
+- `Access-Control-Request-Method`
+    该字段是必须的，用来列出浏览器的CORS请求会用到哪些HTTP方法，上例是GET。
+- `Access-Control-Request-Headers`
+    该字段是一个逗号分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段，上例是`content-type`
+
+接下来服务端也需要配合做相应的修改，其目的是告诉客户端自己接受哪些跨域操作
+
+```javascript
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
+  res.header('Access-Control-Allow-Methods', 'GET');
+  res.header('Access-Control-Allow-Headers', ' Content-Type');
+  next();
+});
+```
+- `Access-Control-Allow-Methods`
+    该字段必需，它的值是逗号分隔的一个字符串，表明服务器支持的所有跨域请求的方法。注意，返回的是所有支持的方法，而不单是浏览器请求的那个方法。这是为了避免多次"预检"请求。
+- `Access-Control-Allow-Headers`
+    如果浏览器请求包括A`ccess-Control-Request-Headers`字段，则`Access-Control-Allow-Headers`字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在"预检"中请求的字段。
+
+一旦服务器通过了"预检"请求，以后每次浏览器正常的CORS请求，就都跟简单请求一样，会有一个`Origin`头信息字段。服务器的回应，也都会有一个`Access-Control-Allow-Origin`头信息字段。接下来客户端便可以向服务端发送GET请求来获取数据。
 
 ## Web攻击
 
