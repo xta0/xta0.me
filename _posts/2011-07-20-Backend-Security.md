@@ -36,7 +36,8 @@ CORS是一个W3C标准，全称是"跨域资源共享"（Cross-origin resource s
 由于Server的端口号不同，参照上一节的规则，客户端的调用请求将会触发跨域规则，浏览器会Block这次请求，并给出下面信息：
 
 ```shell
-Failed to load http://127.0.0.1:9000/: No 'Access-Control-Allow-Origin' header is present on the requested resource. 
+Failed to load http://127.0.0.1:9000/: 
+No 'Access-Control-Allow-Origin' header is present on the requested resource. 
 Origin 'http://127.0.0.1:5500' is therefore not allowed access.
 ```
 
