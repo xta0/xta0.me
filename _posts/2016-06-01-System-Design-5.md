@@ -71,5 +71,10 @@ categories: [backend]
     amount,payment_date
     FROM customer
     INNER JOIN payment ON payment.customer_id = customer.customer_id;
+    WHERE last_name='Patricia';
     ```
-    上面查询语句中用来查询每个用户的交易记录，first_name,last_name,email来自customer表，amount，payment_date来自payment表，两个表之间通过customer_id进行关联。
+    上面查询语句中用来查询某个用户的交易记录，`first_name`,`last_name`,`email`来自`customer`表，`amount`，`payment_date`来自`payment`表，两个表之间通过`customer_id`进行关联。现在由于分库的原因，使这两张表分别位于不同的数据库中，无法做JOIN查询，因此只能现在用户表中将`Patricia`的记录查出来，得到其`customer_id`，然后再到`payment`表中将该`customer_id`的记录查出来。
+
+2. 事物问题
+
+    分库带来的另一个问题是事物的原子性问题，业务分库后，表分散到不同的数据库中，无法通过事务统一修改。虽然数据库厂商提供了一些分布式事务的解决方案（例如，MySQL 的 XA），但性能实在太低，与高性能存储的目标是相违背的。例如，用户下订单时需要扣除商品库存，如果订单数据和商品数据在同一个库中，则可以保证下单操作的原子性，
