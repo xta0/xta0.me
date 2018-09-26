@@ -56,15 +56,20 @@ categories: [backend]
 
 分库是指是指按照业务模块将数据分散到不同的数据库服务器上，例如下面一台DB中同时存放了用户，订单，评论三个业务模块的数据
 
-<img src="{{site.baseurl}}/assets/images/2016/05/sd-5-3.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2016/05/sd-5-3.png">
 
 我们可以将用户，订单，评论三个模块的数据分开放到三台不同的数据库服务器上，这样单台服务器的存储压力就会大幅下降。但与此同时，分库也带来了更多的问题：
 
 1. JOIN操作问题
 
-业务分库后，原本在同一个库中的表分散到不同数据库中，导致无法进行JOIN查询，例如下面SQL语句
+    业务分库后，原本在同一个库中的表分散到不同数据库中，导致无法进行JOIN查询，例如下面SQL语句
 
-```sql
-
-
-```
+    ```SQL
+    <!-- Join customer table with payment table -->
+    SELECT 
+    customer.customer_id, first_name,last_name,email,
+    amount,payment_date
+    FROM customer
+    INNER JOIN payment ON payment.customer_id = customer.customer_id;
+    ```
+    上面查询语句中用来查询每个用户的交易记录，first_name,last_name,email来自customer表，amount，payment_date来自payment表，两个表之间通过customer_id进行关联。
