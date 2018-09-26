@@ -69,10 +69,11 @@ app.listen(9000);
 </div>
 </div>
 
+接下来，我们可以讨论并实践如何使用CORS完成跨域请求
 
-### 简单请求
+### 两种请求
 
-浏览器将CORS请求分成两类：简单请求（simple request）和非简单请求（not-so-simple request）。只要同时满足以下两大条件，就属于简单请求。凡是不同时满足上面两个条件，就属于非简单请求。
+浏览器将CORS请求分成两类：简单请求（simple request）和非简单请求（not-so-simple request）。只要同时满足以下两大条件，就属于简单请求：
 
 1. 请求方法是以下三种方法之一：
     - HEAD
@@ -85,12 +86,49 @@ app.listen(9000);
     - Last-Event-ID
     - Content-Type：只限于三个值`application/x-www-form-urlencoded`、`multipart/form-data`、`text/plain`
 
+凡是不同时满足上面两个条件，就属于非简单请求，浏览器对这两种请求的处理，是不一样的。
 
+### 简单请求
 
-对于简单请求，浏览器直接发出CORS请求。具体来说，就是在头信息之中，增加一个`Origin`字段。
-- CORS Header
+对于简单请求，浏览器直接发出CORS请求。具体来说，当浏览器识别出该请求是跨域请求后，检查该请求是否满足跨域请求的条件，如果满足则会在头部增加一个`Origin`字段。上面例子中，浏览器发出的请求Header如下：
 
-另一种方式是直接在Header中标明
+```shell
+GET / HTTP/1.1
+Host: 127.0.0.1:9000
+Origin: http://127.0.0.1:5500
+...
+Connection: keep-alive
+Pragma: no-cache
+```
+当服务端收到请求后，需要判断该`Origin`是否可被接受，如果可以接受则要在Response Header中告诉客户端，具体做法是在Header中增加`Access-Control-Allow-Origin`字段，并返回可接受的`Origin`。为了模拟这种情况，修改服务端代码如下：
+
+```javascript
+const express = require('express');
+const app = express();
+app.get('/', (req, res) => {
+  res.set({ 'Access-Control-Allow-Origin': 'http://127.0.0.1:5500' });
+  res.send('hello');
+});
+app.listen(9000);
+```
+在Header中加入该字段后，浏览器可成功执行跨域请求，报错消失。与CORS相关的字段有
+
+- `Access-Control-Allow-Origin`
+    该字段是必须的。它的值要么是请求时Origin字段的值，要么是一个*，表示接受任意域名的请求。
+- `Access-Control-Allow-Credentials`
+    该字段可选。它的值是一个布尔值，表示是否允许发送Cookie。默认情况下，Cookie不包括在CORS请求之中。设为true，即表示服务器明确许可，Cookie可以包含在请求中，一起发给服务器。这个值也只能设为true，如果服务器不要浏览器发送Cookie，删除该字段即可。
+- `Access-Control-Expose-Headers`
+    该字段可选。CORS请求时，`XMLHttpRequest`对象的`getResponseHeader()`方法只能拿到6个基本字段: `Cache-Control、Content-Language、Content-Type、Expires、Last-Modified、Pragma`。如果想拿到其他字段，就必须在`Access-Control-Expose-Headers`里面指定。上面的例子指定，`getResponseHeader('FooBar')`可以返回`FooBar`字段的值。
+
+如果想要浏览器带上Cookie，只有`Access-Control-Allow-Credentials:true`是不够的，客户端这边也需要做一定的处理来告诉浏览器可以携带Cookie
+
+```javascript
+fetch('http://127.0.0.1:9000', {credentials: 'include'})
+```
+此时可以看到客户端请求的Header中包含了Cookie值。需要注意的是，如果要发送Cookie，`Access-Control-Allow-Origin`就不能设为星号，必须指定明确的、与请求网页一致的域名
+
+### 非简单请求
+
 
 ## Web攻击
 
