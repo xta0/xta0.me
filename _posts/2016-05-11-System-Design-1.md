@@ -108,7 +108,9 @@ Load Balancer的路由策略有很多种，常用的有如下几种，
 {% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-4.png' param2='sd-4' %}
 {% include _partials/components/pic-from.html param='http://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer' param2='Source: Intro to architecting systems for scale'%}
 
-Server集群的另一个问题是，这些server节点该如何管理，如何上线或者下架一台server，众多的server之间该如何通信，server之间的状态如何同步，以及当某台server出问题之后，怎么能快速恢复等等。显然靠人工取解决这些问题是不现实的，因此，最好有一套统一的服务框架或者配置中心可以将这些Server的声明周期以及通信一并管理起来。针对这个问题，业界常用的解决方案有 [Consul](https://www.consul.io/docs/index.html), [Etcd](https://coreos.com/etcd/docs/latest/), 和[Zookeeper](https://zookeeper.apache.org/)。这里推荐使用Zookeeper，很多大型网站内部也都在使用ZooKeeper，更多关于数据一致性的问题，我们后面的文章会单独讲解。
+Server集群的另一个问题是，这些server节点该如何管理，如何上线或者下架一台server，众多的server之间该如何通信，server之间的状态如何同步，以及当某台server出问题之后，怎么能快速恢复等等。显然靠人工取解决这些问题是不现实的，因此，最好有一套统一的服务框架或者配置中心可以将这些Server的声明周期以及通信一并管理起来。针对这个问题，业界常用的解决方案有 [Consul](https://www.consul.io/docs/index.html), [Etcd](https://coreos.com/etcd/docs/latest/), 和[Zookeeper](https://zookeeper.apache.org/)。目前比较流行的是ZooKeeper，很多大型网站内部也都在使用ZooKeeper，当然具体情况还要具体分析，需要根据业务场景选取最适合的方案。更多关于数据一致性的问题，我们后面的文章会单独讲解。
+
+<img src="{{site.baseurl}}/assets/images/2016/05/zookeeper.png">
 
 另外，对于分布式Server的代码同步以及部署也是一个问题，好在目前有很多开源项目可以解决这个问题，比如Ruby体系的Capistrano等
 
@@ -116,7 +118,7 @@ Server集群的另一个问题是，这些server节点该如何管理，如何�
 
 ### Database
 
-对于数据库的扩展可以选择两种方式，一种方式是使用Master-Slave的架构来复制出多份数据库，如上图中所示，让所有读请求打到Slave上，写请求路由到Master上。这种方式会随着业务不断的变复杂，数据表字段不断增加，查询速度也会变得越来越复杂，尤其是JOIN操作将会非常耗时，这时可能需要一个DBA要对数据库进行sharding（分库分表），做SQL语句调优等一系列优化，但这些优化并不解决根本问题。
+上一节提到App Server可以做到“无状态”，无状态的好处在于彼此没有耦合，可以做到完全的并行化；而数据库成为瓶颈的原因在于数据库是有“状态”的，其状态表现为彼此之间要维持数据一致性，当有一条数据写入时，备份DB都要lock，等待数据同步完成。对于数据库的扩展可以选择两种方式，一种方式是使用Master-Slave的架构来复制出多份数据库，如上图中所示，让所有读请求打到Slave上，写请求路由到Master上。这种方式会随着业务不断的变复杂，数据表字段不断增加，查询速度也会变得越来越复杂，尤其是JOIN操作将会非常耗时，这时可能需要一个DBA要对数据库进行sharding（分库分表），做SQL语句调优等一系列优化，但这些优化并不解决根本问题。
 
 第二种方式是在开始的时候就使用NoSQL数据库，比如MongoDB，CouchDB。使用这类数据库，JOIN操作可以在应用层代码中实现，从而减少DB操作的时间。但是无论哪种方式，随着数据量增多，业务不断复杂化，对DB的查询依旧会变得越来越慢，这时候就要考虑使用缓存。
 
