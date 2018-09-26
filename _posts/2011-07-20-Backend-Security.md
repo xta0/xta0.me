@@ -33,7 +33,7 @@ CORS是一个W3C标准，全称是"跨域资源共享"（Cross-origin resource s
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2011/07/cors-1.png">
 
-由于Server的端口号不同，参照上一节的规则，客户端的调用请求将会触发跨域规则，浏览器会Block这次请求，并给出下面信息：
+由于Server的端口号不同，参照上一节的规则，客户端的GET请求将会触发跨域规则，浏览器会Block这次请求，并给出下面信息：
 
 ```shell
 Failed to load http://127.0.0.1:9000/: 
@@ -105,20 +105,19 @@ Pragma: no-cache
 ```javascript
 const express = require('express');
 const app = express();
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://127.0.0.1:5500');
+  next();
+}
 app.get('/', (req, res) => {
-  res.set({ 'Access-Control-Allow-Origin': 'http://127.0.0.1:5500' });
   res.send('hello');
 });
 app.listen(9000);
 ```
-在Header中加入该字段后，浏览器可成功执行跨域请求，报错消失。与CORS相关的字段有
+在Header中加入该字段后，浏览器可成功执行跨域请求，报错消失。重新观察Request和Response的Header信息，与CORS有关的字段有
 
-- `Access-Control-Allow-Origin`
-    该字段是必须的。它的值要么是请求时Origin字段的值，要么是一个*，表示接受任意域名的请求。
-- `Access-Control-Allow-Credentials`
-    该字段可选。它的值是一个布尔值，表示是否允许发送Cookie。默认情况下，Cookie不包括在CORS请求之中。设为true，即表示服务器明确许可，Cookie可以包含在请求中，一起发给服务器。这个值也只能设为true，如果服务器不要浏览器发送Cookie，删除该字段即可。
-- `Access-Control-Expose-Headers`
-    该字段可选。CORS请求时，`XMLHttpRequest`对象的`getResponseHeader()`方法只能拿到6个基本字段: `Cache-Control、Content-Language、Content-Type、Expires、Last-Modified、Pragma`。如果想拿到其他字段，就必须在`Access-Control-Expose-Headers`里面指定。上面的例子指定，`getResponseHeader('FooBar')`可以返回`FooBar`字段的值。
+- `Access-Control-Allow-Origin` 该字段是必须的。它的值要么是请求时Origin字段的值，要么是一个*，表示接受任意域名的请求。
+- `Access-Control-Allow-Credentials` 该字段可选。它的值是一个布尔值，表示是否允许发送Cookie。默认情况下，Cookie不包括在CORS请求之中。设为true，即表示服务器明确许可，Cookie可以包含在请求中，一起发给服务器。这个值也只能设为true，如果服务器不要浏览器发送Cookie，删除该字段即可。
 
 如果想要浏览器带上Cookie，只有`Access-Control-Allow-Credentials:true`是不够的，客户端这边也需要做一定的处理来告诉浏览器可以携带Cookie
 
@@ -138,12 +137,10 @@ Access-Control-Request-Headers: content-type
 Access-Control-Request-Method: GET
 ```
 
-- `Access-Control-Request-Method`
-    该字段是必须的，用来列出浏览器的CORS请求会用到哪些HTTP方法，上例是GET。
-- `Access-Control-Request-Headers`
-    该字段是一个逗号分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段，上例是`content-type`
+- `Access-Control-Request-Method` 该字段是必须的，用来列出浏览器的CORS请求会用到哪些HTTP方法，上例是GET。
+- `Access-Control-Request-Headers` 该字段是一个逗号分隔的字符串，指定浏览器CORS请求会额外发送的头信息字段，上例是`content-type`
 
-接下来服务端也需要配合做相应的修改，其目的是告诉客户端自己接受哪些跨域操作
+如果要接受客户端的跨域请求，服务端也需要配合做相应的修改，其目的是告诉客户端自己可以接受哪些跨域操作：
 
 ```javascript
 app.use((req, res, next) => {
@@ -154,11 +151,11 @@ app.use((req, res, next) => {
 });
 ```
 - `Access-Control-Allow-Methods`
-    该字段必需，它的值是逗号分隔的一个字符串，表明服务器支持的所有跨域请求的方法。注意，返回的是所有支持的方法，而不单是浏览器请求的那个方法。这是为了避免多次"预检"请求。
+    该字段必需，它的值是逗号分隔的一个字符串，表明服务器支持的所有跨域请求的方法。注意，返回的是所有支持的方法，而不单是浏览器请求的那个方法。这是为了避免多次”Preflight"请求。
 - `Access-Control-Allow-Headers`
     如果浏览器请求包括A`ccess-Control-Request-Headers`字段，则`Access-Control-Allow-Headers`字段是必需的。它也是一个逗号分隔的字符串，表明服务器支持的所有头信息字段，不限于浏览器在"预检"中请求的字段。
 
-一旦服务器通过了"预检"请求，以后每次浏览器正常的CORS请求，就都跟简单请求一样，会有一个`Origin`头信息字段。服务器的回应，也都会有一个`Access-Control-Allow-Origin`头信息字段。接下来客户端便可以向服务端发送GET请求来获取数据。
+一旦服务器通过了"预检"请求，以后每次浏览器正常的CORS请求，就都跟简单请求一样，会有一个`Origin`头信息字段。服务器的回应，也都会有一个`Access-Control-Allow-Origin`头信息字段。在跨域信息沟通完成后，接下来客户端便可以向服务端发送GET请求来获取数据。
 
 ## Web攻击
 
