@@ -129,6 +129,11 @@ fetch('http://127.0.0.1:9000', {credentials: 'include'})
 
 ### 非简单请求
 
+非简单请求是那种对服务器有特殊要求的请求，比如请求方法是PUT或DELETE，或者`Content-Type`字段的类型是`application/json`。此时在正式通信之前，浏览器和Server之前会增加一次HTTP的OPTION请求，称为"preflight"。
+
+我们继续修改上面的例子，在客户端请求的Header中增加``
+
+
 
 ## Web攻击
 
