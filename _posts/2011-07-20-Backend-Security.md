@@ -8,6 +8,7 @@ list_title: 端到端通信（四）| Client Server Communiction - Security
 ## 同源策略
 
 同源策略是指A网页设置的 Cookie，其它网页不能使用，除非这两个网页"同源"。所谓"同源"指的是"三个相同": <mark>协议相同，域名相同，端口相同</mark>。同源政策的目的，是为了保证用户信息的安全，防止恶意的网站窃取数据。
+
 设想这样一种情况，用户在浏览A网站时，会读取用户登录Facebook留下的Cookie，然后拿着该Cookie去获取该用户的隐私数据等等。由此可见，"同源政策"是必需的，否则 Cookie 可以共享，互联网就毫无安全可言了。
 在同源策略下，在当前网页发送AJAX请求到非同源页面的行为是禁止的，比如我们随便打开一个网页，向Google发送一个HTTP的GET请求，该请求将会被禁止：
 
@@ -30,9 +31,9 @@ CORS是一个W3C标准，全称是"跨域资源共享"（Cross-origin resource s
 
 为了便于理解，我们在本机模拟一个跨域场景，假设客户端网页地址为`127.0.0.1:5500`，本地Server的地址为`127.0.0.1:9000`，客户端向服务端发送GET请求，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2011/07/cors-1.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2011/07/cors-1.png">
 
-由于Server的端口号不同，因此会触发跨域，浏览器会Block这次请求，并给出下面信息：
+由于Server的端口号不同，参照上一节的规则，客户端的调用请求将会触发跨域规则，浏览器会Block这次请求，并给出下面信息：
 
 ```shell
 Failed to load http://127.0.0.1:9000/: No 'Access-Control-Allow-Origin' header is present on the requested resource. 
@@ -46,7 +47,7 @@ Origin 'http://127.0.0.1:5500' is therefore not allowed access.
 <pre class="highlight language-javascript md-no-padding-v md-height-full">
 <code class="language-javascript">
 //client
-fetch('http://127.0.0.1:9000', {method: 'GET'})
+fetch('http://127.0.0.1:9000')
   .then(res => console.log(res))
   .catch(err => console.log(err));
 </code>
