@@ -1,8 +1,8 @@
 ---
 updated: "2018-08-20"
 layout: post
-title: 系统设计入门 | System Design | 负载均衡算法 | Load Balancer In Nginx
-list_title: 系统设计 | System Design | Load Balancer
+title: 负载均衡算法 
+list_title: 系统设计入门 | System Design | 负载均衡算法 | Load Balancer
 categories: [backend]
 ---
 
