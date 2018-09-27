@@ -54,7 +54,7 @@ categories: [backend]
 
 ### 分库
 
-分库是指是指按照业务模块将数据分散到不同的数据库服务器上，例如下面一台DB中同时存放了用户，订单，评论三个业务模块的数据
+分库(Partition)是指是指按照业务模块将数据分散到不同的数据库服务器上，例如下面一台DB中同时存放了用户，订单，评论三个业务模块的数据
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2016/05/sd-5-3.png">
 
@@ -81,7 +81,7 @@ categories: [backend]
 
 ### 分表
 
-分表用来解决单表数据量过大的问题，比如淘宝几亿商品如果只存在一张表里，肯定是无法满足性能要求的，此时就要对单表数据进行拆分。单表拆分的方式有两种，一种是垂直分表，另一种是水平分表。
+分表(Sharding)用来解决单表数据量过大的问题，比如淘宝几亿商品如果只存在一张表里，肯定是无法满足性能要求的，此时就要对单表数据进行拆分。单表拆分的方式有两种，一种是垂直分表，另一种是水平分表。
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2016/05/sd-5-4.png">
 
@@ -134,6 +134,12 @@ categories: [backend]
 
 ## Resouce
 
-- [Scalability, Availability & Stability Patterns](https://www.slideshare.net/jboner/scalability-availability-stability-patterns/)
 - [System Design Primer](https://github.com/donnemartin/system-design-primer#master-slave-replication)
+- [Scalability, Availability & Stability Patterns](https://www.slideshare.net/jboner/scalability-availability-stability-patterns/)
+- [Scaling up to your first 10 million users](https://www.youtube.com/watch?v=w95murBkYmU)
+- [Multi-master replication](https://en.wikipedia.org/wiki/Multi-master_replication)
+- [Partition (database)](https://en.wikipedia.org/wiki/Partition_(database))
+- [The coming of the shard](http://highscalability.com/blog/2009/8/6/an-unorthodox-approach-to-database-design-the-coming-of-the.html)
+- [Shard database architecture](https://en.wikipedia.org/wiki/Shard_(database_architecture))
+- [Consistent hashing](https://www.paperplanes.de/2011/12/9/the-magic-of-consistent-hashing.html)
 - [从0开始学架构]()
