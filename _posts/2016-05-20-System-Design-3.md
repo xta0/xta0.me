@@ -58,4 +58,4 @@ categories: [backend]
 
 - [Scalability, Availability & Stability Patterns](https://www.slideshare.net/jboner/scalability-availability-stability-patterns/)
 - [高可用系统](https://coolshell.cn/articles/17459.html)
-- [从0开始学架构](https://time.geekbang.org)
+- [从0开始学架构]()

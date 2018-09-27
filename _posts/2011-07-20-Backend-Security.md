@@ -23,7 +23,7 @@ No 'Access-Control-Allow-Origin' header is present on the requested resource.
 2. DOM 无法获得。
 3. AJAX 请求不能发送。
 
-虽然这些限制是必要的，但是有时很不方便，但有时合理的用途也受到影响，比如前后端分离后，前端调用页面后端的API就会遇到同源问题。
+虽然这些限制是必要的，但是有时很不方便，但有时合理的用途也受到影响，比如前后端分离后，前端页面调用后端的API就会遇到同源问题。
 
 ### CORS跨域通信的基本原理
 
@@ -157,9 +157,7 @@ app.use((req, res, next) => {
 
 一旦服务器通过了"预检"请求，以后每次浏览器正常的CORS请求，就都跟简单请求一样，会有一个`Origin`头信息字段。服务器的回应，也都会有一个`Access-Control-Allow-Origin`头信息字段。在跨域信息沟通完成后，接下来客户端便可以向服务端发送GET请求来获取数据。
 
-## Web攻击
-
-### CSRF(Cross-Site Request Forgery)
+## CSRF(Cross-Site Request Forgery)
 
 ### XSS(Cross-site Scripting)
 
