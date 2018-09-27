@@ -2,7 +2,7 @@
 updated: "2018-08-23"
 layout: post
 title: CAP 理论
-list_title: 系统设计 | CAP理论 | CAP Theorem
+list_title: 系统设计入门 | System Design | CAP理论 | CAP Theorem
 categories: [backend]
 ---
 

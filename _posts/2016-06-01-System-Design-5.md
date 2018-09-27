@@ -2,7 +2,7 @@
 updated: "2018-08-20"
 layout: post
 title: 分布式数据库
-list_title: 系统设计 | System Design | 分布式数据库 | Distributed Database
+list_title: 系统设计入门 | System Design | 数据库设计 | Distributed Database
 categories: [backend]
 ---
 

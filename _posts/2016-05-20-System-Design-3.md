@@ -2,7 +2,7 @@
 updated: "2018-08-23"
 layout: post
 title: 高性能，高可用，可扩展
-list_title: 系统设计 | System Design | 三个目标 | Performance, Availability and Scalibilty
+list_title: 系统设计入门 | System Design | 三个目标 | Performance, Availability and Scalibilty
 categories: [backend]
 ---
 

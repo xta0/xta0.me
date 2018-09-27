@@ -15,7 +15,7 @@ struct objc_object {
 typedef struct objc_class *Class;
 ```
 
-OC中的对象都是id，id是一个objc_object结构体指针，这个结构体中只有一个成员是isa。isa代表了这个对象的类型：
+OC中的对象都可以用`id`来表示，`id`是一个`objc_object`结构体指针，这个结构体中只有一个成员是`isa`。`isa`代表了这个对象的类型：
 这句代码：
 
 ```objc
@@ -26,10 +26,9 @@ Class clz = [obj Class];
 
 ```objc
 objc_class* clz = obj->isa
-
 ```
 
-objc_class这个结构体的定义为：
+`objc_class`这个结构体的定义为：
 
 ```c
 struct objc_class {
@@ -49,10 +48,10 @@ struct objc_class {
 那么就有:
 
 ```objc
-objc_class* clz_meta = obj->isa->isa。
+objc_class* clz_Meta = obj->isa->isa。
 ```
 
-Apple对clz_meta的描述是metaClass，也就是`Class`的class，这也不难理解，因为`clz`同样可以接受message：[clz new],也有自己的类方法。
+Apple对`clz_Meta`的描述是MetaClass，也就是`Class`的class，这也不难理解，因为`clz`同样可以接受message：`[clz new]`,也有自己的类方法。
 
 上面描述的结构如下图所示：
 
@@ -88,7 +87,7 @@ $3 = (Class) 0x3668
 $2 = (Class) 0x3668
 ```
 
-这说明`[obj Class]`等价于`obj->isa`，然后我们看看`objc_class`这个结构体中的状态：
+这说明`[obj Class]`等价于`obj->isa`，复合我们的预期，然后我们看看`objc_class`这个结构体中的状态：
 
 ```shell
 (gdb) p *obj->isa
@@ -106,14 +105,14 @@ $7 = {
 }
 ```
 
-我们看到了metaClass也就是obj->isa->isa指向了0x3654，我们用GDB调试下：
+我们看到了MetaClass也就是`obj->isa->isa`指向`了0x3654`，我们用GDB调试下：
 
 ```shell
 (gdb) p obj->isa->isa
 $8 = (Class) 0x3654
 ```
 
-接着，我么再看看metaClass的objc_class结构体：
+接着，我么再看看MetaClass的objc_class结构体：
 
 ```shell
 (gdb) p *obj->isa->isa
@@ -131,20 +130,20 @@ $6 = {
   }
 ```
 
-看到metaClass对象的isa指向了0x11d4bd4，即obj->isa->isa = 0x11d4bd4。这个时候我们发现super_class也是0x11d4bd4，也就是说metaClass的isa指向了其父类，我们看看它父类是什么？
+看到MetaClass对象的`isa`指向了`0x11d4bd4`，即`obj->isa->isa = 0x11d4bd4`。这个时候我们发现super_class也是`0x11d4bd4`，也就是说MetaClass的`isa`指向了其父类，我们看看它父类是什么？
 
-```
+```shell
 (gdb) po obj->isa->isa->isa
 NSObject
 ```
-MetaClass对象的isa指向了super_class，那super_class的父类，也就是NSObject的MetaClass对象的super_class指向哪里？
+MetaClass对象的`isa`指向了super_class，那`super_class`的父类，也就是`NSObject`的`MetaClass`对象的`super_class`指向哪里？
 
-```
+```shell
 (gdb) po obj->isa->isa->isa->super_class->super_class
 Can't print the description of a NIL object.
 ```
 
-Nil是我们期待的结果，到这里，我们应该把上面的图再改一改：
+`Nil`是我们期待的结果，到这里，我们应该把上面的图再改一改：
 
 ![](/assets/images/2012/02/class_hierarchy-2.png)
 

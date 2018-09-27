@@ -1,12 +1,10 @@
 ---
 updated: "2018-08-20"
 layout: post
-title: 系统设计 （四）| Nginx中的负载均衡 | Load Balancer In Nginx
+title: 系统设计入门 | 负载均衡算法 | Load Balancer In Nginx
 list_title: 系统设计 | System Design | Load Balancer
 categories: [backend]
 ---
-
-## Load Balancer
 
 负载均衡这个概念相对来说比较容易理解，其工作方式如下图所示，由于在之前文章中已经做过介绍，这里就不再展开了。Load Balancer主要完成两个任务，一是负责分发请求，二是处理冗余(即某个server failed了，能够及时发现并redirect请求到其它server上)。本文将使用Nginx来模拟实现三种路由策略，分别是Round-Robin， Least busy以及Session/cookies。通过观察这几种策略的表现来带给大家一些直观的感受。
 
