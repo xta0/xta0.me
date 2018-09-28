@@ -14,7 +14,7 @@ categories: [DataStructure]
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2008/09/B-Tree-1.png">
 
-B树是一种平衡的多分树(Balanced Tree)，它有以下性质
+B树是一种平衡的多分树(Balanced Tree)，如上图是一种3阶B树，也叫做`2-3`树，即每个节点有2个节点或者3个节点
 
 1. 
 
