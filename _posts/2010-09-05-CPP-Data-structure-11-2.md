@@ -14,9 +14,15 @@ categories: [DataStructure]
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2008/09/B-Tree-1.png">
 
-B树是一种平衡的多分树(Balanced Tree)，如上图是一种3阶B树，也叫做`2-3`树，即每个节点有2个节点或者3个节点
+B树是R.Bayer和E.MacCreight在1970年提出的一种平衡的多路查找树，如上图是一种3阶B树，也叫做`2-3`树，即每个节点有2个子节点或者3个子节点。观察发现，它有如下性质：
 
-1. 
+1. 所有底层的节点，深度是一致的，是一种理想平衡的搜索树
+
+B树所谓的多路搜索树和前面提到的二路搜索树实际上是等价的，将BST节点进行合并即可得到B树。例如下图中，将BST的根节点和两个子节点进行“两代”合并，可以得到4路B树
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/09/b-tree-2.png">
+
+
 
 
 
