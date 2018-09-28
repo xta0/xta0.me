@@ -1,22 +1,24 @@
 ---
 layout: post
-list_title: Data Structre Part 10 | B-树 | B-Tree
-title: B-树 
+list_title: Data Structre Part 11-2 | 索引 | B/B+ 树 | Indexing-B/B+ Tree
+title: B/B+ 树 
 mathjax: true
 categories: [DataStructure]
 ---
 
 ## 动态索引
 
-动态索引主要用于数据库中的primary key频繁插入，删除，造成索引结构的频繁更新。如果使用前面提到的多分树，则不是很好调整。因此我们需要一个更高效的数据结构
+动态索引主要用于处理索引结构本身可能发生变化的场景，比如数据库中的primary key可能会频繁插入，删除，造成索引结构的频繁更新。建立动态索引的目的视为了保持较好的查询性能，提高检索效率。实现动态索引有很多种方式，如果使用前面提到的多分树，则节点的插入删除不是很好调整。因此我们需要一个更高效的数据结构
 
 ### B树
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2008/09/B-Tree-1.png">
 
 B树是一种平衡的多分树(Balanced Tree)，它有以下性质
 
 1. 
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2008/09/B-Tree-1.png">
+
 
 
 

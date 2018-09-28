@@ -1,14 +1,14 @@
 ---
 layout: post
-list_title: Data Structre Part 10 | 索引 | Indexing
-title: 静态索引 | Static Indexing
+list_title: Data Structre Part 11-1 | 索引 | 倒排索引 | Inverted Indexing
+title: 静态索引与倒排索引
 mathjax: true
 categories: [DataStructure]
 ---
 
 > 索引相当于图书馆的卡片目录，有了卡片目录之后，就不需要在整个书库中搜索某一本书，而可以在卡片目录中检索到该书的位置。
 
-## 概述
+## 索引概述
 
 索引主要是针对外层文件系统或者数据库文件而设计的一种查询技术。在数据库系统中，每条记录存在文件系统中，文件本质上是一种线性存储结构，如果要查找某个记录，需要从文件头开始逐个去查找，由于是外存访问，效率非常的低。因此我们可以考虑，对于经常需要查找的数据是不是可以建立有效的索引。
 
@@ -73,7 +73,7 @@ categories: [DataStructure]
 
 BST构成了一个多级索引结构，树中每个叶节点表示数据库中每条记录的位置，每个兄弟节点表示索引文件中某个key在下一级索引文件中的位置。
 
-当文数据库文件创建好后，即可生成这样一个静态索引结构
+当数据库文件创建好后，即可生成这样一个静态索引结构
 
 ## 倒排索引(Invered Index)
 
