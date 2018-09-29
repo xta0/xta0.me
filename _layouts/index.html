@@ -1,21 +1,21 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 {% include _blocks/page_class.html %}
 {% assign content_page = page.layout | append: ".html" %}
-<html lang="{{ site.language }}">
+<html lang={{site.language}}>
 <head>
     {% include _partials/head.html %}
     <title>{{page.title}}</title>
 </head>
-<body itemscope itemtype="http://schema.org/WebPage" lang="{{ page.lang | default: page.language | default: site.language }}">
+<body>
     {% assign lang = site.data.languages[site.language] %}
     <div class="site-container site-container-index">
         <div class="site-container__content">
-            <header class="site-header" itemscope itemtype="http://schema.org/WPHeader">
+            <header class="site-header">
                 {% include _partials/header.html %}
             </header>       
             <article class="site-main">
                 <main class={{page_class}}>
-                    {% include {{content_page}} %}
+                    {{content}}
                 </main>
                 <footer class="site-footer">
                     {% include _partials/footer.html %}
