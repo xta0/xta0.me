@@ -8,6 +8,13 @@ updated: '2018-09-14'
 
 ### HTTP Verbs
 
+- **GET/POST**
+    - Parameters in URL / Parameters in Body
+    - used for fetching documents / used for updating
+    - maximum URL length / no max length
+    - Ok to cache / not OK to cache
+    - shouldn't change the server / OK to change the server
+
 - **HEAD**
 
 HEAD返回HTTP Response Header信息，这个操作主要用于查询Response大小，资源过期时间等等，通常在HEAD操作之后进行GET操作
