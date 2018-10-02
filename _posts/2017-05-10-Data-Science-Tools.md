@@ -23,6 +23,34 @@ Python系统自带一些数值计算的API，[Numpy](https://www.python-course.e
 
 二维数组
 
+## Numpy
+
+和Python内置的数组实现相比，Numpy数组有下面几点优势
+
+1. compact, they don't take up as much space in memory as a Python list
+2. efficient, computations usually run quicker on numpy arrays then Python lists
+3. convenient 
+
+
+### 2D Array
+
+```python
+import numpy as np
+
+# A simple robot world can be defined by a 2D array
+# Here is a 6x5 (num_rows x num_cols) world
+world = np.array([ [0, 0, 0, 1, 0],
+                   [0, 0, 0, 1, 0],
+                   [0, 1, 1, 0, 0],
+                   [0, 0, 0, 0, 1],
+                   [1, 0, 0, 1, 0],
+                   [1, 0, 0, 0, 0] ])
+
+# Visualize the world
+print(world.shape) #<row,column> (6,5)
+print('height' + str(world.shape[0]));  #6
+print('width' + str(world.shape[1]));  #5
+```
 
 
 ## Numpy & Pandas for 1D Data

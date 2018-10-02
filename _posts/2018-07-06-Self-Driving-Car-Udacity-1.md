@@ -155,17 +155,24 @@ $$
 
 至此，我们可以先总结一下贝叶斯公式的计算步骤：
 
-### 贝叶斯公式的计算步骤
-
 1. 得到某件事情发生的先验概率 $P(H)$，进而的到 $P(H')$
-2. 根据已有的先验信息，进行某种试验$T$，观察试验结果，得到条件概率： $P(T\|H)$ 以及 $P(T\|H')$
+2. 根据已有的先验信息，进行某种试验$T$，观察试验结果，得到条件概率： $P(T\|H)$ 以及 $P(T\|H')$ , 进而得到 $P(T'\H) = $
 3. 计算先验概率和试验概率的联合概率：
     - $ P(T,H) = P(T\|H)*P(H) $
     - $ P(T,H') = P(T\|H')*P(H') $
 4. 计算试验结果出现的概率，即全概率: $P(T) = P(T,H) + P(T,H')$
 5. 计算贝叶斯概率，即通过试验矫正后的概率：$P(H\|T) = \frac {P(T\|H)*P(H)}{P(T)} $
 
-### 自动驾驶中的贝叶斯模型
+
+## 自动驾驶中的贝叶斯模型
+
+<div class="md-flex-h md-flex-no-wrap">
+<div>{% include _partials/components/lightbox.html param='/assets/images/2018/07/ad-lidar.png' param2='1' %}</div>
+<div>{% include _partials/components/lightbox.html param='/assets/images/2018/07/ad-lidar-2.png' param2='1' %}</div>
+</div>
+
+
+
 
 贝叶斯定理在自动驾驶领域应用非常广泛也非常重要，我们可以通过某种先验信息-比如GPS定位，先得到车的一个初步位置，通常来说这个初步位置和真实位置有5m左右的误差(GPS误差)，如下图左边所示
 
@@ -173,8 +180,6 @@ $$
 <div>{% include _partials/components/lightbox.html param='/assets/images/2018/07/ad-3.png' param2='1' %}</div>
 <div>{% include _partials/components/lightbox.html param='/assets/images/2018/07/ad-4.png' param2='1' %}</div>
 </div>
-
-
 
 显然，5m的误差对于行驶在路上的汽车来说是不可接受的，因此我们还需要通过车各种传感器收集更多的收据来矫正车的位置，常用外部传感器有
 
@@ -190,6 +195,7 @@ $$
 
 我们可以通过这些数据来重新矫正车的位置（虽然现在还不知道该如何矫正，但是可以获得一些感性的认识），上面的例子中，矫正之后的点是`A`点。
 
+### The Robot World
 
 
 {% include _partials/post-footer-1.html %}
@@ -200,9 +206,9 @@ $$
 - [贝叶斯定理Wiki](https://zh.wikipedia.org/wiki/%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AE%9A%E7%90%86)
 - [贝叶斯推断及其互联网应用（一）：定理简介](http://www.ruanyifeng.com/blog/2011/08/bayesian_inference_part_one.html)
 
-### 附录
+## 附录
 
-Solution code for project Joy Ride:
+### Solution code for project Joy Ride:
 
 ```python
 car_parameters = {"throttle": 0, "steer": 0, "brake": 0}
@@ -228,4 +234,24 @@ def control(pos_x, pos_y, time, velocity):
 import src.simulate as sim
 sim.run(control)
 ```
+
 - [Code simulation on Youtube](https://www.youtube.com/watch?v=pYvCvNFZFMw)
+
+### Python实现贝叶斯模型
+
+```python
+def bayes(p_A, p_B_given_A, p_notB_given_notA):
+    #计算P(B')
+    not_p_B = p_notB_given_notA * (1-p_A) + p_A*(1-p_B_given_A)
+    #计算后验概率
+    posterior = (p_A * p_B_given_A) / (1-not_p_B)
+    
+    return posterior
+
+## test case
+p_A = 0.2
+p_B_given_A = 0.9
+p_notB_given_notA = 0.5
+
+posterior = bayes(p_A, p_B_given_A, p_notB_given_notA)
+```
