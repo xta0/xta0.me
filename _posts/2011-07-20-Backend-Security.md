@@ -157,11 +157,45 @@ app.use((req, res, next) => {
 
 一旦服务器通过了"预检"请求，以后每次浏览器正常的CORS请求，就都跟简单请求一样，会有一个`Origin`头信息字段。服务器的回应，也都会有一个`Access-Control-Allow-Origin`头信息字段。在跨域信息沟通完成后，接下来客户端便可以向服务端发送GET请求来获取数据。
 
-## CSRF(Cross-Site Request Forgery)
+## CSRF/XSRF
+
+CSRF指的是跨站点请求伪造(Cross-Site Request Forgery)，其本质是利用身份校验的漏洞进行攻击。考虑下面一个场景，用户Alice登录某银行网站后，进行转账操作，form表单地址为`somebank.com/transfer`，请求为POST，当银行server收到这个请求后，服务器会根据cookie验证该请求是否来自一个合法的session。假设有一个恶意用户Bob，了解该银行系统的API设计，于是他伪造了一个A的转账请求，将转账对象改为自己，但由于Bob无法得到Alice的cookie信息，进而服务端session校验失败，因此该伪造的请求并未成功。这时，Bob为了获取A的cookie信息，做了一个钓鱼网站，诱导用户Alice点击了某个button，随后便触发了一段脚本：
+
+```javascript
+function myFunction(event){
+    const url = 'http://somebank.com/transfer';
+    const data = "name=Bob&amount=1000";
+    fetch(url,{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/x-www-form-urlencoded; charset=utf-8"
+            },
+            credentials: 'include',
+            body:data
+        })
+}
+```
+该脚本会向银行系统发出转账请求，转账对象为`Bob`, 转账金额为`1000`。 大多数情况下，该请求会失败，因为他要求Alice的认证信息。但是，如果Alice次时恰巧刚访问他的银行后不久，他的浏览器与银行网站之间的 session 尚未过期，浏览器的cookie之中含有Alice的认证信息。此时，上述POST请求很容易通过银行的校验，从而完成对Bob的转账。等以后Alice发现账户钱少了，即使他去银行查询日志，他也只能发现确实有一个来自于他本人的合法请求转移了资金，没有任何被攻击的痕迹。
+
+透过例子能够看出，攻击者并不能通过CSRF攻击来直接获取用户的账户控制权，也不能直接窃取用户的任何信息。他们能做到的，是骗用户浏览器来获取用户cookie，模拟用户操作。
+
+### 检查Referer字段
+
+HTTP头中有一个`Referer`字段，这个字段用以标明请求来源于哪个地址。在处理敏感数据请求时，通常来说，`Referer`字段应和请求的地址位于同一域名下。以上文银行操作为例，`Referer`字段地址通常应该是转账按钮所在的网页地址，应该也位于`somebank.com`之下。而如果是CSRF攻击传来的请求，`Referer`字段会是包含恶意网址的地址，不会位于`somebank.com`之下，这时候服务器就能识别出恶意的访问。
+
+然而，这种方法并非万无一失。Referer 的值是由浏览器提供的，虽然 HTTP 协议上有明确的要求，但是每个浏览器对于 Referer 的具体实现可能有差别，并不能保证浏览器自身没有安全漏洞。使用验证 Referer 值的方法，就是把安全性都依赖于第三方（即浏览器）来保障，从理论上来讲，这样并不安全。
+
+即便是使用最新的浏览器，黑客无法篡改 Referer 值，这种方法仍然有问题。因为 Referer 值会记录下用户的访问来源，有些用户认为这样会侵犯到他们自己的隐私权，特别是有些组织担心 Referer 值会把组织内网中的某些信息泄露到外网中。因此，用户自己可以设置浏览器使其在发送请求时不再提供 Referer。当他们正常访问银行网站时，网站会因为请求没有 Referer 值而认为是 CSRF 攻击，拒绝合法用户的访问。
+
+### 使用Token
+
+另一个防御措施是改变用户的校验规则，CSRF 攻击之所以能够成功，是因为黑客可以完全伪造用户的请求，该请求中所有的用户验证信息都是存在于 cookie 中，因此黑客可以在不知道这些验证信息的情况下直接利用用户自己的 cookie 来通过安全验证。要抵御 CSRF，关键在于在请求中放入黑客所不能伪造的信息，并且该信息不存在于 cookie 之中。可以在 HTTP 请求中以参数的形式加入一个随机产生的 token，并在服务器端建立一个拦截器来验证这个 token，如果请求中没有 token 或者 token 内容不正确，则认为可能是 CSRF 攻击而拒绝该请求。
+
 
 ### XSS(Cross-site Scripting)
 
-### SQL注入
+
+
 
 ## Password
 
@@ -206,4 +240,5 @@ def valid_pw(name,pw,hash_code):
 - [Same Origin Policy](https://www.w3.org/Security/wiki/Same_Origin_Policy)
 - [浏览器同源政策及其规避方法](http://www.ruanyifeng.com/blog/2016/04/same-origin-policy.html)
 - [跨域资源共享CORS详解](http://www.ruanyifeng.com/blog/2016/04/cors.html)
+- [CSRF 攻击的应对之道](https://www.ibm.com/developerworks/cn/web/1102_niugang_csrf/index.html)
 - [Learn JSON Web Tokens](https://auth0.com/learn/json-web-tokens/)
