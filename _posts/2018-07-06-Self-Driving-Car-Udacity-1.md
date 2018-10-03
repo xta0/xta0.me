@@ -164,15 +164,7 @@ $$
 5. 计算贝叶斯概率，即通过试验矫正后的概率：$P(H\|T) = \frac {P(T\|H)*P(H)}{P(T)} $
 
 
-## 自动驾驶中的贝叶斯模型
-
-<div class="md-flex-h md-flex-no-wrap">
-<div>{% include _partials/components/lightbox.html param='/assets/images/2018/07/ad-lidar.png' param2='1' %}</div>
-<div>{% include _partials/components/lightbox.html param='/assets/images/2018/07/ad-lidar-2.png' param2='1' %}</div>
-</div>
-
-
-
+### 自动驾驶中的贝叶斯模型
 
 贝叶斯定理在自动驾驶领域应用非常广泛也非常重要，我们可以通过某种先验信息-比如GPS定位，先得到车的一个初步位置，通常来说这个初步位置和真实位置有5m左右的误差(GPS误差)，如下图左边所示
 
@@ -194,9 +186,6 @@ $$
 3. 车轮指向右边
 
 我们可以通过这些数据来重新矫正车的位置（虽然现在还不知道该如何矫正，但是可以获得一些感性的认识），上面的例子中，矫正之后的点是`A`点。
-
-### The Robot World
-
 
 {% include _partials/post-footer-1.html %}
 
