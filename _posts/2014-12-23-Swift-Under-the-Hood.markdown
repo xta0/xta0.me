@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title:  Swift对象的内存模型 | Behind Swift Object
-title: Swift Object Under the hood
+list_title:  Swift中的Object研究 | Swift Object Under the hood
+title: Swift中的Object
 categories: [swift, iOS]
 ---
 
@@ -23,24 +23,17 @@ class MySwiftClass
 ```c
 //creat an instance of MySwiftClass
 let obj = MySwiftClass()
-
 //get it's pointer in memory
 var obj_ptr:UnsafePointer<Void> = unsafeAddressOf(obj)
-
 //size of obj
 let l:UInt = malloc_size(obj_ptr)
-
 //memory layout of obj
 let d = NSData(bytes: obj_ptr, length: (Int)(l));
-
 println("%@",d)
-
 ```
 
 - `obj`的大小为32byte
-
 - `obj`在内存中的存放格式为`<100d8719 01000000 0c000000 01000000 0a000000 00000000 00000000 00000000>`
-
 
 在x86_64上，数据按照little-endian存储，低位在前，高位在后，数据按照64bit对齐内存。前16字节为[isa pointer]():`100d8719 01000000 0c000000 01000000`。后16字节为成员变量`a`。
 
@@ -49,14 +42,13 @@ println("%@",d)
 
 ## Swift Object
 
-### objc_class在哪?
+### `objc_class`在哪?
 
 在Objective-C中，`isa`实际上是`objc_class`类型的结构体。因此，最先首先想到的办法当然是在Swift的各种framework中看看能否找到`objc_class`的定义。翻了半天，只找到了这样一句:
 
 `/* Use 'Class' instead of 'struct objc_class *' */`
 
 这是不是说明Swift的`objc_class`不存在呢？通过上一节的分析，应该可以确定`isa`是存在的，只是不允许被直接访问了。
-
 网上有一篇很神奇的文章[Inside Swift](http://www.eswick.com/2014/06/inside-swift/)。他是通过逆向Mach-O文件，在`__objc_classlist`段，找到了`objc_class`
 
 ```c
