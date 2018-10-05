@@ -7,10 +7,9 @@ categories: [iOS,Objective-C]
 
 <em></em>
 
-
 对于Quartz我觉得有两个点值得讨论：一是坐标系，二是绘制bitmap
 
-<h3>Coordinate</h3>
+### 坐标系
 
 如果熟悉openGL，那么对Quartz的坐标系相信不会有太多的疑惑。Quartz的坐标系是二维的坐标系，通过CGAffineTransform的状态矩阵来表示，顾名思义，它是一种二维线性的可逆变换，也叫<a href="http://zh.wikipedia.org/zh-cn/%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2">仿射变换</a>。在openGL中，物体是通过矩阵表示的，对于二维平面，只需要让z方向分量为单位向量:
 
@@ -141,7 +140,9 @@ CGContextConcatCTM(ctx, t1);</pre>
  CGContextRotateCTM(ctx, (-90)*M_PI/180.0);
 ```
 
-<h3>Drawing Bitmap</h3>
+## 绘制图片
+
+### 使用`UIGraphicsBeginImageContextWithOptions`
 
 我们经常需要使用context绘制bitmap,Core Graphic提供了很多方法来实现它，多到令人费解。我们先看一种常用的方法：
  
@@ -155,14 +156,13 @@ ret = UIGraphicsGetImageFromCurrentImageContext();
 UIGraphicsEndImageContext();
 ``` 
 
-上面代码是将原图缩小到10x10，绘制一张新图:
+`UIGraphicsBeginImageContextWithOptions`这个API用来在内存中生成一个RBGA格式的Bitmap，上面代码是将原图缩小到10x10，绘制一张新图:
 
-<a href="/assets/images/2012/04/quartz5.png"><img src="{{site.baseurl}}/assets/images/2012/04/quartz5.png" alt="quartz5" width="218" height="101"/></a>
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2012/04/quartz5.png">
 
-next,we try the old way:
+接下来，我们可以换一种绘图方式
 
 ```objc
-
 CGSize newSize = CGSizeMake(10, 10);
 CGRect newRect = (CGRect){0,0,newSize};
 
@@ -176,11 +176,9 @@ UIGraphicsEndImageContext();
  
 结果却是这样的：
 
-<a href="/assets/images/2012/04/quartz6.png"><img src="{{site.baseurl}}/assets/images/2012/04/quartz6.png" alt="quartz6" width="220" height="100"/></a>
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2012/04/quartz6.png">
 
-why?
-
-熟悉图像处理的人应该知道bitmap的数据排列和显示是成镜像关系的，bitmap data数据指针指向图片的末行。因此，如果想把bitmap按照正确的顺序绘制出来，需要改变Quartz的绘制顺序，让它从从远点开始，然后从底向上绘制。
+图片为什么反了呢？熟悉图像处理的人应该知道bitmap的数据排列和显示是成镜像关系的，bitmap 数据指针指向图片的末行。因此，如果想把bitmap按照正确的顺序绘制出来，需要改变Quartz的绘制顺序，让它从从远点开始，然后从底向上绘制。
 
 ```objc
 CGContextScaleCTM(srcContext, 1.0, -1.0);
@@ -189,7 +187,7 @@ CGContextTranslateCTM(srcContext, 0, -10);
 
 上面代码的意思是坐标系反转了之后，状态矩阵变成了：
 
-```
+```shell
 $0 = [
   a = 1
   b = 0
@@ -202,22 +200,21 @@ $0 = [
 
 按照上面的计算公式，坐标变成了
 
-```
+```shell
 x(new) = x(old)*1;
 y(new) = y(old)*1;
-
 ```
 
 也就是说Quartz从（0，0）点开始绘制了，读bitmap第一行像素，从屏幕最底部显示出来，这样bitmap的绘制顺序就正确了。
 这种方式确实很麻烦，需要developer理解Quartz的坐标并且对bitmap图片格式也要熟悉，因此并不建议使用。
 
-<h3>RenderInContext</h3>
+### 使用`RenderInContext`
 
 layer.renderInContext：可以将当前layer的content变成一张CGImageRef，这和Quartz有什么关系呢？很久以前我试图render部分layer的内容到一张image，就是说给View的一部分截图。例如一个view的bounds是(0,0,100,100)，我想截取其（50，50，30，30）的部分。实现这个功能有很多种办法，最笨的就是把layer的content先通过context生成bitmap，然后去找像素点，聪明一点的就可以使用layer的二维状态矩阵。假如我们要实现下面的效果：
 
-<a href="/assets/images/2012/04/quartz7.png" alt="quartz7" width="222" height="100" class="alignnone size-full wp-image-660" /></a>
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2012/04/quartz7.png">
 
-假设左边原图大小为100x100，待截取区域矩形的origin位于原图的(25,15)处，大小为50x50。
+假设左边原图大小为`100x100`，待截取区域矩形的origin位于原图的`(25,15`)处，大小为`50x50`。
 
 首先我们需要一个context，创建一个50x50的bitmap，左上角为(0,0)。然后当layer通过context渲染时，只要保证layer的(25,15)这个点在context的状态矩阵中是(0,0)即可。那么怎么做到这一点？上面有提到平移坐标系，例如上面讨论中，我们将tx，ty各增加10。那么对于UIKit的坐标系，（0，0）点便成了(10,10)点，也就是图从（10,10）开始显示。那么反推这种运算，我们现在可以将tx = -25, ty = -15，这样UIKit的坐标系，（0，0）点便成了(-25,-15)点。这样便相当于从原图的(25，15)开始绘制。
 
@@ -242,5 +239,3 @@ UIGraphicsEndImageContext();
 
 return newImg;
 ``` 
-
-
