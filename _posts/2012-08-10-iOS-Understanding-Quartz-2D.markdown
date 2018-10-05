@@ -2,6 +2,7 @@
 list_title:  理解iOS中的Quartz2D | Understand Quartz2D in iOS
 title: 理解iOS中的Quartz2D
 layout: post
+mathjax: true;
 categories: [iOS,Objective-C]
 ---
 
@@ -11,7 +12,7 @@ categories: [iOS,Objective-C]
 
 ### 坐标系
 
-如果熟悉openGL，那么对Quartz的坐标系相信不会有太多的疑惑。Quartz的坐标系是二维的坐标系，通过CGAffineTransform的状态矩阵来表示，顾名思义，它是一种二维线性的可逆变换，也叫<a href="http://zh.wikipedia.org/zh-cn/%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2">仿射变换</a>。在openGL中，物体是通过矩阵表示的，对于二维平面，只需要让z方向分量为单位向量:
+如果熟悉openGL，那么对Quartz的坐标系相信不会有太多的疑惑。Quartz的坐标系是二维的坐标系，通过`CGAffineTransform`的状态矩阵来表示，顾名思义，它是一种二维线性的可逆变换，也叫<a href="http://zh.wikipedia.org/zh-cn/%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2">仿射变换</a>。在openGL中，物体是通过矩阵表示的，对于二维平面，只需要让z方向分量为单位向量:
 
 $$
 \begin{bmatrix}a & b &0 \\ c & d &0 \\ tx &ty &1 \end{bmatrix}
@@ -30,7 +31,6 @@ struct CGAffineTransform {
 
 这个矩阵代表什么意思呢？
 
-
 它和openGL中的矩阵表示的含义是相同的：
 
 - a ： 水平方向的缩放
@@ -41,20 +41,19 @@ struct CGAffineTransform {
 - d ：竖直方向的缩放
 - ty：竖直方向的位移
 
-如果有一个点（x,y,1）乘以这个状态矩阵，将得到新的点：
+如果有一个点`(x,y,1)`乘以这个状态矩阵，将得到新的点：
 
-```
-x ` = ax + cy +tx;
-y` = bx + dy +ty;
-```
+$$
+x^{'} = ax + cy + tx
+y^{'} = bx + dy + ty;
+$$
 
 其中，如果旋转变量b,c为0的话，那么
 
-```
-x` = ax + tx;
-y` = dy + ty;
-
-```
+$$
+x^{'} = ax + tx
+y^{'} = bx + ty;
+$$
 
 新的x值等于旧x值乘以缩放值 + 位移值。y同理
 
