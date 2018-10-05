@@ -283,7 +283,7 @@ struct ListNode
 ```
 后面的问题将会反复用到`ListNode`，则不再重复声明
 
-### 单链表反转
+### [单链表反转](https://leetcode.com/problems/reverse-linked-list)
 
 反转链表是链表中的常见操作，也是很多高级链表算法的基础步骤之一，其问题描述为：
 
@@ -327,7 +327,7 @@ public:
 ```
 不难得出，上述算法的时间复杂度为$O(N)$, 空间复杂度为$O(1)$
 
-### 链表中环的检测
+### [链表中环的检测](https://leetcode.com/problems/linked-list-cycle/description/)
 
 如何判断单链表中是否有环的思路很简单，定义两个前后两个指针，前面指针走两格，后面指针走一格，如果能相遇，则表明链表中有环
 
@@ -358,22 +358,202 @@ public:
 
 不难得出，上述算法的时间复杂度为$O(N)$, 空间复杂度为$O(1)$
 
-### 两个单链表的交点
+### [两个单链表的交点](https://leetcode.com/problems/intersection-of-two-linked-lists/description/)
 
+问题描述如下:
 
+Write a program to find the node at which the intersection of two singly linked lists begins.For example, the following two linked lists:
 
-### merge两个有序链表
+```
+A:          a1 → a2
+                   ↘
+                     c1 → c2 → c3
+                   ↗            
+B:     b1 → b2 → b3
+```
+begin to intersect at node c1.
 
-merge两个有序链表
+**Notes**:
 
+1. If the two linked lists have no intersection at all, return null.
+2. The linked lists must retain their original structure after the function returns.
+3. You may assume there are no cycles anywhere in the entire linked structure.
+4. Your code should preferably run in `O(n)` time and use only `O(1)` memory.
 
-### 删除链表倒数第 n 个结点
+这个题的解法关键是找到两个链表长度的差值，有了差值，我们就可以让长的链表先走完差值，然后两个链表一起走即可。为了找到这个差值，可以让两个列表各自先走到终点，计算长度差，这样算下来时间复杂度约为`O(3*N)`，具体步骤如下：
 
+1. 两个链表各自走到终点，记录长度l1,l2,计算差值，l1-l2
+2. 长的链表先走完差值
+3. 两个链表一起走，观察节点的next值是否相同
 
+```cpp
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        if(!headA || !headB){
+            return nullptr;
+        }
+        int la = 0; int lb = 0;
+        ListNode* pa = headA;
+        ListNode* pb = headB;
+        //统计A,B链表长度
+        while(pa&&pb){
+            la++; 
+            lb++;
+            pa= pa ->next;
+            pb= pb ->next;
+        }      
+        while(pb){
+            lb++;
+            pb = pb->next;
+        }
+        while(pa){
+            la++;
+            pa = pa->next;
+        }
+        //移动长的链表头部
+        if(la >= lb){
+            int delta = la - lb;
+            for(int i =0; i<delta; ++i){
+                headA = headA->next;
+            }
+        }else{
+            int delta = lb - la;
+            for(int i=0;i<delta; ++i){
+                headB = headB -> next;
+            }
+        }
+        //寻找相交节点
+        while(headA && headB){
+            if(headA == headB){
+                return headA;
+            }else{
+                headA = headA -> next;
+                headB = headB -> next;
+            }
+        }
+        return nullptr;
+        
+    }
+};
+```
 
-### 求链表的中间结点
+### [merge两个有序链表](https://leetcode.com/problems/merge-two-sorted-lists)
 
+1. 比较两个链表节点头指针，小的前进，大的不动
+2. 新链表指向小的节点
+3. 新链表尾部追加两个链表中较长的一个
 
+```cpp
+class Solution {
+public:
+    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+        //创建一个dummy，用来提供初始指针
+        ListNode dummy = ListNode(-1);
+        ListNode* head = &dummy;
+        ListNode* tmp = head;
+        while(l1 && l2){
+            //比较两个节点值
+            if(l1->val < l2->val){
+                tmp->next = l1;
+                l1 = l1->next;
+            }else{
+                tmp->next = l2;
+                l2 = l2->next;
+            }
+            tmp = tmp->next;
+        }
+        //append left
+        if(l1){
+            tmp->next = l1;
+        }else{
+            //append right
+            tmp->next = l2;
+        }
+        return head->next;
+    }
+};
+```
+上述算法的时间复杂度为`O(N)`，空间复杂度为`O(1)`
+
+### [删除链表倒数第N个结点 ](https://leetcode.com/problems/remove-nth-node-from-end-of-list/description/)
+
+题目描述为：
+
+```
+Given a linked list, remove the n-th node from the end of list and return its head.
+
+Example:
+
+Given linked list: 1->2->3->4->5, and n = 2.
+
+After removing the second node from the end, the linked list becomes 1->2->3->5.
+Note:
+
+Given n will always be valid.
+```
+解这道题的思路为
+
+1. 使用两个指针同时移动，两个指针之间的间隔为N
+2. 当第二个指针走到链表末尾时，第一个指针的下一个节点即为待删除节点
+
+```cpp
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* p = head;
+        ListNode* runner = head;
+        int count = 0;
+        while(p->next){
+            p = p->next;
+            count ++;
+            if(count > n){
+                runner = runner->next;
+            }
+        }
+        //分析三种情况
+        if(count + 1 == n){
+            //remove head
+            return head->next;
+        }else if(count+1 < n){
+            return head;
+        }else{
+            ListNode* tmp = runner->next->next;
+            runner->next = tmp;
+            return head;
+        }
+    }
+};
+```
+
+### [求链表的中间结点](https://leetcode.com/problems/middle-of-the-linked-list/description/)
+
+这道题目的解法和上面类似，也是采用双指针走法：
+
+1. `fast`指针走两格，`slow`指针走一格。
+2. 当`fast`指针走到头或者无法前进时，`slow`指针即为中间节点。
+
+```cpp
+class Solution {
+public:
+    ListNode* middleNode(ListNode* head) {
+        if(!head || !head->next){
+            return head;
+        }
+        ListNode* fast = head;
+        ListNode* slow = head;
+        while(fast->next){
+            if(fast->next->next){
+                fast = fast->next->next;
+            }else{
+                fast = fast->next;
+            }
+            slow = slow->next;
+        }
+        return slow;
+    }
+};
+```
 
 ## Resources
 
