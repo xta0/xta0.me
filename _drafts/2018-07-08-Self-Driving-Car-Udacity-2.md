@@ -1,8 +1,8 @@
 ---
 updated: "2018-07-10"
 layout: post
-list_title: 自动驾驶入门 | Autonomous Driving | 概率分布模型 | Probability Distributions
-title: 概率分布模型
+list_title: 自动驾驶入门 | Autonomous Driving | 卡尔曼滤波器 | Kalman Filters
+title: 卡尔曼滤波器
 categories: [AI,Autonomous-Driving]
 mathjax: true
 ---
@@ -10,6 +10,7 @@ mathjax: true
 ### Prerequisite
 
 - [Beyesian Model](https://xta0.me/2018/07/06/Self-Driving-Car-Udacity-1.html) 
+- [高斯分布]()
 - [Python Numpy](https://xta0.me/2017/05/10/Data-Science-Tools.html)
 
 ### 概率分布模型
