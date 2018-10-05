@@ -59,17 +59,11 @@ mike ash的<a href="https://www.mikeash.com/pyblog/friday-qa-2010-01-15-stack-an
 
 ### Memory Footprint
 
-操作系统中的内存按页分布，一般来说每个Page的大小为16KB，我们平时分配的heap object都存放在Page中，系统占用内存的大小可以用下面式子计算：
+操作系统中的内存按页分布，一般来说每个Page的大小为16KB，我们平时分配的heap object都存放在Page中，一个Page上可以存放多个Object，如果Object大小很大，比如NSData，那么该对象可能同时占用多个page。系统占用内存的大小可以用下面式子计算：
 
 ```
 Memory in use = Number of pages x page size
 ```
-
-每个Page中的内存又为两种类型：
-
-1. Clean
-2. Dirty
-
 例如下面代码：
 
 ```c
@@ -77,14 +71,28 @@ int *array = malloc(20000 * sizeof(int));
 array[0] = 32
 array[19999] = 64
 ```
+上面代码中假设一个`int`为`4`字节，那么我们一共在heap上分配了约`80k`大小的空间，此时系统会给我们`6`个page约为`96k`。每个page中的内存又为两种类型：
+
+- Clean
+    
+通常来说，Clean Memory是只读的，比如被加载到内存中的应用程序的二进制代码，常量段（`__TEXT`段），系统的各种framework，上面提到的分页表（memory-mapped files）等，clean内存在memory warning的时候可以被discard掉，然后recreate出来。例如, JPEG图片被加载到内存中时，用的就是`mmap`，是Clean Memory，系统可以对其进行回收。
+
+-  Dirty
+
+Dirty的内存是指应用程序产生的数据，包括Heap上分配对象的控件，`UIImage，Caches`等。dirty内存在memory warning时候会被清空
+
+对于Clean和Dirty Memory，后面还会详细说明。回到到上述程序，当这个6个page被分配给我们的时候，每个page都是clean的，但是一旦某个page中有数据写入，则这个page就变成了dirty，例如上面代码中`array[0]=32`会将page#0变为dirty状态，`array[19999]=64`会将page#6变为dirty，如下图所示：
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2012/07/memory-1.png">
+
+通常对于一个进程内的App，其内存构成如下：
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2012/07/memory-2.png">
 
 
 
-通常一个进程中有三种类型的内存：clean，dirty和free：
 
-clean的内存是：硬盘上应用程序的二进制代码（代码段），常量段（__TEXT段），系统的各种framework，上面提到的分页表（memory-mapped files）等，clean内存在memory warning的时候可以被discard掉，然后recreate出来。
 
-dirty的内存是：应用程序产生的数据，包括Heap上分配对象的控件，UIImage，Caches等。dirty内存在memory warning时候会被清空
 
 例如：
 ```objc
