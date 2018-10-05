@@ -7,7 +7,7 @@ categories: [iOS]
 ---
 
 <em> updated @2014/01/10 : 补充了WWDC2013：session410 </em>
-<em> updated @2014/08/12 : 补充了WWDC2018：session416 </em>
+<em> updated @2018/08/12 : 补充了WWDC2018：session416 </em>
 
 排查内存问题，是每个项目都会遇到的。几个项目下来，总结下经验：
 

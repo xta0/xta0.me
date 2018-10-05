@@ -1,4 +1,5 @@
 ---
+updated: '2018-08-12'
 layout: post
 list_title: 理解iOS中的内存结构（二） | Debuging Memory Issues in iOS Part 2
 title: 使用Instrument调试内存问题
@@ -6,6 +7,7 @@ categories: [iOS]
 ---
 
 <em> updated @2014/01/10 补充了WWDC2013:session 410的内容 </em>
+<em> updated @2018/08/12 : 补充了WWDC2018：session416 </em>
 
 <h3>Tracking Memory Leak Using Allocation</h3>
 
@@ -64,7 +66,7 @@ Instrument的leak选项，通常是大家都愿意点的，但实际中，我发
 然后我们创建100个imageView，并让他们加载存在硬盘上的图片
 
 ```objc
-for (int i=0; i&lt;100; i++) 
+for (int i=0; i<100; i++) 
 {        
    ETImageView* imgv = [[ETImageView alloc]initWithFrame:CGRectMake(i%4 * 80, i/4 * 80, 80, 80)];
    imgv.enableFadeInAnimation = YES;
@@ -89,3 +91,8 @@ UIImageView在显示image的时候，实际上对image做了copy操作，然后�
 
 
 总之，VM Region或者VM Tracker是一个很强大的内存分析工具，通过它可以看出一些iOS的源码设计。
+
+## Resources
+
+- [WWDC2013 - 410](https://developer.apple.com/videos/play/wwdc2013/410/)
+- [WWDC2018 - 416_ios_memory_deep_dive](https://developer.apple.com/videos/play/wwdc2018/416/)
