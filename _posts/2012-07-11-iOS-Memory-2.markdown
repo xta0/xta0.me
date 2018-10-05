@@ -89,8 +89,14 @@ UIImageView在显示image的时候，实际上对image做了copy操作，然后�
 
 <a href="/assets/images/2012/07/debug-9.png"><img src="{{site.baseurl}}/assets/images/2012/07/debug-9.png" alt="debug-9" width="473" height="614"/></a>
 
+VM Region或者VM Tracker是一个很强大的内存分析工具，通过它可以看出一些iOS的源码设计。
 
-总之，VM Region或者VM Tracker是一个很强大的内存分析工具，通过它可以看出一些iOS的源码设计。
+### Memory Graph
+
+XCode8 引入内存可视化工具，XCode 10将这个功能进行了增强，可以通过命令行工具生成内存快照
+
+{% include _partials/components/lightbox.html param='/assets/images/2012/07/memory-3.png' param2='1' %}
+
 
 ## Resources
 
