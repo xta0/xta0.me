@@ -54,7 +54,7 @@ Instrument的leak选项，通常是大家都愿意点的，但实际中，我发
 
 下面我们来实际演练一下：我们首先启动app，这个时候，什么都没做，我们看看VM Region和VM Tracker分别有什么变化：
 
-<div class="md-flex-h md-margin-bottom-24">
+<div class="md-flex-h md-flex-no-wrap md-margin-bottom-24">
 <div><img src="{{site.baseurl}}/assets/images/2012/07/debug-6.png"></div>
 <div><img src="{{site.baseurl}}/assets/images/2012/07/debug-7.png"></div>
 </div>
