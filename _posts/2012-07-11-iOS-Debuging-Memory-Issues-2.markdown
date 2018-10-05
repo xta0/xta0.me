@@ -1,11 +1,9 @@
 ---
 layout: post
-list_title: 使用Instrument调试内存问题（二） | Debuging Memory Issues in iOS Part 2
+list_title: 理解iOS中的内存结构（二） | Debuging Memory Issues in iOS Part 2
 title: 使用Instrument调试内存问题
 categories: [iOS]
 ---
-
-<em></em>
 
 <em> updated @2014/01/10 补充了WWDC2013:session 410的内容 </em>
 

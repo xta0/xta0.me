@@ -1,8 +1,7 @@
 ---
 layout: post
-list_title: Data Structure Part 1 | 向量 | Vector
+list_title: Data Structure | 数据结构 | 数组 | Array
 title: 向量
-sub_title: Vector
 mathml: true
 categories: [DataStructure]
 ---

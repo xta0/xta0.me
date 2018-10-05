@@ -1,12 +1,13 @@
 ---
-updated: "2014-01-10"
+updated: "2018-08-12"
 layout: post
-list_title: 使用Instrument调试内存问题（一） | Debuging Memory Issues in iOS Part 1
+list_title: 理解iOS中的内存结构（一） | Debuging Memory Issues in iOS Part 1
 title: 理解iOS中的内存结构
 categories: [iOS]
 ---
 
 <em> updated @2014/01/10 : 补充了WWDC2013：session410 </em>
+<em> updated @2014/08/12 : 补充了WWDC2018：session416 </em>
 
 排查内存问题，是每个项目都会遇到的。几个项目下来，总结下经验：
 
@@ -16,7 +17,9 @@ categories: [iOS]
 
 本文主要讨论是第一点
 
-<h3> Virtual vs. Resident</h3>
+
+
+### Virtual vs. Resident
 
 首先我们从寻址开始。
 iOS设备CPU是32位，因此寻址空间为：0x00000000 ~ 0xffffffff
@@ -54,7 +57,28 @@ Resident Memory是进程的virtual memory中常驻在物理RAM中的部分。
 
 mike ash的<a href="https://www.mikeash.com/pyblog/friday-qa-2010-01-15-stack-and-heap-objects-in-objective-c.html">这篇文章</a>总结的很详细。除了在Heap上创建的Object，还有很多看不到的内存被占用，比如：layer的backing store；代码段和常量段(__TEXT,__DATA)，Thread stack，图片数据，cache等等。
 
-<h3>Clean vs. Dirty</h3>
+### Memory Footprint
+
+操作系统中的内存按页分布，一般来说每个Page的大小为16KB，我们平时分配的heap object都存放在Page中，系统占用内存的大小可以用下面式子计算：
+
+```
+Memory in use = Number of pages x page size
+```
+
+每个Page中的内存又为两种类型：
+
+1. Clean
+2. Dirty
+
+例如下面代码：
+
+```c
+int *array = malloc(20000 * sizeof(int));
+array[0] = 32
+array[19999] = 64
+```
+
+
 
 通常一个进程中有三种类型的内存：clean，dirty和free：
 

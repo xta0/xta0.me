@@ -1,10 +1,11 @@
 ---
 layout: post
-list_title: DataStructure Part 2 | 连表 | List
+list_title: DataStructure | 数据结构 | 链表 | Linked List
 title: 链表
-sub_title: List
 categories: [DataStructure]
 ---
+
+> 本文会先介绍链表的基本概念和常用操作，以及面试中经常出现的关于链表的问题
 
 ### 基本概念
 
@@ -201,7 +202,6 @@ free(p)
 head->[]<-->[a0]<-->[a1]<-...->[an](tail)
 ```
 
-
 ### 链表的边界条件
 
 - 几个特殊点处理
@@ -216,34 +216,33 @@ head->[]<-->[a0]<-->[a1]<-...->[an](tail)
 		- 插入
 		- 查找或遍历   
 
-## 顺序表和链表的比较
+### 数组和链表的比较
 
-#### 顺序表
+- **数组**
+    - 没有使用指针，不用花费额外开销
+    - 线性表元素的读访问非常便利
+    - <mark>插入，删除运算时间代价`O(n)`,查找则可以常数时间完成</mark>
+    - 预先申请固定长度的连续空间
+    - 如果整个数组元素很慢，则没有结构性存储开销
+    - 适合静态数据结构
+    - 不适合：
+        - 经常插入删除时，不宜使用顺序表
+        - 线性表的最大长度也是一个重要因素 
 
-- 没有使用指针，不用花费额外开销
-- 线性表元素的读访问非常便利
-- <mark>插入，删除运算时间代价`O(n)`,查找则可以常数时间完成</mark>
-- 预先申请固定长度的连续空间
-- 如果整个数组元素很慢，则没有结构性存储开销
-- 适合静态数据结构
-- 不适合：
-	- 经常插入删除时，不宜使用顺序表
-	- 线性表的最大长度也是一个重要因素 
-
-#### 链表
-- 无需事先了解线性表长度
-- 允许线性表动态变化
-- 能够适应经常插入删除内部元素的情况
-- <mark>插入，删除运算时间代价`O(1)`，但找第i个元素运算时间代价`O(n)`<mark>
-- 存储利用指针，动态的按照需要为表中的新元素分配存储空间
-- 每个元素都有结构性存储开销
-- 适合动态数据结构
-- 不适合：
-	- 当读操作比插入删除操作频率大时，不用用链表
-	- 当指针的存储开销和整个节点内容所占空间相比较大时，应谨慎选择 
+- **链表**
+    - 无需事先了解线性表长度
+    - 允许线性表动态变化
+    - 能够适应经常插入删除内部元素的情况
+    - <mark>插入，删除运算时间代价`O(1)`，但找第i个元素运算时间代价`O(n)`<mark>
+    - 存储利用指针，动态的按照需要为表中的新元素分配存储空间
+    - 每个元素都有结构性存储开销
+    - 适合动态数据结构
+    - 不适合：
+        - 当读操作比插入删除操作频率大时，不用用链表
+        - 当指针的存储开销和整个节点内容所占空间相比较大时，应谨慎选择 
 
 
-### 顺序表和链表存储密度
+### 数组和链表存储密度
 
 `n`表示线性表中当前元素的数目
 `p`表示指针的存储单元大小(通常为4 bytes)
@@ -270,6 +269,111 @@ head->[]<-->[a0]<-->[a1]<-...->[an](tail)
 	- 线性表中节点动态变化（插入删除多）
 	- n < de/(p+e)  
 
+## 常见的链表问题
+
+本节会介绍面试中经常出现的链表问题，熟悉这些问题对于掌握链表的操作技巧至关重要，由于后面的问题均需要使用链表结构，这里先给出单链表的定义
+
+```cpp
+struct ListNode
+{
+    int val;
+    ListNode *next;
+    ListNode(int x) : val(x), next(NULL) {}
+};
+```
+后面的问题将会反复用到`ListNode`，则不再重复声明
+
+### 单链表反转
+
+反转链表是链表中的常见操作，也是很多高级链表算法的基础步骤之一，其问题描述为：
+
+```
+Reverse a singly linked list.
+
+Input: 1->2->3->4->5->NULL
+Output: 5->4->3->2->1->NULL
+```
+翻转链表的方法有很多，常见的有迭代法和递归法，这里主要介绍基于迭代翻转算法。其思路为从第二个节点开始依次向后指向头结点，效果如下：
+
+```
+1 --> 2 --> 3 --> 4
+loop#1: 1 --> null   |  2-->3-->4
+loop#2: 2 --> 1 --> null | 3-->4
+loop#3: 3 --> 2 --> 1 --> null | 4
+loop#4: 4 --> 3 --> 2 --> 1 --> null | 
+```
+代码实现为:
+
+```cpp
+class Solution
+{
+public:
+    ListNode *reverseList(ListNode *head){
+       ListNode* first = nullptr;
+       ListNode* second = nullptr;
+       while(head){
+           //保存头结点
+           first = head;
+           //移动头结点
+           head = head->next;
+           //断开链表
+           first->next = second;
+           second = head->next;
+           //翻转后链表的头结点
+           second = first;
+       }
+    }
+};
+```
+不难得出，上述算法的时间复杂度为$O(N)$, 空间复杂度为$O(1)$
+
+### 链表中环的检测
+
+如何判断单链表中是否有环的思路很简单，定义两个前后两个指针，前面指针走两格，后面指针走一格，如果能相遇，则表明链表中有环
+
+```cpp
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        if(!head || !head->next){
+            return false;
+        }
+        ListNode* first = head;
+        ListNode* second = first->next;
+        while(second != first){
+            //first前进一步
+            first = first->next;
+            //如果second为前方为空，则链表没有环
+            if(!second->next || !second->next->next){
+                return false;
+            }
+            //second前进两步
+            second = second->next;
+            second = second->next;
+        }
+        return true;
+    }
+};
+```
+
+不难得出，上述算法的时间复杂度为$O(N)$, 空间复杂度为$O(1)$
+
+### 两个单链表的交点
+
+
+
+### merge两个有序链表
+
+merge两个有序链表
+
+
+### 删除链表倒数第 n 个结点
+
+
+
+### 求链表的中间结点
+
+
 
 ## Resources
 
@@ -282,3 +386,4 @@ head->[]<-->[a0]<-->[a1]<-...->[an](tail)
 - [算法与数据结构-2-清华-EDX](https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/)
 - [算法设计与分析-1-北大-Cousera](https://www.coursera.org/learn/algorithms/home/welcome)
 - [算法设计与分析-2-北大-EDX](https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/)
+- [Reverse Linked List](https://leetcode.com/problems/reverse-linked-list/description/)
