@@ -52,13 +52,12 @@ Instrument的leak选项，通常是大家都愿意点的，但实际中，我发
 
 下面我们来实际演练一下：我们首先启动app，这个时候，什么都没做，我们看看VM Region和VM Tracker分别有什么变化：
 
-<div style="overflow: hidden; width: 100%;"> 
-
-<a style="display: block; float:left";href="/assets/images/2012/07/debug-6.png"><img src="{{site.baseurl}}/assets/images/2012/07/debug-6.png" alt="debug-6" width="529" height="258"/></a>
-
-<a style="display: block; float:left;margin-left:30px";href="/assets/images/2012/07/debug-7.png"><img src="{{site.baseurl}}/assets/images/2012/07/debug-7.png" alt="debug-7" width="300" height="104"/></a>
-
+<div class="md-flex-h md-margin-bottom-24">
+<div><img src="{{site.baseurl}}/assets/images/2012/07/debug-6.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2012/07/debug-7.png"></div>
 </div>
+
+
 
 右边是VM Tracker，我们看到了mapped-file：虚拟内存到物理RAM的映射表，看到了__TEXT,__DATA，还有Dirty Memory...我们看到Dirty Memory只占8%，这是由于app刚刚启动，产生在Heap上的空间还不大，Dirty Memory的比重还不大。
 
