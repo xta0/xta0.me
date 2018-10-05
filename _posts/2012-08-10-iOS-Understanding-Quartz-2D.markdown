@@ -44,35 +44,35 @@ struct CGAffineTransform {
 如果有一个点`(x,y,1)`乘以这个状态矩阵，将得到新的点：
 
 $$
-x^{'} = ax + cy + tx
-y^{'} = bx + dy + ty;
+\begin{aligned}
+& x' = ax + cy + tx \\
+& y' = bx + dy + ty; \\
+\end{aligned}
 $$
 
 其中，如果旋转变量b,c为0的话，那么
 
+
 $$
-x^{'} = ax + tx
-y^{'} = bx + ty;
+\begin{aligned}
+& x' = ax + tx \\
+& y' = bx + ty; \\
+\end{aligned}
 $$
 
-新的x值等于旧x值乘以缩放值 + 位移值。y同理
+新的x值等于旧x值乘以缩放值 + 位移值。y同理。
 
-使用Core Graphic绘制，都是在这个坐标系内进行绘制，我们可以得到这些矩阵：
+如果使用Core Graphic绘制，我们可以得到一些矩阵：
 
 ```objc
-
 // Drawing code
 CGContextRef ctx = UIGraphicsGetCurrentContext();
-
 //得到当前的状态矩阵
 CGAffineTransform t0 = CGContextGetCTM(ctx);
-
 //得到当前状态矩阵的逆矩阵
 CGAffineTransform t1 = CGAffineTransformInvert(t1);
-
 //得到单位阵
 CGAffineTransform t2 = CGAffineTransformIdentity;
-
 ```
 
 CTM是Current Transform Matrix的缩写，为了理解的更直观，我们从Quartz的坐标系统开始：
@@ -157,7 +157,7 @@ UIGraphicsEndImageContext();
 
 `UIGraphicsBeginImageContextWithOptions`这个API用来在内存中生成一个RBGA格式的Bitmap，上面代码是将原图缩小到10x10，绘制一张新图:
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2012/04/quartz5.png">
+<img  src="{{site.baseurl}}/assets/images/2012/04/quartz5.png">
 
 接下来，我们可以换一种绘图方式
 
@@ -175,7 +175,7 @@ UIGraphicsEndImageContext();
  
 结果却是这样的：
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2012/04/quartz6.png">
+<img  src="{{site.baseurl}}/assets/images/2012/04/quartz6.png">
 
 图片为什么反了呢？熟悉图像处理的人应该知道bitmap的数据排列和显示是成镜像关系的，bitmap 数据指针指向图片的末行。因此，如果想把bitmap按照正确的顺序绘制出来，需要改变Quartz的绘制顺序，让它从从远点开始，然后从底向上绘制。
 
@@ -211,7 +211,7 @@ y(new) = y(old)*1;
 
 layer.renderInContext：可以将当前layer的content变成一张CGImageRef，这和Quartz有什么关系呢？很久以前我试图render部分layer的内容到一张image，就是说给View的一部分截图。例如一个view的bounds是(0,0,100,100)，我想截取其（50，50，30，30）的部分。实现这个功能有很多种办法，最笨的就是把layer的content先通过context生成bitmap，然后去找像素点，聪明一点的就可以使用layer的二维状态矩阵。假如我们要实现下面的效果：
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2012/04/quartz7.png">
+<img  src="{{site.baseurl}}/assets/images/2012/04/quartz7.png">
 
 假设左边原图大小为`100x100`，待截取区域矩形的origin位于原图的`(25,15`)处，大小为`50x50`。
 
