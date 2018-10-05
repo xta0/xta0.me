@@ -17,25 +17,17 @@ categories: [iOS]
 
 本文主要讨论是第一点
 
+### 虚拟内存与常驻内存
 
+首先我们从寻址开始。iOS设备CPU是32位，因此寻址空间为：`0x00000000 ~ 0xffffffff`，例如一个指针地址为`0x8031 fea0`，将其每一位展开得到 `1000 0000 0011 0001 1111 1110 1010 0000`为32bit。
 
-### Virtual vs. Resident
-
-首先我们从寻址开始。
-iOS设备CPU是32位，因此寻址空间为：0x00000000 ~ 0xffffffff
-例如一个指针地址为0x8031 fea0：
-每一位展开成 1000 0000 0011 0001 1111 1110 1010 0000 为32bit。
-
-2^32 = 4G
-
-理论上可以寻址4GB的空间，这个范围远大于设备的物理内存：iPhone4/4S的内存为512MB，iPhone5的内存为1G。
-
-多出的部分怎么处理？
+而`2^32 = 4Gb`，理论上可以寻址4GB的空间，这个范围远大于设备的物理内存：iPhone4/4S的内存为`512MB`，iPhone5的内存为`1G`。多出的部分怎么处理？
 
 - 虚拟内存
 
-操作系统的RAM有限，所有进程分配的内存总量会超过系统的RAM数量，于是才会有虚拟内存，虚拟内存是中逻辑上的内存，它保证了进程的地址空间不受RAM数量的限制，每个进程都假设自己拥有全部的RAM:寻址范围从0x00000000~0xffffffffff。有了虚拟内存，操作系统可以使用硬盘来缓存RAM中无法保存的数据。但使用虚拟内存带来的一个问题是：进程使用的内存地址与物理RAM并不对应，也就是说我们程序中看到的内存地址并不是物理地址，而是虚拟内存地址。这就需要内核做一个从虚拟内存到物理RAM的映射。
+操作系统的RAM有限，所有进程分配的内存总量会超过系统的RAM数量，于是才会有虚拟内存，虚拟内存是中逻辑上的内存，它保证了进程的地址空间不受RAM数量的限制，每个进程都假设自己拥有全部的RAM:寻址范围从`0x00000000~0xffffffffff`。有了虚拟内存，操作系统可以使用硬盘来缓存RAM中无法保存的数据。但使用虚拟内存带来的一个问题是：进程使用的内存地址与物理RAM并不对应，也就是说我们程序中看到的内存地址并不是物理地址，而是虚拟内存地址。这就需要内核做一个从虚拟内存到物理RAM的映射。
 
+> 注意iOS中没有内存置换的技术，本节讨论的是一般的操作系统，比如OSX或者Windows
 
 回忆我们以前学的微机原理，内存是按照4KB为一帧被划分开。虚拟内存同样按照4KB为一页来划分，每页的字节数与每帧的字节数始终相同。这样便可以将进程中的每页无缝映射到物理RAM中的每帧。WWDC的这张图说明了上面的过程：
 
@@ -45,7 +37,7 @@ iOS设备CPU是32位，因此寻址空间为：0x00000000 ~ 0xffffffff
 
 - 当RAM被写满后怎么办？
 
-在OS X中，会将某些不活跃的帧存到磁盘。但是在iOS中，会直接将某些不活跃的帧清空！也就是进程在后台被系统杀死了，这主要是由于RAM和磁盘进行数据交换会极大的影响性能。
+在OS X中，会将某些不活跃的帧存到磁盘。但是在iOS中，由于没有内存置换技术，系统会直接将某些不活跃的帧清空！也就是进程在后台被系统杀死了，这主要是由于RAM和磁盘进行数据交换会极大的影响性能。
 
 - 如果进程访问的地址找不到怎么办？
 
@@ -53,9 +45,9 @@ iOS设备CPU是32位，因此寻址空间为：0x00000000 ~ 0xffffffff
 
 Resident Memory是进程的virtual memory中常驻在物理RAM中的部分。
 
-<h3>Heap vs. Stack</h3>
+### Heap和Stack
 
-mike ash的<a href="https://www.mikeash.com/pyblog/friday-qa-2010-01-15-stack-and-heap-objects-in-objective-c.html">这篇文章</a>总结的很详细。除了在Heap上创建的Object，还有很多看不到的内存被占用，比如：layer的backing store；代码段和常量段(__TEXT,__DATA)，Thread stack，图片数据，cache等等。
+mike ash的<a href="https://www.mikeash.com/pyblog/friday-qa-2010-01-15-stack-and-heap-objects-in-objective-c.html">这篇文章</a>总结的很详细。除了在Heap上创建的Object，还有很多看不到的内存被占用，比如：layer的backing store；代码段和常量段`(__TEXT,__DATA)`，`Thread stack`，图片数据，cache等等。
 
 ### Memory Footprint
 
@@ -71,30 +63,28 @@ int *array = malloc(20000 * sizeof(int));
 array[0] = 32
 array[19999] = 64
 ```
-上面代码中假设一个`int`为`4`字节，那么我们一共在heap上分配了约`80k`大小的空间，此时系统会给我们`6`个page约为`96k`。每个page中的内存又为两种类型：
-
-- Clean
-    
-通常来说，Clean Memory是只读的，比如被加载到内存中的应用程序的二进制代码，常量段（`__TEXT`段），系统的各种framework，上面提到的分页表（memory-mapped files）等，clean内存在memory warning的时候可以被discard掉，然后recreate出来。例如, JPEG图片被加载到内存中时，用的就是`mmap`，是Clean Memory，系统可以对其进行回收。
-
--  Dirty
-
-Dirty的内存是指应用程序产生的数据，包括Heap上分配对象的控件，`UIImage，Caches`等。dirty内存在memory warning时候会被清空
-
-对于Clean和Dirty Memory，后面还会详细说明。回到到上述程序，当这个6个page被分配给我们的时候，每个page都是clean的，但是一旦某个page中有数据写入，则这个page就变成了dirty，例如上面代码中`array[0]=32`会将page#0变为dirty状态，`array[19999]=64`会将page#6变为dirty，如下图所示：
+上面代码中假设一个`int`为`4`字节，那么我们一共在heap上分配了约`80k`大小的空间，此时系统会给我们`6`个page约为`96k`。当这个6个page被分配给我们的时候，每个page都是clean的，但是一旦某个page中有数据写入，则这个page就变成了dirty，例如上面代码中`array[0]=32`会将page#0变为dirty状态，`array[19999]=64`会将page#6变为dirty，如下图所示：
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2012/07/memory-1.png">
 
-通常对于一个进程内的App，其内存构成如下：
+> 对于Clean和Dirty Memory的概念我们后面讨论。
+
+通常对于一个进程内的App，其内存的结构如下：
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2012/07/memory-2.png">
 
+对于操作系统分配的每个page，其内存类型可分为两种，Clean和Dirty
 
+### Clean Memory
+    
+通常来说，Clean Memory是<mark>只读</mark>的，比如被加载到内存中的应用程序的二进制代码，常量段（`__TEXT`段），系统的各种framework代码和资源，上面提到的分页表（memory-mapped files）等，clean内存在memory warning的时候可以被discard掉，然后recreate出来。例如, JPEG图片被加载到内存中时，用的就是`mmap`，是Clean Memory，系统可以对其进行回收。
 
+### Dirty Memory
 
+与Clean Memory相对应的是Dirty Memory，指的是应用程序可以写的那部分内存，或者说是用来保存应用程序产生的数据。它包括Heap上分配对象的控件，`UIImage，Caches`等。Dirty Memory在内存紧张时会被清空。
 
+对于Clean和Dirty Memory，我们看几个例子：
 
-例如：
 ```objc
 NSString* str = [NSString stringWithUTF8String:"welcome"];
 ```
@@ -104,22 +94,40 @@ NSString* str = [NSString stringWithUTF8String:"welcome"];
 ```objc
 NSString* str = @"welcome";
 ```
-
 是clean的，因为这个字符串在编译的时候会被存放在程序代码段中的read-only的常量区
-
-例如：
 
 ```objc
 UIImage* wwdcLogo = [UIImage imageNamed:@"WWDC12logo"];
 ```
+由于`UIImage`是decompress出来的data，是dirty memory
 
-由于UIImage是decompress出来的data，是dirty memory
+### Memory Warning
 
 当我们的app在前台运行时，不断消耗内存，导致内存不足时，系统首先会将不用的clean memroy干掉一部分，腾出空间来继续创建drity memory，当dirty memory越来越多，又导致内存不足时，系统会将运行在后台app的dirty memory干掉，然后将之前干掉的clean memory重新load回来。
 
-<h3>Private vs. Shared</h3>
+注意，Memory Warning也可以被系统触发，比如当内存紧张时，接到电话时，可能会触发内存警告。
+
+### Compress Memory
+
+由于iOS中没有memory swap技术，无法时用硬盘资源来置换内存，因此当资源紧张时，需要新的手段来提高内存资源利用率。Compress Memory是iOS 7之后引入的内存压缩技术，它可以将没有被访问的内存对象所在的Page进行压缩(Compresses unaccessed pages )，从而腾出更多的空间。如果程序在某个时刻要访问被压缩的对象，则再将该对象所在的Page进行Decompression（Decompresses pages upon access）。
+
+这就会引发一个很有趣的问题，假设我们用一个`NSDictionary`进行图片缓存，当程序运行一段时间后，它的大小为4个page，通常来说，当收到`memoryWarning`后，我们会释放该缓存中的数据，代码如下：
+
+```swift
+override func didReceiveMemoryWarning() {
+ cache.removeAllObjects()
+ super.didReceiveMemoryWarning()
+} 
+```
+
+如果在Compress Memory的场景下，`cache`已经被压缩了，大小从4个page减小到了1个page，而此时在收到内存警告时访问它则会触发其Decompression，反而会将其大小从1个page恢复到4个page。当回复完成后，又释放其空间，大小又回到了1个page，显然这中间有着不必要的内存开销。解决办法是使用`NSCache`，`NSCache`不仅线程安全，而且对内存警告和内存压缩均作了优化。
+
+### Private和Shared Memroy
 
 RAM中可以被多个进程共享的部分称为Shared Memory，比如系统的framework，它只映射一份代码到内存，这部分内存会被不同的进程共用。而每个进程单独alloc的内存，则是Private Memory。
 
 
+## Resources
 
+- [WWDC2013 - 410](https://developer.apple.com/videos/play/wwdc2013/410/)
+- [WWDC2018 - 416_ios_memory_deep_dive](https://developer.apple.com/videos/play/wwdc2018/416/)
