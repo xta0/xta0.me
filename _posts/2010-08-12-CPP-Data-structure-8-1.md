@@ -26,7 +26,8 @@ categories: [DataStructure]
 
 所谓直接选择排序，是指在每次排序的过程中，依次选出剩下的未排序记录中的最小记录
 
-- 算法思想
+- **算法思想**
+
 
 1. 遍历数组中最小的数
 2. 和第0个元素交换
@@ -34,7 +35,7 @@ categories: [DataStructure]
 4. 和第1个元素交换
 5. 重复此过程直到排序完成
 
-```
+```cpp
 void selectionSort(vector<int>& vec){
     for(int i=0;i<vec.size();++i>){
         int minIndex = i;
@@ -47,7 +48,8 @@ void selectionSort(vector<int>& vec){
     }
 }
 ```
-- 算法分析
+- **算法分析**
+
 1. 空间代价 $O(1)$
 2. 时间代价
     - 比较次数：$\Theta(n^2)$
@@ -60,7 +62,7 @@ void selectionSort(vector<int>& vec){
 
 > 关于如何建堆，可参考[之前文章]()
 
-```
+```cpp
 template <class Record>
 void sort(Record Array[], int n){
     int i;
@@ -74,7 +76,8 @@ void sort(Record Array[], int n){
 }
 ```
 
-- 算法分析
+- **算法分析**
+
 
 1. 建堆：$Θ(n)$
 2. 删除堆顶: $Θ(log{n})$
@@ -88,7 +91,7 @@ void sort(Record Array[], int n){
 
 插入排序类似我们队扑克牌进行排序。我们可以首先将数组分为两部分，第一部分是有序的，第二部分是无序的。假设数组的前`i`个数是有序的，当插入元素`e`时，我们需要将该元素与前`i`个元素一次比较来找到插入位置，整个数组的有序部分会依次增长，最终达到整体有序。上述算法中，我们要做的就是每次将注意力都放到无序部分的首元素上，即`e`的值。
 
-```
+```cpp
 Sorted     Unsorted
 [.....]  e  [......]
 L[0, i)     L[i+1, n)
@@ -111,7 +114,8 @@ void insertSort(vector<int>& v){
 }
 ```
 
-- 算法分析
+- **算法分析**
+
 
 1. 最佳情况：n-1次比较，2(n-1)次移动，$\Theta(n)$
 2. 最坏情况：$\Theta(n^2)$
@@ -126,11 +130,11 @@ void insertSort(vector<int>& v){
 
 ### 冒泡排序
 
-- 算法思想
+- **算法思想**
 
 冒泡排序的主要思想为，不停地比较相邻的记录，如果不满足排序要求，就交换相邻记录，直到所有的记录都已经排好序
 
-```
+```cpp
 void bubbleSort(vector<int>& vec){
     int sz = vec.size();
     //每次外层循环归为一个数
@@ -145,7 +149,7 @@ void bubbleSort(vector<int>& vec){
 }
 ```
 
-- 算法分析
+- **算法分析**
 
 1. 空间代价：$Θ(1)$
 2. 时间代价分析
@@ -158,7 +162,8 @@ void bubbleSort(vector<int>& vec){
 
 > 关于分治法，参考[这里]()
 
-- 算法思想
+- **算法思想**
+
 
 1. 选择轴值 (pivot)
 2. 将序列划分为两个子序列 L 和 R，使得 L 中所有记录都小于或等于轴值，R 中记录都大于轴值
@@ -170,7 +175,7 @@ void bubbleSort(vector<int>& vec){
 2. 随机选择
 3. 选择平均值
 
-```
+```cpp
 void quickSort(vector<int>& arr, int left, int right){
     if(left >= right){
         return ;
@@ -178,6 +183,7 @@ void quickSort(vector<int>& arr, int left, int right){
     //选择轴值为最左边数
     int pivot = arr[left];
     int l=left,r=right;
+    //循环结束条件为l=r
     while(l < r){
         //skip掉右边界大于pivot的值
         while(arr[r] >= pivot && r>l){
@@ -192,7 +198,7 @@ void quickSort(vector<int>& arr, int left, int right){
             swap(arr[r],arr[l]);
         }
     }
-    //归位轴值
+    //归位轴值, 注意,如果是先skip右边界，left和l/r交换，
     swap(arr[left],arr[l]);
     //两段递归分治
     quickSort(arr,left,l-1);
@@ -200,9 +206,11 @@ void quickSort(vector<int>& arr, int left, int right){
 }
 ```
 
-- 算法分析
+- **算法分析**
+
+
 1. 最差情况：
-    - 时间代价：$Θ(n2)$
+    - 时间代价：$Θ(n^2)$
     - 空间代价：$Θ(n)$
 2. 最佳情况：
     - 时间代价：$Θ(nlog{n})$
@@ -216,7 +224,8 @@ void quickSort(vector<int>& arr, int left, int right){
 
 归并排序是1945年由冯诺依曼提出的，是典型的分治法，使用递归实现，
 
-- 算法思想
+- **算法思想**
+
 
 1. 将列表分成两个相等的部分
 2. 左边排序
@@ -231,7 +240,7 @@ void quickSort(vector<int>& arr, int left, int right){
 
 对于merge有两种不同的实现方式，一种方式引入一个临时数组来保存原数组，另一种则是原地归并，这里主要介绍原地归并算法
 
-```
+```cpp
 //原地归并排序
 void mergeSort(vector<int>& v){
     if(v.size() <= 1){
@@ -272,7 +281,8 @@ void mergeSort(vector<int>& v){
 1. `while`循环，通过比较`left[i1]`和`right[i2]`向`v`中填充，循环结束条件为两个数组谁先到达末尾
 2. 未到达末尾的数组将其剩余部分追加到`v`中。
 
-- 算法分析
+- **算法分析**
+
 
 1. 空间代价：$Θ(n)$ / $O(1)$
 2. 划分时间、排序时间、归并时间
