@@ -39,10 +39,6 @@ is main thread : 1
 ```objc
 _opQueue = [[NSOperationQueue alloc]init];
 [_opQueue addOperationWithBlock:^{
-       
-        NSThread* thread = [NSThread currentThread];
-        NSLog(@"is main thread : %d",[thread isMainThread]);
-       
         NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url3]];
         //_imgv3.image = [UIImage imageWithData:data];
 
@@ -121,21 +117,27 @@ _opQueue = [[NSOperationQueue alloc]init];
     });
 }
 ``` 
-在实际项目中，我们不会书类似写上面的代码。实际上`dispatch_group`的作用很大，它上提供了一个线程同步点，即当`group`内的所有线程都执行完成后，再通知外部。因此，通常情况下，`dispatch_group`的用法如下：
+在实际项目中，如果是两个线程之间的同步问题，我们不会书类似写上面的代码。实际上`dispatch_group`的作用在于控制多个线程并发，并未这些线程提供一个线程同步点，即当`group`内的所有线程都执行完成后，再通知外部。因此，通常情况下，`dispatch_group`的用法如下：
 
 ```objc
 dispatch_queue_t queue = dispatch_get_global_queue( 0, 0 );
     dispatch_group_t group = dispatch_group_create();
+
+    //run task #1
     dispatch_group_enter(group);
     dispatch_async( queue, ^{
         NSLog( @"task 1 finished: %@", [NSThread currentThread] );
         dispatch_group_leave(group);
     } );
+
+    //run task #2
     dispatch_group_enter(group);
     dispatch_async( queue, ^{
         NSLog( @"task 2 finished: %@", [NSThread currentThread] );
         dispatch_group_leave(group);
     } );
+
+    //sychronization point
     dispatch_group_notify( group, queue, ^{
         NSLog( @"all task done: %@", [NSThread currentThread] );
     } );
@@ -143,14 +145,14 @@ dispatch_queue_t queue = dispatch_get_global_queue( 0, 0 );
 如果考虑控制线程，相比GCD来说NSOperation是个更好的选择，它提供了很多GCD没有的高级用法：
 
 1. Operation之间可指定依赖关系
-2. 可指定Operation的优先级
-3. 可以Cancel正在执行的任务
+2. 可指定每个Operation的优先级
+3. 可以Cancel正在执行的Operation
 4. 可以使用KVO观察对任务状态：`isExecuteing`、`isFinished`、`isCancelled`
 
 
 ### NSOperationQueue与线程池
 
-下面我们在来观察并发的情况，这也是今天重点要讨论的。我们先从NSOperationQueue的并发模型开始：
+下面我们在来观察并发的情况，这也是今天重点要讨论的。我们先从`NSOperationQueue`的并发模型开始：
 
 这里是apple关于并发NSOperationQueue的[Guideline]("https://developer.apple.com/library/mac/documentation/general/conceptual/concurrencyprogrammingguide/OperationObjects/OperationObjects.html#//apple_ref/doc/uid/TP40008091-CH101-SW1");
 
