@@ -206,14 +206,14 @@ $$
 
 解决这两个问题，需要给顶点加一个状态位，标识该节点是否已经被访问过。另外，对图的遍历，可将其按照一定规则转化为对树的遍历
 
-``` 
+``` cpp
 void graph_traverse(){
-
-// 对图所有顶点的标志位进行初始化
-for(int i=0; i<VerticesNum(); i++)
-    status(V[i]) = UNVISITED;
-    // do_traverse函数用深度优先或者广度优先
-    do_traverse(v);
+    // 对图所有顶点的标志位进行初始化
+    for(int i=0; i<VerticesNum(); i++)
+        status(V[i]) = UNVISITED;
+        // do_traverse函数用深度优先或者广度优先
+        do_traverse(v);
+    }
 }
 ```
 
