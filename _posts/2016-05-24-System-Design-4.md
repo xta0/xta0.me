@@ -6,13 +6,12 @@ list_title: 系统设计入门 | System Design | 负载均衡算法 | Load Balan
 categories: [backend]
 ---
 
-负载均衡这个概念相对来说比较容易理解，其工作方式如下图所示，由于在之前文章中已经做过介绍，这里就不再展开了。Load Balancer主要完成两个任务，一是负责分发请求，二是处理冗余(即某个server failed了，能够及时发现并redirect请求到其它server上)。本文将使用Nginx来模拟实现三种路由策略，分别是Round-Robin， Least busy以及Session/cookies。通过观察这几种策略的表现来带给大家一些直观的感受。
-
 {% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-2.png' param2='sd-2' %}
-
 <p class="md-p-center"><a href="http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html">source: Scalable System Design Patterns</a></p>
 
-### 轮询 Round-Robin
+负载均衡这个概念相对来说比较容易理解，其工作方式如下图所示，由于在之前文章中已经做过介绍，这里就不再展开了。Load Balancer主要完成两个任务，一是负责分发请求，二是处理Fail Over(即某个server failed了，能够及时发现并redirect请求到其它server上)。本文将使用Nginx来模拟实现三种路由策略，分别是Round-Robin， Least busy以及Session/cookies。通过观察这几种策略的表现来带给大家一些直观的感受。
+
+## 基于轮询的分配策略（Round-Robin）
 
 Round-Robin是一种简单高效的策略，我们熟悉的DNS服务，P2P网络均适用这种策略。简单的说Roound-Robin算法就是维护一个机器列表，当请求过来时，对当前的列表进行轮询，找到下一个可投递的机器进行路由。
 
@@ -59,10 +58,13 @@ http{
 
 我们看到Load Balancer会依次将request投递到三台服务器上，从输出来看，Ngixn默认的策略为**Round-Robin**。
 
-总结一下，Round-Robin策略的<mark>优点</mark>是适用性强，不依赖于客户端的任何信息，完全依靠后端服务器的情况来进行选择。能把客户端请求更合理更均匀地或者按比例的分配到各个后端服务器处理。<mark>缺点</mark>是同一个客户端的多次请求可能会被分配到不同的后端服务器进行处理，无法满足做会话保持的应用的需求。此外，它并不考虑server的负载情况，因此对负载较高的server压力会持续升高。
+### 小结
+
+1. Round-Robin策略的<mark>优点</mark>是适用性强，不依赖于客户端的任何信息，完全依靠后端服务器的情况来进行选择。能把客户端请求更合理更均匀地或者按比例的分配到各个后端服务器处理。
+2. <mark>缺点</mark>是同一个客户端的多次请求可能会被分配到不同的后端服务器进行处理，无法满足做会话保持的应用的需求。此外，它并不考虑server的负载情况，因此对负载较高的server压力会持续升高。
 
 
-### Session / Cookie
+## 基于Session / Cookie 的分配策略
 
 除了Round Robin外，Nginx还支持其它的负载均衡策略，比如使用`ip hash`。所谓`ip hash`是指将所有来自相同IP的Request均投递到同一个server上，这个特性对于维护用户登录信息之类的操作很有用，我们可以修改Nginx配置如下：
 
@@ -79,8 +81,12 @@ upstream php_servers{
 
 由于本地模拟请求的IP地址相同，我们看到所有的请求均被投递到PHP Server #1上，如果此时该Server #1挂掉，Nginx则会自动将请求转向Server #2。
 
+### 小结
+
 1. 这种策略的优点是能较好地把同一个客户端的多次请求分配到同一台服务器处理，避免了轮询无法适用会话保持的需求。
 2. 缺点是当某个时刻来自某个IP地址的请求特别多，那么将导致某台后端服务器的压力可能非常大，而其他后端服务器却空闲的不均衡情况、
+
+## 基于负载的分配策略
 
 ### Least Busy
 
@@ -111,7 +117,7 @@ upstream php_servers{
 
 观察上述视频可发现，我们在左上角的console中，先用`while`循环模拟了一次请求，由于第一个request被分配到Server #1上，而Server #1此时处于sleep状态，因此后面的请求将会被自动分到Server #2和#3上。为了验证Nginx此时的行为，我们在右下角的console中再次模拟请求，发现Nginx此时感知到Server #1处于阻塞状态而自动的将请求投递到Server #2和Server #3上
 
-## Redundancy
+## 处理Fail Over
 
 最后来我们可以对Load Balancer进行冗余测试，观察当某个Server挂掉时，Load Balancer对请求的路由情况，测试步骤为：
 
@@ -126,7 +132,7 @@ upstream php_servers{
 
 {% include _partials/post-footer-1.html %}
 
-### Resource
+## Resource
 
 - [CS75 (Summer 2012) Lecture 9 Scalability Harvard Web Development David Malan](https://www.youtube.com/watch?v=-W9F__D3oY4&t=955s)
 - [Round Robin](http://g33kinfo.com/info/archives/2657)
