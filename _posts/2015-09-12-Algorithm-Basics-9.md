@@ -345,7 +345,8 @@ int uniquePaths(int m, int n) {
 不难看出，上述算法的时间复杂度为$O(N^2)$。由LIS衍生出的的DP问题有很多，比如：
 
 1. [Maximum Subarray](https://leetcode.com/problems/maximum-subarray/description/)
-2. [LCS]()
+2. [LCS问题]()
+
 
 
 ## DP问题总结

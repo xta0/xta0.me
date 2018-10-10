@@ -12,14 +12,14 @@ categories: [backend]
 
 <p class="md-p-center"><a href="http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html">source: Scalable System Design Patterns</a></p>
 
-### 轮训 Round-Robin
+### 轮询 Round-Robin
 
-Round-Robin是一种简单高效的策略，我们熟悉的DNS服务，P2P网络均适用这种策略。简单的说Roound-Robin算法就是维护一个机器列表，当请求过来时，对当前的列表进行轮训，找到下一个可投递的机器进行路由。
+Round-Robin是一种简单高效的策略，我们熟悉的DNS服务，P2P网络均适用这种策略。简单的说Roound-Robin算法就是维护一个机器列表，当请求过来时，对当前的列表进行轮询，找到下一个可投递的机器进行路由。
 
 > Round-Robin通常用于"single-point-of-entry to multiple servers in the background"的场景
 
 
-寻找下一个可投递机器的算法可以是简单粗暴的按照index等比例分配，比如列表中有1，2，3三台机器，那么路由的顺序也是1，2，3，请求被投递到三台机器的概率相同。另一种方式是按照权重来进行非等比分配，即为每台机器配置一个权重，这种方式也叫做**Weighted Round-Robin**，即加权轮训。比如有列表中有三台机器，三台机器的QPS依次为: 100 req/sec, 300 req/sec, 25 req/sec。这时候可以为其配置一个权重表：
+寻找下一个可投递机器的算法可以是简单粗暴的按照index等比例分配，比如列表中有1，2，3三台机器，那么路由的顺序也是1，2，3，请求被投递到三台机器的概率相同。另一种方式是按照权重来进行非等比分配，即为每台机器配置一个权重，这种方式也叫做**Weighted Round-Robin**，即加权轮询。比如有列表中有三台机器，三台机器的QPS依次为: 100 req/sec, 300 req/sec, 25 req/sec。这时候可以为其配置一个权重表：
 
 ```shell
 Resource Weight
@@ -84,7 +84,7 @@ upstream php_servers{
 
 ### Least Busy
 
-我们知道轮询算法是把请求平均的转发给各个后端，使它们的负载大致相同。这有个前提，就是每个请求所占用的后端时间要差不多，如果对于某台Server有些请求占用的时间很长，而Round-Robin并不会感知这种情况，依旧轮训该Server，并将请求投递过去，则该台Server的负载会持续升高。
+我们知道轮询算法是把请求平均的转发给各个后端，使它们的负载大致相同。这有个前提，就是每个请求所占用的后端时间要差不多，如果对于某台Server有些请求占用的时间很长，而Round-Robin并不会感知这种情况，依旧轮询该Server，并将请求投递过去，则该台Server的负载会持续升高。
 
 为了解决这个问题，Nginx提供了另一种基于最少链接(least_conn)的分配策略。这种策略会让Load Balancer感知每个server的负载情况，并把请求转发给连接数较少的后端，从而达到更好的负载均衡效果。
 
