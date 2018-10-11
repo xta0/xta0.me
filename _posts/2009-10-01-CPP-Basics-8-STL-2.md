@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: C++ Part 6-2 | STL Algorithms | STL 算法
+list_title: C++ Part 8-2 | STL Algorithms | STL 算法
 title: STL算法
 categories: [C++]
 ---

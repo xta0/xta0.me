@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: C++ Part 6-1 | STL Containers | STL容器
+list_title: C++ Part 8-1 | STL Containers | STL容器
 title: 顺序容器 & 关联容器
 categories: [C++]
 ---
@@ -192,8 +192,9 @@ array<int,10> copy = ia3; //正确，类型匹配即合法
 
 ### List
 
-<mark>List是双向链表，不支持完全随机访问, 不能用标准库中的`sort`函数排序</mark>，排序需要使用自己的`sort`成员函数`void sort()`，默认将`list`中的元素按照"<"排列，
-	- 实现比较函数
+<mark>List是双向链表，不支持完全随机访问, 不能用标准库中的`sort`函数排序</mark>，排序需要使用自己的`sort`成员函数`void sort()`，默认将`list`中的元素按照`<`排列，
+
+- 实现比较函数
 	
 	```cpp
 	template<class Compare>
@@ -213,25 +214,24 @@ array<int,10> copy = ia3; //正确，类型匹配即合法
 - 只能使用双向迭代器
 	- 迭代器不支持大于/小于的比较运算符，不支持`[]`运算符和随机移动
 
-```cpp
-list<int> numbers;
-numbers.push_back(1);
-numbers.push_back(2);
-numbers.push_back(3);
-numbers.push_front(4);
-auto itor = numbers.begin();
-itor++;
-itor = numbers.insert(itor,100); //在第二个位置插入100, 返回第三个位置的迭代器
-itor = numbers.erase(itor); //删除第三个元素，返回第四个位置的迭代器
-//遍历
-for(;itor!=numbers.end();++itor){
-	cout<<*itor<<endl;
-	if(*itor == 2){
-		numbers.insert(itor,1234);//在2之前插入1234
+	```cpp
+	list<int> numbers;
+	numbers.push_back(1);
+	numbers.push_back(2);
+	numbers.push_back(3);
+	numbers.push_front(4);
+	auto itor = numbers.begin();
+	itor++;
+	itor = numbers.insert(itor,100); //在第二个位置插入100, 返回第三个位置的迭代器
+	itor = numbers.erase(itor); //删除第三个元素，返回第四个位置的迭代器
+	//遍历
+	for(;itor!=numbers.end();++itor){
+		cout<<*itor<<endl;
+		if(*itor == 2){
+			numbers.insert(itor,1234);//在2之前插入1234
+		}
 	}
-}
-
-```
+	```
 
 ### deque
 
@@ -240,6 +240,10 @@ for(;itor!=numbers.end();++itor){
 - `deque`可以`push_front`和`pop_front`
 
 ## 关联容器
+
+### 关联容器概述
+
+//todo
 
 ### pair
 
@@ -268,7 +272,7 @@ pair<int, int> p(pair<double,double>(5.5,4.6))
 //p.second=  4
 ```
 
-### set & multiset
+### set / multiset
 
 `set`和`multiset`表示数学中集合，`set`和`multiset`的定义如下：
 
@@ -281,6 +285,9 @@ class set{...}
 template<class key, class Pred=less<key>,class A = allocator<key>>
 class multiset{...}
 ```
+
+- **set**
+
 和数学中的集合一样，在`set`中是不能存在重复元素的，另外我们发现`set`模板中第二个类型是函数模板，其默认值为`less<key>`，这说明元素在`set`内部的存储是有序的，`less<key>`这个函数模板定义如下：
 
 ```cpp
@@ -291,7 +298,6 @@ struct less:publi binary_function<T,T,bool>{
 		return x<y;
 	}
 }
-
 ```
 - set中不允许有重复元素,插入set中已有元素时，忽略
 
@@ -307,17 +313,6 @@ int main(){
 	}
 }
 ```
-
-#### multiset
-
-- 定义
-
-```cpp
-
-```
-- `pred`类型的变量决定了`multiset`中的元素顺序是怎么定义的。`multiset`运行过程中，比较两个元素`x`，`y`大小的做法是通过`Pred`类型的变量，例如`op`，若表达式`op(x,y)`返回true则 x比y 小，`Pred`的缺省类型为`less<key>`，其中less模板为一个functor:
-
-
 - 成员函数:
 	- `iterator find(const T&val);`：在容器中查找值为val的元素，返回其迭代器。如果找不到，返回end()。
 	- `iterator insert(const T& vale);`：将val插入到容器中并返回其迭代器
@@ -329,7 +324,6 @@ int main(){
 ```cpp
 class A{};
 int main(){
-	
 	std::multiset<A> a; //等价于multiset<A,less<A>> a;
 	a.insert(A()); //error,由于A没有重载<无法比大小，因此insert后编译器无法知道插入的位置
 }
@@ -371,11 +365,8 @@ int main(){
 }
 ```
 
-### pair
 
-### map/multimap
-
-#### map
+### map / multimap
 
 - 定义
 
