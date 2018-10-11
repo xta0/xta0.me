@@ -225,22 +225,3 @@ sim.run(control)
 ```
 
 - [Code simulation on Youtube](https://www.youtube.com/watch?v=pYvCvNFZFMw)
-
-### Python实现贝叶斯模型
-
-```python
-def bayes(p_A, p_B_given_A, p_notB_given_notA):
-    #计算P(B')
-    not_p_B = p_notB_given_notA * (1-p_A) + p_A*(1-p_B_given_A)
-    #计算后验概率
-    posterior = (p_A * p_B_given_A) / (1-not_p_B)
-    
-    return posterior
-
-## test case
-p_A = 0.2
-p_B_given_A = 0.9
-p_notB_given_notA = 0.5
-
-posterior = bayes(p_A, p_B_given_A, p_notB_given_notA)
-```

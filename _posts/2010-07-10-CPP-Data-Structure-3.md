@@ -6,6 +6,8 @@ sub_title: Stack & Queue
 categories: [DataStructure]
 ---
 
+## 栈
+
 ### 栈的实现方式
 
 - 顺序栈（Array-based Stack）
@@ -39,23 +41,10 @@ categories: [DataStructure]
 		- 顺序栈需要一个固定长度
 		- 链式栈长度可变，但增加结构开销  
 
-	- 实际应用中，顺序栈比链式栈用的更广泛
+	- <mark>实际应用中，顺序栈比链式栈用的更广泛</mark>
 		- 顺序栈容易根据栈顶位置，进行相对位移，快速定位并读取栈内部的元素
-		- 顺序栈读取内部元素时间`为O(1)`,链式栈需要沿着栈顶指针游走，显然慢些，读取第k个元素需要的时间为`O(k)`。
+		- 顺序栈读取内部元素时间为`O(1)`,链式栈需要沿着栈顶指针游走，显然慢些，读取第k个元素需要的时间为`O(k)`。
 		- <mark>一般来说，栈不允许“读取内部元素”，只能在栈顶操作 </mark>
-
-### 栈的应用
-
-1. 逆序输出问题
-
-这类问题输出次序与处理过程颠倒，比如翻转字符串；另外，递归深度和输出长度不易预知，如进制转换问题
-
-2. fadsf 
-
-
-## 括号匹配问题
-
-假如有一组由括号组成的字符串`()(())`，我们如何知道此串字符的括号是否是完全匹配的呢
 
 ### 计算表达式的值
 
@@ -82,7 +71,7 @@ categories: [DataStructure]
 	<数字>     ::= 0|1|2|3|4|5|6|7|8|9
 	```
 
-- 后缀表达式 `23 34 45 * 56 + 7 + /` +
+- 后缀表达式 `23 34 45 * 56 + 7 + / +`
 	- 又称逆波兰表达式
 	- 运算符在后面，不需要括号
 	- 后缀表达式求值
@@ -140,12 +129,11 @@ public: // 队列的运算集
 ### 实现方式
 
 - 顺序队列
-	- 使用线性表做存储，空间提前分配好
+	- 使用线性表做环形表示，空间提前分配好
 	- 维护`front`和`rear`做队头，队尾的游标
 		- 空队列`rear`在`front`前面
 		- 插入删除时间复杂度为`O(1)`
-		- 环形表示
-
+		
 <img src="{{site.baseurl}}/assets/images/2008/07/queue1.png" style="display:block; margin-left:auto; margin-right:auto; width:50%"/>
 
 ```cpp
@@ -200,6 +188,7 @@ class Aqueue : public Queue<Elem> {
 	- 插入时间复杂度为`O(1)`
 
 ### 顺序队列和链式队列比较
+
 - 顺序队列
 	- 固定存储空间
 - 链式队列
@@ -210,6 +199,13 @@ class Aqueue : public Queue<Elem> {
 	- 线性表在部分元素出队后会造成空间的浪费，解决这个问题，引入环形队列，它是一个首尾相连的FIFO的数据结构，采用数组的线性空间,数据组织简单。能很快知道队列是否满为空。
 	- 插入时间复杂度为`O(1)`
 
+
+## 队列与栈的经典问题
+
+
+
+
+## Resources
 
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
 - [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)
