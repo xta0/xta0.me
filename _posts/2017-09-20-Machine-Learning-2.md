@@ -20,7 +20,7 @@ $$
 * cost 函数：
 
 $$
-J(\theta_0,\theta_1) = \frac{1}{2m}\sum_{i=1}^m(y_i^{\^}-y_i)^2=\frac{1}{2m}\sum_{i=1}^m(h_\theta(x_i)-y_i)^2
+J(\theta_0,\theta_1) = \frac{1}{2m}\sum_{i=1}^m(y_i\hat - y_i)^2=\frac{1}{2m}\sum_{i=1}^m(h_\theta(x_i)-y_i)^2
 $$
 
 <math display="block">
