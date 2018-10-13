@@ -1,8 +1,8 @@
 ---
 updated: "2018-07-10"
 layout: post
-list_title: 自动驾驶入门 | Autonomous Driving | 计算位置 | Localizations
-title: 卡尔曼滤波器
+list_title: 自动驾驶入门 | Autonomous Driving | 位置计算 | Localizations
+title: 位置计算
 categories: [AI,Autonomous-Driving]
 mathjax: true
 ---
