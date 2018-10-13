@@ -16,6 +16,7 @@ mathjax: true
 - [Beyesian Model](https://xta0.me/2018/07/06/Self-Driving-Car-Udacity-1.html) 
 - [Probability Distribution](https://zh.wikipedia.org/wiki/%E6%A6%82%E7%8E%87%E5%88%86%E5%B8%83)
 - [Python Numpy](https://xta0.me/2017/05/10/Data-Science-Tools.html)
+- [Kalman Filter](https://zh.wikipedia.org/zh-hans/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2)
 
 
 本将继续讨论自动驾驶中用到的一些基本统计学知识，包括概率分布模型，卡尔曼滤波器以及简单的物理运动模型。本文假设你已经掌握了了一些简单的概率学知识，并且知道如何使用Python和Numpy进行简单的编程。
@@ -97,23 +98,42 @@ def sense(p, Z):
     return q
 ```
 
-`sense`函数非常重要，接下来会不断使用这个函数，因此一定要充分理解。有了`sense`函数后，机器人就可以边移动，边采集数据，然后不断更新每个位置上的概率从而确定自己的位置：
+`sense`函数非常重要，接下来会不断使用这个函数，因此一定要充分理解。回到上面的例子，当机器人sense到自己红色的时候，此时自己内部的概率分布发生了变化，从左图变成了右图
 
-```python
-#假设机器人移动3格，采集到了下面一组观察序列
-measurements = ['green','red','red']
-for m in measurements:
-    #更新概率分布
-    p = sense(p,m)
-```
-
-其概率分布变化如下图所示:
 <div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2018/07/ad-sense-1.png"></div>
 <div><img src="{{site.baseurl}}/assets/images/2018/07/ad-sense-2.png"></div>
 </div>
 
-总结一下，机器人通过传感器不断引入观测数据，从而完成了将原先均匀的概率分布提升为包含一定位置的概率分布。sense的本质上是一种<mark>引入信息的过程</mark>
+右图说明，机器人大概率知道自己位于第2号或者第3号格子内，但是具体在哪一个格子自己并不清楚，想要知道自己具体在哪个格子里需要再引入额外信息进行判断，于是机器人向前移动了一步，又进行了一次sense
+
+```python
+p = move(p,1)
+p = sense(p,'green')
+```
+
+> 对于move函数下一节会具体介绍，这里可理解为机器人向前移动了一个格子
+
+此时，机器人发现自己移动了一格后，sense到了绿颜色，于是概率分布又发生了变化：
+
+
+<div class="md-flex-h md-flex-no-wrap">
+<div><img src="{{site.baseurl}}/assets/images/2018/07/ad-sense-2.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2018/07/ad-sense-3.png"></div>
+</div>
+
+新的概率分布如右图所示，我们发现第4个格子的概率最大，此时机器人便可以明确的知道自己位于第4个格子中了。
+
+当我们有了`sense`函数之后，机器人就可以边移动，边采集数据，然后不断更新每个位置上的概率从而确定自己的位置：
+
+```python
+p = sense(p,'red')
+p = move(p,1)
+p = sense(p,'green')
+p = move(p,1)
+...
+```
+简单总结一下，机器人通过传感器不断引入观测数据，从而完成了将原先均匀的概率分布提升为包含一定位置的概率分布。sense的本质上是一种<mark>引入信息的过程</mark>
 
 ### Move
 
@@ -125,7 +145,7 @@ for m in measurements:
 p = [0,1,0,0,0]
 ```
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/ad-move-0.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/ad-move-1.png">
 
 假设机器人现在想要向右移动2个格子，但由于会有一定几率的出错，根据多次试验的结果，假设我们统计出了下面数据：
 
@@ -137,7 +157,7 @@ $$
 
 上面数据的含义是，假设机器人位于`i`的位置，那么它移动到`i+2`的位置的概率为`0.8`，移动1格或3个的概率为`0.1`。此时当机器人前进2格时，对应的概率分布变成了：
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/ad-move-1.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/ad-move-2.png">
 
 ```python
 p = [0,0,0.1,0.8,0.1]
@@ -170,8 +190,8 @@ print(p) #[0.2,0.2,0.2,0.2,0.2]
 上面结果可以看出，如果移动的次数足够多，概率分布将变为均匀分布，变化如下图所示
 
 <div class="md-flex-h md-flex-no-wrap">
-<div><img src="{{site.baseurl}}/assets/images/2018/07/ad-sense-3.png"></div>
-<div><img src="{{site.baseurl}}/assets/images/2018/07/ad-sense-4.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2018/07/ad-move-3.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2018/07/ad-move-4.png"></div>
 </div>
 
 总结一下，对于move来说，<mark>本质上是一个损失信息的过程</mark>，每次机器人移动都会引入一定的不确定性，移动的次数越多，每个位置的不确定性会越大，最终达到均匀分布的状态。
@@ -211,8 +231,6 @@ for k in range(len(measurements)):
 这一节我们给出了一种确定机器人位置的理论模型和实现方法。我们先来一起回顾下这个过程，首先我们需要有一个位置的先验概率，然后通过`sense`函数来提升先验概率，从概率角度看，sense的过程是使用贝叶斯定理<mark>求乘积</mark>的过程。接下来由于机器人在移动过程中会带来不确定性，因此会损失一部分信息，从概率分布上看，损失信息的过程是求全概率的过程（求和）。最后机器人通过不断的`sense`和`move`来更新概率密度分布，并找到概率最大的位置作为自己的位置。整个过程如下图所示
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/ad-kalman-1.png" >
-
-在实际应用中，`sense`采集到的数据不可能是颜色，而是路面上的一些路标。另外，
 
 ## 一维卡尔曼滤波
 
@@ -321,7 +339,12 @@ for index in range(0,len(measurements)):
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/ad-gs-sm-1.png" width = "70%">
 
 
+## 多维卡尔曼滤波
 
+为了真正模拟机器人或者汽车在现实中的运动，我们需要使用多维的卡尔曼滤波器。卡尔曼滤波器主要有两方面的作用：
+
+1. 状态估计，对于某些无法直接测量的状态，可以使用卡尔曼滤波器进行估计
+2. 对输入的信息做最优的状态估计
 
 
 {% include _partials/post-footer-2.html %}
@@ -330,3 +353,4 @@ for index in range(0,len(measurements)):
 
 - [Udacity Intro to Self-Driving Car](https://www.udacity.com/course/intro-to-self-driving-cars--nd113)
 - [The Kalman Filter](https://www.youtube.com/playlist?list=PLX2gX-ftPVXU3oUFNATxGXY90AULiqnWT)
+- [Understand Kalman Filter](https://www.youtube.com/watch?v=mwn8xhgNpFY&list=PLn8PRpmsu08pzi6EMiYnR-076Mh-q3tWr)
