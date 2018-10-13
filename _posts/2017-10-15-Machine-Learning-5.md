@@ -217,11 +217,11 @@ mathjax: true
 
 * 对于**分类/多重分类**问题，先给出错误分类的预测结果为
 
-      	<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"> <mi>e</mi> <mi>r</mi> <mi>r</mi> <mo stretchy="false">(</mo> <msub> <mi>h</mi> <mi mathvariant="normal">&#x0398;<!-- Θ --></mi> </msub> <mo stretchy="false">(</mo> <mi>x</mi> <mo stretchy="false">)</mo> <mo>,</mo> <mi>y</mi> <mo stretchy="false">)</mo> <mo>=</mo> <mtable rowspacing="4pt" columnspacing="1em"> <mtr> <mtd> <mn>1</mn> </mtd> <mtd> <mtext>if&#xA0;</mtext> <msub> <mi>h</mi> <mi mathvariant="normal">&#x0398;<!-- Θ --></mi> </msub> <mo stretchy="false">(</mo> <mi>x</mi> <mo stretchy="false">)</mo> <mo>&#x2265;<!-- ≥ --></mo> <mn>0.5</mn> <mtext>&#xA0;</mtext> <mi>a</mi> <mi>n</mi> <mi>d</mi> <mtext>&#xA0;</mtext> <mi>y</mi> <mo>=</mo> <mn>0</mn> <mtext>&#xA0;</mtext> <mi>o</mi> <mi>r</mi> <mtext>&#xA0;</mtext> <msub> <mi>h</mi> <mi mathvariant="normal">&#x0398;<!-- Θ --></mi> </msub> <mo stretchy="false">(</mo> <mi>x</mi> <mo stretchy="false">)</mo> <mo>&lt;</mo> <mn>0.5</mn> <mtext>&#xA0;</mtext> <mi>a</mi> <mi>n</mi> <mi>d</mi> <mtext>&#xA0;</mtext> <mi>y</mi> <mo>=</mo> <mn>1</mn> </mtd> </mtr> <mtr> <mtd> <mn>0</mn> </mtd> <mtd> <mtext>o</mtext> <mi>t</mi> <mi>h</mi> <mi>e</mi> <mi>r</mi> <mi>w</mi> <mi>i</mi> <mi>s</mi> <mi>e</mi> </mtd> </mtr> </mtable> </math>
+  <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"> <mi>e</mi> <mi>r</mi> <mi>r</mi> <mo stretchy="false">(</mo> <msub> <mi>h</mi> <mi mathvariant="normal">&#x0398;<!-- Θ --></mi> </msub> <mo stretchy="false">(</mo> <mi>x</mi> <mo stretchy="false">)</mo> <mo>,</mo> <mi>y</mi> <mo stretchy="false">)</mo> <mo>=</mo> <mtable rowspacing="4pt" columnspacing="1em"> <mtr> <mtd> <mn>1</mn> </mtd> <mtd> <mtext>if&#xA0;</mtext> <msub> <mi>h</mi> <mi mathvariant="normal">&#x0398;<!-- Θ --></mi> </msub> <mo stretchy="false">(</mo> <mi>x</mi> <mo stretchy="false">)</mo> <mo>&#x2265;<!-- ≥ --></mo> <mn>0.5</mn> <mtext>&#xA0;</mtext> <mi>a</mi> <mi>n</mi> <mi>d</mi> <mtext>&#xA0;</mtext> <mi>y</mi> <mo>=</mo> <mn>0</mn> <mtext>&#xA0;</mtext> <mi>o</mi> <mi>r</mi> <mtext>&#xA0;</mtext> <msub> <mi>h</mi> <mi mathvariant="normal">&#x0398;<!-- Θ --></mi> </msub> <mo stretchy="false">(</mo> <mi>x</mi> <mo stretchy="false">)</mo> <mo>&lt;</mo> <mn>0.5</mn> <mtext>&#xA0;</mtext> <mi>a</mi> <mi>n</mi> <mi>d</mi> <mtext>&#xA0;</mtext> <mi>y</mi> <mo>=</mo> <mn>1</mn> </mtd> </mtr> <mtr> <mtd> <mn>0</mn> </mtd> <mtd> <mtext>o</mtext> <mi>t</mi> <mi>h</mi> <mi>e</mi> <mi>r</mi> <mi>w</mi> <mi>i</mi> <mi>s</mi> <mi>e</mi> </mtd> </mtr> </mtable> </math>
 
-      	计算<math> <msub> <mi>J</mi><mi>test</mi></msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>的公式为：
+  计算<math> <msub> <mi>J</mi><mi>test</mi></msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>的公式为：
 
-      	<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"> <mtext>Test Error</mtext> <mo>=</mo> <mstyle displaystyle="true"> <mfrac> <mn>1</mn> <msub> <mi>m</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>t</mi> <mi>e</mi> <mi>s</mi> <mi>t</mi> </mrow> </msub> </mfrac> </mstyle> <munderover> <mo>&#x2211;<!-- ∑ --></mo> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> <mo>=</mo> <mn>1</mn> </mrow> <mrow class="MJX-TeXAtom-ORD"> <msub> <mi>m</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>t</mi> <mi>e</mi> <mi>s</mi> <mi>t</mi> </mrow> </msub> </mrow> </munderover> <mi>e</mi> <mi>r</mi> <mi>r</mi> <mo stretchy="false">(</mo> <msub> <mi>h</mi> <mi mathvariant="normal">&#x0398;<!-- Θ --></mi> </msub> <mo stretchy="false">(</mo> <msubsup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>t</mi> <mi>e</mi> <mi>s</mi> <mi>t</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo stretchy="false">)</mo> <mo>,</mo> <msubsup> <mi>y</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>t</mi> <mi>e</mi> <mi>s</mi> <mi>t</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo stretchy="false">)</mo> </math>
+  <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"> <mtext>Test Error</mtext> <mo>=</mo> <mstyle displaystyle="true"> <mfrac> <mn>1</mn> <msub> <mi>m</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>t</mi> <mi>e</mi> <mi>s</mi> <mi>t</mi> </mrow> </msub> </mfrac> </mstyle> <munderover> <mo>&#x2211;<!-- ∑ --></mo> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> <mo>=</mo> <mn>1</mn> </mrow> <mrow class="MJX-TeXAtom-ORD"> <msub> <mi>m</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>t</mi> <mi>e</mi> <mi>s</mi> <mi>t</mi> </mrow> </msub> </mrow> </munderover> <mi>e</mi> <mi>r</mi> <mi>r</mi> <mo stretchy="false">(</mo> <msub> <mi>h</mi> <mi mathvariant="normal">&#x0398;<!-- Θ --></mi> </msub> <mo stretchy="false">(</mo> <msubsup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>t</mi> <mi>e</mi> <mi>s</mi> <mi>t</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo stretchy="false">)</mo> <mo>,</mo> <msubsup> <mi>y</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>t</mi> <mi>e</mi> <mi>s</mi> <mi>t</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo stretchy="false">)</mo> </math>
 
 ### 模型选择和训练样本重新划分
 
@@ -266,7 +266,7 @@ mathjax: true
 
 如下图所示：
 
-![](/assets/images/2017/09/ml-7-1.png)
+<img src="{{site.baseurl}}/assets/images/2017/09/ml-7-1.png" class="md-img-center">
 
 总结一下：
 
@@ -277,7 +277,7 @@ mathjax: true
 
 参考之前对 Regularization 的介绍，λ 的值对预测函数的影响如下图所示
 
-![](/assets/images/2017/09/ml-7-2.png)
+<img src="{{site.baseurl}}/assets/images/2017/09/ml-7-2.png" class="md-img-center">
 
 为了找到最适合的 λ 值，可以按如下步骤
 
@@ -293,9 +293,13 @@ mathjax: true
 学习曲线是指横坐标为训练样本个数，纵坐标为错误率的曲线。错误率会随着训练样本变大，当样本数量超过某个值后，错误率增长会变慢，类似 log 曲线
 
 * High bias - 样本数少：<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> 值很低，<math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>值很高 - 样本数大：<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> 和 <math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>都很高，当样本数超过某个值时，有<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> ≈ <math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> - 如果某个学习算法有较高的 bias，仅通过增加训练样本是没用的 - 学习曲线图如下所示
-  ![](/assets/images/2017/09/ml-7-3.png)
+
+<img src="{{site.baseurl}}/assets/images/2017/09/ml-7-3.png" class="md-img-center">
+
 * high variance - 样本数少：<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> 值很低，<math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>值很高 - 样本数大：<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> 升高，但还是保持在一个较低的水平。 <math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>则持续降低，但还是保持在一个较高的水平，因此有<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> < <math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>。两者的差值很大 - 如果某个学习算法有较高的 variance，通过增加训练样本有可能有帮助 - 学习曲线图如下所示
-  ![](/assets/images/2017/09/ml-7-4.png)
+
+<img src="{{site.baseurl}}/assets/images/2017/09/ml-7-4.png" class="md-img-center">
+  
 
 ### 调试预测函数(Revisit)
 
@@ -340,10 +344,6 @@ mathjax: true
 * Error Metrics for Skewed CLasses
 
 所谓 Skewed Class 指的是分类问题中，对于某些结果出现的可能性很小，比如在患癌症的诊断中，癌症的样本占比很少，非癌症的训练样本很多，因此训练出来的模型，在预测结果上可能 99.5%都趋向于一个结果，这时我们怎么去衡量模型预测的准确率，需要引入"准确率"与"召回率"的概念：
-
-![](/assets/images/2017/09/ml-7-6.png)
-
-如上图所示
 
 * 准确率(Precision)：precision = #(true positives)/#(predicted positives)
 * 召回率(Recall): recall = #(true positives)/#(actual positives)

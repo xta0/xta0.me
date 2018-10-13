@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Data Structure Part 4 | 字符串 | String
+list_title: Data Structure | 数据结构基础 | 字符串 | String
 title: 字符串
 sub_title: String Algorithms
 mathjax: true
@@ -231,7 +231,16 @@ KMP算法复杂度分析：
     - 那么，如果`j = N[j];`的执行次数超过`n`次，最终的结果必然使得`j`为比`-1`小很多的负数。这是不可能的(`j`有时为`-1`,但是很快`+1`回到`0`)。
 2. 同理可以分析出求N数组的时间为`O(m)`，<mark>KMP算法的时间为Ｏ(n+m)</mark>
 
-### Resources
+
+## 字符串常见问题
+
+### [去重问题]
+
+- 题目：给定一个字符串，检查其是否没有重复字符
+
+判断一个字符串中是否有重复字符的问题通常和字符集挂钩，一般来说一个ASCII字符集包含128个字符
+
+## Resources
 
 - [Pattern Matching Pointer](http://www.cs.ucr.edu/~stelo/pattern.html)
 - [字符串匹配算法的描述、复杂度分析和C源代码](http://www-igm.univ-mlv.fr/~lecroq/string/)

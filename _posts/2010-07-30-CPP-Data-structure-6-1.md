@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Data Structure Part 6-2 | AVL树 & Splay Tree | AVL Tree & Splay Tree
+list_title: Data Structure | 数据结构基础 | AVL树 & Splay Tree | AVL Tree & Splay Tree
 mathjax: true
 title: AVL树与伸展树
 categories: [DataStructure]
