@@ -12,7 +12,7 @@ mathjax: true
 * Hypothesis 函数：
 
 $$
-h_{\theta}(x)={\theta}_0 + {\theta}_1x
+h_{\theta}(x)=\theta_0 + {\theta_1}x
 $$
 
 怎么计算参数 θ 呢？需要通过代价函数求解
