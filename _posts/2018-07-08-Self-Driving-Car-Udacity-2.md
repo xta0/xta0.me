@@ -1,13 +1,15 @@
 ---
-updated: "2018-07-10"
+updated: "2018-08-10"
 layout: post
-list_title: 自动驾驶入门 | Autonomous Driving | 位置计算 | Localizations
-title: 位置计算
+list_title: 自动驾驶入门 | Autonomous Driving | 卡尔曼滤波 | Kalman Filter
+title: 卡尔曼滤波
 categories: [AI,Autonomous-Driving]
 mathjax: true
 ---
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/ad-location.png">
+
+> Course Notes from Udacity Self-Driving Car Nanodegree Program
 
 ### Prerequisite
 
