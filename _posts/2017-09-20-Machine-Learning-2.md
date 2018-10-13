@@ -57,10 +57,9 @@ $$
 
 我们的目标是找到一个`θ`值使`J(θ)`最小。显然上述案例中，当`θ=1`时，`J(θ)`最小，因此我们可以得到 Hypothesis 函数：
 
-<math display="block"><msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi>
-<mo>=</mo>
-<mi>x</mi>
-</math>
+$$
+h_{\theta}(x) = x
+$$
 
 ### Cost Function - Intuition(2)
 
