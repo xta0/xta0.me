@@ -132,9 +132,9 @@ p = [0,1,0,0,0]
 假设机器人现在想要向右移动2个格子，但由于会有一定几率的出错，根据多次试验的结果，假设我们统计出了下面数据：
 
 $$
-P(X_{i+2} \| X_i) = 0.8 \\
-P(X_{i+i} \| X_i) = 0.1 \\ 
-P(X_{i+3} \| X_i) = 0.1 \\
+P(X_{i+2} | X_i) = 0.8 \\
+P(X_{i+i} | X_i) = 0.1 \\ 
+P(X_{i+3} | X_i) = 0.1 \\
 $$
 
 上面数据的含义是，假设机器人位于`i`的位置，那么它移动到`i+2`的位置的概率为`0.8`，移动1格或3个的概率为`0.1`。此时当机器人前进2格时，对应的概率分布变成了：
@@ -235,12 +235,12 @@ $$
 
 回到定位问题上，假设我们有一个先验的高斯概率密度函数为$f(x)$，其均值和方差分别为`[120,40]`，校验因子的概率密度函数为$g(x)$，其均值和方差分别为`[200,30]`，如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/ad-gs-1.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/ad-gs-1.png" width="70%">
 
 
 接下来机器人进行了一个次measure，根据贝叶斯公式，后验概率应该等于$f(x)*g(x)$，得到的结果如下图
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2016/07/ad-gs-2.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/ad-gs-2.png" width = "70%">
 
 从这个结果中，我们能观察出几条重要的结论：
 
