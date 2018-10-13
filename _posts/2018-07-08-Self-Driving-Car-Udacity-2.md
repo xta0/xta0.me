@@ -277,10 +277,10 @@ $$
 
 这个看起来没有那么直观，我们不妨代入几个数试试，令$\sigma^2_1 = \sigma^2_2 = 4$，$\sigma=2$的值为2；令$\sigma^2_1 = 8$,$\sigma^2_2 = 2$，$\sigma=1.6$，以此类推。
 
-接下来我们回到sense的过程，在有了先验概率后，根据贝叶斯定理，新的高斯函数应该等于先验高斯函数乘以调整因子，两个高斯函数乘积的性质在上面中已经讨论过，因此我们可以直接写出sense的代码：
+measure过程的Python代码如下：
 
 ```python
-def sense(mean1, var1, mean2, var2):
+def measure(mean1, var1, mean2, var2):
     new_mean = (var2 * mean1 + var1 * mean2) / (var1 + var2)
     new_var = 1/(1/var1 + 1/var2)
     return (new_mean, new_var)
@@ -299,7 +299,7 @@ $$
 因此我们可以写出move的代码:
 
 ```python
-def move(mean1, var1, mean2, var2):
+def predict(mean1, var1, mean2, var2):
     new_mean = mean1 + mean2
     new_var = var1 + var2
     return (new_mean, new_var) 
@@ -307,12 +307,12 @@ def move(mean1, var1, mean2, var2):
 
 ### sense & move
 
-将生面的sense和move结合起来，我们就得到了一维卡尔曼滤波的完整过程:
+将生面的sense和move结合起来，我们就得到了<mark>一维卡尔曼滤波</mark>的完整过程:
 
 ```python
 import math
-from Kalman.move import move
-from Kalman.sense import sense
+from Kalman.predict import predict
+from Kalman.measure import measure
 
 ##先验概率
 mu = 0
@@ -329,14 +329,21 @@ motion_sig = 2.0
 ## sense and move
 for index in range(0,len(measurements)):
     #sense
-    (mu,sig) = sense(mu,sig, measurements[index],measurement_sig)
+    (mu,sig) = measure(mu,sig, measurements[index],measurement_sig)
     #move
-    (mu,sig) = move(mu,sig, motion[index],motion_sig)
+    (mu,sig) = predict(mu,sig, motion[index],motion_sig)
 ```
 上述代码逻辑和前面离散demo基本一致，不同的是概率密度函数变成了连续的高斯函数，这里就不再做过多的分析。下图为移动5次后的概率分布结果
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/ad-gs-sm-1.png" width = "70%">
 
+
+## 多维卡尔曼滤波
+
+为了真正模拟机器人或者汽车在现实中的运动，我们需要使用多维的卡尔曼滤波器。卡尔曼滤波器主要有两方面的作用：
+
+1. 状态估计，对于某些无法直接测量的状态，可以使用卡尔曼滤波器进行估计
+2. 对输入的信息做最优的状态估计
 
 
 {% include _partials/post-footer-2.html %}
