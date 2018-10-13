@@ -254,7 +254,7 @@ $$
 由于$\mu_2 > \mu_1$，因此有 $\mu_1<\mu<\mu_2$。相应的，产生的新的方差为
 
 $$
-\sigma^2 = \frac{sigma^2_1 + sigma^2_2}{sigma^2_1+sigma^2_2}
+\sigma^2 = \frac{\sigma^2_1 + \sigma^2_2}{\sigma^2_1+\sigma^2_2}
 $$
 
 这个看起来没有那么直观，我们不妨代入几个数试试，令$\sigma^2_1 = \sigma^2_2 = 4$，新的$\sigma$的值为2
