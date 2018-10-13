@@ -7,7 +7,7 @@ categories: [AI,Autonomous-Driving]
 mathjax: true
 ---
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2017/07/ad-location.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/ad-location.png">
 
 ### Prerequisite
 
@@ -44,7 +44,7 @@ mathjax: true
 
 假设我们有一个机器人，想要从A点走到B点，AB之间可以平均分成5个格子，则在没有任何信息输入的情况下，机器人认为自己位于AB之间某一位置的概率为`1/5=0.2`，这个概率称为先验概率。 
 
-<img class="md-img-center" src="{{site.baseurl/assets/images/2016/07/ad-uniform-1.png}}">
+<img class="md-img-center" src="{{site.baseurl/assets/images/2018/07/ad-uniform-1.png}}">
 
 我们可以用一个Python数组表示每个位置的概率为:
 
@@ -62,13 +62,13 @@ for index in range(0,n):
 
 那么该如何量化这个概率呢？答案是使用贝叶斯公式，我们将红色，绿色格子中的先验概率`0.2`乘以各自的矫正因子，假设红色的矫正因子为`0.6`，绿色为`0.2`，则可以得出下面结果：
 
-<img class="md-img-center" src="{{site.baseurl/assets/images/2016/07/ad-uniform-2.png}}">
+<img class="md-img-center" src="{{site.baseurl/assets/images/2018/07/ad-uniform-2.png}}">
 
 将上面结果归一化后得到下面结果：
 
-<img class="md-img-center" src="{{site.baseurl/assets/images/2016/07/ad-uniform-3.png}}">
+<img class="md-img-center" src="{{site.baseurl/assets/images/2018/07/ad-uniform-3.png}}">
 
-这个结果表示<mark>当机器人的传感器感知到红色时</mark>，5个格子的概率分布。其概率含义如下：当机器人看到红颜色时，它位于绿色格子的概率为`1/9`，位于红色格子的概率为`1/3`,即 $ P(IN_GREEN|SEEN_RED) = 1/9 $, $ P(IN_RED|SEEN_RED) = 1/3 $。
+这个结果表示<mark>当机器人的传感器感知到红色时</mark>，5个格子的概率分布。其概率含义如下：当机器人看到红颜色时，它位于绿色格子的概率为`1/9`，位于红色格子的概率为`1/3`,即 $ P(IN_GREEN \| SEEN_RED) = 1/9 $, $ P(IN_RED \| SEEN_RED) = 1/3 $。
 
 这个从先验概率通过贝叶斯公式得到后验概率的过程称为**Sense**，我们可以接种用Python表示上述过程：
 
@@ -122,7 +122,7 @@ for m in measurements:
 p = [0,1,0,0,0]
 ```
 
-<img class="md-img-center" src="{{site.baseurl/assets/images/2016/07/ad-move-0.png}}">
+<img class="md-img-center" src="{{site.baseurl/assets/images/2018/07/ad-move-0.png}}">
 
 假设机器人现在想要向右移动2个格子，但由于会有一定几率的出错，根据多次试验的结果，假设我们统计出了下面数据：
 
@@ -134,7 +134,7 @@ $$
 
 上面数据的含义是，假设机器人位于`i`的位置，那么它移动到`i+2`的位置的概率为`0.8`，移动1格或3个的概率为`0.1`。此时当机器人前进2格时，对应的概率分布变成了：
 
-<img class="md-img-center" src="{{site.baseurl/assets/images/2016/07/ad-move-1.png}}">
+<img class="md-img-center" src="{{site.baseurl/assets/images/2018/07/ad-move-1.png}}">
 
 ```python
 p = [0,0,0.1,0.8,0.1]
@@ -177,7 +177,7 @@ print(p) #[0.2,0.2,0.2,0.2,0.2]
 
 了解了sense和move，我们不难发现，机器人移动的过程实际上就是不断获得新信息和不断损失信息的交替循环，机器人没移动一步，会通过传感器得到一个观测值来矫正自己的位置，同时又因为移动带来的不确定性而损失掉一部分信息。这个过程可以如下图所示：
 
-<img class="md-img-center" src="{{site.baseurl/assets/images/2016/07/ad-sm-1.png}}">
+<img class="md-img-center" src="{{site.baseurl/assets/images/2018/07/ad-sm-1.png}}">
 
 我们可以接着用代码来模拟下这个过程
 
@@ -196,11 +196,11 @@ for k in range(len(measurements)):
 ```
 上述代码中，机器人先sense到了`red`，然后向右移动1个格子，接着又sense到了`green`，然后向右又移动了1个格子，此时得到的概率分布如下
 
-<img class="md-img-center" src="{{site.baseurl/assets/images/2016/07/ad-sm-2.png}}">
+<img class="md-img-center" src="{{site.baseurl/assets/images/2018/07/ad-sm-2.png}}">
 
 观察上图也可发现，第5个格子的概率最大，说明机器人知道自己目前在第5个格子中。假如我们将`measurements`改为`['red','red']`，概率分布变为下图
 
-<img class="md-img-center" src="{{site.baseurl/assets/images/2016/07/ad-sm-3.png}}">
+<img class="md-img-center" src="{{site.baseurl/assets/images/2018/07/ad-sm-3.png}}">
 
 此时机器人知道自己位于第4个格子里，这也符合我们的推测。
 
@@ -208,7 +208,7 @@ for k in range(len(measurements)):
 
 这一节我们给出了一种确定机器人位置的理论模型和实现方法。我们先来一起回顾下这个过程，首先我们需要有一个位置的先验概率，然后通过`sense`函数来提升先验概率，但由于机器人在移动过程中会带来不确定性，因此会损失一部分信息（确定性），最后机器人通过不断的`sense`和`move`来更新概率密度分布，并找到概率最大的位置作为自己的位置。整个过程如下图所示
 
-<img class="md-img-center" src="{{site.baseurl/assets/images/2016/07/ad-kalman-1.png}}">
+<img class="md-img-center" src="{{site.baseurl/assets/images/2018/07/ad-kalman-1.png}}">
 
 在实际应用中，`sense`采集到的数据不可能是颜色，而是路面上的一些路标。后面我们还会对localization问题做进一步分析。
 
@@ -230,7 +230,7 @@ $$
 
 回到定位问题上，假设我们有一个先验的高斯概率密度函数为$f(x)$，其均值和方差分别为`[120,40]`，校验因子的概率密度函数为$g(x)$，其均值和方差分别为`[200,30]`，如下图所示
 
-<img class="md-img-center" src="{{site.baseurl/assets/images/2016/07/ad-gs-1.png}}">
+<img class="md-img-center" src="{{site.baseurl/assets/images/2018/07/ad-gs-1.png}}">
 
 
 接下来机器人进行了一个次measure，根据贝叶斯公式，后验概率应该等于$f(x)*g(x)$，得到的结果如下图
@@ -248,7 +248,7 @@ $$
 \mu = \frac{\sigma^{-2}_1\mu_1 + \sigma^{-2}_2\mu_2}{\sigma^{-2}_1 + \sigma^{-2}_2}
 $$
 
-由于$\mu_2 > \mu_1$，因此有 $\mu_1<\mu<\m_2$。相应的，产生的新的方差为
+由于$\mu_2 > \mu_1$，因此有 $\mu_1<\mu<\mu_2$。相应的，产生的新的方差为
 
 $$
 \sigma^2 = \frac{sigma^2_1 + sigma^2_2}{sigma^2_1+sigma^2_2}
