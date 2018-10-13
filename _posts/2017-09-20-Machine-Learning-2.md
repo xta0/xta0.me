@@ -11,21 +11,17 @@ mathjax: true
 
 * Hypothesis 函数：
 
-<math display="block">
-	<msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi>
-	<mo>=</mo>
-	<msub><mi>θ</mi> <mi>0</mi></msub>
-	<mo>+</mo>
-	<msub><mi>θ</mi>
-	<mi>1</mi></msub>
-	<mi>x</mi>
-</math>
+$$
+h_{\theta}(x)={\theta}_0 + {\theta}_1x
+$$
 
-怎么计算参数 θ 呢？
-
-根据训练数据集，找到最合适的 θ 值
+怎么计算参数 θ 呢？需要通过代价函数求解
 
 * cost 函数：
+
+$$
+J(\theta_0,\theta_1) = \frac{1}{2m}\sum{^m}_{i=1}(y_i^{\^}-y_i)^2=\frac{1}{2m}\sum{^m}_{i=1}(h_\theta(x_i)-y_i)^2
+$$
 
 <math display="block">
   <mi>J</mi>
