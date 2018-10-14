@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Data Structure | 数据结构基础 | 前缀树 | Trie
+list_title: 数据结构基础 | Data Structure | 前缀树 | Trie
 mathjax: true
 title: Trie
 categories: [DataStructure]
