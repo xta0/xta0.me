@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Data Structure | 数据结构基础 | 二叉树 | Binary Tree
+list_title: 数据结构基础 | Data Structure | 二叉树 | Binary Tree
 mathjax: true
 title: 二叉树
 categories: [DataStructure]

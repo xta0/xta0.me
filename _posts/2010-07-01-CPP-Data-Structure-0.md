@@ -1,7 +1,7 @@
 ---
 updated: '2018-09-20'
 layout: post
-list_title: Data Structure | 数据结构基础 | 学习资料汇总 | Learning Resource
+list_title: 数据结构基础 | Data Structure | 学习资料汇总 | Learning Resource
 title: 资料汇总
 mathml: true
 categories: [DataStructure]
