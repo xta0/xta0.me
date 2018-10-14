@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Data Structre Part 10 | B+树 | B+ Tree
+list_title: 数据结构基础 | Data Structre | 红黑树 | Red Black Tree
 title: B+树
 mathjax: true
 categories: [DataStructure]

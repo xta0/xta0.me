@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Data Structre Part 8 | In-place Sort Algorithm-1 | 内排序-1
+list_title: 数据结构基础 | Data Structre | 内排序-1 | In-place Sort Algorithm-1
 title: 内排序算法(一)
 # sub_title: In-place Sort Algorithm
 mathjax: true

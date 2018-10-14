@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Data Structre Part 11-2 | 索引 | B/B+ 树 | Indexing-B/B+ Tree
+list_title: 数据结构基础 | Data Structre | 索引-B/B+ 树 | B/B+ Tree
 title: B/B+ 树 
 mathjax: true
 categories: [DataStructure]

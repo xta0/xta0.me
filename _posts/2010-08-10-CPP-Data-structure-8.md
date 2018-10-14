@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Data Structure Part 7 | Graph | 图
+list_title: 数据结构基础 Data Structure | Graph | 图
 title: 图
 mathjax: true
 categories: [DataStructure]

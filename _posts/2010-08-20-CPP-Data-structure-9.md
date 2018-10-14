@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Data Structre Part 9 | External Sort Algorithm | 外排序
+list_title: 数据结构基础 | Data Structre | 外排序 | External Sort Algorithm 
 title: 外排序算法
 sub_title: External Sort Algorithm
 mathjax: true

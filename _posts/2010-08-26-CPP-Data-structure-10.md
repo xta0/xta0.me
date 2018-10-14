@@ -1,7 +1,7 @@
 ---
 updated: "2018-08-20"
 layout: post
-list_title: Data Structre Part 10 | Hashing | 散列
+list_title: 数据结构基础 | Data Structre | 哈希 | Hashing 
 title: 散列 | Hashing
 mathjax: true
 categories: [DataStructure]
