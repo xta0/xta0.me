@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Algorithms | 广度优先搜索 | BFS
+list_title: 算法基础 | Algorithms | 广度优先搜索 | BFS
 title: 广度优先搜索 | BFS
 categories: [Algorithms]
 mathjax: true
