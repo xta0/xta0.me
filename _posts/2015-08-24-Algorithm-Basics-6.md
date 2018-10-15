@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 深搜与回溯 | DFS & Backtracking
+title: 算法基础 | 深搜与回溯 | DFS & Backtracking
 list_title: Algorithms | 深搜与回溯 | DFS & Backtracking
 categories: [Algorithms]
 mathjax: true
@@ -16,18 +16,18 @@ mathjax: true
 
 深搜模板的伪码为：
 
-```
-dfs(array,...) {
+```javascript
+function dfs(array,index, ...) {
     if(some_condition){
         return;
     }else{
-        for(i=0;i<array.size();++i>){
+        for(i=index;i<array.size();++i){
             //choose
             obj = array[i];
             //mark states
             set_states();
             //DFS search
-            dfs(array,...);
+            dfs(array,i, ...);
             //unmark states
             unset_state();
         }

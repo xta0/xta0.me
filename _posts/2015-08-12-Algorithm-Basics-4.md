@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Algorithms | 几种朴素算法 | Simple Algrorithms
+list_title: 算法基础 | Algorithms | 几种朴素算法 | Simple Algrorithms
 title: 几种朴素的算法思想 | Simple Algorithms
 categories: [Algorithms]
 mathjax: true
