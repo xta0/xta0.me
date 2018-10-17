@@ -6,8 +6,6 @@ title: 堆
 categories: [DataStructure]
 ---
 
-## 堆
-
 堆是<mark>完全二叉树</mark>的一种表现形式。以最小堆为例，它要求的每个父节点的值大于两个子节点的值，两个兄弟节点之间的值的大小关系没有限制。由于完全二叉树可以用数组表示，上述性质也可以表述为：
 
 1. $K_1<=K_{2i+1}$
@@ -30,7 +28,7 @@ categories: [DataStructure]
     - 删除最后一个元素
     - 堆顶节点递归进行SiftDown调整
 
-- SiftDown调整
+### `SiftDown`调整
 
 所谓SiftDown调整，即将一个不合适的父节点下降到合适的位置，例如删除堆顶元素后，新的堆顶要进行SiftDown调整
 
@@ -65,7 +63,7 @@ void sift_down(size_t position){
     }
 }
 ```
-- SiftUp调整
+### `SiftUp`调整
 
 和SiftDown类似，即将一个不合适的子节点上升到合适的位置，例如新元素进入堆之后，该元素要进行SiftDown调整
 
@@ -83,7 +81,7 @@ void sift_up(size_t position){
 }
 ```
 
-- 建堆
+### 建堆
 
 如上文所述，建堆有两种思路，其中第二种思路较为简单，可以退化为入堆操作，第一种思路需要按下面步骤操作：
 
