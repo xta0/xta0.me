@@ -137,9 +137,9 @@ void MinHeap<T>::BuildHeap(){
 
 ### 堆的其它实现
 
-上面介绍的建堆的方式是最基本的二叉堆（Binary Heap），其它还有很多种建堆的方式，其性能也不尽相同，这里附上一张不同实现的堆效率对比图
+上面介绍的建堆的方式是最基本的二叉堆（Binary Heap），除了这种方式以外还有很多种其它建堆的方式，比如使用BST，红黑树等。不同的建堆方式其性能也不尽相同，这里附上一张不同实现的堆效率对比图
 
-<img src="{{site.baseurl}}/assets/images/07/heap-wiki.png" class="md-img-center">
+<img src="{{site.baseurl}}/assets/images/2010/07/heap-wiki.png" class="md-img-center">
 
 
 
