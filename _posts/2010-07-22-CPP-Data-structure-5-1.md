@@ -135,6 +135,12 @@ void MinHeap<T>::BuildHeap(){
     - 改变已存储于优先队列中对象的优先权
         - 辅助数据结构帮助找到对象
 
+### 堆的其它实现
+
+上面介绍的建堆的方式是最基本的二叉堆（Binary Heap），其它还有很多种建堆的方式，其性能也不尽相同，这里附上一张不同实现的堆效率对比图
+
+<img src="{{site.baseurl}}/assets/images/07/heap-wiki.png" class="md-img-center">
+
 
 
 ### Resources
