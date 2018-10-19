@@ -5,7 +5,7 @@ title: 概述
 categories: [C++, Concurrency, Thread]
 ---
 
-<img src="{{site.baseurl/assets/images/2016/01/cpp-con.png}}" class="md-img-center">
+<img src="{{site.baseurl}}/assets/images/2016/01/cpp-con.png" class="md-img-center">
 
 
 ## C++ 11: The foundation
