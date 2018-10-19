@@ -1,8 +1,8 @@
 ---
 updated: "2018-08-10"
 layout: post
-list_title: 自动驾驶入门 | Autonomous Driving | 卡尔曼滤波器(一) | Kalman Filter Part 1
-title: 卡尔曼滤波器(一)
+list_title: Autonomous Driving | Localization Part 1 | The Histogram Filter 
+title: The Histogram Filter
 categories: [AI,Autonomous-Driving]
 mathjax: true
 ---
@@ -18,8 +18,9 @@ mathjax: true
 - [Python Numpy](https://xta0.me/2017/05/10/Data-Science-Tools.html)
 - [Kalman Filter](https://zh.wikipedia.org/zh-hans/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2)
 
+### Motivation
 
-本将继续讨论自动驾驶中用到的一些基本统计学知识，包括概率分布模型和卡尔曼滤波器。本文假设你已经掌握了了一些简单的概率学知识，并且知道如何使用Python和Numpy进行简单的编程。
+在上一篇文章中我们曾简单的提到了自动驾驶汽车定位的问题，但没有做很深入的分析，从这篇文章开始，我们将讨论这个问题，这是一个非常复杂而且重要的问题，其复杂性在于
 
 ### 概率分布模型
 
@@ -341,7 +342,7 @@ for index in range(0,len(measurements)):
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/ad-gs-sm-1.png" width = "70%">
 
 
-
+有了对机器人定位原理的初步理解后，在下一篇文章中我们将
 
 
 {% include _partials/post-footer-2.html %}
@@ -349,5 +350,7 @@ for index in range(0,len(measurements)):
 ## Resources
 
 - [Udacity Intro to Self-Driving Car](https://www.udacity.com/course/intro-to-self-driving-cars--nd113)
+- [Robot Localization I: Recursive Bayesian Estimation](http://www.deepideas.net/robot-localization-recursive-bayesian-estimation/)
+- []()
 - [The Kalman Filter](https://www.youtube.com/playlist?list=PLX2gX-ftPVXU3oUFNATxGXY90AULiqnWT)
 - [Understand Kalman Filter](https://www.youtube.com/watch?v=mwn8xhgNpFY&list=PLn8PRpmsu08pzi6EMiYnR-076Mh-q3tWr)

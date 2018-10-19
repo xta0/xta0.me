@@ -135,6 +135,7 @@ StringBuilder
 ## 命令行输入输出
 
 ### java.util.Scanner
+
 - 使用`nextInt()`
 - 使用`nextDouble()`
 - `next()`得到下一个单词
@@ -144,5 +145,8 @@ StringBuilder
 - `System.in.read()`	
 - `System.out.print()`或者 `println,printf`
 
+## Resources
+
 - [Core Java Volumn 1](http://ptgmedia.pearsoncmg.com/images/9780137081899/samplepages/0137081898.pdf)
 - [Core Java Volumn 2](http://ptgmedia.pearsoncmg.com/images/9780137081608/samplepages/013708160X.pdf)
+- []()
