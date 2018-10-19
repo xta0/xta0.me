@@ -1,7 +1,7 @@
 ---
 updated: "2018-07-10"
 layout: post
-list_title: 自动驾驶入门 | Autonomous Driving | 贝叶斯定理 | Bayesian Thinking
+list_title: Autonomous Driving | 贝叶斯定理 | The Bayesian Rule
 title: 贝叶斯概率模型
 categories: [AI,Autonomous-Driving]
 mathjax: true
