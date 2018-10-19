@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 谈谈 C++ 中的多线程 | Concurrency in C++ | 线程管理 | Managing Threads
+list_title: 谈谈 C++ 中的多线程 | Modern Concurrency in C++ | 线程管理 | Managing Threads
 title: 线程管理 
 categories: [C++, Concurrency, Thread]
 ---

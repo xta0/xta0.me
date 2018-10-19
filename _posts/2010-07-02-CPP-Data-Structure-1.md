@@ -108,7 +108,14 @@ bool Array<T>::delete(const int p){
 	- <mark>时间复杂度为O(n)</mark>
 
 
-## Array相关的问题
+## 数组相关的问题
+
+### [Rotate Array]()
+
+题目是如何旋转一个数组
+
+
+
 
 ## Resources 
 

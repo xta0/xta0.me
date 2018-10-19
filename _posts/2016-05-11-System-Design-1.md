@@ -63,6 +63,8 @@ Pull的方式是被动的按需加载，当获取静态资源的请求到达CDN�
 
 负载均衡是一个非常重要的系统，也可以说是无处不在的一个系统，比如在DNS中可以使用负载均衡动态分配请求到不同的CDN上，对于内部App Server的集群也需要使用负载均衡来管理请求的转发。除了转发请求以外，Load Balancer还可以用来检测单点故障，当某个Server挂掉后，及时将请求转移其它Server上。
 
+{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-11.png' param2='sd-3' %}
+
 Load Balancer的实现可以用硬件，比如[Citrix NetScaler](https://www.citrix.com/products/?contentID=21679)旗下的产品，使用硬件的好处是稳定且速度快，缺点是非常贵。当然Load Balancer也可以用软件实现，比如Ngixn或者HAProxy，这种方式仍是目前的主流方式。
 
 Load Balancer的路由策略有很多种，常用的有如下几种，
@@ -121,7 +123,7 @@ Server集群的另一个问题是，这些server节点该如何管理，如何�
 
 对于更多分布式数据库存储的问题，后面还会做详细的讨论。
 
-## Cache
+## Caching
 
 {% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-7.png' param2='sd-7' %}
 {% include _partials/components/pic-from.html param='http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html' param2='Source: Scalable system design patterns'%}
@@ -182,6 +184,8 @@ Server集群的另一个问题是，这些server节点该如何管理，如何�
 
 ### Resource
 
+- [Anatomy of a System Design Interview](https://hackernoon.com/anatomy-of-a-system-design-interview-4cb57d75a53f)
+- [Top 10 System Design Interview Questions for Software Engineers](https://hackernoon.com/top-10-system-design-interview-questions-for-software-engineers-8561290f0444)
 - [CS75 (Summer 2012) Lecture 9 Scalability Harvard Web Development David Malan](https://www.youtube.com/watch?v=-W9F__D3oY4&t=955s)
 - [Introduction to architecting systems for scale](https://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer)
 - [How to view DNS cache in OSX](https://stackoverflow.com/questions/38867905/how-to-view-dns-cache-in-osx)
@@ -194,4 +198,5 @@ Server集群的另一个问题是，这些server节点该如何管理，如何�
 - [Applying Back Pressure When Overloaded](https://mechanical-sympathy.blogspot.com/2012/05/apply-back-pressure-when-overloaded.html)
 - [Scalability for Dummies](http://www.lecloud.net/post/7295452622/scalability-for-dummies-part-1-clones)
 - [System Design Primer](https://github.com/donnemartin/system-design-primer)
+
 

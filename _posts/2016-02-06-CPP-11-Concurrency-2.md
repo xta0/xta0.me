@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 谈谈 C++ 中的多线程 | Concurrency in C++ | 数据共享 | Sharing Data
+list_title: 谈谈 C++ 中的多线程 | Modern Concurrency in C++ | 数据共享 | Sharing Data
 title: 线程间共享数据 
 categories: [C++, Concurrency, Thread]
 ---
