@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 谈谈 C++ 中的多线程 | Modern Concurrency in C++ | 线程管理 | Managing Threads
+list_title: 谈谈 C++ 中的多线程 | Concurrency in Modern C++  | 线程管理 | Managing Threads
 title: 线程管理 
 categories: [C++, Concurrency, Thread]
 ---
@@ -183,5 +183,5 @@ t.detach();
 
 - [《C++ Concurrency in Action》](https://www.manning.com/books/c-plus-plus-concurrency-in-action?)
 - [《C++ Primer 3rd edition》]()
-- [《C++ 数据结构》]()
 - [C++ 11 Concurrency](https://www.classes.cs.uchicago.edu/archive/2013/spring/12300-1/labs/lab6/)
+- [Modern C++ Concurrency in Practice: Get the most out of any machine](https://www.educative.io)
