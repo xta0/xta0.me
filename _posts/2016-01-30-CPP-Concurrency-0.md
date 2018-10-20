@@ -1,7 +1,7 @@
 ---
 layout: post
 list_title: 谈谈 C++ 中的多线程 | Concurrency in Modern C++ | 概述 | Overview
-title: 概述 
+title: C++ 中的多线程概述
 categories: [C++, Concurrency, Thread]
 ---
 
@@ -83,7 +83,7 @@ C++ 20还引入了协程，协程这个概念其实并不新鲜，很多现代�
 
 ### Transactional Memory
 
-C++ 20还引入了一个叫做Transactional Memory的概念，如果熟悉DBMS相信对ACID不会陌生，这四个字母分别代表（Atomicity, Consistency, Isolation 和 Durability)。ACID用来表示DBMS的事务特性，简单地说就是事务操作要具备原子性。C++ 20的新标准中也引入了类似的概念（只有ACI，没有D）并给出了相应的实现方式: 使用synchronized block或者atomic block。例如，如果你想让某段代码具备事务的特性，可以将这部分代码放入synchronized block中，这样就可以保证块中代码某一个时刻只有一个线程可以执行，并且快中代码的执行顺序和书写顺序也是一致的。atomic block的效果类似。
+C++ 20还引入了一个叫做Transactional Memory的概念，如果熟悉DBMS相信对ACID不会陌生，这四个字母分别代表（Atomicity, Consistency, Isolation 和 Durability)。ACID用来表示DBMS的事务特性，简单地说就是事务操作要具备原子性。C++ 20的新标准中也引入了类似的概念（只有ACI，没有D）并给出了相应的实现方式: 使用synchronized block或者atomic block。例如，如果你想让某段代码具备事务的特性，可以将这部分代码放入synchronized block中，这样就可以保证块中代码某一个时刻只有一个线程可以执行，并且块中代码的执行顺序和书写顺序也是一致的。atomic block的效果类似。
 
 
 ## 小结
