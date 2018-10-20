@@ -64,11 +64,30 @@ C++ 17除了支持69个可并行计算的算法外，还新添加了8个新的�
 
 ## C++ 20
 
-C++ 20还未标准化，但已经很多不错的多线程Feature出来了：
+<img src="{{site.baseurl}}/assets/images/2016/01/cpp-con.png" class="md-img-center">
+
+C++ 20还未正式标准化，但已经有很多不错的多线程Feature出来了
 
 ### Atomic Smart Pointers
 
+C++ 11中引入的两个智能指针`std::shared_ptr`和`std::weak_ptr`并不能保证对其指向资源的访问是原子性的，也就是说如果一个对象被多个指针在多线程的环境下同时访问可能会发生race condition的情况。为了解决这个问题，C++ 20中引入了另外两个线程安全的智能指针`std::atomic_shared_ptr`和`std::atomic_weak_ptr`
 
+
+### Latches and Barriers
+
+C++ 20中引入了semaphores的概念。所谓semaphore也是一种线程同步的技术，它通过控制信号量的计数器来协调线程间的调度。例如某线程监听某个信号量的值，当该信号量的计数器为0时该线程才能继续执行，而另一个线程在执行完任务后可以修改信号量的计数器的值，从而实现两个线程串行执行的效果。C++ 20中提供了三个类来实现semaphore，分别为`std::latch`,`std::barrier`和`std::flex_barrier`。
 
 ### Coroutines
 
+C++ 20还引入了协程，协程这个概念其实并不新鲜，很多现代的编程语言都有协程的相应实现，比如JavaScript和Python的Generator，Go的GoRoutine等。如果想了解协程的原理，可参考[之前的文章](https://xta0.me/2014/02/04/Lua-2.html)。
+
+### Transactional Memory
+
+C++ 20还引入了一个叫做Transactional Memory的概念，如果熟悉DBMS相信对ACID不会陌生，这四个字母分别代表（Atomicity, Consistency, Isolation 和 Durability)。ACID用来表示DBMS的事务特性，简单地说就是事务操作要具备原子性。C++ 20的新标准中也引入了类似的概念（只有ACI，没有D）并给出了相应的实现方式: 使用synchronized block或者atomic block。例如，如果你想让某段代码具备事务的特性，可以将这部分代码放入synchronized block中，这样就可以保证块中代码某一个时刻只有一个线程可以执行，并且快中代码的执行顺序和书写顺序也是一致的。atomic block的效果类似。
+
+
+## 小结
+
+总结到这里不禁略有感慨，C++进化的一直很慢，一个智能指针就折腾了近4年才想清楚怎么设计，而引入的这些多线程模型早在8，9年前就均已被Apple实现了，比如atmoic对象，这个概念早在iOS 5中Objective-C就已经支持了，而semaphores，synchronize block这些C++ 20才提出的东西，也很早就已经出现在Objective-C中了，以至于iOS开发人员对这些名词早就习以为常了。而Apple的Foundation Framework还提供了更加强大的GCD多线程模型，极大地改善了多线程开发的体验，对应用开发非常友好，并且性能也能得到保证。
+
+这说明一门语言的发展还是依赖它所支持的平台的发展，二平台的发展又离不开业务的发展。Apple在这方面做的是真心的不错，API每年都有优化，很为开发者着想，整个开发者生态也运营的不错，实际OSX/iOS的多线程模型也并非是一蹴而就的，老一点的开发者还应该记得使用`NSThread`或者`pthread`的年代，但是Apple每年都会改进自己的API，不断降低开发门槛，使得越来越多的人可以加入到其产品的开发队伍中。反观C++在这一点上就明显缺乏前进的推动力，在编程语言层出不穷的情况下，C++的生存空间还有多大呢？可能就像左耳朵耗子说的，C++在应用层开发上的优势已经越来越小了，会逐渐被Go取代，C++将会被压的更底层，能想到的还需要用到C++的业务场景有游戏引擎，手机等嵌入式系统，自动驾驶引擎等等这些对代码执行效率有严格要求的底层系统，也正因为这个原因，学习C++也有一定的好处，可以让我们对操作系统有更深入的了解。

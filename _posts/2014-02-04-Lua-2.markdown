@@ -6,7 +6,7 @@ layout: post
 categories: [Lua]
 ---
 
-最早接触Coroutine是在<a href="http://www.lua.org/pil/">Programming in Lua</a>中，如今这本书已经出到第三版了，第9章介绍了lua中Coroutine的API，读过一遍后，没不太明白，后来又读了一篇关于这方面的<a href="http://www.inf.puc-rio.br/~roberto/docs/corosblp.pdf">论文</a>，作者也是原书的作者，论文将Coroutine机制阐述的很详细，很值得一读，文本会结合具体例子，正确将该论文的内容以通俗易懂的方式呈现出来。
+最早接触Coroutine是在<a href="http://www.lua.org/pil/">Programming in Lua</a>中，如今这本书已经出到第三版了，第9章介绍了lua中Coroutine的API，读过一遍后，没不太明白，后来又读了一篇关于这方面的<a href="http://www.inf.puc-rio.br/~roberto/docs/corosblp.pdf">论文</a>，作者也是原书的作者，论文将Coroutine机制阐述的很详细，很值得一读。
 
 ## 什么是Coroutine
 
