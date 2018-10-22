@@ -177,7 +177,7 @@ Server集群的另一个问题是，这些server节点该如何管理，如何�
 
 ## A Case Study 
 
-最后我们可以分析一下Reddit网站的架构设计，这部分内容来自两部分，一是我对Huffman在Udacity[课程上视频的整理](https://www.youtube.com/playlist?list=PLEJuDSAS60yBW1OpIRqIG2T7S5GG3PTvr)。二是[Neil Williams在QCon上的分享](https://www.youtube.com/watch?v=nUcO7n4hek4&t=799s)。由于没有正式的文章，因此部分细节可能不完全正确，权且作为学习这部分内容的一个小结
+最后我们可以分析一下**Reddit**网站的架构设计，这部分内容来自两部分，一是我对Huffman在Udacity[课程上视频的整理](https://www.youtube.com/playlist?list=PLEJuDSAS60yBW1OpIRqIG2T7S5GG3PTvr)。二是[Neil Williams在QCon上的分享](https://www.youtube.com/watch?v=nUcO7n4hek4&t=799s)。由于没有正式的文章，因此部分细节可能不完全正确，权且作为学习这部分内容的一个小结
 
 {% include _partials/components/lightbox-center.html param='/assets/images/2016/05/reddit.png' param2='1' %}
 
