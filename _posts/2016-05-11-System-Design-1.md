@@ -107,9 +107,9 @@ Load Balancer的路由策略有很多种，常用的有如下几种，
 {% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-4.png' param2='sd-4' %}
 {% include _partials/components/pic-from.html param='http://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer' param2='Source: Intro to architecting systems for scale'%}
 
-Server集群的另一个问题是，这些server节点该如何管理，如何上线或者下架一台server，众多的server之间该如何通信，server之间的状态如何同步，以及当某台server出问题之后，怎么能快速恢复等等。显然靠人工取解决这些问题是不现实的，因此，最好有一套统一的服务框架或者配置中心可以将这些Server的声明周期以及通信一并管理起来。针对这个问题，业界常用的解决方案有 [Consul](https://www.consul.io/docs/index.html), [Etcd](https://coreos.com/etcd/docs/latest/), 和[Zookeeper](https://zookeeper.apache.org/)。目前比较流行的是ZooKeeper，很多大型网站内部也都在使用ZooKeeper，当然具体情况还要具体分析，需要根据业务场景选取最适合的方案。更多关于数据一致性的问题，我们后面的文章会单独讲解。
+Server集群的另一个问题是，这些server节点该如何管理，如何上线或者下架一台server，众多的server之间该如何通信，server之间的状态如何同步，以及当某台server出问题之后，怎么能快速恢复等等。显然靠人工取解决这些问题是不现实的，因此，最好有一套统一的服务框架或者配置中心可以将这些Server的声明周期以及通信一并管理起来。针对这个问题，业界常用的解决方案有 [Consul](https://www.consul.io/docs/index.html), [Etcd](https://coreos.com/etcd/docs/latest/), 和[Zookeeper](https://zookeeper.apache.org/)。目前比较流行的是ZooKeeper，很多大型网站内部也都在使用ZooKeeper，当然具体情况还要具体分析，需要根据业务场景选取最适合的方案。更多关于服务管理的问题，我们后面的文章会单独讲解。
 
-<img src="{{site.baseurl}}/assets/images/2016/05/zookeeper.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2016/05/zookeeper.png">
 
 另外，对于分布式Server的代码同步以及部署也是一个问题，好在目前有很多开源项目可以解决这个问题，比如Ruby体系的Capistrano等
 
@@ -144,7 +144,7 @@ Server集群的另一个问题是，这些server节点该如何管理，如何�
 
 对于更多分布式缓存的问题，后面还会专门写一篇文章来分析
 
-## Asynchronism
+## Message Queue
 
 如果网站的流量大了，所有的操作尽量异步。异步操作又分为很多种，这里讨论两种，一种是异步任务，一种是定时任务。
 
