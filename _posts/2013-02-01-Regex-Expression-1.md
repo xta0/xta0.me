@@ -49,8 +49,8 @@ categories: [Regular Expression]
 -  **WildCard**
     - Notation: `.`
     - 单个字符匹配所有除了换行以外的字符
-        - `/.ohb/`-->`John`,`mohn`
-        - `/3.14/` -->`3.14`,`3x4`,...        
+        - `/.ohn/`-->`John`,`mohn`
+        - `/3.14/` -->`3.14`,`3x14`,...        
     - 用`\`做转义字符
         - `user\.txt` ---> `user.txt`
 
