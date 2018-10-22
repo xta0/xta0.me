@@ -175,7 +175,7 @@ Server集群的另一个问题是，这些server节点该如何管理，如何�
 
 如果队列任务投递的速度远超过消耗的速度，则队列的size将会显著增长，此时内存消耗过快会导致内存耗尽，而内存的消耗又可能导致cache工作异常，进而导致大量的磁盘读写或者DB请求，从而拖慢整条链路的速度。这种情况下，需要考虑使用[Back Pressure](https://mechanical-sympathy.blogspot.com/2012/05/apply-back-pressure-when-overloaded.html)来限制队列size的大小。当消息队列满负荷时，clients的请求会返回HTTP 503提示稍后尝试，等待时间的选择可采用指[数退避算法](https://en.wikipedia.org/wiki/Exponential_backoff)，即等待时间是随指数增长，从而避免频繁的重试。
 
-## A Case Study - Reddit System Architecture Overview
+## A Case Study 
 
 最后我们可以分析一下Reddit网站的架构设计，这部分内容来自两部分，一是我对Huffman在Udacity[课程上视频的整理](https://www.youtube.com/playlist?list=PLEJuDSAS60yBW1OpIRqIG2T7S5GG3PTvr)。二是[Neil Williams在QCon上的分享](https://www.youtube.com/watch?v=nUcO7n4hek4&t=799s)。由于没有正式的文章，因此部分细节可能不完全正确，权且作为学习这部分内容的一个小结
 
