@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structre | 内排序-2 | In-place Sort Algorithm-2 
+list_title: 数据结构基础 | Data Structre | 内排序-2 | Sort Algorithm Part 2
 title: 内排序算法（二）
 # sub_title: In-place Sort Algorithm
 mathjax: true
@@ -8,7 +8,6 @@ categories: [DataStructure]
 ---
 
 前面介绍的几种排序方式主要是以元素比较作为为基本的运算单元，这种排序方式所能达到的上限是$O(N\log{N}$。本文会介绍三种时间复杂度为$O(N)$的排序算法，分别是桶排序，计数排序与基数排序。因为这些排序算法的时间复杂度为线性的，因此也叫做线性排序（Linear Sort）。之所以能做到线性复杂度原因在于这些排序算法并不是基于元素之间的比较和交换，而是采用另外一种时间换空间的思路来提高排序效率。
-
 
 ### 桶排序
 
@@ -54,7 +53,7 @@ void bucketSort(vector<int>& v){
 | 0-9 |     | 10-19 |   | 20-29   |     | 30-39    |
 ```
 
-我们来分析一下这种桶排序方式的时间复杂度，如果待排序数据有N个
+我们来分析一下这种桶排序方式的时间复杂度，如果待排序数据有`n`个，我们将它们划分到`m`个桶内，则每个桶内有`k=n/m`个元素
 
 
 ### 计数排序(Counting Sort)
