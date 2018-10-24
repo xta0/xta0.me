@@ -2,12 +2,9 @@
 updated: "2018-08-20"
 layout: post
 title: 负载均衡算法 
-list_title: 系统设计入门 | System Design | 负载均衡算法 | Load Balancer
+list_title: 系统设计入门 | System Design | 负载均衡| Load Balancer
 categories: [backend]
 ---
-
-{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-2.png' param2='sd-2' %}
-<p class="md-p-center"><a href="http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html">source: Scalable System Design Patterns</a></p>
 
 负载均衡这个概念相对来说比较容易理解，其工作方式如下图所示，由于在之前文章中已经做过介绍，这里就不再展开了。Load Balancer主要完成两个任务，一是负责分发请求，二是处理Fail Over(即某个server failed了，能够及时发现并redirect请求到其它server上)。本文将使用Nginx来模拟实现三种路由策略，分别是Round-Robin， Least busy以及Session/cookies。通过观察这几种策略的表现来带给大家一些直观的感受。
 
