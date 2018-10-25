@@ -20,6 +20,71 @@ Trie树的特点是可以是对输入对象进行空间分解，一个节点的�
 
 ### Trie的实现
 
+我们以一字母树为例，介绍一种简单的Trie的实现方式。首先我们需要先定一个TrieNode的数据结构
+
+```cpp
+struct TrieNode{
+    bool isEnd = false; //用来标识该节点是叶子节点
+    array<TrieNode*,26> children = {nullptr};
+};
+```
+
+接下来我们可以实现Trie的类
+
+```cpp
+class Trie {
+    TrieNode* root;
+public:
+    Trie() {
+        root = new TrieNode();
+    }
+    ~Trie(){
+        delete root;
+        root = nullptr;
+    }
+    void insert(string word) {
+        TrieNode* node = root;
+        for(int i =0; i<word.size(); i++){
+            int index = word[i]-'a';
+            TrieNode* n = node->children[index];
+            if(!n){
+                node->children[index] = new TrieNode();
+                node = node->children[index];
+            }else{
+                node = n;
+            }
+        }
+        node->isEnd = true;
+    }
+    bool search(string word) {
+        TrieNode* node  = root;
+        for(int i=0;i<word.size();i++){
+            int index = word[i]-'a';
+            TrieNode* n = node->children[index];
+            if(!n){
+                return false;
+            }else{
+                node = n;
+            }
+        }
+        return node->isEnd;
+    }
+    bool startsWith(string prefix) {
+        TrieNode* node = root;
+        for(int i=0;i<prefix.size();i++){
+            int index = prefix[i]-'a';
+            TrieNode* n = node->children[index];
+            if(!n){
+                return false;
+            }else{
+                node = n;
+            }
+        }
+        return true;
+    }
+};
+```
+
 
 ## Resources 
 
