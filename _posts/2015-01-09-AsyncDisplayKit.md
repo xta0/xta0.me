@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title:  Introduce to AsyncDisplayKit
+list_title:  谈谈AsyncDisplayKit | Introduce to AsyncDisplayKit
 title: Facebook的AsyncDisplayKit
 categories: iOS
 ---
@@ -40,7 +40,6 @@ categories: iOS
 为什么说两年前想做出Paper这种App比较难呢，在iOS7之前，像Paper这种，全部基于手势的App很少，多数都是以静态动画为主的App：
 
 - 手势基本上以点击等非连续手势为主
-	
 - 动画基本上是静态的，非interactive的，动画执行的过程也是不可打断的（想象一下`UINavigationController`的`push`和`pop`动画）。
 
 所有的老技术都具有局限性，而最大的局限性就是受当时硬件的制约，CoreAnimation也是这样，它最初的设计是：单核CPU+MainThread，这种设计对于Static Animation做了很多优化。具体来说是，对于静态动画，CoreAnimation是在另一个进程中渲染，然后保证该进程比当前进程有着更高的优先级，这样即使当前进程的MainThread被短暂阻塞，用户也能看到流畅的动画，而无法感知当前进程的情况。这种抢占式设计主要是为了弥补当时硬件设备性能上的劣势，提升帧率，增强用户体验。但是随着硬件条件的升级，CoreAnimation的设计却并没有改变。

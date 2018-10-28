@@ -11,6 +11,11 @@ categories: [DataStructure]
 这篇文章会先梳理一遍知识点，然后汇总一些个人在学习过程中用到的学习资料，并持续更新和补充
 
 
+### 知识地图
+
+<img src="{{site.baseurl}}/assets/images/2010/07/data-structure-overview.jpg">
+
+
 ### 视频课程
 
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
@@ -25,13 +30,10 @@ categories: [DataStructure]
 
 ### 其它
 
+- [Big O](http://bigocheatsheet.com/)
 - [List of Algorithms](https://www.wikiwand.com/en/List_of_algorithms)
 - [数据结构与算法之美](https://account.geekbang.org/)
 
-
-### 知识地图
-
-<img src="{{site.baseurl}}/assets/images/2010/07/data-structure-overview.jpg">
 
 
 

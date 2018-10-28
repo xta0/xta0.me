@@ -6,28 +6,49 @@ categories: [Algorithms]
 mathjax: true
 ---
 
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/09/dc-1.png">
+
 ## 分治法的设计思想
 
-分治法顾名思义，其思想为"分而治之"，是指将一个大问题划分为若干个小问题进行各个击破。但是我们平时说的分而治之和计算机的分治法还是有一点区别的，对于计算机所说的分治法，一个很重要的要求是
-
-为求解一个大规模的问题，可以将其分解为若干个（通常两个）子问题，规模大体相当，分别求解子问题，由子问题的解得出原问题的解。
+分治法顾名思义，其思想为"分而治之"，是指将一个大问题划分为若干个小问题进行各个击破。对于计算机来说，为求解一个大规模的问题，可以将其分解为若干个（通常两个）子问题，规模大体相当，分别求解子问题，由子问题的解得出原问题的解。其步骤如下：
 
 1. 将原问题划分为或者归结为规模较小的子问题
 2. 迭代或者递归求解每个子问题
 3. 将子问题的解综合得到原问题的解
 
-注意：
+对于子问题需要符合下面的条件：
+
 1. 子问题与原问题性质完全一样
 2. 子问题之间彼此独立的求解
 3. 递归停止时子问题可直接求解
 
+分治法的代码模板如下:
 
+```python
+def divide_conquer(problem, param1, param2, ...):
+    #recursion terminator
+    if problem is None:
+        print result
+        return
+    # process data
+    data = prepare_data(problem)
+    subproblems = split_problem(problem,data)
+
+    # divide and conqure
+    subResult1 = self.divide_conquer(subproblems[0], p1, ...)
+    subResult1 = self.divide_conquer(subproblems[1], p1, ...)
+    subResult1 = self.divide_conquer(subproblems[2], p1, ...)
+    ...
+
+    # process and generate the final result
+    result = combineResult(subResult1,subResult2, subResult3,...)
+```
 
 ### 二分搜索与归并排序
 
 在[前面文章中]()，我们曾介绍过二分搜索，当时算法是使用迭代的形式给出的，我们可以将二分搜索以分治法的思想进行递归改写，通过`x`与中位数比较，将原问题归结为规模减半的子问题，如果`x`小于中位数，则子问题由小于`x`的数构成，否则子问题由大于`x`的数构成。
 
-```
+```javascript
 binarySearch(a[],l,r,t)->int:
     if r==l:
         return a[l] == t ? l:0

@@ -241,36 +241,29 @@ array<int,10> copy = ia3; //正确，类型匹配即合法
 
 ## 关联容器
 
-### 关联容器概述
+标准库提供8个关联容器，这个8个容器的不同点体现在下面3个维度上：
 
-//todo
+1. 或者是一个`set`或者是一个`map`
+2. 是否允许集合内存在重复元素
+3. 元素在集合内是否按顺序存储。无序的容器以`unordered`开头
 
-### pair
-
-- 定义:
-
-```cpp
-template<class T1, class T2>
-struct pair{
-	typedef T1 first_type;
-	typedef T2 second_type;
-	T1 first;
-	T2 second;
-	pair():first(),second(){}
-	pair(const T1& _a, const T2& _b):first(_a),second(_b)	{}
-	template<class U1, class U2>
-	pair(const pair<_U1,_U2>& _p):first(_p.first),second:(_p.second){
+- `set`
+	- 头文件`#include <set>`
 	
-	};
-}
-```
-`map`,`multimap`容器里存放着的都是pair模板类对象，且first从小到大排序，第三个构造函数用法实例：
+- `multiset`
+- `map`
+	- 头文件`#include <map>`
+	- map**有序的**k-v集合，元素按照`key`**从小到大**排列，缺省情况下用`less<key>`即`<`定义
+	- map中相同的`key`的元素只保留一份
+	- map中元素都是`pair模板类`对象。`first`返回key，`second`返回value
+	- map有`[]`成员函数，支持k-v赋值
+	- 返回对象为second成员变量的引用。若没有关键字key的元素，则会往pairs里插入一个关键字为key的元素，其值用无参构造函数初始化，并返回其值的引用
 
-```cpp
-pair<int, int> p(pair<double,double>(5.5,4.6))
-//p.first = 5,
-//p.second=  4
-```
+- `multimap`
+- `unordered_map`
+
+
+### 关联容器API
 
 ### set / multiset
 
@@ -302,8 +295,7 @@ struct less:publi binary_function<T,T,bool>{
 - set中不允许有重复元素,插入set中已有元素时，忽略
 
 ```cpp
-int main(){
-
+int main(
 	std::set<int> ::iterator IT;
 	int a[5] = {3,4,5,1,2};
 	set<int> st(a,a+5);
@@ -365,6 +357,32 @@ int main(){
 }
 ```
 
+### `pair`
+
+- 定义:
+
+```cpp
+template<class T1, class T2>
+struct pair{
+	typedef T1 first_type;
+	typedef T2 second_type;
+	T1 first;
+	T2 second;
+	pair():first(),second(){}
+	pair(const T1& _a, const T2& _b):first(_a),second(_b)	{}
+	template<class U1, class U2>
+	pair(const pair<_U1,_U2>& _p):first(_p.first),second:(_p.second){
+	
+	};
+}
+```
+`map`,`multimap`容器里存放着的都是pair模板类对象，且first从小到大排序，第三个构造函数用法实例：
+
+```cpp
+pair<int, int> p(pair<double,double>(5.5,4.6))
+p.first = 5;
+p.second = 4;
+```
 
 ### map / multimap
 
@@ -376,14 +394,10 @@ class map{
 	//typedef pair<const key, T> value_type;
 };
 ```	
-- map**有序的**k-v集合，元素按照`key`**从小到大**排列，缺省情况下用`less<key>`即`<`定义
-- map中相同的`key`的元素只保留一份
-- map中元素都是`pair模板类`对象。`first`返回key，`second`返回value
-- map有`[]`成员函数，支持k-v赋值
-- 返回对象为second成员变量的引用。若没有关键字key的元素，则会往pairs里插入一个关键字为key的元素，其值用无参构造函数初始化，并返回其值的引用
+
 
 ```cpp
-map<string,int> ages;
+map<string,int> ages{ {"Joyce",12}, {"Austen",23} };
 ages["mike"]=40;
 ages["kay"]=20;
 cout<<map["kay"]<<endl;
