@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structre | 索引-B/B+ 树 | B/B+ Tree
-title: B/B+ 树 
+list_title: 数据结构基础 | Data Structre | 索引-动态索引 | Dynamic Indexing
+title: B/B+树 和 红黑树 
 mathjax: true
 categories: [DataStructure]
 ---
@@ -31,13 +31,11 @@ B树是R.Bayer和E.MacCreight在1970年提出的一种平衡的多路查找树�
 
 1. 所有底层的节点，深度是一致的，是一种理想平衡的搜索树
 2. 如果每个节点有`n`个关键码，则每个节点最多有`n+1`个分支
+3. 令`m`为每个节点的分支数，则B树的命名规则为 $ (\lceilm/2\rceil, m)$树
 
-也叫做`2-3`树，即每个节点有2个子节点或者3个子节点。观察发现，它有如下性质：
+例如下图中的B树也叫做`2-3`树，即每个节点有2个子节点或者3个子节点。
 
-
-
-
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2008/09/B-Tree-1.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2008/09/B-Tree-1.png",width="80%">
 
 
 
