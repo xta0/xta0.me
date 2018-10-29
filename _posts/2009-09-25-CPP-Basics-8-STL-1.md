@@ -247,25 +247,153 @@ array<int,10> copy = ia3; //正确，类型匹配即合法
 2. 是否允许集合内存在重复元素
 3. 元素在集合内是否按顺序存储。无序的容器以`unordered`开头
 
-- `set`
-	- 头文件`#include <set>`
-	
-- `multiset`
-- `map`
-	- 头文件`#include <map>`
-	- map**有序的**k-v集合，元素按照`key`**从小到大**排列，缺省情况下用`less<key>`即`<`定义
-	- map中相同的`key`的元素只保留一份
-	- map中元素都是`pair模板类`对象。`first`返回key，`second`返回value
-	- map有`[]`成员函数，支持k-v赋值
-	- 返回对象为second成员变量的引用。若没有关键字key的元素，则会往pairs里插入一个关键字为key的元素，其值用无参构造函数初始化，并返回其值的引用
+- 有序容器
+	- `set`
+	- `multiset`
+	- `map`
+	- `multimap`
+- 无序容器
+	- `unordered_map`
+	- `unorderd_multimap`
+	- `unordered_set`
+	- `unordered_multiset`
 
-- `multimap`
-- `unordered_map`
+> 对于关联容器，通常不使用泛型算法，而是使用其自带的算法API，其原因有两点：1.是关联容器的key都是const的，对于需要修改容器内容的泛型算法不适合。 2.对于只读的泛型算法，比如find，只能对容器进行顺序检索，而如果使用关联容器自带的find算法则会进行hash查找，效率要高很多。
 
+### 关联容器的迭代器
+
+- 对于map中的每个pair，key是const的，不能修改
+
+```cpp
+map<string,size_t> m { {"abc",100} };
+auto itor = map.begin();
+itor->first = "def"; //wrong! key是const
+```
+
+- 对于set中的每个元素是const的，不能修改
+
+```cpp
+set<int> s{1,2,3,4};
+auto itor = s.begin();
+*itor = 100; //wrong, set中的key是const
+```
+
+- 集合的遍历
+
+对于关联容器，使用迭代器进行遍历，对于map，集合中的每个元素是pair对象
+
+```cpp
+map<string,size_t> m { {"abc",100},{"def",101} };
+for(auto itor=m.begin(); itor!=m.end(); itor++){
+	string key = itor->first;
+	size_t value = itor->value;
+}
+```
 
 ### 关联容器API
 
-### set / multiset
+- **添加元素**
+
+|--|--|
+| `c.insert(v)` | v是value_type对象 |
+| `c.insert(b,e)`| 向c中插入迭代器b，e中的元素，返回void|
+
+对于map，如果集合中已经有相同key的元素，则插入无效，并返回一个pair，类型为`pair<map<string,size_t>::iterator, bool>`，其中pair的first指向插入元素的itor，pair的second表示插入是否成功。
+
+```cpp
+map<string,size_t> word_count;
+string word;
+while(cin>>word){
+	auto ret = word_count.insert({word,1}); 
+	if(!ret.second){ //word已经在集合中
+		++ret.first->second; //更新已有元素的数量
+	}
+}
+```
+对于multimap，insert没有限制。实际中，用到multimap的场景不多，multimap适用于一对多的结构，例如我们可能想建立作者到他的著作之间的映射，一个作者可能有多份著作，这时我们需要用multimap
+
+```cpp
+multimap<string,string> authors;
+authors.insert{ {"John Smith","Book#1"} };
+authors.insert{ {"John Smith","Book#2"} };
+```
+此时可以无需关心insert的返回值。
+
+- **删除元素**
+
+关联容器提供了三种删除元素的API
+
+|--|--|
+| `c.erase(k)`| 删除key为k的元素，返回删除元素数量，类型为`size_type` |
+| `c.erase(p)`| 从c中删除迭代器p指定的元素。p不能为`c.end()`，返回值为p后面的迭代器|
+| `c.erase(b,e)`| 删除`b`和`e`中的元素，返回`e` |
+
+```cpp
+//map
+size_t ret = word_count.erase("kate")); //ret为0或1
+//multimap
+auto cnt = author.erase("John Smith"); //ret>=0
+```
+
+- **下标操作**
+
+|--|--|
+| `c.[k]`| 返回关key为k的元素，如果k不在c中，则会创建一个key为k的元素，并对其初始化 |
+| `c.at(k)`| 访问key为k的元素，带参数检查，如果k不在c中，则抛异常 |
+
+对于下标操作需要注意三点：
+
+1. `c[k]`返回的类型是`map<k,v>::mapped_type`不是`map<k,v>::value_type`。而解引用一个map迭代器会返回`value_type`类型，也就是`pair`类型，因为对`map`来说，它的都是`pair`对象，因此`value_type`类型自然是`pair`类型
+	
+	```cpp
+	KeyObject k3 = {"Jason",33};
+    m[k3] = 100;
+    map<KeyObject,int>::mapped_type mt = m[k3]; //mt 是int类型
+    map<KeyObject,int>::value_type vt = m[k3]; //wrong! m[k3]返回的是mapped_type,不是value_type
+
+	//对迭代器介解引用，得到value_type类型
+	auto itor = m.begin();
+    map<KeyObject,int> ::value_type p = *itor; //p是pair类型
+    cout<<p.first.get_name()<<endl;
+	```
+2. `c[k]`返回的是左值引用，可以对value进行修改。
+3. 注意副作用，如果`k`不在`c`中，`c[k]`会创建一个key为k的对象
+
+- **查找操作**
+
+|--|--|
+| `c.find(k)`| 返回key为k的元素的迭代器，如果不存在，则返回`c.end()` |
+| `c.count(k)`| 返回key为k的元素个数 |
+| `c.lower_bound(k)`| 返回集合中第一个key大于等于k的元素的迭代器 |
+| `c.upper_bound(k)`| 返回集合中第一个key大于k的元素的迭代器 |
+| `c.equal_range(k)`| 返回一个迭代器pair，表示key为k的元素范围，如果k不存在，则pair的两个值均为`c.end()` |
+
+对于查找的API，如果是map或是set则很好理解，如果是multimap或multiset则需要考虑重复key的问题，例如我们想找出某个key对应的所有value，可以用下面几种方法
+
+```cpp
+//使用count
+string author = "John Smith";
+auto entries = authors.count(author);
+auto itor = authors.find(author);
+while(entries){
+	cout<<itor->second<<endl;
+	++itor;
+	--entries;
+}
+//使用lower，upper bound
+auto itor_lo = authors.lower_bound(author);
+auto itor_hi = authors.upper_bound(author); 
+for(auto itor =lo; itor!=hi; itor++){
+	cout<<itor->second<<endl;
+}
+//使用equal range
+auto p = authors.equal_range(author);
+for(auto itor=p.first; itor!=p.second;itor++){
+	cout<<itor->second<<endl;
+}
+```
+
+### set/multiset
 
 `set`和`multiset`表示数学中集合，`set`和`multiset`的定义如下：
 
@@ -279,9 +407,7 @@ template<class key, class Pred=less<key>,class A = allocator<key>>
 class multiset{...}
 ```
 
-- **set**
-
-和数学中的集合一样，在`set`中是不能存在重复元素的，另外我们发现`set`模板中第二个类型是函数模板，其默认值为`less<key>`，这说明元素在`set`内部的存储是有序的，`less<key>`这个函数模板定义如下：
+`set`模板中第二个类型是函数模板，其默认值为`less<key>`，定义如下：
 
 ```cpp
 template<class T>
@@ -292,20 +418,21 @@ struct less:publi binary_function<T,T,bool>{
 	}
 }
 ```
-- set中不允许有重复元素,插入set中已有元素时，忽略
+如果向set中插入自定义对象，该对象需要实现`operator<(...)`
 
 ```cpp
-int main(
-	std::set<int> ::iterator IT;
-	int a[5] = {3,4,5,1,2};
-	set<int> st(a,a+5);
-	pair<IT,bool> result = st.insert(6); //返回值类型是pair
-	if(result.second){ 
-		//插入成功，则输出被插入的元素
-	}
+class A{
+	private: 
+		int n;
+	public:
+		A(int n_):n(n_){}
+	bool operator<(const A& other){
+		return n<other.n;
+	}	
 }
 ```
 - 成员函数:
+	- 头文件`<set>`
 	- `iterator find(const T&val);`：在容器中查找值为val的元素，返回其迭代器。如果找不到，返回end()。
 	- `iterator insert(const T& vale);`：将val插入到容器中并返回其迭代器
 	- `void insert(iterator first, iterator last);`将区间[first,last)插入容器
@@ -313,49 +440,6 @@ int main(
 	- `iterator lower_bound(const T& val);`查找一个最大位置it，使得[begin(),it)中所有元素都比val小。
 	- `iterator upper_bound(const T& val);`查找一个最大位置it，使得[it,end())中所有元素都比val小。
 
-```cpp
-class A{};
-int main(){
-	std::multiset<A> a; //等价于multiset<A,less<A>> a;
-	a.insert(A()); //error,由于A没有重载<无法比大小，因此insert后编译器无法知道插入的位置
-}
-
-//修改class A
-class A
-{
-	private: 
-		int n;
-	
-	public:
-		A(int n_):n(n_){}
-		
-	friend bool operator<(const A& a1, const A& a2){
-		return a1.n < a2.n;
-	}	
-	friend class Myless;
-}
-
-struct Myless{
-	bool operator()(const A& a1, const A& a2){
-		return (a1.n % 10)< (a2.n % 10);
-	}
-}
-
-int main(){
-	const int SIZE = 6;
-	A a[SIZE] = {4,22,3,9,12};
-	std::multiset<A> set;
-	set.insert(a,a+SIZE);
-	set.insert(22);
-	set.count(22); //2
-	
-	//查找:
-	std::multiset<A>::iterator pp = set.find(9);
-	if(pp != set.end()){
-		//说明找到
-	}
-}
-```
 
 ### `pair`
 
@@ -379,22 +463,48 @@ struct pair{
 `map`,`multimap`容器里存放着的都是pair模板类对象，且first从小到大排序，第三个构造函数用法实例：
 
 ```cpp
+//创建pair
 pair<int, int> p(pair<double,double>(5.5,4.6))
 p.first = 5;
 p.second = 4;
+pair<string,int> process(vector<string>& v){
+	if(!v.empty()){
+		return {v.back(),v.back().size()};
+		//或者使用make_pair
+		return make_pair(v.back(),v.back().size())
+	}else{
+		return pair<string,int>(); //隐式构造
+	}
+}
 ```
 
-### map / multimap
+### map/multimap
 
 - 定义
 
 ```cpp
+//map
 template<class key,class T, class Pred = less<key>,class A = allocator<T>>
 class map{	
 	//typedef pair<const key, T> value_type;
 };
-```	
 
+//multimap
+template<class key, class T, class Pred = less<key>, class A = allocator<T>>
+class multimap{
+	//typedef pair<const key, T> value_type;
+
+};
+```	
+- `multimap`和`map`的区别
+	- `multimap`没有重载`[]`，插入元素只能使用`insert`
+	- `multimap`中允许相同的key存在，key按照first成员变量从小到大排列，缺省用`less<key>`定义关键字的`<`关系
+- 头文件`#include <map>`
+- map**有序的**k-v集合，元素按照`key`**从小到大**排列，缺省情况下用`less<key>`即`<`定义
+- map中相同的`key`的元素只保留一份
+- map中元素都是`pair模板类`对象。`first`返回key，`second`返回value
+- map有`[]`成员函数，支持k-v赋值
+- 返回对象为second成员变量的引用。若没有关键字key的元素，则会往pairs里插入一个关键字为key的元素，其值用无参构造函数初始化，并返回其值的引用
 
 ```cpp
 map<string,int> ages{ {"Joyce",12}, {"Austen",23} };
@@ -415,8 +525,7 @@ for(auto itor=ages.begin(); itor!=ages.end(); itor++){
 }
 ```
 
-- 使用自定义对象作为`key`
-	- 需要实现对象的排序方式
+- 使用自定义对象作为`key`，需要重载`operator<(...)`
 
 ```cpp
 class Person{
@@ -438,47 +547,58 @@ int main(){
 	map<Person, int> people;
 	people[Person("mike",44)] = 40;
 	people[Person("kay",22)] = 40;
-
 	return 0;
 }
 ```
 
-#### multimap
+### 无序容器
 
-- 定义：
+<mark>C++ 11</mark>标准库提供了4个无序容器，这些容器不使用比较运算符类组织元素，而是使用哈希函数和key类型的`==`运算符。在key类型没有顺序要求的情况下，使用无序的容器更轻量和简单。
+
+无序容器在存储上的组织为一组桶，每个桶保存0个或多个元素，元素通过一个哈希函数映射到某个桶中，映射过程中可能会出现哈希碰撞，导致不同的元素映射到同一个桶中，此时需要遍历桶中的元素来找到待查元素。无序容器提供了一组管理桶的函数，这些函数可以让我们查询每个桶的状态。
+
+|---|---|
+|桶接口||
+| `c.bucket_count()` | 正在使用桶的数目 |
+| `c.max_bucket_count()` | 容器能容纳的最多的桶的数量 |
+| `c.bucket_size(n)` | 第n个桶中有多少元素 |
+| `c.bucket(k)` | key为k的元素在哪个桶中 |
+|桶迭代||
+|`local_iterator`| 可以用来访问桶中元素的迭代器类型 |
+|`const_local_iterator`| 桶迭代器的const版本 |
+|`c.begin(),c.end()`| 返回桶n内元素的首尾迭代器 |
+|`c.cbegin(),c.cend()`| 返回桶n内元素的首尾const类型迭代器 |
+|哈希策略||
+|`c.load_factor`| 返回已使用桶数量和全部桶数量的比值 |
+|`c.max_load_factor`| load_factor的最大比值，超过这个值，容器将rehash，使load_factor<max_load_factor |
+|`c.rehash(n)`| 重新存储，使`bucket_count>n` |
+|`c.reserve(n)`| 重新存储，使c可以保存n个元素而不必rehash |
+
+无序容器需要key实现`==`运算符和一个哈希函数来生成哈希值。因此对于一个自定义类型的key，要自己实现这两个函数。
 
 ```cpp
-template<class key, class T, class Pred = less<key>, class A = allocator<T>>
-class multimap{
-	//typedef pair<const key, T> value_type;
-
+struct Sale{
+    string data;
+    int num;
+    Sale(string _data, int _num):data(_data),num(_num){}
+	//实现==
+    bool operator==(const Sale& s) const {
+        return num == s.num && s.data == data;
+    }
 };
-```
-
-- `multimap`和`map`的区别
-	- `multimap`没有重载`[]`，插入元素只能使用`insert`
-	- `multimap`中允许相同的key存在，key按照first成员变量从小到大排列，缺省用`less<key>`定义关键字的`<`关系
-
-
-```cpp
-#include<map>
-using namespace std;
-int main(){
-	
-	typedef multimap<int,double,less<int>> mmid;
-	mmid mmap;
-	
-	//typedef pair<const key, T> value_type;
-	mmap.insert(mmid::value_type(15,2.7)); 
-	mmap.insert(mmid::value_type(15,99.3)); 
-	mmap.insert(make_pair(14,22.3));
-	mmap.count(15); //3
-	
-	for(auto itor = pairs.begin();itor != paris.end(); itor++){
-		i->first;
-		i->second;
-	}
+//指定hash函数
+namespace std{
+    template<>
+    struct hash<Sale>{
+        size_t operator()(const Sale& s) const{
+            return hash<string>()(s.data);
+        }
+    };
 }
+unordered_map<Sale,int> b = {
+	{{"Jason",22},100},
+	{{"Jacob",23},101}
+};
 ```
 
 ## 容器适配器
