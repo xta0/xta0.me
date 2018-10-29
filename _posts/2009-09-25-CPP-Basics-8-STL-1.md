@@ -595,10 +595,10 @@ namespace std{
         }
     };
 }
-unordered_map<Sale,int> b = {
-	{{"Jason",22},100},
-	{{"Jacob",23},101}
-};
+unordered_map<Sale,int> b(
+	{ {"Jason",22},100 },
+	{ {"Jacob",23},101 }
+);
 ```
 
 ## 容器适配器
