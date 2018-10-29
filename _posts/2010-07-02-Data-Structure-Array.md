@@ -108,11 +108,16 @@ bool Array<T>::delete(const int p){
 	- <mark>时间复杂度为O(n)</mark>
 
 
-## 数组相关的问题
+## LeetCode关于数组相关的问题
 
-### [Rotate Array]()
+### K-Sum问题
 
-题目是如何旋转一个数组
+- [1. Two Sum](https://leetcode.com/problems/two-sum/description/)
+- [15. 3Sum](https://leetcode.com/problems/3sum/description/)
+- [16. 3Sum Closest](https://leetcode.com/problems/3sum-closest/description/)
+- [18. 4Sum](https://leetcode.com/problems/4sum/description/)
+
+
 
 
 

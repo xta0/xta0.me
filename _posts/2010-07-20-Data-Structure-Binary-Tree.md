@@ -371,10 +371,15 @@ BinaryTreeNode<T>* Parent(BinaryTreeNode<T>* root, BinaryTreeNode<T>* current){
     - 当`i`为偶数且`0<i<n`时，节点`i`的左兄弟是节点`i-1`，否则节点`i`没有左兄弟
     - 当`i`为奇数且`i+1<n`时，节点i的右兄弟是节点`i+1`，否则节点`i`没有右兄弟
 
+## LeetCode中关于Binary Tree相关问题
 
+### 遍历
+
+- [144. PreOrderTraversal](https://leetcode.com/problems/binary-tree-preorder-traversal/description/)
+- [145. PostOrderTraversal](https://leetcode.com/problems/binary-tree-postorder-traversal/description/)
+- [94. InOrderTraversal](https://leetcode.com/problems/binary-tree-inorder-traversal/description/)
 
 ### Resources
-
 
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
 - [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)

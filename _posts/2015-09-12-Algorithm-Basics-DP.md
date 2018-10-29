@@ -342,12 +342,6 @@ int uniquePaths(int m, int n) {
         return max(l)
     ```
 
-不难看出，上述算法的时间复杂度为$O(N^2)$。由LIS衍生出的的DP问题有很多，比如：
-
-1. [Maximum Subarray](https://leetcode.com/problems/maximum-subarray/description/)
-2. [LCS问题]()
-
-
 
 ## DP问题总结
 
@@ -364,6 +358,12 @@ int uniquePaths(int m, int n) {
     - 找到不同状态之间如何迁移-即如何从一个或多个值已知的状态，求出另一个状态的值。状态的迁移可以用递推公式表示，递推公式也可被称作<mark>状态转移方程</mark>
         - 递推公式可以从前往后推导，也可以从后向前推导 
     - 当选取的状态，难以进行递推时（分解出的子问题和原问题形式不一样，或不具有无后效性），考虑将状态<mark>增加限制条件后分类细化，即增加维度</mark>，然后在新的状态上尝试递推
+
+### LeetCode中的DP问题
+
+- [53. Maximum Subarray](https://leetcode.com/problems/maximum-subarray/description/)
+- [62. Unique Paths](https://leetcode.com/problems/unique-paths/description/)
+
 
 ## Resources
 

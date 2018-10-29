@@ -555,6 +555,8 @@ public:
 };
 ```
 
+### LeetCode中其它链表问题
+
 ## Resources
 
 - [Linked-List Practice](https://www.geeksforgeeks.org/data-structures/linked-list/)

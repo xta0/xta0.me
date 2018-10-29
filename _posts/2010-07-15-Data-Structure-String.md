@@ -232,13 +232,26 @@ KMP算法复杂度分析：
 2. 同理可以分析出求N数组的时间为`O(m)`，<mark>KMP算法的时间为Ｏ(n+m)</mark>
 
 
-## 字符串常见问题
+## LeetCode中字符串常见问题
 
-### [去重问题]
+### 滑动窗口问题
 
-- 题目：给定一个字符串，检查其是否没有重复字符
+- [3. Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/)
 
-判断一个字符串中是否有重复字符的问题通常和字符集挂钩，一般来说一个ASCII字符集包含128个字符
+### 排列问题
+
+- [49. Group Anagrams](https://leetcode.com/problems/group-anagrams/description/)
+- [438. Find All Anagrams in a String](https://leetcode.com/problems/find-all-anagrams-in-a-string/description/)
+
+### 回文问题
+
+- 寻找回文串，两种解法
+    - 中心扩散
+    - 动态规划
+
+- [5. Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/description/)
+- [9. Palindrome Number](https://leetcode.com/problems/palindrome-number/description/)
+
 
 ## Resources
 

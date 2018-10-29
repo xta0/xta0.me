@@ -49,12 +49,12 @@ for(int x=0; x<=100; x++){
 }
 ```
 
-### 二分查找
+## 二分法
 
 - 前提：有序序列
 - 方法：折半查找
 
-```
+```python
 left = 0, right = n-1
 while( left <= right ){
 	mid = (left+right)/2
@@ -68,6 +68,11 @@ while( left <= right ){
 	}
 }
 ```
+
+### LeetCode中关于二分法相关问题
+
+
+- [34. Search for a Range](https://leetcode.com/problems/search-for-a-range/description/)
 
 ### 贪心法
 
