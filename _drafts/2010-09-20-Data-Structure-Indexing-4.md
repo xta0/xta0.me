@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structre | 关系型数据库原理（一） | How Database work 1
+list_title: 数据结构基础 | Data Structre | 数据库原理（一） | How Database work 1
 title: 关系型数据库原理（一）
 mathjax: true
 categories: [DataStructure]
