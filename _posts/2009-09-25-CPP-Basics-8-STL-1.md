@@ -280,13 +280,20 @@ auto itor = s.begin();
 
 - 集合的遍历
 
-对于关联容器，使用迭代器进行遍历，对于map，集合中的每个元素是pair对象
+对于关联容器，可以使用迭代器进行遍历，对于map，集合中的每个元素是pair对象
 
 ```cpp
 map<string,size_t> m { {"abc",100},{"def",101} };
 for(auto itor=m.begin(); itor!=m.end(); itor++){
+	//itor是指向pair的指针，用->访问
 	string key = itor->first;
-	size_t value = itor->value;
+	size_t value = itor->second;
+}
+//range loop
+for(auto &p : m){
+	//此时p是pair对象，不是itor，访问元素用.
+	string key = m.first;
+	size_t value = m.second;
 }
 ```
 
