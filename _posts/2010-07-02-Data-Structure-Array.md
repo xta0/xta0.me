@@ -108,7 +108,7 @@ bool Array<T>::delete(const int p){
 	- <mark>时间复杂度为O(n)</mark>
 
 
-## LeetCode关于数组相关的问题
+## 数组相关的问题
 
 ### K-Sum问题
 
@@ -117,6 +117,9 @@ bool Array<T>::delete(const int p){
 - [16. 3Sum Closest](https://leetcode.com/problems/3sum-closest/description/)
 - [18. 4Sum](https://leetcode.com/problems/4sum/description/)
 
+### 最优SubArray/SubSequence 问题
+
+- [53. Maximum Subarray](https://leetcode.com/problems/maximum-subarray/description/)
 
 
 
