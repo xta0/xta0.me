@@ -39,7 +39,17 @@ B树是R.Bayer和E.MacCreight在1970年提出的一种平衡的多路查找树�
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2008/09/B-Tree-1.png" width="80%">
 
+### B树的表示
 
+```cpp
+BTNode{
+    BTNode* parent;
+    vector<int> key; //存放key
+    vector<BTNode* >children; //存放子节点
+}
+```
+
+### 查找操作
 
 
 

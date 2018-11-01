@@ -54,26 +54,116 @@ for(int x=0; x<=100; x++){
 - 前提：有序序列
 - 方法：折半查找
 
-```python
-left = 0, right = n-1
-while( left <= right ){
-	mid = (left+right)/2
-	if(x[mid] < t){
-		left = mid + 1;
-	}else if(x[mid] == t){
-		p = mid;
-		break;
-	}eles{
-		right = mid-1;
+```cpp
+int bsearch(vector<int>& a, int target){
+	int lo = 0;
+	int hi = a.size()-1;
+	while(l<=r){
+		int mid = lo + (hi-lo)/2;
+		if(a[mid] == target){
+			return mid;
+		}else if(a[mid] < target){
+			lo = mid+1;
+		}else{
+			hi = mid+1;
+		}
+	}
+	return -1;
+}
+```
+
+上面实现的二分法适用于有序数组中没有重复元素的情况，但实际应用中情况往往比较复杂，数组中可能会存在大片的重复元素后者只有局部有序的情况，因此想写对二分法实际上并不容易。比如：
+
+1. 查找第一个值等于给定值的元素
+2. 查找最后一个值等于给定值的元素
+3. 查找第一个大于等于给定值的元素
+4. 查找最后一个小于等于给定值的元素
+
+对于第一个问题，如果数组中存在重复元素，则检索target到的第一个位置可能不是唯一的一个，例如下面数组：
+
+```c
+int a[10] = { 1,3,4,5,6,8,8,8,11,18};
+
+index:		  0 1 2 3 4 5 6 7  8  9 
+```
+我们希望查找到第一个值的等于8的数据，也就是下标为5的元素。如果按照上面标准的二分法查找，则找到的8的位置位于`a[7]`，显然不符合我们的要求，因此，针对这种情况我们需要对上面的二分查找做一下修改。显然，一种最直观的解法是当找到8后，一路向左遍历，直到找到第一个不是8的元素，代码如下：
+
+```cpp
+int a[10] = { 1,3,4,5,6,8,8,8,11,18};
+int index = bsearch(a,8);
+while(index>=0 && a[index] == 8){
+	index--;
+}
+```
+这种方式在有很多重复元素的情况下，效率并不高，比如数据为`{1,8,8,8,8,8,8,8,8,9}`。另一种方式是对`mid-1`的部分继续进行二分查找，直到找到边界点：
+
+```cpp
+int bsearch(vector<int>& a, int target){
+	int lo = 0;
+	int hi = a.size()-1;
+	while(l<=r){
+		int mid = lo + (hi-lo)/2;
+		if(a[mid] == target){
+			//增加判断条件
+			if(mid==0 || a[mid-1] != value){
+				return mid;
+			}else{
+				hi = mid-1;
+			}
+		}else if(a[mid] < target){
+			lo = mid+1;
+		}else{
+			hi = mid+1;
+		}
+	}
+	return -1;
+}
+```
+这种方式的执行效率显然高于逐个元素遍历的方式，类似的，如果想要找最后一个值等于8的元素，也只需要修改当`a[mid]==target`时的判断逻辑
+
+```cpp
+if(a[mid] == target){
+	if( mid == a.size()-1 || a[mid+1] != target){
+		return mid;
+	}else{
+		lo = mid+1;
 	}
 }
 ```
 
-上面实现的二分法适用于有序数组中没有重复元素的情况，但实际应用中情况往往比较复杂
+接下来我们再看剩下两个问题，第三个问题是查找第一个大于等于给定值的元素，注意这里的给定值可以不在序列中，比如，数组中存储的这样一个序列：`3，4，6，7，10`。如果查找第一个大于等于`5`的元素，那就是`6`。这时候由于`5`不一定在序列中，因此不能使用`a[mid]==5`的条件，而需要将`a[mid]==5`和`a[mid]>5`结合起来
 
-### LeetCode中关于二分法相关问题
+```cpp
+if(a[mid] >= target){
+	if(mid==0 || a[mid-1]<target){
+		return mid;
+	}else{
+		hi = mid-1;
+	}
+}else{
+	lo = mid+1;
+}
+```
+现在我们来看最后一个问题，查找最后一个小于等于给定值的元素。比如，数组中存储了这样一组数据：`3，5，6，8，9，10`。最后一个小于等于`7`的元素就是`6`。其思路和上面是一样的，这里就不展开论述了
+
+```cpp
+if(a[mid] <= target){
+	if(mid==a.size()-1 || a[mid]+1 > target){
+		return mid;
+	}else{
+		lo = mid+1;
+	}
+}else{
+	hi = mid-1;
+}
+```
+这几个例子说明，在实际应用中，二分查找更适合用在“近似”查找上，在这类问题上使用二分法相比使用散列表，二叉树等效果更好。
+
+### 更多二分法相关问题
 
 - [34. Search for a Range](https://leetcode.com/problems/search-for-a-range/description/)
+- []()
+
 
 ## 贪心法
 
@@ -88,7 +178,7 @@ while( left <= right ){
 
 以换钱问题为例，假如我们有面值为20，10，5，1的4种纸币，现在想要凑36块钱，问如何选取纸币面值，使纸币数量最少？
 
-<img src="{{site.baseurl}}/assets/images/2015/08/greedy-1.png" class="md-img-center" width="70%">
+<img src="{{site.baseurl}}/assets/images/2015/08/greedy-1.png" width="60%">
 
 如果使用贪心法，会从面值最大的开始，向后依次选取。则结果为20，10，5，1，一共为4张。就这个问题而言，贪心法总能得到最优解。但实际上贪心法能解决的问题是很有限的，它实际上是动态规划问题的一种特殊情况，解法并不具备通用性。例如，如果我们修改上面纸币面额为10, 9，5，1，现在要凑18，则按照贪心的思路为：`18=10+5+1+1+1`,需要4张纸币，而实际上使用两张9块即可。
 

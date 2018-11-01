@@ -226,7 +226,6 @@ void quickSort(vector<int>& arr, int left, int right){
 
 - **算法思想**
 
-
 1. 将列表分成两个相等的部分
 2. 左边排序
 3. 右边排序
