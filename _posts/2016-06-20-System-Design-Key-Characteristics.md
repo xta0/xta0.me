@@ -1,10 +1,12 @@
 ---
 updated: "2018-08-23"
 layout: post
-title: 高性能，高可用，可扩展
-list_title: 系统设计入门 | System Design | 三个目标 | Performance, Availability and Scalibilty
+title: 分布式系统特征
+list_title: 系统设计入门 | System Design | 分布式系统特征 | Key Characteristics of Distributed Systems
 categories: [backend]
 ---
+
+一个典型的分布式系包含下面三个特征：高可用，高性能与可扩展。
 
 ## 高性能
 
