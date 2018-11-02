@@ -232,7 +232,65 @@ KMP算法复杂度分析：
 2. 同理可以分析出求N数组的时间为`O(m)`，<mark>KMP算法的时间为Ｏ(n+m)</mark>
 
 
-## LeetCode中字符串常见问题
+## 字符串常见问题
+
+### 字符串去重问题
+
+字符串去重问题是一个很常见的问题，解法也有很多种，有些语言的库函数可以直接提供high-level的API进行去重。这里提供一个非常巧妙的解法，利用双指针+`set`进行一遍扫描即可。题目如下:
+
+> Given a string that contains duplicate occurrences of characters, remove these duplicate occurrences. For example, if the input string is "abbabcddbabcdeedebc", after removing duplicates it should become "abcde".
+
+算法思路如下：
+
+1. 用一个set保存所有不重复的字母
+2. 定义两个游标，一个read负责读字符，一个write负责写字符
+3. 从字符串头部开始移动read
+    - 如果read到集合里已经有的字符，则read++，继续向后搜索
+    - 如果read到set里没有的字符，则向set中添加字符，同时write在当前位置写入该字符, write++, read++
+4. 算法伪码如下：
+
+    ```python
+    read_pos = 0
+    write_post = 0;
+    while(read_pos < str.len){
+        c = str[read_pos]
+        if(c not in set){
+            set.add(c)
+            str[write_pos] = str[read_pos]
+            write_pos += 1;
+        }
+        read_pos += 1
+    }
+    ```
+6. 该算法的时间复杂度为`O(n)`，空间复杂度也为`O(n)`
+
+如果我们要求不使用额外的空间，这道题该怎么解呢？显然我们需要找到另一种方式可以代替`set`对字符进行判重，思考前面的算法可以发现，`write`游标左边的字符肯定是没有重复的，因此每当`read`读取一个新字符时，我们都需要在`[0,write)`这个范围内查找一下，看看是否存在，如果存在，说明是重复字符，`read`继续向后搜索，`write`不动。如果不存在，则按照原来的逻辑`write`进行写入，同时更新`write`和`read`的位置。此时算法的时间复杂度变为了`O(n^2)`，空间复杂度为`O(1)`。
+
+```python
+read_pos = 0
+write_post = 0;
+while(read_pos < str.len){
+    c = str[read_pos]
+    //修改判重方法
+    if(c not in substr(0,write)){
+        str[write_pos] = str[read_pos]
+        write_pos += 1;
+    }
+    read_pos += 1
+}
+```
+
+### 分割word问题
+
+另一个字符串常见的问题是给定一个字符串和一个词典，判断是否可以将该字符串切割成一个或多个字典中的单词。 如下图所示
+
+<img src="{{site.base}}/assets/images/2010/07/word-break.png" width="80%">
+
+
+### 回文串问题
+
+- [5. Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/description/)
+- [9. Palindrome Number](https://leetcode.com/problems/palindrome-number/description/)
 
 ### 滑动窗口问题
 
@@ -249,8 +307,7 @@ KMP算法复杂度分析：
     - 中心扩散
     - 动态规划
 
-- [5. Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/description/)
-- [9. Palindrome Number](https://leetcode.com/problems/palindrome-number/description/)
+
 
 
 ## Resources
