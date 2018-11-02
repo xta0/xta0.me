@@ -643,7 +643,7 @@ class queue {};
 
 ### priority_queue
 
-1. 优先级队列，最大元素在队头，可以用`vector`和`deque`实现，缺省情况下用`vector`实现
+1. 优先级队列，默认是最大堆，最大元素在队头，可以用`vector`和`deque`实现，缺省情况下用`vector`实现
 2. `priority_queue` 通常用**堆排序**实现, 保证最大的元素总是在最前面(<mark>最大堆</mark>),默认的元素比较器是 `less<T>`
 3. 执行pop操作时, 删除的是最大的元素
 4. 执行top操作时, 返回的是最大元素的引用
@@ -664,3 +664,22 @@ while( !priorities.empty() ) {
 return 0;
 } 
 ```
+除了使用STL提供的比较函数之外，我们还可以自定义比较函数
+
+```cpp
+//使用lambda表达式自定义比较函数
+priority_queue<ListNode*,std::vector<ListNode* >, std::function<bool(ListNode*,ListNode*)>> pq([](ListNode* l1, ListNode* l2 ){
+	return l1->val < l2->val;
+});
+
+//也可以换种写法
+auto compare = [](ListNode* l1, ListNode* l2){
+	return l1->val < l2->val;
+};
+priority_queue<ListNode*,std::vector<ListNode* >, decltype(compare)>> pq(compare);
+```
+
+
+## Resources
+
+- [C++ Primer](http://www.charleshouserjr.com/Cplus2.pdf)

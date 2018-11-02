@@ -120,7 +120,8 @@ bool Array<T>::delete(const int p){
 ### 最优SubArray/SubSequence 问题
 
 - [53. Maximum Subarray](https://leetcode.com/problems/maximum-subarray/description/)
-
+- [325. Maximum Size Subarray Sum Equals k]()
+- [560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)
 
 
 
