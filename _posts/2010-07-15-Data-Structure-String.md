@@ -234,6 +234,9 @@ KMP算法复杂度分析：
 
 ## 字符串常见问题
 
+下面是面试中常见的一些字符串问题，包括字符串去重，回文串，单词切割，滑动窗口，anagram问题等，部分题目来自LeetCode。
+
+
 ### 字符串去重问题
 
 字符串去重问题是一个很常见的问题，解法也有很多种，有些语言的库函数可以直接提供high-level的API进行去重。这里提供一个非常巧妙的解法，利用双指针+`set`进行一遍扫描即可。题目如下:
@@ -286,26 +289,131 @@ while(read_pos < str.len){
 
 <img src="{{site.base}}/assets/images/2010/07/word-break.png" width="80%">
 
+这个题的解法很多，这里使用一种记忆化递归的方式，算法思路如下：
+
+1. 从左向右扫描字符，通过index分割字符为左右两部分：`str1= substr(0,i)`,`str2=substr(i+1,n-1)`;
+2. 判断`str1`是否在字典中，如果不在，继续另`i++`向右扫描，如果在字典中，这时看`str2`:
+    - 如果`str2`也在字典中，或者`str2`的长度为0，则返回true
+    - 如果`str2`不在字典中，则对`str2`进行递归，重复第一步
+3. 算法伪码如下
+
+    ```
+    n = length of input string
+    for i = 0 to n-1
+        firstword = substring (input string from index [0 , i] )
+        secondword = substring (input string from index [i+1 , n-1] )
+        if dictionary has firstword
+            if secondword is in dictionary OR second word is of zero length, then return true
+            recursively call this method with secondword as input and return true if it can be segmented
+    ```
+我们可以模拟一个具体例子，假如输入字符串为`hellonow`，字典为`[hello, hell, on, now]`，按照上面逻辑，当i走到第2个`l`时，`hell`被分割出来如下：
+
+```
+hell
+    onow
+        on 
+            ow
+            ow
+        ono
+            w
+            w
+        ono
+hello
+      now
+```
+
+我们可以来分析一下上述代码的时间复杂度和空间复杂度，上述过程是一个递归深搜的过程，因此时间复杂度为`O(2^n)`，由于每次搜索需要创建`str1,str2`，因此空间复杂度为`O(n^2)`。
+
+上面这个例子比较简单，待分割的字符也比较短，但是极端情况我们可能会遇到分割字符非常长，且字典中的单词非常短的情况，此时会产生大量的重复计算，进而产生大量的不必要的递归导致的栈开销过高。举一个简单的例子，假如待分割的字符为`aaab`，字典为`[a,aa]`。显然，该字符是不能被正确切割的，但是计算机并不知道，我们可以分析一下可能产生的重复计算。从上面的伪码可知，递归产生于当`str1`满足条件后对`str2`的判断，因此我们只需要分析`str2`是否会有重复的情况即可，针对这个例子，当`str1=a`时，产生的`str2`有`[aab,ab,b]`会有3次递归，当`str1=aa`时，产生的`str2`有`[ab,b]`产生2次递归，此时我们可以看到，`ab`和`b`被重复计算了。
+
+解决这个问题，我们需要记录曾经被计算过的，不满足条件的`str2`，然后在递归前先对`str2`进行判断，可以修改上述伪码为:
+
+```
+n = length of input string
+for i = 0 to n-1
+    firstword = substring (input string from index [0 , i] )
+    secondword = substring (input string from index [i+1 , n-1] )
+    if dictionary has firstword
+        if secondword is in dictionary OR second word is of zero length, then return true
+
+        if secondword in solved_set
+            continue
+        
+        add secondword to solved_set
+        recursively call this method with secondword as input and return true if it can be segmented
+```
+
+- [word break](https://leetcode.com/problems/word-break/description/)
+- [word break II](https://leetcode.com/problems/word-break-ii/description/)
 
 ### 回文串问题
 
+检查一个字符串中是否有回文字串也是字符串常见的问题，匹配回文串的方法不难，难的是如何在字符串中找到所有的回文字串，解决这个问题有多种方法，这里介绍一种比较直观的“中心扩散法”，思路如下：
+
+1. 从左边开始遍历字符串
+2. 每访问一个字符，要考虑两种情况：
+    - 中心为奇数字符情况，则以该字符为中心，向两边扩散，进行回文判定
+    - 中心为偶数字符情况，则以该字符+下一个字符为中心，向两边扩散
+3. 算法的时间复杂度为`O(n)`，空间复杂度为`O(1)`
+
+我们看一个[具体例子](https://leetcode.com/problems/palindromic-substrings/description/)，题目要求：
+
+> Given a string, your task is to count how many palindromic substrings in this string.The substrings with different start indexes or end indexes are counted as different substrings even they consist of same characters.
+
+```
+Input: "aaa"
+Output: 6
+Explanation: Six palindromic strings: "a", "a", "a", "aa", "aa", "aaa". 
+```
+使用中心扩散法的代码如下
+
+```cpp
+/*
+ 中心扩散 O(n^2)
+ */
+class Solution {
+    int countPalindrome(int l, int r, string& s, int count){
+        while(l>=0 && r < s.size()){
+            if(s[l--] == s[r++]){
+                count ++;
+            }
+        }
+        return count;
+    }
+public:
+    int countSubstrings(string s) {
+        int count = 0;
+        for(int i =0; i<s.length();++i){
+            //中心为奇数
+            count += countPalindrome(i-1,i+1,s,1);
+            //中心为偶数
+            count += countPalindrome(i,i+1,s,0);
+        }
+        return count;
+    }
+};
+```
+
+基于回文字串的问题还有很多变种，更多回文问题参考：
+
 - [5. Longest Palindromic Substring](https://leetcode.com/problems/longest-palindromic-substring/description/)
 - [9. Palindrome Number](https://leetcode.com/problems/palindrome-number/description/)
+- [516. Longest Palindromic Subsequence](https://leetcode.com/problems/longest-palindromic-subsequence/description/)
+
+### 正则表达式
+
+此类问题的描述为：现在给你一个字符串，一个正则式，问你该正则式是否可以匹配该字符串
+
 
 ### 滑动窗口问题
 
 - [3. Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/)
 
-### 排列问题
+### Anagram问题
 
 - [49. Group Anagrams](https://leetcode.com/problems/group-anagrams/description/)
 - [438. Find All Anagrams in a String](https://leetcode.com/problems/find-all-anagrams-in-a-string/description/)
 
-### 回文问题
-
-- 寻找回文串，两种解法
-    - 中心扩散
-    - 动态规划
 
 
 

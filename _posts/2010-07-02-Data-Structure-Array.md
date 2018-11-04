@@ -2,26 +2,24 @@
 layout: post
 list_title: 数据结构基础 | Data Structure | 数组 | Array
 title: 向量
-mathml: true
+mathjax: true
 categories: [DataStructure]
 ---
 
 ### 基本概念
 
-- 所谓向量采用<mark>定长</mark>的一维数组存储结构
-- 主要特性
-	- 元素类型相同
+数组（Array）是一种线性表数据结构。它用一组连续的内存空间，来存储一组具有相同类型的数据。其主要特性有
+1. 元素类型相同
 	- <mark>元素顺序的存储在连续的存储空间中，每个元素有唯一的索引值</mark>
 	- 使用常数作为向量长度
-- 数组存储
-- 读写元素很方便，通过下标即可指定位置
+2. 读写元素很方便，通过下标即可指定位置
 	- 只要确定了首地址，线性表中任意数据元素都可以<mark>随机访问</mark>
 
-- 元素地址计算
+数组元素地址计算公式为：
 
-```
-Loc(ki) = Loc(k0)+c*i, c=sizeof(ELEM)
-```
+$$
+a[i] = base_address + i * data_type_size
+$$
 
 #### 顺序表类定义
 
@@ -60,7 +58,7 @@ class Array:public List<T>{
 
 ### 顺序表上的运算
 
-- 插入运算
+- **插入运算**
 
 ```cpp
 template<class T>
@@ -82,6 +80,18 @@ bool Array<T>::insert(const int p, const T value){
 	return true;
 }
 ```
+上面代码可以看出，数组的插入运算效率很低。其原因是由于数据是连续存储的，每进行一次插入，需要移动<mark>n-i</mark>个元素。我们可以来分析一下其时间复杂度。如果在末尾查入，则效率很高，时间复杂度为`O(1)`；如果是在数组头部插入，则是最差情况，时间复杂度是`O(n)`。我们假设在数组中每个位置插入数据的概率相同，那么平均的时间复杂度为`(1+2+3+...+n)/n = O(n)`。 
+
+对于插入操作，有一个巧妙的算法，如果我们不关心数组中元素的位置关系，只把它当做集合使用，则插入操作可以做到`O(1)`的时间复杂，其思路如下：
+
+```
+	x
+	|
+a b c d e
+a b x d e c
+```
+上面例子中，假设数组`a[10]` 中存储了如下 `5` 个元素：`a，b，c，d，e`。我们现在需要将元素`x`插入到第`3`个位置。我们只需要将`c`放入到`a[5`，将 `a[2]` 赋值为`x`即可。最后，数组中的元素如下:`a，b，x，d，e，c`。
+
 - 删除运算
 
 ```cpp
@@ -101,29 +111,88 @@ bool Array<T>::delete(const int p){
 	return true;
 }
 ```
+删除操作和插入类似，也需要搬移数据，每删除一个数据，需要移动<mark>n-i-1</mark>个元素，平均时间复杂度也为`O(n)`。如果可以对删除操作进行批处理，效率则会提高很多，例如有些场景，我们不需要对每次删除操作都进行数据搬移，可以累积多次后进行一次批量删除。
 
-- 表中元素的移动
-	- 插入：移动<mark>n-i</mark>个元素
-	- 删除：移动<mark>n-i-1</mark>个元素
-	- <mark>时间复杂度为O(n)</mark>
+我们看一个例子，数组`a[10]`中存储了`8`个元素`a，b，c，d，e，f，g，h`。现在，我们要依次删除`a，b，c` 三个元素。
 
+```
+a b c | d e f g h
+```
+
+为了避免`d，e，f，g，h`这几个数据会被搬移三次，我们可以先记录下已经删除的数据。每次的删除操作并不是真正地搬移数据，只是记录数据已经被删除。当数组没有更多空间存储数据时，我们再触发执行一次真正的删除操作，这样就大大减少了删除操作导致的数据搬移。
 
 ## 数组相关的问题
 
+### 去重问题
+
+去重问题顾名思义，是指一个数组中去掉重复的元素。这个问题看似简单，但实际上需要考虑很多种情况，比如
+
+1. 数组是否有序
+2. 是否可可以申请额外的辅助空间
+3. 是否要求操作是inplace的，即去重操作需要在原数组内完成
+4. 如果数组中有重复的元素有多个，是保留1个还是n个
+
+针对不同的场景，其解法也不尽相同，有的解法效率高，占用空间也少，有的效率低并且也浪费空间。首先，我们来看第一个问题，如何对一个有序数组去重，详细的问题描述可以参考[LeetCode26](https://leetcode.com/problems/remove-duplicates-from-sorted-array/description/)。
+
+如果数组有序，我们可以使用读写双指针进行遍历，读指针移动，写指针待命，当读指针和写指针内容不同时，更新写指针指向的数据，代码如下:
+
+```cpp
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        if(nums.size() <= 1 ){
+            return nums.size();
+        }
+		//write pointer
+        int write = 1;
+		//i is read pointer
+        for(int i=1; i<nums.size();i++){
+            if(nums[i] != nums[write]){
+                nums[write++] = nums[i];
+            }
+        }
+        return write;
+    }
+};
+```
+
+这个题目有一个follow up，是说有序数组中，每个重复元素最多只保留2个，求去重后的数组。变种后的题目实际上思路和上面代码是一致的，判断重复的条件有所变化
+
+```cpp
+int write = 2;
+for(int i= 2; i<nums.size();i++){
+	//reader 和 writer -2 比较
+	if(nums[i] != nums[write-2]){
+		nums[write++] = nums[i];
+	}
+}
+```
+上述算法的时间复杂度均为`O(n)`。对于无序数组的去重则需要在双指针的基础上，增加一个辅助集合（通常是set）保存非重复元素，将判重条件修改为查看set是否存在即可，这种方式的时间复杂度同样为`O(n)`，但是引入了空间复杂度`O(n)`。如果不允许使用额外空间，则只能先排序后再排重，时间复杂度为`O(log(n))`。
+
+- [26. Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/description/)
+- [80. Remove Duplicates from Sorted Array II](https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/description/)
+
 ### K-Sum问题
+
+K Sum问题是数组中的经典问题了，其核心的问题为如何在一个数组中找到若干个数，使它们的和为`k`。根据这几个数之间的位置关系，又可以衍生出两个变种，一个是求连续的子数组和为k，另一个是求不连续的序列，使其和为k。
+
+解这类问题的方法有很多种，可以归为下面几种：
+
+1. 对于非连续的元素可以考虑使用
+	- 先排序后双指针碰撞
+	- 使用hashmap做索引
+2. 如果要求数据是连续的，则可以考虑使用
+	- 双指针滑动窗口 + hashmap
+	- 动态规划，kadane算法
+	- 暴利枚举
 
 - [1. Two Sum](https://leetcode.com/problems/two-sum/description/)
 - [15. 3Sum](https://leetcode.com/problems/3sum/description/)
 - [16. 3Sum Closest](https://leetcode.com/problems/3sum-closest/description/)
 - [18. 4Sum](https://leetcode.com/problems/4sum/description/)
-
-### 最优SubArray/SubSequence 问题
-
 - [53. Maximum Subarray](https://leetcode.com/problems/maximum-subarray/description/)
 - [325. Maximum Size Subarray Sum Equals k]()
 - [560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)
-
-
 
 
 ## Resources 
