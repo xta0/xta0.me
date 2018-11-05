@@ -6,7 +6,9 @@ list_title: 系统设计入门 | System Design | 负载均衡| Load Balancer
 categories: [backend]
 ---
 
-负载均衡这个概念相对来说比较容易理解，其工作方式如下图所示，由于在之前文章中已经做过介绍，这里就不再展开了。Load Balancer主要完成两个任务，一是负责分发请求，二是处理Fail Over(即某个server failed了，能够及时发现并redirect请求到其它server上)。本文将使用Nginx来模拟实现三种路由策略，分别是Round-Robin， Least busy以及Session/cookies。通过观察这几种策略的表现来带给大家一些直观的感受。
+负载均衡主要完成两个任务，一是负责分发请求，二是处理Fail Over上。典型的负载均衡位于用户接入层和
+
+本文将使用Nginx来模拟实现三种路由策略，分别是Round-Robin， Least busy以及Session/cookies。通过观察这几种策略的表现来带给大家一些直观的感受。
 
 ## 基于轮询的分配策略（Round-Robin）
 
@@ -63,7 +65,7 @@ http{
 
 ## 基于Session / Cookie 的分配策略
 
-除了Round Robin外，Nginx还支持其它的负载均衡策略，比如使用`ip hash`。所谓`ip hash`是指将所有来自相同IP的Request均投递到同一个server上，这个特性对于维护用户登录信息之类的操作很有用，我们可以修改Nginx配置如下：
+除了Round Robin外，Nginx还支持其它的负载均衡策略，比如使用`ip hash`。所谓`ip hash`是指每个请求按根据IP hash的结果投递到指定服务器上，所有来自相同IP的请求都会路由到同一个server上。这样每个访客固定访问一个后端服务器，主要用于解决 session 的问题，如购物车类的应用。我们可以修改Nginx配置如下：
 
 ```yaml
 upstream php_servers{
