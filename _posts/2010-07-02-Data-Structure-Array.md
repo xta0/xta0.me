@@ -123,6 +123,8 @@ a b c | d e f g h
 
 ## 数组相关的问题
 
+数组问题是面试中经常出现的问题，本节会分析一些LeetCode中常见的数组高频题，并总结使用数组解题的一般技巧。
+
 ### 去重问题
 
 去重问题顾名思义，是指一个数组中去掉重复的元素。这个问题看似简单，但实际上需要考虑很多种情况，比如
@@ -194,6 +196,12 @@ K Sum问题是数组中的经典问题了，其核心的问题为如何在一个
 - [325. Maximum Size Subarray Sum Equals k]()
 - [560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)
 
+
+### 滑动窗口问题
+
+- [239. Sliding Window Maximum]()
+- [76. Minimum Window Subsequence](https://leetcode.com/problems/minimum-window-subsequence/description/)
+- [Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring/description/)
 
 ## Resources 
 

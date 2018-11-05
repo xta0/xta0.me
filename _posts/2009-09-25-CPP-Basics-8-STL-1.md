@@ -448,7 +448,7 @@ class A{
 	- `iterator upper_bound(const T& val);`查找一个最大位置it，使得[it,end())中所有元素都比val小。
 
 
-### `pair`
+### pair
 
 - 定义:
 
@@ -503,15 +503,13 @@ class multimap{
 
 };
 ```	
-- `multimap`和`map`的区别
-	- `multimap`没有重载`[]`，插入元素只能使用`insert`
-	- `multimap`中允许相同的key存在，key按照first成员变量从小到大排列，缺省用`less<key>`定义关键字的`<`关系
 - 头文件`#include <map>`
-- map**有序的**k-v集合，元素按照`key`**从小到大**排列，缺省情况下用`less<key>`即`<`定义
-- map中相同的`key`的元素只保留一份
-- map中元素都是`pair模板类`对象。`first`返回key，`second`返回value
-- map有`[]`成员函数，支持k-v赋值
-- 返回对象为second成员变量的引用。若没有关键字key的元素，则会往pairs里插入一个关键字为key的元素，其值用无参构造函数初始化，并返回其值的引用
+- **map**
+	- map**有序的**k-v集合，元素按照`key`**从小到大**排列，缺省情况下用`less<key>`即`<`定义
+	- map中相同的`key`的元素只保留一份
+	- map中元素都是`pair模板类`对象。`first`返回key，`second`返回value
+	- map有`[]`成员函数，支持k-v赋值
+	- 返回对象为second成员变量的引用。若没有关键字key的元素，则会往pairs里插入一个关键字为key的元素，其值用无参构造函数初始化，并返回其值的引用
 
 ```cpp
 map<string,int> ages{ {"Joyce",12}, {"Austen",23} };
@@ -555,6 +553,20 @@ int main(){
 	people[Person("mike",44)] = 40;
 	people[Person("kay",22)] = 40;
 	return 0;
+}
+```
+
+- **multimap**
+	- `multimap`没有重载`[]`，插入元素只能使用`insert`
+	- `multimap`中允许相同的key存在，key按照first成员变量从小到大排列，缺省用`less<key>`定义关键字的`<`关系
+
+```cpp
+multimap<string,int> lookup;
+lookup.insert(make_pair(29,"Kevin"));
+lookup.insert(make_pair(39,"Mike"));
+lookup.insert(make_pair(39,"Tom"));
+for(auto itor = lookup.begin(); itor!=lookup.end(); itor++){
+	cout<<itor->first<<it->second<<endl;
 }
 ```
 

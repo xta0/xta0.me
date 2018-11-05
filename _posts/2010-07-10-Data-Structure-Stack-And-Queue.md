@@ -202,6 +202,10 @@ class Aqueue : public Queue<Elem> {
 
 ## 队列与栈的经典问题
 
+### 括号问题
+
+- [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/description/)
+- [301. Remove Invalid Parentheses]()
 
 
 
