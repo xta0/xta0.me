@@ -6,10 +6,13 @@ categories: [Linux, Nginx,Backend]
 ---
 
 ### About Nginx
+
 - created in 2004
 	- High performance, High Concurrency, Low Memory
 	- webserver
     - load balancer / reverse proxy
+
+![](/assets/images/2011/04/nginx-1.png)
 
 ### Nginx vs Apache  
 	
