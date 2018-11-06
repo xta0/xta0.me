@@ -2,7 +2,7 @@
 updated: "2018-08-23"
 layout: post
 title: 分布式系统特征
-list_title: 系统设计入门 | System Design | 分布式系统特征 | Key Characteristics of Distributed Systems
+list_title: 系统设计入门 | System Design | 分布式系统特征 | Characteristics of Distributed Systems
 categories: [backend]
 ---
 
