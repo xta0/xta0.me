@@ -499,7 +499,7 @@ Prim 算法非常类似于 Dijkstra 算法，算法中的距离值不需要累�
 2. 从图中删掉此顶点及其所有的出边，则其所有相邻节点入度减少1
 3. 回到第 1 步继续执行
 
-``` 
+```cpp
 void TopsortbyQueue(Graph& G) {
     for (int i = 0; i < G.VerticesNum(); i++)
         G.status(G.V[i]) = UNVISITED; // 初始化
