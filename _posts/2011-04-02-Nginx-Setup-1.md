@@ -12,7 +12,8 @@ categories: [Linux, Nginx,Backend]
 	- webserver
     - load balancer / reverse proxy
 
-![](/assets/images/2011/04/nginx-1.png)
+<img src="{{site.baseurl}}/assets/images/2011/04/nginx-1.png" width = "70%">
+
 
 ### Nginx vs Apache  
 	
