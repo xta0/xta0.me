@@ -54,8 +54,8 @@ CDN可以用作静态资源的缓存，也可以用作对非登录用户看到�
 3. 当某个key要被缓存时，先计算hash值，然后将该值在环内顺时针移动，直到碰到cache server，如下图所示，`key1`被存到`A`中，`key2`被存到`C`中
 
     <div class="md-flex-h">
-    <div><img src="{{site.baseurl}}/assets/images/2016-06/con-hash-1.png"></div>
-    <div><img src="{{site.baseurl}}/assets/images/2016-06/con-hash-2.png"></div>
+    <div><img src="{{site.baseurl}}/assets/images/2016/06/con-hash-1.png"></div>
+    <div><img src="{{site.baseurl}}/assets/images/2016/06/con-hash-2.png"></div>
     </div>
 
 4. 当有新节点(下图中`D`节点)加入后，由于其位置位于`key2`和`C`之间，则原先`key2`的数据将被版移到`D`中，缓存中其它的数据不变
@@ -63,13 +63,13 @@ CDN可以用作静态资源的缓存，也可以用作对非登录用户看到�
 5. 当有节点故障后(下图图中`A`节点)，`A`中存放的所有数据将被搬移到`B`中，其它数据不影响
     
     <div class="md-flex-h">
-    <div><img src="{{site.baseurl}}/assets/images/2016-06/con-hash-3.png"></div>
-    <div><img src="{{site.baseurl}}/assets/images/2016-06/con-hash-4.png"></div>
+    <div><img src="{{site.baseurl}}/assets/images/2016/06/con-hash-3.png"></div>
+    <div><img src="{{site.baseurl}}/assets/images/2016/06/con-hash-4.png"></div>
     </div>
 
 由于负载均衡投递请求的随机性，不均匀的分布可能会导致某些key距离某个节点很近，进而导致该节点中聚集大量的缓存数据。为了解决这个问题，一致性哈希引入虚拟节点的概念，这些虚拟节点是环中每台server的拷贝，我们将这些虚拟拷贝的节点均匀分布在环中，则可以保证数据的分布的均匀性，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2016-06/con-hash-5.png" class="img-md-center">
+<img src="{{site.baseurl}}/assets/images/2016/06/con-hash-5.png" class="img-md-center">
 
 
 ## Resources
