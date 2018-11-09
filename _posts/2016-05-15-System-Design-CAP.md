@@ -6,7 +6,6 @@ list_title: 系统设计入门 | System Design | CAP理论 | CAP Theorem
 categories: [backend]
 ---
 
-<img scr="{{site.baseurl}}/assets/images/2016/06/cap.png" class="md-img-center" width="80%">
 
 ## CAP Theorem
 
@@ -22,6 +21,9 @@ categories: [backend]
 > 所谓分区是指一个分布式系统里面，节点组成的网络本来应该是连通的使得有些节点之间不连通了，整个网络就分成了几块区域。数据就散布在了这些不连通的区域中。
 
 根据定理，分布式系统只能满足三项中的两项而不可能满足全部三项。如果要保证一致性，那么每次写操作就都要等待全部节点同步完成，而这等待会带来可用性的问题；如果要保证可用性，那么就允许返回旧数据。因此，在系统设计时，需要根据业务类型进行选择与权衡
+
+<img scr="{{site.baseurl}}/assets/images/2016/06/cap.png" class="md-img-center" width="80%">
+
 
 ## CP 
 
