@@ -53,7 +53,7 @@ CDN可以用作静态资源的缓存，也可以用作对非登录用户看到�
 2. 假设我们有三台Server，经过hash后位于环中的三个节点
 3. 当某个key要被缓存时，先计算hash值，然后将该值在环内顺时针移动，直到碰到cache server，如下图所示，`key1`被存到`A`中，`key2`被存到`C`中
 
-    <div class="md-flex-h">
+    <div class="md-flex-h md-flex-no-wrap">
     <div><img src="{{site.baseurl}}/assets/images/2016/06/con-hash-1.png"></div>
     <div><img src="{{site.baseurl}}/assets/images/2016/06/con-hash-2.png"></div>
     </div>
@@ -62,7 +62,7 @@ CDN可以用作静态资源的缓存，也可以用作对非登录用户看到�
 
 5. 当有节点故障后(下图图中`A`节点)，`A`中存放的所有数据将被搬移到`B`中，其它数据不影响
     
-    <div class="md-flex-h">
+    <div class="md-flex-h md-flex-no-wrap">
     <div><img src="{{site.baseurl}}/assets/images/2016/06/con-hash-3.png"></div>
     <div><img src="{{site.baseurl}}/assets/images/2016/06/con-hash-4.png"></div>
     </div>
