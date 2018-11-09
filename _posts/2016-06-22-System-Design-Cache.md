@@ -69,7 +69,7 @@ CDN可以用作静态资源的缓存，也可以用作对非登录用户看到�
 
 由于负载均衡投递请求的随机性，不均匀的分布可能会导致某些key距离某个节点很近，进而导致该节点中聚集大量的缓存数据。为了解决这个问题，一致性哈希引入虚拟节点的概念，这些虚拟节点是环中每台server的拷贝，我们将这些虚拟拷贝的节点均匀分布在环中，则可以保证数据的分布的均匀性，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2016/06/con-hash-5.png" class="img-md-center">
+<img src="{{site.baseurl}}/assets/images/2016/06/con-hash-5.png" class="img-md-center" width="70%">
 
 
 ## Resources
