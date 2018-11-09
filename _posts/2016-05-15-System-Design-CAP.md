@@ -6,17 +6,18 @@ list_title: 系统设计入门 | System Design | CAP理论 | CAP Theorem
 categories: [backend]
 ---
 
+<img scr="{{site.baseurl}}/assets/images/2016/06/cap.png" class="md-img-center" width="80%">
+
 ## CAP Theorem
-
-{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-8.png' param2='sd-8' %}
-{% include _partials/components/pic-from.html param='http://robertgreiner.com/2014/08/cap-theorem-revisited' param2='Source: CAP theorem revisited'%}
-
 
 所谓CAP是指对于一个分布式系统，不可能同时满足以下三点：
 
 1. 数据一致性（**C**onsistency），即每次请求返回最新的数据或者返回错误
 2. 可用性(**A**vailibility)，即每次请求都能拿到正确的返回，但不能保证数据是最新的
 3. 分区容错性(**P**artition tolerance)，即在分布式网络中，出于容错的考虑，每个节点的数据都会被拷贝多份，这样当某个节点出现故障后，该节点的数据仍可被访问到，<mark>对于分布式系统，分区容错是基本要求</mark>
+
+{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-8.png' param2='sd-8' %}
+{% include _partials/components/pic-from.html param='http://robertgreiner.com/2014/08/cap-theorem-revisited' param2='Source: CAP theorem revisited'%}
 
 > 所谓分区是指一个分布式系统里面，节点组成的网络本来应该是连通的使得有些节点之间不连通了，整个网络就分成了几块区域。数据就散布在了这些不连通的区域中。
 
