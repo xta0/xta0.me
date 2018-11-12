@@ -6,11 +6,8 @@ list_title: 系统设计入门 | System Design | CAP理论 | CAP Theorem
 categories: [backend]
 ---
 
+
 ## CAP Theorem
-
-{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-8.png' param2='sd-8' %}
-{% include _partials/components/pic-from.html param='http://robertgreiner.com/2014/08/cap-theorem-revisited' param2='Source: CAP theorem revisited'%}
-
 
 所谓CAP是指对于一个分布式系统，不可能同时满足以下三点：
 
@@ -18,9 +15,15 @@ categories: [backend]
 2. 可用性(**A**vailibility)，即每次请求都能拿到正确的返回，但不能保证数据是最新的
 3. 分区容错性(**P**artition tolerance)，即在分布式网络中，出于容错的考虑，每个节点的数据都会被拷贝多份，这样当某个节点出现故障后，该节点的数据仍可被访问到，<mark>对于分布式系统，分区容错是基本要求</mark>
 
+{% include _partials/components/lightbox-center.html param='/assets/images/2016/05/sd-8.png' param2='sd-8' %}
+{% include _partials/components/pic-from.html param='http://robertgreiner.com/2014/08/cap-theorem-revisited' param2='Source: CAP theorem revisited'%}
+
 > 所谓分区是指一个分布式系统里面，节点组成的网络本来应该是连通的使得有些节点之间不连通了，整个网络就分成了几块区域。数据就散布在了这些不连通的区域中。
 
 根据定理，分布式系统只能满足三项中的两项而不可能满足全部三项。如果要保证一致性，那么每次写操作就都要等待全部节点同步完成，而这等待会带来可用性的问题；如果要保证可用性，那么就允许返回旧数据。因此，在系统设计时，需要根据业务类型进行选择与权衡
+
+<img scr="{{site.baseurl}}/assets/images/2016/06/cap.png" class="md-img-center" width="80%">
+
 
 ## CP 
 
