@@ -130,11 +130,13 @@ a b c | d e f g h
 去重问题顾名思义，是指一个数组中去掉重复的元素。这个问题看似简单，但实际上需要考虑很多种情况，比如
 
 1. 数组是否有序
-2. 是否可可以申请额外的辅助空间
+2. 是否可以申请额外的辅助空间
 3. 是否要求操作是inplace的，即去重操作需要在原数组内完成
 4. 如果数组中有重复的元素有多个，是保留1个还是n个
 
-针对不同的场景，其解法也不尽相同，有的解法效率高，占用空间也少，有的效率低并且也浪费空间。首先，我们来看第一个问题，如何对一个有序数组去重，详细的问题描述可以参考[LeetCode26](https://leetcode.com/problems/remove-duplicates-from-sorted-array/description/)。
+针对不同的场景，其解法也不尽相同，有的解法效率高，占用空间也少，有的效率低并且也浪费空间。
+
+首先，我们来看第一个问题，如何对一个有序数组去重，详细的问题描述可以参考[LeetCode26](https://leetcode.com/problems/remove-duplicates-from-sorted-array/description/)。
 
 如果数组有序，我们可以使用读写双指针进行遍历，读指针移动，写指针待命，当读指针和写指针内容不同时，更新写指针指向的数据，代码如下:
 
@@ -188,20 +190,29 @@ K Sum问题是数组中的经典问题了，其核心的问题为如何在一个
 	- 动态规划，kadane算法
 	- 暴利枚举
 
+这里以一道[560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)为例，
+
+
+
+其它K-Sum相关问题
+
 - [1. Two Sum](https://leetcode.com/problems/two-sum/description/)
 - [15. 3Sum](https://leetcode.com/problems/3sum/description/)
 - [16. 3Sum Closest](https://leetcode.com/problems/3sum-closest/description/)
 - [18. 4Sum](https://leetcode.com/problems/4sum/description/)
 - [53. Maximum Subarray](https://leetcode.com/problems/maximum-subarray/description/)
 - [325. Maximum Size Subarray Sum Equals k]()
-- [560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)
 
 
 ### 滑动窗口问题
 
+滑动窗口问题也是数组相关的经典问题，
+
+- [76. Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring/description/)
 - [239. Sliding Window Maximum]()
-- [76. Minimum Window Subsequence](https://leetcode.com/problems/minimum-window-subsequence/description/)
-- [Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring/description/)
+- [727. Minimum Window Subsequence](https://leetcode.com/problems/minimum-window-subsequence/description/)
+
+
 
 ## Resources 
 

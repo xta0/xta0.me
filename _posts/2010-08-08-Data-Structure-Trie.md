@@ -12,7 +12,7 @@ categories: [DataStructure]
 
 Trie树又称前缀树或字典树，它最早应用于信息检索领域，所谓"Trie"来自英文单词"Retrieval"的中间的4个字符"trie"。Trie的经典应用场景是搜索提示和分词，比如当我们在搜索栏中输入关键词时，地址栏会自动提示并补全关键字。在这个例子中，与之前BST搜索不同的是Trie中的节点保存的并不是key值，而是单个的英文字符，因此使用Trie检索某个字符串是否位于某个集合中，其过程是逐一检索字符串的每个前缀字符是否在Trie的节点中，而不是像BST一样直接比较字符串内容。如下图所示，我们可以将一组单词通过Trie树的形式进行构建，其中左图为等长字符串，每个字符均不是其它字符的前缀；右边为不等长字符串，每个字符可能是其它字符的前缀，这种情况我们需要在末尾增加一个`*`表示
 
-<img src="{{site.baseurl}}/assets/images/2018/08/trie.png" class="md-img-center">
+<img src="{{site.baseurl}}/assets/images/2010/08/trie.png" class="md-img-center">
 
 例如当我们想要查找字符串"bad"，我们只需要从Trie树的根节点开始依次匹配`bad`中的字符，直到遇到`*`表示匹配成功。
 
@@ -20,7 +20,7 @@ Trie树又称前缀树或字典树，它最早应用于信息检索领域，所�
 
 ### Trie的实现
 
-我们以一字母树为例，介绍一种简单的Trie的实现方式。首先我们需要先定一个TrieNode的数据结构
+我们以字母树为例，介绍一种简单的Trie的实现方式。首先我们需要先定一个TrieNode的数据结构
 
 ```cpp
 struct TrieNode{
@@ -28,6 +28,10 @@ struct TrieNode{
     array<TrieNode*,26> children = {nullptr};
 };
 ```
+
+我们使用一个长度为26的静态数组来存储其孩子节点，如果某个位置不为空则说明该位置有一个孩子节点，可参考下图：
+
+<img src="{{site.baseurl}}/assets/images/2010/08/trie-1.png" class="md-img-center">
 
 接下来我们可以实现Trie的类
 
@@ -84,7 +88,7 @@ public:
     }
 };
 ```
-
+Trie的有点是最大限度减少无效的字符串比较，其核心思想史空间换时间。利用字符串的公共前缀来降低查询时间的开销，以达到提高效率的目的。
 
 ## Resources 
 

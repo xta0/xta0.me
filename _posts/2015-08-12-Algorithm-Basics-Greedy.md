@@ -161,9 +161,11 @@ if(a[mid] <= target){
 
 ### 更多二分法相关问题
 
+- [33. Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/description/)
 - [34. Search for a Range](https://leetcode.com/problems/search-for-a-range/description/)
-- []()
-
+- [69. Sqrt(x)](https://leetcode.com/problems/sqrtx/description/)
+- [81. Search in Rotated Sorted Array II](https://leetcode.com/problems/search-in-rotated-sorted-array-ii/description/)
+- [278. First Bad Version](https://leetcode.com/problems/first-bad-version/description/)
 
 ## 贪心法
 
@@ -278,12 +280,6 @@ print(l, r)
 ```
 
 经过上面计算，得到的`x`取值为1700。离经验值1500有些差距。上面的思路是一种“二分+判定”的贪心策略，使用二分法查找阈值`x`，使用堆数必须小于`k`个抄书员作为判定条件。这种思路是一种通用的解题策略
-
-
-
-
-
-
 
 ### Resources
 
