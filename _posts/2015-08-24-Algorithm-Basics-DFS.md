@@ -146,6 +146,8 @@ def dfs(self,curr,depth,arr,index,choose,result):
         choose.pop()
 ```
 
+### N皇后问题
+
 ### Sudoku问题
 
 我们再来看一道数独问题，求解数独问题也是一个典型的DFS搜索问题，通过不停尝试来找到最终解，数独问题描述如下:
