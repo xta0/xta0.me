@@ -148,9 +148,147 @@ def dfs(self,curr,depth,arr,index,choose,result):
 
 ### N皇后问题
 
+另外一个经典的DFS问题是N皇后问题，这个问题是DFS+剪枝的一个典型应用，所谓剪枝是指在DFS搜索过程中，对不必要的路径进行裁剪，从而加快搜索速度。N皇后问题描述如下:
+
+> 给你个NxN的棋盘，在棋盘上摆放N个皇后，使得这N个皇后无法相互攻击（皇后可以横竖攻击，对角线攻击），如下图中是一个8皇后问题的一个解，请给出满足N皇后条件的所有摆法
+
+<img src="{{site.baseurl}}/assets/images/2015/08/8-queens.png">
+
+解这个问题的思路就是用DFS不断的递归+回溯，穷举所有的可能的情况。其算法步骤如下：
+
+1. 由于每个行或者列只能放置一个皇后，因此DFS可以按行搜索，在每行中不断尝试每个列的位置
+2. 当放置一个皇后后，在棋盘上将该位置以及其可能攻击的位置均置为不可用
+3. 搜索到不可用的位置时，直接跳过，进行剪枝操作
+4. 算法时间复杂度为指数级
+
+```cpp
+//表示盘中的每个点
+struct PT{
+    int i;
+    int j;
+    bool operator<(const PT& pt) const{
+        if( i<pt.i){
+            return true;
+        }else if(i==pt.i){
+            return j<pt.j;
+        }else{
+            return false;
+        }
+    }
+};
+class Solution {
+    //放置一个皇后，更新棋盘状态
+    set<PT> place(int i, int j, vector<vector<char>>& board){
+        set<PT> us;
+        //竖向
+        for(int k=0;k<board.size();k++){
+            if(board[k][j] !='.' && board[k][j] != 'Q'){
+                board[k][j] = '.';
+                us.insert({k,j});
+            }
+        }
+        //横向
+        for(int k=0;k<board.size();k++){
+            if(board[i][k] != '.' && board[i][k] != 'Q'){
+                board[i][k]= '.';
+                us.insert({i,k});
+            }
+            
+        }
+        //对角线1
+        for(int p=i, q=j; p>=0 && q>=0 ; p--,q--){
+            if(board[p][q] != '.' && board[p][q] != 'Q'){
+                board[p][q] = '.';
+                us.insert({p,q});
+            }
+        }
+        for(int p=i,q=j; p<board.size()&&q<board.size();p++,q++){
+            if(board[p][q] != '.' && board[p][q] != 'Q'){
+                board[p][q] = '.';
+                us.insert({p,q});
+            }
+        }
+        //对角线2
+        for(int p=i,q=j; p>=0 && q<board.size();p--,q++){
+            if(board[p][q] != '.' && board[p][q] != 'Q'){
+                board[p][q] = '.';
+                us.insert({p,q});
+            }
+        }
+        for(int p=i,q=j; p<board.size() && q>=0;p++,q--){
+            if(board[p][q] != '.' && board[p][q] != 'Q'){
+                board[p][q] = '.';
+                us.insert({p,q});
+            }
+        }
+        board[i][j] = 'Q';
+        us.insert({i,j});
+        return us;
+    }
+    //回溯棋子后复原棋盘状态
+    void unplace(set<PT>& us, vector<vector<char>>& board){
+        for(auto itor = us.begin(); itor!=us.end(); itor++){
+            auto p = *itor;
+            board[p.i][p.j] = 'x';
+        }
+    }
+    //深搜
+    void dfs(int n, int row, int sz, vector<vector<char>>& board, vector<vector<string>>& result){
+        if(n == 0){
+            vector<string> v;
+            for(auto vec:board){
+                string tmp="";
+                for(auto c:vec){
+                    tmp+=c;
+                }
+                v.push_back(tmp);
+            }
+            result.push_back(v);
+            return;
+        }
+        //按行搜索，尝试列位置，j代表列
+        for(int j=0;j<sz && row<sz;j++){
+            if(board[row][j] == 'x'){ //剪枝
+                //choose
+                auto pts = place(row, j, board);
+                cout<<"set state: "<<endl;
+                log(board);
+                n-=1;
+                //深搜
+                dfs(n,row+1,sz,board,result);
+                //backtrack
+                n+=1;
+                unplace(pts, board);
+                cout<<"reset state: "<<endl;
+                log(board);
+
+            }
+        }
+    }
+    //打印棋盘状态
+   void log(vector<vector<char>>& board){
+        for(auto vec:board){
+            for(auto c:vec){
+                cout<<c<<" ";
+            }
+            cout<<endl;
+        }
+        cout<<"--------"<<endl;
+    }
+    
+public:
+    vector<vector<string>> solveNQueens(int n) {
+        vector<vector<char>> board(n,vector<char>(n,'x'));
+        vector<vector<string>> ans;
+        dfs(n,0,n,board,ans);
+        return ans;
+    }
+};
+```
+
 ### Sudoku问题
 
-我们再来看一道数独问题，求解数独问题也是一个典型的DFS搜索问题，通过不停尝试来找到最终解，数独问题描述如下:
+我们再来看一道数独问题，和N皇后问题一样，求解数独问题也是一个典型的DFS搜索+剪枝的问题，通过不停尝试来找到最终解，数独问题描述如下:
 
 > 将数字1到9,填入9x9矩阵中的小方格，使得矩阵中的每行，每列，每个3x3的小格子内，9个数字都会出现"。
 
@@ -236,7 +374,7 @@ bool DFS(int index){
 }
 ```
 
-### LeetCode关于DFS+Backtracking的问题
+### 关于DFS的更多问题
 
 - [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/description/)
 - [46. Permutations](https://leetcode.com/problems/permutations/description/)
