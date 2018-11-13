@@ -283,7 +283,7 @@ struct ListNode
 ```
 后面的问题将会反复用到`ListNode`，则不再重复声明
 
-### [单链表反转](https://leetcode.com/problems/reverse-linked-list)
+- [单链表反转](https://leetcode.com/problems/reverse-linked-list)
 
 反转链表是链表中的常见操作，也是很多高级链表算法的基础步骤之一，其问题描述为：
 
@@ -318,7 +318,6 @@ public:
            head = head->next;
            //断开链表
            first->next = second;
-           second = head->next;
            //翻转后链表的头结点
            second = first;
        }
@@ -327,7 +326,7 @@ public:
 ```
 不难得出，上述算法的时间复杂度为$O(N)$, 空间复杂度为$O(1)$
 
-### [链表中环的检测](https://leetcode.com/problems/linked-list-cycle/description/)
+- [链表中环的检测](https://leetcode.com/problems/linked-list-cycle/description/)
 
 如何判断单链表中是否有环的思路很简单，定义两个前后两个指针，前面指针走两格，后面指针走一格，如果能相遇，则表明链表中有环
 
@@ -358,7 +357,7 @@ public:
 
 不难得出，上述算法的时间复杂度为$O(N)$, 空间复杂度为$O(1)$
 
-### [两个单链表的交点](https://leetcode.com/problems/intersection-of-two-linked-lists/description/)
+- [两个单链表的交点](https://leetcode.com/problems/intersection-of-two-linked-lists/description/)
 
 问题描述如下:
 
@@ -438,7 +437,7 @@ public:
 };
 ```
 
-### [merge两个有序链表](https://leetcode.com/problems/merge-two-sorted-lists)
+- [merge两个有序链表](https://leetcode.com/problems/merge-two-sorted-lists)
 
 1. 比较两个链表节点头指针，小的前进，大的不动
 2. 新链表指向小的节点
@@ -476,7 +475,7 @@ public:
 ```
 上述算法的时间复杂度为`O(N)`，空间复杂度为`O(1)`
 
-### [删除链表倒数第N个结点 ](https://leetcode.com/problems/remove-nth-node-from-end-of-list/description/)
+- [删除链表倒数第N个结点 ](https://leetcode.com/problems/remove-nth-node-from-end-of-list/description/)
 
 题目描述为：
 
@@ -526,7 +525,7 @@ public:
 };
 ```
 
-### [求链表的中间结点](https://leetcode.com/problems/middle-of-the-linked-list/description/)
+- [求链表的中间结点](https://leetcode.com/problems/middle-of-the-linked-list/description/)
 
 这道题目的解法和上面类似，也是采用双指针走法：
 
