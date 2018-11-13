@@ -199,9 +199,11 @@ K Sum问题是数组中的经典问题了，其核心的问题为如何在一个
 
 ### 滑动窗口问题
 
+- [76. Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring/description/)
 - [239. Sliding Window Maximum]()
-- [76. Minimum Window Subsequence](https://leetcode.com/problems/minimum-window-subsequence/description/)
-- [Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring/description/)
+- [727. Minimum Window Subsequence](https://leetcode.com/problems/minimum-window-subsequence/description/)
+
+
 
 ## Resources 
 
