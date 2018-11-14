@@ -224,7 +224,7 @@ dp[1] = max(dp[0],arr[1]);
 
 以上面左图为例，遍历完成后`dp`序列的状态如下，由于`dp`序列的递增性，我们只要返回数组末尾即可。
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/07/kadane-2.png" width="60%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/07/kadane-3.png" width="60%">
 
 ```cpp
 int find_max_sum_nonadjacent(vector<int>& a) {
