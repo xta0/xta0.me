@@ -213,7 +213,7 @@ public:
 <div><img src="{{site.baseurl}}/assets/images/2010/07/kadane-2.png"></div>
 </div>
 
-如上图中的解是一组不连续的序列，例如右图中的解我们不能选10和14，因为它们是连续的。如果是子序列，仍然可以使用kadane的思路，但是条件发生了变化，对于数组中的每个元素，该元素位置的最优子序列的条件是：`max(dp[i-2]+nums[i], dp[i-1])`。即如果包含自己，那么它一定是和`i-2`位置的最优子序列和最大，如果不包含自己，则返回前`i-1`位置的最优子序列。
+如上图中的解是一组不连续的序列，例如右图中的解我们不能选10和14，因为它们是连续的。虽然是求子序列，我们仍然可以使用kadane的思路，但是判断和最大的条件需要修改。对于数组中的每个元素，该元素位置的最优子序列的条件是：`max(dp[i-2]+nums[i], dp[i-1])`。即如果包含自己，那么它一定是和`i-2`位置的最优子序列和最大，如果不包含自己，则返回前`i-1`位置的最优子序列。
 
 注意，上述算法是从`i=2`开始，因此我们的`dp`数组需要有两个初始值`dp[0],dp[1]`
 
@@ -224,7 +224,7 @@ dp[1] = max(dp[0],arr[1]);
 
 以上面左图为例，遍历完成后`dp`序列的状态如下，由于`dp`序列的递增性，我们只要返回数组末尾即可。
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/07/kadane-2.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/07/kadane-2.png" width="60%">
 
 ```cpp
 int find_max_sum_nonadjacent(vector<int>& a) {
