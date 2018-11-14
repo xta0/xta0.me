@@ -176,6 +176,75 @@ for(int i= 2; i<nums.size();i++){
 - [26. Remove Duplicates from Sorted Array](https://leetcode.com/problems/remove-duplicates-from-sorted-array/description/)
 - [80. Remove Duplicates from Sorted Array II](https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/description/)
 
+
+### 最优化问题
+
+最优化问题通常是寻找数组中的一个连续子数组或者一个不连续的子序列，使其满足某种条件（注意，不能排序，需要保持原序列顺序）。解这类问题通常有三种办法：
+
+1. 如果求连续子数组考虑使用滑动窗口
+2. Kadane算法
+3. 动态规划
+
+我们先看一个使用Kadane算法的例子，原题是LeetCode中[53. Maximum Subarray](https://leetcode.com/problems/maximum-subarray/description/)。题意是说找到数组中的一个subarray，使和最大，其中subarray的长度可以为1。
+
+这个题是求解一个subarray，因此是求一个连续的区间，按照上面给出的思路，我们可以首先考虑使用滑动窗口，针对这道题，使用滑动窗口就相当于使用暴力求解，思路为枚举出所有的subarray然后求和，这种方式需要两层循环，时间复杂度为`O(n^2)`。
+
+kadane算法的思路是遍历数组中的每个元素，以**该元素结尾**的最优subarray的和的计算公式为`dp[i] = max(nums[i],dp[i-1]+nums[i])`，意思是这个subarray要么是自己(例如前面都是负数，自己是正数)，要么是`i-1`位置的最大和subarray加上自己（比如前面都是正数，自己也是正数）。
+
+```cpp
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        vector<int> dp(nums.size(),0);
+        dp[0] = nums[0];
+        int maxsum = dp[0];
+        for(int i=1;i<nums.size();i++){
+            dp[i] = max(nums[i],dp[i-1]+nums[i]);
+            maxsum = max(maxsum,dp[i]);
+        }
+        return maxsum;
+    }
+};
+```
+使用Kadane算法，时间复杂度降低到`O(n)`。这个问题通常有一个follow up的问题，即如果将问题变为Maximum Subsequence，该怎么解
+
+<div class="md-flex-h">
+<div><img src="{{site.baseurl}}/assets/images/2010/07/kadane-1.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2010/07/kadane-2.png"></div>
+</div>
+
+如上图中的解是一组不连续的序列，例如右图中的解我们不能选10和14，因为它们是连续的。如果是子序列，仍然可以使用kadane的思路，但是条件发生了变化，对于数组中的每个元素，该元素位置的最优子序列的条件是：`max(dp[i-2]+nums[i], dp[i-1])`。即如果包含自己，那么它一定是和`i-2`位置的最优子序列和最大，如果不包含自己，则返回前`i-1`位置的最优子序列。
+
+注意，上述算法是从`i=2`开始，因此我们的`dp`数组需要有两个初始值`dp[0],dp[1]`
+
+```cpp
+dp[0] = arr[0];
+dp[1] = max(dp[0],arr[1]);
+```
+
+以上面左图为例，遍历完成后`dp`序列的状态如下，由于`dp`序列的递增性，我们只要返回数组末尾即可。
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/07/kadane-2.png">
+
+```cpp
+int find_max_sum_nonadjacent(vector<int>& a) {
+ if(a.size() == 0){
+	 reutrn 0;
+ }
+ if(a.size() == 1){
+	 return a[0];
+ }
+ //维护一个dp序列
+  vector<int> dp(a.size(),0);
+  dp[0] = a[0];
+  dp[1] = std::max(dp[0],a[1]);
+  for(int i=2;i<a.size();i++){
+    dp[i] = max(dp[i-1],a[i]+dp[i-2]);
+  }
+  return dp.back();
+}
+```
+
 ### K-Sum问题
 
 K Sum问题是数组中的经典问题了，其核心的问题为如何在一个数组中找到若干个数，使它们的和为`k`。根据这几个数之间的位置关系，又可以衍生出两个变种，一个是求连续的子数组和为k，另一个是求不连续的序列，使其和为k。
@@ -185,32 +254,44 @@ K Sum问题是数组中的经典问题了，其核心的问题为如何在一个
 1. 对于非连续的元素可以考虑使用
 	- 先排序后双指针碰撞
 	- 使用hashmap做索引
+	- 将问题转化为k-1 sum， 比如3sum可转化为for循环+two sum
+	- 动态规划
 2. 如果要求数据是连续的，则可以考虑使用
 	- 双指针滑动窗口 + hashmap
-	- 动态规划，kadane算法
+	- kadane算法
 	- 暴利枚举
-
-这里以一道[560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)为例，
-
+	- 动态规划
 
 
-其它K-Sum相关问题
+更多KSum问题
 
 - [1. Two Sum](https://leetcode.com/problems/two-sum/description/)
 - [15. 3Sum](https://leetcode.com/problems/3sum/description/)
 - [16. 3Sum Closest](https://leetcode.com/problems/3sum-closest/description/)
 - [18. 4Sum](https://leetcode.com/problems/4sum/description/)
+
+
+另一个例子是LeetCode[560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)，这个例子和前面不同的是需要求解的subarry不是和最大，而是指定和为某个值，因此不能使用Kadane算法，
+
+
+
+其它K-Sum相关问题
+
+
 - [53. Maximum Subarray](https://leetcode.com/problems/maximum-subarray/description/)
 - [325. Maximum Size Subarray Sum Equals k]()
 
 
 ### 滑动窗口问题
 
-滑动窗口问题也是数组相关的经典问题，
+滑动窗口问题也是数组相关的经典问题，并且经常和字符串问题
+
 
 - [76. Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring/description/)
 - [239. Sliding Window Maximum]()
 - [727. Minimum Window Subsequence](https://leetcode.com/problems/minimum-window-subsequence/description/)
+
+
 
 
 
