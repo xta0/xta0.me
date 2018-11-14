@@ -208,7 +208,7 @@ public:
 ```
 使用Kadane算法，时间复杂度降低到`O(n)`。这个问题通常有一个follow up的问题，即如果将问题变为Maximum Subsequence，该怎么解
 
-<div class="md-flex-h">
+<div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2010/07/kadane-1.png"></div>
 <div><img src="{{site.baseurl}}/assets/images/2010/07/kadane-2.png"></div>
 </div>
