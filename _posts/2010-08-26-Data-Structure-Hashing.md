@@ -65,7 +65,7 @@ $$
 ASL = \frac{1}{n} * (\sum_{i=1}^{j}i*2^{(i-1)}) = \frac{n+1}{n}\log{(n+1)}-1 \approx \log{(n+1) -1} \qquad (n>50)
 $$
 
-## 散列
+## 散列搜索
 
 通过上面线性表的检索可以看出，检索的过程是通过元素之间的比较来完成的，而基于比较的运算为无论怎么优化时间代价都是很高的(因为无论怎样都和`n`）相关，当`n`很大时，如果是实时搜索的场景，上述检索时间效率基本是无法接受的。那么一个比较理想的情况是怎样呢？我们希望
 
@@ -363,16 +363,26 @@ $h_2(key)$尽量与$M$互质，这样可使发生冲突的同义词地址尽量�
 4. 若$M$为任意数，$h_1(k)= K \thinspace mod \thinspace p $, (除余法，$p$是小于$M$的最大素数)
     - $h_2(k) = k \thinspace mod \thinspace q+1$ (q是小于p的最大素数。+1为了避免0的出现)
 
+### 如何选择冲突解决方案
 
-### 填充因子
 
-对于Hash Table有一个重要的指标称作填充因子，其定义如下
+
+### 装载因子
+
+对于Hash Table有一个重要的指标称作装载因子，其定义如下
 
 $$
 \alpha \thinspace = \thinspace \frac {\# \thinspace of \thinspace  objects \thinspace in \thinspace hash  \thinspace table} {\# \thinspace of \thinspace buckets \thinspace of \thinspace hash \thinspace table}
 $$
 
-这个指标代表Hash Table的装载率，对于使用chaining实现的Hash Table这个$\alpha$数值可以大于1，这说明会有某些bucket的链表长度大于1。但通常情况下，最好保持这个值远小于1，这意味着，当插入的数据增加时，Hash Table的空位也要跟着增加，比如当$\alpha=0.5$时，可令空位数量跟着增大一倍
+这个指标代表Hash Table的装载率，装载因子越大，说明空闲位置越少，冲突越多，散列表的性能会下降。
+
+通常来说装载因子有一个阈值，当哈希表超过这个阈值时，需要对hash表进行动态扩容。假设每次扩容我们都申请一个原来散列表大小两倍的空间。如果原来散列表的装载因子是`0.8`，那经过扩容之后，新散列表的装载因子就下降为原来的一半，变成了`0.4`。
+
+但是扩容会带来一个问题，就是原先的key映射的槽位可能会发生改变，导致我们需要通过散列函数重新计算每个元素数据的存放位置。
+
+
+对于使用chaining实现的Hash Table这个$\alpha$数值可以大于1，这说明会有某些bucket的链表长度大于1。但通常情况下，最好保持这个值远小于1，这意味着，当插入的数据增加时，Hash Table的空位也要跟着增加，比如当$\alpha=0.5$时，可令空位数量跟着增大一倍
 
 ### Bloom Filter
 
