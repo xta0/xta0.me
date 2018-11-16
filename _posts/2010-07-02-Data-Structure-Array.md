@@ -224,7 +224,7 @@ dp[1] = max(dp[0],arr[1]);
 
 以上面左图为例，遍历完成后`dp`序列的状态如下，由于`dp`序列的递增性，我们只要返回数组末尾即可。
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/07/kadane-3.png" width="60%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/07/kadane-3.png" width="50%">
 
 ```cpp
 int find_max_sum_nonadjacent(vector<int>& a) {
@@ -244,6 +244,7 @@ int find_max_sum_nonadjacent(vector<int>& a) {
   return dp.back();
 }
 ```
+- [53. Maximum Subarray](https://leetcode.com/problems/maximum-subarray/description/)
 
 ### K-Sum问题
 
@@ -255,31 +256,52 @@ K Sum问题是数组中的经典问题了，其核心的问题为如何在一个
 	- 先排序后双指针碰撞
 	- 使用hashmap做索引
 	- 将问题转化为k-1 sum， 比如3sum可转化为for循环+two sum
-	- 动态规划
+	
 2. 如果要求数据是连续的，则可以考虑使用
 	- 双指针滑动窗口 + hashmap
-	- kadane算法
 	- 暴利枚举
-	- 动态规划
+	
+
+关于Two Sum， Three Sum的问题解法相对固定，这里重点分析一下LeetCode[560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)以及它的一个变种。这个问题是要求解所有数组中和为`k`的subarray的数量。
+
+我们先来分析下问题，题目是找出所有满足条件的subarray的数量，由于是subarray，因此数据是连续的，考虑使用滑动窗口或者暴利枚举。先看枚举法，枚举法就是令`i`从`0`到`size()-1`，依次遍历所有的subarray，并找出符合条件的解
+
+```cpp
+class Solution {
+public:
+    int subarraySum(vector<int>& nums, int k) {
+        int count = 0;
+        for(int i=0;i<nums.size();i++){
+            int sum = 0;
+            for(int j=i;j<nums.size();j++){
+                sum += nums[j];
+                if(sum==k){
+                    count += 1;
+                }
+            }
+        }
+        return count;
+    }
+};
+```
+上述枚举方法时间复杂度为`O(n^2)`。我们再来看是否有更优的解法，上面暴利方法的问题在于存在大量的重复计算，比如`i=0`时，我们计算过一遍`j=0`到`n-1`的`sum0`，当`i=1`时，我们又计算了一遍`j=1`到`n-1`的`sum2`，而`sum0`和`sum1`之间有这样的关系：`sum1 = sum0 - a[0]`。
 
 
-更多KSum问题
+LeetCode中关于KSum的问题有：
 
 - [1. Two Sum](https://leetcode.com/problems/two-sum/description/)
 - [15. 3Sum](https://leetcode.com/problems/3sum/description/)
 - [16. 3Sum Closest](https://leetcode.com/problems/3sum-closest/description/)
 - [18. 4Sum](https://leetcode.com/problems/4sum/description/)
+- [560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)
 
 
-另一个例子是LeetCode[560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)，这个例子和前面不同的是需要求解的subarry不是和最大，而是指定和为某个值，因此不能使用Kadane算法，
+K-Sum的问题还可以和上面最优化的问题，比如LeetCode中[325. Maximum Size Subarray Sum Equals k]()，求解所有和为`k`的子数组中，Size最大的，
 
 
 
-其它K-Sum相关问题
 
 
-- [53. Maximum Subarray](https://leetcode.com/problems/maximum-subarray/description/)
-- [325. Maximum Size Subarray Sum Equals k]()
 
 
 ### 滑动窗口问题
