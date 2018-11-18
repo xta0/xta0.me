@@ -130,7 +130,7 @@ a b c | d e f g h
 去重问题顾名思义，是指一个数组中去掉重复的元素。这个问题看似简单，但实际上需要考虑很多种情况，比如
 
 1. 数组是否有序
-2. 是否可以申请额外的辅助空间
+2. 是否可以使用额外的辅助空间
 3. 是否要求操作是inplace的，即去重操作需要在原数组内完成
 4. 如果数组中有重复的元素有多个，是保留1个还是n个
 
@@ -138,7 +138,7 @@ a b c | d e f g h
 
 首先，我们来看第一个问题，如何对一个有序数组去重，详细的问题描述可以参考[LeetCode26](https://leetcode.com/problems/remove-duplicates-from-sorted-array/description/)。
 
-如果数组有序，我们可以使用读写双指针进行遍历，读指针移动，写指针待命，当读指针和写指针内容不同时，更新写指针指向的数据，代码如下:
+如果数组有序，我们可以使用读写双指针进行遍历，读指针移动，写指针待命，当读指针和写指针内容不同时，写指针+1，修改内容为读指针指向的数据，代码如下:
 
 ```cpp
 class Solution {
@@ -147,15 +147,15 @@ public:
         if(nums.size() <= 1 ){
             return nums.size();
         }
-		//write pointer
-        int write = 1;
-		//i is read pointer
-        for(int i=1; i<nums.size();i++){
-            if(nums[i] != nums[write]){
-                nums[write++] = nums[i];
+		//two pointers
+        int writer = 0;
+		int reader = 0;
+        for(; reader<nums.size();reader++){
+            if(nums[writer] != nums[reader]){
+                nums[++write] = nums[reader];
             }
         }
-        return write;
+        return write+1;
     }
 };
 ```
@@ -262,9 +262,11 @@ K Sum问题是数组中的经典问题了，其核心的问题为如何在一个
 	- 暴利枚举
 	
 
-关于Two Sum， Three Sum的问题解法相对固定，这里重点分析一下LeetCode[560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)以及它的一个变种。这个问题是要求解所有数组中和为`k`的subarray的数量。
+关于Two Sum， Three Sum的问题解法都很经典，这里不做过多介绍。这里介绍一道LeetCode[560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)的解法，这种解法相对巧妙，不太容易想到，具有一定的启发意义。该问题的描述为：
 
-我们先来分析下问题，题目是找出所有满足条件的subarray的数量，由于是subarray，因此数据是连续的，考虑使用滑动窗口或者暴利枚举。先看枚举法，枚举法就是令`i`从`0`到`size()-1`，依次遍历所有的subarray，并找出符合条件的解
+> 给定一个数组，求解所有数组中和为k的subarray的数量。
+
+我们先来分析一下问题，题目是找出所有满足条件的subarray的数量，由于是subarray，因此数据是连续的，考虑使用滑动窗口或者暴利枚举。先看比较直观的枚举法，枚举法就是令`i`从`0`到`size()-1`，依次遍历所有的subarray，并找出符合条件的解
 
 ```cpp
 class Solution {
@@ -284,10 +286,52 @@ public:
     }
 };
 ```
-上述枚举方法时间复杂度为`O(n^2)`。我们再来看是否有更优的解法，上面暴利方法的问题在于存在大量的重复计算，比如`i=0`时，我们计算过一遍`j=0`到`n-1`的`sum0`，当`i=1`时，我们又计算了一遍`j=1`到`n-1`的`sum2`，而`sum0`和`sum1`之间有这样的关系：`sum1 = sum0 - a[0]`。
+上述枚举方法时间复杂度为`O(n^2)`，其问题在于第二层循环中存在大量的重复计算，比如`i=0`时，我们计算过一遍`j=0`到`n-1`的`sum0`，当`i=1`时，我们又计算了一遍`j=1`到`n-1`的`sum2`，而`sum0`和`sum1`之间有这样的关系：`sum1 = sum0 - a[0]`。因此我们的优化方向是尽量避免重复计算，我们可以先将数组中每个元素位置的sum值先提前计算好，保存在数组里，比如有数组：
 
+```cpp
+vector<int> arr = [1,-1,0,2];
+```
+可以先计算出每个位置的prefixSum：
 
-LeetCode中关于KSum的问题有：
+```cpp
+vector<int> prefixSum = [1,0,0,2];
+```
+现在假设`k=2`，显然从`prefixSum`数组中可以看到最后一个值为`2`，因此`[1,-1,0,2]`是一组解，subarray的范围是从`[0,3]`。除了这个解之外，还能看到有两组解，分别为`[2]`本身，`[0,2]`，如何找到这些解呢？也可以通过prefixSum数组：
+
+```cpp
+prefixSum[i] - prefixSum[x] = k; // x>=0 && x<i
+```
+接下来我们只要找到一个小于`i`的`x`位置，并且满足`prefixSum[x] = prefixSum[i] - k`即可，由于可能有`0`的存在，这样的`x`可能有多个，如上面例子中，当`i=3`时，`prefixSum[3]=2`，此时我们需要找到`x`使`prefixSum[x] = 2-k = 0`，显然`x=1`和`x=2`均是满足条件的解，这也恰好对应于`prefixSum`中的index值。给出实现代码如下：
+
+```cpp
+class Solution {
+public:
+    int subarraySum(vector<int>& nums, int k) {
+        vector<int> prefix;
+        int sum = 0;
+        for(int i=0;i<nums.size();i++){
+            sum+=nums[i];
+            prefix.push_back(sum);
+        }
+        int ans = 0;
+        unordered_map<int,int> um;
+        for(int i=0; i<nums.size();i++){
+            int prefixSum = prefix[i];
+            if(prefixSum == k){
+                ans+=1;
+            }
+            int target = prefixSum-k;
+            if(um.count(target)){
+                ans+=um[target];
+            }
+            um[prefixSum]++;
+        }
+        return ans;
+    }
+};
+```
+
+使用`prefixSum`的方法，复杂度从`O(n^2)`降到了`O(n)`，LeetCode中关于KSum的问题有：
 
 - [1. Two Sum](https://leetcode.com/problems/two-sum/description/)
 - [15. 3Sum](https://leetcode.com/problems/3sum/description/)
@@ -296,7 +340,12 @@ LeetCode中关于KSum的问题有：
 - [560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)
 
 
-K-Sum的问题还可以和上面最优化的问题，比如LeetCode中[325. Maximum Size Subarray Sum Equals k]()，求解所有和为`k`的子数组中，Size最大的，
+K-Sum的问题还可以和上面最优化的问题相结合，比如
+
+- [209. Minimum Size Subarray Sum](https://leetcode.com/problems/minimum-size-subarray-sum/description/)
+- [325. Maximum Size Subarray Sum Equals k]()
+- [713. Subarray Product Less Than K](https://leetcode.com/problems/subarray-product-less-than-k/description/)
+
 
 
 
