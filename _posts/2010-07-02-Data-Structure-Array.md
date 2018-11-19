@@ -262,7 +262,7 @@ K Sum问题是数组中的经典问题了，其核心的问题为如何在一个
 	- 暴利枚举
 	
 
-关于Two Sum， Three Sum的问题解法都很经典，这里不做过多介绍。这里介绍一道LeetCode[560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)的解法，这种解法相对巧妙，不太容易想到，具有一定的启发意义。该问题的描述为：
+关于Two Sum， Three Sum的问题解法都很经典，不做过多介绍。这里介绍一道LeetCode中第560题[Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)的解法，这种解法相对巧妙，不太容易想到，具有一定的启发意义。该问题的描述为：
 
 > 给定一个数组，求解所有数组中和为k的subarray的数量。
 
@@ -331,7 +331,7 @@ public:
 };
 ```
 
-使用`prefixSum`的方法，复杂度从`O(n^2)`降到了`O(n)`，LeetCode中关于KSum的问题有：
+使用`prefixSum`的方法，复杂度从`O(n^2)`降到了`O(n)`。其它关于KSum的问题：
 
 - [1. Two Sum](https://leetcode.com/problems/two-sum/description/)
 - [15. 3Sum](https://leetcode.com/problems/3sum/description/)
@@ -339,27 +339,22 @@ public:
 - [18. 4Sum](https://leetcode.com/problems/4sum/description/)
 - [560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)
 
-
 K-Sum的问题还可以和上面最优化的问题相结合，比如
 
 - [209. Minimum Size Subarray Sum](https://leetcode.com/problems/minimum-size-subarray-sum/description/)
 - [325. Maximum Size Subarray Sum Equals k]()
-- [713. Subarray Product Less Than K](https://leetcode.com/problems/subarray-product-less-than-k/description/)
 
-
-
-
-
-
+这类问题的解法同上面例子中提到的`prefixSum`类似，均是
 
 
 ### 滑动窗口问题
 
-滑动窗口问题也是数组相关的经典问题，并且经常和字符串问题
+滑动窗口问题也是数组相关的经典问题，并且经常和字符串问题一起出现。根据窗口类型的不同可分为固定窗口和非固定窗口，其对应的解题方法也不尽相同。
 
 
 - [76. Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring/description/)
-- [239. Sliding Window Maximum]()
+- [239. Sliding Window Maximum](https://leetcode.com/problems/sliding-window-maximum/description/)
+- [480. Sliding Window Median](https://leetcode.com/problems/sliding-window-median/description/)
 - [727. Minimum Window Subsequence](https://leetcode.com/problems/minimum-window-subsequence/description/)
 
 
