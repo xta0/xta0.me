@@ -465,7 +465,7 @@ A* 算法的难点在于如何找到合适的Heuristic函数，不同的搜索�
 
 关于Heuristic函数有一点需要特别注意的是，对终点cost的估计不能over estimate，也就是估计出来的值比实际值要大很多，这样会导致真实的最短路径一直被压在最小堆中，产生不必要的冗余计算。虽然Heuristic函数不可以over estimate，但是却可以under estimate。
 
-最后我们以一个迷宫的例子，可以直观的比较Dijkstra和`A*`算法的效率，如下图所示，左边为Dijkstra算法结果，需要走`103`步，右边是`A*`算法，只需要25步（图中格子之间路径的cost均为1）
+最后我们以一个迷宫的例子来直观的比较一下Dijkstra和`A*`算法的效率，如下图所示，左边为Dijkstra算法结果，需要走`103`步，右边是`A*`算法，只需要`25`步（图中格子之间路径的cost均为1）
 
 <div class="md-flex-h md-flex-no-wrap" >
 <div><img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/08/dijkstra-maze.png"></div>
