@@ -457,7 +457,7 @@ priority_queue pq(v1);
 //...
 pq.push( n.cost + H(n,v2) )
 ```
-
+A* 算法的难点在于如何找到合适的Heuristic函数，不同的搜索场景，使用的Heuristic也不相同，这里不再继续展开。
 
 ### 最小生成树
 
