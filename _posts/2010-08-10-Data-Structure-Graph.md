@@ -434,15 +434,15 @@ function dijkstra(v1,v2):
 
 A*是另一种寻找权值最优路径的方法，它是对Dijkstra算法的一种改进。Dijkstra虽然可以找到最短路径，但是BFS的寻找过程却不是最高效的，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2010/08/a-star-2.png" width="60%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/08/a-star-2.png" width="60%">
 
 假设我们要从中心点走到最右边的点，由于从中心扩散出去的每个点权值都相同，Dijkstra算法会在四个方向上不断尝试每个扩散出去的点，显然，这种搜法包含大量的无效搜索。仔细思考不难发现，其原因在于Dijkstra算法基于贪心策略每次只能确定当前最短距离，而不知道哪个方向才能逼近终点，如下图中，Dijkstra每次只能确定由a节点确定b节点，而对于终点c在哪则毫无所知，没有任何信息：
 
-<img src="{{site.baseurl}}/assets/images/2010/08/a-star-1.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/08/a-star-1.png">
 
 针对这个问题，A*算法改进了Dijkstra，引入了一个Heuristic的估计函数来来确定节点的扩散方向，使其可以沿着终点方向逼近，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2010/08/a-star-3.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/08/a-star-3.png">
 
 在引入了一个Heuristic函数后，我们相当于知道了一些额外的信息，这些信息可以帮助我们减少不必要的搜索。假设我们想要找从`a`到`c`的权值最小路径，对于任何中间节点`b`，我们要计算两个值
 
@@ -457,7 +457,11 @@ priority_queue pq(v1);
 //...
 pq.push( n.cost + H(n,v2) )
 ```
-A* 算法的难点在于如何找到合适的Heuristic函数，不同的搜索场景，使用的Heuristic也不相同，这里不再继续展开。
+A* 算法的难点在于如何找到合适的Heuristic函数，不同的搜索场景，使用的Heuristic也不相同，例如下面场景，我们希望从a走到c:
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/08/a-star-4.png" width="80%">
+
+此时可以将Heuristic函数定义为:`H(p1,p2) = abs(p1.x-p2.x) + abs(p1.-p2.y)`，则根据这个公式计算出的cost值如上图中每个格子所示，可以看到，从a点扩散出去的节点不再是等cost的，而是越偏向c点，cost的值越低。
 
 ### 最小生成树
 
