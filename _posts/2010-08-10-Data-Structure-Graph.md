@@ -332,7 +332,7 @@ function bfs(v1,v2):
 
 Dijkstra算法研究的是单源最短路径(single-source shortest paths)问题，即给定带权图 $G = <V，E>$，其中每条边 $(v_i，v_j)$ 上的权 $W[v_i，v_j]$ 是一个**非负实数**。计算从任给的一个源点$s$到所有其他各结点的最短路径。其基本思想是维护一张表，表中记录当前两点间的最短路径，然后不断更新路径值，直到找到最终解。
 
-```
+```javascript
 function dijkstra(v1,v2):
     //初始化所有节点的cost值
     for v: all vertexes:
@@ -354,10 +354,11 @@ function dijkstra(v1,v2):
             cost := v.cost + weight of edge(v,n)
             if cost < n.cost:
                 n.cost = cost
+                //记录前驱节点
                 n.prev = v
                 pq.push(n)
 
-    //使用v2的前驱指针重建到v1的路径
+    //使用v2的前驱节点，重建到v1的路径
 ```
 
 上述是Dijkstra算法的伪码，我们通过下面一个例子看看它是如何工作的。如下图所示，假设我们要求从$\\{a,f\\}$的权值最短路径。
@@ -396,6 +397,12 @@ function dijkstra(v1,v2):
 3. 路径重建： $O(E)$
 4. 总的时间复杂度为: $O(V\log{V}+E\log{V}) = O(E\log{V})$ (如果图是连通的，有$V=O(E)$)
 
+
+### A* 算法
+
+A*是另一种寻找权值最优路径的方法，它是对Dijkstra算法的一种改进。Dijkstra虽然可以找到最短路径，但是BFS的寻找过程却不是最高效的，如下图所示
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/08/a-star-2.png">
 
 ### 最小生成树
 
@@ -529,6 +536,8 @@ void TopsortbyQueue(Graph& G) {
 
 ### Resources 
 
+- [A* Algorithm For Beginners](https://www.gamedev.net/articles/programming/artificial-intelligence/a-pathfinding-for-beginners-r2003/)
+- [Introduction to A*](http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html)
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
 - [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)
 - [算法与数据结构-1-北大-Cousera](https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome)
