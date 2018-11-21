@@ -227,7 +227,7 @@ void graph_traverse(){
 4. 不断递归+回溯，直至所有节点都被访问
 
 
-``` 
+``` cpp
 void DFS(Vertex v) { // 深度优先搜索的递归实现
     status(v) = VISITED;  // 把标记位设置为 VISITED
     Visit(v); // 访问顶点v
@@ -244,7 +244,7 @@ void DFS(Vertex v) { // 深度优先搜索的递归实现
 
 例如上图DFS的遍历次序为：`a b c f d e g`。这里有一点要注意，由于第二步对相邻节的未访问的节点选取规则不唯一（下图例子使用的是字母顺序），因此对全图进行遍历得到结果序列是不唯一的。类似的，如果使用DFS进行搜索，寻找两点间路径，得到的结果不一定是最短路径。
 
-```
+```javascript
 //使用DFS进行搜索
 function dfs(v1,v2):
     v1.status = visited
@@ -267,7 +267,7 @@ function dfs(v1,v2):
 3. 依次访问这些邻接顶点的邻接顶点，如此反复
 4. 直到所有点都被访问过
 
-``` 
+``` cpp
 //从v点开始便利啊
 void BFS(Vertex v) {
     status(v) = VISITED; 
@@ -402,7 +402,16 @@ function dijkstra(v1,v2):
 
 A*是另一种寻找权值最优路径的方法，它是对Dijkstra算法的一种改进。Dijkstra虽然可以找到最短路径，但是BFS的寻找过程却不是最高效的，如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/08/a-star-2.png">
+<img src="{{site.baseurl}}/assets/images/2010/08/a-star-2.png" width="80%">
+
+假设我们要从中心点走到最右边的点，由于从中心扩散出去的每个点权值都相同，Dijkstra算法会在四个方向上不断尝试每个扩散出去的点，显然，这种搜法包含大量的无效搜索。仔细思考不难发现，其原因在于Dijkstra算法基于贪心策略每次只能确定当前最短距离，而不知道哪个方向才能真正逼近重点，如下图中，Dijkstra每次只能确定由a节点确定b节点，而对于终点c在哪则毫无所知，没有任何信息：
+
+<img src="{{site.baseurl}}/assets/images/2010/08/a-star-1.png">
+
+针对这个问题，A*算法改进了Dijkstra，引入了一个Heuristic函数来来确定节点的扩散方向，使其可以沿着重点方向逼近，如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2010/08/a-star-3.png">
+
 
 ### 最小生成树
 
@@ -425,7 +434,7 @@ Kruskal算法是一种贪心算法，主要步骤如下：
 
 如上图所示，首先将所有边放入优先队列，则权值最小的`a`在堆顶，然后`a`出队，其两个顶点不连通，因此将该边放入图中（标红），当`e`出队的时候，我们发现`e`的两个顶点可以已通过`a,d`连通，因此`e`被忽略。按照此规则，以此类推，最终得到最小生成树（图中红色边）为:`a,b,c,d,f,h,i,k,p`总权值为`1+2+3+4+6+8+9+11+16 = 60`。不难看出，上述规则依旧是贪心法，每次选择权值最小的路径，其伪码如下：
 
-```
+```javascript
 function kruskal(graph):
     //创建一个最小堆
     priority_queue pq
