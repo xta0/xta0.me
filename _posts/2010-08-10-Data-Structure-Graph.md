@@ -43,7 +43,7 @@ categories: [DataStructure]
 
 图结构的接口主要包括顶点操作，边操作，遍历算法等
 
-``` 
+``` cpp
 //定义顶点
 class Vertex{
     enum{
@@ -99,7 +99,7 @@ public:
 };
 ```
 
-## 图的实现
+## 图的表示
 
 上面我们已经了解了关于图的逻辑模型和基本接口，但是在计算机中该如何表示这个模型呢？方法有很多种，这里我们主要介绍三种，分别是边表(edge list)，邻接矩阵(adjacency matrix)和邻接表(adjacency list)。
 
@@ -112,6 +112,10 @@ public:
 | (1,2) | (1,4) | (1,7) | (2,3) | (2,5) | (3,6) | (4,7) | (5,6) | (5,7) | (6,7) |
 
 对于每个节点的有序对，使用起点和终点来表示方向，值为顶点的内容。因此这种表示方法不会显示的存放顶点，所有顶点信息均包含在边表中。
+
+```python
+edge_list = [ [1,2],[1,4],[1,7],...,[6,7]]
+```
 
 显然这种方式对顶点操作不是很友好，如果想要找出`4`的邻居节点，则要遍历每个节点，不是很高效。
 
@@ -135,7 +139,7 @@ $$
 
 基于邻接矩阵的图结构，可以用二维数组来表达：
 
-``` 
+``` cpp
 GraphMatrix:public Graph{
 private:
     vector<Vertex* > V; //顶点
@@ -144,7 +148,6 @@ private:
     //map<Vertex* , set<Edge* >> matrix; //也可以使用map
 };
 ```
-
 使用邻接矩阵的优点是：
     
 1. 直观，易于理解和实现
@@ -156,7 +159,18 @@ private:
 
 缺点为：
 1. 空间复杂度为$\Theta(n^2)$，与边数无关
-            
+
+以左边无向图的邻接矩阵为例，Python表示如下：
+
+```python
+adjacency_matrix = [
+    #v0,v1, v2,  v3
+    [0, 1,  1,  0], #v0
+    [1, 0,  1,  1], #v1
+    [1, 1,  0,  0], #v2
+    [0, 1,  0,  0]  #v3
+]
+```
 
 ### 邻接表
 
@@ -184,8 +198,26 @@ $$
 
 上图分别为无向图，带权图和有向图的邻接表，对于有向图，有出度和入度两种邻接表，这里只给出了出度的邻接表，对于入度的情况类似。由上图的结构可以看出使用邻接表，对每个节点的相邻节点的访问是非常高效的，另外，邻接表的空间利用率也相对较高。
 
+以左边无向图的邻接表为例，Python表示如下：
 
-- 几种图的不同实现方式的性能比较
+```python
+#使用list
+adjacency_list = [
+    [1,2], #v0
+    [0,2,3], #v1
+    [0,1], #v2
+    [1,1] #v3
+]
+#也可以使用kev,value对表示
+adjacency_map = {
+    0: [1,2],
+    1: [0,2,3],
+    2: [0,1],
+    3: [1,1]
+}
+```
+
+### 几种图的不同实现方式的性能比较
 
 ||边表|邻接表|邻接矩阵|
 |内存消耗| $V+E$| $V+E$ | $V^2$ |
@@ -335,29 +367,29 @@ Dijkstra算法研究的是单源最短路径(single-source shortest paths)问题
 ```javascript
 function dijkstra(v1,v2):
     //初始化所有节点的cost值
-    for v: all vertexes:
+    for v in all vertexes{
         v.cost = maximum
-
+    }
     v1.cost = 0
     //创建一个最小堆保存顶点，优先级最低的顶点在堆顶部
-    priority_queue pq = {v1}
+    priority_queue pq(v1.cost);
 
-    while not pq.empty():
+    while !(pq.empty()){
         v = pq.front(); //弹出优先级最低的vertex
         v.status = visited
         if v == v2:
+            //找到v2
             break;
         //遍历v的每一个未被访问的相邻节点
          for n : v.unvisited_neighbors:
-            n.status = visited
             //计算到达n的cost
             cost := v.cost + weight of edge(v,n)
             if cost < n.cost:
                 n.cost = cost
                 //记录前驱节点
                 n.prev = v
-                pq.push(n)
-
+                pq.push( n.cost )
+    }
     //使用v2的前驱节点，重建到v1的路径
 ```
 
@@ -408,18 +440,24 @@ A*是另一种寻找权值最优路径的方法，它是对Dijkstra算法的一�
 
 <img src="{{site.baseurl}}/assets/images/2010/08/a-star-1.png">
 
-针对这个问题，A*算法改进了Dijkstra，引入了一个Heuristic函数来来确定节点的扩散方向，使其可以沿着重点方向逼近，如下图所示
+针对这个问题，A*算法改进了Dijkstra，引入了一个Heuristic的估计函数来来确定节点的扩散方向，使其可以沿着终点方向逼近，如下图所示
 
 <img src="{{site.baseurl}}/assets/images/2010/08/a-star-3.png">
 
-假设我们想要找从`a`到`c`的权值最小路径，对于任何中间节点`b`，我们要计算两个值
+在引入了一个Heuristic函数后，我们相当于知道了一些额外的信息，这些信息可以帮助我们减少不必要的搜索。假设我们想要找从`a`到`c`的权值最小路径，对于任何中间节点`b`，我们要计算两个值
 
 1. 从`a`到`b`确定的权值(同Dijkstra)
 2. 从`b`到`c`的估计值（estimated cost）
 
-A*的整体算法框架同Dijkstra相同，只需要修改两点
+A*的整体算法框架同Dijkstra相同，只需要将最小堆中存放的cost改为`cost(n) + H(n,target)`即可
 
-1. 
+```cpp
+v1.cost = H(v1,v2)
+priority_queue pq(v1);
+//...
+pq.push( n.cost + H(n,v2) )
+```
+
 
 ### 最小生成树
 
