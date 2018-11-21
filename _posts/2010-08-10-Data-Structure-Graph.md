@@ -468,8 +468,8 @@ A* 算法的难点在于如何找到合适的Heuristic函数，不同的搜索�
 最后我们以一个迷宫的例子，可以直观的比较Dijkstra和`A*`算法的效率，如下图所示，左边为Dijkstra算法结果，需要走`103`步，右边是`A*`算法，只需要25步（图中格子之间路径的cost均为1）
 
 <div class="md-flex-h md-flex-no-wrap" >
-<div><img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/08/dijkstra-maze.png" width="50%"></div>
-<div><img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/08/a-star-maze.png" width="50%"></div>
+<div><img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/08/dijkstra-maze.png"></div>
+<div class="md-margin-left-12"><img class="md-img-center" src="{{site.baseurl}}/assets/images/2010/08/a-star-maze.png"></div>
 </div>
 
 ### 最小生成树
