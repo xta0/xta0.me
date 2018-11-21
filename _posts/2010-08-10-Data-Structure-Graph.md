@@ -402,7 +402,7 @@ function dijkstra(v1,v2):
 
 A*是另一种寻找权值最优路径的方法，它是对Dijkstra算法的一种改进。Dijkstra虽然可以找到最短路径，但是BFS的寻找过程却不是最高效的，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2010/08/a-star-2.png" width="80%">
+<img src="{{site.baseurl}}/assets/images/2010/08/a-star-2.png" width="60%">
 
 假设我们要从中心点走到最右边的点，由于从中心扩散出去的每个点权值都相同，Dijkstra算法会在四个方向上不断尝试每个扩散出去的点，显然，这种搜法包含大量的无效搜索。仔细思考不难发现，其原因在于Dijkstra算法基于贪心策略每次只能确定当前最短距离，而不知道哪个方向才能真正逼近重点，如下图中，Dijkstra每次只能确定由a节点确定b节点，而对于终点c在哪则毫无所知，没有任何信息：
 
@@ -412,6 +412,14 @@ A*是另一种寻找权值最优路径的方法，它是对Dijkstra算法的一�
 
 <img src="{{site.baseurl}}/assets/images/2010/08/a-star-3.png">
 
+假设我们想要找从`a`到`c`的权值最小路径，对于任何中间节点`b`，我们要计算两个值
+
+1. 从`a`到`b`确定的权值(同Dijkstra)
+2. 从`b`到`c`的估计值（estimated cost）
+
+A*的整体算法框架同Dijkstra相同，只需要修改两点
+
+1. 
 
 ### 最小生成树
 
@@ -517,29 +525,30 @@ Prim 算法非常类似于 Dijkstra 算法，算法中的距离值不需要累�
 void TopsortbyQueue(Graph& G) {
     for (int i = 0; i < G.VerticesNum(); i++)
         G.status(G.V[i]) = UNVISITED; // 初始化
-        queue<Vertex<int>> Q; // 使用STL中的队列
-        for (i = 0; i < G.VerticesNum(); i++){ // 入度为0的顶点入队
-            if (G.V[i].indegree == 0) {
-                Q.push(i);
-            }
+    }
+    queue<Vertex<int>> Q; // 使用STL中的队列
+    for (i = 0; i < G.VerticesNum(); i++){ // 入度为0的顶点入队
+        if (G.V[i].indegree == 0) {
+            Q.push(i);
         }
-        while (!Q.empty()) { // 如果队列非空
-            Vertex<int> v = Q.front(); 
-            Q.pop(); // 获得队列顶部元素， 出队
-            Visit(G,v); 
-            G.status(v) = VISITED; // 将标记位设置为VISITED
-            for (Edge e = G.FirstEdge(v); G.IsEdge(e); e = G.NextEdge(e)) {
-                Vertex<int> v = G.toVertex(e);
-                v.indegree--; // 相邻的顶点入度减1    
-            if (v.indegree == 0){ // 顶点入度减为0则入队
-                Q.push(v);
-            } 
+    }
+    while (!Q.empty()) { // 如果队列非空
+        Vertex<int> v = Q.front(); 
+        Q.pop(); // 获得队列顶部元素， 出队
+        Visit(G,v); 
+        G.status(v) = VISITED; // 将标记位设置为VISITED
+        for (Edge e = G.FirstEdge(v); G.IsEdge(e); e = G.NextEdge(e)) {
+            Vertex<int> v = G.toVertex(e);
+            v.indegree--; // 相邻的顶点入度减1    
+        if (v.indegree == 0){ // 顶点入度减为0则入队
+            Q.push(v);
+        } 
+    }
+    for (i = 0; i < G.VerticesNum(); i++){ // 判断图中是否有环
+        if (G.status(V[i]) == UNVISITED) {
+            cout<<“ 此图有环！”; break;
         }
-        for (i = 0; i < G.VerticesNum(); i++){ // 判断图中是否有环
-            if (G.status(V[i]) == UNVISITED) {
-                cout<<“ 此图有环！”; break;
-            }
-        }
+    }
 }
 ```
 
