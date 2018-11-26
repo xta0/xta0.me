@@ -1,13 +1,9 @@
 ---
 layout: post
-list_title: 数据科学 | Data Science | Python For Data Analysis
+list_title: 数据科学 | Data Science | Python For Data Analysis | Numpy
 title: Python For Data Analysis
 categories: [Data Science, Python, Machine Learning]
 ---
-
-## 概述
-
-这篇文章会重点介绍Python数据分析工具的关系以及一些核心的知识点，这篇文章不会cover一些具体的API用法，这些内容可以参考各自网站的API手册
 
 ## Python Stack Overview
 
@@ -17,11 +13,7 @@ categories: [Data Science, Python, Machine Learning]
 - Matplotlib
 - Scipy
 
-Python系统自带一些数值计算的API，[Numpy](https://www.python-course.eu/numpy.php)是Python数值计算API的封装，Pandas是Numpy的封装
-
-### Python3
-
-二维数组
+Python系统自带一些数值计算的API，[Numpy](https://www.python-course.eu/numpy.php)是Python数值计算API的封装，Pandas是Numpy的封装。Matplotlib用来做数据可视化
 
 ## Numpy
 
@@ -30,9 +22,6 @@ Python系统自带一些数值计算的API，[Numpy](https://www.python-course.e
 1. compact, they don't take up as much space in memory as a Python list
 2. efficient, computations usually run quicker on numpy arrays then Python lists
 3. convenient 
-
-
-### 2D Array
 
 ```python
 import numpy as np
@@ -47,10 +36,12 @@ world = np.array([ [0, 0, 0, 1, 0],
                    [1, 0, 0, 0, 0] ])
 
 # Visualize the world
+print(type(world)) #ndarray
 print(world.shape) #<row,column> (6,5)
 print('height' + str(world.shape[0]));  #6
 print('width' + str(world.shape[1]));  #5
 ```
+上面我们使用`numpy`创建了一个2维数组，在`numpy`中，N维矩阵可以通过`np.array`构建，类型为`ndarray`。`ndarray`有一个`shape`属性，类型为`tuple`，用来保存矩阵的维度。
 
 
 ## Numpy & Pandas for 1D Data
