@@ -294,8 +294,8 @@ public:
 
 
 <div class="md-flex-h md-flex-no-wrap">
-<div><img src="{{site.baseurl}}/assets/images/2015/09/Soduku-1.jpg"></div>
-<div><img src="{{site.baseurl}}/assets/images/2015/09/Soduku-2.jpg"></div>
+<div><img src="{{site.baseurl}}/assets/images/2015/08/Soduku-1.jpg"></div>
+<div><img src="{{site.baseurl}}/assets/images/2015/08/Soduku-2.jpg"></div>
 </div>
 
 这个题目的解法可以通过枚举空白处所有可能的情况，解法相对暴利。由于所有每个位置的解依赖它前面的解，因此这是一个深度搜索的过程。
