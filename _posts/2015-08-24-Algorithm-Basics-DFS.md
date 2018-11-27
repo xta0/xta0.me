@@ -292,10 +292,9 @@ public:
 
 > 将数字1到9,填入9x9矩阵中的小方格，使得矩阵中的每行，每列，每个3x3的小格子内，9个数字都会出现"。
 
-
 <div class="md-flex-h md-flex-no-wrap">
-<div><img src="{{site.baseurl}}/assets/images/2015/08/Soduku-1.jpg"></div>
-<div><img src="{{site.baseurl}}/assets/images/2015/08/Soduku-2.jpg"></div>
+<div><img src="{{site.baseurl}}/assets/images/2015/08/Sudoku-1.jpg"></div>
+<div><img src="{{site.baseurl}}/assets/images/2015/08/Sudoku-2.jpg"></div>
 </div>
 
 这个题目的解法可以通过枚举空白处所有可能的情况，解法相对暴利。由于所有每个位置的解依赖它前面的解，因此这是一个深度搜索的过程。
