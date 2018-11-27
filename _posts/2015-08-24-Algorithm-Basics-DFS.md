@@ -288,11 +288,11 @@ public:
 
 ### Sudoku问题
 
-我们再来看一道数独问题，和N皇后问题一样，求解数独问题也是一个典型的DFS搜索+剪枝的问题，通过不停尝试来找到最终解，数独问题描述如下:
+我们再来看一道数独问题，和N皇后问题一样，求解数独问题也是一个暴利搜索的典型应用。其思路为在空位尝试从1-9的每个值，每放置一个后进行DFS递归，如果所有空位都能填满则返回一组解，如果有空位不满足条件，则进行回朔，重置状态后再换另一个数字进行DFS。
 
 > 将数字1到9,填入9x9矩阵中的小方格，使得矩阵中的每行，每列，每个3x3的小格子内，9个数字都会出现"。
 
-<div class="md-flex-h md-flex-no-wrap">
+<div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
 <div><img src="{{site.baseurl}}/assets/images/2015/08/Sudoku-1.jpg"></div>
 <div class="md-margin-right-12"><img src="{{site.baseurl}}/assets/images/2015/08/Sudoku-2.jpg"></div>
 </div>
