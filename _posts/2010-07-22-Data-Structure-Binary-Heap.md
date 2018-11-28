@@ -60,7 +60,6 @@ private:
     int parent_index(int pos){return (pos-1)/2;}
     void sift_up(size_t pos);
     void sift_down(size_t pos);
-    void buildHeap(vector<int>& arr);
 };
 ```
 
