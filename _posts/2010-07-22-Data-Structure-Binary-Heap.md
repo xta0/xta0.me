@@ -30,7 +30,7 @@ categories: [DataStructure]
 
 ### 堆的表示
 
-正如前文所述，由于堆是一种完全二叉树，我们可以用数组表示，如上图中的小顶堆可用数组`[4,16,28,31,44,59]`表示。对于数组中的任意元素，下标为`i`的节点的左孩子节点的下标为`i*2`，右孩子节点的下标为`2*i+1`，父节点的坐标为`i/2`。为了方便起见，我们让数组的下标从1开始
+正如前文所述，由于堆是一种完全二叉树，我们可以用数组表示，如上图中的小顶堆可用数组`[4,16,28,31,44,59]`表示。对于数组中的任意元素，下标为`i`的节点的左孩子节点的下标为`i*2+1`，右孩子节点的下标为`2*i+2`，父节点的坐标为`(i-1)/2`。
 
 ```cpp
 class Heap{
@@ -40,8 +40,7 @@ class Heap{
 
 public:
     Heap(int capicity){
-        //为了寻址方便，数组下标从1开始
-        heap = vector<int>(capacity+1, 0);
+        heap = vector<int>(capacity, 0);
         n = capacity;
         count = 0;
     }
@@ -49,15 +48,16 @@ public:
         capacity = arr.size();
         count = capacity;
         heap = arr;
-        buildHeap();
+        buildHeap(heap);
     }
+    void buildHeap(vector<int>& arr);
     void push(int data);
-    int top();
+    int top(){ return heap[0]; };
     void pop();
 private:
-    int left_child_index(int pos){return pos*2;}
-    int right_child_index(int pos){return pos*2+1;}
-    int parent_index(int pos){return pos/2;}
+    int left_child_index(int pos){return pos*2+1;}
+    int right_child_index(int pos){return pos*2+2;}
+    int parent_index(int pos){return (pos-1)/2;}
     void sift_up(size_t pos);
     void sift_down(size_t pos);
     void buildHeap(vector<int>& arr);
@@ -70,7 +70,7 @@ private:
 
 ```cpp
 //递归调整
-void sift_down(size_t position){
+void sift_down(vector<int>& heap, size_t position){
     //找到左右节点的index
     size_t l = left_child_index(position);
     size_t r = right_child_index(position);
@@ -104,7 +104,7 @@ void sift_down(size_t position){
 和SiftDown类似，SiftUp调整是将一个不合适的子节点上升到合适的位置，例如新元素进入堆之后，该元素要进行SiftUp调整
 
 ```cpp
-void sift_up(size_t pos){
+void sift_up(vector<int>& heap, size_t pos){
     int p = parent_index(pos);
     if(p > 0 && heap[pos]<heap[p]){
         //交换父子节点
@@ -131,16 +131,12 @@ void sift_up(size_t pos){
 
 1. 按照完全二叉树排布，形成树形结构，如上图
 2. 成树后，可以看到有4个节点(`⌊4/2⌋`)已经是叶子节点，它们不需要参与建堆的过程
-3. 从`23`开始（数组第`i=⌊4/2-1⌋=3`项）向前依次进行递归调整，顺序依次是
-    - `23` SiftUp
-    - `71` SiftUp
-    - `73` SiftUp
-    - `72` SiftUp
+3. 从`23`开始（数组第`i=⌊4/2-1⌋=3`项）依次进行`sift_down`调整，顺序依次是:`23`,`71` ,`73` ,`72` 
 
 ```cpp
-void buildHeap(vector<int>& arr){
+void buildHeap(vector<int>& heap){
   for (int i=count/2-1; i>=0; i--)
-        sift_up(i);
+        sift_down(heap,i);
     } 
 }
 ```
@@ -160,14 +156,14 @@ void buildHeap(vector<int>& arr){
 对于插入操作，我们首先将待插入元素放到数组末尾，然后利用前面提到的`sift_up`算法，让新插入的节点与父节点对比大小，如果不满足子节点小于等于父节点的大小关系，我们就互换两个节点。一直重复这个过程，直到父子节点之间满足刚说的那种大小关系。
 
 ```cpp
-void push(int data){
+void push(vector<>int data){
     if(count >= n){
         return ; //堆满了
     }
     ++count;
     heap[count] = data;
     //递归调整
-    sift_up(count);
+    sift_up(heap,count);
 }
 ```
 
@@ -182,17 +178,34 @@ void pop(){
     if(count == 0){
         return ; //堆中没有数据
     }
-    heap[1] = heap[count]; //交换堆顶和末尾元素
+    heap[0] = heap[count]; //交换堆顶和末尾元素
     heap.pop_back(); //删除末尾元素
     --count ;
     //堆顶元素sift_down
-    sift_down(1);
+    sift_down(heap,1);
 }
 ```
 
 ### 堆操作时间复杂度分析
 
 建堆的效率前面已经分析过了为`O(n)`，对于插入和删除操作来说，它们的主要操作是`sift_down`和`sift_up`操作，这两种操作每次均是向上或者向下跨越一层，因此时间复杂度和树的高度成正比，也就是`O(logn)`。
+
+### 堆排序
+
+我们可以利用堆顶每次返回最优解这个特性来对数组进行原地排序，也就是所谓的堆排序。假设我们要从小到大排序，这时候我们需要建一个大顶堆，按照大顶堆的特性，堆顶元素为数组最大元素，我们把它跟最后一个元素交换，那最大元素就放到了下标为n的位置。接下来为了保持堆的特性，我们需要对新的堆顶进行sift down操作，这样剩下的`n-1`个元素又构成了新的大顶堆。我们再取堆顶的元素放到`n-1`的位置，重复这个过程，直到堆中只剩一个元素，排序工作就完成了。
+
+```cpp
+void heap_sort(vector<int>& a){
+    buildHeap(a);
+    int k = a.size()-1;
+    while(k>=0){
+        swap(a[0],a[k]);
+        --k;
+        sift_down(a,0);
+    }
+}
+```
+上面的堆排序算法包含两个过程，建堆过程和堆调整过程，总的时间复杂度为`O(n) + O(n*log(n)) = O(nlog(n))`。由于存在元素交换，因此堆排序不是稳定排序。
 
 ## 堆的其它实现
 
@@ -229,12 +242,38 @@ public:
     }
 };
 ```
+上述算法，遍历数组需要`O(n)`时间复杂度，一次`push`或`pop`操作需要 `O(logK)` 的时间复杂度，所以最坏情况下，`n`个元素都入堆一次，所以时间复杂度就是`O(nlogK)`。
+
 - **无序数组中位数问题**
 
 这也是一道经典的面试题，常规做法还是对数组排序，然后选出中位数。显然这种方式的时间复杂度和上面的例子相同，为`O(Nlog(N) + O(N/2))`。
 
-如果使用堆，该怎么思考呢？
+如果使用堆，我们则无需排序即可找出中位数，如果做到呢？首先，我们需要维护两个堆，一个堆是小顶堆和一个堆是大顶堆，大顶堆中存储前半部分数据，小顶堆中存储后半部分数据，且小顶堆中的数据都大于大顶堆中的数据。如果数组的大小为偶数，则大小堆的size均为`n/2`，中位数为大小堆堆元素中的某一个。如果数组的大小为奇数，则可以令大顶堆的size为`n/2+1`，则中位数为大顶堆的堆顶元素。
 
+```cpp
+int findMedium(vector<int>& arr){
+    priority_queue<int> maxHeap;
+    priority_queue<int,std::vector<int>,std::greater<int>> minHeap;
+
+    for(auto x : arr){
+        if(maxHeap.empty() || x < maxHeap.top()){
+            maxHeap.push(x);
+        }else{
+            minHeap.push(x);
+        }
+        //adjust size
+        if(minHeap.size() > maxHeap.size()){
+            maxHeap.push(minHeap.top());
+            minHeap.pop();
+        }
+        if(maxHeap.size() - minHeap.size() > 1){
+            minHeap.push(maxHeap.top());
+            maxHeap.pop();
+        }
+    }
+    return maxHeap.top();
+}
+```
 
 ### Resources
 
