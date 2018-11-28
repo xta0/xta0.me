@@ -54,7 +54,8 @@ categories: [Compiler]
 	- 寻找token class的方法一般是使用<em>regular langauages</em>
 
 - 什么是Regular Language:
-	- 定义Regular Language一般需要使用正则表达式(Regular Expression):
+	- [正则语言](https://zh.wikipedia.org/wiki/%E6%AD%A3%E5%88%99%E8%AF%AD%E8%A8%80)
+	- 定义Regular Language需要使用正则表达式(Regular Expression):
 		- 每一种正则表达式代表一种字符集，有两种基本的字符集：
 			- Single character: 
 				- `'c' = {"c"}`:表示只含有这个字符的字符集
@@ -87,7 +88,7 @@ categories: [Compiler]
 				- `(0+1)*` = `"" + (0+1) + (0+1)(0+1) + ... + (0+1)...(0+1) ` = all string of 1's and 0's。意思是这个正则表达式可以表示字符集Z的任意字符组合。
 				- 表征同一字符集的正则表达式有不止一个，例如第1个例子`1*`也可以写作`1* +1 `第2个例子也可以写作`11+10`。
 - In Summary 小结
-	- Regular expressions specify regular languages 正则表达式是定义正则语言的基础
+	- 正则表达式是定义正则语言的基础
 	- 正则表达式的基础语法有5条
 		- Two base cases
 			- empty and 1-character strings
@@ -134,11 +135,11 @@ categories: [Compiler]
 ## Lexical Specifications
 
 - LA的具体表现:
-	- keyword: "if" or "else" or "then" or ...
+	- 关键字： "if" or "else" or "then" or ...
 		- 正则： `'i''f' + 'e''l''s''e'`
 		- 简化： `'if' + 'else' + 'then' + ...`
 	
-	- Integer: a non-empty string of digits
+	- 数字: a non-empty string of digits
 		- 单个integer的正则：`digit = '0'+'1'+'2'+'3'+...+'9'`
 		- 至少有一个非空integer的正则：`AA* => digit digit*`
 			- 简化上面，得到总的正则为:`A* => digit*`
