@@ -148,14 +148,14 @@ public:
             return nums.size();
         }
 		//two pointers
-        int writer = 0;
-		int reader = 0;
-        for(; reader<nums.size();reader++){
-            if(nums[writer] != nums[reader]){
-                nums[++write] = nums[reader];
+    	int write = 1;
+        int read = 1;
+        while(read < nums.size()){
+            if(nums[read] != nums[write-1]){    
+                nums[write++] = nums[read];
             }
-        }
-        return write+1;
+            read++;
+        } 
     }
 };
 ```
@@ -164,12 +164,13 @@ public:
 
 ```cpp
 int write = 2;
-for(int i= 2; i<nums.size();i++){
-	//reader 和 writer -2 比较
-	if(nums[i] != nums[write-2]){
-		nums[write++] = nums[i];
+int read = 2;
+while(read < nums.size()){
+	if(nums[read] != nums[write-2]){    
+		nums[write++] = nums[read];
 	}
-}
+	read++;
+} 
 ```
 上述算法的时间复杂度均为`O(n)`。对于无序数组的去重则需要在双指针的基础上，增加一个辅助集合（通常是set）保存非重复元素，将判重条件修改为查看set是否存在即可，这种方式的时间复杂度同样为`O(n)`，但是引入了空间复杂度`O(n)`。如果不允许使用额外空间，则只能先排序后再排重，时间复杂度为`O(log(n))`。
 
