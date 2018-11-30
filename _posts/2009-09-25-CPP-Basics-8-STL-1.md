@@ -402,51 +402,18 @@ for(auto itor=p.first; itor!=p.second;itor++){
 
 ### set/multiset
 
-`set`和`multiset`表示数学中集合，`set`和`multiset`的定义如下：
+- `set`和`multiset`表示数学中集合
+- 集合内的元素均是有序存储的，默认比较器为`std::less<T>`值小的元素在前面。
+- `set`不允许集合中的有重复元素。`multiset`允许。
+- `set`和`multiset`底层实现为BST。
+- 如果`set/multiset`中保存的是自定义元素，则需要显示指定序函数
 
 ```cpp
-//set
-tempate<class key, class pred = less<key>>
-class set{...}
-
-//multiset
-template<class key, class Pred=less<key>,class A = allocator<key>>
-class multiset{...}
+auto comp = [](const Sales_Data& lhs, const Sale_Data& rhs){
+	return lhs.isbn()<rhs.isbn();
+};
+set<Sales_Data,decltype(comp)> ss(comp);
 ```
-
-`set`模板中第二个类型是函数模板，其默认值为`less<key>`，定义如下：
-
-```cpp
-template<class T>
-struct less:publi binary_function<T,T,bool>{
-	bool operator()(const T& x, const T& y) const{
-		//默认使用<比较大小
-		return x<y;
-	}
-}
-```
-如果向set中插入自定义对象，该对象需要实现`operator<(...)`
-
-```cpp
-class A{
-	private: 
-		int n;
-	public:
-		A(int n_):n(n_){}
-	bool operator<(const A& other){
-		return n<other.n;
-	}	
-}
-```
-- 成员函数:
-	- 头文件`<set>`
-	- `iterator find(const T&val);`：在容器中查找值为val的元素，返回其迭代器。如果找不到，返回end()。
-	- `iterator insert(const T& vale);`：将val插入到容器中并返回其迭代器
-	- `void insert(iterator first, iterator last);`将区间[first,last)插入容器
-	- `int count(const T& val);`统计多少个元素的值和val相等
-	- `iterator lower_bound(const T& val);`查找一个最大位置it，使得[begin(),it)中所有元素都比val小。
-	- `iterator upper_bound(const T& val);`查找一个最大位置it，使得[it,end())中所有元素都比val小。
-
 
 ### pair
 
@@ -487,29 +454,11 @@ pair<string,int> process(vector<string>& v){
 
 ### map/multimap
 
-- 定义
-
-```cpp
-//map
-template<class key,class T, class Pred = less<key>,class A = allocator<T>>
-class map{	
-	//typedef pair<const key, T> value_type;
-};
-
-//multimap
-template<class key, class T, class Pred = less<key>, class A = allocator<T>>
-class multimap{
-	//typedef pair<const key, T> value_type;
-
-};
-```	
-- 头文件`#include <map>`
-- **map**
-	- map**有序的**k-v集合，元素按照`key`**从小到大**排列，缺省情况下用`less<key>`即`<`定义
-	- map中相同的`key`的元素只保留一份
-	- map中元素都是`pair模板类`对象。`first`返回key，`second`返回value
-	- map有`[]`成员函数，支持k-v赋值
-	- 返回对象为second成员变量的引用。若没有关键字key的元素，则会往pairs里插入一个关键字为key的元素，其值用无参构造函数初始化，并返回其值的引用
+- **有序的**k-v集合，元素按照`key`**从小到大**排列，缺省情况下用`less<key>`即`<`定义
+- map中元素类型为`pair`模板。`first`返回key，`second`返回value，<mark>注意，返回类型为引用</mark>
+- `map`支持下标访问`[]`成员函数，支持k-v赋值
+- `multimap`由于支持重复元素的存放，因此不支持基于`[]`的下标访问，插入元素只能使用`insert`方法
+- <mark>若没有关键字key的元素，则会往pairs里插入一个关键字为key的元素，其值用无参构造函数初始化，并返回其值的引用</mark>
 
 ```cpp
 map<string,int> ages{ {"Joyce",12}, {"Austen",23} };
@@ -556,18 +505,16 @@ int main(){
 }
 ```
 
-- **multimap**
-	- `multimap`没有重载`[]`，插入元素只能使用`insert`
-	- `multimap`中允许相同的key存在，key按照first成员变量从小到大排列，缺省用`less<key>`定义关键字的`<`关系
+- 使用自定义比较函数
 
 ```cpp
-multimap<string,int> lookup;
-lookup.insert(make_pair(29,"Kevin"));
-lookup.insert(make_pair(39,"Mike"));
-lookup.insert(make_pair(39,"Tom"));
-for(auto itor = lookup.begin(); itor!=lookup.end(); itor++){
-	cout<<itor->first<<it->second<<endl;
-}
+//注意比较的是两个key，不是两个pari
+auto comp = [](const string& p1, const string& p2){
+	return p1.size() < p2.size();
+};
+
+//map只支持key的比较，不支持基于value的比较函数
+map<string, int, decltype(comp)> dict(comp);
 ```
 
 ### 无序容器
