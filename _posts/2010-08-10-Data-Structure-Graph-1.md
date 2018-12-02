@@ -215,13 +215,14 @@ void graph_traverse(){
 
 
 ``` cpp
-void DFS(Vertex v) { // 深度优先搜索的递归实现
+//dfs遍历伪码
+void dfs(Vertex v) { // 深度优先搜索的递归实现
     status(v) = VISITED;  // 把标记位设置为 VISITED
     Visit(v); // 访问顶点v
     //访问所有UNVISITED状态的节点
     for(auto u : getNbrs(v))
         if (status(u) == UNVISITED){
-            DFS(u);
+            dfs(u);
         }
     } 
 }
@@ -229,20 +230,46 @@ void DFS(Vertex v) { // 深度优先搜索的递归实现
 
 <img src="{{site.baseurl}}/assets/images/2008/08/graph-4.png" style="margin-left:auto; margin-right:auto;display:block">
 
-例如上图DFS的遍历次序为：`a b c f d e g`。这里有一点要注意，由于第二步对相邻节的未访问的节点选取规则不唯一（下图例子使用的是字母顺序），因此对全图进行遍历得到结果序列是不唯一的。类似的，如果使用DFS进行搜索，寻找两点间路径，得到的结果不一定是最短路径。
+例如上图DFS的遍历次序为：`a b c f d e g`。这里有一点要注意，由于第二步对相邻节的未访问的节点选取规则不唯一（下图例子使用的是字母顺序），因此对全图进行遍历得到结果序列是不唯一的。类似的，如果使用DFS进行搜索，寻找两点间路径，得到的结果不一定是最短路径。dfs的搜索代码如下
 
-```javascript
-//使用DFS进行搜索
-function dfs(v1,v2):
-    v1.status = visited
-    if v1 == v2:
-        //found a path
-        return true
-    //遍历v的每一个未被访问的相邻节点
-    for n : v1.unvisited_neighbors:
-        if dfs(n,v2): 
-        //found a path
-    return false
+```cpp
+void dfs(int s, int t){
+    bool found = false;
+    //记录访问过的顶点
+    vector<bool> visited(n,false);
+    //记录前驱节点，创建n个桶
+    vector<int> prev(n,-1);
+    //调用一个辅助函数
+    helper(s,t,visited,prev,found);
+    if(found){
+        print_path(prev,st,);
+    }
+}
+void helper(int s, int t, vector<bool>& visisted, vector<int>& prev, bool& found){
+    if(found == true){
+        return ;
+    }
+    visited[s] = true;
+    if(s == t){
+        found = true;
+        return;
+    }
+    for(int i=0;i<adj[s].size();i++){
+        int x = adj[s][i];
+        if(!visited[x]){
+            //记录前驱节点
+            prev[x] = s;
+            helper(x,t,visited,prev,found);
+        }
+    }
+}
+//打印路径
+void print_path(vector<int>& prev, int s, int t){
+    if(!prev[t] != -1 && t != s){
+        print_path(prev,s,prev[t]);
+    }
+    cout<<t<<" ";
+}
 ```
 
 ### BFS
@@ -255,7 +282,7 @@ function dfs(v1,v2):
 4. 直到所有点都被访问过
 
 ``` cpp
-//从v点开始便利啊
+//bfs遍历伪码
 void BFS(Vertex v) {
     status(v) = VISITED; 
     queue<Vertex> Q; // 使用STL中的队列
@@ -286,30 +313,49 @@ void BFS(Vertex v) {
 4. 同理，`c`出队，`b`入队，以此类推
 5. 直至节点全部被访问
 
-对于无权图来说，BFS相比DFS可以用来寻找两点间（例如上图中的a和b）的最短路径（最少边），但却不容易保存到达b点的路径，解决这个问题，可以给每个节点加一个指向前驱节点的指针。
+对于无权图来说，BFS相比DFS可以用来寻找两点间（例如上图中的a和b）的最短路径（最少边），但却不容易保存到达b点的路径，解决这个问题，可以给每个节点加一个指向前驱节点的指针，或者使用一个数组存储中间节点，代码如下：
 
-```
-//使用BFS进行搜索
-function bfs(v1,v2):
-    queue := {v1}
-    v1.status = visited
-    while not queue.empty():
-        v = queue.front
-        if v == v2 :
-            //path is found
-        //遍历v的每一个未被访问的相邻节点
-        for n : v1.unvisited_neighbors:
-            n.status = visited
-            queue.push(n)
-
-    //if we get here, no path exists.
+```cpp
+//起点s，终点t，顶点个数n
+void bfs_search(int s, int t){
+    if(s == t){
+        return;
+    }
+    //记录访问过的顶点
+    array<bool,n> visited = {false};
+    visited[s] = true;
+    queue<int> q;
+    q.push(s);
+    //记录前驱节点，创建n个桶
+    vector<int> prev(n,-1);
+    while(!q.empty()){
+        int x = q.front();
+        q.pop();
+        visited[x] = true;
+        //访问x的邻接顶点
+        for(int i=0;i<adj[x].size();i++){
+            int y = adj[w][i];
+            if(!visited[y]){
+                //记录y的前驱为x
+                prev[y] = x;
+                //找到目标节点
+                if(t == y){
+                    print_path(prev,s,t);
+                    return;
+                }
+                q.push(y);
+            }
+        }
+    }
+}
 ```
 
 - 时间复杂度分析：
+    - DFS 和 BFS 每个顶点访问一次，对每一条边处理一次 (无向图的每条边从两个方向处理)
+        1. 采用邻接表表示时，有向图总代价为 $\Theta(n + e)$，无向图为 $\Theta(n + 2e)$
+        2. 采用相邻矩阵表示时，理论上，处理所有的边需要 $\Theta(n^2)$的时间 ，所以总代价为$\Theta(n + n^2) = \Theta(n^2)$。但实际上，在执行`nextNbr(v,u)`时，可认为是常数时间，因此它的时间复杂度也可以近似为$\Theta(n + e)$
 
-    DFS 和 BFS 每个顶点访问一次，对每一条边处理一次 (无向图的每条边从两个方向处理)
-    1. 采用邻接表表示时，有向图总代价为 $\Theta(n + e)$，无向图为 $\Theta(n + 2e)$
-    2. 采用相邻矩阵表示时，理论上，处理所有的边需要 $\Theta(n^2)$的时间 ，所以总代价为$\Theta(n + n^2) = \Theta(n^2)$。但实际上，在执行`nextNbr(v,u)`时，可认为是常数时间，因此它的时间复杂度也可以近似为$\Theta(n + e)$
+广度优先搜索和深度优先搜索是图上的两种最常用、最基本的搜索算法，比起其他高级的搜索算法，比如 A*、IDA* 等，要简单粗暴，没有什么优化，所以，也被叫作暴力搜索算法。所以，这两种搜索算法仅适用于状态空间不大，也就是说图不大的搜索。在下一篇文章中，我们会继续介绍几种带权图的搜索方法以及图相关的其它内容
 
 ### Resources 
 
