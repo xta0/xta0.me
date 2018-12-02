@@ -134,35 +134,34 @@ categories: [Compiler]
 			
 ## Lexical Specifications
 
-- LA的具体表现:
-	- 关键字： "if" or "else" or "then" or ...
-		- 正则： `'i''f' + 'e''l''s''e'`
-		- 简化： `'if' + 'else' + 'then' + ...`
-	
-	- 数字: a non-empty string of digits
-		- 单个integer的正则：`digit = '0'+'1'+'2'+'3'+...+'9'`
-		- 至少有一个非空integer的正则：`AA* => digit digit*`
-			- 简化上面，得到总的正则为:`A* => digit*`
-	
-	- Identifier: strings of letters or digits, starting with a letter
-		- letter的正则 : `'a'+'b'+'c'+...+'z'+'A'+'B'+...+'Z'`
-			- 简化上面的正则，使用`range:[]`符号:`[a-z A-Z]`
-			- 总的正则`letter(letter + digit)* ` 
+- 语言关键字（keyword）的正则表示
+	- 正则： `'i''f' + 'e''l''s''e'`
+	- 简化： `'if' + 'else' + 'then' + ...`
 
-	- whitespace: a non-empty sequence of blanks, newlinke, and tabs
-		- blanks : `' ' `
-		- new line: `\n`
-		- tabs: `\t`
-		- 总的正则: `(‘ ’+‘\n’+'\t')+`
+- 数字的正则表示
+	- 单个integer的正则：`digit = '0'+'1'+'2'+'3'+...+'9'`
+	- 至少有一个非空integer的正则：`AA* = digit digit*`
+		- 简化上面，得到总的正则为:`AA* = A+ = digit+ = [0-9]+` 
 
-	- anyone@cs.standford.edu	
-		- 正则为`letter+‘@’+letter+'.'+letter+'.'+letter`
-		
-	- PASCAL
-		- digit = `'0'+'1'+...+'9'`
-		- digits = `digit+`
-		- opt_fraction = `('.'digit) + e`
-		- opt_exponent = `('E'('+'+'-'+e) digits) + e`
-		- num = `digits opt_fraction opt_exponent`
+- 变量，字符（identifier）的正则表示
+	- 字符: `'a'+'b'+'c'+...+'z'+'A'+'B'+...+'Z'`
+		- 简化上面的正则，使用`range:[]`符号:`[a-zA-Z]`
+		- 总的正则`letter(letter + digit)* = [a-z][A-Z]*` 
+
+- whitespace: a non-empty sequence of blanks, newlinke, and tabs
+	- blanks : `' ' `
+	- new line: `\n`
+	- tabs: `\t`
+	- 总的正则: `(‘ ’+‘\n’+'\t')+`
+
+- anyone@cs.standford.edu	
+	- 正则为`letter+‘@’+letter+'.'+letter+'.'+letter`
+	
+- PASCAL
+	- digit = `'0'+'1'+...+'9'`
+	- digits = `digit+`
+	- opt_fraction = `('.'digit) + e`
+	- opt_exponent = `('E'('+'+'-'+e) digits) + e`
+	- num = `digits opt_fraction opt_exponent`
 
 
