@@ -196,6 +196,7 @@ vector<string> infix2postfix(string& postfix){
 				c = char[i];
 			}while(isdigit(c));
 			postfix.push_back(num);
+			num = "";
 			continue;
 		}else if( c == '('){
 			stk.push_back(c);
