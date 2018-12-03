@@ -65,8 +65,6 @@ categories: [DataStructure]
 		- 使用栈
 			- 当遇到一个操作数，入栈
 			- 当遇到一个运算符，从栈中两次取出栈顶，按照运算符对这两个操作数进行计算，然后将结果入栈
-			- 遇到`=`结束
-
 ## 队列
 
 - 先进先出
@@ -215,6 +213,7 @@ vector<string> infix2postfix(string& postfix){
 			}
 			stk.push(c);
 		}
+		i++
 	}
 	//输出栈中符号
 	while(!stk.emtpy()){

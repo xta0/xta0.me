@@ -234,10 +234,7 @@ KMP算法复杂度分析：
 
 ## 字符串常见问题
 
-下面是面试中常见的一些字符串问题，包括字符串去重，回文串，单词切割，滑动窗口，anagram问题等，部分题目来自LeetCode。
-
-
-### 字符串去重问题
+### 去重问题
 
 字符串去重问题是一个很常见的问题，解法也有很多种，有些语言的库函数可以直接提供high-level的API进行去重。这里提供一个非常巧妙的解法，利用双指针+`set`进行一遍扫描即可。题目如下:
 
@@ -406,6 +403,9 @@ public:
 
 
 ### 滑动窗口问题
+
+滑动窗口是用来寻找符合某种条件字串的一种线性扫描方法，
+
 
 - [3. Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/)
 
