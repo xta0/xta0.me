@@ -260,6 +260,10 @@ int calculate(string& infix){
 }
 ```
 
+- [Basic Calculator](https://leetcode.com/problems/basic-calculator/)
+- [Basic Calculator II](https://leetcode.com/problems/basic-calculator-ii/)
+- [Basic Calculator III](https://leetcode.com/problems/basic-calculator-iii/)
+
 ### 括号问题
 
 - [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/description/)
