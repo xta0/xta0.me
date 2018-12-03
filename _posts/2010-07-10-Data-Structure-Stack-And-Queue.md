@@ -67,11 +67,6 @@ categories: [DataStructure]
 			- 当遇到一个运算符，从栈中两次取出栈顶，按照运算符对这两个操作数进行计算，然后将结果入栈
 			- 遇到`=`结束
 
-- 中缀表达式与后缀表达式
-	- 中缀表达符合人类对数学认知的习惯，后缀，前缀表达式由于没有括号和优先级，更符合计算机的处理方式
-	- 中缀表达式可[转换为后缀表达式](http://btechsmartclass.com/DS/U2_T5.html) 
-
-
 ## 队列
 
 - 先进先出
@@ -176,6 +171,94 @@ class Aqueue : public Queue<Elem> {
 
 ### 表达式求值
 
+如前文所述，栈的一个应用是计算表达式的值，这里说的表达式是简单的加减乘除四则运算，其求值过程可分为两步，第一步为将中缀表达式转为后缀表达式，第二步是对后缀表达式进行求值。中缀转后缀的规则如下：
+
+1. 如果当前是数字，向后遍历直到遇到符号，输出数字
+2. 如果当前是`(`，直接入栈
+3. 如果当前是`)`，弹出栈中所有符号并输出，直到遇到`(`，弹出`(`
+4. 如果当前是`+,-,*,/`，根据优先级入栈
+	- 如果当前符号优先级>栈顶元素，直接入栈
+	- 如果当前符号优先级<=栈顶个元素，弹出栈顶元素，直到遇到`(`或者优先级更高的元素
+
+```cpp
+vector<string> infix2postfix(string& postfix){
+	vector<string> postfix;
+	stack<char> stk;
+	int i = 0;
+	string num = "";
+	while(i<postfix.size()){
+		char c = postfix[i];
+		if( isspace(c) ){
+			i++;
+			continue;
+		}else if( isdigit(c) ){
+			do{
+				num+=c;
+				i++;
+				c = char[i];
+			}while(isdigit(c));
+			postfix.push_back(num);
+			continue;
+		}else if( c == '('){
+			stk.push_back(c);
+		}else if( c== ')' ){
+			while(!stk.empty() && stk.top()!='('){
+				postfix.push_back(string(1,stk.top()));
+				stk.pop();
+			}
+			//pop ')'
+			stk.pop();
+		}else if( isoperator(c) ){
+			while(!stk.empty() && level(c) <= level(stk.top())){
+				postfix.push_back(string(1,stk.top()));
+				stk.pop();
+			}
+			stk.push(c);
+		}
+	}
+	//输出栈中符号
+	while(!stk.emtpy()){
+		postfix.push_back(string(1,stk.top()));
+		stk.pop();
+	}
+	return postfix;
+}
+```
+
+第二步是对后缀表达式进行求值，求值的算法前文已提到，这里不再赘述，代码如下
+
+```cpp
+int calculate(string& infix){
+	vector<string> postfix = infix2postfix(infix);
+	stack<long> stk;
+	int sum=0;
+	for(auto &s : postfix){
+		if(isoperator(s)){
+			long x = stk.top();
+			stk.pop();
+			long y = stk.top();
+			stk.pop();
+			if(s == "+"){
+				stk.push(x+y);
+			}else if(s =="-"){
+				stk.push(y-x);
+			}else if(s =="*"){
+				stk.push(x*y);
+			}else if(s == "/"){
+				stk.push(y/x);
+			}
+		}else{
+			stk.push(stol(s));
+		}
+	}
+	int sum = 0;
+	while(!stk.empty()){
+		sum += stk.top();
+		stk.pop();
+	}
+	return sum;
+}
+```
 
 ### 括号问题
 
