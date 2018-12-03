@@ -350,10 +350,9 @@ K-Sum的问题还可以和上面最优化的问题相结合，比如
 
 ### 滑动窗口问题
 
-滑动窗口问题也是数组相关的经典问题，并且经常和字符串问题一起出现。根据窗口类型的不同可分为固定窗口和非固定窗口，其对应的解题方法也不尽相同。
+滑动窗口问题也是数组相关的经典问题，并且经常和字符串问题一起出现。根据窗口类型的不同可分为固定窗口和非固定窗口，根据求解条件不同，又可分为substring和subsequence等，对于固定窗口的非字符串问题，可以使用Balanced BST，我们稍后会看一道例题。对于字符串的滑动窗口问题，将会在后面介绍字符串时再做介绍。
 
 
-- [76. Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring/description/)
 - [239. Sliding Window Maximum](https://leetcode.com/problems/sliding-window-maximum/description/)
 - [480. Sliding Window Median](https://leetcode.com/problems/sliding-window-median/description/)
 - [727. Minimum Window Subsequence](https://leetcode.com/problems/minimum-window-subsequence/description/)

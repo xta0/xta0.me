@@ -404,10 +404,64 @@ public:
 
 ### 滑动窗口问题
 
-滑动窗口是用来寻找符合某种条件字串的一种线性扫描方法，
+滑动窗口是用来寻找符合某种条件子串的一种线性扫描方法，它通过记录滑动窗中字符个数的变化来判断当前状态是否满足条件。其模板如下
 
+```cpp
+//str is input
+//p is pattern
+T slidingWindow(string str, string p){
+    //1. create a hashmap, key is char, value is count
+    unordered_map<char, int> um;
+    for(auto &c : p){
+        um[c]++;
+    }
+    int counter = um.size();
+
+    //2. create a sliding window
+    int left =0; int right = 0;
+    int len = INT_MAX;
+
+    //3. expand right boundary
+    while(right < str.length()){
+        char c = str[right];
+        //check if c is in the um
+        if(um.count(c) > 0){
+            um[c]--;
+            //todo: check point #1
+            if(um[c]==0){
+                counter -=1;
+            }
+        }
+        
+        //todo: check point #2
+        //check if counter is zero
+        while(counter == 0){
+            //todo: check point #3 
+            //calculate len,
+            int length = right -left +1;
+            
+            //move left boundary
+            char c = str[left];
+            if(um.count(c) > 0){
+                um[c]++;
+                if(um[c] > 0){
+                    counter++;
+                }
+            }
+            //expand the left boundary
+            left ++;
+        }
+        //expand the right boundary
+        right ++;
+    }
+    //todo:
+    return some_thing;
+}
+```
 
 - [3. Longest Substring Without Repeating Characters](https://leetcode.com/problems/longest-substring-without-repeating-characters/)
+- [76. Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring/description/)
+- [438. Find All Anagrams In a String](https://leetcode.com/problems/find-all-anagrams-in-a-string/)
 
 ### Anagram问题
 
