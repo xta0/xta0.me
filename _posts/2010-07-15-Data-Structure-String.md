@@ -463,15 +463,6 @@ T slidingWindow(string str, string p){
 - [76. Minimum Window Substring](https://leetcode.com/problems/minimum-window-substring/description/)
 - [438. Find All Anagrams In a String](https://leetcode.com/problems/find-all-anagrams-in-a-string/)
 
-### Anagram问题
-
-- [49. Group Anagrams](https://leetcode.com/problems/group-anagrams/description/)
-- [438. Find All Anagrams in a String](https://leetcode.com/problems/find-all-anagrams-in-a-string/description/)
-
-
-
-
-
 ## Resources
 
 - [Pattern Matching Pointer](http://www.cs.ucr.edu/~stelo/pattern.html)
