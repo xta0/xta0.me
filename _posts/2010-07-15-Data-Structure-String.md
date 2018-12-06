@@ -415,8 +415,8 @@ public:
         1. `s="", p="b*"` 
         2. `s="a", p="b*"`
         3. `s="a", p="b*a"`
-        4. `s="bb"`, p="b*"
-        5. `s="bba", p="b*a"
+        4. `s="bb", p="b*"`
+        5. `s="bba", p="b*a"`
         6. `s="a", p="a*a"`
         
 
@@ -458,7 +458,7 @@ bool isMatch(string s, string p){
     */
     return isMatch(s,p.substr(2));    
 }
-
+```
 - [10. Regular Expression Matching](https://leetcode.com/problems/regular-expression-matching/description/)
 - [44. Wildcard Matching](https://leetcode.com/problems/wildcard-matching/description/)
 
