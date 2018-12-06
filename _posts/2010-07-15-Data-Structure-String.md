@@ -93,6 +93,10 @@ int FintPat(string S, string P, int startIndex){
         - 总比较次数：`m`
         - 时间复杂度：`O(m)`
 
+在实际的软件开发中，大部分情况下模式串和主串都不会太长，而且匹配的时候当遇到不相等的字符时，比较就停止了，并不需要把`m`个字符全都看一遍。所以尽管理论意义上时间复杂度为`O(n*m)`，但实际上大部分情况下算法效率要比这个好的多。
+
+
+
 ### KMP算法
 
 所谓KMP算法，是指在不回溯的前提下，通过某种算法来减少不必要的比较，从而最大限度的减少比较次数。在上面朴素法匹配的过程中，不难发现有很多的重复比对，比如下图所示，有目标`T`和模式`P`两个串，他们在某`j`个长度上匹配成功，即`t(i)t(i+1)...t(i+j-1) = p(0)p(1)...p(j-1)`，
@@ -397,9 +401,66 @@ public:
 - [9. Palindrome Number](https://leetcode.com/problems/palindrome-number/description/)
 - [516. Longest Palindromic Subsequence](https://leetcode.com/problems/longest-palindromic-subsequence/description/)
 
-### 正则表达式
+### 正则表达式匹配
 
-此类问题的描述为：现在给你一个字符串，一个正则式，问你该正则式是否可以匹配该字符串
+此类问题的一般描述为，给你一个字符串，一个模式串，问该模式串是否可以匹配给定的字符串。通常在模式串中，存在某些通配符，例如`.`和`*`。假设给定字符串`s="fabbbc"`，给定的模式串`p=".ab*c"`。我们从第一个字符开始匹配，由于`.`可以匹配任何字符，因此第一个字符match，接下来我们需要继续比较`s=abbbc`和`p=ab*c`，显然`s[0]`和`p[0]`匹配，接下来我们继续匹配`s=bbbc`和`p=b*c`。可以看出上述匹配过程是一个递归的过程，每当我们完成一次匹配后，用剩余的字符继续匹配。
+
+接下来我们可以总结一下匹配规则：
+
+1. 当`s`和`p`的长度都为0时，说明匹配完成，此时返回true
+2. 当`s`和`p`的长度都为1时，判断`p[0] = '.' || p[0] == s[0]`
+3. 当`p`的长度大于1时，check `p[1]=='*'`
+    - 如果`p[1] != '*'`，判断`p[0] = '.' || p[0] == s[0]`，如果match，则递归比较`p.substr(1)`和`s.substr(1)`。如果不match则返回false
+    - 如果`p[1] == '*'`，此时情况比较复杂，我们可以枚举一些情况
+        1. `s="", p="b*"` 
+        2. `s="a", p="b*"`
+        3. `s="a", p="b*a"`
+        4. `s="bb"`, p="b*"
+        5. `s="bba", p="b*a"
+        6. `s="a", p="a*a"`
+        
+
+    上面的前三种情况可以归结为一种情况，即比较`p.substr(2)`和`s`，由于`*`代表0个或者多个，如果将`b*`从`p`中去掉仍然可以匹配，那么`s`和`p`就是匹配的。而对于后面两种情况，我们则不能简单的将`b*`去掉，比如在第4个例子中，如果去掉`b*`，则`s="bb"`和`p=""`，显然是不匹配的，而实际上`s="bb"`是满足`p="b*"`的。因此这种情况下，我们需要不断的改变s，以第5个例子为例，当发现`s[0] == p[0] || p[0]=='.'`后，令`s=s.substr(1)`继续比较，直到`s="a"`,`p="b*a"`，此时再进行一次递归即可回到上面前三条的逻辑。但是这里我们又遗漏了一个场景，即上面第6条，按照之前的逻辑，我们最终会走到`s="",p="a"`的判断，显然结果是不正确的。出现这个问题的原因在于，我们不知道`b*`后面是否还有其它字符，因此正确的做法是，没当更新一次s时，都需要先进行一次递归比较。
+
+4. 综上，上述三条规则可以涵盖所有的场景
+
+```cpp
+bool isMatch(string s, string p){
+    if(s.empty() &&  p.empty()){
+        return true;
+    }
+    if( p.size() ==1){
+        return s.size()==1 && s[0]==p[0] || p[0]=='.';
+    }
+    if ( p[1] != '*' ){
+        if(s.empty()){
+            return false;
+        }
+        if (s[0]==p[0] || p[0]=='.'){
+            return isMatch(s.substr(1),p.substr(1));
+        }else{
+            return false;
+        }
+    }
+
+    //p[1] == '*'
+    //s="bba", p="b*a"
+    while(!s.empty() && (s[0] == p[0] || p[0]=='.'){
+        if(isMatch(s,p.substr(2)){
+            return true;
+        }
+        //update s
+        s = s.substr(1);
+    }
+    /*
+        s="a", p="b*a"
+        s="x", p="b*"
+    */
+    return isMatch(s,p.substr(2));    
+}
+
+- [10. Regular Expression Matching](https://leetcode.com/problems/regular-expression-matching/description/)
+- [44. Wildcard Matching](https://leetcode.com/problems/wildcard-matching/description/)
 
 
 ### 滑动窗口问题
