@@ -272,6 +272,10 @@ int uniquePaths(int m, int n) {
 
 这个例子给我们的启发是：使用DP可以优化蛮力算法，如果说蛮力的搜索算法是从“源头”出发的正向过程，那么DP的思路则是从“终局”出发的反向过程。这里所谓的反向是指从终点向前推进，将“终局”问题化成与之相等价的，规模更小的子问题。因此，当我们遇到需要蛮力解决的搜索问题时，不妨试着从后向前想，看能否找到突破口。但需要注意的是，不是所有的DP问题都是由终点向原点递推，递推方式取决于子问题的划分方式。
 
+- 类似题目
+    - [Triangle](https://leetcode.com/problems/triangle)
+     
+
 
 ### [最长上升子序列(LIS)](https://leetcode.com/problems/longest-increasing-subsequence/description/)
 

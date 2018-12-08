@@ -84,10 +84,11 @@ Find算法比较简单，对任意子节点，向上追溯父节点即可
 ```cpp
 template <class T>
 ParTreeNode<T>* ParTree<T>::Find(ParTreeNode<T>* node) const{
- ParTreeNode<T>* pointer=node;
- while ( pointer->getParent() != NULL )
- pointer=pointer->getParent();
- return pointer;
+    ParTreeNode<T>* pointer=node;
+    while ( pointer->getParent() != NULL ){
+        pointer=pointer->getParent();
+    }
+    return pointer;
 }
 ```
 
