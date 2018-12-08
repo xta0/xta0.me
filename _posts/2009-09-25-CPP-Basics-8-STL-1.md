@@ -566,6 +566,27 @@ unordered_map<Sale,int> b(
 	{ {"Jacob",23},101 }
 );
 ```
+另一个常见的例子是使用`unordered_map`存放`pair<T1,T2>`类型的数据，此时由于`T1,T2`的类型未知，因此`pair`并不知道如何计算自己的哈希值，因此需要使用者提供哈希函数:
+
+```cpp
+struct pair_hash {
+    template <class T1, class T2>
+    std::size_t operator () (const std::pair<T1,T2> &p) const {
+        auto h1 = std::hash<T1>{}(p.first);
+        auto h2 = std::hash<T2>{}(p.second);
+
+        // Mainly for demonstration purposes, i.e. works but is overly simple
+        return h1 ^ h2;  
+    }
+};
+
+using memo = std::pair<std::int, std::int>;
+using unordered_map = std::unordered_map<memo, int, pair_hash>;
+
+int main() {
+    unordered_map um;
+}
+```
 
 ## 容器适配器
 

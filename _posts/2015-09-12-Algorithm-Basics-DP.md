@@ -112,7 +112,7 @@ def fib3(n):
 <img src="{{site.baseurl}}/assets/images/2007/09/fib-2.png" width="50%" style="margin-left:auto; margin-right:auto;display:block"/>
 
 
-- 启发
+- **启发**
 
 斐波那契数列这个例子，给我们的一个启示是，缓存每一步的计算结果的重要性，因此理解DP的一个角度为：
 
@@ -120,7 +120,7 @@ $$
 DP \approx Recursion + Memoization
 $$
 
-但这个例子也会给人造成一种错觉，即DP就是在原来算法的基础上增加缓存即可。就这个例子而言，确实是这样，不过动态规划的思想远不止增加缓存这么简单，在接下来的几个例子中，我们将会看到DP的其它应用。
+但这个例子也会给人造成一种错觉，即DP就是在原来算法的基础上增加缓存来减少重复计算。就这个例子而言，确实是这样，不过DP的思想不只增加缓存这么简单，在接下来的几个例子中，我们将会看到通过设计巧妙的递推公式来大幅提升算法的执行效率。
 
 ### [两点间路径(Unique Paths)](https://leetcode.com/problems/unique-paths/description/)
 
@@ -138,59 +138,89 @@ $$
 
 - **蛮力算法**
 
-首先想到的是使用蛮力算法，类似走迷宫，搜索可抵达边界的每条路径，当搜走到右下角时，记作一次发现，将每次发现的次数计起来即可得到最终解。由之前介绍的深搜+回溯的思路，不难得出穷举的解法：
-
-1. 先一直向右走，走到边界回溯后向下
-2. 重复上述过程
+首先想到的是还是使用蛮力算法，类似走迷宫，搜索可抵达边界的每条路径，当搜走到右下角时，记作一次发现，将每次发现的次数计起来即可得到最终解。由之前介绍的深搜思路，机器人每到一个位置时都有两种走法，向右或者向下，因此到达终点的路径数为从右边走和从下边走结果的总和。
 
 ```cpp
-//m列，n行，起点pt = {1,1}, 终点target = {m,n} , num用来收集结果
-void dfs(int m, int n, pair<int,int>& pt, pair<int,int>& target, int& num ){
-    //走到边界
-    if(pt.second > n || pt.first > m){
-        return ;
+/*
+DFS Solution
+Time Complexity: O(2^n)
+Space Complexity: O(1)
+*/
+class Solution {
+public:
+    /*
+    i,j: 当前位置
+    w,h: 迷宫宽高
+    */
+    int dfs(int i, int j, int w, int h){
+        if(i<0||i>=h || j<0||j>=w){
+            return 0;
+        }
+        if(i==h-1 && j==w-1){
+            return 1;
+        }
+        int cd = dfs(i+1,j,w,h,result);
+        int cr = dfs(i,j+1,w,h,result);
+        return cd + cr;
+        
     }
-    //走到右下角
-    if(pt.first == target.first && pt.second == target.second){
-        num ++;
-        return;
+    int uniquePaths(int m, int n) {
+        return dfs(0,0,m,n,num);
     }
-    //向右前进
-    pt.second += 1;
-    dfs(m,n,pt,target,num);
-    pt.second -= 1;
-    
-    //向下前进
-    pt.first += 1;
-    dfs(m,n,pt,target,num);
-    pt.first -= 1;
-}
-int uniquePaths(int m, int n) {
-    pair<int,int> pt = {1,1};
-    pair<int,int> target = {m,n};
-    int num = 0;
-    dfs(m,n,pt,target,num);
-    return num;
-}
-
-
-dfs(m,n,{1,1},{m,n},num);
+};
 ```
-上述解法的确能够穷举出所有到达右下角的路径，然而效率确非常低。不难看出，上述算法是一种正向的，符合人类直觉的思考方式，即从起点出发穷举所有到达终点的可能性。我们来分析一下其时间复杂度，假设$m=3,n=2$，字母$R$表示向右走，字母$B$表示向下走，左上角为用`start`表示，右下角为`end`表示，则生成的递归树为：
+上述解法的确能够穷举出所有到达右下角的路径，然而效率确非常低。我们可以来分析一下上述解法的时间复杂度，由于每一个格子(非边界的情况)都有两种选择，向下或者向右，因此其时间复杂度和上面计算斐波那契数列一样，为几何级数`O(2^n)`。以`3x3`的棋盘为例，递归树如下：
 
-<img src="{{site.baseurl}}/assets/images/2007/09/dp-2.png" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2015/09/dp-2.png" style="margin-left:auto; margin-right:auto;display:block">
 
-上述递归树可以看出，在所有的叶节点中，只有3个是有效的，其余的均为无效搜索。从某一点出发均有两条路径，因此算法的时间复杂度是呈几何级数增长的
+不难看出，上面的递归过程存在大量的重复计算，比如图中相同颜色的节点被至少计算了两次，因此我们可以考虑使用Memoization，将走过的结果保存起来，于是可以得到优化版的DFS：
 
-$$
-T(n) = 2T(n-1) ∝ O(2^n)
-$$
+
+```cpp
+/*
+DFS solution + Memoization
+Time Complexity: O(2^n) Timeout
+Space Complexity: O(1)
+*/
+class Solution {
+public:
+    /*
+    i,j: 当前位置
+    w,h: 迷宫宽高
+    um: 备忘录
+    */
+    int dfs(int i, int j, int w, int h, unordered_map<pair<int,int>,int, pair_hash>& um){
+        if(i<0||i>=h || j<0||j>=w){
+            return 0;
+        }
+        if(i==h-1 && j==w-1){
+            return 1;
+        }
+        //减少重复路径
+        if(um[{i,j}] > 0){
+            return um[{i,j}];
+        }
+        int cr = dfs(i+1,j,w,h,um);
+        int cd = dfs(i,j+1,w,h,um);
+        um[{i,j}] = cr+cd;
+        //将结果放到备忘录中
+        return um[{i,j}];   
+    }
+    int uniquePaths(int m, int n) {
+        //创建一个备忘录
+        unordered_map<pair<int,int>,int,pair_hash> um;
+        return dfs(0,0,m,n,um);
+    }
+};
+```
+
+总的来说上述DFS算法依旧是自顶向下的思维方式，即从起点出发，向终点走，穷举所有可能的情况，然后通过Memoization进行适当优化，即是优化后的速度有一定的提升，但算法执行效率还是指数级别的，当m和n变大时，这种算法将会变得不可用。
 
 - **使用DP**
 
-使用动态规划该如何思考这个问题呢，首先想到的是，能否和上个例子一样使用缓存，但是对于这个问题，由于每次搜索的路径都不同，不存在重复计算，因此缓存没有用。这时我们需要转变思路，寻找反直觉的方式，比如尝试从终点开始向前递推，则思路或许会被打开。
+使用动态规划该如何思考这个问题呢，既然上面的思路是从起点向终点自顶向下的搜索，如果我们反过来想，从终点向前进行自底向上的递推，效果会是怎么样呢？
 
-从终点出发，问题将简化成：“如果要到达`end`，需要先到达`(x,m-1)`，或者到达`(n-1,y)`，那么到达`end`的路径数就等于到达`(x,m-1)`加上到达`(n-1,y)`的路径数”。同理，对每个点均可应用上述条件，则可得出状态转移方程：
+如果从终点出发，则原问题的解将变为：“如果要到达`(m,n)`，需要先到达`(m-1,n)`，或者到达`(m,n-1)`，那么到达终点的路径数就等于到达`(m,n-1)`加上到达`(m-1,n)`的路径数”。有了原问题，接下来我们要思考该原问题是否可划分为相同的子问题，显然，对于棋盘上的每个点，均可以按照上述思路进行计算，因此原问题的解可换分若干个子问题的解，符合DP解题的条件。对每个点应用上面的计算公式，则可得出状态转移方程：
 
 $$
 dp(x,y) = dp(x-1, y) + dp(x, y-1)
@@ -225,9 +255,9 @@ int uniquePaths(int m, int n) {
     return dp[n-1][m-1];
 }
 ```
-通过DP我们将一个时间复杂度为指数级的蛮力算法转化成了一个N平方时间复杂度的算法，性能得到了一定的提升
+通过DP我们将一个时间复杂度为指数级的蛮力算法转化成了一个N平方时间复杂度的算法，性能得到了一定的提升。但必须要承认的是，这种思考方式非常反直觉，极不容易想到，正如文章开篇所说，掌握DP没有太好的捷径，只能多看，多练，多总结。做的多了，自然会感觉，慢慢就会由量变积累成质变，学习其它算法也是一样。
 
-- 启发
+- **启发**
 
 这个例子给我们的启发是：使用DP可以优化蛮力算法，如果说蛮力的搜索算法是从“源头”出发的正向过程，那么DP的思路则是从“终局”出发的反向过程。这里所谓的反向是指从终点向前推进，将“终局”问题化成与之相等价的，规模更小的子问题。因此，当我们遇到需要蛮力解决的搜索问题时，不妨试着从后向前想，看能否找到突破口。但需要注意的是，不是所有的DP问题都是由终点向原点递推，递推方式取决于子问题的划分方式。
 
@@ -349,6 +379,8 @@ int uniquePaths(int m, int n) {
 
 
 ## DP问题总结
+
+最后为了呼应开头，再总结一下求解DP问题的思路
 
 1. 将原问题分解为子问题
     - 把原问题分解为若干个子问题，子问题和原问题形式相同或类似，只不过规模变小了。子问题解决，原问题即解决
