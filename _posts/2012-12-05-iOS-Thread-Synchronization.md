@@ -45,7 +45,7 @@ dispatch_barrier_async(queue, ^{
 });
 ```
 
-- 使用lock
+- 使用锁
 
 ```objc
 dispatch_async(queue, ^{
@@ -59,7 +59,7 @@ dispatch_async(queue, ^{
 
 常用的锁有下面几种：
 
-- `Mutex locks`: 互斥锁是一种信号量，在某个时刻只允许一个线程对资源进行访问，如果互斥锁正在被使用，另一个线程尝试使用，那么这个线程会被block，直到互斥锁被释放。如果多个线程竞争同一个所锁，只有一个线程能获取到。互斥锁对应POSIX中的实现是`pthread_mutex_t`
+- `Mutex locks`: 互斥锁是一种信号量，在某个时刻只允许一个线程对资源进行访问，如果互斥锁正在被使用，另一个线程尝试使用，那么这个线程会被block，直到互斥锁被释放。如果多个线程竞争同一个所锁，只有一个线程能获取到。互斥锁对应POSIX中的实现是`pthread_mutex_t`，Objective-C`中的@synchronized`关键字底层是对`pthread_mutex_t`的封装
 
 - `Spin locks`: 自旋锁的原理是不断check lock条件，直到条件为true。自旋锁经常被用在多核处理器上并且lock时间很短的场合，如果lock时间很长，则会耗尽CPU资源
 
@@ -67,7 +67,7 @@ dispatch_async(queue, ^{
 
 - `Recursive locks`: 递归锁是互斥锁的一个变种，它允许某一个线程在释放锁之前可以多次获取，其它线程只能等待获取它的线程释放，它最初设计被用来做函数的递归调用，但是也可以用在多个方法同时需要获取一个lock的场合
 
-此外，Objective-C还提供了一些lock的封装，比如`@synchronized`的实现实际上是封装了`pthread_mutex_t`，它不需要明确的创建一个lock对象，但是`NSLock`
+
 
 
 ## Memory Barrier
