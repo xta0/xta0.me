@@ -14,14 +14,12 @@ dispatch_queue_t queue =
 dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
 for(int i=0;i<100;i++){
    dispatch_async(queue, ^{
-            self.j = self.j+1;
+            self.j +=1;
             printf("%d\n",self.j);
         });
 }
 ```
-上述代码中，由于线程是并发的，导致每个线程修改`self.j`的时机不确定，进而导致当执行`printf`时，其`self.j`值可能已经被多次修改了，因此当输出时，其顺序不是有序递增的。
-
-上述问题的本质是线程同步问题，我们只需要让100个线程按顺序依次访问block中的代码即可。为了让线程同步，我们有多很多种做法：
+上述代码中，由于线程是并发的，导致`self.j`在`print`时I/O缓冲区中的数据并不是当前最新的，因此输出的`self.j`的值是乱序的。这个问题的本质是线程之间的同步问题，block中两句代码的执行存在时间差。如果想要保证输出顺序，我们需要强制每个线程执行完这两行代码后，其它线程才能开始执行，即block中的代码具备原子性。
 
 - 使用FIFO的无锁队列
 
