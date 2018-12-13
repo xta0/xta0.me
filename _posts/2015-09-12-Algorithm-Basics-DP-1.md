@@ -399,12 +399,6 @@ int uniquePaths(int m, int n) {
 2. 贪心法是每一步都求局部最优解，默认每一步都具有最优子结构，如果全局最优解可以被这样一步步推出来，则该问题可用贪心法求解。贪心实际上是DP问题的一个特例，它对子问题的要求比较严格，它要求子问题具有”无后效性“，即当前选择永远最优，后面的选择不能影响到前面的选择。
 3. DP更像是回溯和贪心的结合版，当回溯存在大量重复计算时，我们可以将中间结果缓存起来，并用这些局部最优解计算全局最优解。当贪心策略不再局限眼前利益时，它的递推公式就变成了DP的状态转移方程。
 
-### LeetCode中的DP问题
-
-- [53. Maximum Subarray](https://leetcode.com/problems/maximum-subarray/description/)
-- [62. Unique Paths](https://leetcode.com/problems/unique-paths/description/)
-
-
 ## Resources
 
 - [MIT 6.006 Introduction to Algorithms, Fall 2011](https://www.youtube.com/watch?v=OQ5jsbhAv_M&t=1952s)
