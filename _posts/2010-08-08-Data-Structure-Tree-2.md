@@ -60,7 +60,7 @@ parent:    -1 0 -1 2 -1  8  9 4 -1 -1
 
 上述两点比较抽象，在日常生活中的确有一些应用场景，比如用于判别网络结点间的连通性，给定若干个相连通的节点对，判断是否彼此连通，如果不连通，需要在哪些节点之间架设网络；再比如已知N个人相互之间的血缘关系，然后求有这N个人当中总共来自多少个家族；又或者计算社交网络中用户之间的关注关系等等。
 
-### 并查集的代码实现
+### 并查集ADT
 
 如果并查集中的节点是正整数，则可以使用一个int型的数组表示，如果节点为其它类型，则需要用一个泛型数组来表示，如下所示，其中`ParTreeNode`表示并查集中的节点，`ParTree`表示并查集
 
@@ -89,35 +89,6 @@ public:
         return Find(array[i]) == Find(array[j]);
     }; 
 };
-```
-为了便于理解，下面以一个整形数组为例，给出一种UnionFind的一种简单的实现方式
-
-```cpp
-class QuickUF{
-    vector<int> roots;
-public:
-    QuickUF(int N){
-        roots = vector<int>(N,0);
-        //创建N个节点个相互独立的节点，初始化父节点为自己
-        for(int i=0;i<N;i++){
-            roots[i] = i;
-        }
-    }
-    int findRoot(int i){
-        while（roots[i] != i）{
-            i = roots[i];
-        }
-        return i;
-
-    }
-    void union(int p, int q){
-        int proot = findRoot(p);
-        int qroot = findRoot(q);
-        roots[]
-    }
-
-};
-
 ```
 
 - `Find/Union` 操作
@@ -178,6 +149,51 @@ ParTreeNode<T>* ParTree<T>::FindPC(ParTreeNode<T>* node) const{
     - $\log^{*}65535=4$ (即当$n=65535$时，只需要4次$\log$操作，接近$O(1)$）
 4. Find至多需要一系列n个Find操作的开销非常接近于$\Theta(n)$，在实际应用中，$\alpha(n)$往往小于$4$
     
+### UnionFind的具体实现
+
+为了便于理解，下面以一个整形数组为例，给出一种UnionFind的一种简单的实现方式
+
+```cpp
+class QuickUF{
+    vector<int> roots;
+public:
+    QuickUF(int N){
+        roots = vector<int>(N,0);
+        //创建N个节点个相互独立的节点，初始化父节点为自己
+        for(int i=0;i<N;i++){
+            roots[i] = i;
+        }
+    }
+    int findRoot(int i){
+        //为了路径压缩，暂时保留i
+        int root = i;
+        //1, 先找到根节点
+        while（roots[root] != root）{
+            root = roots[root];
+        }
+        //2. 路径压缩，将i到根节点路径中所有节点的父节点更新为根节点
+        while(i!=root){
+            int tmp = roots[i];
+            roots[i] = root;
+            i = tmp;
+        }
+        return root;
+
+    }
+    //检查两个节点是否属于同一集合
+    bool connected(int p, int q){
+        return findRoot(p) == findRoot(q);
+    }
+    //合并两个集合
+    void union(int p, int q){
+        int proot = findRoot(p);
+        int qroot = findRoot(q);
+        roots[proot] = qroot;
+    }
+};
+```
+
+
 ## 字符树 Trie
 
 对于前面提到的BST，当输入是随机的情况下，可能达到理想的查询速度`O(log(N))`，但是如果输入是有序的，则BST会退化为单链表，查询速度会降为`O(N)`。因此我们需要思考，对于BST的构建，能否不和数据的输入顺序相关，而和数据的空间分布相关，这样只要数据的空间分布是随机的，那么构建出的BST查询性能就会得到保证。
