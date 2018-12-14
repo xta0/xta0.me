@@ -70,11 +70,11 @@ public:
 template<class T>
 class ParTree { 
 public:
- ParTreeNode<T>* array; // 存储树结点的数组
- int Size; // 数组大小
- ParTreeNode<T>* Find(ParTreeNode<T>* node) const; // 查找node结点的根结点
- void Union(int i,int j); // 把下标为i，j的结点合并成一棵子树
- bool Different(int i,int j); // 判定下标为i，j的结点是否在一棵树中
+    ParTreeNode<T>* array; // 存储树结点的数组
+    int Size; // 数组大小
+    ParTreeNode<T>* Find(ParTreeNode<T>* node) const; // 查找node结点的根结点
+    void Union(int i,int j); // 把下标为i，j的结点合并成一棵子树
+    bool Different(int i,int j); // 判定下标为i，j的结点是否在一棵树中
 };
 ```
 - Find / Union 操作
@@ -104,10 +104,10 @@ void ParTree<T>::Union(int i,int j) {
         if(pointeri->getCount() >= pointerj->getCount()) {
             pointerj->setParent(pointeri);
             pointeri->setCount(pointeri->getCount() + pointerj->getCount());
+        }else{
+            pointeri->setParent(pointerj);
+            pointerj->setCount(pointeri->getCount() + pointerj->getCount());
         }
-    }else {
-        pointeri->setParent(pointerj);
-        pointerj->setCount(pointeri->getCount() + pointerj->getCount());
     }
 } 
 ```
