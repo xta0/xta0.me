@@ -60,7 +60,7 @@ void selectionSort(vector<int>& vec){
 
 上面介绍的直接排序是直接从剩余记录中线性查找最大记录，而所谓的堆排序是指利用堆的性质，方便的依次找出最大数/最小数。
 
-> 关于如何建堆，可参考[之前文章]()
+> 关于堆相关知识介绍可参考[之前文章](https://xta0.me/2010/07/22/Data-Structure-Binary-Heap.html)
 
 ```cpp
 template <class Record>
@@ -137,7 +137,7 @@ void insertSort(vector<int>& v){
 ```cpp
 void bubbleSort(vector<int>& vec){
     int sz = vec.size();
-    //每次外层循环归为一个数
+    //每次外层循环归位一个数
     for(int i=0;i<sz-1;i++){
         //j只需要循环sz-i-1次，因为已经有i个数被归位
         for(int j = 0; j<sz-i-1; j++){
@@ -156,75 +156,9 @@ void bubbleSort(vector<int>& vec){
     - 最少：$Θ(n)$
     - 最多：交换次数最多为 $Θ(n^2)$，最少为$0$，平均为$Θ(n^2)$
 
-### 快速排序
-
-快速排序是20世纪十大算法之一，由Tony Hoare在1962年提出，是一种基于分治策略的排序算法，类似的还有更早提出的归并排序。
-
-> 关于分治法，参考[这里]()
-
-- **算法思想**
-
-
-1. 选择轴值 (pivot)
-2. 将序列划分为两个子序列 L 和 R，使得 L 中所有记录都小于或等于轴值，R 中记录都大于轴值
-3. 对子序列 L 和 R 递归进行快速排序
-
-关于pivot值的选择，其原则是尽可能使L，R长度相等，常用的策略有
-
-1. 选择最左边的记录
-2. 随机选择
-3. 选择平均值
-
-```cpp
-void quickSort(vector<int>& arr, int left, int right){
-    if(left >= right){
-        return ;
-    }
-    //选择轴值为最左边数
-    int pivot = arr[left];
-    int l=left,r=right;
-    //循环结束条件为l=r
-    while(l < r){
-        //skip掉右边界大于pivot的值
-        while(arr[r] >= pivot && r>l){
-            r--;
-        }
-        //skip掉左边界小于pivot的值
-        while(arr[l]<=pivot && r>l){
-            l++;
-        }
-        //如果走到这里，说明有逆序对交换
-        if(r > l){
-            swap(arr[r],arr[l]);
-        }
-    }
-    //归位轴值, 注意,如果是先skip右边界，left和l/r交换，
-    swap(arr[left],arr[l]);
-    //两段递归分治
-    quickSort(arr,left,l-1);
-    quickSort(arr,l+1, right);
-}
-```
-
-- **算法分析**
-
-
-1. 最差情况：
-    - 时间代价：$Θ(n^2)$
-    - 空间代价：$Θ(n)$
-2. 最佳情况：
-    - 时间代价：$Θ(nlog{n})$
-    - 空间代价：$Θ(log{n})$
-3. 平均情况：
-    - 时间代价：$Θ(nlog{n})$
-    - 空间代价：$Θ(log{n})$
-
-
 ### 归并排序
 
-归并排序是1945年由冯诺依曼提出的，是典型的分治法，使用递归实现，
-
-- **算法思想**
+归并排序和快速排序是本篇文章介绍的重点，我们先从归并排序开始。归并排序是1945年由冯诺依曼提出的，是一种典型的分治法，使用递归实现，其**算法思想**为：
 
 1. 将列表分成两个相等的部分
 2. 左边排序
@@ -289,7 +223,68 @@ void mergeSort(vector<int>& v){
     - merge过程消耗的时间为$O(n)$
     - 最大、最小以及平均时间代价均为$Θ(nlog{n})$
 
-## 比较排序小结
+### 快速排序
+
+快速排序是20世纪十大算法之一，由Tony Hoare在1962年提出，是一种基于分治策略的排序算法，类似的还有更早提出的归并排序。
+
+- **算法思想**
+
+1. 选择轴值 (pivot)
+2. 将序列划分为两个子序列 L 和 R，使得 L 中所有记录都小于或等于轴值，R 中记录都大于轴值
+3. 对子序列 L 和 R 递归进行快速排序
+
+关于pivot值的选择，其原则是尽可能使L，R长度相等，常用的策略有
+
+1. 选择最左边的记录
+2. 随机选择
+3. 选择平均值
+
+```cpp
+void quickSort(vector<int>& arr, int left, int right){
+    if(left >= right){
+        return ;
+    }
+    //选择轴值为最左边数
+    int pivot = arr[left];
+    int l=left,r=right;
+    //循环结束条件为l=r
+    while(l < r){
+        //skip掉右边界大于pivot的值
+        while(arr[r] >= pivot && r>l){
+            r--;
+        }
+        //skip掉左边界小于pivot的值
+        while(arr[l]<=pivot && r>l){
+            l++;
+        }
+        //如果走到这里，说明有逆序对交换
+        if(r > l){
+            swap(arr[r],arr[l]);
+        }
+    }
+    //归位轴值, 注意,如果是先skip右边界，left和l/r交换，
+    swap(arr[left],arr[l]);
+    //两段递归分治
+    quickSort(arr,left,l-1);
+    quickSort(arr,l+1, right);
+}
+```
+
+- **算法分析**
+
+1. 最差情况：
+    - 时间代价：$Θ(n^2)$
+    - 空间代价：$Θ(n)$
+2. 最佳情况：
+    - 时间代价：$Θ(nlog{n})$
+    - 空间代价：$Θ(log{n})$
+3. 平均情况：
+    - 时间代价：$Θ(nlog{n})$
+    - 空间代价：$Θ(log{n})$
+
+
+
+## 小结
 
 1. 当n很小或者数组基本有序时，插入排序比较有效
 2. 综合性能，快速排序最好
@@ -298,6 +293,9 @@ void mergeSort(vector<int>& v){
     2. 叶结点的最小深度就是最佳情况下的最小比较次数
     3. 对`n`个记录，共有`n!`个叶结点，判定树的深度至少为`log(n!)` 
 
+### 比较排序相关问题
+
+- 寻找无序数组中第K大的数
 
 
 ## Resources 
