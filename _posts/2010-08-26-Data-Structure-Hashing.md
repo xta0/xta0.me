@@ -397,7 +397,7 @@ Blloom Filter最早被用来做拼写检查，检查一个单词是否在字典�
 布隆滤波器使用一个二进制向量作为容器，每当有一个元素进入容器时，计算该元素的二进制，并将对应的容器位置为1，如下图所示：
 
 
-<img src="{{site.baseurl}}/assets/images/2010/08/BF-1.png" width="60%" style="margin-left:auto; margin-right:auto;display:block">
+<img src="{{site.baseurl}}/assets/images/2010/08/BF-1.png" width="100%" style="margin-left:auto; margin-right:auto;display:block">
 
 ## Resources 
 
