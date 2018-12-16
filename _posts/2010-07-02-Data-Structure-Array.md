@@ -156,6 +156,7 @@ public:
             }
             read++;
         } 
+		return write;
     }
 };
 ```
