@@ -79,6 +79,8 @@ int bsearch(vector<int>& a, int target){
 3. 查找第一个大于等于给定值的元素
 4. 查找最后一个小于等于给定值的元素
 
+### 二分法的变种
+
 对于第一个问题，如果数组中存在重复元素，则检索target到的第一个位置可能不是唯一的一个，例如下面数组：
 
 ```c
@@ -159,11 +161,14 @@ if(a[mid] <= target){
 ```
 这几个例子说明，在实际应用中，二分查找更适合用在“近似”查找上，在这类问题上使用二分法相比使用散列表，二叉树等效果更好。
 
+### 二分法的实际应用
+
+接下来我们看一个二分法的实际应用问题，该问题为求解一个整数的平方根，即实现函数[Sqrt(x)](https://leetcode.com/problems/sqrtx/description/)。
+
 ### 更多二分法相关问题
 
 - [33. Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/description/)
 - [34. Search for a Range](https://leetcode.com/problems/search-for-a-range/description/)
-- [69. Sqrt(x)](https://leetcode.com/problems/sqrtx/description/)
 - [81. Search in Rotated Sorted Array II](https://leetcode.com/problems/search-in-rotated-sorted-array-ii/description/)
 - [278. First Bad Version](https://leetcode.com/problems/first-bad-version/description/)
 
@@ -177,6 +182,8 @@ if(a[mid] <= target){
 - 自顶向下计算
 	- 通过贪心选择, 将原问题规约为子问题
 	- 子问题的最优解递推到最终问题的最优解
+
+### 贪心法与动态规划
 
 以换钱问题为例，假如我们有面值为20，10，5，1的4种纸币，现在想要凑36块钱，问如何选取纸币面值，使纸币数量最少？
 
@@ -198,6 +205,13 @@ if(a[mid] <= target){
 	- 从问题的某一初始解出发；
 	- while 能朝给定总目标前进一步 do ,求出可行解的一个解元素；
 	- 最后，由所有解元素组合成问题的一个可行解。
+
+
+### 贪心法的应用
+
+贪心的具体应用场景有很多，有些用到贪心的算法非常出名也非常重要，比如霍夫曼编码（Huffman Coding），最小生成树算法(Prim 和 Kruskal)，还有 Dijkstra 单源加权最短路径算法。
+
+
 
 ### 誊抄书籍
 
