@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structure | AVL树 & Splay Tree | AVL Tree & Splay Tree
+list_title: 数据结构基础 | Data Structure | 平衡二叉搜索树 | Balanced BST
 mathjax: true
 title: AVL树与伸展树
 categories: [DataStructure]
