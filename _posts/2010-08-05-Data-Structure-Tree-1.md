@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structure | 树（一） | Tree-1
+list_title: 数据结构基础 | Data Structure | 树与森林 | N-ary Tree
 title: 树
 sub_title: Tree
 mathjax: true
