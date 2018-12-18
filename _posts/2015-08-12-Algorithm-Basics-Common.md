@@ -163,9 +163,7 @@ if(a[mid] <= target){
 
 ### 求解一个正数的平方根
 
-接下来我们看一个二分法的实际应用问题，该问题为求解一个整数的平方根，即实现函数[Sqrt(x)](https://leetcode.com/problems/sqrtx/description/)。
-
-这个问题要求我们不能使用已有的库函数，因此我们需要自己实现，此外，该问题的输入是一个正整数，我们这里延伸一下，改为求解任何一个正数的平方那根（包含小数）。接下来我们来分析下这个问题。
+接下来我们看一个二分法的实际应用问题，该问题为求解一个正数的平方根，即实现函数`sqrt(x)`。这个题目有两个要求，一是我们不能使用已有的库函数，二是输入的正数包含小数。下面我们来分析下这个问题。
 
 1. 对于任何一个正数，如果它大于`1`，其平方根的取值范围为 `1< s < n/2 (n>=1)`。其中`s`表示平方根，`n`表示输入的正数。
 2. 如果它小于或者等于`1`，其平方根的取值范围为 `0 < n < s <=1`
@@ -213,14 +211,15 @@ double sqrt(double num) {
 
 以`num = 9`为例，上述代码执行的过程为:
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/08/bs-1.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/08/bs-1.png" width="60%">
 
 ### 更多二分法相关问题
 
-- [33. Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/description/)
-- [34. Search for a Range](https://leetcode.com/problems/search-for-a-range/description/)
-- [81. Search in Rotated Sorted Array II](https://leetcode.com/problems/search-in-rotated-sorted-array-ii/description/)
-- [278. First Bad Version](https://leetcode.com/problems/first-bad-version/description/)
+- [Sqrt(x)](https://leetcode.com/problems/sqrtx/description/)
+- [Search in Rotated Sorted Array](https://leetcode.com/problems/search-in-rotated-sorted-array/description/)
+- [Search for a Range](https://leetcode.com/problems/search-for-a-range/description/)
+- [Search in Rotated Sorted Array II](https://leetcode.com/problems/search-in-rotated-sorted-array-ii/description/)
+- [First Bad Version](https://leetcode.com/problems/first-bad-version/description/)
 
 ## 贪心法
 
