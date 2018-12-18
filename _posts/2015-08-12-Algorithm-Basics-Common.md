@@ -161,9 +161,59 @@ if(a[mid] <= target){
 ```
 这几个例子说明，在实际应用中，二分查找更适合用在“近似”查找上，在这类问题上使用二分法相比使用散列表，二叉树等效果更好。
 
-### 二分法的实际应用
+### 求解一个正数的平方根
 
 接下来我们看一个二分法的实际应用问题，该问题为求解一个整数的平方根，即实现函数[Sqrt(x)](https://leetcode.com/problems/sqrtx/description/)。
+
+这个问题要求我们不能使用已有的库函数，因此我们需要自己实现，此外，该问题的输入是一个正整数，我们这里延伸一下，改为求解任何一个正数的平方那根（包含小数）。接下来我们来分析下这个问题。
+
+1. 对于任何一个正数，如果它大于`1`，其平方根的取值范围为 `1< s < n/2 (n>=1)`。其中`s`表示平方根，`n`表示输入的正数。
+2. 如果它小于或者等于`1`，其平方根的取值范围为 `0 < n < s <=1`
+
+综合上面两点，我们可以得出，对于任何大于0`的`正数`n`，其平方根的取值范围为`0<s<1+n/2 (n>0)`。 接下来我们便可以使用二分法寻找平方根，其思路为
+
+```python
+low = 0, high = 1 + n/2
+mid = low + (high-low)/2
+while(true){
+	s = mid*mid;
+	if(s==n){
+		return mid;
+	}else if(s > n){
+		high = mid;
+	}else {
+		low = mid;
+	}
+}
+```
+上述算法有一个问题，由于`low`和`high`的类型均为`double`，即`s==n`的情况几乎不会成立，因此我们需要对上面的二分法的判断条件做一些修改，修改方法是引入一个阈值`EPSILON`，这个阈值的作用是用来检查`s`和`n`的差值，如果差值小于阈值，则找到了解，否则将继续二分
+
+```cpp
+const double EPSILON = 0.00001;
+double sqrt(double num) {
+  double l = 0;
+  double r = num/2+1;
+  while( l< r){
+    double mid = l + (r-l)/2;
+    double s = mid*mid;
+    double diff = abs(s-num);
+	//二分终止条件
+    if(diff < EPSILON){
+      return mid;
+    }
+    if(s < num){
+      l = mid;
+    }else{
+      r = mid;  
+    }
+  }
+  return -1;
+}
+```
+
+以`num = 9`为例，上述代码执行的过程为:
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/08/bs-1.png">
 
 ### 更多二分法相关问题
 
