@@ -212,7 +212,7 @@ void heap_sort(vector<int>& a){
 
 <img src="{{site.baseurl}}/assets/images/2010/07/heap-wiki.png" class="md-img-center">
 
-## 堆的相关应用
+### 堆的相关应用
 
 - **[求一个无序数组中第K大的元素](https://leetcode.com/problems/kth-largest-element-in-an-array/description/)**
 
@@ -273,6 +273,8 @@ int findMedium(vector<int>& arr){
     return maxHeap.top();
 }
 ```
+
+- [会议室问题]()
 
 ### Resources
 
