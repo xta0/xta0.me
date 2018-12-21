@@ -55,9 +55,17 @@ public:
     int top(){ return heap[0]; };
     void pop();
 private:
-    int left_child_index(int pos){return pos*2+1;}
-    int right_child_index(int pos){return pos*2+2;}
-    int parent_index(int pos){return (pos-1)/2;}
+    int left_child_index(int pos){
+        int index = pos*2+1;
+        return index >= n?-1:index;
+    }
+    int right_child_index(int pos){
+        int index = pos*2+2;
+        return index?=n?-1:index;
+    }
+    int parent_index(int pos){
+        return (pos-1)/2;
+    }
     void sift_up(size_t pos);
     void sift_down(size_t pos);
 };
@@ -104,8 +112,11 @@ void sift_down(vector<int>& heap, size_t position){
 
 ```cpp
 void sift_up(vector<int>& heap, size_t pos){
+    if(pos == 0){
+        return;
+    }
     int p = parent_index(pos);
-    if(p > 0 && heap[pos]<heap[p]){
+    if(heap[pos]<heap[p]){
         //交换父子节点
         swap(heap[pos], [p]);
         //递归调整
@@ -189,7 +200,13 @@ void pop(){
 
 建堆的效率前面已经分析过了为`O(n)`，对于插入和删除操作来说，它们的主要操作是`sift_down`和`sift_up`操作，这两种操作每次均是向上或者向下跨越一层，因此时间复杂度和树的高度成正比，也就是`O(logn)`。
 
-### 堆排序
+## 堆的其它实现
+
+上面介绍的建堆的方式是最基本的二叉堆（Binary Heap），除了这种方式以外还有很多种其它建堆的方式，比如使用BST，红黑树等。不同的建堆方式其性能也不尽相同，这里附上一张对比图
+
+<img src="{{site.baseurl}}/assets/images/2010/07/heap-wiki.png" class="md-img-center">
+
+## 堆排序
 
 我们可以利用堆顶每次返回最优解这个特性来对数组进行原地排序，也就是所谓的堆排序。假设我们要从小到大排序，这时候我们需要建一个大顶堆，按照大顶堆的特性，堆顶元素为数组最大元素，我们把它跟最后一个元素交换，那最大元素就放到了下标为n的位置。接下来为了保持堆的特性，我们需要对新的堆顶进行sift down操作，这样剩下的`n-1`个元素又构成了新的大顶堆。我们再取堆顶的元素放到`n-1`的位置，重复这个过程，直到堆中只剩一个元素，排序工作就完成了。
 
@@ -206,15 +223,10 @@ void heap_sort(vector<int>& a){
 ```
 上面的堆排序算法包含两个过程，建堆过程和堆调整过程，总的时间复杂度为`O(n) + O(n*log(n)) = O(nlog(n))`。由于存在元素交换，因此堆排序不是稳定排序。
 
-## 堆的其它实现
 
-上面介绍的建堆的方式是最基本的二叉堆（Binary Heap），除了这种方式以外还有很多种其它建堆的方式，比如使用BST，红黑树等。不同的建堆方式其性能也不尽相同，这里附上一张对比图
+## 堆的相关应用
 
-<img src="{{site.baseurl}}/assets/images/2010/07/heap-wiki.png" class="md-img-center">
-
-### 堆的相关应用
-
-- **[求一个无序数组中第K大的元素](https://leetcode.com/problems/kth-largest-element-in-an-array/description/)**
+- **求一个无序数组中第K大的元素**
 
 这是一道经典的面试题，如果不熟悉堆这种数据结构，首先想到的应该是排序。将数组排序后，从头开始向后遍历k个元素，得到最终结果。这种方式当数组较大的时候，效率并不高，时间复杂度为`O(Nlog(N)) + O(K)`，不是一种线性解法。
 
@@ -274,9 +286,9 @@ int findMedium(vector<int>& arr){
 }
 ```
 
-- [会议室问题]()
+### [会议室问题]()
 
-### Resources
+## Resources
 
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
 - [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)
