@@ -78,7 +78,21 @@ $$
 
 2. 若$f(n) = \Theta(n^{\log_b{a}})，那么 \thinspace T(n) = \Theta(n^{\log_b{a}}\log{n})$
 
-3. 若$f(n) = \Omega(n^{\log_b{a+\epsilon}}),\epsilon > 0, \thinspace，且对于某个常数$
+3. 若$f(n) = \Omega(n^{\log_b{a+\epsilon}}),\epsilon > 0, \thinspace，且对于某个常数
+
+### 常见递归算法的时间复杂度
+
+|--|--|--|--|
+| 递推公式 | 时间 | 空间 | 算法 |
+| `T(n) = 2*T(n/2)+O(n)` | `O(nlogn)` | `O(logn)` | quick_sort | 
+| `T(n) = 2*T(n/2)+O(n)` | `O(nlogn)` | `O(n+logn)` | merge sort | 
+| `T(n) = T(n/2)+O(1)` | `O(logn)` | `O(logn)` | binary search | 
+| `T(n) = 2*T(n/2)+O(1)` | `O(n)` | `O(logn) ~ O(n)` | binary tree traversal | 
+| `T(n) = T(n-1) + O(1)` | `O(n^2)` | `O(n)` | quick_sort (worst case) | 
+| `T(n) = n*T(n-1)` | `O(n!)` | `O(n)` | permutation | 
+| `T(n) = T(n-1) + T(n-2) + ... + T(1)` | `O(2^n)` | `O(n)` | combination | 
+
+
 
 ### Resources
 
