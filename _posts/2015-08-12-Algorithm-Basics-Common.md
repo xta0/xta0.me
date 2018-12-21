@@ -65,14 +65,14 @@ int bsearch(vector<int>& a, int target){
 		}else if(a[mid] < target){
 			lo = mid+1;
 		}else{
-			hi = mid+1;
+			hi = mid-1;
 		}
 	}
 	return -1;
 }
 ```
 
-上面实现的二分法适用于有序数组中没有重复元素的情况，但实际应用中情况往往比较复杂，数组中可能会存在大片的重复元素后者只有局部有序的情况，因此想写对二分法实际上并不容易。比如：
+上面实现的二分法适用于有序数组中没有重复元素的情况，但实际应用中情况往往比较复杂，数组中可能会存在大片的重复元素或者只有局部有序的情况，因此想写对二分法实际上并不容易。比如下面几种场景：
 
 1. 查找第一个值等于给定值的元素
 2. 查找最后一个值等于给定值的元素
@@ -115,7 +115,7 @@ int bsearch(vector<int>& a, int target){
 		}else if(a[mid] < target){
 			lo = mid+1;
 		}else{
-			hi = mid+1;
+			hi = mid-1;
 		}
 	}
 	return -1;

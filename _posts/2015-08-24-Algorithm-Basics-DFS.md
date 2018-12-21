@@ -20,17 +20,16 @@ mathjax: true
 function dfs(array,index, ...) {
     if(some_condition){
         return;
-    }else{
-        for(i=index;i<array.size();++i){
-            //choose
-            obj = array[i];
-            //mark states
-            set_states();
-            //DFS search
-            dfs(array,i, ...);
-            //unmark states
-            unset_state();
-        }
+    }
+    for(i=index;i<array.size();++i){
+        //choose
+        obj = array[i];
+        //mark states
+        set_states();
+        //DFS search
+        dfs(array,i, ...);
+        //unmark states
+        unset_state();
     }
 }
 ```
