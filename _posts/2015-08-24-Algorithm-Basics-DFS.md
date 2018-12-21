@@ -31,9 +31,7 @@ function dfs(array,index, ...) {
 }
 ```
 
-### 排列组合
-
-- **排列问题（Permutation**
+### 排列问题（Permutation**
 
 Permutation问题是求解一个集合的全排列问题，例如`[1,2,3]`的全排列为`[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]`。这个问题的解法有很多，比较常见的是使用DFS进行暴力枚举，去搜索所有可能的结果。
 
@@ -81,9 +79,14 @@ public:
 };
 ```
 
-接下来我们来分析下上面算法的时间复杂度，从递归函数来看，该
+接下来我们来分析下上面算法的时间复杂度，从`dfs`函数来看，不难看出，递归函数之间存在下面的关系：
 
-- **组合问题（Combination**
+$$
+T(n) = n*T(n-1)
+$$
+参考前面算法分析的文章可知，该算法的时间复杂度为`O(n!)`，非常高。
+
+### 组合问题（Combination）
 
 组合问题的解法和排列类似，但是组合的搜索分支没有排列那么多，我们还看上面`[1,2,3]`的例子：
 
@@ -110,7 +113,7 @@ def dfs(self,arr,index,choose,result):
         choose.append(x)
         result.append("".join(choose))
         #dfs
-        self.dfs2(curr,depth,arr,i+1,choose,result)
+        self.dfs(curr,depth,arr,i+1,choose,result)
         #unchoose
         choose.pop()
 
