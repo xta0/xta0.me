@@ -7,7 +7,7 @@ mathjax: true
 categories: [DataStructure]
 ---
 
-> 这一节我们来讨论一些常见的内排序算法，所谓内排序是指整个排序过程是在内存中完成的。
+> 所谓内排序是指整个排序过程是在内存中完成的，与之相对应的是我们后要介绍的外排序算法，即排序过程需要用到外部存储。
 
 ### 直接选择排序
 
@@ -161,9 +161,11 @@ void mergeSort(vector<int>& v){
     //1. split vector half
     vector<int> left = vector<int>(v.begin(), v.begin()+v.size()/2);
     vector<int> right = vector<int>(v.begin()+v.size()/2, v.end());
+    
     //2. sort halves
     mergeSort(left);
     mergeSort(right);
+    
     //3. merge halves
     int i1 = 0; //index into left
     int i2 = 0; //index into right
@@ -212,6 +214,23 @@ void mergeSort(vector<int>& v){
 1. 选择最左边的记录
 2. 随机选择
 3. 选择平均值
+
+快速排序的伪码如下：
+
+```javascript
+quick_sort(arr, l, r){
+    if(l >= r){
+        return
+    }
+    pivot = partition(arr,l,r) //获得轴值
+    quick_sort(arr,l,pivot-1)
+    quick_sort(arr,pivot+1,r)
+}
+```
+对于partition函数的实现有很多种(感兴趣的可参考《编程珠玑》中的分析)，
+
+
+
 
 ```cpp
 void quickSort(vector<int>& arr, int left, int right){
@@ -289,6 +308,7 @@ void quickSort(vector<int>& arr, int left, int right){
 
 ## Resources 
 
+- [编程珠玑]()
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
 - [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)
 - [算法与数据结构-1-北大-Cousera](https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome)
