@@ -6,7 +6,7 @@ categories: [Algorithms]
 mathjax: true
 ---
 
-## 递推方程
+### 递推方程
 
 递推思想是人们常用的一种思维方式，它是一种正向的思考的过程，目的是为了找寻到某种规律，从而进行归纳和演绎，有点类似我们学过的数学归纳法。
 
@@ -35,7 +35,7 @@ $$
 4. 对数级数
     - $\log1 + \log2 + ... + \log{n} = \log(n!) = \Theta(nlogn)$
 
-## 分析递归算法的时间复杂度
+## 递归算法的时间复杂度
 
 递归算法的复杂度分析往往没有那么直观，常用的方法有使用递归树和主定理，我们先介绍基于递归树的分析方法。
 
@@ -78,7 +78,21 @@ $$
 
 2. 若$f(n) = \Theta(n^{\log_b{a}})，那么 \thinspace T(n) = \Theta(n^{\log_b{a}}\log{n})$
 
-3. 若$f(n) = \Omega(n^{\log_b{a+\epsilon}}),\epsilon > 0, \thinspace，且对于某个常数$
+3. 若$f(n) = \Omega(n^{\log_b{a+\epsilon}}),\epsilon > 0, \thinspace$，且对于某个常数
+
+### 几种常用的递归算法时间复杂度
+
+|--|--|--|--|
+| 递推公式 | 时间 | 空间 | 算法 |
+| `T(n) = 2*T(n/2)+O(n)` | `O(nlogn)` | `O(logn)` | quick_sort | 
+| `T(n) = 2*T(n/2)+O(n)` | `O(nlogn)` | `O(n+logn)` | merge sort | 
+| `T(n) = T(n/2)+O(1)` | `O(logn)` | `O(logn)` | binary search | 
+| `T(n) = 2*T(n/2)+O(1)` | `O(n)` | `O(logn) ~ O(n)` | binary tree traversal | 
+| `T(n) = T(n-1) + O(1)` | `O(n^2)` | `O(n)` | quick_sort (worst case) | 
+| `T(n) = n*T(n-1)` | `O(n!)` | `O(n)` | permutation | 
+| `T(n) = T(n-1) + T(n-2) + ... + T(1)` | `O(2^n)` | `O(n)` | combination | 
+
+
 
 ### Resources
 

@@ -20,28 +20,22 @@ mathjax: true
 function dfs(array,index, ...) {
     if(some_condition){
         return;
-    }else{
-        for(i=index;i<array.size();++i){
-            //choose
-            obj = array[i];
-            //mark states
-            set_states();
-            //DFS search
-            dfs(array,i, ...);
-            //unmark states
-            unset_state();
-        }
+    }
+    for(i=index;i<array.size();++i){
+        obj = array[i];
+        choose();
+        dfs(array,i, ...);
+        //backtracking
+        unchoose();
     }
 }
 ```
 
-### 排列组合
+### 排列问题（Permutation**
 
-- **排列问题（Permutation**
+Permutation问题是求解一个集合的全排列问题，例如`[1,2,3]`的全排列为`[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]`。这个问题的解法有很多，比较常见的是使用DFS进行暴力枚举，去搜索所有可能的结果。
 
-Permutation问题是求解一个集合的全排列问题，例如`[1,2,3]`的全排列为`[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]`。这个问题的解法有很多，比较常见的是使用动态规划，我们可以先从0个元素开始，然后是1个元素，2个元素去寻找规律，最后可以找到$A(n)$和$A(n-1)$之间的关系，进行递推求解。当然针对这道题，我们也可以使用DFS的思想去搜索所有可能的结果。
-
-正如上文所述，使用DFS进行搜索的一个先决条件是要构建正确的解空间或者决策树，我们以`[1,2,3]`为例，其解空间如下：
+使用DFS进行搜索的一个先决条件是要构建正确的解空间或者决策树，我们以`[1,2,3]`为例，其解空间如下：
 
 ```
      1               2              3
@@ -53,7 +47,7 @@ Permutation问题是求解一个集合的全排列问题，例如`[1,2,3]`的全
 
 由这个解空间不难看出，我们可以将`1,2,3`分别作为根节点来构造一棵树，然后使用DFS对每个节点进行深度搜索，当搜索到叶子结点时便得到一个解，然后进行回溯。以第一棵树为例，我们从`1`开始沿着左路搜索到`1,2,3`，然后进行回溯，回溯到`2`之后，发现没有其它的孩子节点，因此继续回溯到`1`，然后继续沿着`1`的右边继续下降，得到`1,3,2`。依次类推深度遍历其它树，最终得到全部解。
 
-这里有个问题，由于递归函数的自相似性，我们算法主体是构造一个`for`循环来遍历各自的孩子节点，这个`for`循环的范围该怎么选取呢？我们来简单分析一下，对于根节点`1`，可以令`i`从`1`到`2`，对于第二层的`2`它只有一个节点，于是我们希望`i`从`2`到`2`,对于第三层`3`，显然它没有子节点，函数在这里返回，开始回溯，于是`3`回溯到了`2`,由于该层的`for`循环的`i`已经为`2`，`for`循环不在执行，于是回溯到`1`，此时第一层的`for`循环继续，`i`值为`2`，于是开始右边的下降过程。理解了这个过程，就不难写出代码：
+套用前面给出的深搜+回溯的代码模板，我们首先需要构造一个`for`循环来遍历各自的孩子节点，其次，我们需要在每次递归前进行choose操作，然后在递归完成后进行unchoose操作，整个过程如下：
 
 ```cpp
 //全排列-深搜
@@ -62,21 +56,19 @@ private:
     void dfs( vector<int>& nums, vector<int>& chosen, vector<vector<int>>& results){
         if(nums.size() == 0){
             results.push_back(chosen);
-        }else{
-            for(int i = 0; i<nums.size(); ++i){
-                int n = nums[i];
-                //set state
-                chosen.push_back(n);
-                nums.erase(nums.begin()+i);
-                //dfs
-                dfs(nums,chosen,results);
-                //backtracking, unset_state
-                chosen.pop_back();
-                nums.insert(nums.begin()+i,n);
-            }
+        }
+        for(int i = 0; i<nums.size(); ++i){
+            int n = nums[i];
+            //set state
+            chosen.push_back(n);
+            nums.erase(nums.begin()+i);
+            //dfs
+            dfs(nums,chosen,results);
+            //backtracking, unset_state
+            chosen.pop_back();
+            nums.insert(nums.begin()+i,n);
         }
     }
-    
 public:
     vector<vector<int>> permute(vector<int>& nums) {
         vector<vector<int>> ret;
@@ -87,7 +79,14 @@ public:
 };
 ```
 
-- **组合问题（Combination**
+接下来我们来分析下上面算法的时间复杂度，从`dfs`函数来看，不难看出，递归函数之间存在下面的关系：
+
+$$
+T(n) = n*T(n-1)
+$$
+参考前面算法分析的文章可知，该算法的时间复杂度为`O(n!)`，非常高。
+
+### 组合问题（Combination）
 
 组合问题的解法和排列类似，但是组合的搜索分支没有排列那么多，我们还看上面`[1,2,3]`的例子：
 
@@ -114,7 +113,7 @@ def dfs(self,arr,index,choose,result):
         choose.append(x)
         result.append("".join(choose))
         #dfs
-        self.dfs2(curr,depth,arr,i+1,choose,result)
+        self.dfs(curr,depth,arr,i+1,choose,result)
         #unchoose
         choose.pop()
 

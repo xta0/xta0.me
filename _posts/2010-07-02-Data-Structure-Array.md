@@ -340,14 +340,8 @@ public:
 - [16. 3Sum Closest](https://leetcode.com/problems/3sum-closest/description/)
 - [18. 4Sum](https://leetcode.com/problems/4sum/description/)
 - [560. Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/description/)
-
-K-Sum的问题还可以和上面最优化的问题相结合，比如
-
 - [209. Minimum Size Subarray Sum](https://leetcode.com/problems/minimum-size-subarray-sum/description/)
 - [325. Maximum Size Subarray Sum Equals k]()
-
-这类问题的解法同上面例子中提到的`prefixSum`类似，均是
-
 
 ### 滑动窗口问题
 
