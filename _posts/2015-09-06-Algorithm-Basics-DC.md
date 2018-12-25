@@ -8,21 +8,23 @@ mathjax: true
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/09/dc-1.png">
 
-## 分治法的设计思想
+### 分治法的设计思想
 
-分治法顾名思义，其思想为"分而治之"，是指将一个大问题划分为若干个小问题进行各个击破。对于计算机来说，为求解一个大规模的问题，可以将其分解为若干个（通常两个）子问题，规模大体相当，分别求解子问题，由子问题的解得出原问题的解。其步骤如下：
+分治法顾名思义，其思想为"分而治之"，是指将一个大问题划分为若干个小问题进行各个击破。对于计算机来说，为求解一个大规模的问题，可以将其分解为若干个（通常两个）子问题，规模大体相当，分别求解子问题，由子问题的解得出原问题的解。对于分治法，比较重要的是要求子问题具备一定的特征：
+
+1. 子问题与原问题性质完全一样
+2. 子问题之间**彼此独立**的求解
+3. 递归停止时子问题可直接求解
+
+上述三点中的第二点尤其重要，如果子问题不能满足独立求解（彼此有耦合），那么该问题将不适合用分治法求解，例如动态规划同样是将原问题划分为子问题，但是子问题的求解往往依赖其它子问题的状态，彼此之间并不独立。正式由于其子问题的独立性，我们往往可以是用并行计算来同时处理多个子问题，例如对较小规模的子问题可以进行多线程处理，对规模较大的子问题，可使用目前流行的分布式计算MapReduce。
+
+使用分治法的算法思路如下：
 
 1. 将原问题划分为或者归结为规模较小的子问题
 2. 迭代或者递归求解每个子问题
 3. 将子问题的解综合得到原问题的解
 
-对于子问题需要符合下面的条件：
-
-1. 子问题与原问题性质完全一样
-2. 子问题之间彼此独立的求解
-3. 递归停止时子问题可直接求解
-
-分治法的代码模板如下:
+根据前面介绍的子问题的特征，我们可以总结出一套分治法的代码模板:
 
 ```python
 def divide_conquer(problem, param1, param2, ...):
@@ -34,13 +36,13 @@ def divide_conquer(problem, param1, param2, ...):
     data = prepare_data(problem)
     subproblems = split_problem(problem,data)
 
-    # divide and conqure
+    # divide
     subResult1 = self.divide_conquer(subproblems[0], p1, ...)
     subResult1 = self.divide_conquer(subproblems[1], p1, ...)
     subResult1 = self.divide_conquer(subproblems[2], p1, ...)
     ...
 
-    # process and generate the final result
+    # conquer, process and generate the final result
     result = combineResult(subResult1,subResult2, subResult3,...)
 ```
 

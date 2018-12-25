@@ -7,27 +7,11 @@ mathjax: true
 categories: [DataStructure]
 ---
 
-本章主要讨论一些常见的内排序算法，所谓内排序是指整个排序过程是在内存中完成的。排序的算法有很多种，不同的排序方法应用场景不同，因此没有所谓的“最好”的排序方法。常用的排序算法有
-
-| -- | -- | -- |
-| bubble sort | swap adjacent pairs that are out of order | $O(n^2)$ | 
-| selection sort | look for the smallest element, move to the front | $O(n^2)$ | 
-| insertion sort | build an increasingly large sorted front portion | $O(n^2)$ | 
-| merge sort | recursively divide the data in half and sort it | $O(nlog{n})$ | 
-| heap sort | place the values into a sorted tree structure | $O(nlog{n})$ | 
-| quick sort |recursively "partition" data based on a middle value | $O(nlog{n})$ |
-| bucket sort | place the values as indexes into another array | $O(n)$  | 
-
-另外还有一些其他的排序方法，比如桶排序(bucket sort)，基数排序(radix sort)等，这里不做介绍。
-
-## 选择排序
+> 这一节我们来讨论一些常见的内排序算法，所谓内排序是指整个排序过程是在内存中完成的。
 
 ### 直接选择排序
 
-所谓直接选择排序，是指在每次排序的过程中，依次选出剩下的未排序记录中的最小记录
-
-- **算法思想**
-
+所谓直接选择排序，是指在每次排序的过程中，依次选出剩下的未排序记录中的最小记录，其**算法思想**为：
 
 1. 遍历数组中最小的数
 2. 和第0个元素交换
@@ -58,7 +42,7 @@ void selectionSort(vector<int>& vec){
 
 ### 堆排序
 
-上面介绍的直接排序是直接从剩余记录中线性查找最大记录，而所谓的堆排序是指利用堆的性质，方便的依次找出最大数/最小数。
+上面介绍的直接排序是直接从剩余记录中线性查找最大记录，而堆排序则可以借助堆的性质，在`log(n)`的时间内找到最大数或最小数。
 
 > 关于堆相关知识介绍可参考[之前文章](https://xta0.me/2010/07/22/Data-Structure-Binary-Heap.html)
 
@@ -78,14 +62,11 @@ void sort(Record Array[], int n){
 
 - **算法分析**
 
-
 1. 建堆：$Θ(n)$
 2. 删除堆顶: $Θ(log{n})$
 3. 一次建堆，n 次删除堆顶
 4. <mark>总时间代价为$Θ(nlog{n})$</mark>
 5. 空间代价为$Θ(1)$
-
-## 插入排序
 
 ### 直接插入排序
 
@@ -116,7 +97,6 @@ void insertSort(vector<int>& v){
 
 - **算法分析**
 
-
 1. 最佳情况：n-1次比较，2(n-1)次移动，$\Theta(n)$
 2. 最坏情况：$\Theta(n^2)$
     - 比较次数：$\sum{i=1}{n-1}i=n(n-1)/2$ = $\Theta(n^2)$
@@ -125,8 +105,6 @@ void insertSort(vector<int>& v){
 
 1. 在最好情况（序列本身已是有序的）下时间代价为$Θ(n)$
 2. 对于短序列，直接插入排序比较有效
-
-## 交换排序
 
 ### 冒泡排序
 
@@ -158,7 +136,7 @@ void bubbleSort(vector<int>& vec){
 
 ### 归并排序
 
-归并排序和快速排序是本篇文章介绍的重点，我们先从归并排序开始。归并排序是1945年由冯诺依曼提出的，是一种典型的分治法，使用递归实现，其**算法思想**为：
+归并排序和接下来的快速排序是本文介绍的重点，它们在实际中应用非常广发，值得深入思考其背后的原理。我们先从归并排序开始。归并排序是1945年由冯诺依曼提出的，是一种典型的分治法，使用递归实现，其**算法思想**为：
 
 1. 将列表分成两个相等的部分
 2. 左边排序
@@ -192,11 +170,10 @@ void mergeSort(vector<int>& v){
     int i = 0; //index of the merged array
     while(i1<left.size() && i2<right.size()){
         if(left[i1] <= right[i2]){
-            v[i] = left[i1++];
+            v[i++] = left[i1++];
         }else{
-            v[i] = right[i2++];
+            v[i++] = right[i2++];
         }
-        i++;
     }
     //append left half
     while(i1<left.size()){
@@ -216,7 +193,6 @@ void mergeSort(vector<int>& v){
 
 - **算法分析**
 
-
 1. 空间代价：$Θ(n)$ / $O(1)$
 2. 划分时间、排序时间、归并时间
     - $T(n) = 2T(n/2)+cn$, $T(1) = 1$
@@ -225,15 +201,13 @@ void mergeSort(vector<int>& v){
 
 ### 快速排序
 
-快速排序是20世纪十大算法之一，由Tony Hoare在1962年提出，是一种基于分治策略的排序算法，类似的还有更早提出的归并排序。
-
-- **算法思想**
+快速排序是20世纪十大算法之一，由Tony Hoare在1962年提出，同样是一种基于分治策略的排序算法，和归并排序不同的是，它不是都将数组划分为两个等长的子数组，子数组的长度是随机的，取决于选取的轴值（pivot point）。快速排序的**算法思想**为：
 
 1. 选择轴值 (pivot)
 2. 将序列划分为两个子序列 L 和 R，使得 L 中所有记录都小于或等于轴值，R 中记录都大于轴值
 3. 对子序列 L 和 R 递归进行快速排序
 
-关于pivot值的选择，其原则是尽可能使L，R长度相等，常用的策略有
+关于轴值的选择，其原则是尽可能使L，R长度相等，常用的策略有
 
 1. 选择最左边的记录
 2. 随机选择
@@ -282,20 +256,35 @@ void quickSort(vector<int>& arr, int left, int right){
     - 时间代价：$Θ(nlog{n})$
     - 空间代价：$Θ(log{n})$
 
+### 快速选择 (Quick Select)
+
+快速选择算法是由快速排序演变而来的一种选择算法，它可以在`O(n)`时间内从无序列数组找到第k小的元素。该算法同样是由Tony Hoare提出，因此它也被称为霍尔选择算法。快速选择的总体思路与快速排序一致，选择一个元素作为基准来对元素进行分区，将小于和大于基准的元素分在基准左边和右边的两个区域。不同的是，快速选择并不递归访问双边，而是只递归进入一边的元素中继续寻找。这降低了平均时间复杂度，从O`(nlogn)`至`O(n)`，不过最坏情况仍然是`O(n^2)`。
+
+
+
 
 
 ## 小结
 
-1. 当n很小或者数组基本有序时，插入排序比较有效
-2. 综合性能，快速排序最好
-3. 任何基于比较的排序算法，其时间复杂度不可能低于$O(n\log(n))$，可以用决策树来证明
+1. 上述各种排序方法的时间复杂度如下：
+
+    | -- | -- | -- |
+    | bubble sort | swap adjacent pairs that are out of order | $O(n^2)$ | 
+    | selection sort | look for the smallest element, move to the front | $O(n^2)$ | 
+    | insertion sort | build an increasingly large sorted front portion | $O(n^2)$ | 
+    | merge sort | recursively divide the data in half and sort it | $O(nlog{n})$ | 
+    | heap sort | place the values into a sorted tree structure | $O(nlog{n})$ | 
+    | quick sort |recursively "partition" data based on a middle value | $O(nlog{n})$ |
+    | bucket sort | place the values as indexes into another array | $O(n)$  | 
+
+
+2. 当n很小或者数组基本有序时，插入排序比较有效
+3. 综合性能，快速排序最好
+4. 任何基于比较的排序算法，其时间复杂度不可能低于$O(n\log(n))$，可以用决策树来证明
     1. 决策树中叶结点的最大深度就是排序算法在最差情况下需要的最大比较次数
     2. 叶结点的最小深度就是最佳情况下的最小比较次数
     3. 对`n`个记录，共有`n!`个叶结点，判定树的深度至少为`log(n!)` 
 
-### 比较排序相关问题
-
-- 寻找无序数组中第K大的数
 
 
 ## Resources 

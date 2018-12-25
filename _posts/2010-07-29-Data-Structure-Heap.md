@@ -286,7 +286,10 @@ int findMedium(vector<int>& arr){
 }
 ```
 
-### [会议室问题]()
+- **会议室问题**
+
+该问题是一道非常经典的高频面试题，题目
+
 
 ## Resources
 
