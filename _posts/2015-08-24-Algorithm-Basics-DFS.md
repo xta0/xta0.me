@@ -102,7 +102,7 @@ $$
 
 1. 在进行`for`循环遍历时，需要改变每次起始搜索的`index`的值，`index`值是递增的，例如当我们走完`[1,2,3]`后，我们需要回溯到`1`，然后接着走到`3`，此时对于`3`来说，它不能再回头遍历`2`，因为`[1,2,3]`和`[1,3,2]`是相同的组合
 2. 由于`index`的递增性使我们在遍历数组的时候无需修改数组，例如第一次搜索我们choose了`1`，第二次搜索由于index递增，可以直接上我们选择到`2`,无需将`1`移除array
-3. 对于组合，我们可以求长度，例如长度为2的组合有`[1,2],[1,3],[2,3]`
+
 
 ```python
 def dfs(self,arr,index,choose,result):
@@ -124,7 +124,9 @@ def combination(self,arr,n):
     return result
 ```
 
-上面代码可以搜索出`arr`的所有组合，在`dfs`函数中无需增加递归基，因为由于`index`递增，当`for`循环执行完后，函数自动返回。如果想要求解`k`个数的组合，只需要修改`dfs`函数，追踪递归深度即可:
+上面代码可以搜索出`arr`的所有组合，在`dfs`函数中无需增加递归基，因为由于`index`递增，当`for`循环执行完后，函数自动返回。
+
+如果想要求解`k`个数的组合，只需要修改`dfs`函数，追踪递归深度即可:
 
 ```python
 def dfs(self,curr,depth,arr,index,choose,result):
@@ -139,7 +141,7 @@ def dfs(self,curr,depth,arr,index,choose,result):
         choose.append(x)
         curr += 1
         #dfs
-        self.dfs2(curr,depth,arr,i+1,choose,result)
+        self.dfs(curr,depth,arr,i+1,choose,result)
         #unchoose
         curr-=1
         choose.pop()

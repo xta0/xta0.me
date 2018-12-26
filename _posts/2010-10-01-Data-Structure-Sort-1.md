@@ -219,47 +219,69 @@ void mergeSort(vector<int>& v){
 
 ```javascript
 quick_sort(arr, l, r){
-    if(l >= r){
-        return
-    }
+    if l >= r: return
     pivot = partition(arr,l,r) //获得轴值
     quick_sort(arr,l,pivot-1)
     quick_sort(arr,pivot+1,r)
 }
 ```
-对于partition函数的实现有很多种(感兴趣的可参考《编程珠玑》中的分析)，
+对于partition函数的实现有多种，这里参考了《编程珠玑》中`sort3`版本，伪码如下
 
+```javascript
+partition(arr,lo,hi){
+    i = lo;
+    j = hi+1
+    p = arr[lo]
+    loop:
+        do i++ while i<= hi && arr[i] < p
+        do j-- while arr[j] > p
+        if i > j:
+            break
+        swap( arr[i], arr[j])
+    //swap pivot
+    swap( arr[lo], arr[j] )
+    return j
+}
+```
+想写出没有bug的快排实际上并不容易，在上述代码中，有下面一些细节需要特别小心：
 
+1. 初始化右边界为`hi+1`
+2. 使用`do-while`结构，先移动`i,j`，后比较
+3. 先移动左边界，后移动右边界，右边界无需判断`j>=lo`
+4. 归位轴值时交换`lo`和`j`
 
+C++代码如下：
 
 ```cpp
+int partition(vector<int>& arr, int lo, int hi){
+    //a[lo,...,i-1],a[i],a[i+1,...,hi]
+    int p = arr[lo];
+    int i = lo;
+    int j = hi+1;
+    while(true){
+        //skip左边界小于pivot的值
+        do { i++; } while( i<=hi && arr[i] < p );
+        //skip右边界大于pivot的值
+        do { j--; } while( arr[j] > p);
+        //i，j相遇
+        if( i>j ){
+            break;
+        }
+        swap(arr[i],arr[j]);
+    }
+    //swap pivot
+    swap(arr[lo],arr[j]);
+    return j;
+}
 void quickSort(vector<int>& arr, int left, int right){
     if(left >= right){
         return ;
     }
-    //选择轴值为最左边数
-    int pivot = arr[left];
-    int l=left,r=right;
-    //循环结束条件为l=r
-    while(l < r){
-        //skip掉右边界大于pivot的值
-        while(arr[r] >= pivot && r>l){
-            r--;
-        }
-        //skip掉左边界小于pivot的值
-        while(arr[l]<=pivot && r>l){
-            l++;
-        }
-        //如果走到这里，说明有逆序对交换
-        if(r > l){
-            swap(arr[r],arr[l]);
-        }
-    }
-    //归位轴值, 注意,如果是先skip右边界，left和l/r交换，
-    swap(arr[left],arr[l]);
-    //两段递归分治
-    quickSort(arr,left,l-1);
-    quickSort(arr,l+1, right);
+    //返回pivot index
+    int pivot = partition(arr,left,right);
+    //两段分治
+    quickSort(arr,left,pivot-1);
+    quickSort(arr,pivot+1, right);
 }
 ```
 
@@ -277,10 +299,69 @@ void quickSort(vector<int>& arr, int left, int right){
 
 ### 快速选择 (Quick Select)
 
-快速选择算法是由快速排序演变而来的一种选择算法，它可以在`O(n)`时间内从无序列数组找到第k小的元素。该算法同样是由Tony Hoare提出，因此它也被称为霍尔选择算法。快速选择的总体思路与快速排序一致，选择一个元素作为基准来对元素进行分区，将小于和大于基准的元素分在基准左边和右边的两个区域。不同的是，快速选择并不递归访问双边，而是只递归进入一边的元素中继续寻找。这降低了平均时间复杂度，从O`(nlogn)`至`O(n)`，不过最坏情况仍然是`O(n^2)`。
+快速选择算法是由快速排序演变而来的一种选择算法，它可以在`O(n)`时间内从无序列数组找到第k小的元素。该算法同样是由Tony Hoare提出，因此它也被称为霍尔选择算法。快速选择的总体思路与快速排序一致，选择一个元素作为基准来对元素进行分区，将小于和大于基准的元素分在基准左边和右边的两个区域。不同的是，快速选择并不递归访问双边，而是只递归进入一边的元素中继续寻找。这降低了平均时间复杂度，从O`(nlogn)`至`O(n)`，不过最坏情况仍然是`O(n^2)`。其算法思路为
 
+1. 选择数组第一个数作为pivot，进行partition分区，数组将分为三部分`A[0,...,p-1], A[p], A[p+1,...,n-1]`
+2. 分区后我们可以知道p右边的数都比p大，因此p是`arr.size()-partition_index`大的数，令该值为`pi`
+2. 如果`k=pi`，则pivot就是第`k`大的数
+3. 如果`k>pi`，则第k的大数在`A[0,...,p-1]`区间，递归求解该区间
+4. 如果`k<pi`，则第k的大数在`A[p+1,...,n-1]`区间，递归求解该区间
 
+举例来说，有下面一组无序的number；`6 1 3 5 7 2 4 9 11 8`，现在想要求出数组中第`3`大的数。按照上面思路，我们首先需要对数组进行分区，按照快排的逻辑，分区后的数组如下：
 
+```
+partition num : 6
+partition index : 5
+2 1 3 5 4 6 [ 7 9 11 8 ]
+          |
+```
+此时`pi = arr.size() - partition_index = 5`，即`6`是数组中第`5`大的数，现在我们要找第`3`大的数，因此我们需要在`6`的右边区间继续寻找，递归求解该区间得到
+
+```
+paritition num: 7
+paritition index: 6
+2 1 3 5 4 6  7 [ 9 11 8 ]
+             | 
+```
+此时`pi = 10-6 = 4 > 3`，因此继续递归求解`7`右边区间，得到
+
+```
+paritition num: 9
+paritition index: 8
+2 1 3 5 4 6 7 [ 8 ]  9  11
+                     | 
+```
+此时`pi = 10-9 = 2 < 3`，递归求解`9`右边区间，该区间只有一个元素`8`，即是第`3`大的数
+
+算法完整代码如下：
+
+```cpp
+int quickSelect(vector<int>& arr, int lo, int hi, int k){
+    if(lo >= hi){
+        return arr[lo];
+    }
+    //partition部分同快排
+    int p = partition(arr, lo, hi);    
+    int index = (int)arr.size() - p;
+    if( k==index ){
+        return arr[p];
+    }else if( k < index){
+        //递归右边区间
+        return quickSelect(arr, p+1, hi, k);
+    }else{
+        //递归左边区间
+        return quickSelect(arr,lo,p-1,k);
+    }
+}
+```
+
+接下来我们可以来分析一下该算法的时间复杂度，上面算法中，`partition`时间为线性`O(n)`，每次递归原数组的一般区间，因此有如下式子:
+
+$$
+T(n) = T(n/2) + O(n)
+$$
+
+上述式子实际上是等比数列求和$n+n/2+n/4+...+1 = 2n-1 = O(n)$
 
 
 ## 小结
@@ -297,7 +378,7 @@ void quickSort(vector<int>& arr, int left, int right){
     | bucket sort | place the values as indexes into another array | $O(n)$  | 
 
 
-2. 当n很小或者数组基本有序时，插入排序比较有效
+2. <mark>当n很小或者数组基本有序时，插入排序比较有效</mark>
 3. 综合性能，快速排序最好
 4. 任何基于比较的排序算法，其时间复杂度不可能低于$O(n\log(n))$，可以用决策树来证明
     1. 决策树中叶结点的最大深度就是排序算法在最差情况下需要的最大比较次数
