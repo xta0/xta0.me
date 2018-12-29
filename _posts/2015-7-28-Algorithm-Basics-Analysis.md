@@ -43,7 +43,7 @@ $$
 
 所谓递归树就是将递归的过程用树的方式呈现出来，以归并排序为例，递归树如下图示：
 
-<img src="{{site.baseurl}}/assets/images/2015/08/merge_sort.png" class="md-img-center" width="70%">
+<img src="{{site.baseurl}}/assets/images/2015/08/merge_sort.png" class="md-img-center" width="80%">
 
 
 归并排序的时间复杂度公式为:

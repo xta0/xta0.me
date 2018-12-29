@@ -1,8 +1,7 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structure | 树与森林 | N-ary Tree
-title: 树
-sub_title: Tree
+list_title: 数据结构基础 | Data Structure | 树与森林 | N-ary Tree & Forest
+title: 树与森林
 mathjax: true
 categories: [DataStructure]
 ---
@@ -367,7 +366,6 @@ ltag 0 0 1 1 1 1 1 0 1 1
 11. D,X,I的恢复过程类似
 
 <img src="{{site.baseurl}}/assets/images/2008/08/tree-22.png" style="margin-left:auto; margin-right:auto;display:block">
-
 
 ### Resource
 
