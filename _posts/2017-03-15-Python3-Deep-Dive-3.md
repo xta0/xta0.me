@@ -12,13 +12,12 @@ categories: [Python]
 在介绍函参数之前，先来回顾一下Python中的Tuple，在Python中，Tuple的定义是被`,`分割的value而不是`()`，`()`的作用是为了让Tuple看起来更容易理解
 
 ```shell
-Python 3.7.0 (default, Aug 10 2018, 12:20:11)
-[Clang 9.1.0 (clang-902.0.39.2)] on darwin
+Python 3.7.0 (default, Mar 15 2017, 12:20:11)
 Type "help", "copyright", "credits" or "license" for more information.
 >>> 1,2,3  #declaure a tuple
 (1, 2, 3)
 ```
-比如我们想定义一个Tuple，该Tuple只有一个元素`1`，我们可能最先想到的写法是`(1)`，但实际上这并不是Tuple（这是要一个`int`值），根据上面的介绍可知，定义Tuple需要使用`,`，因此正确的定义方式是`1,`：
+比如我们想定义一个Tuple，该Tuple只有一个元素`1`，我们可能最先想到的写法是`(1)`，但实际上这并不是Tuple（这是一个`int`值），根据上面的介绍可知，定义Tuple需要使用`,`，因此正确的定义方式是`1,`：
 
 ```shell
 >>> a = (1)
