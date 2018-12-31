@@ -29,6 +29,8 @@ function dfs(array,index, ...) {
 }
 ```
 
+## 排列组合问题
+
 ### 排列问题（Permutation)
 
 Permutation问题是求解一个集合的全排列问题，例如`[1,2,3]`的全排列为`[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]`。这个问题的解法有很多，比较常见的是使用DFS进行暴力搜索，搜索所有可能的结果。
@@ -77,9 +79,10 @@ vector<vector<int>> permute(vector<int>& nums) {
 接下来我们来分析下上面算法的时间复杂度，从`dfs`函数来看，不难看出，递归函数之间存在下面的关系：
 
 $$
-T(n) = n*T(n-1)
+T(n) = n*T(n-1) = O(n!)
 $$
-参考前面算法分析的文章可知，该算法的时间复杂度为`O(n!)`，非常高。
+
+使用主定理推导或者参考前面算法分析的文章可知，该算法的时间复杂度为`O(n!)`，非常高。
 
 ### 组合问题（Combination）
 
@@ -121,9 +124,15 @@ def combination(self,arr,n):
     return result
 ```
 
-上面代码可以搜索出`arr`的所有组合，在`dfs`函数中无需增加递归基，因为由于`index`递增，当`for`循环执行完后，函数自动返回。
+上面代码可以搜索出`arr`的所有组合，在`dfs`函数中无需增加递归基，因为由于`index`递增，当`for`循环执行完后，函数自动返回。组合问题的时间复杂度计算公式如下
 
-如果想要求解`k`个数的组合，只需要修改`dfs`函数，追踪递归深度即可:
+$$
+T(n) = T(n-1) + T(n-2) + ... + T(1) = O(2^n)
+$$
+
+使用主定理求解上面公式，其时间复杂度仍然是指数级别的。
+
+关于组合的题目往往有很多变种，比如求解一个数组的所有subsets，本质上还是者问题，或者求解一个数组中`k`个数的组合，此时只需要为`dfs`函数增加一个递归基，用来追踪递归深度即可:
 
 ```python
 def dfs(self,curr,depth,arr,index,choose,result):
@@ -144,6 +153,58 @@ def dfs(self,curr,depth,arr,index,choose,result):
         choose.pop()
 ```
 
+### 关于排列组合的更多问题
+
+- [46. Permutations](https://leetcode.com/problems/permutations/description/)
+- [47. Permutations II](https://leetcode.com/problems/permutations-ii/description/)
+- [78. Subsets](https://leetcode.com/problems/subsets/description/)
+- [77. Combinations](https://leetcode.com/problems/combinations/description/)
+- [40. Combination Sum II](https://leetcode.com/problems/combination-sum-ii/description/)
+- [216. Combination Sum III](https://leetcode.com/problems/combination-sum-iii/description/)
+
+## 括号问题
+
+括号问题是另一类比较经典的搜索问题，它包含下面几种类型的题目：
+
+1. 判断括号是否匹配
+2. 生成所有可能的括号组合
+3. 添加或删除括号使所有括号匹配
+
+上面三个问题中，掌握第一个问题是解决后面问题的先决条件，它并不需要使用到搜索，简单遍历一遍输入数据即可
+
+```cpp
+bool valid(string& s){
+    int oc; //未闭合的左括号 数量
+    int cc; //未闭合的右括号 数量
+    for(auto c : s){
+        if(c == '{'){
+            oc ++;
+        }else{
+            //遇到右括号，先看是否有未闭合的左括号
+            if(oc){
+                oc--;
+            }else{
+                //如果左括号都闭合，那么右括号为非闭合
+                cc ++;
+            }
+        }
+        return cc+oc; //返回未闭合的左右括号数量
+    }
+}
+```
+
+### 生成所有括号组合
+
+### 添加删除括号
+
+
+
+### 更多括号问题
+
+- [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/description/)
+
+
+
 
 ## Resources
 
@@ -156,14 +217,5 @@ def dfs(self,curr,depth,arr,index,choose,result):
 - [算法设计与分析-1-北大-Cousera](https://www.coursera.org/learn/algorithms/home/welcome)
 - [算法设计与分析-2-北大-EDX](https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/)
 
-### 关于DFS的更多问题
 
-- [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/description/)
-- [46. Permutations](https://leetcode.com/problems/permutations/description/)
-- [47. Permutations II](https://leetcode.com/problems/permutations-ii/description/)
-- [51. N-Queens](https://leetcode.com/problems/n-queens/description/)
-- [52. N-Queens II](https://leetcode.com/problems/n-queens-ii/)
-- [78. Subsets](https://leetcode.com/problems/subsets/description/)
-- [77. Combinations](https://leetcode.com/problems/combinations/description/)
-- [40. Combination Sum II](https://leetcode.com/problems/combination-sum-ii/description/)
-- [216. Combination Sum III](https://leetcode.com/problems/combination-sum-iii/description/)
+

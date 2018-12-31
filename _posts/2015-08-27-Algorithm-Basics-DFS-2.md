@@ -225,11 +225,5 @@ bool DFS(int index){
 ### 关于DFS的更多问题
 
 - [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/description/)
-- [46. Permutations](https://leetcode.com/problems/permutations/description/)
-- [47. Permutations II](https://leetcode.com/problems/permutations-ii/description/)
 - [51. N-Queens](https://leetcode.com/problems/n-queens/description/)
 - [52. N-Queens II](https://leetcode.com/problems/n-queens-ii/)
-- [78. Subsets](https://leetcode.com/problems/subsets/description/)
-- [77. Combinations](https://leetcode.com/problems/combinations/description/)
-- [40. Combination Sum II](https://leetcode.com/problems/combination-sum-ii/description/)
-- [216. Combination Sum III](https://leetcode.com/problems/combination-sum-iii/description/)
