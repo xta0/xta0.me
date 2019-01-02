@@ -63,21 +63,77 @@ class BinaryTreeNode{
 };
 ```
 
-我们可以以计算二叉树的节点个数为例，来看下ADT的具体用法
+### 二叉树的存储结构
+
+二叉树的各节点随机地存储在内存空间中，节点之间的逻辑关系用指针来链接。
+
+- 二叉链表
+    - left,right两个指针指向左右两个子树
+    - `left - info - right`
+    
+- 三叉链表
+    - left,right,指向左右两个子树
+    - parent指向父节点
+    - `left-info-parent-right`
+
+- 由根节点和叶子节点定位父节点
 
 ```cpp
-//O(n)
-int size(BinaryTreeNode<int> root){
-    int s = 1;
-    if(root->left){
-        s += size(root->left);
+template<class T>
+BinaryTreeNode<T>* Parent(BinaryTreeNode<T>* root, BinaryTreeNode<T>* current){
+    BinaryTreeNode<T>* ret = NULL;
+    //前序遍历搜索
+    if(root == NULL){
+        return NULL;
     }
-    if(root->right){
-        s+= size(root->right);
+    if(root->left == current || root->right == current){
+        return root;
+    }else{
+        tmp = Parent(root->left, current); //左子树
+        if(tmp){
+            return tmp;
+        }
+        tmp = Parent(root->right, current); //右子树
+        if(tmp){
+            return tmp;
+        }
+        return NULL;
     }
-    return s;
 }
 ```
+
+- 二叉链表的空间开销分析
+    - 存储密度$\alpha$表示数据结构存储的效率
+    - 结构性开销 $\gamma=1-\alpha$
+        - 有效数据外的辅助信息
+    
+    $$
+    \alpha=\frac{数据本身存储量}{整个结构占用的存储总量}
+    $$
+
+    - 以满二叉树为例，满二叉树的一半指针域为空
+        - 每个节点存在两个指针，一个数据域
+            - 总空间: $(2p+d)n$
+            - 结构性开销: $pdn
+            - 如果$p=d$，那么结构性开销为$2p/(sp+d)=2/3$
+    - 可见满二叉树存储效率并不高，有三分之二的结构性开销
+
+### 完全二叉树的顺序存储
+
+- 由于完全二叉树的结构，可以将二叉树节点按一定的顺序存储到一片连续的存储单元，使节点在序列中的位置反映出相应的结构信息
+    - 存储结构实现性的
+        - 如下图的完全二叉树，其存储结构为`|3|16|7|23|37|10|21|20|`
+        - 我们可以根据一维数组的下标来定位节点的位置
+    - 逻辑结构上仍然是二叉树结构 
+
+<img src="{{site.baseurl}}/assets/images/2008/07/tree-4.jpg" style="margin-left:auto; margin-right:auto;display:block">
+
+- 下标公式
+    - 当`2i+1<n`时，节点`i`的左孩子是节点`2i+1`，否则节点i没有左孩子
+    - 当`2i+2<n` 时，节点`i`的右孩子是节点`2i+2`，否则节点i没有右孩子
+    - 当`0<i<n` 时，节点`i`的父亲是节点`⌊(i-1)/2⌋`
+    - 当`i`为偶数且`0<i<n`时，节点`i`的左兄弟是节点`i-1`，否则节点`i`没有左兄弟
+    - 当`i`为奇数且`i+1<n`时，节点i的右兄弟是节点`i+1`，否则节点`i`没有右兄弟
 
 ## 二叉树的遍历
  
@@ -299,87 +355,20 @@ void BinaryTree<T>::LevelOrder (BinaryTreeNode<T>* root){
         - 最好 `O(1)`
         - 最坏 `O(n)`
 
-### 二叉树的存储结构
+## 二叉树的实际问题
 
-二叉树的各节点随机地存储在内存空间中，节点之间的逻辑关系用指针来链接。
+在了解了上面的概念以后，我们看一些实际应用中的二叉树问题
 
-- 二叉链表
-    - left,right两个指针指向左右两个子树
-    - `left - info - right`
-    
-- 三叉链表
-    - left,right,指向左右两个子树
-    - parent指向父节点
-    - `left-info-parent-right`
+### 计算二叉树的高度
 
-- 由根节点和叶子节点定位父节点
+### 复原二叉树
 
-```cpp
-template<class T>
-BinaryTreeNode<T>* Parent(BinaryTreeNode<T>* root, BinaryTreeNode<T>* current){
-    BinaryTreeNode<T>* ret = NULL;
-    //前序遍历搜索
-    if(root == NULL){
-        return NULL;
-    }
-    if(root->left == current || root->right == current){
-        return root;
-    }else{
-        tmp = Parent(root->left, current); //左子树
-        if(tmp){
-            return tmp;
-        }
-        tmp = Parent(root->right, current); //右子树
-        if(tmp){
-            return tmp;
-        }
-        return NULL;
-    }
-}
-```
+- 使用前序遍历和中序遍历恢复二叉树
+- 使用
 
-- 二叉链表的空间开销分析
-    - 存储密度$\alpha$表示数据结构存储的效率
-    - 结构性开销 $\gamma=1-\alpha$
-        - 有效数据外的辅助信息
-    
-    $$
-    \alpha=\frac{数据本身存储量}{整个结构占用的存储总量}
-    $$
 
-    - 以满二叉树为例，满二叉树的一半指针域为空
-        - 每个节点存在两个指针，一个数据域
-            - 总空间: $(2p+d)n$
-            - 结构性开销: $pdn
-            - 如果$p=d$，那么结构性开销为$2p/(sp+d)=2/3$
-    - 可见满二叉树存储效率并不高，有三分之二的结构性开销
 
-### 完全二叉树的顺序存储
-
-- 由于完全二叉树的结构，可以将二叉树节点按一定的顺序存储到一片连续的存储单元，使节点在序列中的位置反映出相应的结构信息
-    - 存储结构实现性的
-        - 如下图的完全二叉树，其存储结构为`|3|16|7|23|37|10|21|20|`
-        - 我们可以根据一维数组的下标来定位节点的位置
-    - 逻辑结构上仍然是二叉树结构 
-
-<img src="{{site.baseurl}}/assets/images/2008/07/tree-4.jpg" style="margin-left:auto; margin-right:auto;display:block">
-
-- 下标公式
-    - 当`2i+1<n`时，节点`i`的左孩子是节点`2i+1`，否则节点i没有左孩子
-    - 当`2i+2<n` 时，节点`i`的右孩子是节点`2i+2`，否则节点i没有右孩子
-    - 当`0<i<n` 时，节点`i`的父亲是节点`⌊(i-1)/2⌋`
-    - 当`i`为偶数且`0<i<n`时，节点`i`的左兄弟是节点`i-1`，否则节点`i`没有左兄弟
-    - 当`i`为奇数且`i+1<n`时，节点i的右兄弟是节点`i+1`，否则节点`i`没有右兄弟
-
-## LeetCode中关于Binary Tree相关问题
-
-### 遍历
-
-- [144. PreOrderTraversal](https://leetcode.com/problems/binary-tree-preorder-traversal/description/)
-- [145. PostOrderTraversal](https://leetcode.com/problems/binary-tree-postorder-traversal/description/)
-- [94. InOrderTraversal](https://leetcode.com/problems/binary-tree-inorder-traversal/description/)
-
-### Resources
+## Resources
 
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
 - [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)
