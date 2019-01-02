@@ -52,7 +52,11 @@ categories: [DataStructure]
 5. 满二叉树定理推论：一个非空二叉树的空子树数目等于其节点数加1
 6. 有$n$个节点$(n>0)$的完全二叉树的高度为$⌈\log_2(n+1)⌉$，深度为$⌈\log_2(n+1)- 1⌉$
 
-### 二叉树的ADT表示
+
+
+### 二叉树的存储结构
+
+二叉树的各节点随机地存储在内存空间中，节点之间的逻辑关系用指针来链接。我们可以使用二叉链表的方式来表示一个节点，其中`left`,`right`两个指针指向左右两个子树，`info`表示该节点的值，如下：
 
 ```cpp
 template<class T>
@@ -62,61 +66,24 @@ class BinaryTreeNode{
     T info;
 };
 ```
-
-### 二叉树的存储结构
-
-二叉树的各节点随机地存储在内存空间中，节点之间的逻辑关系用指针来链接。
-
-- 二叉链表
-    - left,right两个指针指向左右两个子树
-    - `left - info - right`
+对于某些场景，我们也可以在上述结构中再增加一个指向父节点的`parent`指针，使其变为三叉链表：
     
-- 三叉链表
-    - left,right,指向左右两个子树
-    - parent指向父节点
-    - `left-info-parent-right`
-
-- 由根节点和叶子节点定位父节点
-
 ```cpp
 template<class T>
-BinaryTreeNode<T>* Parent(BinaryTreeNode<T>* root, BinaryTreeNode<T>* current){
-    BinaryTreeNode<T>* ret = NULL;
-    //前序遍历搜索
-    if(root == NULL){
-        return NULL;
-    }
-    if(root->left == current || root->right == current){
-        return root;
-    }else{
-        tmp = Parent(root->left, current); //左子树
-        if(tmp){
-            return tmp;
-        }
-        tmp = Parent(root->right, current); //右子树
-        if(tmp){
-            return tmp;
-        }
-        return NULL;
-    }
-}
-```
+class BinaryTreeNode{
+    BinaryTreeNode<T> *left; // 指向左子树的指针
+    BinaryTreeNode<T> *right; // 指向右子树的指针
+    BinaryTreeNode<T> *parent; // 指向父节点的指针
+    T info;
+};
 
-- 二叉链表的空间开销分析
-    - 存储密度$\alpha$表示数据结构存储的效率
-    - 结构性开销 $\gamma=1-\alpha$
-        - 有效数据外的辅助信息
+接下来我们来分析一下使用二叉链表的空间开销，我们令存储密度$\alpha$表示数据结构存储的效率，结构性开销 $\gamma=1-\alpha$，则有
     
-    $$
-    \alpha=\frac{数据本身存储量}{整个结构占用的存储总量}
-    $$
+$$
+\alpha=\frac{数据本身存储量}{整个结构占用的存储总量}
+$$
 
-    - 以满二叉树为例，满二叉树的一半指针域为空
-        - 每个节点存在两个指针，一个数据域
-            - 总空间: $(2p+d)n$
-            - 结构性开销: $pdn
-            - 如果$p=d$，那么结构性开销为$2p/(sp+d)=2/3$
-    - 可见满二叉树存储效率并不高，有三分之二的结构性开销
+满二叉树为例，满二叉树的一半指针域为空，每个节点存在两个指针，一个数据域，则需要的总空间为`(2p+d)*n`，如果`p=d`，那么结构性开销为`2p/(sp+d)=2/3`，可见满二叉树存储效率并不高，有三分之二的结构性开销。
 
 ### 完全二叉树的顺序存储
 
@@ -166,9 +133,9 @@ void traverse (BinaryTreeNode<T>* root){
         return ;
     }
     //Visit(root); //前序遍历
-    traverse(root->leftchild()); // 递归访问左子树
+    traverse(root->left); // 递归访问左子树
     //Visit(root); // 中序
-    traverse(root->rightchild()); // 递归访问右子树
+    traverse(root->right); // 递归访问右子树
     //Visit(root); // 后序
 ｝
 ```
@@ -176,9 +143,9 @@ void traverse (BinaryTreeNode<T>* root){
 
 ### 迭代实现
 
-上面介绍的递归遍历是一种简洁并很好理解的算法，而且编译器也会在递归过程中做一些优化，因此效率并不会太差，但是对树层次很深的情况下，可能会有StackOverflow的隐患，此时可以将递归解法转为非递归的迭代解法。
+上面介绍的递归遍历是一种简洁并很好理解的算法，而且编译器也会在递归过程中做一些优化，因此效率并不会太差，但是对树层次很深的情况下，可能会有栈溢出的隐患，此时可以将递归解法转为非递归的迭代解法。
 
-- 前序遍历
+- **前序遍历**
 
 ```cpp
 template<class T>
@@ -188,11 +155,11 @@ void BinaryTree<T>::None_Recursive_1(BinaryTreeNode<T>* root){
     ss.push(NULL);// 栈底监视哨
     while(pointer){
         Visit(pointer->value()); //遍历节点
-        if(pointer->rightchild()!=NULL){
-            ss.push(pointer->rightchild()); //如果该节点有右子树，入栈
+        if(pointer->right){
+            ss.push(pointer->right); //如果该节点有右子树，入栈
         }
-        if(pointer->leftchild()!=NULL){ //循环遍历左子树
-            pointer = pointer->leftchild();
+        if(pointer->left){ //循环遍历左子树
+            pointer = pointer->left;
         }else{
             pointer = ss.top(); //右子树
             ss.pop();
@@ -228,7 +195,7 @@ void BinaryTree<T>::None_Recursive_2(BinaryTreeNode<T>* root){
 }
 ```
 
-- 中序遍历
+- **中序遍历**
 
 1. 指针指向根节点
 2. 遇到一个节点，入栈一个节点，指针指向左子节点，继续下降
@@ -254,7 +221,7 @@ void inOrder_Traverse(TreeNode* root){
 }
 ```
 
-- 后序遍历
+- **后序遍历**
 
 后序遍历相对复杂，需要给栈中元素加上一个特征位：
 
@@ -309,6 +276,54 @@ void postOrder_Traversal(TreeNode* root){
     }
 }
 ```
+实际上对于后序遍历的迭代实现还有更为巧妙的一种方法，这种方法的思路和前序遍历类似，前序遍历的顺序为：根-->左节点-->右结点，我们稍微修改一下这个顺序，将其改为：根-->右结点-->左节点。我们按照这个顺序来遍历二叉树会得到一组结果，接下来我们只需要将该结果reverse一下即可得到后序遍历的结果。我们看一个例子
+
+```
+    4
+  /   \
+ 1     3
+      / 
+     2
+```
+上面这棵二叉树按照上面提到的遍历次序，得到结果为`4 3 2 1`，将该序列翻转后得到`1 2 3 4`，即后序遍历结果。我们可以先用递归形式的代码模拟这个过程：
+
+```cpp
+void traverse (TreeNode* root){
+    if(!root){
+        return ;
+    }
+    Visit(root); 
+    traverse(root->right); //先访问右结点
+    traverse(root->left;
+｝
+```
+将上述代码转为迭代的形式为：
+
+```cpp
+ vector<int> postOrder_Traversal(TreeNode* root) {
+        if(!root){
+            return {};
+        }
+        vector<int> res;
+        stack<TreeNode* > stk;
+        stk.push(root);
+        while(!stk.empty()){
+            TreeNode* node = stk.top();
+            stk.pop();
+            res.push_back(node->val);
+            if(node->left){
+                stk.push(node->left);
+            }
+            //先访问右子树，后入栈
+            if(node->right){
+                stk.push(node->right);
+            }
+        }
+        //结果reverse
+        return {res.rbegin(),res.rend()};
+    }
+```
+这种方式的迭代实现比起第一个版本要容易很多，实际应用中也更容易编写，不易出错。
 
 ### 复杂度分析
 
