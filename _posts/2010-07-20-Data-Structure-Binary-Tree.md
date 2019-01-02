@@ -76,6 +76,7 @@ class BinaryTreeNode{
     BinaryTreeNode<T> *parent; // 指向父节点的指针
     T info;
 };
+```
 
 接下来我们来分析一下使用二叉链表的空间开销，我们令存储密度$\alpha$表示数据结构存储的效率，结构性开销 $\gamma=1-\alpha$，则有
     
