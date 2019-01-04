@@ -160,55 +160,81 @@ public:
 解数独问题的思路为在每个空位依次尝试从1-9的每个值，每放置一个后进行DFS搜索，如果所有空位都能填满则返回一组解，如果有空位不满足条件，则进行回朔，重置状态后再换另一个数字尝试DFS，知道尝试完所有的空位。
 
 ```cpp
-//确定数据结构：
-int col[9][10]; //标志位，存放每列1-9出现的标志，1为放置，0为未放置
-int row[9][10]; //标志位，存放每行1-9出现的标志，1为放置，0为未放置
-int block[9][10]; //标志位，存放每个小块1-9出现的标志，1为放置，0为未放置
-int board[9][9]; //棋盘
-struct Value{
-    int row;
-    int col;
-};//棋盘中的每个点
-vector<Value> blanks; //待填充的空白数字
 
-...
+vector<vector<bool>> row_state(9,vector<bool>(10,false)); //标志位，存放每行1-9出现的标志，1为放置，0为未放置
+vector<vector<bool>> col_state(9,vector<bool>(10,false)); //标志位，存放每列1-9出现的标志，1为放置，0为未放置
+vector<vector<bool>> block_state(9,vector<bool>(10,false)); //标志位，存放每个小块1-9出现的标志，1为放置，0为未放置
 
-//可放置数字的条件
-bool can_be_placed(int r, int c, int num){
-    if( row[r][num] == 0 &&
-        col[c][num] == 0 &&
-        block[block_index(r,c)][num] == 0){
-        return true;
-    }
-    return false;
+//根据x，y计算对应的block index
+int blockIndex(int r, int c){
+  return r/3 * 3 + c/3;
 }
 
-//深度搜索过程
-bool DFS(int index){
-    if(index < 0){
-        return true;
-    }
-    int row = blanks[index].row;
-    int col = blanks[index].col;
-    for(int num=1;num<=9;num++){
-        //枚举num，如果可以被放置
-        if(can_be_placed(row, col, num)){
-            //填充板子上的值
-            board[row][col] = num;
-            //设置状态
-            set_state(row,col,num);
-            //继续递归
-            if(DFS(index-1)){
-                return true;
-            }else{
-                //递归失败，回溯清空状态
-                clear_state(row,col,num);
-            }
-        }
-    }
-    return false;
+//每放一个棋子需要更新 state
+void set_state(int r, int c, int num, bool value){
+  int index = blockIndex(r,c);
+  col_state[c][num] = value;
+  row_state[r][num] = value;
+  block_state[index][num] = value;
 }
-```
+//当前位置是否已经被放置过
+bool is_valid(int r, int c , int num){
+  int index = blockIndex(r,c);
+  if(!row_state[r][num] && 
+     !col_state[c][num] && 
+     !block_state[index][num]){
+    return true;
+  }
+  return false;
+}
+bool dfs(int index, vector<pair<int,int>>& blanks, vector<vector<char>>& board){
+  
+  if(index >= blanks.size()){
+    return true;
+  }
+  int row = blanks[index].first;
+  int col = blanks[index].second;
+  
+  //每个空白位置尝试1-9
+  for(int n=1;n<=9;n++){  
+      if(!is_valid(row,col,n)){
+        continue;
+      }
+      //choose
+      set_state(row,col,n,true);
+      //dfs
+      if(dfs(index+1,blanks,board)){
+        //剪枝
+        return true;
+      }else{
+        //backtracking  
+        set_state(row,col,n,false);
+      }
+  }
+  return false;
+}
+
+bool sudokuSolve( const vector<vector<char>>& input ) {
+  
+  vector<vector<char>> board = input;
+  vector<pair<int,int>> blanks;
+  
+  for(int i=0; i<board.size(); i++){
+    for(int j=0;j<board.size();j++){
+      char c = board[i][j];
+      int num = c-'0';
+      if(c == '.'){
+        blanks.push_back({i,j});
+      }else{
+        //modify the board
+        set_state(i,j,num,true);
+      }
+    } 
+  }
+  //深搜
+  return dfs(0,blanks,board);
+}
+
 
 ## Resources
 
