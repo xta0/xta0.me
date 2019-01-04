@@ -18,7 +18,7 @@ categories: [DataStructure]
 数组元素地址计算公式为：
 
 $$
-a[i] = base_address + i * data_type_size
+Arr<T>[i] = base_address + i * sizeof(T)
 $$
 
 #### 顺序表类定义
@@ -179,7 +179,7 @@ while(read < nums.size()){
 - [80. Remove Duplicates from Sorted Array II](https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/description/)
 
 
-### 最优化问题
+### 子数组最优解问题
 
 最优化问题通常是寻找数组中的一个连续子数组或者一个不连续的子序列，使其满足某种条件（注意，不能排序，需要保持原序列顺序）。解这类问题通常有三种办法：
 
