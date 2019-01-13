@@ -1,4 +1,5 @@
 ---
+updated: '2019-01-09'
 layout: post
 title: Git简明操作（二）
 list_title: Git简明操作（二） | Git Commands Quick Reference
@@ -57,3 +58,16 @@ layout: post
 title: Computer Problems
 ---
 ```
+
+### Git对象之间的关系
+
+Git中有三种对象，分别是`Commit`，`Tree`和`Blob`。每种对象均有唯一的哈希值表示，每一个commit对应一个tree结构，每个tree中又包含tree和blob，如此递归嵌套，其中tree表示文件夹，blob表示文件，三者关系可如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2011/02/git-objects.png" class="md-img-center">
+
+
+
+
+## Resource
+
+- [玩转Git]()

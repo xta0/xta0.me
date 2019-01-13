@@ -85,21 +85,18 @@ git reset path_to_the_file
 
 ### Branch
 
+- 查看分支
+    - 查看本地分支,`git branch -av`
+
 - 创建新分支
+    - 创建本地分支, `git branch <branchName>`
+    - 创建远端分支,`git push origin <branchName>`
+- 拉取分支
 
-```
-//本地创建新分支
-git branch <branchName>
-//推动到远端
-git push origin <branchName>
-```
-
-- Checkout Remote Branch
-
-```
-git fetch
-git checkout -b <branchName>
-```
+    ```shell
+    git fetch
+    git checkout -b <branchName>
+    ```
 
 - 删除分支
 
