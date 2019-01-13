@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Git简明操作
+title: Git简明操作（一）
 list_title: Git简明操作 | Git Commands Quick Reference
 categories: [Git,Cheatsheet]
 ---
@@ -8,16 +8,37 @@ categories: [Git,Cheatsheet]
 ### Config
 
 - Global Configuration
+    
     ```
-    git config --global user.name = ""
-    git config --global user.emal = ""
+    git config --global user.name "your_name"
+    git config --global user.email "your_email@domain.com"
     ```
 
 - Configuration for project
+
     ```
-    git config user.name ""
-    git config user.email ""
+    git config --local user.name "your_name"
+    git config --local user.email  "your_email@domain.com"
     ```
+
+    该命令实际上是修改`.git`下的config文件中的`[user]`字段
+
+- Show Configuration
+
+    ```
+    git config --list --local
+    git config --list --global
+    ```
+
+### Add/Remove Files
+
+- Add
+    - `git add -u`, 将工作空间新增和被修改的文件添加的暂存区
+    - `git add .`, 将工作空间被修改和被删除的文件添加到暂存区(不包含没有纳入Git管理的新增文件)
+- Remove
+    - `git rm file_name`
+- Rename
+    - `git mv file_name_1 file_name_2`, 重命名文件
 
 ### Stash
 
@@ -32,21 +53,33 @@ git reset path_to_the_file
 
 ### Commit
 
+
+
+- 参数
+    - `-m`, commit信息
+
 - 恢复到上一次commit的状态
     ```
     git checkout -- .
     ```
 - 修改commit中的个人信息
+
     ```
     git commit --amend --author="Author Name <email@address.com>"`
     ```
+
+    对于某次Commit，其auther和committer可能不同，
+
+    
 ### Repo
 
 - Check remote repo 
+
     ```
     git remote -v 
     ```
 - Change repo origin 
+
     ```
     git remote set-url origin https://xxxx.git
     ```
@@ -95,3 +128,7 @@ the `-l` or `--files-with-matches` flag causes grep to output only the filename 
 
 The matched file names are then piped to `xargs`, a utility that breaks up the piped input stream into individual arguments for `git checkout --ours` or `--theirs`
 
+
+### 其它
+
+- `gitk`， 图形化界面
