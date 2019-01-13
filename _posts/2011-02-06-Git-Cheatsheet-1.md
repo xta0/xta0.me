@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Git简明操作（一）
-list_title: Git简明操作 | Git Commands Quick Reference
+list_title: Git简明操作（一） | Git Commands Quick Reference
 categories: [Git,Cheatsheet]
 ---
 
@@ -9,14 +9,14 @@ categories: [Git,Cheatsheet]
 
 - Global Configuration
     
-    ```
+    ```shell
     git config --global user.name "your_name"
     git config --global user.email "your_email@domain.com"
     ```
 
 - Configuration for project
 
-    ```
+    ```shell
     git config --local user.name "your_name"
     git config --local user.email  "your_email@domain.com"
     ```
@@ -25,16 +25,14 @@ categories: [Git,Cheatsheet]
 
 - Show Configuration
 
-    ```
+    ```shell
     git config --list --local
     git config --list --global
     ```
 
 ### Add/Remove Files
 
-- Add
-    - `git add -u`, 将工作空间新增和被修改的文件添加的暂存区
-    - `git add .`, 将工作空间被修改和被删除的文件添加到暂存区(不包含没有纳入Git管理的新增文件)
+
 - Remove
     - `git rm file_name`
 - Rename
@@ -42,10 +40,11 @@ categories: [Git,Cheatsheet]
 
 ### Stash
 
-- stash所有修改
-```
-git add -A
-```
+- Add
+    - `git add -u`, 将工作空间新增和被修改的文件添加的暂存区
+    - `git add .`, 将工作空间被修改和被删除的文件添加到暂存区(不包含没有纳入Git管理的新增文件)
+    - `git add -A`, stash所有修改
+
 - 从stash文件中删除一个
 ```
 git reset path_to_the_file

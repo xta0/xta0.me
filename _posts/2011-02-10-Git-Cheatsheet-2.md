@@ -1,13 +1,13 @@
 ---
 layout: post
 title: Git简明操作（二）
-list_title: Git简明操作 | Git Commands Quick Reference
+list_title: Git简明操作（二） | Git Commands Quick Reference
 categories: [Git,Cheatsheet]
 ---
 
 ### `.git`目录
 
-`.git`目录下包含很多配置信息，我们先从`HEAD`文件入手，`HEAD`实际上是一个文本文件，我们可以用过`cat`命令查看其内容
+`.git`目录下包含很多配置信息，我们先从`HEAD`文件入手，`HEAD`是一个文本文件，我们可以用过`cat`命令查看其内容
 
 ```shell
 ➜  .git git:(master) cat HEAD
@@ -27,18 +27,19 @@ heads/   remotes/ tags/
 ➜  heads git:(master) git cat-file -t 80ad70abd #检查80ad70abd类型
 commit
 ```
-我们发现`master`文件中的值存放的是一个commit的哈希值，这个hash值的内容为
+我们发现`master`文件中的值存放的是一个commit的哈希值，这个hash值的内容为此次提交的记录
 
 ```shell
+#检查80ad70abd的内容
 ➜  heads git:(master) git cat-file -p master
-tree 80ad70abdfe2b44364c9ac0b412a244a700269e7 #检查80ad70abd的内容
+tree 80ad70abdfe2b44364c9ac0b412a244a700269e7 
 parent 02c74583828e7e8d93c741fae34b07d65426f643
 author user_name <user_email> 1546623228 -0800
 committer user_name <user_email> 1546623228 -0800
 
 Update(auto commit)
 ```
-`.git`中另一个有用的信息是`objects`文件夹，里面存放了本地提交的所有记录：
+如果查看某次提交的具体内容，`.git`中`objects`文件夹内存放了本地提交的所有记录：
 
 ```shell
 ➜  objects git:(master) ls
@@ -48,7 +49,7 @@ c6/   d1/   dc/   e7/   f2/   fd/ info/ pack/
 ```
 如果`00-ff`均被使用，则git会对commit内容进行压缩，存放到`pack`目录下，在每个提交目录中可通过`git cat-file -p`查看提交的内容：
 
-```
+```shell
 #哈希值前要加上目录值
 ➜  00 git:(master) git cat-file -p 00262fc2da0013eb2c913ac8b7b85e59b5378be9 
 ---
