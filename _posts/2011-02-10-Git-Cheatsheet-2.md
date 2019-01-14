@@ -65,9 +65,11 @@ Git中有三种对象，分别是`Commit`，`Tree`和`Blob`。每种对象均有
 
 <img src="{{site.baseurl}}/assets/images/2011/02/git-objects.png" class="md-img-center">
 
+举一个实际的例子，假如我们在一个git仓库中创建了一个文件夹`doc`，在该目录下新创建了一个`readme`的文件，此时如果我们进行commit操作，则会生成四个对象，他们之间的关系如下图所示
 
+<img src="{{site.baseurl}}/assets/images/2011/02/git-objects-2.png" class="md-img-center">
 
 
 ## Resource
 
-- [玩转Git]()
+- [玩转Git](https://git201901.github.io/github_pages_learning/docs/%E8%8B%8F%E7%8E%B2%E3%80%8A%E7%8E%A9%E8%BD%ACGit%E4%B8%89%E5%89%91%E5%AE%A2%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4.pdf)
