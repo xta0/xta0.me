@@ -61,6 +61,7 @@ void bfs{
 - 深搜几乎可以用于任何问题
     - 只需要保存从起始状态到当前状态路径上的节点
 
+
 ### 双向BFS
 
 - DBFS算法是对BFS算法的一种扩展。
@@ -97,6 +98,25 @@ int expand(i) //其中i为队列的编号，0或1
 ```
 
 ### BFS的应用
+
+接下来我们看几个BFS应用的例子，我们先来看一个比较经典的问题，[LeetCode 127. Word Ladder](https://leetcode.com/problems/word-ladder/description/)，这个题目是说，给定一个起始单词`beginWord`和一个终止单词`endWord`以及一组字典单词，现在希望让`beginWord`经过若干步变换，变成`endWord`，变换的规则为
+
+1. 每一步变换只能改变`beginWord`中的一个字母
+2. 每一步变换后的单词必须在字典中
+
+例如下面这个例子，`hit`经过一些列变化后可变为`cog`
+
+```shell
+Input:
+beginWord = "hit",
+endWord = "cog",
+wordList = ["hot","dot","dog","lot","log","cog"]
+
+Output: 5
+
+Explanation: As one shortest transformation is "hit" -> "hot" -> "dot" -> "dog" -> "cog",
+return its length 5.
+```
 
 
 

@@ -12,7 +12,9 @@ categories: [DataStructure]
 
 <img src="{{site.baseurl}}/assets/images/2008/08/graph-9.jpg" style="margin-left:auto; margin-right:auto;display:block">
 
-Dijkstra算法研究的是单源最短路径(single-source shortest paths)问题，即给定带权图 $G = <V，E>$，其中每条边 $(v_i，v_j)$ 上的权 $W[v_i，v_j]$ 是一个**非负实数**。计算从任给的一个源点$s$到所有其他各结点的最短路径。其基本思想是维护一张表，表中记录当前两点间的最短路径，然后不断更新路径值，直到找到最终解。
+Dijkstra算法研究的是单源最短路径(single-source shortest paths)问题，即给定带权图 `G = <V,E>`，其中每条边 $(v_i，v_j)$ 上的权 $W[v_i，v_j]$ 是一个**非负实数**。计算从任给的一个源点`s`到所有其他各结点的最短路径。
+
+Dijkstra算法的基本思想是使用贪心法维护一个数据结构，记录当前两点间的最短路径，然后不断更新路径值，直到找到最终解。
 
 ```javascript
 function dijkstra(v1,v2):
