@@ -54,6 +54,7 @@ Permutation问题是求解一个集合的全排列问题，例如`[1,2,3]`的全
 void dfs( vector<int>& nums, vector<int>& chosen, vector<vector<int>>& results){
     if(nums.size() == 0){
         results.push_back(chosen);
+        return;
     }
     for(int i = 0; i<nums.size(); ++i){
         int n = nums[i];
