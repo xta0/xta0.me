@@ -1,6 +1,34 @@
-#AutoLayout
+---
+updated: "2016-12-20"
+layout: post
+title: 理解AutoLayout
+categories: [iOS]
+---
 
-##Introduce to AutoLayout 
+
+## AutoLayout
+
+### AutoResizing
+
+在`AutoLayout`技术出现之前，如果想要实现view大小和位置的相对变化，我们有两种有两种方式，一种是使用手动的计算的方式，或者使用`AutoResizing`，也叫`Spring & Struts`。这两种方式都有优点也都有局限性。手动布局的方式理论上可以应对各种复杂的布局变化，但缺点是代码复杂，不易维护和修改；`AutoResizing`适用于view的尺寸跟随父view变化的场景非常方便，但是对于需要动态调整view间距的场景则不够灵活（例如，两个并排的view，当一个view变宽时，可能会遮住另一个view，此时`AutoResizing`没有办法自动调整二者的间距）
+
+### StackView
+
+StackView是iOS 9引入的一种自动布局技术，它的用法类似于CSS中的FlexBox，通过容器来约束子View的位置。和FlexBox类似，StackView是一种弹性容器，具有水平和竖直两种布局方向。在布局方向上StackView可以通过`spacing`来控制子元素间距，通过`distribution`控制空白区域的分割方式；在垂直布局的方向上可以通过`Alignment`来控制元素的对齐方式，其属性值有`leading`，`center`和`Trailing`
+
+
+- `Intrinsic Content Size`表示view自身大小，和view展示的内容相关
+- `Content Hugging` 控制在布局方向上，当剩余空间充足时，哪个view会占用剩余空间，类似`FlexGrow`，在Autolayout中，这个值较低的view会grow，当该值相同时，在布局方向上的第一个view会grow
+
+- `Compression Resistance` 控制在布局方向上，当剩余空间不足时，哪个view将被压缩，类似`FlexShrink`，在Autolayout中，这个值较低的view会被shrink，当该值相同时，在布局方向上的第一个view会shrink
+
+和AutoLayout一样，StackView的优点是对于使用Storyboard的场景非常好用，如果使用代码布局则非常低效
+
+### Autolayout Concept
+
+
+
+### Introduce to AutoLayout 
 
 ### LayoutConstraint的公式
 
