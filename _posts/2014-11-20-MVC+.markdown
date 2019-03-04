@@ -61,9 +61,7 @@ MVVM的好处是：
 
 ### Vizzle
 
-所有这些都和我的设想不太一样，我希望能在现有框架([Vizzle](http://akadealloc.github.io/blog/2014/09/15/Vizzle.html))的支撑下，平滑的过度到一个新的框架，并且能解决UIViewController的问题。
-
-现在的[Vizzle](http://akadealloc.github.io/blog/2014/09/15/Vizzle.html)是一个MVC框架，其中Controller和Model已经做了较好的抽象，因此我不想破坏这部分的结构，那么现在的问题是如何处理：
+所有这些都和我的设想不太一样，我希望能在现有框架([Vizzle](https://xta0.me/2014/09/15/Vizzle-Framework.html))的支撑下，平滑的过度到一个新的框架，并且能解决UIViewController的问题。现在的Vizzle是一个MVC框架，其中Controller和Model已经做了较好的抽象，因此我不想破坏这部分的结构，那么现在的问题是如何处理：
 
 1. UIViewController和View之间的耦合
 2. View和业务代码的耦合。
@@ -80,8 +78,15 @@ MVVM的好处是：
 3. 只有基类的Controller引用Template，负责Template的创建和渲染。
 4. 通常情况下Controller中是不应该访问Template中具体的view的，如果想改变view的状态，需要通过viewmodel
 5. ViewModel不会知道任何view的存在，view也不会知道ViewModel的存在，view和viewModel会建立双向绑定，通过Channel（一种类似KVO的实现）。这也意味着ViewModel是干净的，它将是业务逻辑集中的地方，它的每一个方法都应该可以被单元测试。
-6. 关于数据流转（主动:M->C->VM->V）：Controller发起model请求（[self load]）--> 处理model的状态([self showmodel:model]) ---> 更新ViewModel ---> 当ViewModel中被View绑定的数据源发生变化时 --> View被更新
-7. 关于数据流转（被动:V->VM->C）：当view的状态因外界改变时（比如button点击）--> 更新ViewModel中绑定的keypath --> ViewModel如果能处理则处理（比如触发定位），如果不能处理则转交controller（如发起一个HTTP请求）--> controller处理
+6. 关于数据流转（主动:M->C->VM->V）
+    - Controller发起model请求（`[self load]`）
+    - 处理model的状态(`[self showmodel:model]`) 
+    - 更新ViewModel 
+    - 当ViewModel中被View绑定的数据源发生变化时View被更新
+7. 关于数据流转（被动:V->VM->C）
+    - 当view的状态因外界改变时（比如button点击）
+    - 更新ViewModel中绑定的keypath 
+    - ViewModel如果能处理则处理（比如触发定位），如果不能处理则转交controller处理（如发起一个HTTP请求）
 
 
 这种代码设计的好处有下面几点：
