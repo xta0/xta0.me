@@ -1,10 +1,8 @@
 ---
-list_title: iOS中的汇编 | Assembly on ARM
-title: iOS中的汇编
+list_title: ARM的汇编基础 | Assembly on ARM
+title: ARM的汇编基础
 layout: post
-tag: Assembly
-categories: 随笔
-
+categories: [iOS, Assembly]
 ---
 
 ### ARM基础
@@ -39,7 +37,7 @@ bl _label =>lr = pc + 4; pc = _label
 
 函数调用是基于stack的，stack是从高到低生长的，假如函数A内部要调用B，首先要将A的sp存起来，然后在stack上开辟一块控件，执行B，执行万后在将sp取出来继续执行。整个过程如下图：
 
-<a href=/assets/images/2012/11/stack.png"><img src="{{site.baseurl}}/assets/images/2012/11/stack.png" alt="stack" width="558" height="354"/></a>
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2012/11/stack.png">
 
 <strong>parameter area：</strong>存放了B（callee）函数需要的参数，这一块空间需要由A来分配(caller),这个过程叫做Prologs：
 
