@@ -8,7 +8,6 @@ categories: [iOS, Assembly]
 ### ARM基础
 
 - 寄存器功能：
-
 ```
 r0 - r3 ：存放函数的传参
 r4 - r11 ：存放局部变量
@@ -16,10 +15,9 @@ r7  : FP : frame pointer。通常用来保存之前的sp和lr
 r12 : 通用寄存器
 r13 : SP : stack pointer ，栈底指针，很重要
 r14 ： LR : link register ，保存下一条指令地址
-r15 ： PC : program counter，存放当前指令的地址，当指令执行完后，会自增加</code></p></div>
+r15 ： PC : program counter，存放当前指令的地址，当指令执行完后，会自增加
 ```
 - 常用的汇编指令：
-
 ```
 mov r0, r1   => r0 = r1
 mov r0, #10  => r0 = 10
