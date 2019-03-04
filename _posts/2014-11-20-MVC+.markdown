@@ -8,7 +8,7 @@ categories: [iOS]
 
 ## UIViewController的问题
 
-理论上来说，MVC的各个角色边界是清晰的，互不耦合。但Apple早期的设计显然违背了这个原则,UIKit中的UIViewController，自身就耦合了view的逻辑，比如：将View作为一个成员变量（self.view）；提供对View touch事件处理的API等等。因此它不能真正意义上去充当Controller的角色，就像它的名字一样，它是UIView的Controller。而现实中，我们通常把它作为Controller的角色在使用，这就会产生一个问题：我们可以在Controller里面创建和销毁View，进而会引出下面两个问题：
+理论上来说，MVC的各个角色边界是清晰的，互不耦合。但Apple早期的设计显然违背了这个原则,UIKit中的`UIViewController`，自身就耦合了view的逻辑，比如：将View作为一个成员变量（`self.view`）；提供对View touch事件处理的API等等。因此它不能真正意义上去充当Controller的角色，就像它的名字一样，它是UIView的Controller。而现实中，我们通常把它作为Controller的角色在使用，这就会产生一个问题：我们可以在Controller里面创建和销毁View，进而会引出下面两个问题：
 
 - Controller负责提供view的数据源，并处理View的状态
 - Controller负责处理view产生的事件（响应callback）
@@ -23,46 +23,41 @@ categories: [iOS]
 
 ### Storyboard
 
-显然，Apple也已经意识到了这个问题，在iOS 5.0的时候推出了Storyboard，一种View的模板。它承担了View的创建和销毁,以及各种属性的配置：
+显然，Apple也已经意识到了这个问题，在iOS 5的时候推出了Storyboard，一种View的模板。它承担了View的创建和销毁,管理View的声明周期，以及支持各种属性的可视化配置：
 
 ```objc
 @property (nonatomic, weak) IBOutlet UIImageView *imgV;
-
 ```
-通过IBOutlet，imgV被编译成weak类型，说明UIViewController不再负责view的生命周期。
+通过IBOutlet，`imgV`被编译成`weak`类型，说明`UIViewController`不再负责view的生命周期。
 
 使用Storyboard的优点是:
 
-- 减少了在UIViewController中创建各种View的代码。
+- 减少了在`UIViewController`中创建各种View的代码。
 
 缺点是：
 
-- Controller依然会引用各个subview。
-
 - Controller依然要负责对view状态的维护和数据的传递。
-
-- 对于大的项目，多人维护Storyboard会带来不便。
-
+- 对于大的项目，多人维护Storyboard会带来不便，Merge Conflict将会成为一个大问题。
 
 ### MVVM
 
-既然UIViewController被设计成和view耦合，那么索性就直接使用MVVM，将UIViewController和UIView绑到一起统一视作View，摆脱MVC。关于MVVM这个模式，网上有很多资料，[这篇文章](http://www.objc.io/issue-13/mvvm.html)讲的比较清楚。
+既然`UIViewController`被设计成和view耦合，那么索性就直接使用MVVM，将UIViewController和UIView绑到一起统一视作View，摆脱MVC。关于MVVM这个模式，网上有很多资料，这里不做过多介绍，[这篇文章](http://www.objc.io/issue-13/mvvm.html)讲的比较清楚。
 
 MVVM的好处是：
 
-- UIViewController被当做View使用不处理具体业务逻辑
-- 业务代码集中在ViewModel里，ViewModel不耦合具体的View，是业务逻辑可做单元测试
-- ViewModel和View自动绑定
+- `UIViewController`被当做View使用不处理具体业务逻辑
+- 业务代码集中在ViewModel里，ViewModel不耦合具体的View，业务逻辑可做单元测试
+- ViewModel和View之间建立双向绑定
 
 缺点：
-- 对于项目中已有的业务代码和框架，迁移过去成本很高。
+- 对于项目中已有的业务代码和框架，迁移过去成本很高
+- 双向绑定复杂难实现，调试起来也非常困难
 
 ### 其它
 
-- [pureMVC](https://github.com/PureMVC/puremvc-objectivec-standard-framework/wiki):它是整个一套解决方案，也有OC的实现，代码风格上看，感觉是从Java迁移过去的。
+- [pureMVC](https://github.com/PureMVC/puremvc-objectivec-standard-framework/wiki):它是一个完整的通用的GUI系统解决方案，也有OC的实现，代码风格上看，感觉是从Java迁移过去的。
 - [Bee](https://github.com/gavinkwoe/BeeFramework):实现了通过CSS生成View，很酷，但是上手有些慢，不适合项目迁移。
 - [Viper](http://www.objc.io/issue-13/viper.html):拆分的过于细致了
-
 
 ### Vizzle
 
