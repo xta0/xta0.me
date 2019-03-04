@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: Regular Expression-2 | 案例分析 | Case Study |
-title: Regular Expression - Case Study
+list_title: Regular Expression | 案例分析 | Case Study
+title: 正则表达式的应用案例
 categories: [Regular Expression]
 ---
 
@@ -32,12 +32,11 @@ categories: [Regular Expression]
     - include `a-z, A-Z`
     - include `@`
 - Regex
-
     ```shell
-    (?!.*\.\.)([\w.\-#!$%&'*+\/=?^_`{}|~]{1,35})@([\w.\-]+)\.([a-zA-Z]{2,10})
+    (?!.*\.\.)([\w.\-#!$%&'*+\/=?^_{}|~]{1,35})@([\w.\-]+)\.([a-zA-Z]{2,10})
     ```
 - Explaination
-    1. `([\w.\-#!$%&'*+\/=?^_`{}|~]{1,35})` ,匹配`@`之前的可能字符，限定长度为`{1,35}
+    1. `([\w.\-#!$%&'*+\/=?^_{}|~]{1,35})` ,匹配`@`之前的可能字符，限定长度为`{1,35}`
     2. `@`符号
     3. `([\w.\-]+)`, 匹配`@`之后，`.`之前可能的字符，可能有`xxx@xx.xx`的情况
     4. `([a-zA-Z]{2,10})`, 匹配`.`之后的字符，限定长度为`{2,10}`

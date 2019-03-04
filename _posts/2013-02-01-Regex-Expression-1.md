@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: Regular Expression-1 | 基本语法 | Syntax |
-title: Regular Expression - Syntax
+list_title: Regular Expression  | 基本语法 | Syntax 
+title: 正则表达式的基本语法
 categories: [Regular Expression]
 ---
 

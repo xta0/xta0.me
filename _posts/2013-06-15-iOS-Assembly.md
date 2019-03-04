@@ -35,7 +35,7 @@ b _label =>pc = _label
 bl _label =>lr = pc + 4; pc = _label
 ```
 
-### Stack Frame
+### 栈帧 StackFrame
 
 函数调用是基于stack的，stack是从高到低生长的，假如函数A内部要调用B，首先要将A的sp存起来，然后在stack上开辟一块控件，执行B，执行万后在将sp取出来继续执行。整个过程如下图：
 
