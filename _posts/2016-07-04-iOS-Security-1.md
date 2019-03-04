@@ -1,13 +1,11 @@
 ---
 layout: post
-list_title:  iOS的安全机制（一） | iOS Security Part 1
-title: App的签名原理
+list_title:  iOS的签名原理（一） | App Signing in iOS Part 1
+title: App的签名原理（一）
 categories: [iOS]
 ---
 
-### iOS Security概述
-
-根据iOS的安全白皮书的序言部分，整套iOS安全体系非常的复杂，分为下面几个主要部分：
+App签名属于iOS的安全控制范畴，根据iOS的安全白皮书的序言部分，整套iOS安全体系非常的复杂，分为下面几个主要部分：
 - 系统安全，针对Apple的硬件平台，比如iPhone，iPad等
 - 数据加密与数据安全
 - App安全，主要针对应用签名，确保App内容不被篡改

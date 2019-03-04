@@ -184,15 +184,14 @@ int main(int argc, char *argv[]) {
 
 ### Mach-O 文件
 
-有了汇编代码就离机器码不远了，接着我们执行命令：`xcrun clang hello.m`，生成`a.out`的可执行文件<a href="https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/MachORuntime/Reference/reference.html ">文件格式</a>。
-
+有了汇编代码就离机器码不远了，接着我们执行命令：`xcrun clang hello.m`，生成`a.out`的[可执行文件](https://developer.apple.com/library/archive/documentation/Performance/Conceptual/CodeFootprint/Articles/MachOOverview.html), Apple称这种可执行文件为Mach-O文件。
 Mach-O文件由Header和Commands和Data三个部分组成：
 
 1. Header ： 标识它是Mach-O文件
 2. Load commands ： 标识data的存放规则
 3. Data : 数据存放
 
-Data部分又分为两部分：
+其中Data部分又分为两部分：
 
 1. Text Section: 存放代码段，常量段等read-only数据
 2. Data Section: 存放数据段，如静态变量，全局变量等，是writable的
