@@ -115,7 +115,7 @@ f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision
 
 ### 小结
 
-<img src="{{site.baseurl}}/assets/images/2016/07/ios-app-sign-1.png" class="md-img-center">
+<img src="{{site.baseurl}}/assets/images/2016/07/ios-app-sign-2.png" class="md-img-center">
 
 ## Resource
 
