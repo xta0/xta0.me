@@ -103,19 +103,26 @@ f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision
 </dict>
 </plist>
 ```
-可见这个文件包含的就是App元信息
+可见这个文件包含的就是App元信息，重点是包含了数字证书
+
+### 签名的原理
+
+在前面数字证书一节中曾提到对二进制进行签名的是证书中的私钥，我们可以使用XCode自带的签名工具手动的对某个App进行签名，比如使用下面命令
+
+```shell
+codesign -f -s 'iPhone Developer: Tao Xu (Q7PV3L5FKY)' Example.app
+```
+该命令会对`Example.app`中的Mach-O进行重签名，并注入signature代码。
 
 
 
-
-
-### 签名的基本过程
-
-
-
-### 小结
 
 <img src="{{site.baseurl}}/assets/images/2016/07/ios-app-sign-2.png" class="md-img-center">
+
+### 签名的局限性
+
+对App的签名并不会对代码进行混淆，
+
 
 ## Resource
 
