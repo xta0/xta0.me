@@ -30,7 +30,7 @@ App签名对大多数iOS开发者来说都不陌生，但想搞清楚它的工�
 
 我们先从证书开始说，相信绝大多数的iOS开发者都有开发者证书，它是Apple颁发给你的代码签名的凭证，如下面这张图
 
-<img src="{{site.baseurl}}/assetes/images/2016/07/ios-app-sign-1.png" class="md-img-center">
+<img src="{{site.baseurl}}/assets/images/2016/07/ios-app-sign-1.png" class="md-img-center">
 
 如果了解SSL的工作原理，这个开发者证书可类比于(注意是类似而不是等同，因为开发者证书中还包含其它内容)数字证书，而Apple就是CA(Certifacate Authority)，我们拿到的开发证书实际上是Apple用自己的私钥加密过的，证书中有什么我们稍后讨论，参考《iOS Security WhitePaper》中可知，证书公钥保存在iPhone或者其它终端设备中。
 
@@ -115,7 +115,7 @@ f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision
 
 ### 小结
 
-<img src="{{site.baseurl}}/assetes/images/2016/07/ios-app-sign-1.png" class="md-img-center">
+<img src="{{site.baseurl}}/assets/images/2016/07/ios-app-sign-1.png" class="md-img-center">
 
 ## Resource
 
