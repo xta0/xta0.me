@@ -11,7 +11,6 @@ categories: [JavaScript]
 
 > 本文及后面的文章不会覆盖所有ES6的特性
 
-
 ### Array
 
 - `forEach` 循环
