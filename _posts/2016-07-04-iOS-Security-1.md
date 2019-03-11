@@ -103,7 +103,7 @@ f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision
 </dict>
 </plist>
 ```
-可见这个文件包含的就是App元信息，重点是包含了数字证书
+可见这个文件包含的就是App元信息，包括bundle Id， Entitlements中的内容，支持的device设备列表，以及最重要的数字证书
 
 ### 签名的原理
 
@@ -112,7 +112,7 @@ f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision
 ```shell
 codesign -f -s 'iPhone Developer: Tao Xu (Q7PV3L5FKY)' Example.app
 ```
-该命令会对`Example.app`中的Mach-O进行重签名，并注入signature代码。
+该命令会对`Example.app`中的Mach-O进行重签名，并向其中注入signature，也就是说`codesign`会改变binary的结构和值。
 
 
 
