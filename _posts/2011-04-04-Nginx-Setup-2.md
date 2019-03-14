@@ -1,89 +1,12 @@
 ---
 updated: '2016-08-04'
 layout: post
-title: Nginx配置HTTPs和反向代理
-list_title: 配置Nginx（二）| Setup HTTPs & Reverse Proxy
+title: Nginx配置反向代理
+list_title: 配置Nginx（二）| Nginx as Reverse Proxy 
 categories: [Linux, Nginx,Backend]
 ---
 
-### HTTPs
-
-- 登录[certbot](https://certbot.eff.org/)选择系统版本，安装certbot
-
-```shell
-sudo apt-get update
-sudo apt-get install software-properties-common
-sudo add-apt-repository ppa:certbot/certbot
-sudo apt-get update
-sudo apt-get install python-certbot-nginx 
-```
-
-- 使用certbot安装SSL证书
-
-```shell
-% certbot --nginx
-```
-按提示修改nginx 配置文件
-
-```ymal
-#SSL configuration
-listen 443 ssl default_server;
-listen [::]:443 ssl default_server;
-server_name xta0.me www.xta0.me;
-ssl_certificate /etc/letsencrypt/live/xta0.me/fullchain.pem; # managed by Certbot
-ssl_certificate_key /etc/letsencrypt/live/xta0.me/privkey.pem; # managed by Certbot
-include /etc/letsencrypt/options-ssl-nginx.conf; #managed by Certbot
-ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; #managed by Certbot
-```
-
-- 自动更新证书
-
-```shell
-%crontab -e
-#编辑task，每日更新证书
-@daily certbot renew
-
-#确认修改
-%crontab -l
-```
-
-### Basic Auth
-
-如果某个URL只允许管理员访问，可以在Nginx中配置用户名和密码认证
-
-```yaml
-location / {
-    auth_basic "Secure Area";
-    auth_basic_user_file /etc/nginx/.htpasswd;
-    try_files $uri $uri/ =404;
-}
-```
-用户名和密码可以使用`apach2-utils`：
-
-```shell
-% sudo apt-get install apache2-utils
-% htpasswd -c /etc/nginx/.htpasswd user_name
-% cat /etc/nginx/.htpasswd
-```
-### Other Security Options
-
-其它一些常用的安全配置
-
-```yaml
-http{
-    #hide nginx version from HTTP header
-    server_tokens off;
-    
-    server{
-        #放置页面被其它网站用iframe嵌入
-        add_header X-Frame-Options "SAMEORIGIN";
-        #Cross-site scripting protection
-        add_header X-XSS-Protection "1; mode-block";
-    }
-}
-```
-
-### Reverse Proxy
+## Reverse Proxy
 
 所谓Reverse Proxy是指对内部服务的代理，client的请求先到达Nginx，Nginx会根据配置文件来分发请求到内部的server上
 

@@ -178,6 +178,40 @@ location / {
 }
 ```
 
+### Security
+
+如果某个URL只允许管理员访问，可以在Nginx中配置用户名和密码认证
+
+```yaml
+location / {
+    auth_basic "Secure Area";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+    try_files $uri $uri/ =404;
+}
+```
+用户名和密码可以使用`apach2-utils`：
+
+```shell
+% sudo apt-get install apache2-utils
+% htpasswd -c /etc/nginx/.htpasswd user_name
+% cat /etc/nginx/.htpasswd
+```
+其它一些常用的安全配置
+
+```yaml
+http{
+    #hide nginx version from HTTP header
+    server_tokens off;
+    
+    server{
+        #放置页面被其它网站用iframe嵌入
+        add_header X-Frame-Options "SAMEORIGIN";
+        #Cross-site scripting protection
+        add_header X-XSS-Protection "1; mode-block";
+    }
+}
+```
+
 ### 模板语言
 
 Nginx配置中可以使用两类变量
@@ -348,6 +382,8 @@ HTTP2支持
 3. Persistent Connections 短链改长链，减少频繁建立短连接的开销
 4. Multiplex Streaming 多路复用，合并资源请求
 5. Server Push 支持push
+
+
 
 ## Resources
 
