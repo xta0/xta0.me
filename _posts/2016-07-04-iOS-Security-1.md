@@ -112,7 +112,27 @@ f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision
 ```shell
 codesign -f -s 'iPhone Developer: Tao Xu (Q7PV3L5FKY)' Example.app
 ```
-该命令会对`Example.app`中的Mach-O进行重签名，并向其中注入signature，也就是说`codesign`会改变binary的结构和值。
+该命令会对`Example.app`中的Mach-O进行重签名，并向其中注入signature，从而改变binary的结构和内容。我们也可以使用该命令查看一个App的签名信息
+
+```
+➜  Payload codesign -vv -d Example.app
+
+Executable=/Example/Payload/Example.app/Example
+Identifier=com.idsdk.demo
+Format=app bundle with Mach-O thin (arm64)
+CodeDirectory v=20200 size=1518 flags=0x0(none) hashes=40+5 location=embedded
+Signature size=4705
+Authority=iPhone Distribution: Tao Xu (GW8XWHWQR7)
+Authority=Apple Worldwide Developer Relations Certification Authority
+Authority=Apple Root CA
+Signed Time=Jul 04, 2016 at 11:28:58 AM
+Info.plist entries=26
+TeamIdentifier=GW8XWHWQR7
+Sealed Resources version=2 rules=10 files=19
+Internal requirements count=1 size=172
+```
+
+上述信息中最关键的是
 
 
 
