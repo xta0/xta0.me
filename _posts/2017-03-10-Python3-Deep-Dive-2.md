@@ -1,5 +1,5 @@
 ---
-title: Python对象的内存模型（二）
+title: Python中的变量与内存模型（二）
 list_title: 深入理解Python | Python Deep Dive | 变量与内存(二) | Variables and Memory Part 2
 layout: post
 categories: [Python]

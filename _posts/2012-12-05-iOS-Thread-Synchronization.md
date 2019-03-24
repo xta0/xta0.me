@@ -21,14 +21,14 @@ for(int i=0;i<100;i++){
 ```
 上述代码中，由于线程是并发的，导致`self.j`在`print`时I/O缓冲区中的数据并不是当前最新的，因此输出的`self.j`的值是乱序的。这个问题的本质是线程之间的同步问题，block中两句代码的执行存在时间差。如果想要保证输出顺序，我们需要强制每个线程执行完这两行代码后，其它线程才能开始执行，即block中的代码具备原子性。
 
-- 使用FIFO的无锁队列
+- 使用GCD提供的串行队列
 
 ```objc
 //修改queue为串行队列
 dispatch_queue_t queue =
 dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
 ```
-- 使用`@synchronize`代码块
+- 使用`@synchronize`保护临界区
 
 ```objc
 @synchronized (self) {
@@ -36,7 +36,7 @@ dispatch_queue_create(NULL, DISPATCH_QUEUE_SERIAL);
 	printf("%d\n",self.j);
 }
 ```
-- 使用Barrier
+- 使用GCD的Barrier
 
 ```objc
 dispatch_barrier_async(queue, ^{
@@ -45,7 +45,7 @@ dispatch_barrier_async(queue, ^{
 });
 ```
 
-- 使用锁
+- 使用各种锁
 
 ```objc
 dispatch_async(queue, ^{
@@ -59,7 +59,7 @@ dispatch_async(queue, ^{
 
 常用的锁有下面几种：
 
-- `Mutex locks`: 互斥锁是一种信号量，在某个时刻只允许一个线程对资源进行访问，如果互斥锁正在被使用，另一个线程尝试使用，那么这个线程会被block，直到互斥锁被释放。如果多个线程竞争同一个所锁，只有一个线程能获取到。互斥锁对应POSIX中的实现是`pthread_mutex_t`，Objective-C`中的@synchronized`关键字底层是对`pthread_mutex_t`的封装
+- `Mutex locks`: 互斥锁是一种信号量，在某个时刻只允许一个线程对资源进行访问，如果互斥锁正在被使用，另一个线程尝试使用，那么这个线程会被block，直到互斥锁被释放。如果多个线程竞争同一个所锁，只有一个线程能获取到。互斥锁对应POSIX中的实现是`pthread_mutex_t`，Objective-C中的`@synchronized`关键字内部分装了对`pthread_mutex_t`的操作
 
 - `Spin locks`: 自旋锁的原理是不断check lock条件，直到条件为true。自旋锁经常被用在多核处理器上并且lock时间很短的场合，如果lock时间很长，则会耗尽CPU资源
 

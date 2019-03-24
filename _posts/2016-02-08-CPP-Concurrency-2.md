@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 谈谈 C++ 中的多线程 | Concurrency in Modern C++  | 数据共享 | Sharing Data
+list_title: 谈谈 C++ 中的多线程 | Concurrency in Modern C++  | 线程互斥 | Mutex 
 title: 线程间共享数据 
 categories: [C++, Concurrency, Thread]
 ---
@@ -80,7 +80,7 @@ if(!empty()){            |
 
 `mutex`对接口操作失效的原因在于其粒度太大了，`mutex`无法真正lock到对内部data的操作上。解决这个问题需要重新设计一个线程安全的数据结构，篇幅原因，这里不做过多介绍，在后面几篇文章中将对这个问题做更详细的论述
 
-### Deadlock
+### 死锁问题
 
  上面使用mutex的场景是多个线程竞争**同一个**公共资源，而死锁则是多个线程同时在等待对方释放资源从而进入无休止的等待状态。死锁发生的条件通常是一个线程需要同时操作两份或者多份公共资源，每份公共资源都有一个mutex，当该线程（thread #1）已经获取了某个资源(B)的mutex后，试图获取资源(A)的mutex时，发现该mutex已经被另一个线程(thread #2)占据，而另一个线程(thread #2)则是相同的逻辑，它获取了该资源(A)的mutex，同时等待另一个线程(thread #1)释放资源(B)的mutex，从而两个线程进入死锁状态。
  
@@ -238,8 +238,6 @@ public:
 对于同一个mutex对象，如果在一个线程内被连续`lock()`多次，则会导致`undefined behavior`，但是如果某些情况下，一个线程需要对同一个mutex对象进行多次`lock()`操作，这时可以使用C++提供的另一种recursive mutex，`std::recursive_mutex`它的用法和普通的mutex相同，不同的是它的对象可以在同一个线程内可以被`lock()`多次。但有一点要注意的是，当另一个线程试图获取对`std::recursive_mutex`对象的控制权时，该对象必须要释放它分配出去的所有锁，即如果它之前进行了三次`unlock()`操作，那么需要配对的进行三次`unlock()`操作。同样的，并不建议直接使用`std::recursive_mutex`，还是需要使用它的封装类`std::lock_guard`和`std::unique_lock`。
 
 对于绝大多数情况来说，如果代码中遇到需要使用recursive mutex的场景，那说明该段代码需要重构。一种使用recursive mutex的典型场景是某个类对象被多个线程共享，对此在类的每个成员函数中都加了锁保护内部数据的读写，如果在每个成员函数中都只操作该类的内部数据，则没有任何问题，但是某些情况下在某个成员函数中部会访问另一个成员函数，这时候就出现类中的同一个mutex对象被`lock`两次的情况，如果是普通的mutex则会出问题，因此一个简单粗暴的解决办法就是将普通的mutex替换为recursive mutex。但是这种做法并不推荐，并且这种调用也是一个很糟糕的设计，遇到这种情况，可以将调用另一个成员函数的函数拆成两个粒度更小的函数，保证每个函数都只做一件事情。
-
-
 
 
 ## Resources

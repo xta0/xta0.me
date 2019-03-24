@@ -8,7 +8,7 @@ categories: [C++, Concurrency, Thread]
 <img src="{{site.baseurl}}/assets/images/2016/01/cpp-con.png" class="md-img-center">
 
 
-## C++ 11: The foundation
+## Overview
 
 C++ 11为C++引入了多线程的概念并以标准库的形式提供了许多线程操作的API，比如atomic variables，线程管理，线程同步，锁，异步任务等。以此为基础，在接下来的C++ 14到C++ 20中，对各种并发API进行了不断地完善和增强。比如C++ 14中增加了`reader-writer`锁的实现等，C++ 17中引入了支持并行计算的STL。
 

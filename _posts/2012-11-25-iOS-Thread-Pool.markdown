@@ -5,36 +5,17 @@ title: 理解iOS中的线程池
 categories: [iOS]
 ---
 
-在GCD和NSOperationQueue之前，iOS使用线程一般是用NSThread，而NSThread是对<a title="POSIX THREAD" href="http://en.wikipedia.org/wiki/POSIX_Threads">POSIX thread</a>的封装,也就是pthread，本文最后会面附上一段使用pthread下图片的代码，现在我们还是继续上面的讨论。使用NSThread的一个最大的问题是：直接操纵线程，线程的生死完全交给developer控制，在大的工程中，模块间相互独立，假如A模块并发了8条线程，B模块同样需要6条线程，以此类推，线程数量会持续增长，最终会导致难以控制的结果。
+在GCD和NSOperationQueue之前，iOS使用线程一般是用NSThread，而NSThread是对<a title="POSIX THREAD" href="http://en.wikipedia.org/wiki/POSIX_Threads">POSIX thread</a>的封装,也就是pthread，本文最后会面附上一段使用pthread下图片的代码，现在我们还是继续上面的讨论。使用NSThread的一个最大的问题是：直接操纵线程，线程的生命周期完全交给developer控制，在大的工程中，模块间相互独立，假如A模块并发了8条线程，B模块需要并发6条线程，以此类推，线程数量会持续增长，最终会导致难以控制的结果。
 
-GCD和NSOperationQueue出来以后，developer可以不直接操纵线程，而是将所要执行的任务封装成一个unit丢给线程池去处理，线程池会有效管理线程的并发，控制线程的生死。因此，现在如果考虑到并发场景，基本上是围绕着GCD和NSOperationQueue来展开讨论。GCD是一种轻量的基于block的线程模型，使用GCD一般要注意两点：一是线程的priority，二是strong reference cycle的问题。NSOperationQueue是对GCD更上一层的封装，它对线程的控制更好一些，但是用起来也麻烦一些。关于这两个孰优熟劣，仁者见仁智者见智了：<a title="GCD vs NSOperation" href="http://stackoverflow.com/questions/10373331/nsoperation-vs-grand-central-dispatch">stackoverflow:GCD vs NSopeartionQueue</a>。
+GCD和NSOperationQueue出来以后，developer可以不直接操纵线程，而是将所要执行的任务封装成一个unit丢给线程池去处理，线程池会有效管理线程的并发，控制线程的生命周期。因此，现在如果考虑到并发场景，基本上是围绕着GCD和NSOperationQueue来展开讨论。GCD是一种轻量的基于block的线程模型，使用GCD一般要注意两点：一是线程的priority，二是对象间的循环引用问题。NSOperationQueue是对GCD更上一层的封装，它对线程的控制更好一些，但是用起来也麻烦一些。关于这两个孰优熟劣，需要根据具体应用场景进行讨论：<a title="GCD vs NSOperation" href="http://stackoverflow.com/questions/10373331/nsoperation-vs-grand-central-dispatch">stackoverflow:GCD vs NSopeartionQueue</a>。
 
 我们后面会以下载图片为例，首先来分析在非并发的情况下NSOperationQueue和GCD的用法和特性，然后分析在并发的情况下讨论NSOperationQueue对线程的管理。
 
-
-推荐一个不错的<a href="http://www.collegedj.net/wp-content/uploads/">图片测试网站</a>。
+> 测试图片来自[这里](http://www.collegedj.net/wp-content/uploads/)
 
 ### 异步下载
 
 先从NSOperationQueue最简单的用法开始：
-
-```objc
-[[NSOperationQueue mainQueue] addOperationWithBlock:^{
-        NSThread* thread = [NSThread currentThread];
-        NSLog(@"is main thread : %d",[thread isMainThread]);
-       
-         NSData* data = [NSData dataWithContentsOfURL:[NSURL URLWithString:url3]];
-        _imgv3.image = [UIImage imageWithData:data];
-    }];
-```
-
-上面我们直接用主线程去下图，因此这段代码并没有实现异步的效果log输出为：
-
-```shell
-is main thread : 1
-```
-
-常识告诉我们，不要在主线程中去下图片，于是我们想到了把上面代码改成使用异步线程去完成下载工作，我们先考虑使用`NSOperationQueue`:
 
 ```objc
 _opQueue = [[NSOperationQueue alloc]init];
@@ -72,22 +53,18 @@ _opQueue = [[NSOperationQueue alloc]init];
 {
     ETOperation* op1 = [ETOperation new];
     op1.url = [NSURL URLWithString:url3];
-    
     __weak ETOperation* _op1 = op1;
     [op1 setCompletionBlock:^{
         _imgv3.image = _op1.image;
     }];
-    
     [op1 start];
     
     ETOperation* op2 = [ETOperation new];
     op2.url = [NSURL URLWithString:url4];
-   
     __weak ETOperation* _op2 = op2;
     [op2 setCompletionBlock:^{
         _imgv4.image = _op2.image;
     }];
-
     [op2 addDependency:op1];
     [op2 start];
 }
@@ -117,30 +94,30 @@ _opQueue = [[NSOperationQueue alloc]init];
     });
 }
 ``` 
-在实际项目中，如果是两个线程之间的同步问题，我们不会书类似写上面的代码。实际上`dispatch_group`的作用在于控制多个线程并发，并未这些线程提供一个线程同步点，即当`group`内的所有线程都执行完成后，再通知外部。因此，通常情况下，`dispatch_group`的用法如下：
+在实际项目中，如果是两个线程之间的同步问题，我们不会书类似写上面的代码。实际上`dispatch_group`的作用在于控制多个线程并发，并为这些线程提供一个线程同步点，即当`group`内的所有线程都执行完成后，再通知外部(类似Java中线程的`join`操作)。因此，通常情况下，`dispatch_group`的用法如下：
 
 ```objc
 dispatch_queue_t queue = dispatch_get_global_queue( 0, 0 );
-    dispatch_group_t group = dispatch_group_create();
+dispatch_group_t group = dispatch_group_create();
 
-    //run task #1
-    dispatch_group_enter(group);
-    dispatch_async( queue, ^{
-        NSLog( @"task 1 finished: %@", [NSThread currentThread] );
-        dispatch_group_leave(group);
-    } );
+//run task #1
+dispatch_group_enter(group);
+dispatch_async( queue, ^{
+    NSLog( @"task 1 finished: %@", [NSThread currentThread] );
+    dispatch_group_leave(group);
+} );
 
-    //run task #2
-    dispatch_group_enter(group);
-    dispatch_async( queue, ^{
-        NSLog( @"task 2 finished: %@", [NSThread currentThread] );
-        dispatch_group_leave(group);
-    } );
+//run task #2
+dispatch_group_enter(group);
+dispatch_async( queue, ^{
+    NSLog( @"task 2 finished: %@", [NSThread currentThread] );
+    dispatch_group_leave(group);
+} );
 
-    //sychronization point
-    dispatch_group_notify( group, queue, ^{
-        NSLog( @"all task done: %@", [NSThread currentThread] );
-    } );
+//sychronization point
+dispatch_group_notify( group, queue, ^{
+    NSLog( @"all task done: %@", [NSThread currentThread] );
+} );
 ```
 如果考虑控制线程，相比GCD来说NSOperation是个更好的选择，它提供了很多GCD没有的高级用法：
 

@@ -20,15 +20,15 @@ App签名属于iOS的安全控制范畴，根据iOS的安全白皮书的序言�
 
 App签名属于App安全的范畴，它主要是为了防止恶意代码注入或者代码篡改，确保可执行程序一定是合规的。根据Apple在WWDC2016 Session 705的介绍，Apple早在10多年前就想到了这个问题，从而设计了这套App签名机制，不得不说这个设计确实很有先见之明
 
-App签名对大多数iOS开发者来说都不陌生，但想搞清楚它的工作原理又不是很容易，加上众多冗余繁杂的证书，即使对于入行很久的iOS开发者来说，对代码加解密的过程也不一定能够说的清楚。纠其原因，大概有两点，一是绝大多数情况XCode将代码签名的工作自动化了，使开发人员感知不到其中的细节；二是代码签名所用到的知识本质上是密码学，需要理解非对称加密的原理，Hash函数，数字签名以及数字证书等一系列概念，这对于纯iOS开发者来说，多少有些门槛
+App签名对大多数iOS开发者来说都不陌生，但想搞清楚它的工作原理又不是很容易，加上众多冗余繁杂的概念和各式各样的证书，即使对于入行很久的iOS开发者来说，对App签名的过程也不一定能够说的清楚。纠其原因，大概有两点，一是绝大多数情况XCode将代码签名的工作自动化了，使开发人员感知不到其中的细节；二是代码签名所用到的知识本质上是密码学，需要理解非对称加密的原理，Hash函数，数字签名以及数字证书等一系列概念，这对于纯iOS开发者来说，多少有些门槛
 
 但是我个人认为，作为iOS开发人员，这部分知识是一定要掌握的，它对于理解App的运行和系统底层的原理都有很大的好处，同时它也是Reverse Engineering的基础入门知识，在实际工程中，如果我们要配置CI，也需要用到这方面的知识。
 
-接下来两篇文章我们将通过理论结合实践的方式来分析App代码签名的过程，这里假设你已经了解了非对称加密，公钥私钥等这些基本概念，如果这些概念还不清楚，可以参考之前介绍[HTTPs和SSL的文章](https://xta0.me/2011/07/10/Backend-HTTP.html)，另外，在下一篇文章中我们还将使用一个签名工具[mobdevim](https://github.com/DerekSelander/mobdevim)来分析开源的Wordpress App。
+接下来两篇文章我们将通过理论结合实践的方式来分析App代码签名的过程，这里假设你已经了解了非对称加密，公钥私钥等这些基本概念，如果这些概念还不清楚，可以参考之前介绍[HTTPs和SSL的文章](https://xta0.me/2011/07/10/Backend-HTTP.html)。
 
 ### 开发者证书
 
-我们先从证书开始说，相信绝大多数的iOS开发者都有开发者证书，它是Apple颁发给你的代码签名的凭证，如下面这张图
+我们先从Apple的开发者证书开始说，相信绝大多数的iOS开发者都有开发者证书，它是Apple颁发给你的代码签名的凭证，如下面这张图
 
 <img src="{{site.baseurl}}/assets/images/2016/07/ios-app-sign-1.png" class="md-img-center">
 
@@ -56,12 +56,12 @@ qkEDhYZScToVQlJNDVBCmgfQcuaDdt6lxVKW+awJIw==
 
 总结一下，关于开发者证书，我们需要明白下面两点：
 
-1. 在App安装时证书本身会随着App下发，由于证书是要被验证真伪的，因此证书实际上是被Apple加密过的，解密的公钥就存放在iPhone或者iPad设备中，它在设备出厂的时候就被打到系统中了
-2. 真正对我们代码进行签名或者说加密的是保存在开发者证书中的私钥，当App被上传到Appstore时，Apple会用对应 的公钥进行验证，看App内容是否被篡改
+1. 在App安装时证书本身会随着App下发，由于证书是要被验证真伪的，因此证书实际上是被Apple加密过的，解密的公钥就存放在iPhone或者iPad设备中，它在设备出厂的时候就被预置到文件系统中了
+2. 真正对我们代码进行签名或者说加密的是保存在开发者证书中的私钥，当App被上传到Appstore时，Apple会用对应的公钥进行验证，确保该程序是合法的并且来源属于Apple的开发者
 
 ### Provisioning Profiles
 
-上面我们曾提到当App被下载到手机时，证书也跟着下发，这里说的证书并不是开发者证书而是符合x509格式的数字证书，即begin和end中间那部分字符串，Provisioning Profile就是用来承载这部分内容的。Provisioning Profile除了包含数字证书，还包含entitlements文件和App支持的设备列表。Provisioning Profile文件默认的存放位置为
+上面我们曾提到当App被下载到手机时，证书也跟着下发，这里说的证书并不是开发者证书而是符合x509格式的数字证书，即begin和end中间那部分字符串，Provisioning Profile就是用来承载这部分内容的。Provisioning Profile除了包含数字证书，还包含entitlements文件和App支持的设备列表等一些App的元信息。Provisioning Profile文件默认的存放位置为
 
 ```shell
 ~/Library/MobileDevice/Provisioning Profiles
@@ -112,10 +112,10 @@ f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision
 ```shell
 codesign -f -s 'iPhone Developer: Tao Xu (Q7PV3L5FKY)' Example.app
 ```
-该命令会对`Example.app`中的Mach-O进行重签名，并向其中注入signature，从而改变binary的结构和内容。我们也可以使用该命令查看一个App的签名信息
+该命令会对`Example.app`中的Mach-O进行重签名，并向其中注入signature，从而改变binary的结构和内容。被签名后的App，我们可以使用下面命令查看一个其签名信息
 
 ```
-➜  Payload codesign -vv -d Example.app
+➜  codesign -vv -d Example.app
 
 Executable=/Example/Payload/Example.app/Example
 Identifier=com.idsdk.demo
@@ -132,7 +132,7 @@ Sealed Resources version=2 rules=10 files=19
 Internal requirements count=1 size=172
 ```
 
-上述信息中最关键的是
+上述信息中最关键的是`Authority`这个几个字段，
 
 
 
