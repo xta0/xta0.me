@@ -5,7 +5,7 @@ layout: about
 <section class="about-me">
 <h2 class="about-h2 md-p-center">我是谁</h2>
 <p class="about-content">我叫徐韬，前阿里巴巴高级技术专家，现同家人在美国华盛顿地区(北弗吉尼亚)居住。</p>
-<p class="about-content">My name is Tao(Jason) Xu, I am a former tech lead(senior technologist) with Aliabba Group. Currently I'm living with my family in Washington, D.C. area</p>
+<p class="about-content">My name is Tao, I'm a ex senior technologist with Aliabba Group.</p>
 
 <div class="md-flex-v about-contact">
     <div><i class="fas fa-envelope"></i> | taoxu.dev@gmail.com </div>
