@@ -1,7 +1,7 @@
 ---
 layout: post
-title: iOS中的线程同步问题 
-list_title: iOS中的线程同步问题 | Thread Synchronization in iOS
+title: 线程同步与互斥锁
+list_title: iOS中的多线程问题 | Thread synchronization 
 categories: [iOS]
 ---
 
