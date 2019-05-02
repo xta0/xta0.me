@@ -1,5 +1,6 @@
 ---
 layout: post
+updated: "2018-08-10"
 list_title:  ES6快速参考 | ES6 Quick Reference Guide
 title: ES6快速参考
 categories: [JavaScript]
