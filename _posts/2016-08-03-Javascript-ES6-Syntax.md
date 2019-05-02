@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: Javascript ES6 Quick Reference Guide Part 1
-title: Javascript ES6 Part 1
+list_title:  ES6快速参考 | ES6 Quick Reference Guide
+title: ES6快速参考
 categories: [JavaScript]
 ---
 
