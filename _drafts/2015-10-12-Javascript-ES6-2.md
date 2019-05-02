@@ -102,6 +102,8 @@ const task = new Promise((resolve, reject) => {
 
 ### Proxy
 
+TBD
+
 ### Generator
 
 Generator 是 ES6 引入的一种被动（惰性）求值技术
@@ -127,8 +129,7 @@ function* getEmployee() {
   console.log("the function has ended");
 }
 ```
-
-Generator 和`for...of`
+未完待续。。
 
 ### Resource
 
