@@ -8,7 +8,7 @@ categories: [JavaScript]
 
 ### Motavition
 
-最近在学习React，补习一下ES6的知识
+最近在学习React，持续更新对ES6各种feature的理解
 
 ### Array
 
