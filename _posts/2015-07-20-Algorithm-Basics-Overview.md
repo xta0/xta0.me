@@ -82,10 +82,7 @@ Euclid(m,n){
 - 至今没有人能证明对于这类问题不存在多项式时间的算法
 - 从是否存在多项式时间算法的角度看，这些问题彼此是等价的。<mark>这些问题的难度处于有效计算的边界</mark>
 
-
-
-
-### Resources
+## 资料汇总
 
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
 - [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)
@@ -96,3 +93,4 @@ Euclid(m,n){
 - [算法与数据结构-2-清华-EDX](https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/)
 - [算法设计与分析-1-北大-Cousera](https://www.coursera.org/learn/algorithms/home/welcome)
 - [算法设计与分析-2-北大-EDX](https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/)
+- [libpku](https://github.com/lib-pku/libpku/tree/master/%E6%9A%91%E6%9C%9F%E8%AF%BE/acm-icpc%E6%9A%91%E6%9C%9F%E8%AF%BE)

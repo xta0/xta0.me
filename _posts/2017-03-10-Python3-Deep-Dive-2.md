@@ -20,7 +20,7 @@ type(a) #<class 'int'>
 a = "hello"
 type(a) #<class 'str'>
 ```
-此时`a`的"类型"变成了string，表面上看，上述代码实际上是对`a`的重新赋值，因此一个直观的想法是`a`所指向的内存数据被修改了，从`10`被修改为`hello`，也就是所谓的mutation。实际上则不是，重新复制后的`a`指向的是另一块新的内存，其值为`hello`，原来`10`的那块内存仍然存在，只是没有人引用它的，很快便会被GC回收。
+此时`a`的"类型"变成了string，表面上看，上述代码实际上是对`a`的重新赋值，因此一个直观的想法是`a`所指向的内存数据被修改了，从`10`被修改为`hello`，也就是所谓的mutation。实际上则不是，重新赋值后的`a`指向的是另一块新的内存，其值为`hello`，原来`10`的那块内存仍然存在，只是没有人引用它的，很快便会被GC回收。
 
 我们可以用代码试验一下上述结论
 
@@ -43,12 +43,12 @@ print(hex(id(a))) #0x10851fc30
 对于Mutbale的数据结构，我们可以修改其内容，然后观察其地址
 
 ```python
-#1
+#1 list是mutable的
 my_list = [1,2,3]
 print(hex(id(my_list))) #0x10ae13f48
 my_list.append(4)
 print(hex(id(my_list))) #0x10ae13f48
-#2
+#2 string是immutable的
 my_str = "123"
 print(hex(id(my_str))) #0x10da15030
 my_str += "4"
