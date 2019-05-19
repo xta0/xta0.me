@@ -1,3 +1,9 @@
 {
-    "mist.isDebugging": false
+    "mist.isDebugging": false,
+    "files.exclude": {
+        "**/.classpath": true,
+        "**/.project": true,
+        "**/.settings": true,
+        "**/.factorypath": true
+    }
 }
