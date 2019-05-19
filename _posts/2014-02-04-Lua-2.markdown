@@ -80,10 +80,10 @@ co = coroutine.wrap(function(a)
 	print("main func a: ",a) 
 	return 2*a 
 end)
-ret = co(20) --hit yield
-print(ret) -- ret = 21
+d = co(20) --hit yield
+print(d) -- d = 21
 --从yield后面执行
-d = co(b+1)
+d = co(20)
 print(d) -- 40
 
 --使用create
@@ -130,6 +130,24 @@ consumer()
 3. 此时控制权转回`consumer`，`resume`执行完成后得到了`x`后并输出。
 4. 进入下一次循环，重复1，直到生产出的`x`为`ok`，循环退出
 
+```shell
+➜  Desktop lua async.lua 
+1
+producer create:        1
+consumer get:   1
+2
+producer create:        2
+consumer get:   2
+3
+producer create:        3
+consumer get:   3
+4
+producer create:        4
+consumer get:   4
+ok
+producer create:        ok
+consumer quit:  ok
+```
 
 ## Resource
 
