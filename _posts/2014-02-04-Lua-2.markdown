@@ -8,63 +8,58 @@ categories: [Lua]
 
 最早接触Coroutine是在<a href="http://www.lua.org/pil/">Programming in Lua</a>中，如今这本书已经出到第三版了，第9章介绍了lua中Coroutine的API，读过一遍后，没不太明白，后来又读了一篇关于这方面的<a href="http://www.inf.puc-rio.br/~roberto/docs/corosblp.pdf">论文</a>，作者也是原书的作者，论文将Coroutine机制阐述的很详细，很值得一读。
 
-## 什么是Coroutine
+### 什么是Coroutine
 
 我们首先来看一下lua的作者对Coroutine是这样解释的：
-“Coroutine和线程类似，是一段可执行代码，它拥有自己的stack，自己的局部变量和自己的stack pointer，可以和其它Coroutine共享全局变量。和线程的重要区别是：线程可以并发执行，Coroutine只能协作执行，即CPU的某个时刻只会有一个Coroutine被执行，这个Coroutine终止的条件是自己执行完毕或者它自己明确的要求被停止（Coroutine是不允许从外部被终止的）。”
 
-Coroutine翻译过来叫做<a href="http://zh.wikipedia.org/wiki/%E5%8D%8F%E7%A8%8B">协程</a>，顾名思义是一种协同工作的概念。举个例子，就好比A,B要共同完成一项工作，A干了一半说：“我干完了，该你了”（注意是A自己说的）。B收到后，继续将剩下的工作干完。A,B就一种协同工作的方式。这个概念早在60年代就成型了，只是现代的主流编程语言都没有加入对它的实现。在上述论文中有提到：
+> “Coroutine和线程类似，是一段可执行代码，它拥有自己的stack，自己的局部变量和自己的stack pointer，可以和其它Coroutine共享全局变量。和线程的重要区别是：线程可以并发执行，Coroutine只能协作执行，即CPU的某个时刻只会有一个Coroutine被执行，这个Coroutine终止的条件是自己执行完毕或者它自己明确的要求被停止（Coroutine是不允许从外部被终止的）。”
 
-> 设计编程语言的人缺乏对Coroutine的有效理解，而提出Coroutine的作者（Marlin）也只是在Simula中实现了Coroutine而且实现的超复杂。
+Coroutine翻译过来叫做<a href="http://zh.wikipedia.org/wiki/%E5%8D%8F%E7%A8%8B">协程</a>，顾名思义是一种协同工作的概念。举个例子，就好比A,B两个人要共同装修一栋房子，A干了一会儿对B说：“我木头运进来了，该你了铺地板了，等你干完了我再来刷油漆”（注意是A自己说的），B收到后，过来将它的工作干完，于是A,B就一种协同工作的方式。注意协同并不等于同步，比如当A说完："我干完了，该你了"之后，A完全可以去干别的事情，比如去买一瓶啤酒再吃顿饭，等B铺完地板后，再接着干活，而不是坐在那里傻等着B完成它的任务。因此从A的角度看，和B一起干活这件事是异步的，A的时间并没有因为B而block。但是需要注意的是，异步并不等于多线程，多线程强调的是并行计算，任务之间同时进行而且没有联系；而协程是协同工作，任务之间彼此依赖并且有先后关系，比如上面例子中A和B是不能同时干活的，而对A来说也不能同时运木头和买啤酒。
 
-后来，有两伙人开始重拾Coroutine，一伙人提出了用Coroutine来实现非抢占式（non-preemptive）多线程，还取了一个名字叫：collaborative multithreading——协作式多线程。和传统的抢占式多线程（preemptive）相比，这种方式开销很小（因为不涉及到内核，所以不存在context switching带来的开销），又能规避线程带来的很多问题，在某些场景很有用。其中最具代表性的是Windows中的Fiber机制，<a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682661(v=vs.85).aspx">在MSDN中有描述</a>。另一伙人将Coroutine用到了脚本语言中，包括Python，Perl和Lua等，Lua在当时是为数不多支持协程的语言，但是没有多少人知道，直到现在去Google搜索什么是协程，大多数的答案仍是以Python的Generator为分析的例子，而对于JavaScript，更是在ES6出来后，才提供了对协程的API（generator）的支持。这一方面说明Lua的小众，另一方面说明在Lua的应用场景中需要用到并发，而使用协程可以摆脱语言对操作系统（内核）的依赖，轻量级的实现多线程。
+实际上协程这个概念早在60年代就成型了，只是现代的主流编程语言都没有加入对它的实现。在上述论文中有提到：
 
-## Lua中的Coroutine
+> "设计编程语言的人缺乏对Coroutine的有效理解，而提出Coroutine的作者（Marlin）也只是在Simula中实现了Coroutine而且实现的超复杂"
 
-。接着我们来看看如何用Lua的语法来描述它，
+后来，有两伙人开始重拾Coroutine，一伙人提出了用Coroutine来实现非抢占式（non-preemptive）多线程，还取了一个名字叫：collaborative multithreading——协作式多线程。和传统的抢占式多线程（preemptive）相比，这种方式开销很小（因为不涉及到内核，所以不存在context switching带来的开销），又能规避线程带来的很多问题，在某些场景很有用。其中最具代表性的是Windows中的Fiber机制，<a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682661(v=vs.85).aspx">在MSDN中有描述</a>。另一伙人将Coroutine用到了脚本语言中，包括Python，Perl和Lua等，Lua在当时是为数不多支持协程的语言，但是没有多少人知道，直到现在去Google搜索什么是协程，大多数的答案仍是以Python的Generator为分析的例子，而对于JavaScript，更是在ES6出来后，才提供了对协程的API（generator）的支持。这一方面说明Lua的小众，另一方面说明在Lua的应用场景中需要用到并发，而使用协程可以摆脱语言对操作系统（内核）的依赖，轻量级的异步任务。
+
+### Lua中的Coroutine
+
+接着我们来看看如何用在Lua中使用Coroutine。首先我们可以通过`create`方法创建一个协程对象
 
 ```lua
---learning lua--
---chap9 : Coroutines--
-
---创建一个coroutine任务
-
 co = coroutine.create(function() print("hi") end)
 print(co,type(co)) --thread: 0x1001082a0	
-
---coroutine有四种状态：
---suspend，dead，running，normal
-
---suspend：当coroutine被创建时，是suspend状态
+```
+在lua中，一个协程对象有四种状态：`suspend`，`dead`，`running`和`normal`，当一个新的协程被创建时，它是suspend状态：
+```lua
 print(coroutine.status(co)) --suspend
---resume方法会执行coroutine任务，状态会变为running
+```
+然后我们可以使用`resume`方法来执行协程任务，其状态会变为running，当任务完成后，状态会变为`dead`:
+```lua
 coroutine.resume(co) --hi
 --coroutine执行完成后，状态变为dead
 print(coroutine.status(co)) --dead
 --dead之后不能resume了
 print(coroutine.resume(co)) --false	cannot resume dead coroutine
+```
+上面代码通常没有什么意义，因为这种使用协程的方式和使用普通函数没有区别，并不能实现任务的异步执行，使用协程的正确方式是和`yield`搭配使用
 
---coroutine的用法要搭配yield函数使用
+```lua
 co = coroutine.create(function()
-	for i=1,10 do 
-		print("co",i)
-		print("yield",coroutine.yield())
-	end
+	for i=1,3 do 
+		print("index: ",i)
+        coroutine.yield()
+    end
 end)
 
-coroutine.resume(co) --co 1
---这说明yield可以中断coroutine的执行
---@important：
---从coroutine的角度出发，当co suspend时，co在试行yield的操作，当yield执行完后，再会在执行co的操作
---这意味着，当co被suspend时，stack上的参数传递给yield继续执行，yield执行完后，再将参数交给co的stack
+coroutine.resume(co) 
+```
+上面代码中，当执行`resume`方法后，协程函数会执行，首先输出`index: 1`，接着执行了`yield`。`yield()`的作用是挂起协程，即中断该协程函数的执行。由前面的介绍可知，每个协程函数都有自己的stack，执行`yield()`后，协程函数的栈帧会被保存，栈里的信息也会被保存，而程序的控制权则转移给了主函数。
 
+我们也可以向协程函数中出传参，这里分为两种情况，一种是协程函数中没有`yield`，那么函数执行完后协程对象状态变为dead：
 
---传参:任何传递给yield/resume的参数，都会作为返回值返回给main function
---考虑两种情况：
---一种是coroutine function没有配对的yield，function自然dead
---一种是有配对的yield
-
---第一种情况--：
+```lua
+--第一种情况
 --使用wrap
 co = coroutine.wrap(function(a) return 2*a end)
 b = co(20)
@@ -74,70 +69,85 @@ print(b) -- 40
 co = coroutine.create(function(a) return 2*a end)
 b,v1 = coroutine.resume(co,20)
 print(b,v1) --true 40
+```
 
---第二种情况，resume有对应的yield
-co = coroutine.wrap(function(a) local c = coroutine.yield(a+1) print("main func a: ",a) return 2*a end)
-b = co(20)
-print(b) -- 21
+第二种情况是当协程函数中有`yield`方法时，当执行到`yield(arg)`，协程函数的返回值将是函数栈顶变量的值，即`arg`的值。
+
+```lua
+--使用wrap
+co = coroutine.wrap(function(a)
+	local c = coroutine.yield(a+1) 
+	print("main func a: ",a) 
+	return 2*a 
+end)
+d = co(20) --hit yield
+print(d) -- d = 21
 --从yield后面执行
-d = co(b+1)
+d = co(20)
 print(d) -- 40
 
-
 --使用create
-co = coroutine.create(function(a) return 2*a end)
-b,v = coroutine.resume(co,20)
-print(b,v) -- true，40
-
---使用create
-co = coroutine.create(function(a) local c = coroutine.yield(a+1) print("main func c: ",c) return 2*a end)
+co = coroutine.create(function(a) 
+	local c = coroutine.yield(a+1) 
+	print("main func c: ",c) 
+	return 2*a 
+end)
 b,v = coroutine.resume(co,20)
 print(b,v) -- true，21
 b,v = coroutine.resume(co,20)
 print(b,v) -- true,40
+```
 
---生产者，消费者模式--
---通过yield，resume配对实现，类似java的wait和notify
+接下来我们来使用协程模拟一个简单的生产者，消费者的模式
 
-function send(x)
-	coroutine.yield(x)
-end
-
-producer = coroutine.create(function() while true do 
-	local x = io.read()
-	print("producer get: ",x)
-	send(x)
+```lua
+producer = coroutine.create(function() 
+	while true do 
+		local x = io.read()
+		print("producer create: ",x)
+		coroutine.yield(x)
 	end
 end)
 
-function receive()
-	local status,value = coroutine.resume(producer)
-	--print(status,value)
-	return value
-end
-
 function consumer ()
-	while(true) do
-		local x = receive()
-		
+	while true  do
+		status,x = coroutine.resume(producer)
 		if x == "ok" then
-		print("consumer quit: ",x)
-		break
-	else
-		print("consumer get: ",x)
+			print("consumer quit: ",x)
+			break
+		else
+			print("consumer get: ",x)
 		end
 	end
 end
 
---consumer()
-
---过程变为：
---1，由消费者驱动数据：消费者首先需要一个x,调用receive，此时main coroutine停止running，进入normal状态，
---2，此时创建一个coroutine：producer，它有自己的stack，自己的状态，resume后，执行send，发送一个x,此时yield，producer暂停
---3, 消费者收到x，继续请求令一个x</pre> 
-
+consumer()
 ```
+上述代码中`producer`是一个协程，它的协程函数是一个`while`循环，不断的从console中读入字符。`consumer`是一个普通函数，它也是一个`while`循环，通过不断调用协程的对象的`resume`方法来获取数据。一次典型的生产消费过程如下：
 
+1. `consumer`调用`producer`的`resume`方法索要数据，协程被唤醒
+2. `producer`从IO中读取数据，"生产"一个`x`，然后执行`yield`，将`x`push到某个地方后，协程被挂起
+3. 此时控制权转回`consumer`，`resume`执行完成后得到了`x`后并输出。
+4. 进入下一次循环，重复1，直到生产出的`x`为`ok`，循环退出
+
+```shell
+➜  Desktop lua async.lua 
+1
+producer create:        1
+consumer get:   1
+2
+producer create:        2
+consumer get:   2
+3
+producer create:        3
+consumer get:   3
+4
+producer create:        4
+consumer get:   4
+ok
+producer create:        ok
+consumer quit:  ok
+```
 
 ## Resource
 
