@@ -7,6 +7,8 @@ categories: [Machine Learning,AI]
 mathjax: true
 ---
 
+> [Machine Learning course notes](https://www.coursera.org/learn/machine-learning)
+
 ### Macine Learning definition
 
 机器学习的定义：

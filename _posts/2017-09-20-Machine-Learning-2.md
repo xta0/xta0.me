@@ -7,6 +7,8 @@ categories: [Machine Learning,AI]
 mathjax: true
 ---
 
+> [Machine Learning course notes](https://www.coursera.org/learn/machine-learning)
+
 ### Cost Function
 
 * Hypothesis 函数：

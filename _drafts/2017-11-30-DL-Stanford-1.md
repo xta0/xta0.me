@@ -16,8 +16,6 @@ categories: ["AI", "Machine Learning"]
 4. Convolutional Neural Networks
 5. Natural Language Processing: Building sequence models
 
-## Neural Networks and Deep Learning
-
 ### What is neural networks
 
 深度学习通常是指训练大型的神经网络系统，
