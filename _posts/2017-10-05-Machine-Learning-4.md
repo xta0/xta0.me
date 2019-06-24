@@ -13,7 +13,7 @@ mathjax: true
 
 ![](/assets/images/2017/09/ml-6-1.png)
 
-可以通过构建对feature的多项式<math><msub><mi>g</mi><mi>θ</mi></msub></math>来确定预测函数，但这中方法适用于feature较少的情况，比如上图中，只有两个feature。
+我们可以通过构建对feature的多项式$g_\theta$来确定预测函数，但这中方法适用于feature较少的情况，比如上图中，只有两个feature。
 当feature多的时候，产生多项式就会变得很麻烦，还是预测房价的例子，可能的feature有很多，比如：x1=size,x2=#bedrooms,x3=#floors,x4=age,...x100=#schools等等，
 假设n=100，有几种做法：
 
