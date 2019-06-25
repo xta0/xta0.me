@@ -72,19 +72,16 @@ $$
 
 $$
 a_1^{(2)} = g(\theta_{10}^{(1)}x_0 + \theta_{11}^{(1)}x_1 + \theta_{12}^{(1)}x_2 + \theta_{13}^{(1)}x_3 )
-\linebreak
+\newline
 a_2^{(2)} = g(\theta_{20}^{(1)}x_0 + \theta_{21}^{(1)}x_1 + \theta_{22}^{(1)}x_2 + \theta_{23}^{(1)}x_3 )
-\linebreak
+\newline
 a_3^{(2)} = g(\theta_{30}^{(1)}x_0 + \theta_{31}^{(1)}x_1 + \theta_{32}^{(1)}x_2 + \theta_{33}^{(1)}x_3 )
-\linebreak
+\newline
 h_\theta(x) = g(\theta_{10}^{2}a_0^{2}+\theta_{11}^{2}a_1^{2}+\theta_{12}^{2}a_2^{2}+\theta_{13}^{2}a_3^{2})
 $$
 
-上面可以看到<math><msup><mi>θ</mi><mi>(1)</mi></msup></math>矩阵是3x4的，X矩阵是4x1的，这样相乘得出的矩阵是3x1的，对应每个a节点的值。最终输出结果是另一个θ矩阵<math><msup><mi>θ</mi><mi>(2)</mi></msup></math>乘以上面的3x1矩阵，由此可知<math><msup><mi>θ</mi><mi>(2)</mi></msup></math>是3x1的矩阵，这个矩阵的意义是第二层节点的权重值。
+上面可以看到第一层Hidden Layer的参数（权重值）$\theta^(1)$是`3x4`的，输入的feature矩阵是`4x1`的，这样相乘得出的第一层输出矩阵是`3x1`的，对应每个`a`节点的值。而整个神经网络最终输出结果是神经元`a`矩阵再乘以第二层Hidden Layer的参数矩阵$\theta^(2)$，由于`a`是`3x1`的，可知$\theta^(2)$是`1x3`的。由此我们可以推测出$\theta$矩阵的维度为
 
-因此可以知道，每一层神经网络节点都有各自的权重矩阵<math><msup><mi>θ</mi><mi>(j)</mi></msup></math>，矩阵维度的计算方法是：
-
-> <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mtext>If network has&#xA0;</mtext><mrow class="MJX-TeXAtom-ORD"><msub><mi>s</mi><mi>j</mi></msub></mrow><mtext>&#xA0;units in layer&#xA0;</mtext><mrow class="MJX-TeXAtom-ORD"><mi>j</mi></mrow><mtext>&#xA0;and&#xA0;</mtext><mrow class="MJX-TeXAtom-ORD"><msub><mi>s</mi><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><mtext>&#xA0;units in layer&#xA0;</mtext><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>+</mo><mn>1</mn></mrow><mtext>,then&#xA0;</mtext><mrow class="MJX-TeXAtom-ORD"><msup><mi mathvariant="normal">Θ</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>j</mi><mo stretchy="false">)</mo></mrow></msup></mrow><mtext>&#xA0;will be of dimension&#xA0;</mtext><mrow class="MJX-TeXAtom-ORD"><msub><mi>s</mi><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>×</mo><mo stretchy="false">(</mo><msub><mi>s</mi><mi>j</mi></msub><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mtext>.</mtext></math>
 
 
 推算可知+1来自<math><msup><mi>θ</mi><mi>(j)</mi></msup></math>矩阵的"bias nodes"，即<math><msub><mi>x</mi><mn>0</mn></msub></math>和<math><msubsup><mi>θ</mi><mi>(j)</mi><mn>0</mn></msubsup></math>。如下图：
