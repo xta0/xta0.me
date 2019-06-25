@@ -77,9 +77,9 @@ a_3^{(2)} = g(\theta_{30}^{(1)}x_0 + \theta_{31}^{(1)}x_1 + \theta_{32}^{(1)}x_2
 h_\theta(x) = g(\theta_{10}^{2}a_0^{2}+\theta_{11}^{2}a_1^{2}+\theta_{12}^{2}a_2^{2}+\theta_{13}^{2}a_3^{2})
 $$
 
-上面可以看到第一层Hidden Layer的参数（权重值）$\theta^{(1)}$是`3x4`的，输入的feature矩阵是`4x1`的，这样相乘得出的第一层输出矩阵是`3x1`的，对应每个`a`节点的值。而整个神经网络最终输出结果是神经元`a`矩阵再乘以第二层Hidden Layer的参数矩阵$\theta^{(2)}$，由于`a`是`3x1`的，可知$\theta^(2)$是`1x3`的。由此我们可以推测出$\theta$矩阵的维度为
+上面可以看到第一层Hidden Layer的参数（权重值）$\theta^{(1)}$是`3x4`的，输入的feature矩阵是`4x1`的，这样相乘得出的第一层输出矩阵是`3x1`的，对应每个`a`节点的值。而整个神经网络最终输出结果是神经元`a`矩阵再乘以第二层Hidden Layer的参数矩阵$\theta^{(2)}$，由于`a`是`3x1`的，可知$\theta^(2)$是`1x3`的。由此我们可以推测出$\theta$矩阵的维度的计算方式为:
 
-如果神经网络第`j`层有$s_j$个单元，第`j+1`层有$s_{j+1}$个单元，那么$\theta_{(j)}$的维度为$s_{j+1} x (s_j + 1)$
+> 如果神经网络第`j`层有$s_j$个单元，第`j+1`层有$s_{j+1}$个单元，那么$\theta^{(j)}$的维度为$s_{j+1} \times (s_{j}+1)$
 
 举例来说, 如果layer 1有两个输入节点，layer 2 有4个activation节点，那么<math><msup><mi>θ</mi><mi>(1)</mi></msup></math>是4x3的，<math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>s</mi><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>×</mo><mo stretchy="false">(</mo><msub><mi>s</mi><mi>j</mi></msub><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mo>=</mo><mn>4</mn><mo>×</mo><mn>3</mn></math>
 
