@@ -58,17 +58,13 @@ x_0 \\
 x_1 \\
 x_2 \\
 \end{matrix1}
-
-->
-
+\to
 \begin{matrix2}
 a_1^(2) \\
 a_2^(2) \\
 a_3^(2) \\
 \end{matrix2}
-
-->
-
+\to
 h_\theta(x)
 $$
 
