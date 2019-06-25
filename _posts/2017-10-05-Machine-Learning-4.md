@@ -57,110 +57,24 @@ $$
 x_0 \\
 x_1 \\
 x_2 \\
+x_3 \\
 \end{bmatrix}
 \to
 \begin{bmatrix}
-a_1^(2) \\
-a_2^(2) \\
-a_3^(2) \\
+a_0^{(2)}
+a_1^{(2)} \\
+a_2^{(2)} \\
+a_3^{(2)} \\
 \end{bmatrix}
 \to
 h_\theta(x)
 $$
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mfenced open="[" close="]">
-    <mtable rowspacing="4pt" columnspacing="1em">
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mn>0</mn>
-          </msub>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mn>1</mn>
-          </msub>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mn>2</mn>
-          </msub>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mn>3</mn>
-          </msub>
-        </mtd>
-      </mtr>
-    </mtable>
-  </mfenced>
-  <mo stretchy="false">→</mo>
-  <mfenced open="[" close="]">
-    <mtable rowspacing="4pt" columnspacing="1em">
-      <mtr>
-        <mtd>
-          <msubsup>
-            <mi>a</mi>
-            <mn>1</mn>
-            <mrow class="MJX-TeXAtom-ORD">
-              <mo stretchy="false">(</mo>
-              <mn>2</mn>
-              <mo stretchy="false">)</mo>
-            </mrow>
-          </msubsup>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msubsup>
-            <mi>a</mi>
-            <mn>2</mn>
-            <mrow class="MJX-TeXAtom-ORD">
-              <mo stretchy="false">(</mo>
-              <mn>2</mn>
-              <mo stretchy="false">)</mo>
-            </mrow>
-          </msubsup>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msubsup>
-            <mi>a</mi>
-            <mn>3</mn>
-            <mrow class="MJX-TeXAtom-ORD">
-              <mo stretchy="false">(</mo>
-              <mn>2</mn>
-              <mo stretchy="false">)</mo>
-            </mrow>
-          </msubsup>
-        </mtd>
-      </mtr>
-    </mtable>
-  </mfenced>
-  <mo stretchy="false"> → </mo>
-  <msub>
-    <mi>h</mi>
-    <mi>θ</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-</math>
-
-
 对第二层每个activation节点的计算公式如下：
+
+$$
+a_1^{(2)} \quad = \quad g(\theta_{10}^{(1)x_0} + \theta_{11}^{(1)x_1} + \theta_{12}^{(1)x_2}) + \theta_{13}^{(1)x_3}
+$$
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
   <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
