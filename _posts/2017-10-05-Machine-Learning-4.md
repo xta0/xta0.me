@@ -48,8 +48,9 @@ mathjax: true
 $$
 h_\theta(x) = g(\theta^Tx) = g(\theta_0 + \theta_1x_1 + \theta_2x_2 + \theta_3x_3 + \theta_4x_4)
 $$
+其中，`g`为sigmoid函数，作用是将输出的值映射到`[0,1]`之间。
 
-一个多层神经网络如下图
+理解了单层的神经网络，我们再来看一个多层神经网络，如下图所示
 
 ![](/assets/images/2017/09/ml-6-5.png)
 
