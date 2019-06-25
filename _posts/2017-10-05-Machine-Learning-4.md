@@ -41,7 +41,13 @@ mathjax: true
 
 - 输入端$x_0$默认为1，也叫做"bias unit."
 - $h_\theta(x)$ 和逻辑回归预测方程一样，用$\frac{1}{1+e^{-\theta^Tx}}$表示，也叫做**activation**函数
-- θ矩阵在神经网络里也被叫做权重weight
+- $\theta$矩阵在神经网络里也被叫做权重weight矩阵
+
+对于上述单层神经网络的输出函数$h_\theta(x)$，可以表示为
+
+$$
+h_\theta(x) = \theta^Tx = \theta_0 + \theta_1x_1 + \theta_2x_2 + \theta_3x_3 + \theta_4x_4
+$$
 
 一个多层神经网络如下图
 
