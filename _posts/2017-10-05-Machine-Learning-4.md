@@ -30,34 +30,17 @@ mathjax: true
 
 假设图片大小为50x50，总共2500个像素点，即2500个feature（灰度图像，RGB乘以三），如果使用二次方程，那么有接近300万个feature，显然图像这种场景使用non linear regression不合适，需要探索新的学习方式
 
-
-### Neural Networks and Brain
-
-- Origins: Algorithms that try to mimic the brain
-	- Was vary widely used in 80s and early 90s; popularity diminished in late 90s
-	- Recent resurgence: State of the art technique for many applications，近几年大数据推动
-
-- 脑神经试验
-	- 大脑负责识别听力的区域同样可以被训练来识别视觉信号
-
 	
+## Model Representation
 
-### Mode Representation
-
-- 大脑中的神经元结构如下图：
-
-![](/assets/images/2017/09/ml-6-3.png)
-
-所谓神经元就是一种计算单元，它的输入是**Dendrite**，输出是**Axon**。类比之前的机器学习模型，dendrite可以类比为<math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>x</mi><mn>1</mn></msub><mo>⋯</mo><msub><mi>x</mi><mi>n</mi></msub></math>，输出Axon可以类比为预测函数的结果。
-
-- Neuron model: Logistic unit
+所谓神经元(Neuron)就是一种计算单元，它的输入是一组特征信息$x_1$...$x_n$，输出为预测函数的结果。
 
 ![](/assets/images/2017/09/ml-6-4.png)
 
 如上图，是一个单层的神经网络，其中：
 
-- 输入端<math><msub><mi>X</mi><mn>0</mn></msub></math>默认为1，也叫做"bias unit."
-- <math><msub><mi>h</mi><mi>θ</mi></msub><mi>(x)</mi></math> 和逻辑回归预测方程一样，用<math xmlns="http://www.w3.org/1998/Math/MathML"><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow class="MJX-TeXAtom-ORD"><mo>−</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi></mrow></msup></mrow></mfrac></math>表示，也叫做asigmoid(logistic)**activation**函数
+- 输入端$x_0$默认为1，也叫做"bias unit."
+- $h_\theta(x)$ 和逻辑回归预测方程一样，用<math xmlns="http://www.w3.org/1998/Math/MathML"><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow class="MJX-TeXAtom-ORD"><mo>−</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi></mrow></msup></mrow></mfrac></math>表示，也叫做sigmoid(logistic)**activation**函数
 - θ矩阵在神经网络里也被叫做权重weight
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
