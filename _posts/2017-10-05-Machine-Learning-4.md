@@ -7,15 +7,15 @@ categories: [Machine Learning,AI]
 mathjax: true
 ---
 
-### Non-linear hypotheses
+## Non-linear hypotheses
 
 神经网络是一个很老的概念，在机器学习领域目前还是主流，之前已经介绍了linear regression和logistics regression，为什么还要学习神经网络？以non-linear classification为例，如下图所示
 
 ![](/assets/images/2017/09/ml-6-1.png)
 
-我们可以通过构建对feature的多项式$g_\theta$来确定预测函数，但这中方法适用于feature较少的情况，比如上图中，只有两个feature。
-当feature多的时候，产生多项式就会变得很麻烦，还是预测房价的例子，可能的feature有很多，比如：x1=size,x2=#bedrooms,x3=#floors,x4=age,...x100=#schools等等，
-假设n=100，有几种做法：
+我们可以通过构建对feature的多项式$g_\theta$来确定预测函数，但这中方法适用于feature较少的情况，比如上图中，只有两个feature: x1和x2。
+
+当feature多的时候，产生多项式就会变得很麻烦，还是预测房价的例子，可能的feature有很多，比如：`x1=size`,`x2=#bedrooms`,`x3=#floors`,`x4=age`,...`x100=#schools`等等，假设`n=100`，有几种做法：
 
 - 构建二阶多项式
 	- 如`x1^2,x1x2,x1x3,x1x4,...,x1x100,x2^2,x2x3...`有约为5000项(n^2/2)，计算的代价非常高。
@@ -24,8 +24,7 @@ mathjax: true
 - 构建三阶多项式
 	- 如`x1x2x3, x1^2x2, x1^2x3...x10x11x17...`, 有约为n^3量级的组合情况，约为170,000个
 
-
-另一个例子是图像识别与分类，例如识别一辆汽车，对于图像来说，是通过对像素值进行学习（车共有的像素特征vs非汽车特征），那么feature就是图片的像素值，如下图所示，加入有两个像素点是车图片都有的：
+另一个例子是图像识别与分类，例如识别一辆汽车，对于图像来说，是通过对像素值进行学习（车共有的像素特征vs非汽车特征），那么feature就是图片的像素值，如下图所示，假如有两个像素点是车图片都有的：
 
 ![](/assets/images/2017/09/ml-6-2.png)
 
