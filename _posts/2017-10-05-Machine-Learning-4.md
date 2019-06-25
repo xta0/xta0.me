@@ -40,69 +40,37 @@ mathjax: true
 如上图，是一个单层的神经网络，其中：
 
 - 输入端$x_0$默认为1，也叫做"bias unit."
-- $h_\theta(x)$ 和逻辑回归预测方程一样，用<math xmlns="http://www.w3.org/1998/Math/MathML"><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow class="MJX-TeXAtom-ORD"><mo>−</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi></mrow></msup></mrow></mfrac></math>表示，也叫做sigmoid(logistic)**activation**函数
+- $h_\theta(x)$ 和逻辑回归预测方程一样，用$\frac{1}{1+e^{-\theta^Tx}}$表示，也叫做**activation**函数
 - θ矩阵在神经网络里也被叫做权重weight
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mfenced open="[" close="]">
-    <mtable rowspacing="4pt" columnspacing="1em">
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mn>0</mn>
-          </msub>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mn>1</mn>
-          </msub>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mn>2</mn>
-          </msub>
-        </mtd>
-      </mtr>
-    </mtable>
-  </mfenced>
-  <mo stretchy="false">→</mo>
-  <mfenced open="[" close="]">
-    <mtable rowspacing="4pt" columnspacing="1em">
-      <mtr>
-        <mtd>
-          <mtext>&#xA0;</mtext>
-          <mtext>&#xA0;</mtext>
-          <mtext>&#xA0;</mtext>
-        </mtd>
-      </mtr>
-    </mtable>
-  </mfenced>
-  <mo stretchy="false">→</mo>
-  <msub>
-    <mi>h</mi>
-    <mi>θ</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-</math>
-
-
-多层神经网络如下图
+一个多层神经网络如下图
 
 ![](/assets/images/2017/09/ml-6-5.png)
 
-- 第一层是叫"Input Layer"，最后一层叫"Output Layer"，中间叫"Hidden Layer"，上面例子中，我们使用<math xmlns="http://www.w3.org/1998/Math/MathML"><msubsup><mi>a</mi><mn>0</mn><mn>2</mn></msubsup><mo>⋯</mo><msubsup><mi>a</mi><mi>n</mi><mn>2</mn></msubsup></math>表示，他们也叫做"activationunits."
+- 第一层是叫"Input Layer"，最后一层叫"Output Layer"，中间叫"Hidden Layer"，上面例子中，对于hidden layer我们使用$a_0^2...a_n^2$表示，他们也叫做"activation units."
 
 - $a_i^{(j)} = "activition" \thinspace of \thinspace unit \thinspace {i} \thinspace in \thinspace \thinspace layer \thinspace{j}$
 - $\theta^{j} = \thinspace matrix \thinspace of \thinspace weights \thinspace controlling \thinspace function \thinspace mapping \thinspace from \thinspace layer \thinspace j \thinspace to \thinspace {j+1}$
+
+$$
+\begin{matrix1}
+x_0 \\
+x_1 \\
+x_2 \\
+\end{matrix1}
+
+->
+
+\begin{matrix2}
+a_1^(2) \\
+a_2^(2) \\
+a_3^(2) \\
+\end{matrix2}
+
+->
+
+h_\theta(x)
+$$
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
   <mfenced open="[" close="]">
