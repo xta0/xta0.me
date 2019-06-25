@@ -81,98 +81,44 @@ $$
 
 > 如果神经网络第`j`层有$s_j$个单元，第`j+1`层有$s_{j+1}$个单元，那么$\theta^{(j)}$的维度为$s_{j+1} \times (s_{j}+1)$
 
-举例来说, 如果layer1有两个输入节点，即$s_1=2$, layer2 有4个activation节点，即$s_2=4$。那么$\theta^(1)$是`4x3`的。
+举例来说, 如果layer1有两个输入节点，即$s_1=2$, layer2 有4个activation节点，即$s_2=4$。那么$\theta^{(1)}$是`4x3`的。
 
 > 为什么要+1呢？ 原因是在输入层(input layer)要引入$x_0$作为bias
 
-### 神经网络的向量化表示
+上面计算Hidden Layer的式子可以用向量运算来表示，我们定义一个新的变量$z_k^{(j)}$来表示`g`函数的参数，则上述节点`a`的值可表示如下：
 
-上面计算中间节点的式子可以用向量化表示，我们定义一个新的变量<math><msubsup><mi>z</mi><mi>k</mi><mrow><mo stretchy="false">(</mo><mi>j</mi><mo stretchy="false">)</mo></mrow></msubsup></math>来表示g函数的参数，则上述公式可表示如下：
+$$
+a_1^{(2)} = g(z_1^{(2)}) \\
+a_2^{(2)} = g(z_2^{(2)}) \\
+a_3^{(2)} = g(z_3^{(2)}) \\
+$$
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd>
-        <msubsup>
-          <mi>a</mi>
-          <mn>1</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo>=</mo>
-        <mi>g</mi>
-        <mo stretchy="false">(</mo>
-        <msubsup>
-          <mi>z</mi>
-          <mn>1</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <msubsup>
-          <mi>a</mi>
-          <mn>2</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo>=</mo>
-        <mi>g</mi>
-        <mo stretchy="false">(</mo>
-        <msubsup>
-          <mi>z</mi>
-          <mn>2</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <msubsup>
-          <mi>a</mi>
-          <mn>3</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo>=</mo>
-        <mi>g</mi>
-        <mo stretchy="false">(</mo>
-        <msubsup>
-          <mi>z</mi>
-          <mn>3</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+和前面一样，上脚标用来表示第几层layer，下脚标用来表示该layer的第几个节点。例如`j=2`时的第`k`个节点的值为
 
-其中，上角标用来表示第几层layer，下角标表示该层的第几个节点。例如layer j=2，第k个节点，z 表示为：
+$$
+a_k^{(2)} = g(z_k^{(2)})
+z_k^{(2)} = \theta_{k0}^{(1)}x_0 + \theta_{k1}^{(1)}x_1 + ... + \theta_{kn}^{(1)}x_n
+$$
+
+将上面式子做进一步推导并用向量表示为
+
+$$
+a^{(j)} = 
+z^{(j)} = \theta^{(j-1)}a^{(j-1)}
+$$
+
+我们用结合上面的三层神经网络来简单验证下，假设`j=3`那么第三层神经网络节点的值$z^{(3)}$为
+
+$$
+z^{(3)} = \theta^{{2)}a^{(2)}
+h_\theta(x) = a^{()}
+$$
+
+其中，上角标用来表示第几层layer，下角标表示该层的第几个节点。例如第2层的第k个节点的z值为：
+
+$$
+z_k^{(2)} = 
+$$
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
   <msubsup>
