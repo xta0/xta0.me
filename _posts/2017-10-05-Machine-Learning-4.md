@@ -81,13 +81,7 @@ $$
 
 如果神经网络第`j`层有$s_j$个单元，第`j+1`层有$s_{j+1}$个单元，那么$\theta_{(j)}$的维度为$s_{j+1} x (s_j + 1)$
 
-推算可知+1来自<math><msup><mi>θ</mi><mi>(j)</mi></msup></math>矩阵的"bias nodes"，即<math><msub><mi>x</mi><mn>0</mn></msub></math>和<math><msubsup><mi>θ</mi><mi>(j)</mi><mn>0</mn></msubsup></math>。如下图：
-
-![](/assets/images/2017/09/ml-6-6.png)
-
-举例来说：
-
-如果layer 1有两个输入节点，layer 2 有4个activation节点，那么<math><msup><mi>θ</mi><mi>(1)</mi></msup></math>是4x3的，<math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>s</mi><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>×</mo><mo stretchy="false">(</mo><msub><mi>s</mi><mi>j</mi></msub><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mo>=</mo><mn>4</mn><mo>×</mo><mn>3</mn></math>
+举例来说, 如果layer 1有两个输入节点，layer 2 有4个activation节点，那么<math><msup><mi>θ</mi><mi>(1)</mi></msup></math>是4x3的，<math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>s</mi><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>×</mo><mo stretchy="false">(</mo><msub><mi>s</mi><mi>j</mi></msub><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mo>=</mo><mn>4</mn><mo>×</mo><mn>3</mn></math>
 
 - 向量化表示
 
