@@ -40,7 +40,6 @@ mathjax: true
 如上图，是一个单层的神经网络，其中：
 
 - 输入端$x_0$默认为1，也叫做"bias unit."
-- $h_\theta(x)$ 和逻辑回归预测方程一样，用$\frac{1}{1+e^{-\theta^Tx}}$表示，也叫做**activation**函数
 - $\theta$矩阵在神经网络里也被叫做权重weight矩阵
 
 对于上述单层神经网络的输出函数$h_\theta(x)$，可以表示为
@@ -48,16 +47,21 @@ mathjax: true
 $$
 h_\theta(x) = g(\theta^Tx) = g(\theta_0 + \theta_1x_1 + \theta_2x_2 + \theta_3x_3 + \theta_4x_4)
 $$
-其中，`g`为sigmoid函数，作用是将输出的值映射到`[0,1]`之间。
 
-理解了单层的神经网络，我们再来看一个多层神经网络，如下图所示
+其中，`g`为sigmoid函数$\frac{1}{1+e^{-z}}$，作用是将输出的值映射到`[0,1]`之间。因此最终的输出函数也可以写作
+
+$$
+h_\theta(x) = \frac{1}{1+e^{-\theta^Tx}}
+$$
+
+上述的神经网络只有输出端一个Neuron，属于比较简单的神经网络，我们再来看一个多个Neuron的两层神经网络，如下图所示
 
 ![](/assets/images/2017/09/ml-6-5.png)
 
-- 第一层是叫"Input Layer"，最后一层叫"Output Layer"，中间叫"Hidden Layer"，上面例子中，对于hidden layer我们使用$a_0^2...a_n^2$表示，他们也叫做"activation units."
+上述神经网络中的第一层是叫"Input Layer"，最后一层叫"Output Layer"，中间叫"Hidden Layer"，用$a_0^2...a_n^2$表示，他们也叫做"activation units." 其中
 
-- $a_i^{(j)} = "activition" \thinspace of \thinspace unit \thinspace {i} \thinspace in \thinspace \thinspace layer \thinspace{j}$
-- $\theta^{j} = \thinspace matrix \thinspace of \thinspace weights \thinspace controlling \thinspace function \thinspace mapping \thinspace from \thinspace layer \thinspace j \thinspace to \thinspace {j+1}$
+- 输入层的$x_i$为样本feature，$x_0$作为"bias"
+- 中间层的$a_i^{(j)} 表示第`j`层的第`i`个节点，我们可以加入$a_0^{(2)}$作为"bias unit"，也可以忽略
 
 $$
 \begin{bmatrix}
@@ -81,10 +85,10 @@ $$
 a_1^{(2)} = g(\theta_{10}^{(1)}x_0 + \theta_{11}^{(1)}x_1 + \theta_{12}^{(1)}x_2 + \theta_{13}^{(1)}x_3 ) \\
 a_2^{(2)} = g(\theta_{20}^{(1)}x_0 + \theta_{21}^{(1)}x_1 + \theta_{22}^{(1)}x_2 + \theta_{23}^{(1)}x_3 ) \\
 a_3^{(2)} = g(\theta_{30}^{(1)}x_0 + \theta_{31}^{(1)}x_1 + \theta_{32}^{(1)}x_2 + \theta_{33}^{(1)}x_3 ) \\
-h_\theta(x) = g(\theta_{10}^{2}a_0^{2}+\theta_{11}^{2}a_1^{2}+\theta_{12}^{2}a_2^{2}+\theta_{13}^{2}a_3^{2})
+h_\theta(x) = a_1^{(3)} = g(\theta_{10}^{(2)}a_0^{2}+\theta_{11}^{(2)}a_1^{2}+\theta_{12}^{(2)}a_2^{2}+\theta_{13}^{(2)}a_3^{2})
 $$
 
-上面可以看到第一层Hidden Layer的参数（权重值）$\theta^{(1)}$是`3x4`的，输入的feature矩阵是`4x1`的，这样相乘得出的第一层输出矩阵是`3x1`的，对应每个`a`节点的值。而整个神经网络最终输出结果是神经元`a`矩阵再乘以第二层Hidden Layer的参数矩阵$\theta^{(2)}$，由于`a`是`3x1`的，可知$\theta^(2)$是`1x3`的。由此我们可以推测出$\theta$矩阵的维度的计算方式为:
+上面可以看到第一层Hidden Layer的参数（权重值）$\theta^{(1)}$是`3x4`的，输入的feature矩阵是`4x1`的，这样相乘得出的第一层输出矩阵是`3x1`的，对应每个`a`节点的值。而整个神经网络最终输出结果是神经元`a`矩阵再乘以第二层Hidden Layer的参数矩阵$\theta^{(2)}$。由此我们可以推测出$\theta$矩阵的维度的计算方式为:
 
 > 如果神经网络第`j`层有$s_j$个单元，第`j+1`层有$s_{j+1}$个单元，那么$\theta^{(j)}$的维度为$s_{j+1} \times (s_{j}+1)$
 
