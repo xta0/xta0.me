@@ -46,7 +46,7 @@ mathjax: true
 对于上述单层神经网络的输出函数$h_\theta(x)$，可以表示为
 
 $$
-h_\theta(x) = \theta^Tx = \theta_0 + \theta_1x_1 + \theta_2x_2 + \theta_3x_3 + \theta_4x_4
+h_\theta(x) = g(\theta^Tx) = g(\theta_0 + \theta_1x_1 + \theta_2x_2 + \theta_3x_3 + \theta_4x_4)
 $$
 
 一个多层神经网络如下图
