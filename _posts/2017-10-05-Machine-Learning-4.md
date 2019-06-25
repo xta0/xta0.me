@@ -53,17 +53,17 @@ mathjax: true
 - $\theta^{j} = \thinspace matrix \thinspace of \thinspace weights \thinspace controlling \thinspace function \thinspace mapping \thinspace from \thinspace layer \thinspace j \thinspace to \thinspace {j+1}$
 
 $$
-\begin{matrix1}
+\begin{bmatrix}
 x_0 \\
 x_1 \\
 x_2 \\
-\end{matrix1}
+\end{bmatrix}
 \to
-\begin{matrix2}
+\begin{bmatrix}
 a_1^(2) \\
 a_2^(2) \\
 a_3^(2) \\
-\end{matrix2}
+\end{bmatrix}
 \to
 h_\theta(x)
 $$
