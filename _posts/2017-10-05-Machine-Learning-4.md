@@ -81,9 +81,11 @@ $$
 
 > 如果神经网络第`j`层有$s_j$个单元，第`j+1`层有$s_{j+1}$个单元，那么$\theta^{(j)}$的维度为$s_{j+1} \times (s_{j}+1)$
 
-举例来说, 如果layer 1有两个输入节点，layer 2 有4个activation节点，那么<math><msup><mi>θ</mi><mi>(1)</mi></msup></math>是4x3的，<math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>s</mi><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>×</mo><mo stretchy="false">(</mo><msub><mi>s</mi><mi>j</mi></msub><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mo>=</mo><mn>4</mn><mo>×</mo><mn>3</mn></math>
+举例来说, 如果layer1有两个输入节点，即$s_1=2$, layer2 有4个activation节点，即$s_2=4$。那么$\theta^(1)$是`4x3`的。
 
-- 向量化表示
+> 为什么要+1呢？ 原因是在输入层(input layer)要引入$x_0$作为bias
+
+### 神经网络的向量化表示
 
 上面计算中间节点的式子可以用向量化表示，我们定义一个新的变量<math><msubsup><mi>z</mi><mi>k</mi><mrow><mo stretchy="false">(</mo><mi>j</mi><mo stretchy="false">)</mo></mrow></msubsup></math>来表示g函数的参数，则上述公式可表示如下：
 
