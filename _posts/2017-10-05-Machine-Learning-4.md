@@ -7,7 +7,7 @@ categories: [Machine Learning,AI]
 mathjax: true
 ---
 
-## Non-linear hypotheses
+## Background
 
 神经网络是一个很老的概念，在机器学习领域目前还是主流，之前已经介绍了linear regression和logistics regression，为什么还要学习神经网络？以non-linear classification为例，如下图所示
 
@@ -31,7 +31,7 @@ mathjax: true
 假设图片大小为50x50，总共2500个像素点，即2500个feature（灰度图像，RGB乘以三），如果使用二次方程，那么有接近300万个feature，显然图像这种场景使用non linear regression不合适，需要探索新的学习方式
 
 	
-## Model Representation
+## 单层神经网络
 
 所谓神经元(Neuron)就是一种计算单元，它的输入是一组特征信息$x_1$...$x_n$，输出为预测函数的结果。
 
@@ -53,6 +53,34 @@ $$
 $$
 h_\theta(x) = \frac{1}{1+e^{-\theta^Tx}}
 $$
+
+公式有些抽象，我们看看如何用Pytorch来实现
+
+```Python
+import torch
+
+def activation(x):
+    return 1 / (1+torch.exp(-x))
+
+## Generate some data
+torch.manual_seed(7) #set the random seed so things are predictable
+
+## Features are 5 random normal variables
+features = torch.randn((1,5)) #1x5
+
+# True weights for our data, random normal variables again
+# same shape as features
+weights = torch.randn_like(features) #1x5
+
+#and a true bias term
+bias = torch.randn((1,1))
+
+# weights.view will convert the matrix to 5x1
+# torch.mm does the matrxi multiplication
+y = activation(bias + torch.mm(features, weights.view(5,1)))
+```
+
+### 多层神经网络
 
 上述的神经网络只有输出端一个Neuron，属于比较简单的神经网络，我们再来看一个多个Neuron的两层神经网络，如下图所示
 
