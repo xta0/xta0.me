@@ -148,7 +148,7 @@ Escape | What it does.
 `\xhh` | Character with hex value `hh`
 
 
-### Printing
+## Printing
 
 - 链接字符串
 
@@ -192,7 +192,7 @@ print("Is it greater or equal?", 5 >= -2) #Is it greater or equal? True
 
 
 
-### Primary Types
+## Primary Types
 
 - `locals()/globals()`
 

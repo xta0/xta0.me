@@ -222,11 +222,9 @@ pod repo remote xxx #删除源
 
 NVM是node.js的包管理系统
 
-### 解决VSCode命令行问题
-
-- [The Reason](https://github.com/Microsoft/vscode-docs/blob/master/docs/editor/integrated-terminal.md#why-is-nvm-complaining-about-a-prefix-option-when-the-integrated-terminal-is-launched)
-- [The Fix](https://github.com/creationix/nvm/issues/855)
-
+- 解决VSCode命令行问题
+  - [The Reason](https://github.com/Microsoft/vscode-docs/blob/master/docs/editor/integrated-terminal.md#why-is-nvm-complaining-about-a-prefix-option-when-the-integrated-terminal-is-launched)
+  - [The Fix](https://github.com/creationix/nvm/issues/855)
 
 ## Lua
 
@@ -240,6 +238,37 @@ LuaRock的用法和gem相同:
 - 查看某个包: `luarocks show json4lua`
 - 删除某个包: `luarocks remove json4lua`
 
+## Python
 
+### Virtualenv
+
+用来隔离python开发环境以及包管理，必备良药
+
+- install  & config
+
+```
+#install using pip
+pip3 install virtualenv
+#create enviroment
+> virtualen proj
+#create enviroment with python path
+> virutalen proj -p python_path
+#activate & deactive
+> source bin/activate
+> deactivate
+```
+由于改变了python路径，使用vscode可能会导致lint出错，配置新的python路径
+
+```json
+<!-- .vscode/settings.json -->
+{
+    "python.pythonPath": "${workspace}/bin/python",    
+    "python.linting.pylintEnabled": false,
+    "python.linting.enabled": true,
+    "python.linting.pylintPath": "${workspace}/lib/python2.7/"    
+}
+```
+
+### Conda
 
 

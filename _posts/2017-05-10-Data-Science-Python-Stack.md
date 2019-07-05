@@ -1,13 +1,12 @@
 ---
 layout: post
-list_title: 数据科学 | Data Science | Python For Data Analysis | Numpy
-title: Python For Data Analysis
+list_title: 数据科学 | Data Science | Python Stack For Data Analysis
+title: Python Stack For Data Analysis
 categories: [Data Science, Python, Machine Learning]
 ---
 
 ## Python Stack Overview
 
-- Python3 
 - Numpy
 - Pandas
 - Matplotlib
@@ -17,11 +16,14 @@ Python系统自带一些数值计算的API，[Numpy](https://www.python-course.e
 
 ## Numpy
 
-和Python内置的数组实现相比，Numpy数组有下面几点优势
+Numpy主要用于做矩阵的数值运算，对常用的数学操作做了封装，使用起来极为方便，而且在性能方面，Numpy也比
 
-1. compact, they don't take up as much space in memory as a Python list
-2. efficient, computations usually run quicker on numpy arrays then Python lists
-3. convenient 
+
+总结一下，和Python内置的数组实现相比，Numpy有下面几点优势
+
+1. 语法简单，易上手
+2. 数值运算的效率比Python list要高(没有for循环)
+3. 消耗的内存更少
 
 ```python
 import numpy as np
