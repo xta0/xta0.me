@@ -5,9 +5,9 @@ layout: post
 categories: [Python]
 ---
 
-### 函数参数
+在介绍函数之前，我们先来复习下Python的一些基础知识
 
-- Tuple
+### Tupes
 
 在介绍函参数之前，先来回顾一下Python中的Tuple，在Python中，Tuple的定义是被`,`分割的value而不是`()`，`()`的作用是为了让Tuple看起来更容易理解
 
