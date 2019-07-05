@@ -126,5 +126,6 @@ RAM中可以被多个进程共享的部分称为Shared Memory，比如系统的f
 
 ## Resources
 
+- [Anatomy of a program in memory](https://manybutfinite.com/post/anatomy-of-a-program-in-memory/)
 - [WWDC2013 - 410](https://developer.apple.com/videos/play/wwdc2013/410/)
 - [WWDC2018 - 416_ios_memory_deep_dive](https://developer.apple.com/videos/play/wwdc2018/416/)

@@ -6,10 +6,7 @@ title: 使用Instrument调试内存问题
 categories: [iOS]
 ---
 
-<em> updated @2014/01/10 补充了WWDC2013:session 410的内容 </em>
-<em> updated @2018/08/12 : 补充了WWDC2018：session416 </em>
-
-<h3>Tracking Memory Leak Using Allocation</h3>
+### 使用Instrument来跟踪内存泄漏
 
 调试内存最基本的手段是使用Instrument的Allocation,Allocation可以帮助找到当前内存中活跃的object，通常可以用来观察对象有没有释放。假设我们有一个10个cell的tableview列表，我们运行Allocation，得到的状态如下：
 
@@ -24,11 +21,9 @@ categories: [iOS]
 
 这时候我们发现，有一个ETLibDemo创建的UITableView，就是这个UITableView没释放，我们后面可以继续排查为什么tableview没有释放。
 
-Allocation除了帮助我们发现当前heap上活跃的object外，还有一个很重要的功能是HeapShot。WWDC关于memory的session中，曾反复提到使用HeapShot来detect memory growth：
+### HeapShot
 
-“Memory shouldn't grow without bound when repeating operation”。意思是当重复相同操作时，内存不应该有增长。例如：push，pop同一controller，滚动tableview等。实际中，我们如何来验证呢？如下图：
-
-<em>Jayson updated the picture @2014/01/10</em>
+Allocation除了帮助我们发现当前heap上活跃的object外，还有一个很重要的功能是HeapShot。WWDC关于memory的session中，曾反复提到使用HeapShot来detect memory growth："Memory shouldn't grow without bound when repeating operation"。意思是当重复相同操作时，内存不应该有增长。例如：push，pop同一个ViewController，滚动tableview等。实际中，我们如何来验证呢？如下图：
 
 <a href="/assets/images/2012/07/debug-3.png"><img src="{{site.baseurl}}/assets/images/2012/07/debug-3.png" alt="debug-3" width="472" height="125" class="alignnone size-full wp-image-804" /></a>
 
