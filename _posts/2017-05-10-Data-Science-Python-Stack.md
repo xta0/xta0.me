@@ -16,14 +16,38 @@ Python系统自带一些数值计算的API，[Numpy](https://www.python-course.e
 
 ## Numpy
 
-Numpy主要用于做矩阵的数值运算，对常用的数学操作做了封装，使用起来极为方便，而且在性能方面，Numpy也比
+Numpy主要用于做矩阵的数值运算，对常用的数学操作做了封装，使用起来极为方便，而且在性能方面也比Python的list要高不少，因此在数值计算方面Numpy非常流行。
+
+我们可以先来对比一下Numpy数组和Python的数组的使用，现在假设让每个数组的元素都乘以2
+
+```python
+import numpy as np
+
+#Python list
+L = [1,2,3]
+#Numpy array
+N = np.array([1,2,3])
+
+L2 = []
+for e in L : 
+    L2.append(e*2)
+
+N*2
+```
+
+可以看出Numpy会对数组中每个元素进行数学运算，当数组的size很大时，Numpy可以极大的提升了开发效率(没有for loop)，除此之外，Numpy还提供了一系列的方便的数学运算
+
+```python
+np.sqrt(N)
+np.exp(N)
+np.log(N)
+```
+
+### Dot Product
 
 
-总结一下，和Python内置的数组实现相比，Numpy有下面几点优势
+### Vector and Matrices
 
-1. 语法简单，易上手
-2. 数值运算的效率比Python list要高(没有for循环)
-3. 消耗的内存更少
 
 ```python
 import numpy as np
@@ -44,24 +68,6 @@ print('height' + str(world.shape[0]));  #6
 print('width' + str(world.shape[1]));  #5
 ```
 上面我们使用`numpy`创建了一个2维数组，在`numpy`中，N维矩阵可以通过`np.array`构建，类型为`ndarray`。`ndarray`有一个`shape`属性，类型为`tuple`，用来保存矩阵的维度。
-
-
-## Numpy & Pandas for 1D Data
-
-### N-Dimentional Array
-
-Numpy中的array称为`ndarray`,所谓nd是多维的意思，实际上是pyhton数组的封装
-
-
-
-
-### Numpy & Pandas for 2D Data
-
-
-- ndarray
-
-```
-```
 
 - **Matrix**
 
@@ -92,6 +98,13 @@ np.random.rand(3,3) #产生一个[0-1)之间的3x3矩阵
 np.random.randn(5) #按照正态分布产生5个(-1,1)之间的随机数，均值为0，方差为1
 np.random.randint(1,100,10) #产生10个【1,100)之间的随机数组
 ```
+
+总结一下，和Python内置的数组实现相比，Numpy有下面几点优势
+
+1. 语法简单，易上手
+2. 数值运算的效率比Python list要高(没有for循环)
+3. 消耗的内存更少
+
 
 
 ### Resources
