@@ -3,6 +3,7 @@ layout: post
 list_title: 数据科学 | Data Science | Python Stack For Data Analysis
 title: Python Stack For Data Analysis
 categories: [Data Science, Python, Machine Learning]
+mathjax: true
 ---
 
 ## Python Stack Overview
@@ -33,18 +34,27 @@ for e in L :
     L2.append(e*2)
 
 N*2
-```
-
-可以看出Numpy会对数组中每个元素进行数学运算，当数组的size很大时，Numpy可以极大的提升了开发效率(没有for loop)，除此之外，Numpy还提供了一系列的方便的数学运算
-
-```python
 np.sqrt(N)
 np.exp(N)
 np.log(N)
 ```
 
+可以看出Numpy会对数组中每个元素进行数学运算，当数组的size很大时，Numpy可以极大的节约内存开销和提升开发效率，除此之外，Numpy还提供了一系列的方便的数学运算
+
 ### Dot Product
 
+数学中，我们经常需要计算两个向量的点积(dot product)。假设有两个二维想来那个$a=[x_a,y_a]$和$b=[x_b,y_b]$，则`a`和`b`点积的代数运算为 $a·b=x_ax_b+y_ay_b$，其结果为一个标量。使用numpy可以表示为
+
+```python
+import numpy as np
+
+a = np.array([1,2])
+b = np.array([2,1])
+dot = np.dot(a,b) #4
+dot = a.dot(b) #4
+dot = b.dot(a) #4
+```
+如果我们将点积转化为其几何表达
 
 ### Vector and Matrices
 
