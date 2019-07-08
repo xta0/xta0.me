@@ -2,7 +2,7 @@
 update: "2019-06-29"
 layout: post
 title: 聊一聊Linkers and Loaders
-list_title:  聊一聊程序的链接与加载 (一) | Linkers and Loaders 
+list_title:  链接与加载 (一) | Linkers and Loaders 
 categories: [C,C++]
 ---
 
