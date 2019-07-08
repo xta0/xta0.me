@@ -1,11 +1,13 @@
 ---
 layout: post
-title: C程序的编译
-list_title: C Part 1 | C程序的编译与链接 | Compile C code
+title: 聊一聊Linkers and Loaders
+list_title:  聊一聊程序的链接与加载 (一) | Linkers and Loaders 
 categories: [C]
 ---
 
-本节我们来讨论下一个简单的C程序的编译与链接，我们将把重点放在目标文件的链接和加载上。
+> 本文以及接下来的文章属于<Linkers and Loaders>这本书的读书笔记
+
+今天开始我们来讨论下C/C++程序的链接，加载和执行，我们将把重点放在目标文件的链接和加载上。
 
 一般来说，源文件编译完成后会生成`.o`文件，多个`.o`文件和一些lib，一起link得到可执行文件，下面是GCC的一些常用编译选项，我们稍后会用到：
 
