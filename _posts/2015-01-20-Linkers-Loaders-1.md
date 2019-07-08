@@ -1,11 +1,10 @@
 ---
+update: "2019-06-29"
 layout: post
 title: 聊一聊Linkers and Loaders
 list_title:  聊一聊程序的链接与加载 (一) | Linkers and Loaders 
-categories: [C]
+categories: [C,C++]
 ---
-
-> 本文以及接下来的文章属于<Linkers and Loaders>这本书的读书笔记
 
 今天开始我们来讨论下C/C++程序的链接，加载和执行，我们将把重点放在目标文件的链接和加载上。
 
@@ -17,6 +16,8 @@ categories: [C]
 - `-Wall`:编译器编译时打出warning信息,强烈推荐使用这个选项。
 - `-I+dir`: 除了在main.c当前目录和系统默认目录中寻找.h外，还在dir目录寻找，注意，dir是一个绝对路径。
 - `-01,-02,-03`: 编译器优化程度
+
+> 如果使用macOS，gcc实际上是Clang的alias，无法build出ELF格式的binary，不过这并不影响理解本文的内容
 
 现在假设我们有三个文件:`function.h`,`function.m`和`main.c`，代码如下
 
@@ -149,7 +150,49 @@ _main:
 ```
 对比两段汇编代码，不难发现，`callq`指令后的符号变成了我们期望的函数符号`_add_and_multiply`。
 
+### Loaders
 
+现在我们已经有了一个link好的binary文件了，当我们执行它的时候，Loader会将binary中的section按照一定策略加载到内存中。实际上Loader的工作就这么简单，但是这里还是有一些点值得讨论，比如程序的Entry Point在哪里。
+
+如果从C/C++程序的角度看，那么程序的入口应该就是main函数，而如果从loaders的角度看，则在main函数执行之前程序就已经start了。我们还是通过反汇编上面的`demoApp`来观察
+
+> 注意，这里的`demoApp`是ELF格式
+
+```shell
+Disassembly of section .text:
+
+00000000004003e0 <_start>:
+  4003e0:	31 ed                	xor    %ebp,%ebp
+  4003e2:	49 89 d1             	mov    %rdx,%r9
+  4003e5:	5e                   	pop    %rsi
+  4003e6:	48 89 e2             	mov    %rsp,%rdx
+  4003e9:	48 83 e4 f0          	and    $0xfffffffffffffff0,%rsp
+  4003ed:	50                   	push   %rax
+  4003ee:	54                   	push   %rsp
+  4003ef:	49 c7 c0 10 06 40 00 	mov    $0x400610,%r8
+  4003f6:	48 c7 c1 a0 05 40 00 	mov    $0x4005a0,%rcx
+  4003fd:	48 c7 c7 40 05 40 00 	mov    $0x400540,%rdi
+  400404:	e8 b7 ff ff ff       	callq  4003c0 <__libc_start_main@plt>
+  400409:	f4                   	hlt
+  40040a:	66 0f 1f 44 00 00    	nopw   0x0(%rax,%rax,1)
+```
+我们看到代码段(text section)的第一个函数是`_start`，这个函数最后又调用了`__libc_start_main`函数。我们先看看这个函数的原型
+
+```c
+int __libc_start_main(
+    int *(main) (int, char * *, char * *),  /* address of main function */
+    int argc, 
+    char * * ubp_av, 
+    void (*init) (void), /* address of init function */
+    void (*fini) (void), 
+    void (*rtld_fini) (void), 
+    void (* stack_end));
+```
+这个函数的定义在libc中，由于篇幅有限，源码就不展开分析了，但是我们可以大致猜到它的作用，即初始化程序进程中的环境变量，为main函数的执行做准备，比如某个类的构造函数使用了`__attribute__((constructor))`这种keyword，那么在main函数执行前，自定义的初始化逻辑将被执行。
+
+### 小结
+
+到目前为止，我们已经对linkers和loaders有了一些直观的感觉，当然这些感觉还很粗浅，接下来我们会深入linkers和loaders的各个部分，来分析它们具体是怎么工作的。
 
 ## 附录
 
