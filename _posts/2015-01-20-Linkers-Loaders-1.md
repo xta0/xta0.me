@@ -154,9 +154,7 @@ _main:
 
 现在我们已经有了一个link好的binary文件了，当我们执行它的时候，Loader会将binary中的section按照一定策略加载到内存中。实际上Loader的工作就这么简单，但是这里还是有一些点值得讨论，比如程序的Entry Point在哪里。
 
-如果从C/C++程序的角度看，那么程序的入口应该就是main函数，而如果从loaders的角度看，则在main函数执行之前程序就已经start了。我们还是通过反汇编上面的`demoApp`来观察
-
-> 注意，这里的`demoApp`是ELF格式
+如果从C/C++程序的角度看，那么程序的入口应该就是main函数，而如果从loaders的角度看，则在main函数执行之前程序就已经start了。我们还是通过反汇编上面的`demoApp`来观察（注意，这里的`demoApp`是ELF格式）
 
 ```shell
 Disassembly of section .text:
@@ -194,9 +192,12 @@ int __libc_start_main(
 
 到目前为止，我们已经对linkers和loaders有了一些直观的感觉，当然这些感觉还很粗浅，接下来我们会深入linkers和loaders的各个部分，来分析它们具体是怎么工作的。
 
-## 附录
+## Resources
 
-### `NM`命令
+- [Linkers and Loaders]()
+- [C and C++ compiling]()
+
+### `nm`命令
 
 > 注意，`nm`命令不会列出DLL的entry point，除非有和它关联的符号表。
 
@@ -219,35 +220,3 @@ int __libc_start_main(
 - ? :unknown symbol
 ```
 
-### A GCC Demo
-
-```
-//文件路径
-
-./test/main.c , main.h  ,  module_1.h  ,  module_1.c  
-./test/ext/module_2.h  ,  module_2.c
-
-//main.h
-#include <stdio.h>;
-int main(void);
-
-//main.m
-#include "main.h" 
-#include "module_1.h"
-#include "module_2.h"
-
-int main(void){}
-```
-- 单行名命令
-    - `gcc -o output main.c module_1.c ./ext/module_2.c -I./ext`
-- 分步执行，先各自编译成.o，再link
-    1. <code> gcc -c module_1.c </code>生成module_1.o
-    2. <code> cd ./ext	% gcc -c module_2.c </code>生成module_2.o
-    3. <code> gcc -c main.c -I./ext </code>生成main.o
-    4. <code> gcc -o p main.o module_1.o ./ext/module_2.o </code>生成output
-
-
-## Resources
-
-- [Linkers and Loaders]()
-- [C and C++ compiling]()
