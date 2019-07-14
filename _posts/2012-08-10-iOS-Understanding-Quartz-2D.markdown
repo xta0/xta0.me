@@ -18,9 +18,7 @@ $$
 \begin{bmatrix}a & b &0 \\ c & d &0 \\ tx &ty &1 \end{bmatrix}
 $$
 
-这就是CGAffineTransform矩阵。
-
-在iOS中，它的定义如下：
+这就是CGAffineTransform矩阵。在iOS中，它的定义如下：
 
 ```objc
 struct CGAffineTransform {
@@ -28,10 +26,7 @@ struct CGAffineTransform {
   CGFloat tx, ty;
 };
 ```
-
-这个矩阵代表什么意思呢？
-
-它和openGL中的矩阵表示的含义是相同的：
+这个矩阵和openGL中的矩阵表示的含义是相同的：
 
 - a ： 水平方向的缩放
 - c :  水平方向的旋转
@@ -56,13 +51,11 @@ $$
 $$
 \begin{aligned}
 & x' = ax + tx \\
-& y' = bx + ty; \\
+& y' = dy + ty; \\
 \end{aligned}
 $$
 
-新的x值等于旧x值乘以缩放值 + 位移值。y同理。
-
-如果使用Core Graphic绘制，我们可以得到一些矩阵：
+即新的`x`值等于旧`x`值乘以缩放值 + 位移值。y同理。 如果使用Core Graphic绘制，我们可以得到一些矩阵：
 
 ```objc
 // Drawing code
@@ -94,7 +87,7 @@ CTM是Current Transform Matrix的缩写，为了理解的更直观，我们从Qu
 ```
 
 
-这个矩阵的意思很明确：将y轴翻转然后再想上平移568个单位，就是(0,0)了。加入我们在(100,100)画了一个点，实际上在Quartz的坐标系中，这个点是(100,468)。
+这个矩阵的意思很明确：将y轴翻转然后再向上平移568个单位，就是(0,0)了。假如我们在(100,100)画了一个点，实际上在Quartz的坐标系中，这个点是(100,468)。
 
 <a href="/assets/images/2012/04/quartz2.png"><img src="{{site.baseurl}}/assets/images/2012/04/quartz2.png" alt="quartz2" width="236" height="289"/></a>
 
@@ -107,14 +100,12 @@ CTM是Current Transform Matrix的缩写，为了理解的更直观，我们从Qu
 然后将坐标系的原点平移到(20,20)：
 
 ```objc
-
 //得到单位阵
 CGAffineTransform t1 = CGAffineTransformIdentity;
 //平移单位阵
 t1 = CGAffineTransformTranslate(t1, 20, 20);
 //改变当前状态阵
 CGContextConcatCTM(ctx, t1);</pre> 
-
 ```
 得到结果如下：
 
@@ -126,7 +117,7 @@ CGContextConcatCTM(ctx, t1);</pre>
 (CGAffineTransform) $0 = {
   a = 1
   b = 0
-  c = -0
+  c = 0
   d = -1
   tx = 10
   ty = 558

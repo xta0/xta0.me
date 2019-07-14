@@ -7,15 +7,15 @@ categories: [Machine Learning,AI]
 mathjax: true
 ---
 
-### Non-linear hypotheses
+## Background
 
 神经网络是一个很老的概念，在机器学习领域目前还是主流，之前已经介绍了linear regression和logistics regression，为什么还要学习神经网络？以non-linear classification为例，如下图所示
 
 ![](/assets/images/2017/09/ml-6-1.png)
 
-可以通过构建对feature的多项式<math><msub><mi>g</mi><mi>θ</mi></msub></math>来确定预测函数，但这中方法适用于feature较少的情况，比如上图中，只有两个feature。
-当feature多的时候，产生多项式就会变得很麻烦，还是预测房价的例子，可能的feature有很多，比如：x1=size,x2=#bedrooms,x3=#floors,x4=age,...x100=#schools等等，
-假设n=100，有几种做法：
+我们可以通过构建对feature的多项式$g_\theta$来确定预测函数，但这中方法适用于feature较少的情况，比如上图中，只有两个feature: x1和x2。
+
+当feature多的时候，产生多项式就会变得很麻烦，还是预测房价的例子，可能的feature有很多，比如：`x1=size`,`x2=#bedrooms`,`x3=#floors`,`x4=age`,...`x100=#schools`等等，假设`n=100`，有几种做法：
 
 - 构建二阶多项式
 	- 如`x1^2,x1x2,x1x3,x1x4,...,x1x100,x2^2,x2x3...`有约为5000项(n^2/2)，计算的代价非常高。
@@ -24,654 +24,141 @@ mathjax: true
 - 构建三阶多项式
 	- 如`x1x2x3, x1^2x2, x1^2x3...x10x11x17...`, 有约为n^3量级的组合情况，约为170,000个
 
-
-另一个例子是图像识别与分类，例如识别一辆汽车，对于图像来说，是通过对像素值进行学习（车共有的像素特征vs非汽车特征），那么feature就是图片的像素值，如下图所示，加入有两个像素点是车图片都有的：
+另一个例子是图像识别与分类，例如识别一辆汽车，对于图像来说，是通过对像素值进行学习（车共有的像素特征vs非汽车特征），那么feature就是图片的像素值，如下图所示，假如有两个像素点是车图片都有的：
 
 ![](/assets/images/2017/09/ml-6-2.png)
 
 假设图片大小为50x50，总共2500个像素点，即2500个feature（灰度图像，RGB乘以三），如果使用二次方程，那么有接近300万个feature，显然图像这种场景使用non linear regression不合适，需要探索新的学习方式
 
-
-### Neural Networks and Brain
-
-- Origins: Algorithms that try to mimic the brain
-	- Was vary widely used in 80s and early 90s; popularity diminished in late 90s
-	- Recent resurgence: State of the art technique for many applications，近几年大数据推动
-
-- 脑神经试验
-	- 大脑负责识别听力的区域同样可以被训练来识别视觉信号
-
 	
+## 单层神经网络
 
-### Mode Representation
-
-- 大脑中的神经元结构如下图：
-
-![](/assets/images/2017/09/ml-6-3.png)
-
-所谓神经元就是一种计算单元，它的输入是**Dendrite**，输出是**Axon**。类比之前的机器学习模型，dendrite可以类比为<math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>x</mi><mn>1</mn></msub><mo>⋯</mo><msub><mi>x</mi><mi>n</mi></msub></math>，输出Axon可以类比为预测函数的结果。
-
-- Neuron model: Logistic unit
+所谓神经元(Neuron)就是一种计算单元，它的输入是一组特征信息$x_1$...$x_n$，输出为预测函数的结果。
 
 ![](/assets/images/2017/09/ml-6-4.png)
 
 如上图，是一个单层的神经网络，其中：
 
-- 输入端<math><msub><mi>X</mi><mn>0</mn></msub></math>默认为1，也叫做"bias unit."
-- <math><msub><mi>h</mi><mi>θ</mi></msub><mi>(x)</mi></math> 和逻辑回归预测方程一样，用<math xmlns="http://www.w3.org/1998/Math/MathML"><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow class="MJX-TeXAtom-ORD"><mo>−</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi></mrow></msup></mrow></mfrac></math>表示，也叫做asigmoid(logistic)**activation**函数
-- θ矩阵在神经网络里也被叫做权重weight
+- 输入端$x_0$默认为1，也叫做"bias unit."
+- $\theta$矩阵在神经网络里也被叫做权重weight矩阵
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mfenced open="[" close="]">
-    <mtable rowspacing="4pt" columnspacing="1em">
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mn>0</mn>
-          </msub>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mn>1</mn>
-          </msub>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mn>2</mn>
-          </msub>
-        </mtd>
-      </mtr>
-    </mtable>
-  </mfenced>
-  <mo stretchy="false">→</mo>
-  <mfenced open="[" close="]">
-    <mtable rowspacing="4pt" columnspacing="1em">
-      <mtr>
-        <mtd>
-          <mtext>&#xA0;</mtext>
-          <mtext>&#xA0;</mtext>
-          <mtext>&#xA0;</mtext>
-        </mtd>
-      </mtr>
-    </mtable>
-  </mfenced>
-  <mo stretchy="false">→</mo>
-  <msub>
-    <mi>h</mi>
-    <mi>θ</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-</math>
+对于上述单层神经网络的输出函数$h_\theta(x)$，可以表示为
 
+$$
+h_\theta(x) = g(\theta^Tx) = g(\theta_0 + \theta_1x_1 + \theta_2x_2 + \theta_3x_3 + \theta_4x_4)
+$$
 
-多层神经网络如下图
+其中，`g`为sigmoid函数$\frac{1}{1+e^{-z}}$，作用是将输出的值映射到`[0,1]`之间。因此最终的输出函数也可以写作
+
+$$
+h_\theta(x) = \frac{1}{1+e^{-\theta^Tx}}
+$$
+
+公式有些抽象，我们看看如何用Pytorch来实现
+
+```Python
+import torch
+
+def activation(x):
+    return 1 / (1+torch.exp(-x))
+
+## Generate some data
+torch.manual_seed(7) #set the random seed so things are predictable
+
+## Features are 5 random normal variables
+features = torch.randn((1,5)) #1x5
+
+# True weights for our data, random normal variables again
+# same shape as features
+weights = torch.randn_like(features) #1x5
+
+#and a true bias term
+bias = torch.randn((1,1))
+
+# weights.view will convert the matrix to 5x1
+# torch.mm does the matrxi multiplication
+y = activation(bias + torch.mm(features, weights.view(5,1)))
+```
+
+### 多层神经网络
+
+上述的神经网络只有输出端一个Neuron，属于比较简单的神经网络，我们再来看一个多个Neuron的两层神经网络，如下图所示
 
 ![](/assets/images/2017/09/ml-6-5.png)
 
-- 第一层是叫"Input Layer"，最后一层叫"Output Layer"，中间叫"Hidden Layer"，上面例子中，我们使用<math xmlns="http://www.w3.org/1998/Math/MathML"><msubsup><mi>a</mi><mn>0</mn><mn>2</mn></msubsup><mo>⋯</mo><msubsup><mi>a</mi><mi>n</mi><mn>2</mn></msubsup></math>表示，他们也叫做"activationunits."
+上述神经网络中的第一层是叫"Input Layer"，最后一层叫"Output Layer"，中间叫"Hidden Layer"，用$a_0^2...a_n^2$表示，他们也叫做"activation units." 其中
 
-- $a_i^{(j)} = "activition" \thinspace of \thinspace unit \thinspace {i} \thinspace in \thinspace \thinspace layer \thinspace{j}$
-- $\theta^{j} = \thinspace matrix \thinspace of \thinspace weights \thinspace controlling \thinspace function \thinspace mapping \thinspace from \thinspace layer \thinspace j \thinspace to \thinspace {j+1}$
+- 输入层的$x_i$为样本feature，$x_0$作为"bias"
+- 中间层的$a_i^{(j)}$ 表示第`j`层的第`i`个节点，我们可以加入$a_0^{(2)}$作为"bias unit"，也可以忽略
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mfenced open="[" close="]">
-    <mtable rowspacing="4pt" columnspacing="1em">
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mn>0</mn>
-          </msub>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mn>1</mn>
-          </msub>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mn>2</mn>
-          </msub>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msub>
-            <mi>x</mi>
-            <mn>3</mn>
-          </msub>
-        </mtd>
-      </mtr>
-    </mtable>
-  </mfenced>
-  <mo stretchy="false">→</mo>
-  <mfenced open="[" close="]">
-    <mtable rowspacing="4pt" columnspacing="1em">
-      <mtr>
-        <mtd>
-          <msubsup>
-            <mi>a</mi>
-            <mn>1</mn>
-            <mrow class="MJX-TeXAtom-ORD">
-              <mo stretchy="false">(</mo>
-              <mn>2</mn>
-              <mo stretchy="false">)</mo>
-            </mrow>
-          </msubsup>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msubsup>
-            <mi>a</mi>
-            <mn>2</mn>
-            <mrow class="MJX-TeXAtom-ORD">
-              <mo stretchy="false">(</mo>
-              <mn>2</mn>
-              <mo stretchy="false">)</mo>
-            </mrow>
-          </msubsup>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <msubsup>
-            <mi>a</mi>
-            <mn>3</mn>
-            <mrow class="MJX-TeXAtom-ORD">
-              <mo stretchy="false">(</mo>
-              <mn>2</mn>
-              <mo stretchy="false">)</mo>
-            </mrow>
-          </msubsup>
-        </mtd>
-      </mtr>
-    </mtable>
-  </mfenced>
-  <mo stretchy="false"> → </mo>
-  <msub>
-    <mi>h</mi>
-    <mi>θ</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-</math>
-
+$$
+\begin{bmatrix}
+x_1 \\
+x_2 \\
+x_3 \\
+\end{bmatrix}
+\to
+\begin{bmatrix}
+a_1^{(2)} \\
+a_2^{(2)} \\
+a_3^{(2)} \\
+\end{bmatrix}
+\to
+h_\theta(x)
+$$
 
 对第二层每个activation节点的计算公式如下：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd>
-        <msubsup>
-          <mi>a</mi>
-          <mn>1</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo>=</mo>
-        <mi>g</mi>
-        <mo stretchy="false">(</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>10</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msub>
-          <mi>x</mi>
-          <mn>0</mn>
-        </msub>
-        <mo>+</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>11</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msub>
-          <mi>x</mi>
-          <mn>1</mn>
-        </msub>
-        <mo>+</mo>
-        <msubsup>
-			<mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>12</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msub>
-          <mi>x</mi>
-          <mn>2</mn>
-        </msub>
-        <mo>+</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>13</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msub>
-          <mi>x</mi>
-          <mn>3</mn>
-        </msub>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <msubsup>
-          <mi>a</mi>
-          <mn>2</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo>=</mo>
-        <mi>g</mi>
-        <mo stretchy="false">(</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>20</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msub>
-          <mi>x</mi>
-          <mn>0</mn>
-        </msub>
-        <mo>+</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>21</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msub>
-          <mi>x</mi>
-          <mn>1</mn>
-        </msub>
-        <mo>+</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>22</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msub>
-          <mi>x</mi>
-          <mn>2</mn>
-        </msub>
-        <mo>+</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>23</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msub>
-          <mi>x</mi>
-          <mn>3</mn>
-        </msub>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <msubsup>
-          <mi>a</mi>
-          <mn>3</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo>=</mo>
-        <mi>g</mi>
-        <mo stretchy="false">(</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>30</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msub>
-          <mi>x</mi>
-          <mn>0</mn>
-        </msub>
-        <mo>+</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>31</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msub>
-          <mi>x</mi>
-          <mn>1</mn>
-        </msub>
-        <mo>+</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>32</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msub>
-          <mi>x</mi>
-          <mn>2</mn>
-        </msub>
-        <mo>+</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>33</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msub>
-          <mi>x</mi>
-          <mn>3</mn>
-        </msub>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <msub>
-          <mi>h</mi>
-			<mi mathvariant="normal">Θ</mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <mi>x</mi>
-        <mo stretchy="false">)</mo>
-        <mo>=</mo>
-        <msubsup>
-          <mi>a</mi>
-          <mn>1</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>3</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo>=</mo>
-        <mi>g</mi>
-        <mo stretchy="false">(</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>10</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msubsup>
-          <mi>a</mi>
-          <mn>0</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo>+</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>11</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msubsup>
-          <mi>a</mi>
-          <mn>1</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo>+</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>12</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msubsup>
-          <mi>a</mi>
-          <mn>2</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo>+</mo>
-        <msubsup>
-          <mi mathvariant="normal">Θ</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mn>13</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msubsup>
-          <mi>a</mi>
-          <mn>3</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+$$
+a_1^{(2)} = g(\theta_{10}^{(1)}x_0 + \theta_{11}^{(1)}x_1 + \theta_{12}^{(1)}x_2 + \theta_{13}^{(1)}x_3 ) \\
+a_2^{(2)} = g(\theta_{20}^{(1)}x_0 + \theta_{21}^{(1)}x_1 + \theta_{22}^{(1)}x_2 + \theta_{23}^{(1)}x_3 ) \\
+a_3^{(2)} = g(\theta_{30}^{(1)}x_0 + \theta_{31}^{(1)}x_1 + \theta_{32}^{(1)}x_2 + \theta_{33}^{(1)}x_3 ) \\
+h_\theta(x) = a_1^{(3)} = g(\theta_{10}^{(2)}a_0^{2}+\theta_{11}^{(2)}a_1^{2}+\theta_{12}^{(2)}a_2^{2}+\theta_{13}^{(2)}a_3^{2})
+$$
 
-上面可以看到<math><msup><mi>θ</mi><mi>(1)</mi></msup></math>矩阵是3x4的，X矩阵是4x1的，这样相乘得出的矩阵是3x1的，对应每个a节点的值。最终输出结果是另一个θ矩阵<math><msup><mi>θ</mi><mi>(2)</mi></msup></math>乘以上面的3x1矩阵，由此可知<math><msup><mi>θ</mi><mi>(2)</mi></msup></math>是3x1的矩阵，这个矩阵的意义是第二层节点的权重值。
+上面可以看到第一层Hidden Layer的参数（权重值）$\theta^{(1)}$是`3x4`的，输入的feature矩阵是`4x1`的，这样相乘得出的第一层输出矩阵是`3x1`的，对应每个`a`节点的值。而整个神经网络最终输出结果是神经元`a`矩阵再乘以第二层Hidden Layer的参数矩阵$\theta^{(2)}$。由此我们可以推测出$\theta$矩阵的维度的计算方式为:
 
-因此可以知道，每一层神经网络节点都有各自的权重矩阵<math><msup><mi>θ</mi><mi>(j)</mi></msup></math>，矩阵维度的计算方法是：
+> 如果神经网络第`j`层有$m$个单元，第`j+1`层有$n$个单元，那么$\Theta$矩阵的维度为$n \times (m+1)$
 
-> <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mtext>If network has&#xA0;</mtext><mrow class="MJX-TeXAtom-ORD"><msub><mi>s</mi><mi>j</mi></msub></mrow><mtext>&#xA0;units in layer&#xA0;</mtext><mrow class="MJX-TeXAtom-ORD"><mi>j</mi></mrow><mtext>&#xA0;and&#xA0;</mtext><mrow class="MJX-TeXAtom-ORD"><msub><mi>s</mi><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow><mtext>&#xA0;units in layer&#xA0;</mtext><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>+</mo><mn>1</mn></mrow><mtext>,then&#xA0;</mtext><mrow class="MJX-TeXAtom-ORD"><msup><mi mathvariant="normal">Θ</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>j</mi><mo stretchy="false">)</mo></mrow></msup></mrow><mtext>&#xA0;will be of dimension&#xA0;</mtext><mrow class="MJX-TeXAtom-ORD"><msub><mi>s</mi><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>×</mo><mo stretchy="false">(</mo><msub><mi>s</mi><mi>j</mi></msub><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mtext>.</mtext></math>
+以上面的例子来说, 如果layer1有两个三个输入节点，即$m=3$, layer2 有三个activation节点，即$n=3$。那么$\Theta$矩阵是`3x4`的。
 
+> 为什么要+1呢？ 原因是在输入层(input layer)要引入$x_0$作为bias
 
-推算可知+1来自<math><msup><mi>θ</mi><mi>(j)</mi></msup></math>矩阵的"bias nodes"，即<math><msub><mi>x</mi><mn>0</mn></msub></math>和<math><msubsup><mi>θ</mi><mi>(j)</mi><mn>0</mn></msubsup></math>。如下图：
+为了简化上面Hidden Layer的式子，我们定义一个新的变量$z_k^{(j)}$来表示`g`函数的参数，则上述节点`a`的值可表示如下：
 
-![](/assets/images/2017/09/ml-6-6.png)
+$$
+a_1^{(2)} = g(z_1^{(2)}) \\
+a_2^{(2)} = g(z_2^{(2)}) \\
+a_3^{(2)} = g(z_3^{(2)}) \\
+a_1^{(3)} = g(z_3^{(2)})
+$$
 
-举例来说：
+和前面一样，上脚标用来表示第几层layer，下脚标用来表示该layer的第几个节点。例如`j=2`时的第`k`个节点的值为
 
-如果layer 1有两个输入节点，layer 2 有4个activation节点，那么<math><msup><mi>θ</mi><mi>(1)</mi></msup></math>是4x3的，<math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>s</mi><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>×</mo><mo stretchy="false">(</mo><msub><mi>s</mi><mi>j</mi></msub><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo><mo>=</mo><mn>4</mn><mo>×</mo><mn>3</mn></math>
+$$
+a_k^{(2)} = g(z_k^{(2)}) \\
+z_k^{(1)} = \theta_{k0}^{(1)}x_0 + \theta_{k1}^{(1)}x_1 + ... + \theta_{kn}^{(1)}x_n
+$$
 
-- 向量化表示
+将上面式子做进一步推导并用向量表示为
 
-上面计算中间节点的式子可以用向量化表示，我们定义一个新的变量<math><msubsup><mi>z</mi><mi>k</mi><mrow><mo stretchy="false">(</mo><mi>j</mi><mo stretchy="false">)</mo></mrow></msubsup></math>来表示g函数的参数，则上述公式可表示如下：
+$$
+a^{(j)} = g(z^{(j-1)}) \\
+z^{(j-1)} = \theta^{(j-1)}a^{(j-1)}
+$$
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd>
-        <msubsup>
-          <mi>a</mi>
-          <mn>1</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo>=</mo>
-        <mi>g</mi>
-        <mo stretchy="false">(</mo>
-        <msubsup>
-          <mi>z</mi>
-          <mn>1</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <msubsup>
-          <mi>a</mi>
-          <mn>2</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo>=</mo>
-        <mi>g</mi>
-        <mo stretchy="false">(</mo>
-        <msubsup>
-          <mi>z</mi>
-          <mn>2</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <msubsup>
-          <mi>a</mi>
-          <mn>3</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo>=</mo>
-        <mi>g</mi>
-        <mo stretchy="false">(</mo>
-        <msubsup>
-          <mi>z</mi>
-          <mn>3</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+我们用结合上面的三层神经网络来简单验证下，假设`j=3`那么第三层神经网络节点的值$z^{(3)}$为
 
-其中，上角标用来表示第几层layer，下角标表示该层的第几个节点。例如layer j=2，第k个节点，z 表示为：
+$$
+z^{(3)} = \theta^{(2)}a^{(2)}
+h_\theta(x) = a^{(3)} = g(z)
+$$
+
+其中，上角标用来表示第几层layer，下角标表示该层的第几个节点。例如第2层的第k个节点的z值为：
+
+$$
+z_k^{(2)} = 
+$$
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
   <msubsup>

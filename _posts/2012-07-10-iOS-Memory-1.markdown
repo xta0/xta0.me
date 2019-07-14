@@ -6,9 +6,6 @@ title: 理解iOS中的内存结构
 categories: [iOS]
 ---
 
-<em> updated @2014/01/10 : 补充了WWDC2013：session410 </em>
-<em> updated @2018/08/12 : 补充了WWDC2018：session416 </em>
-
 排查内存问题，是每个项目都会遇到的。几个项目下来，总结下经验：
 
 - 要了解iOS内存模型的基本概念，懂了这些才能更有效的debug。
@@ -129,5 +126,6 @@ RAM中可以被多个进程共享的部分称为Shared Memory，比如系统的f
 
 ## Resources
 
+- [Anatomy of a program in memory](https://manybutfinite.com/post/anatomy-of-a-program-in-memory/)
 - [WWDC2013 - 410](https://developer.apple.com/videos/play/wwdc2013/410/)
 - [WWDC2018 - 416_ios_memory_deep_dive](https://developer.apple.com/videos/play/wwdc2018/416/)

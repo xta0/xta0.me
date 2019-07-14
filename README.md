@@ -3,11 +3,11 @@
 
 ## xta0.me
 
-This is my personal website built in Jekyll. Jekyll is a static website generator widely used for building blogs. 
+This is my personal website built in Jekyll. Jekyll is a static website generator widely used for building blog applications. 
 
 ## Theme
 
-I've been reading [Yihui Xie's](https://yihui.name/) articles for quite a few days, I really enjoy it. He's a great Chinese scientist and also a good writter. I like the desgin of his website which is pretty clean and neat. So I reproduced the theme on my own using Sass and Flexbox. So far, the code has not been abstracted as a framework. If anyone interesed, feel free to open an issue or checkout the code and mess around with it.
+I've been reading [Yihui Xie's](https://yihui.name/) articles for a while, and really enjoy reading his articles. I like the desgin of his website that looks clean and neat. So I reproduced the theme using Sass and Flexbox. So far, the code has not been abstracted as a framework. If anyone interesed, feel free to open an issue or checkout the code and play around with it.
 
 ## CI
 

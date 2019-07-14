@@ -1,5 +1,6 @@
 ---
 layout: post
+updated: "2019-06-20"
 list_title:  iOS的签名原理（一） | App Signing in iOS Part 1
 title: App的签名原理（一）
 categories: [iOS]
