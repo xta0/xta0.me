@@ -1,8 +1,8 @@
 ---
 update: "2019-06-29"
 layout: post
-title: 聊一聊Linkers and Loaders
-list_title:  链接与加载 (一) | Linkers and Loaders 
+title: Overview
+list_title:  链接与加载 | Linkers and Loaders | Part1 Overview
 categories: [C,C++]
 ---
 
