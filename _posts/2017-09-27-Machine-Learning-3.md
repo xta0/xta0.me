@@ -9,17 +9,11 @@ mathjax: true
 
 ### Classification
 
-分类问题, Email: Spam/NotSpam, Tumor: 恶性/良性
+分类问题, Email: Spam/NotSpam, Tumor: 恶性/良性，可用下面式子表达
 
-<math display="block">
-<mi>y</mi>
-<mo>∈</mo>
-<mo>{</mo>
-<mn>0</mn>
-<mo>,</mo>
-<mn>1</mn>
-<mo>}</mo>
-</math>
+$$
+y ∈ {0,1}
+$$
 
 * 0："Negative Class"(e.g., benign tumor)
 * 1: "Positive Class"(e.g., malignant tumor)
@@ -28,12 +22,7 @@ mathjax: true
 
 ### Logistic Regression Model
 
-逻辑回归 wiki
-
-在给出模型前，先不考虑 y 的取值是离散的，我们希望能使：<math><mn>0</mn><mo>≤</mo><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>≤</mo><mn>1</mn></math>，可以将式子做一些变换：
-
-* 线性函数：<math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>X</mi></math>
-* 做如下变换：<math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>g</mi><mo>(</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi><mo>)</mo></math>, 另<math><mi>z</mi><mo>=</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi><mo>,</mo><mi>g</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>=</mo><mstyle><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>z</mi></mrow></msup></mrow></mfrac></mstyle></math>
+在给出模型前，先不考虑 y 的取值是离散的，我们希望能使：$0≤h_{\theta}(x)≤1$，可以将线性函数：$h_{\theta}(x)=\theta^{T}x$ 做如下变换：$h_{\theta}(x)=g(\theta^{T}x)$, 其中g为 $g(z)=frac{1}{1+e^{-z}}$。可以得到函数
 
 * 得到函数：<math><mi>g</mi><mo stretchy="false">(</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mstyle><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow class="MJX-TeXAtom-ORD"><mo>−</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi></mrow></msup></mrow></mfrac></mstyle></math>
   函数曲线如下:
