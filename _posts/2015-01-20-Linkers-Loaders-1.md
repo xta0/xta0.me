@@ -185,7 +185,7 @@ $objdump -D demoApp
 
 内存分段的思路很简单，就是找出一段连续的物理内存，然后和虚拟内存进行映射得到虚拟内存地址，再将这个地址分给被load的binary。这种思路虽然简单，但有一个很大的问题就是内存碎片。如下图所示，当C程序退出后，释放的128MB内存成了不连续的空间，当有loader要加载D程序时，会发现没有足够的连续内存空间可以使用。
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/01/linker-1.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/01/loader-1.png">
 
 解决这个问题，可以使用内存的置换技术，即将程序B先写入到硬盘，释放内存空间来装在D，当D装载完成后，再将B读入到内存中。但是由于内存置换的成本极高，硬盘访问的速度要比内存慢太多，因此这种方案有很大的性能问题。
 
@@ -201,7 +201,7 @@ getconf PAGE_SIZE #4096
 
 这并不是说一段连续完整程序可以被零散的映射物理内存中，程序的寻址空间在内存中依旧是一段连续的区域，只不过当出现内存碎片或者物理内存不足时，系统进行内存置换的成本变小了(因为置换现在是以4KB为单位，速度变快了)。如下图中，当程序A试图加载第三片虚拟内存到物理内存中时，会触发系统的内存置换
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/01/linker-2.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/01/loader-2.png">
 
 总的来说loader可以将程序和物理内存隔离开，然程序不需要考虑实际的物理内存地址，大小和分配方案，大大降低了程序编写复杂度。
 
