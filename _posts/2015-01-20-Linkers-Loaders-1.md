@@ -96,7 +96,7 @@ Section和symbol的Relocation很简单，就是将所有目标文件的各个sec
 0000000000000000    T main
                     U nCompletionStatus
 ```
-可以看到`add_and_multiply`的symbol类型为`U`，意味着编译器并不知道这个符号在哪里，`nCompletionStatus`同理。因此linker要做的事情就是将所有`Undefined`符号进行地址绑定（动态库中的符号暂不考虑），方法也很简单，就是扫描所有undefined的symbol，在symbol中查找并将其绑定到真实的地址上。除了绑定Undefined Symbol外，linker还要负责修正每一条机器码中在内存中的真实地址。
+可以看到`add_and_multiply`的symbol类型为`U`，意味着编译器并不知道这个符号在哪里，`nCompletionStatus`同理。因此linker要做的事情就是将所有`Undefined`符号进行地址绑定（动态库中的符号暂不考虑），方法也很简单，就是扫描所有undefined的symbol，在symbol表中查找并将其绑定到真实的地址上。除了绑定Undefined Symbol外，linker还要负责修正每一条机器码中在内存中的真实地址。
 
 下面我们通过观察汇编代码来加深对Relocation和Symbol Resolution的理解，我们可以使用`objdump`命令来反汇编目标文件
 
@@ -179,20 +179,28 @@ $objdump -D demoApp
 
 ## Loaders
 
-现在我们已经有了一个link好的binary文件了，当我们执行它的时候，Loader会将binary中的section按照一定规则加载到内存中。实际上Loader的工作就这么简单，但是所谓的“一定规则”确又很复杂，具体来说Loader面临的挑战主要是如何为每个可执行文件找到一篇连续的内存空间。解决这个问题有两个办法，一个是使用内存分段，一个是使用内存分页
+现在我们已经有了一个link好的binary文件了，当我们执行它的时候，Loader会将binary中的section按照一定规则加载到内存中。实际上Loader的工作就这么简单，但是所谓的“一定规则”确又很复杂，具体来说Loader面临的挑战主要是如何为每个可执行文件找到一片连续的内存空间。解决这个问题有两个办法，一个是使用内存分段，一个是使用内存分页
 
 ### Segmentation
 
-内存分段的思路很简单，就是将binary完整的加载到一段连续的内存中去
+内存分段的思路很简单，就是找出一段连续的物理内存，然后和虚拟内存进行映射得到虚拟内存地址，再将这个地址分给被load的binary。这种思路虽然简单，但有一个很大的问题就是内存碎片。如下图所示，当C程序退出后，释放的128MB内存成了不连续的空间，当有loader要加载D程序时，会发现没有足够的连续内存空间可以使用。
 
-### 虚拟内存
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2009/05/linker-1.png">
+
+解决这个问题，可以使用内存的置换技术，即将程序B先写入到硬盘，释放内存空间来装在D，当D装载完成后，再将B读入到内存中。
+
+虚拟内存，分段再加上内存置换，看似可以解决多个程序同时装载的问题，但是由于内存置换的成本极高，硬盘访问的速度要比内容慢太多，因此这种方案有很大的性能问题。
+
+### Paging
+
+如果说将整个程序完全置换到硬盘上的成本太高
 
 
-## ELF excutable
+### Excutable
 
-当Linker和Loader各自完成任务后，我们就得到了可以真正运行的
+当loader将程序完全加载到内存中后，程序就可以运行了。如果从C/C++程序的角度看，那么程序的入口应该就是main函数，而如果从loaders的角度看，则在main函数执行之前程序就已经start了。我们还是通过反汇编上面的`demoApp`来观察
 
-如果从C/C++程序的角度看，那么程序的入口应该就是main函数，而如果从loaders的角度看，则在main函数执行之前程序就已经start了。我们还是通过反汇编上面的`demoApp`来观察（注意，这里的`demoApp`是ELF格式）
+> 注意，这里的`demoApp`依旧是ELF格式
 
 ```shell
 Disassembly of section .text:
@@ -228,7 +236,7 @@ int __libc_start_main(
 
 ### 小结
 
-到目前为止，我们已经对linkers和loaders有了一些直观的感觉，当然这些感觉还很表面，接下来我们会深入linkers和loaders的各个部分，来分析它们具体是怎么工作的。
+到目前为止，我们已经对linkers和loaders有了一些直观的感觉，当然这些感觉还很表面，很多细节问题还不是很清楚，比如Symbol Resolution的具体过程是怎样的，Relocation时偏移地址是如何计算的，等等。
 
 ## Resources
 
