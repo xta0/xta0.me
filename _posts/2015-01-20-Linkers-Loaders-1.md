@@ -19,6 +19,8 @@ categories: [C,C++]
 
 > 如果使用macOS，gcc实际上是Clang的alias，binary的结构为MachO，而不是UNIX的ELF格式，不过这并不影响理解本文的内容
 
+## Linkers
+
 现在假设我们有三个文件:`function.h`,`function.m`和`main.c`，代码如下
 
 ```c
@@ -60,99 +62,135 @@ int main() {
     return 0;
 }
 ```
-为了生成目标文件`.o`，我们可以使用gcc来进行编译，我们先来要编译`main.c`，得到`main.o`: `gcc -c main.c -o main.o`。该文件包含了很多重要的信息
+为了生成目标文件`.o`，我们可以使用gcc来进行编译，我们先来要编译`main.c`，得到`main.o`: `gcc -c main.c -o main.o`。由于我们后面还会对目标文件做详细分析，现在可以将其简单理解为汇编指令和数据的集合，格式如下
 
-1. 可以将`.o`理解为所有symbol的集合，可以用`nm`命令查看其包含的symbol
+<img src="{{site.baseurl}}/assets/images/2015/01/elf.png">
 
-    ```shell
-                     U _add_and_multiply
-    0000000000000000 T _main
-                     U _nCompletionStatus
-    ```
-    这些symbol的类型可以在文末的附录中查询。值得注意的是，`_add_and_multiply`的symbol类型为`U`，意味着这个符号的定义并不在`main.o`中，`_nCompletionStatus`同理。因此在单独编译`main.c`时，编译器并不知道这两个符号具体在哪里
+对于上面图中的每个section，可以认为它们都是一个有起始实地址和固定长度构成的一段连续空间。其中，有四个section需要特别关注
 
-2. 除了包含基本的符号信息外，`.o`还包含了section的信息，关于section将在后面跟linking的阶段做详细讨论。需要注意的是，`.o`并不包含符号在内存中的真实地址，地址绑定将在linking的阶段完成。但是每个section的长度和其address range却是`.o`中很重要的一条信息，linking需要依靠这个信息做符号的定位
+1. `.text`段，也叫代码段，用来存放汇编指令
+2. `.data`段，也叫数据段，用来保存程序里设置好的初始化数据信息
+3. `.rela.text`段，叫做重定位表(Relocation Table)。在表里，保存了所有未知跳转的指令
+4. `.symtab`段，也叫做符号表，用来存放当前文件里定义的函数和对应的地址
 
-尽管我们可以使用gcc为每个文件生成单独的目标文件，但是如何把这些目标文件组织到一起还有许多问题要解决，比如
+接下来linker要做的事情就是将所有已经生成的`.o`文件link在一起，具体来说过程如下，linker会扫描所有的目标文件，将所有符号表中的信息收集起来，构成一个全局的符号表，然后再根据重定位表，把所有不确定的跳转指令根据符号表里地址，进行一次修正。最后，把所有的目标文件的section分别进行合并，行程最终的可执行代码。整个过程如下图所示
 
-1. 当`main.o`调用`add_and_multiply`函数时，程序该去哪里寻找这个函数呢？
-2. `extern`声明的全局变量`_nCompletionStatus`在被使用时，该去哪里寻找呢?
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/01/linker.png">
 
-因此链接器要做的事情就是将这些目标文件打包成一个可执行文件，这个打包的过程分几个步骤，我们先从Relocation说起。
+如果将上述步骤分解开来，则linker的执行步骤分为两部分，分别是的Relocation和symbol的Resolution
 
 ### Relocation
 
-Relocation的任务很简单，就是将所有目标文件的各个section按照规则进行合并，进而产生一个全新的memory map。这个过程虽然好理解，但有些细节需要注意，比如符号地址的重新分配。
-
-由于虚拟内存的存在，对于每个`.o`文件中的符号，它们不需要考虑自己在真实的内存中的绝对地址（memory map中的地址），它们的地址都是相对的，比如`main.o`中，`_main`符号的地址为`0x0000000000000000`，`function.o`中`_add`地址也为`0x0000000000000000`。显然，在实际的内存中，不管是`_add`还是`_main`的地址是不可能为`0x0000000000000000`的。这时候就需要Relocation发挥作用，将所有symbol的地址重新分配到合理的位置。但需要注意的是，所有的这些重新分配都是基于section的，因此linker是需要知道目标文件中每个section的大小和范围的。
+Section和symbol的Relocation很简单，就是将所有目标文件的各个section按照某种规则进行合并。由于虚拟内存的存在，使目标文件不需要考虑自己在真实的内存中的绝对地址（memory map中的地址），它们的地址都是相对的，比如`main.o`中，`main`符号的地址为`0x0000000000000000`，`function.o`中`add`地址也为`0x0000000000000000`。显然，在实际的内存中，不管是`add`还是`main`的地址是不可能为`0x0000000000000000`的。这时候就需要Relocation发挥作用，将所有section的地址重新分配到合理的位置。但需要注意的是，在分配的过程中要保证每个Section的连续性不被破坏，因此linker是需要知道每个section的大小和范围。
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2009/05/c-compile-1.png">
 
-### Resolving Reference
+ Relocation完成后，每个section和symbol的虚拟内存地址也就确定了，接下来要做的事情就是修正每个section中指令地址，以及为undefined的symbol绑定地址。
 
-当我们把section都拼装好之后，接下来需要解决的问题就是symbol之间的调用问题，比如在main.o中`_add_and_multiply`符号类型`Undefined`，这说明main并不知道这个符号在哪，因此linker要做的事情就是将所有`Undefined`符号进行地址绑定（动态库中的符号暂不考虑），具体来说有下面几个步骤
+### Symbol Resolution
 
-1. 扫描memory map中已有的section
-2. 找到调用外部符号的symbol (undefined symbol)
-3. 找到被调用的symbol的地址，并将其绑定到目标symbol上
-
-我们可以通过观察汇编代码来加深对上述过程的理解，我们可以使用`objdump`命令来反汇编目标文件
+我们可以先查看一下`main.o`中都有哪些symbol
 
 ```shell
-$objdump -D main.o
-
-Disassembly of section __TEXT,__text:
-_main:
-       0:	55 	pushq	%rbp
-       1:	48 89 e5 	movq	%rsp, %rbp
-       4:	48 83 ec 10 	subq	$16, %rsp
-       8:	f3 0f 10 05 44 00 00 00 	movss	68(%rip), %xmm0
-      10:	f3 0f 10 0d 40 00 00 00 	movss	64(%rip), %xmm1
-      18:	c7 45 fc 00 00 00 00 	movl	$0, -4(%rbp)
-      1f:	f3 0f 11 4d f8 	movss	%xmm1, -8(%rbp)
-      24:	f3 0f 11 45 f4 	movss	%xmm0, -12(%rbp)
-      29:	f3 0f 10 45 f8 	movss	-8(%rbp), %xmm0
-      2e:	f3 0f 10 4d f4 	movss	-12(%rbp), %xmm1
-      33:	e8 00 00 00 00 	callq	0 <_main+0x38>
-      38:	31 c0 	xorl	%eax, %eax
-      3a:	48 8b 0d 00 00 00 00 	movq	(%rip), %rcx
-      41:	f3 0f 11 45 f0 	movss	%xmm0, -16(%rbp)
-      46:	c7 01 01 00 00 00 	movl	$1, (%rcx)
-      4c:	48 83 c4 10 	addq	$16, %rsp
-      50:	5d 	popq	%rbp
-      51:	c3 	retq
+                    U add_and_multiply
+0000000000000000    T main
+                    U nCompletionStatus
 ```
-上述是`main`函数的汇编指令，我们发现在第#33行，有一个`callq`的指令，参考`main`函数的源码可知，这个指令是用来调用`add_and_multiply`函数的，但是由于这个`.o`中`_add_and_multiply`符号未知，`callq`变成调用自己，显然是不正确的。因此，我们可以猜想在最终的binary中，这行指令应该会发生变化，linker会对符号进行解析和地址绑定。
+可以看到`add_and_multiply`的symbol类型为`U`，意味着编译器并不知道这个符号在哪里，`nCompletionStatus`同理。因此linker要做的事情就是将所有`Undefined`符号进行地址绑定（动态库中的符号暂不考虑），方法也很简单，就是扫描所有undefined的symbol，在symbol中查找并将其绑定到真实的地址上。除了绑定Undefined Symbol外，linker还要负责修正每一条机器码中在内存中的真实地址。
+
+下面我们通过观察汇编代码来加深对Relocation和Symbol Resolution的理解，我们可以使用`objdump`命令来反汇编目标文件
+
+```shell
+objdump -d -M intel -S main.o
+
+main.o:     file format elf64-x86-64
+Disassembly of section .text:
+0000000000000000 main:
+0:	55                   	push   rbp
+1:	48 89 e5             	mov    rbp,rsp
+4:	48 83 ec 20          	sub    rsp,0x20
+8:	f3 0f 10 05 00 00 00 	movss  xmm0,DWORD PTR [rip+0x0]        # 10 <main+0x10>
+f:	00
+10:	f3 0f 11 45 f4       	movss  DWORD PTR [rbp-0xc],xmm0
+15:	f3 0f 10 05 00 00 00 	movss  xmm0,DWORD PTR [rip+0x0]        # 1d <main+0x1d>
+1c:	00
+1d:	f3 0f 11 45 f8       	movss  DWORD PTR [rbp-0x8],xmm0
+22:	f3 0f 10 45 f8       	movss  xmm0,DWORD PTR [rbp-0x8]
+27:	8b 45 f4             	mov    eax,DWORD PTR [rbp-0xc]
+2a:	0f 28 c8             	movaps xmm1,xmm0
+2d:	89 45 ec             	mov    DWORD PTR [rbp-0x14],eax
+30:	f3 0f 10 45 ec       	movss  xmm0,DWORD PTR [rbp-0x14]
+35:	e8 00 00 00 00       	call   3a <main+0x3a>
+3a:	66 0f 7e c0          	movd   eax,xmm0
+3e:	89 45 fc             	mov    DWORD PTR [rbp-0x4],eax
+41:	c7 05 00 00 00 00 01 	mov    DWORD PTR [rip+0x0],0x1        # 4b <main+0x4b>
+48:	00 00 00
+4b:	b8 00 00 00 00       	mov    eax,0x0
+50:	c9                   	leave
+51:	c3                   	ret
+```
+上述是`main`函数的汇编指令，我们发现在第#35行，有一个`call`的指令，参考`main`函数的源码可知，这个指令是用来调用`add_and_multiply`函数的，但是由于这个`.o`中`_add_and_multiply`符号未知，`call`变成调用自己，显然是不正确的。因此，我们可以猜想在最终的binary中，这行指令应该会发生变化，linker会对符号进行解析和地址绑定。
 
 ```shell
 $gcc function.c mian.c -o demoApp
 $objdump -D demoApp
 
-_main:
-100000f50:	55 	pushq	%rbp
-100000f51:	48 89 e5 	movq	%rsp, %rbp
-100000f54:	48 83 ec 10 	subq	$16, %rsp
-100000f58:	f3 0f 10 05 50 00 00 00 	movss	80(%rip), %xmm0
-100000f60:	f3 0f 10 0d 4c 00 00 00 	movss	76(%rip), %xmm1
-100000f68:	c7 45 fc 00 00 00 00 	movl	$0, -4(%rbp)
-100000f6f:	f3 0f 11 4d f8 	movss	%xmm1, -8(%rbp)
-100000f74:	f3 0f 11 45 f4 	movss	%xmm0, -12(%rbp)
-100000f79:	f3 0f 10 45 f8 	movss	-8(%rbp), %xmm0
-100000f7e:	f3 0f 10 4d f4 	movss	-12(%rbp), %xmm1
-100000f83:	e8 78 ff ff ff 	callq	-136 <_add_and_multiply>
-100000f88:	31 c0 	xorl	%eax, %eax
-100000f8a:	48 8d 0d 6f 00 00 00 	leaq	111(%rip), %rcx
-100000f91:	f3 0f 11 45 f0 	movss	%xmm0, -16(%rbp)
-100000f96:	c7 01 01 00 00 00 	movl	$1, (%rcx)
-100000f9c:	48 83 c4 10 	addq	$16, %rsp
-100000fa0:	5d 	popq	%rbp
-100000fa1:	c3 	retq
+0000000000400540 main:
+  400540:	55                   	push   rbp
+  400541:	48 89 e5             	mov    rbp,rsp
+  400544:	48 83 ec 20          	sub    rsp,0x20
+  400548:	f3 0f 10 05 d4 00 00 	movss  xmm0,DWORD PTR [rip+0xd4]        # 400624 <_IO_stdin_used+0x4>
+  40054f:	00
+  400550:	f3 0f 11 45 f4       	movss  DWORD PTR [rbp-0xc],xmm0
+  400555:	f3 0f 10 05 cb 00 00 	movss  xmm0,DWORD PTR [rip+0xcb]        # 400628 <_IO_stdin_used+0x8>
+  40055c:	00
+  40055d:	f3 0f 11 45 f8       	movss  DWORD PTR [rbp-0x8],xmm0
+  400562:	f3 0f 10 45 f8       	movss  xmm0,DWORD PTR [rbp-0x8]
+  400567:	8b 45 f4             	mov    eax,DWORD PTR [rbp-0xc]
+  40056a:	0f 28 c8             	movaps xmm1,xmm0
+  40056d:	89 45 ec             	mov    DWORD PTR [rbp-0x14],eax
+  400570:	f3 0f 10 45 ec       	movss  xmm0,DWORD PTR [rbp-0x14]
+  400575:	e8 80 ff ff ff       	call   4004fa add_and_multiply
+  40057a:	66 0f 7e c0          	movd   eax,xmm0
+  40057e:	89 45 fc             	mov    DWORD PTR [rbp-0x4],eax
+  400581:	c7 05 a9 0a 20 00 01 	mov    DWORD PTR [rip+0x200aa9],0x1        # 601034 <nCompletionStatus>
+  400588:	00 00 00
+  40058b:	b8 00 00 00 00       	mov    eax,0x0
+  400590:	c9                   	leave
+  400591:	c3                   	ret
+  400592:	66 2e 0f 1f 84 00 00 	nop    WORD PTR cs:[rax+rax*1+0x0]
+  400599:	00 00 00
+  40059c:	0f 1f 40 00          	nop    DWORD PTR [rax+0x0]
 ```
-对比两段汇编代码，不难发现，`callq`指令后的符号变成了我们期望的函数符号`_add_and_multiply`。
+对比两段汇编代码，不难发现，前者的BaseAddress是`0000000000000000`，每条汇编指令前面的数字是该指令的offset。而后者的BaseAddreess变成了`0000000000400540`，说明Linker对每个目标文件的汇编指令做了地址修正，另外，`call`指令后的符号变成了我们期望的函数符号`add_and_multiply`，地址为`4004fa`。说明Linker完成的符号和地址的绑定。
 
-### Loaders
+```shell
+00000000004004fa <add_and_multiply>:
+4004fa:	55                   	push   rbp
+4004fb:	48 89 e5             	mov    rbp,rsp
+...
+40051a:	f3 0f 10 45 e4       	movss  xmm0,DWORD PTR [rbp-0x1c]
+40051f:	e8 b2 ff ff ff       	call   4004d6 <add>
+400524:	66 0f 7e c0          	movd   eax,xmm0
+...
+40053e:	c9                   	leave
+40053f:	c3                   	ret
+```
 
-现在我们已经有了一个link好的binary文件了，当我们执行它的时候，Loader会将binary中的section按照一定策略加载到内存中。实际上Loader的工作就这么简单，但是这里还是有一些点值得讨论，比如程序的Entry Point在哪里。
+## Loaders
+
+现在我们已经有了一个link好的binary文件了，当我们执行它的时候，Loader会将binary中的section按照一定规则加载到内存中。实际上Loader的工作就这么简单，但是所谓的“一定规则”确又很复杂，具体来说Loader面临的挑战主要是如何为每个可执行文件找到一篇连续的内存空间。解决这个问题有两个办法，一个是使用内存分段，一个是使用内存分页
+
+### Segmentation
+
+内存分段的思路很简单，就是将binary完整的加载到一段连续的内存中去
+
+### 虚拟内存
+
+
+## ELF excutable
+
+当Linker和Loader各自完成任务后，我们就得到了可以真正运行的
 
 如果从C/C++程序的角度看，那么程序的入口应该就是main函数，而如果从loaders的角度看，则在main函数执行之前程序就已经start了。我们还是通过反汇编上面的`demoApp`来观察（注意，这里的`demoApp`是ELF格式）
 
@@ -190,7 +228,7 @@ int __libc_start_main(
 
 ### 小结
 
-到目前为止，我们已经对linkers和loaders有了一些直观的感觉，当然这些感觉还很粗浅，接下来我们会深入linkers和loaders的各个部分，来分析它们具体是怎么工作的。
+到目前为止，我们已经对linkers和loaders有了一些直观的感觉，当然这些感觉还很表面，接下来我们会深入linkers和loaders的各个部分，来分析它们具体是怎么工作的。
 
 ## Resources
 

@@ -9,7 +9,7 @@ categories: [C,C++]
 
 ### 指令集与ABI
 
-指令集很好理解，就是目标体系结构所支持的opcode，我们还是先来写一段简单的代码
+指令集很好理解，就是目标体系结构所支持的汇编代码（机器码）的指令格式。我们还是先来写一段简单的代码
 
 ```cpp
 int main()
@@ -19,12 +19,9 @@ int main()
   a = a + b;
 }
 ```
-然后我们分别使用`gcc`在Linux上编译和`clang`在MacOS上来编译上述代码，观察对应的汇编指令和机器码:
+然后我们在Linux上用`gcc`和`arm-linux-gnueabi-gcc`来编译上述代码并使用`objdump`观察各自的汇编指令和机器码:
 
-<div class="md-flex-h md-margin-bottom-24">
-<div>
-<pre class="highlight md-no-padding-v md-height-full">
-<code class="language-cpp">
+```cpp
 main.o:     file format elf64-x86-64
 Disassembly of section .text:
 0000000000000000 main:
@@ -40,12 +37,7 @@ int main()
 }
   1d:	5d                   	pop    rbp
   1e:	c3                   	ret
-</code>
-</pre>
-</div>
-<div class="md-margin-left-12">
-<pre class="highlight md-no-padding-v md-height-full">
-<code class="language-cpp">
+
 main.o:	file format Mach-O 64-bit x86-64
 Disassembly of section __TEXT,__text:
 _main:
@@ -59,9 +51,5 @@ _main:
       1a:	89 4d fc 	movl	%ecx, -4(%rbp)
       1d:	5d 	popq	%rbp
       1e:	c3 	retq
-</code>
-</pre>
-</div>
-</div>
-
-可以看到在Linux上，目标文件的格式为`ELF`，在Mac上为`Mach-O`。左侧的一堆数字表示一条条机器码，右侧一系列的`push,mov,add,pop`等是对应的汇编代码。汇编代码和机器码是一一对应的
+```
+可以看到在Linux上，目标文件的格式为`ELF`，在Mac上为`Mach-O`。左侧的一堆数字表示一条条机器码，右侧一系列的`push,mov,add,pop`等是对应的汇编代码。汇编代码和机器码是一一对应的。
