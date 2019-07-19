@@ -18,14 +18,11 @@ $$
 * 0："Negative Class"(e.g., benign tumor)
 * 1: "Positive Class"(e.g., malignant tumor)
 
-对于分类场景，使用线性回归模型不适合，原因是 <math><msub><mi>h</mi><mi>θ</mi></msub></math> 的值区间不能保证在[0,1]之间，因此需要一种新的模型，叫做 logistic regression，逻辑回归。
+对于分类场景，使用线性回归模型不适合，原因是 $h_{\theta}(x)$ 的区间不能保证在`[0,1]`之间，因此需要一种新的模型，叫做 logistic regression - 逻辑回归。
 
 ### Logistic Regression Model
 
-在给出模型前，先不考虑 y 的取值是离散的，我们希望能使：$0≤h_{\theta}(x)≤1$，可以将线性函数：$h_{\theta}(x)=\theta^{T}x$ 做如下变换：$h_{\theta}(x)=g(\theta^{T}x)$, 其中g为 $g(z)=frac{1}{1+e^{-z}}$。可以得到函数
-
-* 得到函数：<math><mi>g</mi><mo stretchy="false">(</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mstyle><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow class="MJX-TeXAtom-ORD"><mo>−</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi></mrow></msup></mrow></mfrac></mstyle></math>
-  函数曲线如下:
+在给出模型前，先不考虑 y 的取值是离散的，我们希望能使：$0≤h_{\theta}(x)≤1$，可以将线性函数：$h_{\theta}(x)=\theta^{T}x$ 做如下变换：$h_{\theta}(x)=g(\theta^{T}x)$, 其中g为 $g(z)=\frac{1}{1+e^{-z}}$。可以得到函数曲线如下
 
 ![](/assets/images/2017/09/ml-5-1.png)
 
