@@ -62,7 +62,7 @@ int main() {
     return 0;
 }
 ```
-为了生成目标文件`.o`，我们可以使用gcc来进行编译，我们先来要编译`main.c`，得到`main.o`: `gcc -c main.c -o main.o`。由于我们后面还会对目标文件做详细分析，现在可以将其简单理解为汇编指令和数据的集合，格式如下
+为了生成目标文件`.o`，我们可以使用GCC对上述源码进行编译，我们先来要编译`main.c`，得到`main.o`: `gcc -c main.c -o main.o`。由于我们后面还会对目标文件做详细分析，现在可以将其简单理解为汇编指令和数据的集合，格式如下
 
 <img src="{{site.baseurl}}/assets/images/2015/01/elf.png">
 
@@ -73,11 +73,11 @@ int main() {
 3. `.rela.text`段，叫做重定位表(Relocation Table)。在表里，保存了所有未知跳转的指令
 4. `.symtab`段，也叫做符号表，用来存放当前文件里定义的函数和对应的地址
 
-接下来linker要做的事情就是将所有已经生成的`.o`文件link在一起，具体来说过程如下，linker会扫描所有的目标文件，将所有符号表中的信息收集起来，构成一个全局的符号表，然后再根据重定位表，把所有不确定的跳转指令根据符号表里地址，进行一次修正。最后，把所有的目标文件的section分别进行合并，行程最终的可执行代码。整个过程如下图所示
+接下来linker要做的事情就是将所有已经生成的`.o`文件link在一起，具体来说过程如下，linker会扫描所有的目标文件，将所有符号表中的信息收集起来，构成一个全局的符号表，然后再根据重定位表，把所有不确定的跳转指令根据符号表里地址，进行一次修正。最后，把所有的目标文件的section分别进行合并，形成最终的可执行代码。整个过程如下图所示
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/01/linker.png">
 
-如果将上述步骤分解开来，则linker的执行步骤分为两部分，分别是的Relocation和symbol的Resolution
+如果将上述步骤分解开来，则linker的执行步骤可以分为两部分，分别是的Relocation和symbol的Resolution
 
 ### Relocation
 
@@ -97,6 +97,8 @@ Section和symbol的Relocation很简单，就是将所有目标文件的各个sec
                     U nCompletionStatus
 ```
 可以看到`add_and_multiply`的symbol类型为`U`，意味着编译器并不知道这个符号在哪里，`nCompletionStatus`同理。因此linker要做的事情就是将所有`Undefined`符号进行地址绑定（动态库中的符号暂不考虑），方法也很简单，就是扫描所有undefined的symbol，在symbol表中查找并将其绑定到真实的地址上。除了绑定Undefined Symbol外，linker还要负责修正每一条机器码中在内存中的真实地址。
+
+### Disassembe `main.o`
 
 下面我们通过观察汇编代码来加深对Relocation和Symbol Resolution的理解，我们可以使用`objdump`命令来反汇编目标文件
 
@@ -197,7 +199,7 @@ $objdump -D demoApp
 getconf PAGE_SIZE #4096
 ```
 
-进一步讲，当程序加载时，loader不需要将程序一次性加载到物理内存中，而是可以按需加载，当需要用到虚拟内存里的指令和数据时，操作系统触发一个CPU的确页错误，然后触发加载虚拟内存中的页到物理内存。
+进一步讲，当程序加载时，loader不需要将程序一次性加载到物理内存中，而是可以按需加载，当需要用到虚拟内存里的指令和数据时，操作系统触发CPU的缺页错误，然后触发加载虚拟内存中的页到物理内存。
 
 这并不是说一段连续完整程序可以被零散的映射物理内存中，程序的寻址空间在内存中依旧是一段连续的区域，只不过当出现内存碎片或者物理内存不足时，系统进行内存置换的成本变小了(因为置换现在是以4KB为单位，速度变快了)。如下图中，当程序A试图加载第三片虚拟内存到物理内存中时，会触发系统的内存置换
 
