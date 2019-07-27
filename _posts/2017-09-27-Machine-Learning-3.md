@@ -26,7 +26,7 @@ $$
 
 ![](/assets/images/2017/09/ml-5-1.png)
 
-函数`g(z)`, 如上图将所有实数映射到了(0,1]空间内，这使他可以将任意一个 h(x)的值空间转化为适合分类器取值的空间, `g(z)`也叫做**Sigmoid Function**`hθ(x)`的输出是结果是`1`的概率，比如`hθ(x)=0.7`表示 70%的概率我们的输出结果为`1`，因此输出是`0`的概率则是 30%：
+如上图，函数$g(z)$ 将所有实数映射到了`(0,1]`空间内, $g(z)$ 也叫做**Sigmoid Function**`hθ(x)`的输出是结果是`1`的概率，比如`hθ(x)=0.7`表示 70%的概率我们的输出结果为`1`，因此输出是`0`的概率则是 30%：
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
    <msub>
@@ -220,11 +220,9 @@ $$
 
 则落在圈外的样本点，可以预测`y=1`
 
-### Cost Function
+## Cost Function
 
-由上面可知，给定：
-
-* 训练集<math><mo>{</mo><mo>(</mo><msup><mi>x</mi><mi>(1)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(1)</mi></msup><mo>)</mo><mo>,</mo><mo>(</mo><msup><mi>x</mi><mi>(2)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(2)</mi></msup><mo>)</mo><mo>,</mo><mo>...</mo><mo>,</mo><mo>(</mo><msup><mi>x</mi><mi>(m)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(m)</mi></msup><mo>)</mo><mo>}</mo></math>，m 个样本，其中:<math><mi>x</mi><mo>∈</mo><mo>[</mo><mtable> <mtr> <msub><mi>x</mi><mi>1</mi></msub> </mtr> <mtr> <msub><mi>x</mi><mi>2</mi></msub> </mtr> <mtr> <mtd><mo>...</mo></mtd> </mtr> <mtr> <msub><mi>x</mi><mi>n</mi></msub> </mtr></mtable><mo>]</mo><mspace width="1em"></mspace><msub><mi>x</mi><mn>0</mn></msub><mo>,</mo><mi>y</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>0,1</mn><mo stretchy="false">}</mo></math>
+由上面可知，给定训练集 ${(x^{(1)}, y^{(1)}), (x^{(2)}, y^{(2)}), ... , (x^{(m)}, y^{(m)})}, m个样本，其中 <math><mi>x</mi><mo>∈</mo><mo>[</mo><mtable> <mtr> <msub><mi>x</mi><mi>1</mi></msub> </mtr> <mtr> <msub><mi>x</mi><mi>2</mi></msub> </mtr> <mtr> <mtd><mo>...</mo></mtd> </mtr> <mtr> <msub><mi>x</mi><mi>n</mi></msub> </mtr></mtable><mo>]</mo><mspace width="1em"></mspace><msub><mi>x</mi><mn>0</mn></msub><mo>,</mo><mi>y</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>0,1</mn><mo stretchy="false">}</mo></math>
 
 * 预测函数: <math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mstyle><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow class="MJX-TeXAtom-ORD"><mo>−</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi></mrow></msup></mrow></mfrac></mstyle></math>
 

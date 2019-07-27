@@ -52,8 +52,6 @@ git reset path_to_the_file
 
 ### Commit
 
-
-
 - 参数
     - `-m`, commit信息
 
@@ -82,6 +80,10 @@ git reset path_to_the_file
     ```
     git remote set-url origin https://xxxx.git
     ```
+- Add remote url
+    - `git remote add upstream xxx`
+    - `git fetch upstream`
+    - `git merge upstream/master`
 
 ### Branch
 

@@ -151,8 +151,8 @@ dict : the python session dictionary
 
 ###  Lipo
 
-- `lipo -info 二进制包`
-- `lipo -detailed_info 二进制包`
+- `lipo -info` 二进制包
+- `lipo xx.a -thin arm64`
 
 ### otool
 

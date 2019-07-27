@@ -269,6 +269,33 @@ pip3 install virtualenv
 }
 ```
 
-### Conda
+### Anaconda
 
+Anaconda是另一个Python的包管理软件，基本用法如下
+
+- 查看当前所有Python环境 
+  - `conda info --envs`
+  
+  ```
+  # conda environments:
+  #
+  base                     /home/taox/anaconda3
+  py36                  *  /home/taox/anaconda3/envs/py36
+  ```
+
+- 创建一个新的Python环境 
+  - `conda create --name py36 python=3.6`
+
+- 切换/注销Python环境
+  - `conda activate py36`
+  - `conda deactivate`
+
+- 删除一个Python环境
+  - `conda remove --name py36`
+
+- 查看当前环境已安装的包
+  - `conda list`
+- 安装/删除包
+  - `conda install -n py36 numpy`
+  - `conda uninstall -n py36 numpy`
 
