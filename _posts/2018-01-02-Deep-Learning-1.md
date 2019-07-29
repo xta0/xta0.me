@@ -66,22 +66,39 @@ $$
 
 ### Gradient Descent
 
-有了Cost funciton之后，我们就可以使用梯度下降来求解$w$和$b$，使$J(w,b)$最小，梯度下降的计算方式如下
+有了Cost funciton之后，我们就可以使用梯度下降来求解$w$和$b$，使$J(w,b)$最小。梯度下降的计算方式如下
 
 $$
 Repeat \{ \\
-    w  := w - \alpha\frac{dJ(w)}{dw} \\
+    w := w - \alpha\frac{dJ(w,b)}{dw} \\
+    b := b - \alpha\frac{dJ(b,b)}{db}
 \}
 $$
 
-其中$\alpha$为Learning Rate,用来控制梯度下降的幅度，
-
-> 在后面的Python代码中，使用`dw`表示 $\frac{dJ(w)}{dw}$
+上述式子通过不断的对$w$和$b$进行求偏导，最终使其收敛为一个稳定的值，其中$\alpha$为Learning Rate,用来控制梯度下降的幅度。在后面的Python代码中，使用`dw`表示 $\frac{dJ(w,b)}{dw}$，`db`表示$\frac{dJ(w,b)}{db}$，以此类推
 
 
-### Neural Network
+### Computing Graph
 
-## Computing Graph
+神经网络中有所谓的Computation Graph的概念，基本思想是将每一步运算都用一个节点表示，然后将这些节点串联起来得到一个Graph，举例来说，假设有一个函数为
+
+$$
+J(a,b,c) = 3(a+bc)
+$$
+
+我们另
+
+- $u = bc$
+- $v = a+u$
+- $J = 3v$
+
+则该算式的Computation Graph可以表示如下
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-1.png">
+
+
+
+
 
 ## Backpropagation
 
