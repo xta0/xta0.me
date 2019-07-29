@@ -1,13 +1,13 @@
 ---
 updated: '2017-11-30'
-list_title: Neural Networks and Deep Learning | 深度学习 
-title: 深度学习
+list_title: 深度学习 | Logistic Regression as a Neural Network
+title: Logistic Regression as a Neural Network
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
-## Logistic Regression Recap
+### Logistic Regression Recap
 
 前面机器学习的课程中，我们曾[介绍过Logistic Regression的概念](https://xta0.me/2017/09/27/Machine-Learning-3.html)，它主要用来解决分类的问题，尤其是True和False的分类。我们可以将逻辑回归模型理解为一种简单的神经网络，`F(x) = {0 or 1}`，如果我们将重点放在线性的逻辑回模型上，则数学表达为
 
@@ -20,11 +20,11 @@ $$
 $$
 x= 
 \begin{bmatrix}
-. . . . .
-. . . . .
-x^{(1)} x^{(2)} x^{(3)} . x^{(m)}
-. . . . .
-. . . . .
+. . . . . . . \\
+. . . . . . . \\
+x^{(1)} x^{(2)} x^{(3)} ... x^{(m)} \\
+. . . . . . . \\
+. . . . . . . \\
 \end{bmatrix}
 $$
 
