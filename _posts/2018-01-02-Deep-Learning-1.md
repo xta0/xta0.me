@@ -118,10 +118,20 @@ $$
 我们最终目标是求解$w^{(1)}$和$w^{(2)}$和$b$，使Loss函数的值最小，根据梯度下降的公式，
 
 $$
-w^({1}) := w^({1}) - \alpha\frac{dL(\sigma(z)^{(1)},y^{(i)})}{dw^{(1)}} \\
-w^({2}) := w^({2}) - \alpha\frac{dL(\sigma(z)^{(2)},y^{(i)})}{dw^{(2)}} \\
-b := b - \alpha\frac{dL(\sigma(z),b)}{db} 
+w^({1}) := w^({1}) - \alpha\frac{dL(a^{(1)},y^{(i)})}{dw^{(1)}} \\
+w^({2}) := w^({2}) - \alpha\frac{dL(a^{(2)},y^{(i)})}{dw^{(2)}} \\
+b := b - \alpha\frac{dL(a,b)}{db} 
 $$
+
+接下来利用前面提到的求偏导的方式，一步步反向计算得到 $w^({1})$ 和 $w^({2})$的最终值，如下图所示
+
+> 注意这里的$w^({1})$, $w^({2})$, $b$ 均为矩阵
+
+- $da = \frac {dL(a,y)} {da} = - \frac{y}{a} + \frac{1-y}{1-a}$
+- $dz = \frac {dL(a,y)} {da} = \frac {dL(a,y)}{da} \times \frac {da}{dz} = a-y$
+- $dw_1$ = \frac {dL(a,y)} {dw_1} = x_1 \times dz$
+- $dw_2$ = \frac {dL(a,y)} {dw_2} = x_2 \times dz$ 
+- $db$ = \frac {dL(a,y)} {db} = dz$ 
 
 ## Vectorization 
 
