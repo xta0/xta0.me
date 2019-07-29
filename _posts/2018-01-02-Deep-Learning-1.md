@@ -19,7 +19,6 @@ $$
 
 $$
 x= 
-\left[
 \begin{bmatrix}
 . . . . .
 . . . . .
