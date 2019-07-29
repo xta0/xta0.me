@@ -48,15 +48,7 @@ b_1 & b_2 & . & . & . &b_n
 \end{bmatrix}
 $$
 
-因此预测结果$\hat{y}$为$1xm$的向量
-
-### Vectorization 
-
-对于上面$z$的计算，涉及到矩阵相乘和相加，通常的计算方式是使用两层for循环，根据矩阵乘法和加法的定义完成计算。但这种实现方式效率不高，我们可以使用向量化的方式，使用向量化的好处是对于矩阵运算可以显著的提升计算效率，numpy提供了方便的API可以取代for循环而进行矩阵的数值运算
-
-```python
-z = np.dot(w.T,x)+b
-```
+因此预测结果$\hat{y}$为$1 \times m$的向量
 
 ### Cost function
 
@@ -69,9 +61,29 @@ $$
 我们将所有训练样本一起计算，则可以得到Cost function
 
 $$
-J(w,b) = \frac{1}{m}\sum_{i=1}^{m}L(\hat{y}^{(i)}, y^{(i)}) = -\frac{1}{m}\sum{i=1}^{m}[(y^{(i)}\log{\hat{y}^{(i)}}) + (1-y^{(i)})\log{(1-\hat{y}^{(i)})} ]
+J(w,b) = \frac{1}{m}\sum_{i=1}^{m}L(\hat{y}^{(i)}, y^{(i)}) = -\frac{1}{m}\sum_{i=1}^{m}[(y^{(i)}\log{\hat{y}^{(i)}}) + (1-y^{(i)})\log{(1-\hat{y}^{(i)})} ]
 $$
+
+### Gradient Descent
+
+有了Cost funciton之后，我们就可以使用梯度下降来求解$w$和$b$，使$J(w,b)$最小，梯度下降的计算方式如下
+
+$$
+Repeat { \\
+    w  := w - \alpha\frac{dJ(w)}{dw} \\
+}
+$$
+
+### Neural Network
 
 ## Computing Graph
 
 ## Backpropagation
+
+## Vectorization 
+
+对于上面$z$的计算，涉及到矩阵相乘和相加，通常的计算方式是使用两层for循环，根据矩阵乘法和加法的定义完成计算。但这种实现方式效率不高，我们可以使用向量化的方式，使用向量化的好处是对于矩阵运算可以显著的提升计算效率，numpy提供了方便的API可以取代for循环而进行矩阵的数值运算
+
+```python
+z = np.dot(w.T,x)+b
+```
