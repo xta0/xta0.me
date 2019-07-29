@@ -127,11 +127,22 @@ $$
 
 > 注意这里的$w^({1})$, $w^({2})$, $b$ 均为矩阵
 
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-4.png" class="md-img-center">
+
 - $da = \frac {dL(a,y)} {da} = - \frac{y}{a} + \frac{1-y}{1-a}$
 - $dz = \frac {dL(a,y)} {da} = \frac {dL(a,y)}{da} \times \frac {da}{dz} = a-y$
-- $dw_1$ = \frac {dL(a,y)} {dw_1} = x_1 \times dz$
-- $dw_2$ = \frac {dL(a,y)} {dw_2} = x_2 \times dz$ 
-- $db$ = \frac {dL(a,y)} {db} = dz$ 
+- $dw_1 = \frac {dL(a,y)} {dw_1} = x_1 \times dz$ 
+- $dw_2 = \frac {dL(a,y)} {dw_2} = x_2 \times dz$ 
+- $db = \frac {dL(a,y)} {db} = dz$ 
+
+因此上述梯度下降公式，最终可以表示为
+
+$$
+w^({1}) := w^({1}) - \alphadw^{{1}} \\
+w^({2}) := w^({2}) - \alphadw^{(2)} \\
+b := b - \alphadb
+$$
+
 
 ## Vectorization 
 
