@@ -65,15 +65,17 @@ $$
 
 ## Cost Function
 
-由上面可知，给定训练集 ${(x^{(1)}, y^{(1)}), (x^{(2)}, y^{(2)}), ... , (x^{(m)}, y^{(m)})}, m个样本，其中 <math><mi>x</mi><mo>∈</mo><mo>[</mo><mtable> <mtr> <msub><mi>x</mi><mi>1</mi></msub> </mtr> <mtr> <msub><mi>x</mi><mi>2</mi></msub> </mtr> <mtr> <mtd><mo>...</mo></mtd> </mtr> <mtr> <msub><mi>x</mi><mi>n</mi></msub> </mtr></mtable><mo>]</mo><mspace width="1em"></mspace><msub><mi>x</mi><mn>0</mn></msub><mo>,</mo><mi>y</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>0,1</mn><mo stretchy="false">}</mo></math>
+当我们有了模型以后，接下来的问题便是找到一个代价函数来求解θ值，如果使用之前先行回归的 cost function，即 <math><mi>J</mi><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>1</mn><mrow><mn>2</mn><mi>m</mi></mrow></mfrac><munderover><mo>∑</mo><mrow class="MJX-TeXAtom-ORD"><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></munderover> <mo>(</mo><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><msub><mi>x</mi> <mi>i</mi></msub><mo stretchy="false">)</mo><mo>−</mo><msub><mi>y</mi><mi>i</mi></msub> <msup><mo>)</mo><mn>2</mn></msup></math>
 
-* 预测函数: <math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mstyle><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow class="MJX-TeXAtom-ORD"><mo>−</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi></mrow></msup></mrow></mfrac></mstyle></math>
+这时会出现$J(\theta)$不是存才多个local minimum的情况，即$J(\theta)$不是一个convex function
 
-问题还是怎么求解<math><mo>θ</mo></math>，如果使用之前先行回归的 cost function，即 <math><mi>J</mi><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>1</mn><mrow><mn>2</mn><mi>m</mi></mrow></mfrac><munderover><mo>∑</mo><mrow class="MJX-TeXAtom-ORD"><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></munderover> <mo>(</mo><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><msub><mi>x</mi> <mi>i</mi></msub><mo stretchy="false">)</mo><mo>−</mo><msub><mi>y</mi><mi>i</mi></msub> <msup><mo>)</mo><mn>2</mn></msup></math>
+> $h(x)$变成了复杂的非线性函数，因此梯度下降无法得到最小值（得到极小值的概率更高）。
 
-这时会出现`J(θ)`不是 convex function 的情况，原因是`h(x)`变成了复杂的非线性函数，因此梯度下降无法得到最小值（得到极小值的概率更高）。
+因此我们要找到一个逻辑回归可以使用的代价函数，这里略去推导，直接给出函数定义
 
-* 逻辑回归的 Cost Function：
+$$
+J(\theta_0,\theta_1) = \frac{1}{2m}\sum_{i=1}^m(\hat{y}_{i} - y_i)^2=\frac{1}{2m}\sum_{i=1}^m(h_\theta(x_i)-y_i)^2
+$$
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
 <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
