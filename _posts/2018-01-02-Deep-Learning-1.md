@@ -69,7 +69,7 @@ $$
 我们将所有训练样本一起计算，则可以得到Cost function
 
 $$
-J(w,b) = \frac{1}{m}\Sigma_{i=1}^{m}L(\hat(y)^{(i)}, y^{(i)})
+J(w,b) = \frac{1}{m}\sum_{i=1}^{m}L(\hat{y}^{(i)}, y^{(i)}) = -\frac{1}{m}\sum{i=1}^{m}[(y^{(i)}\log{\hat{y}^{(i)}}) + (1-y^{(i)})\log{(1-\hat{y}^{(i)})} ]
 $$
 
 ## Computing Graph
