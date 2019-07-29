@@ -6,39 +6,33 @@ title: UNIX 常用命令
 categories: [UNIX]
 ---
 
-## 常用命令
+## 文件操作
 
 - `echo`：输出字符
 	- `echo hello world > ~/text`: `>`为输出流标志，输出文本到text中
 - `man`: 命令手册
-- 目录操作:	
-	- `ls`：查看目录下文件
-		- `ls -al`:查看隐藏文件
-		- `ls -l`：长列表形式显示
-		- `ls ~/c*`:只显示`c`开头的文件
-		- 别名：`ll`
-	- `cd`：进入目录
-	- `find dir file`:在`dir`的路径中查找`file`
-	- `pwd`: 当前路径
-
-- 文件操作:
-	- `touch`:创建空文件
-	- `cat/more/less`：查看文件
-		- `cat`：查看短文件
-		- `more/less`：查看长文件
-		- `less`：
-	- `tail`
-		- `tail -n 1 log.error`
-	- `cp`：copy文件
-	- `mv`：移动文件,重命名
+- `ls` 命令:	
+	- `ls -l`：将结果按照长列表形式显示
+	- `ls -a`: 查看隐藏文件
+	- `ls -r`: 将结果reverse排列
+	- `ls -S`: 将结果按文件size进行排序
+	- `ls -t`: 将结果按时间进行排序
+	- `ls -R`: 将结果进行递归显示
+- `touch`:创建空文件
+- `cat/more/less`：查看文件
+	- `cat`：查看短文件
+	- `more/less`：查看长文件
+	- `less`：
+- `tail`
+	- `tail -n 1 log.error`
+- `cp`：copy文件
+- `mv`：移动文件,重命名
+- `rm`：删除文件
 	- `rm`：删除文件
-		- `rm`：删除文件
-		- `rm -d`：删除空文件夹
-		- `rm -rd`：强制递归删除文件夹中的文件
-		- `rm -rf`
-		- `rm -rf test1/test2 -v`：查看删除过程
-- 别名
-	- `alias ll` = `ls -alF`  
+	- `rm -d`：删除空文件夹
+	- `rm -rd`：强制递归删除文件夹中的文件
+	- `rm -rf`
+	- `rm -rf test1/test2 -v`：查看删除过程
 
 ## File Permission
 

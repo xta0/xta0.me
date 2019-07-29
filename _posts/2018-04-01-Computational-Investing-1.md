@@ -8,7 +8,7 @@ mathjax: true
 
 ### Prerequisites
 
-- [Advanced Python Programming](http://127.0.0.1:4000/2017/03/05/Python3-Deep-Dive-1.html)
+- Solid Python understanding
 - Pandas, Numpy, Matplotlib Frameworks
 - Fundamental concepts of investing, financial markets
 

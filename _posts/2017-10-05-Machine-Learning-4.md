@@ -7,6 +7,8 @@ categories: [Machine Learning,AI]
 mathjax: true
 ---
 
+> 文中所有图片部分截取自Andrew Ng在[Cousera上的课程](https://www.coursera.org/learn/machine-learning)
+
 ## Background
 
 神经网络是一个很老的概念，在机器学习领域目前还是主流，之前已经介绍了linear regression和logistics regression，为什么还要学习神经网络？以non-linear classification为例，如下图所示

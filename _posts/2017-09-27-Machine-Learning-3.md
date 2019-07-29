@@ -7,7 +7,7 @@ categories: [Machine Learning,AI]
 mathjax: true
 ---
 
-### Classification
+> 文中所有图片部分截取自Andrew Ng在[Cousera上的课程](https://www.coursera.org/learn/machine-learning)
 
 分类问题, Email: Spam/NotSpam, Tumor: 恶性/良性，可用下面式子表达
 
@@ -20,201 +20,38 @@ $$
 
 对于分类场景，使用线性回归模型不适合，原因是 $h_{\theta}(x)$ 的区间不能保证在`[0,1]`之间，因此需要一种新的模型，叫做 logistic regression - 逻辑回归。
 
-### Logistic Regression Model
+## Logistic Regression Model
 
 在给出模型前，先不考虑 y 的取值是离散的，我们希望能使：$0≤h_{\theta}(x)≤1$，可以将线性函数：$h_{\theta}(x)=\theta^{T}x$ 做如下变换：$h_{\theta}(x)=g(\theta^{T}x)$, 其中g为 $g(z)=\frac{1}{1+e^{-z}}$。可以得到函数曲线如下
 
 ![](/assets/images/2017/09/ml-5-1.png)
 
-如上图，函数$g(z)$ 将所有实数映射到了`(0,1]`空间内, $g(z)$ 也叫做**Sigmoid Function**`hθ(x)`的输出是结果是`1`的概率，比如`hθ(x)=0.7`表示 70%的概率我们的输出结果为`1`，因此输出是`0`的概率则是 30%：
+如上图，函数$g(z)$ 将所有实数映射到了`(0,1]`空间内, $g(z)$ 也叫做**Sigmoid Function**。
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-   <msub>
-     <mi>h</mi>
-     <mi>θ</mi>
-   </msub>
-   <mo stretchy="false">(</mo>
-   <mi>x</mi>
-   <mo stretchy="false">)</mo>
-   <mo>=</mo>
-   <mi>P</mi>
-   <mo stretchy="false">(</mo>
-   <mi>y</mi>
-   <mo>=</mo>
-   <mn>1</mn>
-   <mrow class="MJX-TeXAtom-ORD">
-     <mo stretchy="false">|</mo>
-   </mrow>
-   <mi>x</mi>
-   <mo>;</mo>
-   <mi>θ</mi>
-   <mo stretchy="false">)</mo>
-   <mo>=</mo>
-   <mn>1</mn>
-   <mo>−</mo>
-   <mi>P</mi>
-   <mo stretchy="false">(</mo>
-   <mi>y</mi>
-   <mo>=</mo>
-   <mn>0</mn>
-   <mrow class="MJX-TeXAtom-ORD">
-     <mo stretchy="false">|</mo>
-   </mrow>
-   <mi>x</mi>
-   <mo>;</mo>
-	 <mi>θ</mi>
-   <mo stretchy="false">)</mo>
-   <mo>,</mo>
-   <mspace width="1em"></mspace>
-	<mi>P</mi>
-   <mo stretchy="false">(</mo>
-   <mi>y</mi>
-   <mo>=</mo>
-   <mn>0</mn>
-   <mrow class="MJX-TeXAtom-ORD">
-     <mo stretchy="false">|</mo>
-   </mrow>
-   <mi>x</mi>
-   <mo>;</mo>
-   <mi>θ</mi>
-   <mo stretchy="false">)</mo>
-   <mo>+</mo>
-   <mi>P</mi>
-   <mo stretchy="false">(</mo>
-   <mi>y</mi>
-   <mo>=</mo>
-   <mn>1</mn>
-   <mrow class="MJX-TeXAtom-ORD">
-     <mo stretchy="false">|</mo>
-   </mrow>
-   <mi>x</mi>
-   <mo>;</mo>
-   <mi>θ</mi>
-   <mo stretchy="false">)</mo>
-   <mo>=</mo>
-   <mn>1</mn>
-</math>
+## Decision Boundary
 
-### Decision Boundary
+通过观察函数曲线可以发现，当`z`大于 0 的时候`g(z)≥0.5`，因此只需要判断$\theta^{(T)}x$和0的关系即可：
 
-对函数<math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>g</mi><mo>(</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi><mo>)</mo></math>，假设：
+- $\theta^{(T)}x ≥ 0$ -> $y=1$
+- $\theta^{(T)}x < 0$ -> $y=0$
 
-* <math><mo>"</mo><mi>y</mi><mo>=</mo><mn>1</mn><mo>"</mo></math> if <math><math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>≥</mo><mn>0.5</mn></math>
+### linear decision boundaries
 
-* <math><mo>"</mo><mi>y</mi><mo>=</mo><mn>0</mn><mo>"</mo></math> if <math><math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo><</mo><mn>0.5</mn></math>
+举个例子，假设有一个线性预测函数 $h_{\theta}(x) = g(\theta_0 + \theta_1x_1 + \theta_2x_2$，假设θ值已确定为`[-3,1,1]`，则问题变为求如果要`y=1`，那么需要 $h(x) = -3 + x_1+x_2 ≥ 0$, 即找到$x_1$, $x_2$满足 $x_1 + x_2 ≥ 3$，如下图所示：
 
-通过观察函数<math><mi>g</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>=</mo><mstyle><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>z</mi></mrow></msup></mrow></mfrac></mstyle></math>上一节的曲线可以发现，当`z`大于 0 的时候`g(z)≥0.5`，因此只需要<math><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi><mo> > </mo><mn>0</mn></math>即可，即：
+![](/assets/images/2017/09/ml-lr-1.png)
 
-<math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd />
-      <mtd>
-        <msup>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mi>T</mi>
-        </msup>
-        <mi>x</mi>
-        <mo>&#x2265;<!-- ≥ --></mo>
-        <mn>0</mn>
-        <mo stretchy="false">&#x21D2;<!-- ⇒ --></mo>
-        <mi>y</mi>
-        <mo>=</mo>
-        <mn>1</mn>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <msup>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mi>T</mi>
-        </msup>
-        <mi>x</mi>
-        <mo>&lt;</mo>
-        <mn>0</mn>
-        <mo stretchy="false">&#x21D2;<!-- ⇒ --></mo>
-        <mi>y</mi>
-        <mo>=</mo>
-        <mn>0</mn>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+由上图可看出, 图中的粉色线段为可以作为**Boundary Function**，也叫**Decision Boundary**。当$x_1 + x_2 ≥ 3$时预测结果$y=1$，反之，当$x_1 + x_2 < 3$时，预测结果$y=0$
 
-`g(z)`小于`0.5`的情况同理。
+### Non-linear decision boundaries
 
-#### linear decision boundaries
+接下来我们看一个非线性的预测函数，例如：
 
-举个例子，假设有一个线性预测函数<math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mo>g</mo><mo>(</mo><msub><mi>θ</mi><mn>0</mn></msub><mo>+</mo><msub><mi>θ</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>θ</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub><mo>)</mo></math>，其中<math><mo>θ</mo></math>的值已经确定为`[-3,1,1]`，则问题变为求如果要`y=1`，那么需要<math><mi>h</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mn>-3</mn><mo>+</mo><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>x</mi><mn>2</mn></msub><mo>≥</mo><mn>0</mn></math>，即找到<math><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><msub><mi>x</mi><mn>2</mn></msub></math>满足<math><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>x</mi><mn>2</mn></msub><mo>≥</mo><mn>3</mn></math>
+$$
+h_{\theta}x = g(\theta_0 + \theta_1x_1 + \theta_2x_2 + \theta_3x_1{^2} + \theta_4x_2{^2})
+$$
 
-如下图所示：
-
-![](/assets/images/2017/09/ml-5-2.png)
-
-由上图可看出：<math><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>x</mi><mn>2</mn></msub><mo>=</mo><mn>3</mn></math>可作为**Boundary Function**，也叫**Decision Boundary**
-
-#### Non-linear decision boundaries
-
-对于非线性的预测函数，例如：
-
-<math display="block">
-  <msub>
-    <mi>h</mi>
-    <mi>θ</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <mo>g</mo>
-  <mo>(</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>0</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>1</mn>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mn>1</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>2</mn>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mn>2</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>3</mn>
-  </msub>
-  <msubsup>
-    <mi>x</mi>
-    <mn>1</mn>
-    <mn>2</mn>
-  </msubsup>
-	<mo>+</mo>
-	<msub>
-    <mi>θ</mi>
-    <mn>4</mn>
-  </msub>
-  <msubsup>
-    <mi>x</mi>
-    <mn>2</mn>
-    <mn>2</mn>
-  </msubsup>
-  <mo>)</mo>
-</math>
-
-假设`θ`值已经确定`[-1,0,0,1,1]`，同上，变为求如果要`y=1`，那么需要<math><mn>-1</mn><mo>+</mo><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>x</mi><mn>2</mn><mn>2</mn></msubsup><mo>≥</mo><mn>0</mn></math>，即找到<math><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><msub><mi>x</mi><mn>2</mn></msub></math>满足<math><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>x</mi><mn>2</mn><mn>2</mn></msubsup><mo>≥</mo><mn>0</mn></math>，则边界函数为<math><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>+</mo><msubsup><mi>x</mi><mn>2</mn><mn>2</mn></msubsup><mo>=</mo><mn>0</mn></math>，如下图所示
+假设`θ`值已经确定为`[-1,0,0,1,1]`，同上，变为求如果要`y=1`，那么需要$-1 + x_1{^2} + x_2{^2} ≥ 0$，即找到$x_1$, $x_2$满足$x_1^2 + x_2^2 ≥ 0$，则边界函数为$x_1^2 + x_2^2 = 0$，如下图所示
 
 ![](/assets/images/2017/09/ml-5-3.png)
 

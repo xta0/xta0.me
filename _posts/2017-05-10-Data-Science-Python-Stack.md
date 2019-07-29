@@ -13,30 +13,40 @@ mathjax: true
 - Matplotlib
 - Scipy
 
-Python系统自带一些数值计算的API，[Numpy](https://www.python-course.eu/numpy.php)是Python数值计算API的封装，Pandas是Numpy的封装。Matplotlib用来做数据可视化
+Python系统自带一些数值计算的API，但它们使用起来效率不高；[Numpy](https://www.python-course.eu/numpy.php)被设计用来专门做数值计算，底层做了大量的优化；Pandas是Numpy的封装；Matplotlib用来做数据可视化
 
 ## Numpy
 
 Numpy主要用于做矩阵的数值运算，对常用的数学操作做了封装，使用起来极为方便，而且在性能方面也比Python的list要高不少，因此在数值计算方面Numpy非常流行。
 
-我们可以先来对比一下Numpy数组和Python的数组的使用，现在假设让每个数组的元素都乘以2
+我们可以来对比一下numpy数组和python做矩阵的点积
 
 ```python
-import numpy as np
+import numpy as np 
+from datetime import datetime
 
-#Python list
-L = [1,2,3]
-#Numpy array
-N = np.array([1,2,3])
+a = np.random.randn(100)
+b = np.random.randn(100)
+T = 100000
 
-L2 = []
-for e in L : 
-    L2.append(e*2)
+def slow_dot_product(a,b ):
+    result = 0
+    for e,f in zip(a,b):
+        result += e*f
+    return result
 
-N*2
-np.sqrt(N)
-np.exp(N)
-np.log(N)
+dt0 = datetime.now()
+for t in range(T): 
+    slow_dot_product(a,b)
+dt1 = datetime.now() - dt0
+
+dt0 = datetime.now()
+for t in range(T):
+    #numpy dot product
+    a.dot(b)
+dt2 = datetime.now() - dt0
+
+print("dt1/dt2: ", dt1.total_seconds() / dt2.total_seconds()) #~40
 ```
 
 可以看出Numpy会对数组中每个元素进行数学运算，当数组的size很大时，Numpy可以极大的节约内存开销和提升开发效率，除此之外，Numpy还提供了一系列的方便的数学运算
@@ -57,7 +67,6 @@ dot = b.dot(a) #4
 如果我们将点积转化为其几何表达
 
 ### Vector and Matrices
-
 
 ```python
 import numpy as np
