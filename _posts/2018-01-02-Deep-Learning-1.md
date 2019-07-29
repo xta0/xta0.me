@@ -69,10 +69,15 @@ $$
 有了Cost funciton之后，我们就可以使用梯度下降来求解$w$和$b$，使$J(w,b)$最小，梯度下降的计算方式如下
 
 $$
-Repeat { \\
+Repeat \{ \\
     w  := w - \alpha\frac{dJ(w)}{dw} \\
-}
+\}
 $$
+
+其中$\alpha$为Learning Rate,用来控制梯度下降的幅度，
+
+> 在后面的Python代码中，使用`dw`表示 $\frac{dJ(w)}{dw}$
+
 
 ### Neural Network
 
