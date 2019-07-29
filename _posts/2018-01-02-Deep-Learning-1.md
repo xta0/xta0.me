@@ -31,14 +31,14 @@ $$
 类似的$w$是一个$n x 1$的向量，则$w^Tx$是 $1xm$, 对应的常数项$b$也是$1xm$的矩阵，另
 
 $$
-z^{(i)} = w^Tx^{(i)} + b
+z^{(i)} = w^Tx^{(i)} + b \\
 a^{(i)} = \sigma(z^{(i)}) 
 $$
 
 则$\hat{y}$可以表示为
 
 $$
-$\hat{y}$ = 
+\hat{y} = 
 \begin{bmatrix}
 z^{(1)} & z^{(2)} & . & . & . &z^{(m)}  
 \end{bmatrix}
