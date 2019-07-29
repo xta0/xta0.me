@@ -48,15 +48,29 @@ b_1 & b_2 & . & . & . &b_n
 \end{bmatrix}
 $$
 
+因此预测结果$\hat{y}$为$1xm$的向量
+
 ### Vectorization 
 
-对于`z`的计算，我们可以使用向量化的方式，使用向量化的好处是对于矩阵运算可以显著的提升计算效率，numpy提供了方便的API可以取代for循环而进行矩阵的数值运算
+对于上面$z$的计算，涉及到矩阵相乘和相加，通常的计算方式是使用两层for循环，根据矩阵乘法和加法的定义完成计算。但这种实现方式效率不高，我们可以使用向量化的方式，使用向量化的好处是对于矩阵运算可以显著的提升计算效率，numpy提供了方便的API可以取代for循环而进行矩阵的数值运算
+
+```python
+z = np.dot(w.T,x)+b
+```
+
+### Cost function
+
+对于某组训练集可知其Loss Function为
 
 $$
-z^{(1)} = W^Tx^{(1)}+b
+L(\hat(y),y) = - (y\log{\hat{y}}) + (1-y)\log{(1-\hat{y})} 
 $$
 
-## Cost function
+我们将所有训练样本一起计算，则可以得到Cost function
+
+$$
+J(w,b) = \frac{1}{m}\Sigma_{i=1}^{m}L(\hat(y)^{(i)}, y^{(i)})
+$$
 
 ## Computing Graph
 
