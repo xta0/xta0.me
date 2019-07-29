@@ -9,7 +9,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 > 部分图片截取自课程视频[Nerual Networks and Deep Learning](https://www.coursera.org/learn/neural-networks-deep-learning)
 
-### Logistic Regression Recap
+## Logistic Regression Recap
 
 前面机器学习的课程中，我们曾[介绍过Logistic Regression的概念](https://xta0.me/2017/09/27/Machine-Learning-3.html)，它主要用来解决分类的问题，尤其是True和False的分类。我们可以将逻辑回归模型理解为一种简单的神经网络，`F(x) = {0 or 1}`，如果我们将重点放在线性的逻辑回模型上，则数学表达为
 
@@ -51,6 +51,14 @@ b_1 & b_2 & . & . & . &b_n
 $$
 
 因此预测结果$\hat{y}$为$1 \times m$的向量
+
+## Vectorization 
+
+对于上面$z$的计算，涉及到矩阵相乘和相加，通常的计算方式是使用两层for循环，根据矩阵乘法和加法的定义完成计算。但这种实现方式效率不高，我们可以使用向量化的方式，使用向量化的好处是对于矩阵运算可以显著的提升计算效率，numpy提供了方便的API可以取代for循环而进行矩阵的数值运算
+
+```python
+z = np.dot(w.T,x)+b
+```
 
 ### Cost function
 
@@ -111,21 +119,27 @@ $$
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-2.png" class="md-img-center">
 
-理解了Computation Graph，我们回到算梯度下降上来，假设我们只有两组训练集$x^{(1)}$和$x^{(2)}$，我们可以随机给出两个$w$矩阵，$w^{(1)}$和$w^{(2)}$，以及一个$b$矩阵，则逻辑回归model的Graph如下
+理解了Computation Graph，我们回到算梯度下降上来，我们先看一种简单的情况，假设我们只有一组训练样本，该样本中只有两个feature，$x_1$和$x_2$，我们用$w_1$和$w_2$表示两个feature对应的权重，则预测的model可以表示为
+
+$$
+\hat{y} = \sigma(z) = \sigma(w_1x_1 + w_2x_2 + b) \\
+$$
+
+为了求解$w_1$和$w_2$，结合上面给出的Loss函数，得到生成的Computation Graph如下
+
+> 注意这里使用的是Loss函数，而不是Cost函数，因为当前case为单一的样本，不涉及到所有的样本集
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-3.png" class="md-img-center">
 
-我们最终目标是求解$w^{(1)}$和$w^{(2)}$和$b$，使Loss函数的值最小，根据梯度下降的公式，
+为了使Loss函数的值最小，我们需要使用梯度下降来计算$w_1$,$w_2$和$b$
 
 $$
-w^{(1)} := w^{(1)} - \alpha\frac{dL(a^{(1)},y^{(i)})}{dw^{(1)}} \\
-w^{(2)} := w^{(2)} - \alpha\frac{dL(a^{(2)},y^{(i)})}{dw^{(2)}} \\
-b := b - \alpha\frac{dL(a,b)}{db} 
+w_1 := w_1 - \alpha\frac{dL(a,y}{dw_1} \\
+w_2 := w_2 - \alpha\frac{dL(a,y}{dw_2} \\
+b := b - \alpha\frac{dL(a,y)}{db} 
 $$
 
-接下来利用前面提到的求偏导的方式，一步步反向计算得到 $w^({1})$ 和 $w^({2})$的最终值，如下图所示
-
-> 注意这里的$w^{(1)}$, $w^{(2)}$, $b$ 均为矩阵
+接下来利用前面提到的求偏导的方式，一步步反向计算得到 $w_1$ 和 $w_2$的最终值，如下图所示
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-4.png" class="md-img-center">
 
@@ -135,21 +149,6 @@ $$
 - $dw_2 = \frac {dL(a,y)} {dw_2} = x_2 \times dz$ 
 - $db = \frac {dL(a,y)} {db} = dz$ 
 
-因此上述梯度下降公式，最终可以表示为
-
-$$
-w^{(1)} := w^{(1)} - \alphadw^{(1)} \\
-w^{(2)} := w^{(2)} - \alphadw^{(2)} \\
-b := b - \alphadb
-$$
-
-上面的例子是只有两组训练样本的情况
 
 
-## Vectorization 
 
-对于上面$z$的计算，涉及到矩阵相乘和相加，通常的计算方式是使用两层for循环，根据矩阵乘法和加法的定义完成计算。但这种实现方式效率不高，我们可以使用向量化的方式，使用向量化的好处是对于矩阵运算可以显著的提升计算效率，numpy提供了方便的API可以取代for循环而进行矩阵的数值运算
-
-```python
-z = np.dot(w.T,x)+b
-```
