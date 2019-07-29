@@ -28,6 +28,26 @@ x^{(1)} & x^{(2)} & x^{(3)} & . & . & . & x^{(m)} \\
 \end{bmatrix}
 $$
 
+类似的$w$是一个$n x 1$的向量，则$w^Tx$是 $1xm$, 对应的常数项$b$也是$1xm$的矩阵，另
+
+$$
+z^{(i)} = w^Tx^{(i)} + b
+a^{(i)} = \sigma(z^{(i)}) 
+$$
+
+则$\hat{y}$可以表示为
+
+$$
+$\hat{y}$ = 
+\begin{bmatrix}
+z^{(1)} & z^{(2)} & . & . & . &z^{(m)}  
+\end{bmatrix}
+= w^{T}x + 
+\begin{bmatrix}
+b_1 & b_2 & . & . & . &b_n
+\end{bmatrix}
+$$
+
 ### Vectorization 
 
 对于`z`的计算，我们可以使用向量化的方式，使用向量化的好处是对于矩阵运算可以显著的提升计算效率，numpy提供了方便的API可以取代for循环而进行矩阵的数值运算
