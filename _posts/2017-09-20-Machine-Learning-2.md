@@ -7,7 +7,7 @@ categories: [Machine Learning,AI]
 mathjax: true
 ---
 
-> 文中所有图片部分截取自Andrew Ng在[Cousera上的课程](https://www.coursera.org/learn/machine-learning)
+> 文中所用到的图片部分截取自Andrew Ng在[Cousera上的课程](https://www.coursera.org/learn/machine-learning)
 
 ### Cost Function
 

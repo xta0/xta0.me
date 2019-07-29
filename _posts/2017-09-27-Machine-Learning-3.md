@@ -7,7 +7,7 @@ categories: [Machine Learning,AI]
 mathjax: true
 ---
 
-> 文中所有图片部分截取自Andrew Ng在[Cousera上的课程](https://www.coursera.org/learn/machine-learning)
+> 文中所用到的图片部分截取自Andrew Ng在[Cousera上的课程](https://www.coursera.org/learn/machine-learning)
 
 分类问题, Email: Spam/NotSpam, Tumor: 恶性/良性，可用下面式子表达
 
@@ -37,7 +37,13 @@ $$
 
 ### linear decision boundaries
 
-举个例子，假设有一个线性预测函数 $h_{\theta}(x) = g(\theta_0 + \theta_1x_1 + \theta_2x_2$，假设θ值已确定为`[-3,1,1]`，则问题变为求如果要`y=1`，那么需要 $h(x) = -3 + x_1+x_2 ≥ 0$, 即找到$x_1$, $x_2$满足 $x_1 + x_2 ≥ 3$，如下图所示：
+举个例子，假设有一个线性预测函数 
+
+$$
+h_{\theta}(x) = g(\theta_0 + \theta_1x_1 + \theta_2x_2)
+$$
+
+现在假设θ值已确定为`[-3,1,1]`，则问题变为求如果要`y=1`，那么需要 $h(x) = -3 + x_1+x_2 ≥ 0$, 即找到$x_1$, $x_2$满足 $x_1 + x_2 ≥ 3$，如下图所示：
 
 ![](/assets/images/2017/09/ml-lr-1.png)
 
@@ -53,9 +59,9 @@ $$
 
 假设`θ`值已经确定为`[-1,0,0,1,1]`，同上，变为求如果要`y=1`，那么需要$-1 + x_1{^2} + x_2{^2} ≥ 0$，即找到$x_1$, $x_2$满足$x_1^2 + x_2^2 ≥ 0$，则边界函数为$x_1^2 + x_2^2 = 0$，如下图所示
 
-![](/assets/images/2017/09/ml-5-3.png)
+![](/assets/images/2017/09/ml-lr-2.png)
 
-则落在圈外的样本点，可以预测`y=1`
+处于粉色圆圈内的样本点预测结果为0, 对于落在圈外的样本点，则预测结果为1 
 
 ## Cost Function
 
