@@ -9,7 +9,7 @@ mathjax: true
 
 > 文中所用到的图片部分截取自Andrew Ng在[Cousera上的课程](https://www.coursera.org/learn/machine-learning)
 
-分类问题, Email: Spam/NotSpam, Tumor: 恶性/良性，可用下面式子表达
+逻辑回归经常用于解决分类问题, 比如Email是否为Spam/非Spam, 肿瘤是否为恶性/良性，可用下面式子表达
 
 $$
 y ∈ {0,1}
@@ -65,7 +65,11 @@ $$
 
 ## Cost Function
 
-当我们有了模型以后，接下来的问题便是找到一个代价函数来求解θ值，如果使用之前先行回归的 cost function，即 <math><mi>J</mi><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>1</mn><mrow><mn>2</mn><mi>m</mi></mrow></mfrac><munderover><mo>∑</mo><mrow class="MJX-TeXAtom-ORD"><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>m</mi></munderover> <mo>(</mo><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><msub><mi>x</mi> <mi>i</mi></msub><mo stretchy="false">)</mo><mo>−</mo><msub><mi>y</mi><mi>i</mi></msub> <msup><mo>)</mo><mn>2</mn></msup></math>
+当我们有了模型以后，接下来的问题便是找到一个代价函数来求解θ值，如果使用之前先行回归的 cost function，即 
+
+$$
+J(\theta) =\frac{1}{2m}\sum_{i=1}^m(h_\theta(x_i)-y_i)^2
+$$
 
 这时会出现$J(\theta)$不是存才多个local minimum的情况，即$J(\theta)$不是一个convex function
 
@@ -74,7 +78,7 @@ $$
 因此我们要找到一个逻辑回归可以使用的代价函数，这里略去推导，直接给出函数定义
 
 $$
-J(\theta_0,\theta_1) = \frac{1}{2m}\sum_{i=1}^m(\hat{y}_{i} - y_i)^2=\frac{1}{2m}\sum_{i=1}^m(h_\theta(x_i)-y_i)^2
+
 $$
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
