@@ -7,7 +7,7 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
-> Course notes of [Nerual Networks and Deep Learning](https://www.coursera.org/learn/neural-networks-deep-learning)
+> 部分图片截取自课程视频[Nerual Networks and Deep Learning](https://www.coursera.org/learn/neural-networks-deep-learning)
 
 ### Logistic Regression Recap
 
@@ -72,15 +72,12 @@ $$
 
 $$
 w := w - \alpha\frac{dJ(w,b)}{dw} \\
-b := b - \alpha\frac{dJ(b,b)}{db} 
+b := b - \alpha\frac{dJ(w,b)}{db} 
 $$
 
-上述式子通过不断的对$w$和$b$进行求偏导，最终使其收敛为一个稳定的值，其中$\alpha$为Learning Rate,用来控制梯度下降的幅度。在后面的Python代码中，使用`dw`表示 $\frac{dJ(w,b)}{dw}$，`db`表示$\frac{dJ(w,b)}{db}$，以此类推
+上述式子通过不断的对$w$和$b$进行求偏导，最终使其收敛为一个稳定的值，其中$\alpha$为Learning Rate,用来控制梯度下降的幅度。在后面的Python代码中，使用`dw`表示 $\frac{dJ(w,b)}{dw}$，`db`表示$\frac{dJ(w,b)}{db}$，以此类推。
 
-
-### Computing Graph
-
-神经网络中有所谓的Computation Graph的概念，基本思想是将每一步运算都用一个节点表示，然后将这些节点串联起来得到一个Graph，举例来说，假设有一个函数为
+虽然我们有了上面的算式，但如何有效的计算它是我们接下来要讨论的问题，这里我们介绍一种使用**Computation Graph**的思路，所谓的Computation Graph的概念，基本思想是将每一步运算都用一个节点表示，然后将这些节点串联起来得到一个Graph，举例来说，假设有一个函数为
 
 $$
 J(a,b,c) = 3(a+bc)
@@ -110,13 +107,21 @@ $$
 \frac{dFinalOutputVar}{dvar}
 $$
 
-这种写法太过冗余，因此，如果想表示$\frac{dJ}{da}$，在代码中可直接写成`da`，其余同理
+这种写法太过冗余，因此，如果想表示$\frac{dJ}{da}$，在代码中可直接写成`da`，其余同理，计算这些变量到数值的过程，可类比于神经网络的backpropagation
 
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-2.png" class="md-img-center">
 
+理解了Computation Graph，我们回到算梯度下降上来，假设我们只有两组训练集$x^{(1)}$和$x^{(2)}$，我们可以随机给出两个$w$矩阵，$w^{(1)}$和$w^{(2)}$，以及一个$b$矩阵，则逻辑回归model的Graph如下
 
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-3.png" class="md-img-center">
 
+我们最终目标是求解$w^{(1)}$和$w^{(2)}$和$b$，使Loss函数的值最小，根据梯度下降的公式，
 
-## Backpropagation
+$$
+w^({1}) := w^({1}) - \alpha\frac{dL(\sigma(z)^{(1)},y^{(i)})}{dw^{(1)}} \\
+w^({2}) := w^({2}) - \alpha\frac{dL(\sigma(z)^{(2)},y^{(i)})}{dw^{(2)}} \\
+b := b - \alpha\frac{dL(\sigma(z),b)}{db} 
+$$
 
 ## Vectorization 
 
