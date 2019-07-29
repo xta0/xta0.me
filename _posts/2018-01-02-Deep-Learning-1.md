@@ -7,6 +7,8 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
+> Course notes of [Nerual Networks and Deep Learning](https://www.coursera.org/learn/neural-networks-deep-learning)
+
 ### Logistic Regression Recap
 
 前面机器学习的课程中，我们曾[介绍过Logistic Regression的概念](https://xta0.me/2017/09/27/Machine-Learning-3.html)，它主要用来解决分类的问题，尤其是True和False的分类。我们可以将逻辑回归模型理解为一种简单的神经网络，`F(x) = {0 or 1}`，如果我们将重点放在线性的逻辑回模型上，则数学表达为
@@ -69,10 +71,8 @@ $$
 有了Cost funciton之后，我们就可以使用梯度下降来求解$w$和$b$，使$J(w,b)$最小。梯度下降的计算方式如下
 
 $$
-Repeat \{ \\
-    w := w - \alpha\frac{dJ(w,b)}{dw} \\
-    b := b - \alpha\frac{dJ(b,b)}{db}
-\}
+w := w - \alpha\frac{dJ(w,b)}{dw} \\
+b := b - \alpha\frac{dJ(b,b)}{db} 
 $$
 
 上述式子通过不断的对$w$和$b$进行求偏导，最终使其收敛为一个稳定的值，其中$\alpha$为Learning Rate,用来控制梯度下降的幅度。在后面的Python代码中，使用`dw`表示 $\frac{dJ(w,b)}{dw}$，`db`表示$\frac{dJ(w,b)}{db}$，以此类推
@@ -94,7 +94,23 @@ $$
 
 则该算式的Computation Graph可以表示如下
 
-<img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-1.png">
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-1.png" class="md-img-center">
+
+接下来我们要思考如何对Graph中的每一项进行求导，这将是后面计算神经网络backpropagation的基础。显然如果有微积分基础的话，这并不难
+
+- $\frac{dJ}{dv} = 3$
+- $\frac{dJ}{du} = \frac{dJ}{dv} \times \frac{dv}{du} = 3 \times 1 = 3$
+- $\frac{dJ}{da} = \frac{dJ}{dv} \times \frac{dv}{da} = 3 \times 1 = 3$
+- $\frac{dJ}{db} = \frac{dJ}{dv} \times \frac{dv}{du} \times \frac{du}{db} = 3 \times 1 \times c = 3c$
+- $\frac{dJ}{dc} = \frac{dJ}{dv} \times \frac{dv}{du} \times \frac{du}{dc} = 3 \times 1 \times b = 3b$
+
+在接下来的代码中，我们需要表示上面的每个导数值，其表示方式为
+
+$$
+\frac{dFinalOutputVar}{dvar}
+$$
+
+这种写法太过冗余，因此，如果想表示$\frac{dJ}{da}$，在代码中可直接写成`da`，其余同理
 
 
 
