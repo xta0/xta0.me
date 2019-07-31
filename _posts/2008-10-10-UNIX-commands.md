@@ -6,6 +6,13 @@ title: UNIX 常用命令
 categories: [UNIX]
 ---
 
+## 用户管理
+
+- `su` 切换用户
+	- `su - USERNAME` 使用 login shell 方式切换用户
+- `sudo` 以其他用户身份执行命令
+	- `visudo` 
+
 ## 文件操作
 
 - `echo`：输出字符
@@ -34,7 +41,7 @@ categories: [UNIX]
 	- `rm -rf`
 	- `rm -rf test1/test2 -v`：查看删除过程
 
-## File Permission
+### 文件权限
 
 以下面这两条记录为例：
 
@@ -82,10 +89,7 @@ drwxr-xr-x    755
 -rw-------    600
 ```
 
-- [Linux/Mac OS下文件夹的含义](http://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard)
-
-
-## 文件压缩
+### 文件压缩
 
 - **使用zip**
 
@@ -103,12 +107,19 @@ unzip archive_name.zip
 ```shell
 #To compress
 tar -zcvf archive_name.tar.gz folder_to_compress
-
 #To extract
 tar -zxvf archive_name.tar.gz
 ```
 
-## Network
+### 加密
+
+- 查看RSA的FingerPrint
+
+```shell
+ssh-keygen -l -f rsa_key.pub
+```
+
+## 网络操作
 
 - 查看端口进程
 
@@ -136,15 +147,8 @@ For sending data with POST and PUT requests, these are common `curl` options:
 - data
 	- form urlencoded: `-d "param1=value1&param2=value2"` or `-d @data.txt`
 	- json: `-d '{"key1":"value1", "key2":"value2"}'` or `-d @data.json`
-  
-## 加密
 
-- 查看RSA的FingerPrint
-
-```shell
-ssh-keygen -l -f rsa_key.pub
-```
 
 ## Resouces
 
-- [NM Command](https://www.mkssoftware.com/docs/man1/nm.1.asp)
+- [Linux/Mac OS下文件夹的含义](http://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard)
