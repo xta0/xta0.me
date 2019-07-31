@@ -62,19 +62,19 @@ z = np.dot(w.T,x)+b
 
 ### Cost function
 
-对于某组训练集可知其Loss Function为
+对于某一组训练集可知其Loss函数为
 
 $$
 L(\hat(y),y) = - (y\log{\hat{y}}) + (1-y)\log{(1-\hat{y})} 
 $$
 
-我们将所有训练样本一起计算，则可以得到Cost function
+然后我们对所有$m$组训练集都计算Loss函数，之后再求平均，则可以得到Cost function
 
 $$
 J(w,b) = \frac{1}{m}\sum_{i=1}^{m}L(\hat{y}^{(i)}, y^{(i)}) = -\frac{1}{m}\sum_{i=1}^{m}[(y^{(i)}\log{\hat{y}^{(i)}}) + (1-y^{(i)})\log{(1-\hat{y}^{(i)})} ]
 $$
 
-### Gradient Descent
+## Gradient Descent
 
 有了Cost funciton之后，我们就可以使用梯度下降来求解$w$和$b$，使$J(w,b)$最小。梯度下降的计算方式如下
 
@@ -84,6 +84,8 @@ b := b - \alpha\frac{dJ(w,b)}{db}
 $$
 
 上述式子通过不断的对$w$和$b$进行求偏导，最终使其收敛为一个稳定的值，其中$\alpha$为Learning Rate,用来控制梯度下降的幅度。在后面的Python代码中，使用`dw`表示 $\frac{dJ(w,b)}{dw}$，`db`表示$\frac{dJ(w,b)}{db}$，以此类推。
+
+### Computation Graph
 
 虽然我们有了上面的算式，但如何有效的计算它是我们接下来要讨论的问题，这里我们介绍一种使用**Computation Graph**的思路，所谓的Computation Graph的概念，基本思想是将每一步运算都用一个节点表示，然后将这些节点串联起来得到一个Graph，举例来说，假设有一个函数为
 
@@ -119,6 +121,8 @@ $$
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-2.png" class="md-img-center">
 
+### Loss Function
+
 理解了Computation Graph，我们回到算梯度下降上来，我们先看一种简单的情况，假设我们只有一组训练样本，该样本中只有两个feature，$x_1$和$x_2$，我们用$w_1$和$w_2$表示两个feature对应的权重，则预测的model可以表示为
 
 $$
@@ -148,11 +152,13 @@ $$
 - $dw_1 = \frac {dL(a,y)} {dw_1} = x_1 \times dz$ 
 - $dw_2 = \frac {dL(a,y)} {dw_2} = x_2 \times dz$
 
+### Cost Function
+
 接着我们可以考虑使用上述方法来计算逻辑回归的cost function，如前所述，对于任意一组的训练集，我们用$x^{(i)}$表示第i个样本， 每个样本$x^{(i)}$包含$n$个feature，则$x^{(i)}$是`n x 1`的，每组样本的预测结果用$\hat{y}^{(i)}$或$a^{(i)}$表示，假设整个训练集有$m$组样本，则对于cost function可以表示为
 
 $$
 J(w,b) = \frac{1}{m}\sum_{i=1}^{m}L(a^{(i)}, y) \\
-\hat{y}^{(i)}$ = $a^{(i)}$ = \sigma(z^{(i)}) = \sigma(w^tx^{(i)} + b)
+\hat{y}^{(i)} = a^{(i)} = \sigma(z^{(i)}) = \sigma(w^tx^{(i)} + b)
 $$
 
 可以看到，cost函数只是loss函数的平均值，现在我们假设$n=2$，则每组样本都有两个feature，对应的$w^{(i)}$是$2\times1$的，即`[w1,w2]`，因此对$dw_1^{(i)}$的计算只需要循环$m$次累加$\frac{d(a^{(i)}, y^{(i)})}{dw_1}$，然后求平均即可，$dw_2^{(i)}$同理
