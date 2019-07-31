@@ -134,8 +134,8 @@ $$
 为了使Loss函数的值最小，我们需要使用梯度下降来计算$w_1$,$w_2$和$b$
 
 $$
-w_1 := w_1 - \alpha\frac{dL(a,y}{dw_1} \\
-w_2 := w_2 - \alpha\frac{dL(a,y}{dw_2} \\
+w_1 := w_1 - \alpha\frac{dL(a,y)}{dw_1} \\
+w_2 := w_2 - \alpha\frac{dL(a,y)}{dw_2} \\
 b := b - \alpha\frac{dL(a,y)}{db} 
 $$
 
@@ -144,10 +144,52 @@ $$
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-4.png" class="md-img-center">
 
 - $da = \frac {dL(a,y)} {da} = - \frac{y}{a} + \frac{1-y}{1-a}$
-- $dz = \frac {dL(a,y)} {da} = \frac {dL(a,y)}{da} \times \frac {da}{dz} = a-y$
+- $dz = \frac {dL(a,y)} {dz} = \frac {dL(a,y)}{da} \times \frac {da}{dz} = a-y$
 - $dw_1 = \frac {dL(a,y)} {dw_1} = x_1 \times dz$ 
-- $dw_2 = \frac {dL(a,y)} {dw_2} = x_2 \times dz$ 
-- $db = \frac {dL(a,y)} {db} = dz$ 
+- $dw_2 = \frac {dL(a,y)} {dw_2} = x_2 \times dz$
+
+接着我们可以考虑使用上述方法来计算逻辑回归的cost function，如前所述，对于任意一组的训练集，我们用$x^{(i)}$表示第i个样本， 每个样本$x^{(i)}$包含$n$个feature，则$x^{(i)}$是$n \times 1$的，每组样本的预测结果用$\{hat}y^{(i)}$或$a^{(i)}$表示，假设整个训练集有$m$组样本，则对于cost function可以表示为
+
+$$
+J(w,b) = \frac{1}{m}\sum_{i=1}^{m}L(a^{(i)}, y) \\
+$\{hat}y^{(i)}$ = $a^{(i)}$ = \sigma(z^{(i)}) = \sigma(w^tx^{(i)} + b)
+$$
+
+可以看到，cost函数只是loss函数的平均值，现在我们假设$n=2$，则每组样本都有两个feature，对应的$w^{(i)}$是$2\times1$的，即`[w1,w2]`，因此对$dw_1^{(i)}$的计算只需要循环$m$次累加$\frac{d(a^{(i)}, y^{(i)})}{dw_1}$，然后求平均即可，$dw_2^{(i)}$同理
+
+$$
+\frac{dJ(w,b)}{dw_1} = \frac{1}{m}\sum_1^{m}\frac{d(a^{(i)}, y^{(i)})}{dw_1}
+$$
+
+伪代码如下
+
+```python
+J=0, dw1=0, dw2=0, db=0
+for i=1 to m 
+    z[i] = w.tx[i] + b
+    a[i] = sigmoid(z[i])
+    J += -y[i]*log(a[i]) + (1-y[i])log(1-a[i])
+    dz[i] = a[i] - y[i]
+    for j=1 to n
+        dw[j] += x[i][j] * dz[i] #第i组样本的第j个feature
+    db += dz[i]
+        # if n = 2
+            #dw1 += x[i][1] * dz[i]
+            #dw2 += x[i][2] * dz[i]
+dw1 = dw1 / m
+dw2 = dw2 / m
+db  = db / m
+
+w1 = w1 - alpha*dw1
+w2 = w2 - alpha*dw2
+b  = b - alpha*db
+```
+上面代码展示了一次梯度下降的计算过程
+
+
+
+待求解的的$w$和$b$均为向量，如前所述，假设组样本都有
+
 
 
 
