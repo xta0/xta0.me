@@ -298,9 +298,9 @@ x^{(1)} & x^{(2)} & x^{(3)} & . & . & . & x^{(m)} \\
 \end{bmatrix}
 \begin{bmatrix}
 dz^{(1)} \\
-.
-.
-.
+. \\
+. \\
+. \\
 dz^{(m)}
 \end{bmatrix}
 = \frac{1}{m}[x^{(1)}dz^{(1)},..., x^{(m)}dz^{(m)}]
@@ -318,7 +318,6 @@ for i in range(1,1000):
     dZ = A-Y
     dw = 1/m*X*(dZ.T)
     db = 1/m*np.sum(dZ)
-
     ## gradient descent
     w := w-alpha*dw
     b := b-alpha*db
