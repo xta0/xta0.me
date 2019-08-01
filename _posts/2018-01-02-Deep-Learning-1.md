@@ -17,7 +17,7 @@ $$
 \hat{y} = \sigma(w^Tx + b)
 $$
 
-其中$\hat{y}$, $x$, $w$ 和 $b$ 皆为矩阵，$\sigma$为sigmoid函数，定义为$\sigma(z) = \frac{1}{1+e^{-z}}$。我们假设第$i$组训练样本用向量$x^{(i)}$表示，则$x^{(i)}$是$nx1$的（注意是n行1列），那么假设一共有$m$组训练样本，那么$x$矩阵表示为
+其中$\hat{y}$, $x$, $w$ 和 $b$ 皆为矩阵，$\sigma$为sigmoid函数，定义为$\sigma(z) = \frac{1}{1+e^{-z}}$。我们假设第$i$组训练样本用向量$x^{(i)}$表示，则$x^{(i)}$是$nx1$的（注意是n行1列），那么假设一共有$m$组训练样本，则样本矩阵$X$表示为
 
 $$
 X= 
@@ -48,11 +48,7 @@ b_1 & b_2 & . & . & . &b_n
 \end{bmatrix}
 $$
 
-$$
-a^{(i)} = \sigma(z^{(i)}) 
-$$
-
-则$\hat{y}$可以表示为
+对任意训练集$i$，另$a^{(i)} = \sigma(z^{(i)})$，则最后的预测结果$\hat{y}$可以表示为
 
 $$
 \hat{y} = 
@@ -235,8 +231,23 @@ for i=1 to m
     db += dz[i]
 dw = dw/m
 ```
+回到前面第一节计算矩阵$Z$的式子上
 
-### Vectorize Forword propagation
+$$
+Z=
+\begin{bmatrix}
+z^{(1)} & z^{(2)} & . & . & . &z^{(m)}  
+\end{bmatrix}
+= w^{T}X + 
+\begin{bmatrix}
+b_1 & b_2 & . & . & . &b_n
+\end{bmatrix}
+$$
+如果使用numpy表示，则只需要一行代码
+
+```python
+Z = np.dot(w.T,X) + b #b is a 1x1 number
+```
 
 
 
