@@ -221,6 +221,8 @@ a = a*2 #[2,2]
 J=0,db=0
 dw = np.zeros([n,1]) 
 for i=1 to m 
+    #z是1xm的
+    #x是nxm的
     z[i] = w.tx[i] + b
     a[i] = sigmoid(z[i])
     J += -y[i]*log(a[i]) + (1-y[i])log(1-a[i])
@@ -231,6 +233,8 @@ for i=1 to m
     db += dz[i]
 dw = dw/m
 ```
+### Compute Forward Propagation
+
 回到前面第一节计算矩阵$Z$的式子上
 
 $$
@@ -243,14 +247,79 @@ z^{(1)} & z^{(2)} & . & . & . &z^{(m)}
 b_1 & b_2 & . & . & . &b_n
 \end{bmatrix}
 $$
+
 如果使用numpy表示，则只需要一行代码
 
 ```python
 Z = np.dot(w.T,X) + b #b is a 1x1 number
 ```
+### Compute Backwward Propagation
 
+在通过Loss函数计算w值时，我们曾给出过下面式子
 
+$$
+dz^{(1)} = a^{(1)} - y^{(1)} \\
+dz^{(2)} = a^{(2)} - y^{(2)} \\
+... \\
+dz^{(i)} = a^{(i)} - y^{(i)} \\
+$$
 
+训练集共有$m$，则$dz$的矩阵(`1xm`)表示为
 
+$$
+dZ = [dz^{(1)}, dz^{(2)}, ... , dz^{(m)}]
+$$
 
+另 $A = [a^{(i)}...a^{(m)}]$, $Y = [y^{(i)}...y^{(m)}]$，则
 
+$$
+dZ = A - Y = [a^{(1)} - y^{(1)}, a^{(2)} - y^{(2)}, ... , a^{(m)} - y^{(m)}]
+$$
+
+在前面求解$dw$的代码中，我们虽然将$dw$向量化后减少了一重循环，但最外层还有一个`[1,m]`的for循环，接下来我们的任务是将这个for循环也向量化。
+
+我们的目的是求解$dw$和$d$`，其中$db$为
+
+$$
+db = \frac{1}{m}\sum_{i=1}^{m}dz^{(i)}
+$$
+
+上述式子可以用numpy一行表示 `db = 1/m * np.sum(dZ)`，对于$dw$，有
+
+$$
+dw = \frac{1}{m}XdZ^T \\
+= \frac{1}{m}
+\begin{bmatrix}
+. & . & . & . & . & . & . \\
+. & . & . & . & . & . & . \\
+x^{(1)} & x^{(2)} & x^{(3)} & . & . & . & x^{(m)} \\
+. & . & . & . & . & . & . \\
+. & . & . & . & . & . & . \\
+\end{bmatrix}
+\begin{bmatrix}
+dz^{(1)} \\
+.
+.
+.
+dz^{(m)}
+\end{bmatrix}
+= \frac{1}{m}[x^{(1)}dz^{(1)},..., x^{(m)}dz^{(m)}]
+$$
+
+综上，一个简单的神经网络伪代码实现如下
+
+```python
+## 1000 iterations
+for i in range(1,1000):
+    ## Forward prop
+    Z = np.dot(w.T,x) + b
+    A = sigmoid(Z
+    ## Backward prop
+    dZ = A-Y
+    dw = 1/m*X*(dZ.T)
+    db = 1/m*np.sum(dZ)
+
+    ## gradient descent
+    w := w-alpha*dw
+    b := b-alpha*db
+```
