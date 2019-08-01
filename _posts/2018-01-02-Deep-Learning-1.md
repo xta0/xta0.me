@@ -20,7 +20,7 @@ $$
 其中$\hat{y}$, $x$, $w$ 和 $b$ 皆为矩阵，$\sigma$为sigmoid函数，定义为$\sigma(z) = \frac{1}{1+e^{-z}}$。我们假设第$i$组训练样本用向量$x^{(i)}$表示，则$x^{(i)}$是$nx1$的（注意是n行1列），那么假设一共有$m$组训练样本，那么$x$矩阵表示为
 
 $$
-x= 
+X= 
 \begin{bmatrix}
 . & . & . & . & . & . & . \\
 . & . & . & . & . & . & . \\
@@ -30,20 +30,23 @@ x^{(1)} & x^{(2)} & x^{(3)} & . & . & . & x^{(m)} \\
 \end{bmatrix}
 $$
 
-类似的$w$是一个`nx1`的向量，则$w^Tx$是`1xm`的, 对应的常数项$b$也是`1xm`的矩阵，另
+类似的$w$是一个`nx1`的向量，则$w^Tx$是`1xm`的, 对应的常数项$b$也是`1xm`的矩阵。对任意第$i$个训练样本，有
 
 $$
-z^{(i)} = w^Tx^{(i)} + b \\
+z^{(i)} = w^Tx^{(i)} + b 
+$$
+
+对所有训练集则可以使用矩阵运算来表示
+
+$$
 \begin{bmatrix}
 z^{(1)} & z^{(2)} & . & . & . &z^{(m)}  
 \end{bmatrix}
-= w^{T}x + 
+= w^{T}X + 
 \begin{bmatrix}
 b_1 & b_2 & . & . & . &b_n
 \end{bmatrix}
 $$
-
-另
 
 $$
 a^{(i)} = \sigma(z^{(i)}) 
@@ -194,11 +197,49 @@ b  = b - alpha*db
 
 ## Vectorization 
 
-Vectorization是用来取代for循环的一种对于上面$z$的计算，涉及到矩阵相乘和相加，通常的计算方式是使用两层for循环，根据矩阵乘法和加法的定义完成计算。但这种实现方式效率不高，我们可以使用向量化的方式，使用向量化的好处是对于矩阵运算可以显著的提升计算效率，numpy提供了方便的API可以取代for循环而进行矩阵的数值运算
+由于深度学习涉及大量的矩阵间的数值计算，而且数据量有很大，使用`for`计算时间成本太高。Vectorization是用来取代for循环的一种针对矩阵数值计算的计算方式，其底层可以通过GPU或者CPU(SIMD)的并行指令集来实现。不少数值计算库都有相应的实现，比如Python的Numpy，C++的Eigen等。
+
+比如我们想要计算$z = w^Tx+b$，我们假设$x$和$w$都是`nx1`的向量，我们使用Python来对比下两种计算方式的差别
 
 ```python
-z = np.dot(w.T,x)+b
+#for loop
+z = 0
+for i in range(1,n):
+    z += w[i] * x[i]
+z+=b
+
+# use numpy
+# vectorized version of doing 
+# matrix multiplications
+z = np.dot(w.T,x)+b 
 ```
+numpy数组的另一个特点是可以做element-wise的矩阵运算，这样让我们避开了for循环的使用
+
+```python
+a = np.ones([1,2])  #[1,1]
+a = a*2 #[2,2]
+```
+接下来我们可以使用numpy重新实现以下上一节计算`dw`代码的for循环部分
+
+```python
+J=0,db=0
+dw = np.zeros([n,1]) 
+for i=1 to m 
+    z[i] = w.tx[i] + b
+    a[i] = sigmoid(z[i])
+    J += -y[i]*log(a[i]) + (1-y[i])log(1-a[i])
+    dz[i] = a[i] - y[i]
+    # for j=1 to n
+        # dw[j] += x[i][j] * dz[i] #第i组样本的第j个feature
+    dw += x[i]*dz[i]
+    db += dz[i]
+dw = dw/m
+```
+
+### Vectorize Forword propagation
+
+
+
 
 
 
