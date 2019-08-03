@@ -1,5 +1,4 @@
 ---
-updated: '2017-11-30'
 list_title: 深度学习 | Logistic Regression as a Neural Network
 title: Logistic Regression as a Neural Network
 layout: post
