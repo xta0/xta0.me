@@ -14,7 +14,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 - $a^{[l]}_i$: 表示第$l$层神经网络的第$i$个节点
 - $a^{[l] (m)}_i$：表示第$m$个训练样本的第$l$层神经网络的第$i$个节点
 
-遵循上述的Notation，一个两层的神经网络可用下图描述
+遵循上述的Notation，一个只有一组训练样本的$[x_1, x_2, x_3]$的两层神经网络可用下图描述
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w3-1.png" class="md-img-center">
 
@@ -36,10 +36,12 @@ $$
 $$
 \begin{align*}
 & for\ i=1\ to\ m\ \{ \\
+\\
 & \qquad z^{[1] (i)} = W^{[1] (i)}x^{(i)} + b^{[1]} \\
 & \qquad a^{[1] (i)} = \sigma(z^{[1] (i)}) \\ 
 & \qquad z^{[2] (i)} = W^{[2]}a^{[1] (i)} + b^{[2]} \\
 & \qquad a^{[2] (i)} = \sigma(z^{[2] (i)}) \\
+\\
 & \}
 \end{align*}
 $$
@@ -79,4 +81,10 @@ $$
 
 ### Activation Functions
 
-对于Activation Functions选择的几点
+如果神经网路的某个Layer要求输出结果在`[0,1]`之间，那么选取$\sigmoid(x) = \frac{1}{1+e^{-x}}$作为Activation函数，此外，则可以使用**Rectified Linear Unit**函数：
+
+$$
+ReLU(z) = max(0,z)
+$$
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w3-3.png" class="md-img-center">
