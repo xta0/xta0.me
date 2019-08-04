@@ -6,14 +6,20 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
-<img src="{{site.baseurl}}/assets/images/2018/01/dp-w4-1.png" class="md-img-center">
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w4-1.png" class="md-img-center" width="60%">
 
 ### Notations
 
 - $n^{[l]}$: #units in layer $l$
 - $a^{[l]}$: #activations units in layer $l$
-    - $a^{[l]}=g^{[l]}(Z^{[l]})$
+    - $a^{[l]}=g^{[l]}(z^{[l]})$
     - $a^{[0]} = X$ 
-- $W^{[l]}$: weights for $Z^{[l]}$
+- $W^{[l]}$: weights for $z^{[l]}$
 - $b^{[l]}$
+- $Z^[{l}] = W^[{l}]A^{[l-1]} + $b^{[l]}$
+- $A^[{l}] = g^{[l]}(Z^{[l]})$
+
+其中，$W^{[l]}$矩阵的维度为$(n^{[l]}, n^{[l-1]})$, $b^{[l]}$的维度为$(n^{[l]},1)$，$Z^{[l]}$和$A^{[l]}$均为$(n^{[l]},m)$ （m为训练样本数量）
+
+### Why Deep Nerual Networks
 
