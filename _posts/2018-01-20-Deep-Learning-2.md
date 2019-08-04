@@ -1,10 +1,12 @@
 ---
-list_title: 深度学习 | Neural Networks Overview
-title: Neural Networks Overview
+list_title: 深度学习 | Shallow Neural Networks
+title: Shallow Neural Networks
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
+
+> 本文部分图片截取自课程视频[Nerual Networks and Deep Learning](https://www.coursera.org/learn/neural-networks-deep-learning)
 
 ### Notations
 
@@ -136,12 +138,9 @@ $$
 - $dZ^{[2]} = A^{[2]} - Y$ 
 - $dW^{[2]} = \frac{1}{m}dZ^{[2]}A^{[1]^{T}}$ 
 - $db^{[2]} = \frac{1}{m}np.sum(dz^{[2]}, axis=1, keepdims=True)$
-- $dz^{[1]} = W^{[2]^{T}}dZ^{[2]} * g^{[1]^{'}}(Z^{[1]}) \quad (element-wise product)$
+- $dz^{[1]} = W^{[2]^{T}}dZ^{[2]} * g^{[1]^{'}}(Z^{[1]}) \quad (element-wise \ product)$
 - $dW^{[1]} = \frac{1}{m}dZ^{[1]}X^{T}$ 
 - $db^{[1]} = \frac{1}{m}np.sum(dz^{[1]}, axis=1, keepdims=True)$
-
-### Random Initialization
-
 
 
 
