@@ -44,7 +44,7 @@ $$
 \end{align*}
 $$
 
-注意，这里面$W^{[1] (i)}$是`4x3`二维矩阵，结合前面文章可知，我们可以用向量化计算来取代`for`循环，另
+结合前面文章可知，我们可以用向量化计算来取代`for`循环，另
 
 $$
 X= 
@@ -101,8 +101,11 @@ $$
 如果神经网路的某个Layer要求输出结果在`[0,1]`之间，那么选取$\sigma(x) = \frac{1}{1+e^{-x}}$作为Activation函数，此外，则可以使用**Rectified Linear Unit**函数：
 
 $$
-ReLU(z) = max(0,z)
+ReLU(z) = g(z) = max(0,z)
 $$
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w3-3.png" class="md-img-center" width="60%">
+
+### Gradient Descent
+
 
