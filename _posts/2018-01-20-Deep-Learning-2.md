@@ -157,7 +157,9 @@ $$
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w3-4.gif" class="md-img-center">
 
 
-## Deep-Layer Neural Networks
+### Deep-Layer Neural Networks
+
+Now we have a better understanding of how the two-layer neural networks works, we can apply and extend the idea to the multi-layer neural networks as shown below:
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w4-1.png" class="md-img-center" width="60%">
 
@@ -168,7 +170,7 @@ $$
     - $a^{[l]}=g^{[l]}(z^{[l]})$
     - $a^{[0]} = X$ 
 - $W^{[l]}$: weights for $z^{[l]}$
-- $b^{[l]}$
+- $b^{[l]}$: bias vector
 
 ### Forward Propagation for Layer $l$
 
@@ -183,6 +185,8 @@ $$
 $$
 
 其中，$W^{[l]}$矩阵的维度为$(n^{[l]}, n^{[l-1]})$, $b^{[l]}$的维度为$(n^{[l]},1)$，$Z^{[l]}$和$A^{[l]}$均为$(n^{[l]},m)$ （m为训练样本数量）
+
+Although we can use vectorization to compute $A^{[l]}$ more easily, we still need to use a explicit for-loop to loop thourgh all the hidden layers, as the deep neural networks always have more than one layers.
 
 ### Backward Propagation for layer $l$
 
@@ -217,5 +221,3 @@ $$
 - #hidden units 
 - choice of activation function
 - ...
-
-
