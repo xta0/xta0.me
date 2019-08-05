@@ -16,10 +16,32 @@ categories: ["AI", "Machine Learning","Deep Learning"]
     - $a^{[0]} = X$ 
 - $W^{[l]}$: weights for $z^{[l]}$
 - $b^{[l]}$
-- $Z^[{l}] = W^[{l}]A^{[l-1]} + $b^{[l]}$
-- $A^[{l}] = g^{[l]}(Z^{[l]})$
+
+### Forward Propagation for Layer $l$
+
+- Input $a^{[l-1]}$
+- Output $a^{[l]}$, cache (z^{[l]})
+
+$$
+\begin{align*}
+& Z^{[l]} = W^{[l]}A^{[l-1]} + $b^{[l]}
+& A^{[l]} = g^{[l]}(Z^{[l]})
+\end{align*}
+$$
 
 其中，$W^{[l]}$矩阵的维度为$(n^{[l]}, n^{[l-1]})$, $b^{[l]}$的维度为$(n^{[l]},1)$，$Z^{[l]}$和$A^{[l]}$均为$(n^{[l]},m)$ （m为训练样本数量）
 
-### Why Deep Nerual Networks
+### Backward Propagation for layer $l$
+
+- Input $da^{[l]}$
+- Output $da^{[l-1]}$, $dW^{[l]}$, $db^{[l]}$
+
+$$
+\begin{align*}
+& dz^{[l]} = da^{[l]} *  g^{[l]'}(z^{[l]}) \quad (element-wise \ product)
+& dw^{[l]} = dz^{[l]}a^{[l-1]}
+& db^{[l]} = dz^{[1]}
+& da^{[l-1]} = w^{[l]^T}dz^{[l]}
+\end{align*}
+$$
 
