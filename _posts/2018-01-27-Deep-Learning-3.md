@@ -24,8 +24,8 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 $$
 \begin{align*}
-& Z^{[l]} = W^{[l]}A^{[l-1]} + $b^{[l]}
-& A^{[l]} = g^{[l]}(Z^{[l]})
+& Z^{[l]} = W^{[l]}A^{[l-1]} + $b^{[l]} \\
+& A^{[l]} = g^{[l]}(Z^{[l]}) \\
 \end{align*}
 $$
 
@@ -38,10 +38,20 @@ $$
 
 $$
 \begin{align*}
-& dz^{[l]} = da^{[l]} *  g^{[l]'}(z^{[l]}) \quad (element-wise \ product)
-& dw^{[l]} = dz^{[l]}a^{[l-1]}
-& db^{[l]} = dz^{[1]}
-& da^{[l-1]} = w^{[l]^T}dz^{[l]}
+& dz^{[l]} = da^{[l]} *  g^{[l]'}(z^{[l]}) \quad (element-wise \ product) \\
+& dw^{[l]} = dz^{[l]}a^{[l-1]} \\
+& db^{[l]} = dz^{[1]} \\
+& da^{[l-1]} = w^{[l]^T}dz^{[l]} \\
 \end{align*}
 $$
 
+- Vetorized version
+
+$$
+\begin{align*}
+& dZ^{[l]} = dA^{[l]} *  g^{[l]'}(Z^{[l]}) \quad (element-wise \ product) \\
+& dW^{[l]} = \frac{1}{m}dZ^{[l]}A^{[l-1]} \\
+& db^{[l]} = \frac{1}{m}np.sum(dZ^{[l]}, axis=1, keepdims=True) \\
+& dA^{[l-1]} = W^{[l]^T}dZ^{[l]} \\
+\end{align*}
+$$
