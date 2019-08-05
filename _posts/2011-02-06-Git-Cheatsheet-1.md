@@ -8,30 +8,19 @@ categories: [Git,Cheatsheet]
 ### Config
 
 - Global Configuration
-    
-    ```shell
-    git config --global user.name "your_name"
-    git config --global user.email "your_email@domain.com"
-    ```
+    - `git config --global user.name "your_name"`
+    - `git config --global user.email "your_email@domain.com"`
 
 - Configuration for project
-
-    ```shell
-    git config --local user.name "your_name"
-    git config --local user.email  "your_email@domain.com"
-    ```
-
-    该命令实际上是修改`.git`下的config文件中的`[user]`字段
+    - `git config --local user.name "your_name"`
+    - `git config --local user.email  "your_email@domain.com"`
+    - 该命令实际上是修改`.git`下的config文件中的`[user]`字段
 
 - Show Configuration
-
-    ```shell
-    git config --list --local
-    git config --list --global
-    ```
+    - git config --list --local
+    - git config --list --global
 
 ### Add/Remove Files
-
 
 - Remove
     - `git rm file_name`
@@ -52,9 +41,12 @@ git reset path_to_the_file
 
 ### Commit
 
+- 修改当前commit的message：`git commit --amend`
+- 修改之前commit的message：`git rebase -i`
+
+
 - 参数
     - `-m`, commit信息
-
 - 恢复到上一次commit的状态
     ```
     git checkout -- .
@@ -66,7 +58,6 @@ git reset path_to_the_file
     ```
 
     对于某次Commit，其auther和committer可能不同，
-
     
 ### Repo
 
@@ -101,21 +92,11 @@ git reset path_to_the_file
     ```
 
 - 删除分支
+    - 删除本地分支：`git branch -d <branchName>`
+    - 删除远程分支：`git push origin --delete <branchName>`
 
-```
-//删除本地分支
-git branch -d <branchName>
-//删除远程分支
-git push origin --delete <branchName>
-```
 
-- 合并
-
-```
-git merge branch_to_merge
-```
-
-- 解决合并冲突
+### 解决合并冲突
 
 - `grep -lr '<<<<<<<' . | xargs git checkout --ours`
 - `grep -lr '<<<<<<<' . | xargs git checkout --theirs`
