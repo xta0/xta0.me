@@ -1,6 +1,6 @@
 ---
-list_title: 深度学习 | Shallow Neural Networks
-title: Shallow Neural Networks
+list_title: 深度学习 | Deep-Layer Neural Networks
+title: Deep-Layer Neural Networks
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
@@ -155,5 +155,67 @@ $$
 其中对$\alpha$的取值需要注意，不同learning rate的选取对梯度下降收敛的速度有着重要的影响，如下图
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w3-4.gif" class="md-img-center">
+
+
+## Deep-Layer Neural Networks
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w4-1.png" class="md-img-center" width="60%">
+
+### Notations
+
+- $n^{[l]}$: #units in layer $l$
+- $a^{[l]}$: #activations units in layer $l$
+    - $a^{[l]}=g^{[l]}(z^{[l]})$
+    - $a^{[0]} = X$ 
+- $W^{[l]}$: weights for $z^{[l]}$
+- $b^{[l]}$
+
+### Forward Propagation for Layer $l$
+
+- Input $a^{[l-1]}$
+- Output $a^{[l]}$, cache (z^{[l]})
+
+$$
+\begin{align*}
+& Z^{[l]} = W^{[l]}A^{[l-1]} + $b^{[l]} \\
+& A^{[l]} = g^{[l]}(Z^{[l]}) \\
+\end{align*}
+$$
+
+其中，$W^{[l]}$矩阵的维度为$(n^{[l]}, n^{[l-1]})$, $b^{[l]}$的维度为$(n^{[l]},1)$，$Z^{[l]}$和$A^{[l]}$均为$(n^{[l]},m)$ （m为训练样本数量）
+
+### Backward Propagation for layer $l$
+
+- Input $da^{[l]}$
+- Output $da^{[l-1]}$, $dW^{[l]}$, $db^{[l]}$
+
+$$
+\begin{align*}
+& dz^{[l]} = da^{[l]} *  g^{[l]'}(z^{[l]}) \quad (element-wise \ product) \\
+& dw^{[l]} = dz^{[l]}a^{[l-1]} \\
+& db^{[l]} = dz^{[1]} \\
+& da^{[l-1]} = w^{[l]^T}dz^{[l]} \\
+\end{align*}
+$$
+
+- Vetorized version
+
+$$
+\begin{align*}
+& dZ^{[l]} = dA^{[l]} *  g^{[l]'}(Z^{[l]}) \quad (element-wise \ product) \\
+& dW^{[l]} = \frac{1}{m}dZ^{[l]}A^{[l-1]} \\
+& db^{[l]} = \frac{1}{m}np.sum(dZ^{[l]}, axis=1, keepdims=True) \\
+& dA^{[l-1]} = W^{[l]^T}dZ^{[l]} \\
+\end{align*}
+$$
+
+### Hyperparameters
+
+- learning rate $\alpha$
+- #iterations
+- #hidden layer 
+- #hidden units 
+- choice of activation function
+- ...
 
 
