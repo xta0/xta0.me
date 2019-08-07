@@ -20,6 +20,10 @@ categories: [Git,Cheatsheet]
     - git config --list --local
     - git config --list --global
 
+### Log
+
+- 查看前n条log
+
 ### Add/Remove Files
 
 - Remove

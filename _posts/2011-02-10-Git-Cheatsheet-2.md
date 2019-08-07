@@ -1,9 +1,9 @@
 ---
 updated: '2019-01-09'
 layout: post
-title: Git简明操作（二）
-list_title: Git简明操作（二） | Git Commands Quick Reference
-categories: [Git,Cheatsheet]
+title: Git的内部工作原理
+list_title: Git的内部工作原理 | Git Internal
+categories: [Git]
 ---
 
 ### `.git`目录
