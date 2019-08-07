@@ -65,10 +65,46 @@ Git中有三种对象，分别是`Commit`，`Tree`和`Blob`。每种对象均有
 
 <img src="{{site.baseurl}}/assets/images/2011/02/git-objects.png" class="md-img-center">
 
-举一个实际的例子，假如我们在一个git仓库中创建了一个文件夹`doc`，在该目录下新创建了一个`readme`的文件，此时如果我们进行commit操作，则会生成四个对象，他们之间的关系如下图所示
+举一个实际的例子，假如我们在一个git仓库中创建了一个文件夹`doc`，在该目录下新创建了一个`readme`的文件
+
+```shell
+└── doc
+    └── readme.md
+```
+在执行`add`命令前，`.git/objects`的目录是空的，说明只创建文件git是不会将其加入到暂存区的。此时我们执行`add`操作，观察objects目录的变化
+
+```shell
+> find .git/objects -type f
+.git/objects/8d/0e41234f24b6da002d962a26c2495ea16a425f
+> git cat-file -t 8d0e
+blob
+> git cat-file -p  8d0e
+hello git
+```
+可知objects下生成了一个blob, 也就是我们的readme文件，内容为`hello git`。然后我们进行commit操作，objects目录下会生成四个对象，
+
+```shell
+> find .git/objects -type f
+.git/objects/da/e6876e15d84cdec59319806e39272c5d58e7c9
+.git/objects/88/d0860df2c42bd9d9c2ed893eb43460a1871bbe
+.git/objects/5d/6d9f8679f21ea8a190a9222aa8f4d3c38e6344
+.git/objects/8d/0e41234f24b6da002d962a26c2495ea16a425f
+```
+我们逐个观察其类型
+
+```shell
+> git cat-file -t dae6
+commit
+> git cat-file -t 88d0
+tree
+> git cat-file -t 5d6d
+tree
+> git cat-file -t 8d0e
+blob
+```
+他们之间的关系如下图所示
 
 <img src="{{site.baseurl}}/assets/images/2011/02/git-objects-2.png" class="md-img-center">
-
 
 ### Detach HEAD
 
