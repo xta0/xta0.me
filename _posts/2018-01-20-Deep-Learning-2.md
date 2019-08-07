@@ -155,5 +155,3 @@ $$
 其中对$\alpha$的取值需要注意，不同learning rate的选取对梯度下降收敛的速度有着重要的影响，如下图
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w3-4.gif" class="md-img-center">
-
-
