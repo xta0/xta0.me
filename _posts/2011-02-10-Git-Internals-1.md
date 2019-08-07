@@ -106,15 +106,29 @@ blob
 
 <img src="{{site.baseurl}}/assets/images/2011/02/git-objects-2.png" class="md-img-center">
 
-### Detach HEAD
+### HEAD
 
-当我们checkout某个 commit的时候，我们可以能已经脱离了某个分支，此时Git会提醒我们处于Detach HEAD的状态。如果此时在该commit上进行了一些修改，则当我们切回某个分支时，Git会提示
+前面可知Head指向的是当前工作区的分支的最新commit，但是也可以指向仓库中的任意一个commit
+
+- Detach Head
+
+当我们checkout某个commit的时候，我们可以能已经脱离了某个分支，此时Git会提醒我们处于Detach HEAD的状态。如果此时在该commit上进行了一些修改，则当我们切回某个分支时，Git会提示
 
 ```shell
 If you want to keep it by creating a new branch, this may be a good time to do so with:
     git branch <new-branch-name> <commit-id>
 ```
 这说明当前在该commit上的修改并不会被自动保留或者合并到当前分支上，很可能会被Git当做垃圾处理掉。如果想要保留，需要单独建一个分支保留
+
+- HEAD 
+
+由于HEAD可以指代commit，对所有commit相关的git命令，均可以用HEAD进行替换，比如
+
+```shell
+# git diff <commit-1> <commit-2>
+git diff HEAD HEAD~1 
+#比对HEAD指向的commit和HEAD前一条commit之间的差别
+```
 
 ## Resource
 

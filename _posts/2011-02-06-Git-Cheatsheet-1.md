@@ -20,67 +20,15 @@ categories: [Git,Cheatsheet]
     - git config --list --local
     - git config --list --global
 
+
 ### Log
 
-- 查看前n条log
+- 查看前5条log：`git long -n5 --graph`
 
-### Add/Remove Files
+### File Operations
 
-- Remove
-    - `git rm file_name`
-- Rename
-    - `git mv file_name_1 file_name_2`, 重命名文件
-
-### Stash
-
-- Add
-    - `git add -u`, 将工作空间新增和被修改的文件添加的暂存区
-    - `git add .`, 将工作空间被修改和被删除的文件添加到暂存区(不包含没有纳入Git管理的新增文件)
-    - `git add -A`, stash所有修改
-
-- 从stash文件中删除一个
-```
-git reset path_to_the_file
-```
-
-### Commit
-
-- 修改本地当前的commit的message：`git commit --amend`
-- 修改本地之前的commit的message：`git rebase -i` 后选择`r`
-- 合并commit
-    - `git rebase -i `
-    - pick一个commit作为最终合并后的commit，其它的commit会合并到它上面
-
-- 参数
-    - `-m`, commit信息
-- 恢复到上一次commit的状态
-    ```
-    git checkout -- .
-    ```
-- 修改commit中的个人信息
-
-    ```
-    git commit --amend --author="Author Name <email@address.com>"`
-    ```
-
-    对于某次Commit，其auther和committer可能不同，
-    
-### Repo
-
-- Check remote repo 
-
-    ```
-    git remote -v 
-    ```
-- Change repo origin 
-
-    ```
-    git remote set-url origin https://xxxx.git
-    ```
-- Add remote url
-    - `git remote add upstream xxx`
-    - `git fetch upstream`
-    - `git merge upstream/master`
+- Remove: `git rm file_name`
+- Rename: `git mv file_name_1 file_name_2`, 重命名文件
 
 ### Branch
 
@@ -100,6 +48,52 @@ git reset path_to_the_file
 - 删除分支
     - 删除本地分支：`git branch -d <branchName>`
     - 删除远程分支：`git push origin --delete <branchName>`
+
+### Commit
+
+- 修改本地当前的commit的message：`git commit --amend`
+- 修改本地之前的commit的message：`git rebase -i` 后选择`r`
+- 合并commit
+    - `git rebase -i `
+    - pick一个commit作为最终合并后的commit，其它的commit会合并到它上面
+- revert当前本地的commit: `git reset --hard`
+
+- 参数
+    - `-m`, commit信息
+- 恢复到上一次commit的状态
+    ```
+    git checkout -- .
+    ```
+- 修改commit中的个人信息
+
+    ```
+    git commit --amend --author="Author Name <email@address.com>"`
+    ```
+
+    对于某次Commit，其auther和committer可能不同，
+
+### Stash
+
+- Add
+    - `git add -u`, 将工作空间新增和被修改的文件添加的暂存区
+    - `git add .`, 将工作空间被修改和被删除的文件添加到暂存区(不包含没有纳入Git管理的新增文件)
+    - `git add -A`, stash所有修改
+
+- 从stash文件中删除一个
+```
+git reset path_to_the_file
+```
+    
+### Repo
+
+- Check remote repo: `git remote -v `
+- Change repo's origin `git remote set-url origin https://xxxx.git`
+- Add remote origin
+    - `git remote add upstream xxx`
+    - `git fetch upstream`
+    - `git merge upstream/master`
+
+
 
 
 ### 解决合并冲突
