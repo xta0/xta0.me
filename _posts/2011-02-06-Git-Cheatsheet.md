@@ -1,7 +1,7 @@
 ---
 layout: post
-title: Git简明操作（一）
-list_title: Git简明操作（一） | Git Commands Quick Reference
+title: Git简明操作
+list_title: Git简明操作 | Git Commands Quick Reference
 categories: [Git,Cheatsheet]
 ---
 
@@ -31,6 +31,7 @@ categories: [Git,Cheatsheet]
 - 查看某次commit和HEAD之间的差异 `git diff HEAD <commit_2>`
 - 查看工作区和暂存区的差异 `git diff -- <filename1> <filename2>`
 - 查看暂存区和HEAD之间的差异 `git diff --cached`
+- 查看不同分支之间某个文件的差异 `git diff <branch1> <branch2> -- <filename>`
 
 ### File Operations
 
@@ -38,8 +39,9 @@ categories: [Git,Cheatsheet]
     - `git add -u`, 将工作空间新增和被修改的文件添加的暂存区
     - `git add .`, 将工作空间被修改和被删除的文件添加到暂存区(不包含没有纳入Git管理的新增文件)
     - `git add -A`, stash所有修改
-
-- Remove: `git rm file_name`
+- Remove: 
+    - `git rm file_name`
+    - 同时删除工作区和暂存区的文件
 - Rename: `git mv file_name_1 file_name_2`, 重命名文件
 
 ### Revert 
@@ -47,6 +49,14 @@ categories: [Git,Cheatsheet]
 - revert更工作区的提交: `git checkout -- <filename>`
 - revert暂存区的提交: `git reset HEAD -- <filename>` 
 - revert到某个commit `git reset --hard <commit_id>`
+
+### Stash
+
+- 将工作区变更存放到Stash区域: `git stash`
+- 查看Stash内容：`git stash list`
+- 取回Stash中的变更
+    - `git stash apply`
+    - `git stash pop` 会丢掉stash区域里的信息
 
 ### Branch
 
@@ -87,12 +97,6 @@ categories: [Git,Cheatsheet]
 
 - `grep -lr '<<<<<<<' . | xargs git checkout --ours`
 - `grep -lr '<<<<<<<' . | xargs git checkout --theirs`
-
-How this works: `grep` will search through every file in the current directory (the `.`) and subdirectories recursively (the `-r` flag) looking for conflict markers (the string '<<<<<<<')
-
-the `-l` or `--files-with-matches` flag causes grep to output only the filename where the string was found. Scanning stops after first match, so each matched file is only output once.
-
-The matched file names are then piped to `xargs`, a utility that breaks up the piped input stream into individual arguments for `git checkout --ours` or `--theirs`
 
 
 ### 其它
