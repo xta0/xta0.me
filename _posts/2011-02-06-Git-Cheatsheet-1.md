@@ -41,9 +41,11 @@ git reset path_to_the_file
 
 ### Commit
 
-- 修改当前commit的message：`git commit --amend`
-- 修改之前commit的message：`git rebase -i`
-
+- 修改本地当前的commit的message：`git commit --amend`
+- 修改本地之前的commit的message：`git rebase -i` 后选择`r`
+- 合并commit
+    - `git rebase -i `
+    - pick一个commit作为最终合并后的commit，其它的commit会合并到它上面
 
 - 参数
     - `-m`, commit信息
