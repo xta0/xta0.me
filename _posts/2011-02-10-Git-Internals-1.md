@@ -6,6 +6,10 @@ list_title: Git的内部工作原理 | Git Internal
 categories: [Git]
 ---
 
+### 工作区于暂存区
+
+所谓工作区就是git clone下来后，本地的repo。所谓暂存区是指当执行`git add <filename>`命令之后，文件会被暂存管理的一个区域
+
 ### `.git`目录
 
 `.git`目录下包含很多配置信息，我们先从`HEAD`文件入手，`HEAD`是一个文本文件，我们可以用过`cat`命令查看其内容
