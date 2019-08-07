@@ -70,6 +70,16 @@ Git中有三种对象，分别是`Commit`，`Tree`和`Blob`。每种对象均有
 <img src="{{site.baseurl}}/assets/images/2011/02/git-objects-2.png" class="md-img-center">
 
 
+### Detach HEAD
+
+当我们checkout某个 commit的时候，我们可以能已经脱离了某个分支，此时Git会提醒我们处于Detach HEAD的状态。如果此时在该commit上进行了一些修改，则当我们切回某个分支时，Git会提示
+
+```shell
+If you want to keep it by creating a new branch, this may be a good time to do so with:
+    git branch <new-branch-name> <commit-id>
+```
+这说明当前在该commit上的修改并不会被自动保留或者合并到当前分支上，很可能会被Git当做垃圾处理掉。如果想要保留，需要单独建一个分支保留
+
 ## Resource
 
 - [玩转Git](https://git201901.github.io/github_pages_learning/docs/%E8%8B%8F%E7%8E%B2%E3%80%8A%E7%8E%A9%E8%BD%ACGit%E4%B8%89%E5%89%91%E5%AE%A2%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4.pdf)
