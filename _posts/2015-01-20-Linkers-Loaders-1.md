@@ -98,7 +98,7 @@ Section和symbol的Relocation很简单，就是将所有目标文件的各个sec
 ```
 可以看到`add_and_multiply`的symbol类型为`U`，意味着编译器并不知道这个符号在哪里，`nCompletionStatus`同理。因此linker要做的事情就是将所有`Undefined`符号进行地址绑定（动态库中的符号暂不考虑），方法也很简单，就是扫描所有undefined的symbol，在symbol表中查找并将其绑定到真实的地址上。除了绑定Undefined Symbol外，linker还要负责修正每一条机器码中在内存中的真实地址。
 
-### Disassembe `main.o`
+### Disassemble `main.o`
 
 下面我们通过观察汇编代码来加深对Relocation和Symbol Resolution的理解，我们可以使用`objdump`命令来反汇编目标文件
 
@@ -207,7 +207,7 @@ getconf PAGE_SIZE #4096
 
 总的来说loader可以将程序和物理内存隔离开，然程序不需要考虑实际的物理内存地址，大小和分配方案，大大降低了程序编写复杂度。
 
-### Excutable
+### Executable
 
 当loader将程序完全加载到内存中后，程序就可以运行了。如果从C/C++程序的角度看，那么程序的入口应该就是main函数，而如果从loaders的角度看，则在main函数执行之前程序就已经start了。我们还是通过反汇编上面的`demoApp`来观察
 
