@@ -173,7 +173,7 @@ dAL = - (np.divide(Y, AL) - np.divide(1 - Y, 1 - AL))
 ```
 接下来我们便可以使用`dAL`对sigmoid函数求导得出$dW^{[l]}$,$db^{[l]}$,$dA^{[l-1]}$，接下来通过一个for循环，逐层求解$dw$,$db$和$dA$，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2018/01/dp-w4-3.png" class="md-img-center" width="80%">
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w4-4.png" class="md-img-center" width="80%">
 
 在反向求导的过程中，我们需要将`dA`,`dW`和`db`缓存起来，便于后续梯度下降运算
 
