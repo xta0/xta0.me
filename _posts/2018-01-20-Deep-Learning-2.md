@@ -1,6 +1,6 @@
 ---
-list_title: 深度学习 | Deep-Layer Neural Networks
-title: Deep-Layer Neural Networks
+list_title: 深度学习 | Shallow Layer Neural Networks
+title: Shallow Layer Neural Networks
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
@@ -198,7 +198,13 @@ def initialize_parameters(n_x, n_h, n_y):
 
 - Forward Propagation
 
-参数初始化完成后，我们可以来实现FP了，其公式为 $Z^{[l]} = W^{[l]}A^{[l-1]} +b^{[l]}\tag{4}$，为了后面便于计算back prop，我们会将FP的计算结果缓存起来
+参数初始化完成后，我们可以来实现FP了，其公式为
+
+$$
+Z^{[l]} = W^{[l]}A^{[l-1]} +b^{[l]}\tag{4}
+$$
+
+为了后面便于计算back prop，我们会将FP的计算结果缓存起来
 
 ```python
 def linear_forward(A, W, b):
@@ -287,7 +293,7 @@ def compute_cost(AL, Y):
 
 对于第$l$层网络，FP得到的结果为$Z^{[l]} = W^{[l]} A^{[l-1]} + b^{[l]}$, 假设我们已经知道 $dZ^{[l]} = \frac{\partial \mathcal{L} }{\partial Z^{[l]}}$ 的值，我们的目的是求出 $(dW^{[l]}, db^{[l]}, dA^{[l-1]})$，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2018/01/dp-w4-3.png" class="md-img-center">
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w4-3.png" class="md-img-center" width="50%">
 
 其中$dZ^{[l]}$的计算公式前面已经给出
 
@@ -366,8 +372,8 @@ def linear_activation_backward(dA, cache, activation):
 
 $$
 \begin{align*}
-& W^{[l]} = W^{[l]} - \alpha \text{ } dW^{[l]} \tag{16} \\
-& b^{[l]} = b^{[l]} - \alpha \text{ } db^{[l]} \tag{17}
+& W^{[l]} = W^{[l]} - \alpha \text{ } dW^{[l]}  \\
+& b^{[l]} = b^{[l]} - \alpha \text{ } db^{[l]} 
 \end{align*}
 $$
 
