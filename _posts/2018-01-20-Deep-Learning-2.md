@@ -155,3 +155,246 @@ $$
 其中对$\alpha$的取值需要注意，不同learning rate的选取对梯度下降收敛的速度有着重要的影响，如下图
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w3-4.gif" class="md-img-center">
+
+### Build a 2-layer Nerual Netwrok
+
+接下来我们用numpy来实现一个两层的神经网络，第一层的activation函数为Relu，第二层为Sigmoid。
+
+- Initialization
+
+第一步我们来初始化$W$和$b$，我们使用`np.random.randn(shape)*0.01`来初始化$W$，使用`np.zeros`来初始化$b$
+
+```python
+
+def initialize_parameters(n_x, n_h, n_y):
+    """
+    Argument:
+    n_x -- size of the input layer
+    n_h -- size of the hidden layer
+    n_y -- size of the output layer
+    
+    Returns:
+    parameters -- python dictionary containing your parameters:
+                    W1 -- weight matrix of shape (n_h, n_x)
+                    b1 -- bias vector of shape (n_h, 1)
+                    W2 -- weight matrix of shape (n_y, n_h)
+                    b2 -- bias vector of shape (n_y, 1)
+    """
+    
+    np.random.seed(1)
+    
+    W1 = np.random.randn(n_h,n_x) * 0.01
+    b1 = np.zeros((n_h,1))
+    W2 = np.random.randn(n_y,n_h) * 0.01
+    b2 = np.zeros((n_y,1))
+
+    parameters = {"W1": W1,
+                  "b1": b1,
+                  "W2": W2,
+                  "b2": b2}
+    
+    return parameters    
+```
+
+- Forward Propagation
+
+参数初始化完成后，我们可以来实现FP了，其公式为 $Z^{[l]} = W^{[l]}A^{[l-1]} +b^{[l]}\tag{4}$，为了后面便于计算back prop，我们会将FP的计算结果缓存起来
+
+```python
+def linear_forward(A, W, b):
+    """
+    Implement the linear part of a layer's forward propagation.
+
+    Arguments:
+    A -- activations from previous layer (or input data): (size of previous layer, number of examples)
+    W -- weights matrix: numpy array of shape (size of current layer, size of previous layer)
+    b -- bias vector, numpy array of shape (size of the current layer, 1)
+
+    Returns:
+    Z -- the input of the activation function, also called pre-activation parameter 
+    cache -- a python tuple containing "A", "W" and "b" ; stored for computing the backward pass efficiently
+    """
+
+    Z = np.dot(W,A) + b
+    cache = (A, W, b)
+    
+    return Z, cache
+
+def linear_activation_forward(A_prev, W, b, activation):
+    """
+    Implement the forward propagation for the LINEAR->ACTIVATION layer
+
+    Arguments:
+    A_prev -- activations from previous layer (or input data): (size of previous layer, number of examples)
+    W -- weights matrix: numpy array of shape (size of current layer, size of previous layer)
+    b -- bias vector, numpy array of shape (size of the current layer, 1)
+    activation -- the activation to be used in this layer, stored as a text string: "sigmoid" or "relu"
+
+    Returns:
+    A -- the output of the activation function, also called the post-activation value 
+    cache -- a python tuple containing "linear_cache" and "activation_cache";
+             stored for computing the backward pass efficiently
+    """
+    
+    if activation == "sigmoid":
+        # Inputs: "A_prev, W, b". Outputs: "A, activation_cache".
+        Z, linear_cache = linear_forward(A_prev, W, b)
+        A, activation_cache = sigmoid(Z)
+    
+    elif activation == "relu":
+        # Inputs: "A_prev, W, b". Outputs: "A, activation_cache".
+        Z, linear_cache = linear_forward(A_prev, W, b)
+        A, activation_cache = relu(Z)
+    
+    cache = (linear_cache, activation_cache)
+    return A, cache
+```
+
+- Cost Function
+
+回顾计算Cost函数的公式如下
+
+$$
+-\frac{1}{m} \sum\limits_{i = 1}^{m} (y^{(i)}\log\left(a^{[L] (i)}\right) + (1-y^{(i)})\log\left(1- a^{[L](i)}\right)) \tag{7}
+$$
+
+```python
+def compute_cost(AL, Y):
+    """
+    Implement the cost function defined by equation (7).
+
+    Arguments:
+    AL -- probability vector corresponding to your label predictions, shape (1, number of examples)
+    Y -- true "label" vector (for example: containing 0 if non-cat, 1 if cat), shape (1, number of examples)
+
+    Returns:
+    cost -- cross-entropy cost
+    """
+    m = Y.shape[1]
+    # Compute loss from aL and y.
+    cost = -1/m *(np.dot(Y, np.log(AL.T)) + np.dot(1-Y, np.log(1-AL).T))    
+    # To make sure your cost's shape is what we expect (e.g. this turns [[17]] into 17).
+    cost = np.squeeze(cost)      
+    assert(cost.shape == ())
+    return cost
+```
+
+- Backward propagation
+
+对于两层的神经网络，其反向求导的过程如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w4-2.png" class="md-img-center" width="80%">
+
+对于第$l$层网络，FP得到的结果为$Z^{[l]} = W^{[l]} A^{[l-1]} + b^{[l]}$, 假设我们已经知道 $dZ^{[l]} = \frac{\partial \mathcal{L} }{\partial Z^{[l]}}$ 的值，我们的目的是求出 $(dW^{[l]}, db^{[l]}, dA^{[l-1]})$，如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w4-3.png" class="md-img-center">
+
+其中$dZ^{[l]}$的计算公式前面已经给出
+
+$$
+dZ^{[l]} = dA^{[l]} * g'(Z^{[l]}) \tag{11}
+$$
+
+numpy内置了求解`dz`的函数，我们可以直接使用
+
+```python
+## sigmoid
+dZ = sigmoid_backward(dA, activation_cache)
+## relu
+dZ = relu_backward(dA, activation_cache)
+```
+
+$dW^{[l]}, db^{[l]}, dA^{[l-1]}$的计算可参考前面小结给出的公式
+
+```python
+def linear_backward(dZ, cache):
+    """
+    Implement the linear portion of backward propagation for a single layer (layer l)
+
+    Arguments:
+    dZ -- Gradient of the cost with respect to the linear output (of current layer l)
+    cache -- tuple of values (A_prev, W, b) coming from the forward propagation in the current layer
+
+    Returns:
+    dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
+    dW -- Gradient of the cost with respect to W (current layer l), same shape as W
+    db -- Gradient of the cost with respect to b (current layer l), same shape as b
+    """
+    A_prev, W, b = cache
+    m = A_prev.shape[1]
+
+    dW = 1/m * np.dot(dZ, A_prev.T)
+    db = 1/m * np.sum(dZ, axis = 1, keepdims = True)
+    dA_prev = np.dot(W.T, dZ)
+    
+    assert (dA_prev.shape == A_prev.shape)
+    assert (dW.shape == W.shape)
+    assert (db.shape == b.shape)
+    
+    return dA_prev, dW, db
+
+def linear_activation_backward(dA, cache, activation):
+    """
+    Implement the backward propagation for the LINEAR->ACTIVATION layer.
+    
+    Arguments:
+    dA -- post-activation gradient for current layer l 
+    cache -- tuple of values (linear_cache, activation_cache) we store for computing backward propagation efficiently
+    activation -- the activation to be used in this layer, stored as a text string: "sigmoid" or "relu"
+    
+    Returns:
+    dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
+    dW -- Gradient of the cost with respect to W (current layer l), same shape as W
+    db -- Gradient of the cost with respect to b (current layer l), same shape as b
+    """
+    linear_cache, activation_cache = cache
+    
+    if activation == "relu":
+        dZ = relu_backward(dA,activation_cache)
+        dA_prev, dW, db = linear_backward(dZ,linear_cache)
+        
+    elif activation == "sigmoid":
+        dZ = sigmoid_backward(dA,activation_cache)
+        dA_prev, dW, db = linear_backward(dZ,linear_cache)
+    
+    return dA_prev, dW, db
+```
+
+- Update Parameters
+
+在每次BP完成后，我们需要对$dw$h和$db$进行梯度下降
+
+$$
+\begin{align*}
+& W^{[l]} = W^{[l]} - \alpha \text{ } dW^{[l]} \tag{16} \\
+& b^{[l]} = b^{[l]} - \alpha \text{ } db^{[l]} \tag{17}
+\end{align*}
+$$
+
+```python
+
+def update_parameters(parameters, grads, learning_rate):
+    """
+    Update parameters using gradient descent
+    
+    Arguments:
+    parameters -- python dictionary containing your parameters 
+    grads -- python dictionary containing your gradients, output of L_model_backward
+    
+    Returns:
+    parameters -- python dictionary containing your updated parameters 
+                  parameters["W" + str(l)] = ... 
+                  parameters["b" + str(l)] = ...
+    """
+    
+    L = len(parameters) // 2 # number of layers in the neural network
+    # Update rule for each parameter. Use a for loop.
+    for l in range(L):
+        parameters["W" + str(l+1)] = parameters["W" + str(l+1)] - learning_rate * grads["dW"+str(l+1)]
+        parameters["b" + str(l+1)] = parameters["b" + str(l+1)] - learning_rate * grads["db"+str(l+1)]
+    return parameters
+```
+
+### All Together
+
+
