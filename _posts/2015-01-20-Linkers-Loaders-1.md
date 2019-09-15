@@ -68,15 +68,15 @@ int main() {
 gcc -c function.c
 gcc -c main.c
 ```
-执行上面两行命令后，我们可以得到`funtion.o`和`main.o`。接下来我们可以而来简单的分析一下目标文件的格式以及里面所包含的内容，在UNIX环境中，我们可以使用下面的工具帮助我们分析
+执行上面两行命令后，我们可以得到`funtion.o`和`main.o`。接下来我们来简单的分析一下目标文件的格式以及里面所包含的内容，在UNIX环境中，我们可以使用下面的工具帮助我们分析
 
 - **nm**: 显示目标文件中的symbol列表
 - **objdump**: 提供了一系列选项可以最目标文件做比较详细的分析，比如`-S`选项可以dump出汇编代码
 - **readelf**: 读取并显示ELF格式文件的信息
 
-我们可以先来分析一下`function.o`，使用`readelf -a function.o`
+以`function.o`为例，使用`readelf -a function.o`
 
-```
+```shell
 readelf -a function.o
 ELF Header:
   Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
@@ -170,7 +170,7 @@ Symbol table '.symtab' contains 11 entries:
 
 ## Linkers
 
-在有了编译生成的`.o`文件后，Linker要做的事情就是将这些文件link在一起，具体来说过程如下，linker会扫描所有的目标文件，将所有符号表中的信息收集起来，构成一个全局的符号表，然后再根据重定位表，把所有不确定的跳转指令根据符号表里地址，进行一次修正。最后，把所有的目标文件的section分别进行合并，形成最终的可执行代码。整个过程如下图所示
+在有了编译生成的`.o`文件后，Linker要做的事情就是将这些文件link在一起，具体来说过程如下，linker会扫描所有的目标文件，将所有符号表中的信息收集起来，构成一个全局的符号表，然后再根据重定位表，把所有不确定的跳转指令根据符号表里地址，进行一次修正。最后，把所有的目标文件的section分别进行合并，形成最终的可执行代码。对于前面的例子，我们有两个目标文件，linker的过程如下图所示
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/01/linker.png">
 
@@ -194,9 +194,9 @@ Symbol table '.symtab' contains 11 entries:
 
 通过观察上面的符号表，可以发现
 
-1. 每个符号都有自己的类型，比如在`main.o`中，由于`add_and_multiply`是定义在另一个目标文件中，因此对于`main.o`来说，编译器并不知道这个符号在哪里，因此用`U`表示。`nCompletionStatus`同理。而对于`function.o`来说，这两个函数就定义在自身的目标文件中，编译器是知道它们的位置的，因此用`T`和`B`表示。更多关于符号的含义可参考文末的附录。
+1. 每个符号都有自己的类型。比如在`main.o`中，由于`add_and_multiply`是定义在另一个目标文件中，因此对于`main.o`来说，编译器并不知道这个符号在哪里，因此用`U`表示。`nCompletionStatus`同理。而对于`function.o`来说，这两个函数就定义在自身的目标文件中，编译器是知道它们的位置的，因此用`T`和`B`表示。更多关于符号的含义可参考文末的附录。
 
-2. 每个符号的地址都是相对于该目标文件的偏移，并不是虚拟内存中的地址。我们可以通过观察汇编代码来进一步验证，使用 `objdump -d function.o`得到`function.o`的汇编代码如下
+2. 每个符号都有自己的地址。它们的地址都是相对的都是相对于该目标文件的偏移，并不是虚拟内存中的地址。我们可以通过观察汇编代码来进一步验证，使用 `objdump -d function.o`得到`function.o`的汇编代码如下
 
 ```shell
 Disassembly of section .text:
@@ -239,18 +239,14 @@ Disassembly of section .text:
 
 ### Relocation
 
-Section和symbol的Relocation很简单，就是将所有目标文件的各个section按照某种规则进行合并。由于虚拟内存的存在，使目标文件不需要考虑自己在真实的内存中的绝对地址（memory map中的地址），它们的地址都是相对的，比如前面提到的`main.o`中的`main`符号的地址为`0x0000000000000000`，`function.o`中`add`地址也为`0x0000000000000000`。显然，在实际的内存中，不管是`add`还是`main`的地址是不可能为`0x0000000000000000`的。这时候就需要Relocation发挥作用，将所有section的地址重新分配到合理的位置。但需要注意的是，在分配的过程中要保证每个Section的连续性不被破坏，因此linker是需要知道每个section的大小和范围。
+Section的Relocation很简单，就是将所有目标文件的各个段按照某种规则进行合并，比如上面图中的，text段合并，符号表合并等等。在合并的过程中，需要计算每个段在实际虚拟内存中的地址，比如前面提到的`main.o`中的`main`符号的地址为`0x0000000000000000`，`function.o`中`add`地址也为`0x0000000000000000`。显然，在实际的内存中，不管是`add`还是`main`的地址是不可能为`0x0000000000000000`的。这时候就需要Relocation发挥作用，将所有section的地址重新分配到合理的位置。但需要注意的是，在分配的过程中要保证每个Section的连续性不被破坏，因此linker是需要知道每个section的大小和范围。
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2009/05/c-compile-1.png">
 
- Relocation完成后，每个section和symbol的虚拟内存地址也就确定了，接下来要做的事情就是修正每个section中指令地址，以及修正指令中symbol的地址，这个过程也叫做Code Modification
-
-### Code Modification
-
-下面我们通过观察汇编代码来加深对Relocation和Symbol Resolution的理解，我们可以使用`objdump`命令来反汇编目标文件
+ 下面我们来通过观察汇编代码来具体看一下是上述过程，我们还是使用`objdump`命令来反汇编目标文件
 
 ```shell
-objdump -d -M intel -S main.o
+objdump -d -S main.o
 
 main.o:     file format elf64-x86-64
 Disassembly of section .text:
@@ -340,6 +336,8 @@ A3 00 00 00 00 mov %eax, b
 A1 34 12 10 00 mov a, %eax
 A3 12 9A 00 00 mov %eax, b
 ```
+
+当Relocation完成后，每个section和symbol的虚拟内存地址也就确定了，至此linker的任务也就完成了。
 
 ## Loaders
 
