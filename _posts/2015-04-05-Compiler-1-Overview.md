@@ -40,7 +40,7 @@ categories: [Compiler]
 		 - Optimization
 		 - Code Generation
 
-## How Computer Works 
+### How Compiler Works 
 
 <img src="{{site.baseurl}}/assets/images/2015/04/0-0.png" class="md-img-center" >
 
@@ -73,15 +73,15 @@ Seperator: space
 
 每个token都可以用一个tuple来表示：
 
-$$
+```
 <token-name，attribute-value>
-$$
+```
 
 token的name代表这个token的类型，value用来记录该token在符号表中的index。例如下面语句的token表示为
 
-$$
-pos \thinspace = \thinspace initial \thinspace + \thinspace rate \thinspace * \thinspace 60
-$$
+```
+pos = initial + rate  *  60
+```
 
 1. `pos`是一个token，用`<id,1>`，`id`表示这个token是一个符号，`1`表示它在符号表的第一个位置
 2. `=`是一个token，用`<=>`表示，因为它不是符号，因此不计入符号表
@@ -100,10 +100,9 @@ $$
 Parsing也叫**语法分析**(syntax analysis)，Parsing的目的是将LA产生的一系列token形成语法树。
 假如我们要解析一个英文句子，可以把它的结构用树形结构来描述，例如下面句子的树形结构为
 
-$$
-This \thinspace line \thinspace is \thinspace a \thinspace long \thinspace sentence
-$$
-
+```
+This line is a long sentence
+```
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/04/0-1.png" width="50%"/>
 
@@ -119,7 +118,7 @@ else
 
 <img src="{{site.baseurl}}/assets/images/2015/04/0-3.png" width="40%"/>
 
-### Semantic Analysis:理解语义
+### Semantic Analysis
 
 一旦树形结构确定，接下来就是最难的语义分析，编译器在这方面很难保持它的理解和programmer的理解是一致的，以英语为例：
 

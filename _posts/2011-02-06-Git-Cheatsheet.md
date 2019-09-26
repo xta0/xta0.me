@@ -20,7 +20,6 @@ categories: [Git,Cheatsheet]
     - `git config --list --local`
     - `git config --list --global`
 
-
 ### Log
 
 - 查看前5条log：`git long -n5 --graph`
@@ -49,6 +48,11 @@ categories: [Git,Cheatsheet]
 - revert更工作区的提交: `git checkout -- <filename>`
 - revert暂存区的提交: `git reset HEAD -- <filename>` 
 - revert到某个commit `git reset --hard <commit_id>`
+
+### Clean
+
+- 清理工作区的未追踪文件: `git clean -fxd`
+- 清理Git缓存: `git gc`
 
 ### Stash
 
