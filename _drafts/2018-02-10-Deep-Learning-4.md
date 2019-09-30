@@ -6,6 +6,99 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
-CNN是深度学习中一种处理图像的神经网络，可以用来做图像的分类，segmentation，目标检测等等。其工作原理可简单概括为通过神经网络的各层layer提取图片特征，然后针对这些特征做一系列的运算从而达到我们想要的结果
+CNN是深度学习中一种处理图像的神经网络，可以用来做图像的分类，segmentation，目标检测等等。其工作原理可简单概括为通过神经网络的各层layer提取图片特征，然后针对这些特征做一系列的运算从而达到我们想要的结果。
 
 ### Edge Detection
+
+图像的边缘检测实际上是对图像中的各个点做卷积运算，离散的卷积运算在时域（空域）上可以理解为是一种加权求和的过程，在频域上可以理解为一种滤波器。例如一副36个像素的灰度图片，我想想要检测它的竖直边缘，可以用一个3x3的kernel滑过图片的每个像素点，如下图所示
+
+<div class="md-flex-h">
+<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-1.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-2.png" ></div>
+</div>
+
+对于滑过的蓝色区域，对图中的像素和kernel矩阵进行element-wise的乘积并求和，以作图为例，滤波后的像素点为的值为
+
+```shell
+3x1 + 1x1 + 2x1 + 0x0 + 5x0 + 7x0 + 1x(-1) + 8x(-1) + 2x(-1) = -5
+```
+
+这样当kernel滑过整张图片后，会得到一个4x4的矩阵，包含滤波后的像素值。
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-3.png">
+
+图中可见滤波后图像的大小为kernel在水平和竖直方向上所滑过的次数。我们假设图片的大小是`nxn`的，kernel的大小是`fxf`的，那么输出图片的大小为
+
+```shell
+n-f+1 x n-f+1
+```
+
+对于kernel的选取并不固定，如果熟悉图像处理算法，可知边缘检测的算子有很多种，比如Sobel，拉普拉斯等。但是这些算子的值都是根据经验来确定的，比如Sobel的算子的值为
+
+```shell
+1 0 1
+2 0 -3
+1 0 -1
+```
+
+对于CNN来说，可以将这些算子中的值作为待确定的值，而不是固定的值，通过大数据的输入加上神经网络的前后传播来寻找这些参数，从而使得到的算子可以更加精确的提取物体的边缘。
+
+### Padding
+
+从上面边缘检测的过程中可以看出，每当图片完成一次卷积运算后，它的大小会变小；另外，对于图片中边缘的像素点，只会经过一次的卷积运算，而对于位于图中中心位置的点，则可能经过多次的卷积运算，因此卷积运算对于图片边缘的点并不能有效的运用起来。
+
+为了解决这两个问题，我们可以给输入的图片增加一圈padding，以上面6x6的图片为例，如果我们在图片周围各加一个像素的padding，那么6x6的图片，将会变成8x8，经过卷积运算后的图片尺寸依旧是 8-3+1 = 6x6。
+
+我们另$p$为padding的像素数，则卷积后的图片尺寸为
+
+$$
+n+2p-f+1 \times n+2p-f+1 
+$$
+
+在CNN中，我们称Valid为没有padding的卷积运算，称Same为有padding的卷积运算，卷积后的尺寸和原图片相同，此时要求 
+
+$$
+p = \frac{f-1}{2}
+$$
+
+在计算机视觉中，`f`通常为奇数
+
+### Strided Convolutions
+
+在前面例子中，kernel滑过图片时的步长为1，我们也可以改变kernel滑动的步长，如下图中，kernel滑动的步长为2
+
+<div class="md-flex-h">
+<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-4.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-5.png" ></div>
+</div>
+
+上图中，一个7x7的图片和一个3x3的kernel，按照步长为2进行卷积运算，得到的图片大小为3x3。计算方法为
+
+$$
+\floor{\frac{n+2p-f}{stride} + 1} \times \floor{\frac{n+2p-f}{stride} + 1}
+$$
+
+### Convolutions over volume 
+
+在前面的例子中，我们介绍了二维灰度图片的卷积运算，我们可以将原理推广到三维的RGB图片上，对于RGB图片的卷积运算，我们可以用下图表示
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-6.png">
+
+此时我们的输入图片变成了6x6x3的矩阵，表示有三张RGB的二维图片，内存中的存储结构为
+
+```
+r 
+
+```
+
+
+值得注意的是，对于图片矩阵，6x6x3的含义和3x6x6的含义并不相同，后者表示的矩阵为
+
+```
+rgb rgb rgb ... rgb
+rgb rgb rgb ... rgb
+... ... ... ... rgb
+rgb rgb rgb ... rgb
+
+
+```
