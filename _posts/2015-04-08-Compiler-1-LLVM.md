@@ -1,5 +1,5 @@
 ---
-list_title: 编译原理 | Compiler Theory | LLVM - A Case Study
+list_title: Compilers | LLVM - A Case Study
 title: LLVM概述
 layout: post
 categories: [compilers]
