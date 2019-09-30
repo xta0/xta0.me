@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 编译原理| Compiler Theory | Overviwe
+list_title: Compilers | Overviwe
 title: Overview
 mathjax: true
 categories: [Compiler]

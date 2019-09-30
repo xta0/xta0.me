@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 编译原理 | Compiler Theory | Lexical Analysis & Finate Automata
+list_title: Compilers | Lexical Analysis & Finate Automata
 title: Lexical Analysis & Finate Automata
 mathjax: true
 categories: [Compiler]
@@ -50,19 +50,19 @@ categories: [Compiler]
 ## Regular Languages
 
 - Lexical structure = token classes
-- We must say what set of strings is in a token class:当拿到了n多个token之后，我们首先要匹配出token class,然后才能拿到每个token class对应的string
+	- each one of the token classes contains a set of strings
+- We must say what set of strings is in a token class
+	- 当拿到了n多个token之后，需要用正则式匹配出该token属于那种类型(token class)
 	- 寻找token class的方法一般是使用<em>regular langauages</em>
-
 - 什么是Regular Language:
 	- [正则语言](https://zh.wikipedia.org/wiki/%E6%AD%A3%E5%88%99%E8%AF%AD%E8%A8%80)
-	- 定义Regular Language需要使用正则表达式(Regular Expression):
+	- 定义Regular Language是通过一系列正则表达式来构成的(Regular Expression):
 		- 每一种正则表达式代表一种字符集，有两种基本的字符集：
 			- Single character: 
 				- `'c' = {"c"}`:表示只含有这个字符的字符集
 			- Epsilon: 
 				- `ε = {""}`: 表示只包含一个空字符串的字符集
 				- 注意`ε`不等于`o(empty)`
-
 		- 除了这两种基本的字符集外，还有三种组合型的字符集:
 			- Union
 				- `A+B = {a|a<A} or {b|b<B}`
@@ -75,34 +75,36 @@ categories: [Compiler]
 		- 正则表达式：在某个字符集(假如为Z)上，有一个最小的表达式集合，通过这个集合可以表征Z上任意字符的组合（可能的出现情况）。正则表达式的y语法（grammar）如下
 			- Baes cases
 				- R = `ε` = `{""}`(epsilon)
-				- R = {`c`}, c<Z
+				- R = {`c`}, c属于某个字符集`Z`，例如字母表
 			- Three compound expressions
 				- Union:  `R = R+R`
 				- Concatenation: `R = RR`
 				- Iteration: `R = R*`
 			
 		- 正则表达式的例子:
-			- `Z = {0,1}`
-				- `1* ` = `""` + `1` + `11` + `111` + `111...1`(i次) = all strings of 1's，意思是`1*`这个正则表达式可以表示所有1的字符。
-				- `(1+0)1`  = `{ab|a<1+0 and b<1} ` = `{11,01}`，意思是`(1+0)1`这个正则表达式可以表示`{11,01}`这两种情况的字符串
+			- 假设字符集`Z = {0,1}`
+				- `1*` 表示 `""` + `1` + `11` + `111` + `111...1`(i次) = all strings of 1's，意思是`1*`这个正则表达式可以表示所有1的字符。
+				- `(1+0)1`等价于`{ab|a<1+0 and b<1}` = `{11,01}`，意思是`(1+0)1`这个正则表达式可以表示`{11,01}`这两种情况的字符串
 				- `(0+1)*` = `"" + (0+1) + (0+1)(0+1) + ... + (0+1)...(0+1) ` = all string of 1's and 0's。意思是这个正则表达式可以表示字符集Z的任意字符组合。
 				- 表征同一字符集的正则表达式有不止一个，例如第1个例子`1*`也可以写作`1* +1 `第2个例子也可以写作`11+10`。
-- In Summary 小结
+- 小结
 	- 正则表达式是定义正则语言的基础
 	- 正则表达式的基础语法有5条
 		- Two base cases
-			- empty and 1-character strings
+			- an empty character - ε 
+			- a single character
 		- Three compound expressions
 			- union, concatenation, iteration 
 
-
 ## Formal Languages
 
-- Formal language是计算机编程语言理论的基础
+- Formal language是计算机编程语言理论的基础，上一节提到的Regular Language也是是Formal Language的一种
 - 定义
 	- 假设 $\sum$ 是一个字符集，Formal Languages是指建立在这个字符集之上的语言
-		- Alphabet = English characters, Language = English sentences
-		- Alphabet = ASCII, Language = C programs
+		- Not well-defined Formal Languages
+			- Alphabet = English characters, Language = English sentences
+		- Well-defined Formal Languages
+			- Alphabet = ASCII, Language = C programs
 	- 不同的语言是建立在不同的字符集上，因此讨论某种Formal Language的前提是先确定其所在的字符集合
 
 ### Meaning Function
@@ -114,10 +116,10 @@ categories: [Compiler]
 		L(e) \thinspace = \thinspace M 
 		$$
 
-		例如，对于正则语言来说，`e`为正则表达式，
+		例如，对于正则语言来说，`e`为正则表达式，M为它所表示的一组字符串
 		
 	- 对于正则语言来说，`e`为正则表达式，`M`为其所匹配的字符串集合，
-		- `L(e) = {""}`
+		- `L(ε) = {""}`
 		- `L('c') = {"c"}`
 		- `L(A+B)` = `L(A) or L(B)`
 		- `L(AB)` = `{ab| a<L(A) and b<L(B)}`
@@ -129,8 +131,10 @@ categories: [Compiler]
 	- Because expressions and meanings are not 1-1, 描述同一字符集的正则表达式不唯一
 		- 例如`0*`表示`{"",0,00,...}`该集合也可以用`0+0*`来描述
 	- 对应到编程语言
-		- 语法糖可以有很多，但是处理后得到的语义是相同的
+		- 表征同一语义的语法可以有很多，但是处理后得到的语义是相同的
 		- 不同变成语言定义变量的方式不同，但其语义均为在内存中定义一个变量
+	- Meaning function L是多对一的
+ 
 			
 ## Lexical Specifications
 
@@ -140,24 +144,21 @@ categories: [Compiler]
 
 - 数字的正则表示
 	- 单个integer的正则：`digit = '0'+'1'+'2'+'3'+...+'9'`
-	- 至少有一个非空integer的正则：`AA* = digit digit*`
-		- 简化上面，得到总的正则为:`AA* = A+ = digit+ = [0-9]+` 
-
+	- 至少有一个非空符号的正则：`AA* = A+`
+		- 对于数字来说，它的正则为:`digit digit* = digit+ = [0-9]+` 
 - 变量，字符（identifier）的正则表示
 	- 字符: `'a'+'b'+'c'+...+'z'+'A'+'B'+...+'Z'`
 		- 简化上面的正则，使用`range:[]`符号:`[a-zA-Z]`
 		- 总的正则`letter(letter + digit)* = [a-z][A-Z]*` 
-
 - whitespace: a non-empty sequence of blanks, newlinke, and tabs
 	- blanks : `' ' `
 	- new line: `\n`
 	- tabs: `\t`
 	- 总的正则: `(‘ ’+‘\n’+'\t')+`
-
 - anyone@cs.standford.edu	
 	- 正则为`letter+‘@’+letter+'.'+letter+'.'+letter`
-	
-- PASCAL
+	- `[a-zA-Z]+@[a-zA-Z]+.`
+- PASCAL的数字token正则式
 	- digit = `'0'+'1'+...+'9'`
 	- digits = `digit+`
 	- opt_fraction = `('.'digit) + e`
