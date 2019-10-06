@@ -12,7 +12,7 @@ CNN是深度学习中一种处理图像的神经网络，可以用来做图像�
 
 图像的边缘检测实际上是对图像中的各个点做卷积运算，离散的卷积运算在时域（空域）上可以理解为是一种加权求和的过程，在频域上可以理解为一种滤波器。例如一副36个像素的灰度图片，我想想要检测它的竖直边缘，可以用一个3x3的kernel滑过图片的每个像素点，如下图所示
 
-<div class="md-flex-h md-flex-no-wrap">
+<div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
 <div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-1.png"></div>
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-2.png" ></div>
 </div>
@@ -25,7 +25,7 @@ CNN是深度学习中一种处理图像的神经网络，可以用来做图像�
 
 这样当kernel滑过整张图片后，会得到一个4x4的矩阵，包含滤波后的像素值。
 
-<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-3.png" width="60%">
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-3.png" width="50%">
 
 图中可见滤波后图像的大小为kernel在水平和竖直方向上所滑过的次数。我们假设图片的大小是`nxn`的，kernel的大小是`fxf`的，那么输出图片的大小为
 
@@ -67,7 +67,7 @@ $$
 
 在前面例子中，kernel滑过图片时的步长为1，我们也可以改变kernel滑动的步长，如下图中，kernel滑动的步长为2
 
-<div class="md-flex-h md-flex-no-wrap">
+<div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
 <div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-4.png"></div>
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-5.png" ></div>
 </div>
@@ -82,7 +82,7 @@ $$
 
 在前面的例子中，我们介绍了二维灰度图片的卷积运算，我们可以将原理推广到三维的RGB图片上，对于RGB图片的卷积运算，我们可以用下图表示
 
-<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-6.png" width="60%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-6.png" width="80%">
 
 此时我们的输入图片变成了6x6x3的矩阵，表示有三张RGB的二维图片，内存中的存储结构为
 
