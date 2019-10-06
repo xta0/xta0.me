@@ -75,7 +75,7 @@ $$
 上图中，一个7x7的图片和一个3x3的kernel，按照步长为2进行卷积运算，得到的图片大小为3x3。计算方法为
 
 $$
-\floor{\frac{n+2p-f}{stride} + 1} \times \floor{\frac{n+2p-f}{stride} + 1}
+(\lfloor{\frac{n+2p-f}{stride} + 1}\rfloor) \times (\lfloor{\frac{n+2p-f}{stride} + 1}\rfloor)
 $$
 
 ### Convolutions over volume 
