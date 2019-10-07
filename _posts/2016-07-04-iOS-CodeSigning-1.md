@@ -149,6 +149,7 @@ Internal requirements count=1 size=172
 
 - [iOS Security Whitepaper](https://www.apple.com/business/site/docs/iOS_Security_Guide.pdf)
 - [WWDC2016 How iOS Security Really Works](https://developer.apple.com/videos/play/wwdc2016/705/)
+- [WWDC2016 What's New in Xcode App Signing](https://developer.apple.com/videos/play/wwdc2016/401/)
 - [iOS Code Signing Guide](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40005929-CH1-SW1)
 - [Inside Code Signing](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40005929-CH1-SW1)
 - [Advanced Apple Debugging and Reverse Engineering](https://store.raywenderlich.com/products/advanced-apple-debugging-and-reverse-engineering)
