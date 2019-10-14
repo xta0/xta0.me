@@ -6,7 +6,7 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
-> 本文部分图片截取自课程视频[Nerual Networks and Deep Learning](https://www.coursera.org/learn/neural-networks-deep-learning)
+> 文中部分图片截取自课程视频[Nerual Networks and Deep Learning](https://www.coursera.org/learn/neural-networks-deep-learning)
 
 ### Notations
 

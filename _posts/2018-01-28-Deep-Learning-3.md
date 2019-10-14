@@ -5,6 +5,7 @@ layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
+> 文中部分图片截取自课程视频[Nerual Networks and Deep Learning](https://www.coursera.org/learn/neural-networks-deep-learning)
 
 Now we have a better understanding of how the two-layer neural networks works, we can apply and extend the idea to any multi-layer neural network.
 

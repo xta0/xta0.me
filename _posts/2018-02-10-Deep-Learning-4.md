@@ -6,6 +6,8 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
+> 文中部分图片截取自课程视频[Nerual Networks and Deep Learning](https://www.coursera.org/learn/neural-networks-deep-learning)
+
 CNN是深度学习中一种处理图像的神经网络，可以用来做图像的分类，segmentation，目标检测等等。其工作原理可简单概括为通过神经网络的各层layer提取图片特征，然后针对这些特征做一系列的运算从而达到我们想要的结果。
 
 ### Edge Detection
@@ -16,6 +18,16 @@ CNN是深度学习中一种处理图像的神经网络，可以用来做图像�
 <div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-1.png"></div>
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-2.png" ></div>
 </div>
+
+图中蓝色区域的脚标值构成一个kernel，如上图中的kernel为
+
+$$
+\begin{bmatrix}
+1 & 0 & -1  \\
+1 & 0 & -1  \\
+1 & 0 & -1  \\
+\end{bmatrix}
+$$
 
 对于滑过的蓝色区域，对图中的像素和kernel矩阵进行element-wise的乘积并求和，以作图为例，滤波后的像素点为的值为
 
@@ -29,19 +41,21 @@ CNN是深度学习中一种处理图像的神经网络，可以用来做图像�
 
 图中可见滤波后图像的大小为kernel在水平和竖直方向上所滑过的次数。我们假设图片的大小是`nxn`的，kernel的大小是`fxf`的，那么输出图片的大小为
 
-```shell
-n-f+1 x n-f+1
-```
+$$
+n-f+1 \times n-f+1
+$$
 
 对于kernel的选取并不固定，如果熟悉图像处理算法，可知边缘检测的算子有很多种，比如Sobel，拉普拉斯等。但是这些算子的值都是根据经验来确定的，比如Sobel的算子的值为
 
-```shell
-1 0 1
-2 0 -3
-1 0 -1
-```
+$$
+\begin{bmatrix}
+1 & 0 & 1  \\
+2 & 0 & -3  \\
+1 & 0 & -1  \\
+\end{bmatrix}
+$$
 
-对于CNN来说，可以将这些算子中的值作为待确定的值，而不是固定的值，通过大数据的输入加上神经网络的前后传播来寻找这些参数，从而使得到的算子可以更加精确的提取物体的边缘。
+CNN要做的事情就是将这些经验值，通过神经网络的训练得到一个更加精确的值。
 
 ### Padding
 
@@ -91,12 +105,10 @@ r r r ... r
 r r r ... r
 ... ... ...
 r r r ... r
-
 g g g ... g
 g g g ... g
 ... ... ...
 g g g ... g
-
 b b b ... b
 b b b ... b
 ... ... ...
@@ -112,4 +124,34 @@ rgb rgb rgb ... rgb
 rgb rgb rgb ... rgb
 ```
 
-同样对于
+同样对于卷积核，也是一个3x3x3的矩阵，对应RGB三个通道。整个卷积运算的过程为RGB三通道图片分别和对应的卷积核进行卷积操作，将结果填充到一个4x4的矩阵中。
+
+注意到，上图中我们只考虑了一种情况，即一张RGB图片和一个kernel进行卷积得到一个4x4的矩阵，这个kernel可以是竖直边缘检测的kernel，那么得到的4x4矩阵则是图片的竖直边缘特征。如果我们要同时提取图片的竖直和水平边缘则需要让图片和另一个kernel进行卷积，得到另一个4x4的矩阵，那么最终的结果将是一个4x4x2的矩阵，如下图所示
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-8.png" width="80%">
+
+小结一下，对于图片的卷积操作，一张$n \times n \times n_c$的图片和一个$f \times f \times n_c$的kernel做卷积得到的输出为
+
+$$
+n-f+1 \times n-f+1 \times n_c^{'}
+$$
+
+其中$n_c^{'}$为kernel的个数
+
+### One Layer of a CNN
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-9.png" width="80%">
+
+如上图中是一个一层的CNN，其中hidden layer包含两个4x4的节点$a_i$。回忆前面神经网络的概念，对于单层的神经网络，输出可用下面式子表示
+
+$$
+z^{[1]} = W^{[1]}a^{[0]} + b^{[1]} \\
+a^{[0]} = g(z^{[1]}) \\
+$$
+
+
+对应到CNN中，$a^{[0]}$是我们输入的图片，大小为6x6x3，两个kernel类比于$W^[1]$矩阵，则$W^{[1]}a^{[0]}$类比于$a^{[0]} * W^{[1]}$得到的输出为一个4x4的矩阵，接下来让该矩阵中的各项加上bias，即$b1$，$b2$，再非线性函数$Relu$对其求值，则可得到$a^[1]$
+
+如果layer $l$是一个convolution layer，另
+
+- $f^{[l]} = filter size$ 
