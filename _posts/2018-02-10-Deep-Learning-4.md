@@ -84,7 +84,7 @@ $$
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-6.png" width="80%">
 
-此时我们的输入图片变成了6x6x3的矩阵，表示有三张RGB的二维图片，内存中的存储结构为
+此时我们的输入图片变成了6x6x3的矩阵，表示有三张RGB的二维图片，内存中的排列方式为
 
 ```shell
 r r r ... r
@@ -111,3 +111,5 @@ rgb rgb rgb ... rgb
 ... ... ... ... rgb
 rgb rgb rgb ... rgb
 ```
+
+同样对于
