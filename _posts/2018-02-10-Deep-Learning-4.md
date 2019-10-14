@@ -128,7 +128,7 @@ rgb rgb rgb ... rgb
 
 注意到，上图中我们只考虑了一种情况，即一张RGB图片和一个kernel进行卷积得到一个4x4的矩阵，这个kernel可以是竖直边缘检测的kernel，那么得到的4x4矩阵则是图片的竖直边缘特征。如果我们要同时提取图片的竖直和水平边缘则需要让图片和另一个kernel进行卷积，得到另一个4x4的矩阵，那么最终的结果将是一个4x4x2的矩阵，如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-8.png" width="80%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-8.png">
 
 小结一下，对于图片的卷积操作，一张$n \times n \times n_c$的图片和一个$f \times f \times n_c$的kernel做卷积得到的输出为
 
@@ -138,9 +138,7 @@ $$
 
 其中$n_c^{'}$为kernel的个数
 
-### One Layer of a CNN
-
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-9.png" width="80%">
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-9.png">
 
 如上图中是一个一层的CNN，其中hidden layer包含两个4x4的节点$a_i$。回忆前面神经网络的概念，对于单层的神经网络，输出可用下面式子表示
 
@@ -150,7 +148,7 @@ a^{[0]} = g(z^{[1]}) \\
 $$
 
 
-对应到CNN中，$a^{[0]}$是我们输入的图片，大小为6x6x3，两个kernel类比于$W^[1]$矩阵，则$W^{[1]}a^{[0]}$类比于$a^{[0]} * W^{[1]}$得到的输出为一个4x4的矩阵，接下来让该矩阵中的各项加上bias，即$b1$，$b2$，再非线性函数$Relu$对其求值，则可得到$a^[1]$
+对应到CNN中，$a^{[0]}$是我们输入的图片，大小为6x6x3，两个kernel类比于$W^[1]$矩阵，则$W^{[1]}a^{[0]}$类比于$a^{[0]} * W^{[1]}$得到的输出为一个4x4的矩阵，接下来让该矩阵中的各项加上bias，即$b1$，$b2$，再非线性函数$Relu$对其求值，则可得到$a^{[1]}$
 
 如果layer $l$是一个convolution layer，另
 
