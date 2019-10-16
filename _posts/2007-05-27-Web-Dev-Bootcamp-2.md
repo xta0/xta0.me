@@ -1,7 +1,7 @@
 ---
 layout: post
 title: CSS Basics
-list_title: CSS Basics
+list_title: Web Dev | CSS Basics
 categories: [CSS]
 ---
 
@@ -499,28 +499,134 @@ background-color: lighten($color-tertiary,15%);
 			- 用在container上，比如`div`套一个`img`
 			- parent和child需要指定宽度或者有默认宽度
 
-```html
-<body>
-    <div class="text-wrap">
-        <div class="center">
-            <h1>Center Heading</h1>
-            <p>All my text in this section would be aligned left as default</p>
-        </div>
-    </div>
-</body>
-```
+	```html
+	<body>
+		<div class="text-wrap">
+			<div class="center">
+				<h1>Center Heading</h1>
+				<p>All my text in this section would be aligned left as default</p>
+			</div>
+		</div>
+	</body>
+
+	# css 
+	.text-wrap {
+	width: 100%;
+	}
+
+	.center {
+	width: 50%;
+	margin-left: auto;
+	margin-right: auto;
+	}
+
+	h1 {
+	text-align: center;
+	}
+	```
+
+## Tips and Tricks
+
+- 使用Emmet
+- 将`px`转换为`rem`。
+	- 改变`root font-size`其它属性都会自动变化
+	- 将`root font-size`设为`62.5%`
+	- IE9以下不支持`rem`
+- `box-sizing`
+	```css
+	* {
+		box-sizing: inherit;
+	}
+  
+	body {
+		box-sizing: border-box;
+	}
+	``` 
+- 样式表先* 初始化`*`和`body`
+
 ```css
-.text-wrap {
-  width: 100%;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.center {
-  width: 50%;
-  margin-left: auto;
-  margin-right: auto;
+body {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #777;
+  padding: 30px;
+}
+```
+
+- 使用`backgroud-image`
+	- 增加渐变：
+  	
+  	```css
+  	cssbackground-image: linear-gradient(
+      to right bottom,
+      rgba(126, 213, 111, 0.8),
+      rgba(40, 180, 131, 0.8)
+    ), url(../img/hero.jpg);
+    ```
+	- 增加`clip-path`
+
+	```css
+	clip-path: polygon(
+		0 0,
+		100% 0,
+		100% 50%,
+		0 100%
+	); //(X,Y) => 左上角，右上角，右下角，左下角
+	```
+
+- 对于`inline`的元素，外层套`div`
+
+
+### Seudo Class
+
+`seudo class`用来指定某个元素的某种状态
+
+```css
+.btn:focus{
+	//focus状态下应用某种样式
+}
+.btn:hover{
+	//hover状态下应用某种样式
+}
+```
+
+### Animations
+
+- 使用`transform` 和`transition-duration`一起使用，`transition-duration`描述时间
+
+```css
+.btn:hover::after{
+    transform: scaleX(1.4) scaleY(1.6);   
+    opacity: 0;
+    transition: .4s;
+}
+```
+
+- 使用`key-frame`
+
+`key-frame`帧动画和`transform`一起用
+
+```css
+.btn {
+    animation: moveFromBottom .5s ease-in-out;
 }
 
-h1 {
-  text-align: center;
+@keyframes moveFromBottom {
+    0% {
+        opacity: 0;	
+        transform: translateY(30px); 
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 ```

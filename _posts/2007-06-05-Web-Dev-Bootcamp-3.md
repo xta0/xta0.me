@@ -1,8 +1,8 @@
 ---
 title: Javascript Basics
-list_title: Javascript Basics
+list_title: Web Dev | Javascript Basics
 layout: post
-categories: [JavaScript]
+categories: [Web, JavaScript]
 ---
 
 ## 数据类型

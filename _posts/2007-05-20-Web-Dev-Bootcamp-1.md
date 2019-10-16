@@ -3,7 +3,7 @@ update: "2014-09-20"
 layout: post
 categories: [HTML]
 title: HTML Basics
-list_title: HTML Basics
+list_title: Web Dev | HTML Basics
 ---
 
 ## HTML
