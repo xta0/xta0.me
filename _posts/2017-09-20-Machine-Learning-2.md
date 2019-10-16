@@ -101,7 +101,7 @@ end
 
 ### Gradient descent
 
-对 Cost 函数： <math><mi>J</mi><mo>(</mo><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>)</mo></math>，找到<math><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub></math>使 <math><mi>J</mi><mo>(</mo><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>)</mo></math>值最小
+对 Cost 函数：$J(\theta_0, \theta_1)$，找到$\theta_0, \theta_1$ 使 $J(\theta_0, \theta_1)$值最小
 
 * 方法 1. 选择任意<math><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub></math>，例如：<math><msub><mi>θ</mi><mi>0</mi></msub><mo>=</mo><mn>1</mn><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>=</mo><mn>1</mn></math> 
 
@@ -346,7 +346,7 @@ end
 	
 对于线性回归，<math><msup><mi>J</mi><mi>(θ)</mi></msup></math>是凸函数(convex function)，因此上述两个式子没有局部极值点，只有全局唯一的一个极值点。梯度下降法通常在离极值点远的地方下降很快，但在极值点附近时会收敛速度很慢。并且，在目标函数是凸函数时，梯度下降法的解是全局最优解。而在一般情况下，梯度下降法不保证求得全局最优解。
 
-### Multiple features
+## Multiple features
 
 上几节讨论的问题是：已知一个房子大小和价格样本数据集，来推导房价和房屋大小的关系函数：
 
@@ -358,15 +358,13 @@ end
 | 642     | 126      |
 | ...     | ...      |
 
-`x`为房子的 size，`y`是房价，上述的一维线性回归函数：<math>
-<msub><mi>h</mi> <mi>θ</mi></msub><mi>(x)</mi>
-<mo>=</mo>
-<msub><mi>θ</mi> <mi>0</mi></msub>
-<mo>+</mo>
-<msub><mi>θ</mi>
-<mi>1</mi></msub>
-<mi>x</mi>
-</math>，但是影响房价的因素很多，比如房屋数量，楼层数等等：
+`x`为房子的 size，`y`是房价，上述的一维线性回归函数：
+
+$$
+h_\theta(x) = \theta_0+ \theta_1x
+$$
+
+但是影响房价的因素很多，比如房屋数量，楼层数等等：
 
 | Size(x1) | number of bed room (x2) | number of floors(x3) | Price(y) |
 | -------- | ----------------------- | -------------------- | -------- |
@@ -376,249 +374,46 @@ end
 | 642      | 2                       | 1                    | 126      |
 | ...      | ...                     | ...                  | ...      |
 
-对应到公式里，则表现为`x`是多维时，公式如下：
+对应到公式里，则表现为$x$是多维时，公式如下：
 
-<math display="block">
-  <msub>
-    <mi>h</mi>
-    <mi>θ</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <munderover>
-<mo>∑</mo>
-<mrow>
-  <mi>j</mi>
-  <mo>=</mo>
-  <mn>0</mn>
-</mrow>
-<mi>n</mi>
-</munderover>
-<msub><mi>θ</mi><mi>j</mi></msub>
-<msub><mi>x</mi><mi>j</mi></msub>
-<mo>=</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>0</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>1</mn>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mn>1</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>2</mn>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mn>2</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>3</mn>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mn>3</mn>
-  </msub>
-  <mo>+</mo>
-  <mo>⋯</mo>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mi>n</mi>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mi>n</mi>
-  </msub>
-</math>
+$$
+h_\theta(x) = \sum_{j=0}^n\theta_jx_j = \theta_0 + \theta_1x_1 + + \theta_2x_2 + ... + + \theta_nx_n
+$$
 
 其中：
 
-<math display="block">
-<mtable>
-    <mtr>
-      <mtd>
-        <msubsup>
-          <mi>x</mi>
-          <mi>j</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-      </mtd>
-      <mtd>
-        <mo>=</mo>
-        <mtext>value of feature</mtext>
-        <mi>j</mi>
-        <mtext>in the</mtext>
-        <msup>
-          <mi>i</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>t</mi>
-            <mi>h</mi>
-          </mrow>
-        </msup>
-        <mtext>training example</mtext>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <msup>
-          <mi>x</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-      </mtd>
-      <mtd>
-        <mo>=</mo>
-        <mtext>the input (features) of the</mtext>
-        <msup>
-          <mi>i</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>t</mi>
-            <mi>h</mi>
-          </mrow>
-        </msup>
-        <mtext>training example</mtext>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mi>m</mi>
-      </mtd>
-      <mtd>
-        <mo>=</mo>
-        <mtext>the number of training examples</mtext>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mi>n</mi>
-      </mtd>
-      <mtd>
-        <mo>=</mo>
-        <mtext>the number of features</mtext>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+- $x_j^{(i)}$ 表示第j个feature的第i个样本
+- $x^{(i)}$ 表示第i组训练样本
+- $m$ 表示样本数
+- $n$ 表示feature个数
 
-举例来说，<math><msup><mi>x</mi><mi>(2)</mi></msup></math>表示第二组训练集：
+举例来说，$x^{(2)}$表示第二组训练集：
 
-<math display="block">
-<msup><mi>x</mi><mi>(2)</mi></msup>
-<mo>=</mo>
-<mfenced open="[" close="]">
-<mtable>
-	<mtr><mtd><mi>1035</mi></mtd></mtr>
-	<mtr><mtd><mi>4</mi></mtd></mtr>
-	<mtr><mtd><mi>1</mi></mtd></mtr>
-	<mtr><mtd><mi>224</mi></mtd></mtr>
-</mtable>
-</mfenced>
-</math>
+$$
+x^{(2)} = 
+\begin{bmatrix}
+1035  \\
+4  \\
+1  \\
+224 \\
+\end{bmatrix}
+$$
 
-而<math><msubsup><mi>x</mi><mi>3</mi><mi>(2)</mi></msubsup></math>表示上面向量中中第三个元素：
+而$x_3^{(2)}$表示上面向量中中第三个元素：
 
-<math display="block">
-<msubsup>
-<mi>x</mi>
-<mi>3</mi>
-<mi>(2)</mi>
-</msubsup>
-<mo>=</mo>
-<mn>1</mn>
-</math>
+$$
+x_3^{(2)} = 1
+$$
 
 还是举个买房子的例子，假如我们得到如下函数:
 
-<math display="block">
-<msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo>
-<mo>=</mo>
-<mn>80</mn>
-<mo>+</mo>
-<mn>0.1</mn><msub><mi>x</mi><mi>1</mi></msub>
-<mo>+</mo>
-<mn>0.01</mn><msub><mi>x</mi><mi>2</mi></msub>
-<mo>+</mo>
-<mn>3</mn><msub><mi>x</mi><mi>3</mi></msub>
-<mo>-</mo>
-<mn>2</mn><msub><mi>x</mi><mi>4</mi></msub>
-</math>
+$$
+h_\theta(x) = 80 + 0.1x_1 + 0.01x_2 + 3x_3 - 2x_4
+$$
 
-其中<math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></math>表示房子的总价，<math><msub><mi>θ</mi><mn>0</mn></msub></math> = 80 代表房子的基础价格，<math><msub><mi>x</mi><mn>1</mn></msub></math>代表这栋房子的 size，<math><msub><mi>θ</mi><mn>1</mn></msub></math>是用 cost function 计算出来对<math><msub><mi>x</mi><mn>1</mn></msub></math>的系数，类似的<math><msub><mi>x</mi><mn>2</mn></msub></math>代表房子的房间数，<math><msub><mi>θ</mi><mn>2</mn></msub></math>是对<math><msub><mi>x</mi><mn>2</mn></msub></math>的系数，等等
+其中$h_\theta(x)$表示房子的总价，$\theta_0=80$ 代表房子的基础价格，<math><msub><mi>x</mi><mn>1</mn></msub></math>代表这栋房子的 size，<math><msub><mi>θ</mi><mn>1</mn></msub></math>是用 cost function 计算出来对<math><msub><mi>x</mi><mn>1</mn></msub></math>的系数，类似的<math><msub><mi>x</mi><mn>2</mn></msub></math>代表房子的房间数，<math><msub><mi>θ</mi><mn>2</mn></msub></math>是对<math><msub><mi>x</mi><mn>2</mn></msub></math>的系数，等等
 
-在这个式子中
-
-<math display="block">
-  <msub>
-    <mi>h</mi>
-    <mi>θ</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>0</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>1</mn>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mn>1</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>2</mn>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mn>2</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>3</mn>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mn>3</mn>
-  </msub>
-  <mo>+</mo>
-  <mo>⋯</mo>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mi>n</mi>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mi>n</mi>
-  </msub>
-</math>
-<math><msub><mi>x</mi><mn>0</mn></msub></math> 默认为1，即<math><msubsup><mi>x</mi><mi>0</mi><mi>(i)</mi></msubsup><mo>=</mo><mn>1</mn></math>可以把每条样本和对应的参数看成两条vector:
+在这个式子中$x_0$ 默认为1，即$x_0^{(i)}=1$，可以把每条样本和对应的参数看成两条vector:
 
 <math display="block">
 <mi>x</mi><mo>=</mo>
@@ -630,7 +425,6 @@ end
 	<mtr><mtd><msub><mi>x</mi><mi>n</mi></msub></mtd></mtr>
 </mtable>
 </mfenced>
-<mo>,</mo>
 <mspace width="2em"></mspace>
 <mi>θ</mi><mo>=</mo>
 <mfenced open="[" close="]">
@@ -1146,7 +940,7 @@ end
 end
 ```
 
-### Feature Scaling
+## Feature Scaling
 
 Idea: Make sure features are on a similar scale.
 
@@ -1158,7 +952,7 @@ E.g.:`x1 = size(0-200 feet)`,`x2=number of bedrooms(1-5)`
 
 `x1 = size(0-200 feet)/5`,`x2=(number of bedrooms)/5`,则 contour 图会变为接近圆形，梯度下降收敛的速度会加快。通常为了加速收敛，会将每个 feature 值(每个`xi`)统一到某个区间里，比如 <math><mn>0</mn><mo>≤</mo><msub><mi>x</mi><mi>1</mi></msub><mo>≤</mo><mn>3</mn></math>，<math><mn>-2</mn><mo>≤</mo><msub><mi>x</mi><mi>2</mi></msub><mo>≤</mo><mn>0.5</mn></math>等等
 
-### Mean normalization
+## Mean normalization
 
 Replace <math><msub><mi>x</mi><mi>i</mi></msub></math>with <math><msub><mi>x</mi><mi>i</mi></msub><mo>-</mo><msub><mi>μ</mi><mi>i</mi></msub></math> to make features have approximately zero mean.实际上就是将 feature 归一化，
 
@@ -1199,7 +993,7 @@ For example, if xi represents housing prices with a range of 100 to 2000 and a m
 * `μ`表示所有 feature 的平均值
 * `s = max - min`
 
-### Learning Rate
+## Learning Rate
 
 <math display="block">
   <msub>
@@ -1243,7 +1037,7 @@ For example, if xi represents housing prices with a range of 100 to 2000 and a m
 
 * Summary: - if `α` is too small: slow convergence - if `α` is too large: `J(θ)`may not decrease on every iteration; may not converge - To choose `α` , try: ..., 0.001, 0.003, 0.01,0.03, 0.1,0.3, 1, ...
 
-### Polynomial regression
+## Polynomial regression
 
 对于线性回归函数:
 
@@ -1390,7 +1184,7 @@ We can **combine** multiple features into one. For example, we can combine x1 an
 
 可以令 <math><msub><mi>x</mi><mn>2</mn></msub><mo>=</mo><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>,</mo><msub><mi>x</mi><mn>3</mn></msub><mo>=</mo><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup></math> 但是这么选择的一个问题在于 feature scaling 会比较重要，如果 x1 的 range 是[1,1000]，那么 x2 的 range 就会变成[1,1000000]等
 
-### Normal Equation
+## Normal Equation
 
 对于 cost 函数：
 
