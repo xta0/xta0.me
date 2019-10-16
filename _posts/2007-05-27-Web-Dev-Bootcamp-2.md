@@ -1,7 +1,7 @@
 ---
 layout: post
 title: CSS Basics
-list_title: Web Dev Bootcamp Part 2 | CSS Basics
+list_title: CSS Basics
 categories: [CSS]
 ---
 
@@ -524,5 +524,3 @@ h1 {
   text-align: center;
 }
 ```
-
-## Resources

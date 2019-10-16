@@ -1,6 +1,6 @@
 ---
 title: Javascript Basics
-list_title: Web Dev Bootcamp Part 3 | Javascript Basics
+list_title: Javascript Basics
 layout: post
 categories: [JavaScript]
 ---
