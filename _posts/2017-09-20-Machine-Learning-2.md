@@ -389,19 +389,6 @@ $$
 
 举例来说，$x^{(2)}$表示第二组训练集：
 
-<math display="block">
-<msup><mi>x</mi><mi>(2)</mi></msup>
-<mo>=</mo>
-<mfenced open="[" close="]">
-<mtable>
-	<mtr><mtd><mi>1035</mi></mtd></mtr>
-	<mtr><mtd><mi>4</mi></mtd></mtr>
-	<mtr><mtd><mi>1</mi></mtd></mtr>
-	<mtr><mtd><mi>224</mi></mtd></mtr>
-</mtable>
-</mfenced>
-</math>
-
 $$
 x^{(2)} = 
 \begin{bmatrix}
