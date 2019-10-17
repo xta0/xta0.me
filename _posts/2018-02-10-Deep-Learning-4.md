@@ -225,3 +225,4 @@ $$
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-12.png">
 
+该神经网络后面几层为Fully connected layer。对于卷积神经网络一个比较常见的pattern是conv layer后面追加pooling layer，并且最后几层为FC，然后是一个softmax做分类。
