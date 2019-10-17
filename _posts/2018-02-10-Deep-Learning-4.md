@@ -150,17 +150,23 @@ $$
 
 对应到CNN中，$a^{[0]}$是我们输入的图片，大小为6x6x3，两个kernel类比于$W^[1]$矩阵，则$W^{[1]}a^{[0]}$类比于$a^{[0]} * W^{[1]}$得到的输出为一个4x4的矩阵，接下来让该矩阵中的各项加上bias，即$b1$，$b2$，再非线性函数$Relu$对其求值，则可得到$a^{[1]}$
 
-如果layer $l$是一个convolution layer，则有
+如果layer $l$是一个convolution layer，另
 
 - $f^{[l]}$ = filter size 
 - $p^{[l]}$ = padding
 - $s^{[l]}$ = stride
+- $n_C^{[l]}$ = number of filters
 
-则input和output分别为
+则layer ${l}$的input的size为
 
 $$
-input: n_H^{[l-1]} \times  n_W^{[l-1]} \times n_C^{[l-1]} \\
-output: n_H^{[l]} \times n_W^{[l]} \times n_C^{[l]}
+n_H^{[l-1]} \times  n_W^{[l-1]} \times n_C^{[l-1]}
+$$
+
+output的size为
+
+$$
+n_H^{[l]} \times n_W^{[l]} \times n_C^{[l]}
 $$
 
 其中，$n_H^{[l]}$ 和 $n_W^{[l]}$的size计算公式前面曾提到过
@@ -169,24 +175,22 @@ $$
 n_H^{[l]} = \lfloor{\frac{n^{[l-1]}+2p^{[l]}-f^{[l]}}{s^{[l]}} + 1}\rfloor
 $$
 
-- $n_C^{[l]}$ = number of filters
-
 每个Fileter的size为 
 
 $$
 f^{[l]} \times f^{[l]} \times n_C^{[l-1]}
 $$
 
-Hidden Layer的size为
+Hidden Layer中每个Activation unit $A^{[l]}$的size为
 
 $$
-A^{[l]} -> m \times n_H^{[l]} \times n_W^{[l]} \times n_C^{[l]}, m = #batch
+ m \times n_H^{[l]} \times n_W^{[l]} \times n_C^{[l]}, m = #batch
 $$
 
-Weights的size为
+Weights $W^{[l]}$的size为
 
 $$
-W^{[l]} -> f^{[l]} \times f^{[l]} \times n_C^{[l-1]} \times n_C^{[l]}
+ -> f^{[l]} \times f^{[l]} \times n_C^{[l-1]} \times n_C^{[l]}
 $$
 
 Bias的size为
