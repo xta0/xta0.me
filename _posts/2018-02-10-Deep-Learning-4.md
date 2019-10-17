@@ -195,14 +195,6 @@ $$
 
 Bias $b^{[l]}$的size为 $n_C^{[l]}$
 
-### A Simple Convolutional Network Example
-
-一般来说，一个卷积神经网络有下面几种layer
-
-- Convolution
-- Pooling
-- Fully connected
-
 ### Pooling layer
 
 Pooling是用来对输入矩阵进行优化的一种方法。举例来说，下图是对一个4x4的矩阵进行max pooling，得到一个2x2的矩阵
@@ -220,3 +212,16 @@ Pooling是用来对输入矩阵进行优化的一种方法。举例来说，下�
 $$
 \lfloor{\frac{n_H-f}{stride} + 1}\rfloor \times \lfloor{\frac{n_W-f}{stride} + 1}\rfloor \times n_C
 $$
+
+### A Convolutional Network Example
+
+一般来说，一个卷积神经网络有下面几种layer
+
+- Convolution
+- Pooling
+- Fully connected
+
+如下图是一个LeNet-5的卷积神经网路
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-12.png">
+
