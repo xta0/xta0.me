@@ -37,7 +37,7 @@ $$
 
 这样当kernel滑过整张图片后，会得到一个4x4的矩阵，包含滤波后的像素值。
 
-<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-3.png" width="50%">
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-3.png" width="40%">
 
 图中可见滤波后图像的大小为kernel在水平和竖直方向上所滑过的次数。我们假设图片的大小是`nxn`的，kernel的大小是`fxf`的，那么输出图片的大小为
 
