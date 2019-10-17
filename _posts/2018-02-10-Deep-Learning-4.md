@@ -193,8 +193,4 @@ $$
 f^{[l]} \times f^{[l]} \times n_C^{[l-1]} \times n_C^{[l]}
 $$
 
-Bias的size为
-
-$$
-b^{[l]} -> n_C^{[l]}
-$$
+Bias $b^{[l]}$的size为 $n_C^{[l]}$
