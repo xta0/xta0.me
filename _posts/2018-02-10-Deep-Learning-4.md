@@ -15,8 +15,8 @@ CNN是深度学习中一种处理图像的神经网络，可以用来做图像�
 图像的边缘检测实际上是对图像中的各个点做卷积运算，离散的卷积运算在时域（空域）上可以理解为是一种加权求和的过程，在频域上可以理解为一种滤波器。例如一副36个像素的灰度图片，我想想要检测它的竖直边缘，可以用一个3x3的kernel滑过图片的每个像素点，如下图所示
 
 <div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
-<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-1.png"></div>
-<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-2.png" ></div>
+<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-1.png" width="80%"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-2.png" width="80%"></div>
 </div>
 
 图中蓝色区域的脚标值构成一个kernel，如上图中的kernel为
@@ -92,7 +92,7 @@ $$
 \lfloor{\frac{n+2p-f}{stride} + 1}\rfloor \times \lfloor{\frac{n+2p-f}{stride} + 1}\rfloor
 $$
 
-### Convolutions over volume 
+### Convolutions Over Volume 
 
 在前面的例子中，我们介绍了二维灰度图片的卷积运算，我们可以将原理推广到三维的RGB图片上，对于RGB图片的卷积运算，我们可以用下图表示
 
@@ -152,4 +152,9 @@ $$
 
 如果layer $l$是一个convolution layer，另
 
-- $f^{[l]} = filter size$ 
+- $f^{[l]}$ = filter size 
+- $p^{[l]}$ = padding
+- $s^{[l]}$ = stride
+- input: $n_H^{[l-1]}$ x $n_W^{[l-1]}$ x $n_C^{[l-1]}$
+- output: $n_H^{[l]}$ x $n_W^{[l]}$ x $n_C^{[l]}$
+    - $n_H^{[l]}$ = $\lfloor{\frac{n^{[l-1]}+2p^{[l]}-f^{[l]}}{s^{[l]}} + 1}\rfloor$
