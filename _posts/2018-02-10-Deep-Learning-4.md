@@ -169,3 +169,28 @@ $$
 n_H^{[l]} = \lfloor{\frac{n^{[l-1]}+2p^{[l]}-f^{[l]}}{s^{[l]}} + 1}\rfloor
 $$
 
+- $n_C^{[l]}$ = number of filters
+
+每个Fileter的size为 
+
+$$
+f^{[l]} \times f^{[l]} \times n_C^{[l-1]}
+$$
+
+Hidden Layer的size为
+
+$$
+A^{[l]} -> m \times n_H^{[l]} \times n_W^{[l]} \times n_C^{[l]}, m = #batch
+$$
+
+Weights的size为
+
+$$
+W^{[l]} -> f^{[l]} \times f^{[l]} \times n_C^{[l-1]} \times n_C^{[l]}
+$$
+
+Bias的size为
+
+$$
+b^{[l]} -> n_C^{[l]}
+$$
