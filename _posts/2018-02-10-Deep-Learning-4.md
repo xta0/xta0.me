@@ -194,3 +194,29 @@ f^{[l]} \times f^{[l]} \times n_C^{[l-1]} \times n_C^{[l]}
 $$
 
 Bias $b^{[l]}$的size为 $n_C^{[l]}$
+
+### A Simple Convolutional Network Example
+
+一般来说，一个卷积神经网络有下面几种layer
+
+- Convolution
+- Pooling
+- Fully connected
+
+### Pooling layer
+
+Pooling是用来对输入矩阵进行优化的一种方法。举例来说，下图是对一个4x4的矩阵进行max pooling，得到一个2x2的矩阵
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-10.png">
+
+上图中，max-pooling的两个参数 - $stride$为2，$f$为2，对于多维矩阵同理
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-11.png">
+
+注意，Pooling用到的这两个参数是经验值，并非通过backprop求得。
+
+总结一下，如果Pooling layer的输入为 $n_H \times n_W \times n_C$，则输出的size为
+
+$$
+\lfloor{\frac{n_H-f}{stride} + 1}\rfloor \times \lfloor{\frac{n_W-f}{stride} + 1}\rfloor \times n_C
+$$
