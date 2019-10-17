@@ -155,6 +155,16 @@ $$
 - $f^{[l]}$ = filter size 
 - $p^{[l]}$ = padding
 - $s^{[l]}$ = stride
-- input: $n_H^{[l-1]}$ x $n_W^{[l-1]}$ x $n_C^{[l-1]}$
-- output: $n_H^{[l]}$ x $n_W^{[l]}$ x $n_C^{[l]}$
-    - $n_H^{[l]}$ = $\lfloor{\frac{n^{[l-1]}+2p^{[l]}-f^{[l]}}{s^{[l]}} + 1}\rfloor$
+
+则有input和output分别为
+$$
+input: n_H^{[l-1]}$ x n_W^{[l-1]} x n_C^{[l-1]} \\
+output: n_H^{[l]}$ x n_W^{[l]} x n_C^{[l]}
+$$
+
+其中，$n_H^{[l]}$ 和 $n_W^{[l]}$的size计算公式前面曾提到过
+
+$$
+n_H^{[l]}$ = \lfloor{\frac{n^{[l-1]}+2p^{[l]}-f^{[l]}}{s^{[l]}} + 1}\rfloor
+$$
+
