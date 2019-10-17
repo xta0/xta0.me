@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: 聊聊Linkers和Loaders
-title: 聊聊Linkers和Loaders
+list_title: 链接与加载 | Linkers and Loaders | Static and Dynamic Libraries
+title: 静态库与动态库
 categories: [C,C++]
 ---
 

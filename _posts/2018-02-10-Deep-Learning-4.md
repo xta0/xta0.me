@@ -15,8 +15,8 @@ CNN是深度学习中一种处理图像的神经网络，可以用来做图像�
 图像的边缘检测实际上是对图像中的各个点做卷积运算，离散的卷积运算在时域（空域）上可以理解为是一种加权求和的过程，在频域上可以理解为一种滤波器。例如一副36个像素的灰度图片，我想想要检测它的竖直边缘，可以用一个3x3的kernel滑过图片的每个像素点，如下图所示
 
 <div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
-<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-1.png"></div>
-<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-2.png" ></div>
+<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-1.png" width="80%"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-2.png" width="80%"></div>
 </div>
 
 图中蓝色区域的脚标值构成一个kernel，如上图中的kernel为
@@ -37,7 +37,7 @@ $$
 
 这样当kernel滑过整张图片后，会得到一个4x4的矩阵，包含滤波后的像素值。
 
-<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-3.png" width="50%">
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-3.png" width="40%">
 
 图中可见滤波后图像的大小为kernel在水平和竖直方向上所滑过的次数。我们假设图片的大小是`nxn`的，kernel的大小是`fxf`的，那么输出图片的大小为
 
@@ -92,7 +92,7 @@ $$
 \lfloor{\frac{n+2p-f}{stride} + 1}\rfloor \times \lfloor{\frac{n+2p-f}{stride} + 1}\rfloor
 $$
 
-### Convolutions over volume 
+### Convolutions Over Volume 
 
 在前面的例子中，我们介绍了二维灰度图片的卷积运算，我们可以将原理推广到三维的RGB图片上，对于RGB图片的卷积运算，我们可以用下图表示
 
@@ -152,4 +152,77 @@ $$
 
 如果layer $l$是一个convolution layer，另
 
-- $f^{[l]} = filter size$ 
+- $f^{[l]}$ = filter size 
+- $p^{[l]}$ = padding
+- $s^{[l]}$ = stride
+- $n_C^{[l]}$ = number of filters
+
+则layer ${l}$的input的size为
+
+$$
+n_H^{[l-1]} \times  n_W^{[l-1]} \times n_C^{[l-1]}
+$$
+
+output的size为
+
+$$
+n_H^{[l]} \times n_W^{[l]} \times n_C^{[l]}
+$$
+
+其中，$n_H^{[l]}$ 和 $n_W^{[l]}$的size计算公式前面曾提到过
+
+$$
+n_H^{[l]} = \lfloor{\frac{n^{[l-1]}+2p^{[l]}-f^{[l]}}{s^{[l]}} + 1}\rfloor
+$$
+
+每个Fileter的size为 
+
+$$
+f^{[l]} \times f^{[l]} \times n_C^{[l-1]}
+$$
+
+Hidden Layer中每个Activation unit $A^{[l]}$的size为，其中m为batch数量
+
+$$
+ m \times n_H^{[l]} \times n_W^{[l]} \times n_C^{[l]}
+$$
+
+Weights $W^{[l]}$的size为
+
+$$
+f^{[l]} \times f^{[l]} \times n_C^{[l-1]} \times n_C^{[l]}
+$$
+
+Bias $b^{[l]}$的size为 $n_C^{[l]}$
+
+### Pooling layer
+
+Pooling是用来对输入矩阵进行优化的一种方法。举例来说，下图是对一个4x4的矩阵进行max pooling，得到一个2x2的矩阵
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-10.png">
+
+上图中，max-pooling的两个参数 - $stride$为2，$f$为2，对于多维矩阵同理
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-11.png">
+
+注意，Pooling用到的这两个参数是经验值，并非通过backprop求得。
+
+总结一下，如果Pooling layer的输入为 $n_H \times n_W \times n_C$，则输出的size为
+
+$$
+\lfloor{\frac{n_H-f}{stride} + 1}\rfloor \times \lfloor{\frac{n_W-f}{stride} + 1}\rfloor \times n_C
+$$
+
+### A Convolutional Network Example
+
+一般来说，一个卷积神经网络有下面几种layer
+
+- Convolution
+- Pooling
+- Fully connected
+
+如下图是一个LeNet-5的卷积神经网路
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-12.png">
+
+该神经网络后面几层为Fully connected layer。对于卷积神经网络一个比较常见的pattern是conv layer后面追加pooling layer，并且最后几层为FC，然后是一个softmax做分类。
