@@ -181,16 +181,16 @@ $$
 f^{[l]} \times f^{[l]} \times n_C^{[l-1]}
 $$
 
-Hidden Layer中每个Activation unit $A^{[l]}$的size为
+Hidden Layer中每个Activation unit $A^{[l]}$的size为，其中m为batch数量
 
 $$
- m \times n_H^{[l]} \times n_W^{[l]} \times n_C^{[l]}, m = #batch
+ m \times n_H^{[l]} \times n_W^{[l]} \times n_C^{[l]}
 $$
 
 Weights $W^{[l]}$的size为
 
 $$
- -> f^{[l]} \times f^{[l]} \times n_C^{[l-1]} \times n_C^{[l]}
+f^{[l]} \times f^{[l]} \times n_C^{[l-1]} \times n_C^{[l]}
 $$
 
 Bias的size为
