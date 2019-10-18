@@ -249,12 +249,15 @@ $$
 
 假设我们要Train一个CNN来识别图片是不是猫。首先我们有一组Training set $(x^{(i)},y^{(i)}) ... (x^{(m)},y^{(m)})$，接下来我们可以构建一个如下图的CNN
 
-<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-14.png">
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-15.png">
 
 接下来我们还需要一个代价函数来计算error
 
 $$
-Cost J = \frac{1}{m}\sum_{i=1}^mL(\hat{y}^{(i)}, y^{(i)})
+J = \frac{1}{m}\sum_{i=1}^mL(\hat{y}^{(i)}, y^{(i)})
 $$
 
-最后我们需要用到前面讲过的梯度下降来计算weight和bias
+最后我们需要用到前面讲过的梯度下降来最小化error，从得到最终的weight和bias
+
+
+### Python Implementation
