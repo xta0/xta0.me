@@ -10,13 +10,13 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 CNN是深度学习中一种处理图像的神经网络，可以用来做图像的分类，segmentation，目标检测等等。其工作原理可简单概括为通过神经网络的各层layer不断提取图片特征，通过对这些特征的运算从而达到我们想要的结果。
 
-<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-0.png" width="80%"></div>
+<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-0.png"></div>
 
 ### Edge Detection as an Example
 
 比如我们想做一个卷积神经网络用来提取图片的边缘，如下图所示，该怎么做呢
 
-<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-14.png" width="80%"></div>
+<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-14.png"></div>
 
 提取边缘信息实际上是对图像中的各个点做卷积运算，离散的卷积运算在时域（空域）上可以理解为是一种加权求和的过程，在频域上可以理解为一种滤波器。例如一副36个像素的灰度图片，我想想要检测它的竖直边缘，可以用一个3x3的kernel滑过图片的每个像素点，如下图所示
 
