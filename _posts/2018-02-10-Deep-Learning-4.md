@@ -14,7 +14,7 @@ CNN是深度学习中一种处理图像的神经网络，可以用来做图像�
 
 ### Edge Detection as an Example
 
-比如我们想做一个卷积神经网络用来提取图片的边缘，如下图所示，该怎么做呢
+比如我们想做一个卷积神经网络用来提取图片的边缘信息，如下图所示，后面两张图中为图片的垂直于水平边缘
 
 <div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-14.png"></div>
 
@@ -61,7 +61,7 @@ $$
 \end{bmatrix}
 $$
 
-但基于传统图像处理算法的边缘提取效果并不是最佳的，与其根据经验值来确定kernel中的值，CNN可以通过训练来找到最佳的kernel，这也是CNN所要最终解决的问题，即通过训练找到各式各样的kernel来帮我们完成最终的任务
+但基于传统图像处理算法对边缘的提取效果并不是最佳的，与其根据经验值来确定kernel中的值，CNN可以通过训练来找到最佳的kernel，这也是CNN所要最终解决的问题，即通过训练找到各式各样的kernel来帮我们完成最终的任务
 
 ### Padding
 
@@ -235,4 +235,26 @@ $$
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-13.png">
 
-可以看出，hidden layer的Activation units的shape和size都是逐层减少的
+可以看出，hidden layer的Activation units的shape和size都是逐层减少的。看到这里不禁有人会问，这种卷积神经网络和之前介绍的普通神经网络或者FC神经网络相比有什么好处呢？好处大概有这么两点
+
+- **Parameter Sharing**
+
+相比于直接使用FC，使用conv layer的好处在于需要学习的weight数量会显著减少，比如还是上面的例子，如果使用FC，那么第二层的weight数量为 3072 * 4704，这个训练量是巨大的。而如果使用conv layer，待训练的数量只有156个。其背后的原因在于卷积运算的kernel（feature detector）是可以复用的，比如在图片左上角检测边缘的kernel对于图片右下角的边缘也适用。因此我们只需要一个卷积核就可滑过整张图片。
+
+- **Sparsity of connections**
+
+对于卷积后图片上每一点的值只和原图中某个局部的区域有关，区域的的大小取决于kernel的大小，和其余的点无关。而对于FC，每个点的计算都和前一个layer的所有点有关联，因此计算效率会大大降低
+
+### All Together
+
+假设我们要Train一个CNN来识别图片是不是猫。首先我们有一组Training set $(x^{(i)},y^{(i)}) ... (x^{(m)},y^{(m)})$，接下来我们可以构建一个如下图的CNN
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-14.png">
+
+接下来我们还需要一个代价函数来计算error
+
+$$
+Cost J = \frac{1}{m}\sum_{i=1}^mL(\hat{y}^{(i)}, y^{(i)})
+$$
+
+最后我们需要用到前面讲过的梯度下降来计算weight和bias
