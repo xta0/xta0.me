@@ -1,5 +1,5 @@
 ---
-list_title: 深度学习 | Logistic Regression as a Neural Network | 逻辑回归于神经网络
+list_title: 深度学习 | Logistic Regression as a Neural Network | 逻辑回归与神经网络
 title: Logistic Regression as a Neural Network
 layout: post
 mathjax: true
