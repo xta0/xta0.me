@@ -12,20 +12,13 @@ CNN是深度学习中一种处理图像的神经网络，可以用来做图像�
 
 <div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-0.png"></div>
 
-### Edge Detection as an Example
+### 卷积运算
 
-比如我们想做一个卷积神经网络用来提取图片的边缘信息，如下图所示，后面两张图中为图片的垂直于水平边缘
+CNN对图片特征的提取是基于卷积运算，由于图片中的像素点在空域上是离散的，因此准确的说是离散卷积运算。如果熟悉信号处理可知，卷积运算在频域上是一种滤波，比如图片的边缘包含大量的高频信息，我们可以设计一个高频滤波器对图片进行卷积，这样只有图片中的高频分量才能通过滤波器，即过滤出了图片的边缘。在空域上，卷积运算是一种加权求和的运算。其具体过程为让一个卷积核（kernel）依次滑过图片中的所有区域，如下图所示
 
-<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-14.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-conv-kernal.png"></div>
 
-提取边缘信息实际上是对图像中的各个点做卷积运算，离散的卷积运算在时域（空域）上可以理解为是一种加权求和的过程，在频域上可以理解为一种滤波器。例如一副36个像素的灰度图片，我想想要检测它的竖直边缘，可以用一个3x3的kernel滑过图片的每个像素点，如下图所示
-
-<div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
-<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-1.png" width="80%"></div>
-<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-2.png" width="80%"></div>
-</div>
-
-图中蓝色区域的脚标值构成一个kernel，如上图中的kernel为
+还是以上面的提到的边缘检测为例，我们需要一个卷积核作为滤波器来提取图片的边缘信息，以检竖直边缘为例，我们可以设计下面一个kernel
 
 $$
 \begin{bmatrix}
@@ -35,17 +28,27 @@ $$
 \end{bmatrix}
 $$
 
+接下来我们让这个kerel依次滑过图片，如下图中蓝色区域所示
+
+<div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
+<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-1.png" width="80%"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-2.png" width="80%"></div>
+</div>
+
 对于滑过的蓝色区域，对图中的像素和kernel矩阵进行element-wise的乘积并求和，以左图的第一个window为例，滤波后的像素点为的值为
 
 ```shell
 3x1 + 1x1 + 2x1 + 0x0 + 5x0 + 7x0 + 1x(-1) + 8x(-1) + 2x(-1) = -5
 ```
-
 这样当kernel滑过整张图片后，会得到一个4x4的矩阵，包含滤波后的像素值。
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-3.png" width="40%">
 
-图中可见滤波后图像的大小为kernel在水平和竖直方向上所滑过的次数。我们假设图片的大小是`nxn`的，kernel的大小是`fxf`的，那么输出图片的大小为
+同理我们也可以设计一个水平方向的滤波器来提取图片中水平的边缘信息，则通过竖直和水平滤波后的图片如下图所示
+
+<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-14.png"></div>
+
+我们假设图片的大小是`nxn`的，kernel的大小是`fxf`的，那么滤波后图片的大小为
 
 $$
 n-f+1 \times n-f+1
@@ -67,7 +70,9 @@ $$
 
 从上面边缘检测的例子中可以看出，每当图片完成一次卷积运算后，它的大小会变小；另外，对于图片中边缘的像素点，只会经过一次的卷积运算，而对于位于图中中心位置的点，则可能经过多次的卷积运算，因此卷积运算对于图片边缘的点并不能有效的运用起来。
 
-为了解决这两个问题，我们可以给输入的图片增加一圈padding，以上面6x6的图片为例，如果我们在图片周围各加一个像素的padding，那么6x6的图片，将会变成8x8，经过卷积运算后的图片尺寸依旧是 8-3+1 = 6x6。
+为了解决这两个问题，我们可以给输入的图片增加一圈padding，以上面6x6的图片为例，如果我们在图片周围各加一个像素的padding，那么6x6的图片，将会变成8x8，经过卷积运算后的图片尺寸依旧是 8-3+1 = 6x6。下图则是对一张图片的RGB三通道做padding
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-padding.png">
 
 我们另$p$为padding的像素数，则卷积后的图片尺寸为
 
@@ -81,7 +86,26 @@ $$
 p = \frac{f-1}{2}
 $$
 
-在计算机视觉中，`f`通常为奇数
+在计算机视觉中，`f`通常为奇数。在numpy中我们可以使用下面代码对图片增加padding
+
+```python
+import numpy as np
+
+def zero_pad(X, pad):
+    """
+    Pad with zeros all images of the dataset X. The padding is applied to the height and width of an image, 
+    as illustrated in Figure 1.
+    
+    Argument:
+    X -- python numpy array of shape (m, n_H, n_W, n_C) representing a batch of m images
+    pad -- integer, amount of padding around each image on vertical and horizontal dimensions
+    
+    Returns:
+    X_pad -- padded image of shape (m, n_H + 2*pad, n_W + 2*pad, n_C)
+    """
+    X_pad = np.pad(X, ((0,0),(pad, pad),(pad, pad),(0,0)), mode='constant', constant_values=(0,0);    
+    return X_pad
+```
 
 ### Strided Convolutions
 
