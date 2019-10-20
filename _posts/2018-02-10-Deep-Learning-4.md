@@ -44,6 +44,31 @@ $$
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-3.png" width="40%">
 
+我们可以用Numpy实现上述计算过程
+
+```python
+def conv_single_step(a_slice_prev, W, b):
+    """
+    Apply one filter defined by parameters W on a single slice (a_slice_prev) of the output activation 
+    of the previous layer.
+    
+    Arguments:
+    a_slice_prev -- slice of input data of shape (f, f, n_C_prev)
+    W -- Weight parameters contained in a window - matrix of shape (f, f, n_C_prev)
+    b -- Bias parameters contained in a window - matrix of shape (1, 1, 1)
+    
+    Returns:
+    Z -- a scalar value, the result of convolving the sliding window (W, b) on a slice x of the input data
+    """
+    # Element-wise product between a_slice_prev and W. Do not add the bias yet.
+    s = np.multiply(a_slice_prev, W)
+    # Sum over all entries of the volume s.
+    Z = s.sum()
+    # Add bias b to Z. Cast b to a float() so that Z results in a scalar value.
+    Z = Z+float(b)
+    return Z
+```
+
 同理我们也可以设计一个水平方向的滤波器来提取图片中水平的边缘信息，则通过竖直和水平滤波后的图片如下图所示
 
 <div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-14.png"></div>
@@ -93,9 +118,6 @@ import numpy as np
 
 def zero_pad(X, pad):
     """
-    Pad with zeros all images of the dataset X. The padding is applied to the height and width of an image, 
-    as illustrated in Figure 1.
-    
     Argument:
     X -- python numpy array of shape (m, n_H, n_W, n_C) representing a batch of m images
     pad -- integer, amount of padding around each image on vertical and horizontal dimensions
