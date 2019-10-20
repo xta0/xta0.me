@@ -1,5 +1,5 @@
 ---
-list_title: 深度学习 | Convolutional Neural Networks
+list_title: 深度学习 | Convolutional Neural Networks | 卷积神经网络
 title: Convolutional Neural Networks
 layout: post
 mathjax: true
@@ -18,7 +18,7 @@ CNN对图片特征的提取是基于卷积运算，由于图片中的像素点�
 
 <div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-conv-kernel.gif"></div>
 
-还是以上面的提到的边缘检测为例，我们需要一个卷积核作为滤波器来提取图片的边缘信息，以检竖直边缘为例，我们可以设计下面一个kernel
+还是以上面的提到的边缘检测为例，假设我们要提取图片的竖直边缘，我们可以设计下面一个kernel
 
 $$
 \begin{bmatrix}

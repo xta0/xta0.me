@@ -1,5 +1,5 @@
 ---
-list_title: 深度学习 | Shallow Layer Neural Networks
+list_title: 深度学习 | Shallow Layer Neural Networks | 单层神经网络
 title: Shallow Layer Neural Networks
 layout: post
 mathjax: true
