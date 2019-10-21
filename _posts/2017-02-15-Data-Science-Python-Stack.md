@@ -137,13 +137,9 @@ conv = np.cov(X.T)
 np.linalg.eig(conv)
 np.linalg.eigh(conv)
 ```
-
-### Solving a Linear System
-
-我们可以使用Numpy解决一些简单的线性代数问题，比如给定 $Ax=b$，其中$A，b$各是一个矩阵，我们要求解向量$x$
-
 ## Pandas
 
+### Loading in Data
 
 
 ### Resources

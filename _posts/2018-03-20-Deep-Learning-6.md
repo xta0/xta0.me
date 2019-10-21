@@ -266,14 +266,14 @@ def conv_forward(A_prev, W, b, hparameters):
     Z -- conv output, numpy array of shape (m, n_H, n_W, n_C)
     cache -- cache of values needed for the conv_backward() function
     """
-    # Retrieve dimensions from A_prev's shape (≈1 line)  
+    # Retrieve dimensions from A_prev's shape
     (m, n_H_prev, n_W_prev, n_C_prev) = A_prev.shape
-    # Retrieve dimensions from W's shape (≈1 line)
+    # Retrieve dimensions from W's shape
     (f, f, n_C_prev, n_C) = W.shape
-    # Retrieve information from "hparameters" (≈2 lines)
+    # Retrieve information from "hparameters"
     stride = hparameters["stride"]
     pad = hparameters["pad"]
-    # Compute the dimensions of the CONV output volume using the formula given above. Hint: use int() to floor. (≈2 lines)
+    # Compute the dimensions of the CONV output volume using the formula given above. Hint: use int() to floor.
     n_H = int((n_H_prev - f + 2*pad) / stride + 1)
     n_W = int((n_W_prev - f + 2*pad) / stride + 1)
     # Initialize the output volume Z with zeros. 
@@ -290,9 +290,9 @@ def conv_forward(A_prev, W, b, hparameters):
                     vert_end = vert_start + f
                     horiz_start = stride * w
                     horiz_end = horiz_start + f
-                    # Use the corners to define the (3D) slice of a_prev_pad (See Hint above the cell). (≈1 line)
+                    # Use the corners to define the (3D) slice of a_prev_pad (See Hint above the cell). 
                     a_slice_prev = a_prev_pad[vert_start:vert_end, horiz_start:horiz_end, :]
-                    # Convolve the (3D) slice with the correct filter W and bias b, to get back one output neuron. (≈1 line)
+                    # Convolve the (3D) slice with the correct filter W and bias b, to get back one output neuron. 
                     Z[i, h, w, c] = conv_single_step(a_slice_prev, W[:, :, :, c], b[:, :, :, c])
     # Making sure your output shape is correct
     assert(Z.shape == (m, n_H, n_W, n_C))
