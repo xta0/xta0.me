@@ -182,6 +182,8 @@ rgb rgb rgb ... rgb
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-8.png">
 
+> [这个视频](https://eirwumuabdrwrjknwzodsl.coursera-apps.org/notebooks/week1/images/conv_kiank.mp4)更好的展示上述卷积计算的过程
+
 小结一下，对于图片的卷积操作，一张$n \times n \times n_c$的图片和一个$f \times f \times n_c$的kernel做卷积得到的输出为
 
 $$
@@ -247,6 +249,75 @@ $$
 
 Bias $b^{[l]}$的size为 $n_C^{[l]}$
 
+我们还是用Numpy来实现以下上面的过程
+
+```python
+def conv_forward(A_prev, W, b, hparameters):
+    """
+    Implements the forward propagation for a convolution function
+
+    Arguments:
+    A_prev -- output activations of the previous layer, numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
+    W -- Weights, numpy array of shape (f, f, n_C_prev, n_C)
+    b -- Biases, numpy array of shape (1, 1, 1, n_C)
+    hparameters -- python dictionary containing "stride" and "pad"
+
+    Returns:
+    Z -- conv output, numpy array of shape (m, n_H, n_W, n_C)
+    cache -- cache of values needed for the conv_backward() function
+    """
+    # Retrieve dimensions from A_prev's shape (≈1 line)  
+    (m, n_H_prev, n_W_prev, n_C_prev) = A_prev.shape
+    # Retrieve dimensions from W's shape (≈1 line)
+    (f, f, n_C_prev, n_C) = W.shape
+    # Retrieve information from "hparameters" (≈2 lines)
+    stride = hparameters["stride"]
+    pad = hparameters["pad"]
+    # Compute the dimensions of the CONV output volume using the formula given above. Hint: use int() to floor. (≈2 lines)
+    n_H = int((n_H_prev - f + 2*pad) / stride + 1)
+    n_W = int((n_W_prev - f + 2*pad) / stride + 1)
+    # Initialize the output volume Z with zeros. 
+    Z = np.zeros((m, n_H, n_W, n_C))
+    # Create A_prev_pad by padding A_prev
+    A_prev_pad = zero_pad(A_prev, pad)
+    for i in range(m):                               # loop over the batch of training examples
+        a_prev_pad = A_prev_pad[i, :, :, :]            # Select ith training example's padded activation
+        for h in range(n_H):                           # loop over vertical axis of the output volume
+            for w in range(n_W):                       # loop over horizontal axis of the output volume
+                for c in range(n_C):                   # loop over channels (= #filters) of the output volume
+                    # Find the corners of the current "slice"
+                    vert_start = stride * h
+                    vert_end = vert_start + f
+                    horiz_start = stride * w
+                    horiz_end = horiz_start + f
+                    # Use the corners to define the (3D) slice of a_prev_pad (See Hint above the cell). (≈1 line)
+                    a_slice_prev = a_prev_pad[vert_start:vert_end, horiz_start:horiz_end, :]
+                    # Convolve the (3D) slice with the correct filter W and bias b, to get back one output neuron. (≈1 line)
+                    Z[i, h, w, c] = conv_single_step(a_slice_prev, W[:, :, :, c], b[:, :, :, c])
+    # Making sure your output shape is correct
+    assert(Z.shape == (m, n_H, n_W, n_C))
+    # Save information in "cache" for the backprop
+    cache = (A_prev, W, b, hparameters)
+    return Z, cache
+```
+测试代码如下
+
+```python
+np.random.seed(1)
+#10张4通道的RGBA图片，每张的大小为5x7
+A_prev = np.random.randn(10,5,7,4)
+#8个fileter，每个filter有4通道
+W = np.random.randn(3,3,4,8)
+b = np.random.randn(1,1,1,8)
+#自定义pad和stride
+hparameters = {"pad" : 1,
+               "stride": 2}
+#通过conv层得到的结果
+Z, cache_conv = conv_forward(A_prev, W, b, hparameters)
+#卷积后得到10张8组3x4的图片
+print("Z's shape:", Z.shape) #(10, 3, 4, 8)
+```
+
 ### Pooling layer
 
 Pooling是用来对输入矩阵进行优化的一种方法。举例来说，下图是对一个4x4的矩阵进行max pooling，得到一个2x2的矩阵
@@ -304,6 +375,3 @@ J = \frac{1}{m}\sum_{i=1}^mL(\hat{y}^{(i)}, y^{(i)})
 $$
 
 最后我们需要用到前面讲过的梯度下降来最小化error，从得到最终的weight和bias
-
-
-### Python Implementation
