@@ -1,7 +1,7 @@
 ---
 layout: post
 list_title: 计算投资 | Machine Learning For Trading | Motivation 
-title:  Motivation & Python Tools Stack
+title:  Machine Learning for Trading
 categories: [Machine Learning, Trading]
 mathjax: true
 ---
