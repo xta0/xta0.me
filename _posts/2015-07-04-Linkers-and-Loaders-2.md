@@ -16,3 +16,5 @@ categories: [C,C++]
 静态链接相对来说比较简单，如上图中展示了一个静态库被链接进一个project binary的全过程，对于这种情况，binary中最终只会链接静态库中被用到的symbols，如下图所示
 
 <img src="{{site.baseurl}}/assets/images/2015/07/static-linking-selectiveness.png">
+
+上图中，我们的binary只需要
