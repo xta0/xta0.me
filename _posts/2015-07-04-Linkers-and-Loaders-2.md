@@ -77,11 +77,11 @@ int main(){
 <code class="language-python">
 > nm main.o | c++filt
 
-00000000000001e0 short GCC_except_table3
+000001e0 short GCC_except_table3
                  U __Unwind_Resume
                  U a_foo()
 ...
-00000000000000a0 T _main
+000000a0 T _main
 
 </code>
 </pre>
@@ -100,12 +100,12 @@ ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem $path_to_libclang_rt.osx.
 ```shell
 > nm a.out | c++filt
 
-0000000100000f68 short GCC_except_table3
+100000f68 short GCC_except_table3
                  ...
-0000000100000e70 T a_bar()
-0000000100000e20 T a_foo()
+100000e70 T a_bar()
+100000e20 T a_foo()
 ...
-0000000100000c40 T _main
+100000c40 T _main
                  U dyld_stub_binder
 
 ```
