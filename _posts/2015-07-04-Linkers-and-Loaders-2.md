@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 链接与加载 | Linkers and Loaders | Static and Dynamic Libraries
+list_title: 链接与加载 | Linkers and Loaders | 静态库 | Static Library 
 title: 静态库与动态库
 categories: [C,C++]
 ---
@@ -126,4 +126,8 @@ ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem $path_to_libclang_rt.osx.
 
 ### Whole Archive的问题
 
-## 动态库
+
+## Resources
+
+- [Linkers and Loaders](https://www.amazon.com/Linkers-Kaufmann-Software-Engineering-Programming/dp/1558604960)
+- [Advanced C and C++ compiling](https://www.amazon.com/Advanced-C-Compiling-Milan-Stevanovic/dp/1430266678)

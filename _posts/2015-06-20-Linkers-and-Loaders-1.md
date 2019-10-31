@@ -2,7 +2,7 @@
 update: "2019-06-29"
 layout: post
 title: 聊一聊Linkers和Loaders
-list_title:  链接与加载 | Linkers and Loaders | Overview
+list_title:  链接与加载 | Linkers and Loaders | 综述 | Overview
 categories: [C,C++]
 ---
 
@@ -411,9 +411,8 @@ int __libc_start_main(
 
 ## Resources
 
-- [Linkers and Loaders]()
-- [C and C++ compiling]()
-
+- [Linkers and Loaders](https://www.amazon.com/Linkers-Kaufmann-Software-Engineering-Programming/dp/1558604960)
+- [Advanced C and C++ compiling](https://www.amazon.com/Advanced-C-Compiling-Milan-Stevanovic/dp/1430266678)
 ### `nm`命令
 
 > 注意，`nm`命令不会列出DLL的entry point，除非有和它关联的符号表。
