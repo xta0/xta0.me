@@ -40,6 +40,7 @@ int __attribute__((noinline)) a_bar() {
 <div class="md-margin-left-12">
 <pre class="highlight language-cpp md-no-padding-v md-height-full">
 <code class="language-cpp">
+//main.cpp
 extern int a_foo();
 int main(){
     int x = a_foo();
@@ -65,8 +66,8 @@ int main(){
 <code class="language-cpp">
 >  nm a.o | c++filt
 
-0000000000000050 T a_bar()
-0000000000000000 T a_foo()
+00000050 T a_bar()
+00000000 T a_foo()
                  U ___stack_chk_fail
                  U ___stack_chk_guard
 </code>
@@ -88,7 +89,7 @@ int main(){
 </div>
 </div>
 
-观察目标文件中的symbol，其中`main.o`中的`a_foo`标记为`U`，符合我们的预期。接着我们手动的将这两个目标文件link起来，我们在MacOS下使用默认的linker - `ld`
+观察目标文件中的symbol，其中`main.o`中的`a_foo`标记为`U`，符合我们的预期。接着我们手动的将这两个目标文件link起来产生最终的binary `a.out`，我们在MacOS下使用默认的linker - `ld`
 
 ```shell
 ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem $path_to_libclang_rt.osx.a
