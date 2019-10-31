@@ -88,7 +88,7 @@ int main(){
 </div>
 </div>
 
-观察目标文件中的symbol，符合我们的预期，接着我们手动的将这两个目标文件link起来，我们在MacOS下使用默认的linker - `ld`
+观察目标文件中的symbol，其中`main.o`中的`a_foo`标记为`U`，符合我们的预期。接着我们手动的将这两个目标文件link起来，我们在MacOS下使用默认的linker - `ld`
 
 ```shell
 ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem $path_to_libclang_rt.osx.a
