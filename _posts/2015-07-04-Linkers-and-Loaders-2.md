@@ -26,8 +26,6 @@ categories: [C,C++]
 <pre class="highlight language-cpp md-no-padding-v md-height-full">
 <code class="language-cpp">
 //a.cpp
-#include <iostream>
-
 int __attribute__((noinline)) a_foo() { 
     int buf[5000]; 
     return 1; 
@@ -42,9 +40,7 @@ int __attribute__((noinline)) a_bar() {
 <div class="md-margin-left-12">
 <pre class="highlight language-cpp md-no-padding-v md-height-full">
 <code class="language-cpp">
-#include <iostream>
 extern int a_foo();
-
 int main(){
     int x = a_foo();
     std::cout<<x<<std::endl;
