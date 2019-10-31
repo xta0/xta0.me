@@ -1,7 +1,7 @@
 ---
 layout: post
 list_title: 链接与加载 | Linkers and Loaders | 静态库 | Static Library 
-title: 静态库与动态库
+title: 静态链接与静态库
 categories: [C,C++]
 ---
 
