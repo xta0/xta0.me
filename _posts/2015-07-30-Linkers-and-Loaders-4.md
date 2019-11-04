@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 链接与加载 | Linkers and Loaders | 符号的可见性问题 | Introduction to Symbol visibility
+list_title: 链接与加载 | Linkers and Loaders | 符号的可见性问题 | Symbol visibility
 title: 符号的可见性问题
 categories: [C,C++]
 ---
