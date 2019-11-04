@@ -76,7 +76,7 @@ AlexNet发表后，业界对这个模型做了很多改进的工作，使得其�
 
 前面提到RetNet建立在Residual Block的概念之上，接下来我们就来看看它是怎么解决问题的。
 
-<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-resnet-1.png">
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-resnet-1.png" width="80%">
 
 假设我们有一个两层的FC网路如上图所示，按照之前介绍的求法，则有下面一些式子
 
@@ -96,6 +96,12 @@ $$
 $$
 a^{[l+1]} = g(z^{[l+2]}+a^{[l]})
 $$
+
+推而广之，如果我们有一个下图中的"Plain Network"，我们可以将下面的layer两两形成一个Residual Block，进而组成了一个Residual Network
+
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-resnet-3.png">
+
+那为什么ResNet
 
 
 
