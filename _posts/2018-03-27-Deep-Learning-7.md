@@ -1,6 +1,6 @@
 ---
 list_title: 深度学习 | Classic CNN Models | 几种经典的CNN Model
-title: Convolutional Neural Networks
+title: Classic CNN Models
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]

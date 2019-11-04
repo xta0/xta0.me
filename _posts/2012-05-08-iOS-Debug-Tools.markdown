@@ -1,4 +1,5 @@
 ---
+update: "2016-07-30"
 layout: post
 title: XCode的调试工具
 list_title: XCode 调试 | XCode Debug Tools
@@ -136,6 +137,10 @@ dict : the python session dictionary
 	- `command script import "/Users/moxinxt/Desktop/tbcity-ipad/iCoupon4Ipad/iCoupon4Ipad/breakpoint.py"`
 
 - 使用Facebook [Chisel](https://github.com/facebook/chisel)
+
+### Attach到某个进程
+
+我们也可以使用LLDB来debug某个进程：`process attach --name WWDCDemo --waitfor` //等待WWDCDemo启动，并将lldb挂到WWDCDemo上
 	
 ## debug二进制
 
@@ -175,9 +180,6 @@ XCode自带了导出二进制符号表的工具:`dsymutil`
 
 ### lldb
 
-- 新版的macos在shell里面直接输入`lldb`即可启动lldb
-- debug某个进程：`process attach --name WWDCDemo --waitfor` //等待WWDCDemo启动，并将lldb挂到WWDCDemo上
-- 设置断点：`breakpoint set --func_regex fact`
 		 
 ### optool
 
