@@ -25,7 +25,6 @@ int func0 () {
 int func1 (int i) {
   return func0() * i;
 }
-
 </code>
 </pre>
 </div>
@@ -97,9 +96,26 @@ int func1 (int i) {
 
 我们发现`_func0`和`_myintvar`的符号类型变成了小写的`t`和`d`，说明这两个符号变成了`local`的。
 
-虽然`static`可以隐藏符号，但是它同样限制了符号的作用域，`func0`和`myintvar`只可以在`b.c`中使用，即被`static`修饰的符号，只可在定义它们的文件中使用。因此`main.c`中将无法看到`myintvar`，当编译`main.c`时会有link错误。
+虽然`static`可以隐藏符号，但是它同样限制了符号的作用域，`func0`和`myintvar`只可以在`a.c`中使用，即被`static`修饰的符号，只可在定义它们的文件中使用。我们来看一个例子，假设我有个`b.c`如下
 
-使用`static`这种方式更多的是用于控制文件内的符号可见性，而不用于控制低级别的符号可见性。实际上，大多数函数或者变量不会依赖于static来控制符号可见性。
+```c
+extern int myintvar;
+int func2(int x){
+    return x+myintvar;
+}
+```
+
+它依赖`a.c`中的全局变量`myintvar`，当我们将`a.c`和`b.c`一起编译为一个动态库时，`b.c`将无法看到`myintvar`这个符号，因为它只对`a.c`可见
+
+```shell
+> clang -fPIC -shared a.c b.c -o lib.so
+Undefined symbols for architecture x86_64:
+  "_myintvar", referenced from:
+      _func2 in b-ad7f57.o
+ld: symbol(s) not found for architecture x86_64
+```
+
+小结一下，使用`static`这种方式更多的是用于控制文件内的符号可见性，而不用于控制低级别的符号可见性。实际上，大多数函数或者变量不会依赖于static来控制符号可见性。
 
 ### 使用`visibility`关键字
 
@@ -118,8 +134,19 @@ int __attribute__ ((visibility ("hidden"))) func0 () {
 ```
 重新编译动态库并查看其符号
 
-```c
+```shell
 > clang -fPIC -shared a.c a.so
 > nm a.so
 
+0000000000000f70 t _func0
+0000000000000f90 T _func1
+0000000000001000 d _myintvar
+                 U dyld_stub_binder
 ```
+可见其符号类型和上面一样，`myintvar`以及`_fun0`变成了local的。不同的是，`_myintvar`此时对所有动态库源文件可见(前面的`b.c`)。实际上，隐藏的符号(`_myintvar`,`_func0`)将不会出现在动态符号表中，但是还被保留在符号表中用于做静态链接。
+
+> 注意，对于用 visibility 属性指定的变量，将它声明为 static 可能会让编译器感到混淆
+
+### 使用Symbol List
+
+在前面静态库的文章中，我们使用过符号表，原因在于我们在编译期没法做优化，因此只能在link的时候来做。

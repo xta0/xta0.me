@@ -121,7 +121,9 @@ ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem $path_to_libclang_rt.osx.
 
 ### 静态库的优化
 
+自然而然的我们会想否可以将上面的linker优化技术应用到静态库上，即给你一个很大的静态库，是否可以通过linker的帮助来裁剪掉无用的代码。为了回答这个问题我们要想一下`-dead_strip`是怎么工作的。显然对于每个executable都有一个`main()`函数，这个main函数是整个应用程序的entry point，也就是说我们可以从main函数中用到的symbols出发来trace所有用到的symbol并把他们记录下来，然后strip掉那些没有用的symbol。比如上面例子中main函数中发现了`a_foo`，是一个undefined symbol，这时linker再去寻找`a_foo`，而`a_foo`也是一个函数，它又用了别的symbol，通过这样的不断搜索，便可以找出所有用到的symbol。
 
+回到静态库问题上，通常对于静态库，我们会提供public APIs，这些API即可作为我们的entry point，作为trace的起点。接下来的问题是，我们需要一个linker来帮我们完成trace + dead_code strip。不幸的是，MacOS上默认的`ld`不能strip目标文件，`-dead_strip`
 
 
 ### Whole Archive的问题
