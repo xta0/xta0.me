@@ -116,3 +116,10 @@ int __attribute__ ((visibility ("hidden"))) func0 () {
   return ++myintvar;
 }
 ```
+重新编译动态库并查看其符号
+
+```c
+> clang -fPIC -shared a.c a.so
+> nm a.so
+
+```
