@@ -149,4 +149,34 @@ int __attribute__ ((visibility ("hidden"))) func0 () {
 
 ### 使用Symbol List
 
-在前面静态库的文章中，我们使用过符号表，原因在于我们在编译期没法做优化，因此只能在link的时候来做。
+在前面静态库的文章中，我们曾使用过符号表来告诉Linker保留哪些符号。对于符号的可见性，我们同样可以通过Symbol list来控制。具体来说，对于上面例子，我们可以使用下面的列表
+
+```shell
+//exportmap.map
+{
+  global: func1;
+  local: *;
+};
+```
+
+接下来我们将`a.c`编译为动态库，并查看其symbol
+
+> 注意，这一部分我们将编译器从clang变回gcc，因为clang不支持version script
+
+```shell
+> gcc -shared -o mylib.so a.c -fPIC -Wl,--version-script=exportmap.map
+> nm mylib.so
+
+0000000000201024 b __bss_start
+...
+0000000000000590 t func0
+00000000000005b4 T func1
+...
+0000000000201020 d myintvar
+```
+我们看到只有`func1`是global的，说明符号表起到了作用
+
+## Resources
+
+- [Linkers and Loaders](https://www.amazon.com/Linkers-Kaufmann-Software-Engineering-Programming/dp/1558604960)
+- [Advanced C and C++ compiling](https://www.amazon.com/Advanced-C-Compiling-Milan-Stevanovic/dp/1430266678)
