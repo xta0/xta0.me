@@ -168,7 +168,7 @@ int main(){
 }
 ```
 
-如果我们编译上述代码，并查看`a.out`的符号表，我们会发现`A`的虚函数依然存在
+上述代码中，我们创建了一个`A`对象，并调用了它的成员方法`print()`。如果我们编译上述代码，并查看`a.out`的符号表，我们会发现`A`的虚函数`bark()`依然存在，其原因是`-dead_strip`貌似无法strip掉类的virtual table，进而strip不掉虚方法
 
 ```shell
 > clang++ main.cpp a.cpp -Wl,-dead_strip -o a.out
