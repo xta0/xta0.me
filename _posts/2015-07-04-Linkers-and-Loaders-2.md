@@ -92,7 +92,7 @@ int main(){
 观察目标文件中的symbol，其中`main.o`中的`a_foo`标记为`U`，符合我们的预期。接着我们手动的将这两个目标文件link起来产生最终的binary `a.out`，我们在MacOS下使用默认的linker - `ld`
 
 ```shell
-ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem $path_to_libclang_rt.osx.a
+ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem
 ```
 > 也可以直接 `clang++ main.cpp a.cpp`
 
@@ -113,19 +113,77 @@ ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem $path_to_libclang_rt.osx.
 我们发现，`a.o`中没用的`a_bar`也被link进来了，这显然是我们不希望看到的，此时我们可以通过`-dead_strip`来告诉`ld` strip掉无用代码
 
 ```shell
-ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem $path_to_libclang_rt.osx.a -dead_strip
+ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem -dead_strip
 ```
 > 也可以直接 `clang++ main.cpp a.cpp -Wl,-dead_strip`
 
 此时我们再查看`a.out`的符号表则会发现`a_bar()`已经不在了。
 
-### 静态库的优化
+### `ld64.lld`
+
+自然而然的我们会想否可以将上面的linker优化技术应用到静态库上，即给你一个很大的静态库，是否可以通过linker的帮助来裁剪掉无用的代码。为了回答这个问题我们要想一下`-dead_strip`是怎么工作的。显然对于每个executable都有一个`main()`函数，这个main函数是整个应用程序的entry point，也就是说我们可以从main函数中用到的symbols出发来trace所有用到的symbol并把他们记录下来，然后strip掉那些没有用的symbol。比如上面例子中main函数中发现了`a_foo`，是一个undefined symbol，这时linker再去寻找`a_foo`，而`a_foo`也是一个函数，它又用了别的symbol，通过这样的不断搜索，便可以找出所有用到的symbol。
+
+回到静态库问题上，通常对于静态库，我们会提供public APIs，这些API即可作为我们的entry point，作为trace的起点。接下来的问题是，我们需要一个linker来帮我们完成trace + dead_code strip。不幸的是，MacOS上默认的`ld`不能strip目标文件，`-dead_strip`只对executable或者动态库有效。由于静态库只是目标文件的合集，我们需要一种linker可以帮我们strip 目标文件 - `ld64.lld`。
+
+> 需要注意的是ld64.lld目前已经处于不被维护的状态，请慎重使用
+
+`ld64.lld`是LLVM toolchain里的一种linker，使用它我们需要自行编译LLVM
+
+```shell
+> git clone https://github.com/llvm/llvm-project.git
+> mkdir build-release && cd build-release
+> cmake -G Ninja ../llvm -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="clang;lld"
+> ninjia
+```
+有了ld64.lld之后，我们需要先为其提供一个`symbol list`，里面包含我们要保留的symbol。还是上面的例子，假如我们要保留`a_foo`，则我们可以用下面命令
+
+```shell
+> echo "__Z5a_foov" > exported.syms
+> LD=~/LLVM/build-release/bin/ld64.lld
+> $LD -dead_strip -o a_lite.o -exported_symbols_list ./exported.syms -r a.o
+```
+此时得到的`a_lite.o`只保留了`a_foo`。可以看到`ld64.lld`和`ld`不同的地方在于，它支持`-r`，即可以将目标文件作为`-dead_strip`的输入，同时输出可以是一个monolithic 目标文件。
 
 
+### vtable的问题
 
+虽然`-dead_strip`可以帮我们strip掉无用代码，但它却不是万能的，对于虚函数，它貌似无能为力
 
-### Whole Archive的问题
+```cpp
+//a.cpp
+#include <iostream>
+class A{
+public:
+    virtual void bark(){
+        std::cout << "from A" << std::endl;
+    }
+    void print();
+};
+//main.cpp
+#include "./a.h"
+int main(){
+    A b;
+    b.print();
+    return 0;
+}
+```
 
+上述代码中，我们创建了一个`A`对象，并调用了它的成员方法`print()`。如果我们编译上述代码，并查看`a.out`的符号表，我们会发现`A`的虚函数`bark()`依然存在，其原因是`-dead_strip`貌似无法strip掉类的virtual table，进而strip不掉虚方法
+
+```shell
+> clang++ main.cpp a.cpp -Wl,-dead_strip -o a.out
+> nm a.out | c++filt
+
+...
+0000000100000e40 unsigned short A::bark()
+0000000100001b70 T A::print()
+0000000100000e00 unsigned short A::A()
+0000000100000e20 unsigned short A::A()
+...
+00000001000020e8 short vtable for A
+               U vtable for __cxxabiv1::__class_type_info
+...
+```
 
 ## Resources
 
