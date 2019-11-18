@@ -104,7 +104,7 @@ commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> bugFix, master)
 
 虽然Git默认的模式是Merge，但是也支持使用Rebase模式。所谓Rebase是指当有新的改动时，我们为其生成一个新的commit，通过改变commit在目标分支中的位置，从而将其纳入到目标分支中。Rebase的优点在于所有commit是线性排列的，log上看没有多条分支合并的情况；同时Rebase也不会产生Merge模式的commit节点，即每个commit都只有一个或者零个parent
 
-还是上面的例子，加入我们现在在bufFix上生成一个commit `c3`，现在我们想让它rebase到master上，我们可以执行
+还是上面的例子，加入我们现在在bugFix上生成一个commit `c3`，现在我们想让它rebase到master上，我们可以执行
 
 ```shell
 > git rebase master
