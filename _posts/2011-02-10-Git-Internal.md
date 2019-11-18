@@ -1,8 +1,8 @@
 ---
 updated: '2019-01-09'
 layout: post
-title: 理解Git
-list_title: 理解Git | Understand Git
+title: 理解Git的相关概念
+list_title: 理解Git理解Git的相关概念 | Understand Git Concept
 categories: [Git]
 ---
 
@@ -14,38 +14,6 @@ categories: [Git]
 
 每一个条Commit都有自己的parent，即指向当前分支的前一条commit，因此所有的commit会组成一棵树。
 
-### Merge
-
-理论上每个Commit都只有一个Parent，但实际上，有些情况某个Commit会有两个parent，比如当我们合并分支的时候，Git会自动生成一个指向两个parent的commit，如下图所示
-
-<img src="{{site.baseurl}}/assets/images/2011/02/git-commits-merge.png" class="md-img-center">
-
-上图中我们执行了merge命令，将`bugFix`分支合并到`master`上
-
-```shell
-> git merge bugFix
-```
-我们看到Git为我们新生成了一个commit - `c4`。这时候我们查看`git log`，可以发现master已经包含了`bugFix`分支的提交记录，说明master已经拥有了包括`bugFix`在内的全部的commit。此时我们先记录下HEAD
-
-```shell
-commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> master)
-```
-接下来我们将分支切到`bugFix`，并执行`git log`，发现`bugFix`分支并没有master的信息，于是我们可以执行
-
-```shell
-> git merge master
-```
-
-此时由于master分支已经包含了包括`bugFix`在内的所有commit，因此Git只需要将HEAD指针指向master即可，如下图所示
-
-<img src="{{site.baseurl}}/assets/images/2011/02/git-commits-merge-2.png" class="md-img-center">
-
-此时`bugFix`分支也包含了`master`的所有信息，我们可以通过`git show HEAD`来验证
-
-```shell
-> git show HEAD
-commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> bugFix, master)
-```
 
 ### HEAD
 
@@ -93,6 +61,51 @@ If you want to keep it by creating a new branch, this may be a good time to do s
     git branch <new-branch-name> <commit-id>
 ```
 这说明当前在该commit上的修改并不会被自动保留或者合并到当前分支上，很可能会被Git当做垃圾处理掉。如果想要保留，需要单独建一个分支保留
+
+### Merge
+
+理论上每个Commit都只有一个Parent，但实际上，有些情况某个Commit会有两个parent，比如当我们合并分支的时候，Git会自动生成一个指向两个parent的commit，如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2011/02/git-commits-merge.png" class="md-img-center">
+
+上图中我们执行了merge命令，将`bugFix`分支合并到`master`上
+
+```shell
+> git merge bugFix
+```
+我们看到Git为我们新生成了一个commit - `c4`。这时候我们查看`git log`，可以发现master已经包含了`bugFix`分支的提交记录，说明master已经拥有了包括`bugFix`在内的全部的commit。此时我们先记录下HEAD
+
+```shell
+commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> master)
+```
+接下来我们将分支切到`bugFix`，并执行`git log`，发现`bugFix`分支并没有master的信息，于是我们可以执行
+
+```shell
+> git merge master
+```
+
+此时由于master分支已经包含了包括`bugFix`在内的所有commit，因此Git只需要将HEAD指针指向master即可，如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2011/02/git-commits-merge-2.png" class="md-img-center">
+
+此时`bugFix`分支也包含了`master`的所有信息，我们可以通过`git show HEAD`来验证
+
+```shell
+> git show HEAD
+commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> bugFix, master)
+```
+使用Merge方式的一个问题在于对于多人合作的项目会产生多个无效的Merge节点，阅读体验不是很友好
+
+<img src="{{site.baseurl}}/assets/images/2011/02/git-commits-merge-3.png" class="md-img-center">
+
+比如上图中当有两个人同时commit代码时，log会产生出多个分支和合并节点，试想当有10个人同时协作时，将会有10条平行线，对于问题排查或者追溯历史非常不友好
+
+### Rebase
+
+虽然Git默认的模式是Merge，但是也支持使用Rebase模式。所谓Rebase是指不创建新的分支，当有新的改动时，我们为其生成一个新的commit，通过改变commit的位置将其纳入到当前分支中。Rebase的有点在于所有log历史是线性的，没有多条分支合并的情况；同时Rebase也不会产生Merge模式的commit节点
+
+
+
 
 ### `.git`目录
 
@@ -198,4 +211,5 @@ blob
 
 ## Resource
 
+- [Learn Git](https://learngitbranching.js.org/)
 - [玩转Git](https://git201901.github.io/github_pages_learning/docs/%E8%8B%8F%E7%8E%B2%E3%80%8A%E7%8E%A9%E8%BD%ACGit%E4%B8%89%E5%89%91%E5%AE%A2%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4.pdf)
