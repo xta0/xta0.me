@@ -1,8 +1,8 @@
 ---
 updated: '2019-01-09'
 layout: post
-title: 理解Git的相关概念
-list_title: 理解Git理解Git的相关概念 | Understand Git Concept
+title: 理解Git中的重要概念
+list_title: 理解Git中的重要概念 | Understand Git Concept
 categories: [Git]
 ---
 
@@ -102,10 +102,30 @@ commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> bugFix, master)
 
 ### Rebase
 
-虽然Git默认的模式是Merge，但是也支持使用Rebase模式。所谓Rebase是指不创建新的分支，当有新的改动时，我们为其生成一个新的commit，通过改变commit的位置将其纳入到当前分支中。Rebase的有点在于所有log历史是线性的，没有多条分支合并的情况；同时Rebase也不会产生Merge模式的commit节点
+虽然Git默认的模式是Merge，但是也支持使用Rebase模式。所谓Rebase是指不创建新的分支，当有新的改动时，我们为其生成一个新的commit，通过改变commit的位置将其纳入到当前分支中。Rebase的优点在于所有commit是线性排列的，log上看没有多条分支合并的情况；同时Rebase也不会产生Merge模式的commit节点，即每个commit都只有一个或者零个parent
 
+还是生面的例子，加入我们现在在bufFix上生成一个commit `c3`，现在我们想让它rebase到master上，我们可以执行
 
+```shell
+> git rebase master
+```
+如下图所示
 
+<img src="{{site.baseurl}}/assets/images/2011/02/git-commits-rebase.png" class="md-img-center">
+
+我们看到c3被rebase到了master，但是这个c3并不是当前bugFix分支上的c3，而是它的一个copy。
+
+而此时bugFix也变成了一个线性的，里面含有master的commits。如果master上的代码和bugFix有冲突，则此时需要解决合并的冲突。
+
+此时我们将分支切回master，并执行
+
+```shell
+> git rebase bugFix
+```
+
+如下图所示，来自bugFix分支的c3成了当前master的最新节点，被rebase到了最前面
+
+<img src="{{site.baseurl}}/assets/images/2011/02/git-commits-rebase-2.png" class="md-img-center">
 
 ### `.git`目录
 
