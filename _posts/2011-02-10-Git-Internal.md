@@ -1,14 +1,98 @@
 ---
 updated: '2019-01-09'
 layout: post
-title: Git的内部工作原理
-list_title: Git的内部工作原理 | Git Internal
+title: 理解Git
+list_title: 理解Git | Understand Git
 categories: [Git]
 ---
 
 ### 工作区
 
-所谓工作区就是git clone下来后，本地的repo。所谓暂存区是指当执行`git add <filename>`命令之后，文件会被暂存管理的一个区域
+所谓工作区就是git clone下来后，本地的repo。所谓暂存区是指当执行`git add <filename>`命令之后，文件会被暂存管理的一个区域。当文件进入暂存区后，它将有资格被Commit
+
+### Commit
+
+每一个条Commit都有自己的parent，即指向当前分支的前一条commit，因此所有的commit会组成一棵树。
+
+### Merge
+
+理论上每个Commit都只有一个Parent，但实际上，有些情况某个Commit会有两个parent，比如当我们合并分支的时候，Git会自动生成一个指向两个parent的commit，如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2011/02/git-commits-merge.png" class="md-img-center">
+
+上图中我们执行了merge命令，将`bugFix`分支合并到`master`上
+
+```shell
+> git merge bugFix
+```
+我们看到Git为我们新生成了一个commit - `c4`。这时候我们查看`git log`，可以发现master已经包含了`bugFix`分支的提交记录，说明master已经拥有了包括`bugFix`在内的全部的commit。此时我们先记录下HEAD
+
+```shell
+commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> master)
+```
+接下来我们将分支切到`bugFix`，并执行`git log`，发现`bugFix`分支并没有master的信息，于是我们可以执行
+
+```shell
+> git merge master
+```
+
+此时由于master分支已经包含了包括`bugFix`在内的所有commit，因此Git只需要将HEAD指针指向master即可，如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2011/02/git-commits-merge-2.png" class="md-img-center">
+
+此时`bugFix`分支也包含了`master`的所有信息，我们可以通过`git show HEAD`来验证
+
+```shell
+> git show HEAD
+commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> bugFix, master)
+```
+
+### HEAD
+
+HEAD用来指向当前工作区分支的最新commit，但是也可以指向仓库中的任意一个commit。可以认为HEAD就是某个commit的指针，对所有commit相关的git命令，均可以用HEAD进行替换，比如
+
+```shell
+# git diff <commit-1> <commit-2>
+> git diff HEAD HEAD~1 
+#比对HEAD指向的commit和HEAD前一条commit之间的差别
+```
+
+- HEAD与分支
+
+假设我们现在在某个repo的master上，由于HEAD默认指代当前分支的最新commit，我们可以用下面命令查看HEAD
+
+```shell
+> git show HEAD
+commit dae6876e15d84cdec59319806e39272c5d58e7c9 (HEAD -> master)
+```
+可以看到它指向上面一条commit，这时候我们创建一个branch并切到最新的branch上，观察HEAD的变化
+
+```shell
+> git branch b1
+> git checkout b1
+> git show HEAD
+commit dae6876e15d84cdec59319806e39272c5d58e7c9 (HEAD -> master, b1)
+```
+可以看到它依旧指向同一个commit，这是因为`b1`是基于master创建。接着我们修改Readme文件
+
+```shell
+> echo blahblah >> readme.md
+> git add .
+> git commit -m "update readme.md"
+> git show HEAD 
+commit 6701c21717b895bbe7cb745fa5a7ac37d32490f9 (HEAD -> b1)
+```
+由于我们生成了一个新的commit，可以看到此时HEAD指向了它，即当前分支最新的commit。
+
+- Detach HEAD
+
+HEAD也可以不和分支挂钩，当我们checkout某个commit的时候，我们可以能已经脱离了某个分支，此时Git会提醒我们处于Detach HEAD的状态。如果此时在该commit上进行了一些修改，则当我们切回某个分支时，Git会提示
+
+```shell
+If you want to keep it by creating a new branch, this may be a good time to do so with:
+    git branch <new-branch-name> <commit-id>
+```
+这说明当前在该commit上的修改并不会被自动保留或者合并到当前分支上，很可能会被Git当做垃圾处理掉。如果想要保留，需要单独建一个分支保留
 
 ### `.git`目录
 
@@ -110,29 +194,7 @@ blob
 
 <img src="{{site.baseurl}}/assets/images/2011/02/git-objects-2.png" class="md-img-center">
 
-### HEAD
 
-前面可知Head指向的是当前工作区的分支的最新commit，但是也可以指向仓库中的任意一个commit
-
-- Detach Head
-
-当我们checkout某个commit的时候，我们可以能已经脱离了某个分支，此时Git会提醒我们处于Detach HEAD的状态。如果此时在该commit上进行了一些修改，则当我们切回某个分支时，Git会提示
-
-```shell
-If you want to keep it by creating a new branch, this may be a good time to do so with:
-    git branch <new-branch-name> <commit-id>
-```
-这说明当前在该commit上的修改并不会被自动保留或者合并到当前分支上，很可能会被Git当做垃圾处理掉。如果想要保留，需要单独建一个分支保留
-
-- HEAD 
-
-由于HEAD可以指代commit，对所有commit相关的git命令，均可以用HEAD进行替换，比如
-
-```shell
-# git diff <commit-1> <commit-2>
-git diff HEAD HEAD~1 
-#比对HEAD指向的commit和HEAD前一条commit之间的差别
-```
 
 ## Resource
 

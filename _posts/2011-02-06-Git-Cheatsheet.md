@@ -85,8 +85,9 @@ categories: [Git,Cheatsheet]
     - `git rebase -i `
     - pick一个commit作为最终合并后的commit，其它的commit会合并到它上面
 - revert当前本地的commit: `git reset --hard`
-- 参数
-    - `-m`, commit信息
+- 删除暂存区中的文件
+    - `git cache rm <file>`
+    
     
 ### Repo
 
