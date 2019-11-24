@@ -6,6 +6,8 @@ categories: [Data Science, Python, Machine Learning]
 mathjax: true
 ---
 
+> 本文将对数据分析常用的Python库做一些简单的介绍，目的是快速了解这些库的作用以及一些常用的使用方法
+
 ## Python Stack Overview
 
 - Numpy
@@ -137,10 +139,10 @@ conv = np.cov(X.T)
 np.linalg.eig(conv)
 np.linalg.eigh(conv)
 ```
-## Pandas
 
 ### Loading in Data
 
+## Pandas
 
 ### Resources
 
