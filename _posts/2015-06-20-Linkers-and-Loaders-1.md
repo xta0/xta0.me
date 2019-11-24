@@ -17,7 +17,7 @@ categories: [C,C++]
 - `-I+dir`: 除了在main.c当前目录和系统默认目录中寻找.h外，还在dir目录寻找，注意，dir是一个绝对路径。
 - `-01,-02,-03`: 编译器优化程度
 
-> 如果使用macOS，gcc实际上是Clang的alias，binary的结构为MachO，而不是UNIX的ELF格式，不过这并不影响理解本文的内容
+> 如果使用macOS，gcc实际上是Clang的alias，binary的结构为Mach-O，而不是UNIX的ELF格式，不过这并不影响理解本文的内容
 
 ## Object Files
 

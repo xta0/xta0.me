@@ -26,7 +26,7 @@ bool find(int value_to_find){
     return (std::find(some_list.begin(), some_list.end(), value_to_find) != some_list.end());
 }
 ```
-上面是一个简单的使用mutex的例子，当`guard`对象析构时，会自动滴啊用`some_mutex.unlock()`来说释放mutex。然后在实际应用中，我们不太会定义全局的mutex对象，而是将其定义在某个类中和某个data关联：
+上面是一个简单的使用mutex的例子，当`guard`对象析构时，会自调用`some_mutex.unlock()`来释放mutex。然后在实际应用中，我们不太会定义全局的mutex对象，而是将其定义在某个类中和某个data关联：
 
 ```cpp
 class some_data{
