@@ -127,6 +127,10 @@ commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> bugFix, master)
 
 <img src="{{site.baseurl}}/assets/images/2011/02/git-commits-rebase-2.png" class="md-img-center">
 
+### Relative Refs
+
+Git中的commit用一串很长hash值表示，
+
 ### `.git`目录
 
 `.git`目录下包含很多配置信息，我们先从`HEAD`文件入手，`HEAD`是一个文本文件，我们可以用过`cat`命令查看其内容
