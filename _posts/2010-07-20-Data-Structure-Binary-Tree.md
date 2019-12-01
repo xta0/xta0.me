@@ -371,19 +371,6 @@ void BinaryTree<T>::LevelOrder (BinaryTreeNode<T>* root){
         - 最好 `O(1)`
         - 最坏 `O(n)`
 
-## 二叉树的实际问题
-
-在了解了上面的概念以后，我们来看一些二叉树的应用问题，这些问题无论实在面试中或者在实际工作中都会涉及到，通过分析这些问题，可以帮助我们进一步加深对二叉树的理解
-
-### 计算二叉树的高度
-
-### 复原二叉树
-
-- 使用前序遍历和中序遍历恢复二叉树
-- 使用前序遍历和后序遍历恢复二叉树
-
-
-
 ## Resources
 
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)

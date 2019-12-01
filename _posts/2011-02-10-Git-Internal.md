@@ -14,7 +14,6 @@ categories: [Git]
 
 每一个条Commit都有自己的parent，即指向当前分支的前一条commit，因此所有的commit会组成一棵树。
 
-
 ### HEAD
 
 HEAD用来指向当前工作区分支的最新commit，但是也可以指向仓库中的任意一个commit。可以认为HEAD就是某个commit的指针，对所有commit相关的git命令，均可以用HEAD进行替换，比如
@@ -129,7 +128,28 @@ commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> bugFix, master)
 
 ### Relative Refs
 
-Git中的commit用一串很长hash值表示，
+Git中的commit的值用一串很长hash字符串表示，不好记，因此Git中还提供几种使用Relative commit的方式，包括下面几种
+
+- `^`表示当前commit的前若一条commit
+
+```shell
+> git show HEAD^    #HEAD的前一条commit
+> git show master^  #master分支当前commit的前一条commit
+> git show bugFix^^ #bugfix分支当前commit的前两条commit
+```
+
+- `~<num>`表示当前commit的前`num`条commit
+
+```shell
+> git checkout HEAD~2 #checkout HEAD之前两条的commit，此时
+```
+此时HEAD会处于detach的状态并指向某条commit，我们可以让分支指针强行指向HEAD（谨慎操作，有风险）
+
+```shell
+#假设HEAD指向master
+> git checkout HEAD~5 #移动HEAD到master后5个commit
+> git branch -f master HEAD #将master强行移到HEAD，则master前5个commit会丢失
+```
 
 ### `.git`目录
 

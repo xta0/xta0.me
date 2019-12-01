@@ -87,6 +87,10 @@ categories: [Git,Cheatsheet]
 - revert当前本地的commit: `git reset --hard`
 - 删除暂存区中的文件
     - `git cache rm <file>`
+
+### Cherry-pick
+
+- `git cherry-pick <commit1> <commit2>,...`
     
     
 ### Repo

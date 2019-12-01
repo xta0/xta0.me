@@ -265,14 +265,6 @@ int calculate(string& infix){
 - [Basic Calculator II](https://leetcode.com/problems/basic-calculator-ii/)
 - [Basic Calculator III](https://leetcode.com/problems/basic-calculator-iii/)
 
-### 括号匹配问题
-
-括号匹配问题是另一个栈的经典问题，
-
-- [22. Generate Parentheses](https://leetcode.com/problems/generate-parentheses/description/)
-- [301. Remove Invalid Parentheses]()
-
-
 
 ## Resources
 

@@ -286,11 +286,6 @@ int findMedium(vector<int>& arr){
 }
 ```
 
-- **会议室问题**
-
-该问题是一道非常经典的高频面试题，题目
-
-
 ## Resources
 
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)

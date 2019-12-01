@@ -140,16 +140,6 @@ TreeNode* deleteNode(TreeNode* root, int key) {
 
 当要查找数据的时候，遇到值相同的节点，我们并不停止查找操作，而是继续在右子树中查找，直到遇到叶子节点才停止。这样就可以把键值等于要查找值的所有节点都找出来。
 
-
-
-
-### BST的相关问题
-
-- **寻找LCA**
-
-该问题的描述为，在一棵BST中找到任何两个
-
-
 ### Resources
 
 - [Binary search tree](https://en.wikipedia.org/wiki/Binary_search_tree)
