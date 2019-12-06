@@ -87,14 +87,14 @@ z^{[l+2]} = W^{[l+2]}a^{[l+1]} + b^{[l+2]} \\
 a^{[l+2]} = g(z^{[l+2]}) \\
 $$
 
-也就是说，如果想要得到$a^[l+2]$，必须要经历上面4部求解过程。而Residual Network则直接将$a[l]$作为Residual Block加入到了网络的末尾，如下图所示
+也就是说，如果想要得到$a^{[l+2]}$，必须要经历上面4部求解过程。而Residual Network则直接将$a^{[l]}$作为Residual Block加入到了网络的末尾，如下图所示
 
 <img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-resnet-2.png">
 
 则$a^{[l+2]}$变成了
 
 $$
-a^{[l+1]} = g(z^{[l+2]}+a^{[l]})
+a^{[l+2]} = g(z^{[l+2]}+a^{[l]})
 $$
 
 推而广之，如果我们有一个下图中的"Plain Network"，我们可以将下面的layer两两形成一个Residual Block，进而组成了一个Residual Network
