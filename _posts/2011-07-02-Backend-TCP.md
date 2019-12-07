@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: 端到端通信（一）| Client Server Communiction - TCP Handshake
-title: TCP Hand Shakes
+list_title: 观察TCP的握手机制 | Observe TCP Handshakes
+title: 观察TCP的握手机制
 categories: [Network,Backend]
 ---
 

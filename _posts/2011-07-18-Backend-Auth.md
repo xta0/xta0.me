@@ -1,9 +1,9 @@
 ---
 updated: "2018-08-04"
 layout: post
-title: Authentication
-list_title: 端到端通信（三）| Client Server Communiction - Authentication
-categories: [Network,Backend]
+title: Web中的Cookie机制
+list_title: Web中的Cookie机制
+categories: [Web,Backend]
 ---
 
 ## Cookies

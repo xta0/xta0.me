@@ -1,8 +1,9 @@
 ---
 updated: "2018-08-12"
 layout: post
-title: Web Security
-list_title: 端到端通信（四）| Client Server Communiction - Security
+title: Web中的同源策略
+list_title: Web中的同源策略
+categories: [Web,Backend]
 ---
 
 ## 同源策略
