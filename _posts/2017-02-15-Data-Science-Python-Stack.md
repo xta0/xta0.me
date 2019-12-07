@@ -21,6 +21,14 @@ Python系统自带一些数值计算的API，但它们使用起来效率不高�
 
 Numpy主要用于做矩阵的数值运算，对常用的数学操作做了封装，使用起来极为方便，而且在性能方面也比Python的list要高不少，因此在数值计算方面Numpy非常流行。
 
+### Problems with Python list
+
+Python原生的多维数组存在很多缺陷，并不适用于数值计算的场景，比如
+
+1. Python数组中的数字是Object类型，有很大的overhead
+2. Python的数组对象不支持数值计算的API，比如矩阵相关运算
+3. Python的解释器效率很低，和直接运行编译好的函数相比，解释器速度会比较慢
+
 ### Matrix Products
 
 我们可以来对比一下numpy和python的矩阵点积运算，假设有两个矩阵$a=[x_a,y_a]$, $b=[x_b,y_b]$，则`a`和`b`点积的代数运算为 $a·b=x_ax_b+y_ay_b$，其结果为一个标量。代码如下

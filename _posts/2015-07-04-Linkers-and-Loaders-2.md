@@ -13,7 +13,7 @@ categories: [C,C++]
 
 这种方式的好处是简单粗暴，静态库中的代码和目标工程中的代码一起编译连接，linker可以做全局的symbol级别的optimization，比如strip掉dead code等。使用静态库的劣势在于它会增加binary的大小，更重要的是如果静态库中的代码更新了，整个工程需要重新编译，不够灵活。
 
-### 静态链接
+### 静态链接与`-dead_strip`
 
 静态链接相对来说比较简单，如上图中展示了一个静态库被链接进一个executable的全过程，对于这种情况，binary中最终只会链接静态库中被用到的symbols，如下图所示
 
@@ -184,6 +184,40 @@ int main(){
                U vtable for __cxxabiv1::__class_type_info
 ...
 ```
+
+### The C++ Registry Pattern
+
+C++中有一种很常见的Registry Pattern，即通过定义一个无用的全局变量来执行一段初始化代码，我们还是来看一个具体的例子
+
+```cpp
+//main.cpp
+class AA {
+public:
+    AA(){}
+    void foo(){}
+};
+class BB {
+public:
+    void bar(){}
+}
+auto REG_a = AA();
+
+int main(){
+    BB b = BB();
+    b.bar();
+    return 0;
+}
+```
+上述例子中我们的`main()`函数定义了`b`并调用了`bar()`，按照我们对`-dead_strip`的理解，`AA`应该会被strip掉，因为除了`auto REG_a = AA()`这句之外没有其它的Call Site，而`REG_a`也没有在`main`函数中出现，因此应该同样被strip掉，我们可以编译一下看看结果是否符合预期
+
+```cpp
+> clang++ main.cpp -Wl,-dead_strip
+> nm a.out | c++filt | grep AA
+
+0000000100000db0 unsigned short AA::AA()
+0000000100000f10 unsigned short AA::AA()
+```
+我们发现`AA`和`REG_a`并没有被strip掉，也就是说对于这种情况，linker会保留`AA`的构造函数，以及构造函数的transitive closure。但是对于`AA::foo()`却不会保留。
 
 ## Resources
 
