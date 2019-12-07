@@ -1,7 +1,7 @@
 ---
 updated: "2018-08-12"
 layout: post
-title: Web中的同源策略
+title: Web中的同源策略 | The Same Origin Policy
 list_title: Web中的同源策略
 categories: [Web,Backend]
 ---
