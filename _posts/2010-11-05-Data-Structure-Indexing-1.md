@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structre | 索引-静态索引 | Static Indexing
+list_title: Basic Data Strutures | Indexing Part 1
 title: 静态索引
 mathjax: true
 categories: [DataStructure]

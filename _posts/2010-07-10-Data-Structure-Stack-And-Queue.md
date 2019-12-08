@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: "" | 栈与队列 | Stack & Queue
+list_title: Basic Data Strutures | Stack and Queue
 title:  栈与队列 
 sub_title: Stack & Queue
 categories: [DataStructure]

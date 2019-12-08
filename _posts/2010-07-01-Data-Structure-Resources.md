@@ -1,7 +1,7 @@
 ---
 updated: '2018-09-20'
 layout: post
-list_title: "" | 学习资料汇总 | Learning Resource
+list_title: Basic Data Structures | Some Learning Resource
 title: 资料汇总
 mathml: true
 categories: [DataStructure]
@@ -9,7 +9,6 @@ categories: [DataStructure]
 
 从这篇文章开始，计划将自己之前最近学习数据结构的笔记整理出来，方便日后查阅。关于学习数据结构的重要性和必要性这里就不展开了，在这个浮躁的年代，能踏实下来啃这些东西的程序员是越来越少了。
 这篇文章会先梳理一遍知识点，然后汇总一些个人在学习过程中用到的学习资料，并持续更新和补充
-
 
 ### 知识地图
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structre | 外排序 | External Sort Algorithm 
+list_title: Basic Data Strutures | External Sort Algorithm 
 title: 外排序算法
 sub_title: External Sort Algorithm
 mathjax: true

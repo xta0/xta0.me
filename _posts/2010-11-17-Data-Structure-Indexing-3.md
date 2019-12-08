@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structre | 索引-动态索引 | Dynamic Indexing
+list_title: Basic Data Strutures | Indexing Part 3
 title: B/B+树 和 红黑树 
 mathjax: true
 categories: [DataStructure]

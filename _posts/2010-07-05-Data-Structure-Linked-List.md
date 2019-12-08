@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: "" | 链表 | Linked List
+list_title: Basic Data Structures | Linked List
 title: 链表
 categories: [DataStructure]
 ---

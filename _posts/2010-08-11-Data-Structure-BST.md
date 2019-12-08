@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: "" | 二叉搜索树 | BST
+list_title: Basic Data Strutures | BST
 mathjax: true
 title: 二叉搜索树
 categories: [DataStructure]

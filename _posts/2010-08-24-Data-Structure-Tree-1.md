@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: "" | 树与森林 | N-ary Tree & Forest
+list_title: Basic Data Strutures | N-ary Tree
 title: 树与森林
 mathjax: true
 categories: [DataStructure]

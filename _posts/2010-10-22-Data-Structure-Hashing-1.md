@@ -1,7 +1,7 @@
 ---
 updated: "2018-08-20"
 layout: post
-list_title: 数据结构基础 | Data Structre | 哈希（一） | Hashing 
+list_title: Basic Data Strutures | Hashing 
 title: 哈希表
 mathjax: true
 categories: [DataStructure]

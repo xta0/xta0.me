@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structre | 索引-倒排索引 | Inverted Indexing
+list_title: Basic Data Strutures | Indexing Part 2
 title: 倒排索引
 mathjax: true
 categories: [DataStructure]

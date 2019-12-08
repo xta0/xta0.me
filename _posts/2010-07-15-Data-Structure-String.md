@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: "" | 字符串 | String
+list_title: Basic Data Strutures | String
 title: 字符串
 sub_title: String Algorithms
 mathjax: true

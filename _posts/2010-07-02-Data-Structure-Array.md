@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: "" | 数组 | Array
+list_title: Basic Data Structures | Array
 title: 向量
 mathjax: true
 categories: [DataStructure]
