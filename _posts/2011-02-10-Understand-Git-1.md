@@ -151,10 +151,28 @@ commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> bugFix, master)
 
 <img src="{{site.baseurl}}/assets/images/2011/02/git-commits-rebase-2.png" class="md-img-center">
 
-### Remote
+### Remote Branch
 
-当我们把一个Git仓库Clone到本地后，Git会为我们生成一个Remote Branch，格式为`<remote_name>/<branch_name>`。大多数情况下这个branch的名字为`origin/master`
+当我们把一个Git仓库Clone到本地后，Git会为我们生成一个Remote Branch，格式为`<remote_name>/<branch_name>`。大多数情况下这个branch的名字为`origin/master`。注意这个`origin/master`和本地的`master`并不是同一个分支，我们可以用`git branch -av`来查看
 
+```shell
+> git branch -av
+* master                   542d9b1 Update(auto commit)
+  remotes/origin/HEAD      -> origin/master
+  remotes/origin/master    542d9b1 Update(auto commit)
+```
+
+上面我们看到远端的`remotes/origin/master`和本地的`master`指向同一个commit，当我们产生一个本地的commit时，log会显示本地的master领先于远端的master一个commit
+
+```shell
+* master                   a212c4a [ahead 1] update
+  remotes/origin/HEAD      -> origin/master
+  remotes/origin/master    542d9b1 Update(auto commit)
+```
+
+此时我们会想那为什么不直接在`remote/origin/master`上开发呢？当我们在本地checkout `remote/origin/master`这个分支时，我们会发现HEAD处于了一个Detached的状态，这说明Git限制了该分支不能用来做本地开发，这也是为什么我们在本地还有一个master分支的原因
+
+### Fetch
 
 ## Resource
 
