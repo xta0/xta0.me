@@ -53,13 +53,13 @@ commit 6701c21717b895bbe7cb745fa5a7ac37d32490f9 (HEAD -> b1)
 
 - Detach HEAD
 
-HEAD也可以不和分支挂钩，当我们checkout某个commit的时候，我们可以能已经脱离了某个分支，此时Git会提醒我们处于Detach HEAD的状态。如果此时在该commit上进行了一些修改，则当我们切回某个分支时，Git会提示
+HEAD也可以不和分支挂钩，当我们checkout某个commit的时候，我们可以能已经脱离了某个分支，此时Git会提醒我们处于Detach HEAD的状态，即HEAD指向了某一条commit，但是不属于某个分支。如果此时在该commit上进行了一些修改，则当我们切回某个分支时，Git会提示
 
 ```shell
 If you want to keep it by creating a new branch, this may be a good time to do so with:
     git branch <new-branch-name> <commit-id>
 ```
-这说明当前在该commit上的修改并不会被自动保留或者合并到当前分支上，很可能会被Git当做垃圾处理掉。如果想要保留，需要单独建一个分支保留
+这说明当前在该commit上的修改并不会被自动保留或者合并到该分支上，很可能会被Git当做垃圾处理掉。如果想要保留，需要单独建一个分支保留
 
 ### Relative Refs
 

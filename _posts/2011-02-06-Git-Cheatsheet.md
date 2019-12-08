@@ -91,8 +91,13 @@ categories: [Git,Cheatsheet]
 ### Cherry-pick
 
 - `git cherry-pick <commit1> <commit2>,...`
-    
-    
+
+### tag
+
+- 标记某个commit为tag： `git tag <tag_name> <commit>`
+- 查看某个commit和最近tag的关系 `git describe <commit>`，结果的格式为
+    - `<tag>_<numCommits>_g<hash>`表示当前commit - `g<hash>`距离`<tag>`有`<numCommits>`个commit
+
 ### Repo
 
 - Check remote repo: `git remote -v `
@@ -101,12 +106,6 @@ categories: [Git,Cheatsheet]
     - `git remote add upstream xxx`
     - `git fetch upstream`
     - `git merge upstream/master`
-
-### 解决合并冲突
-
-- `grep -lr '<<<<<<<' . | xargs git checkout --ours`
-- `grep -lr '<<<<<<<' . | xargs git checkout --theirs`
-
 
 ### 其它
 
