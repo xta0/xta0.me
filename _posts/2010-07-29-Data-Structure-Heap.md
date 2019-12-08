@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structure | 堆 | Heap
+list_title: "" | 堆 | Heap
 mathjax: true
 title: 堆
 categories: [DataStructure]

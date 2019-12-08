@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 算法基础 | Algorithms | 算法度量 | Big O notation
+list_title: Basic Algorithms | 算法度量 | Big O notation
 title: Big O 
 categories: [Algorithms]
 mathjax: true

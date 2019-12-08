@@ -1,8 +1,8 @@
 ---
 updated: "2018-08-04"
 layout: post
-title: Web中的Cookie机制 | What is Cookie
-list_title: Web中的Cookie机制
+title: Web中的Cookie机制 
+list_title: Web中的Cookie机制 | What is Cookie
 categories: [Web,Backend]
 ---
 

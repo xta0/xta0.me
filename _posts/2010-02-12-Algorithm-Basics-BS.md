@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 算法基础 | Algorithms | 二分法 | Binary Search
+list_title: Basic Algorithms | 二分法 | Binary Search
 title: 二分法
 categories: [Algorithms]
 mathjax: true

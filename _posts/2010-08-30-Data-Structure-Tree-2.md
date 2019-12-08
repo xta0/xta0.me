@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structure | 并查集与Trie树 | Union-Find & Trie
+list_title: "" | 并查集与Trie树 | Union-Find & Trie
 mathjax: true
 title: 并查集与Trie
 categories: [DataStructure]

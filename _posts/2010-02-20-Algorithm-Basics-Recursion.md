@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 算法基础 | Algorithms | 递归 | Recursion
+list_title: Basic Algorithms | 递归 | Recursion
 title: 递归 | Recursion
 categories: [Algorithms]
 mathjax: true

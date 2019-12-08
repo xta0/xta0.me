@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 算法基础 | Algorithms | 动态规划（一） | Dynamic Programming Part 1
+list_title: Basic Algorithms | 动态规划（一） | Dynamic Programming Part 1
 title: 动态规划 | Dynamic Programming
 categories: [Algorithms]
 mathjax: true

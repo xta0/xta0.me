@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structure | 霍夫曼树 | Huffman Tree
+list_title: "" | 霍夫曼树 | Huffman Tree
 mathjax: true
 title: 霍夫曼树
 categories: [DataStructure]

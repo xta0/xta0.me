@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 算法基础 | Algorithms | 几种朴素算法 | Naive Algrorithms
+list_title: Basic Algorithms | 几种朴素算法 | Naive Algrorithms
 title: 枚举法与贪心法
 categories: [Algorithms]
 mathjax: true

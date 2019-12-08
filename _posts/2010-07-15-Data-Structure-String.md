@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structure | 字符串 | String
+list_title: "" | 字符串 | String
 title: 字符串
 sub_title: String Algorithms
 mathjax: true

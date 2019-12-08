@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 深搜与回溯 
-list_title: 算法基础 | Algorithms | 深搜与回溯（一） | DFS & Backtracking Part 1
+list_title: Basic Algorithms | 深搜与回溯（一） | DFS & Backtracking Part 1
 categories: [Algorithms]
 mathjax: true
 ---

@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 算法基础 | Algorithms | 分治法 | Divide and Conquer
+list_title: Basic Algorithms | 分治法 | Divide and Conquer
 title: 分而治之 | Divide and Conquer
 categories: [Algorithms]
 mathjax: true

@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据结构基础 | Data Structure | 平衡二叉搜索树 | Balanced BST
+list_title: "" | 平衡二叉搜索树 | Balanced BST
 mathjax: true
 title: 平衡二叉搜索树
 categories: [DataStructure]
