@@ -59,7 +59,7 @@ HEAD也可以不和分支挂钩，当我们checkout某个commit的时候，我�
 If you want to keep it by creating a new branch, this may be a good time to do so with:
     git branch <new-branch-name> <commit-id>
 ```
-这说明当前在该commit上的修改并不会被自动保留或者合并到该分支上，很可能会被Git当做垃圾处理掉。如果想要保留，需要单独建一个分支保留
+这说明当前在该commit上的修改并不会被自动保留或者合并到该分支上，很可能会被Git当做垃圾处理掉。如果想要保留，需要单独建一个分支保留。因此使用Detached Head的一种场景是基于某个commit节点来拉一个新的分支，比如master上有10个commit节点，我们checkout第5个，此时HEAD指向第五个commit，并处于detached状态，此时我们执行`git branch test` 则会基于该commit拉一条新的分支`test`出来
 
 ### Relative Refs
 
@@ -162,7 +162,7 @@ commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> bugFix, master)
   remotes/origin/master    542d9b1 Update(auto commit)
 ```
 
-上面我们看到远端的`remotes/origin/master`和本地的`master`指向同一个commit，当我们产生一个本地的commit时，log会显示本地的master领先于远端的master一个commit
+上面我们看到远端的`remotes/origin/master`和本地的`master`指向同一个commit，当我们产生一个本地的commit时，log会显示本地的master领先于远端的master一个commit，说明这两个分支并不会自动同步
 
 ```shell
 * master                   a212c4a [ahead 1] update
@@ -170,11 +170,22 @@ commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> bugFix, master)
   remotes/origin/master    542d9b1 Update(auto commit)
 ```
 
-此时我们会想那为什么不直接在`remote/origin/master`上开发呢？当我们在本地checkout `remote/origin/master`这个分支时，我们会发现HEAD处于了一个Detached的状态，这说明Git限制了该分支不能用来做本地开发，这也是为什么我们在本地还有一个master分支的原因
+此时我们会想那为什么不直接在`remote/origin/master`上开发呢？当我们在本地checkout `remote/origin/master`这个分支时，我们会发现HEAD处于了一个Detached的状态，这说明Git限制了该分支不能用来做本地开发，这也是为什么我们在本地还有一个master分支的原因。那`remote/origin/master`什么时候更新呢？当我们执行push操作的时候本地的`master`会同步到远端的master，进而更`remote/origin/master`
 
-### Fetch
+### Fetch & Pull
+
+`git fetch`的命令会做两件事 
+
+1. 将远端所有本地repo中没有的commits下载下来
+2. 更新本地的`remotes/`分支和远端保持同步，例如远端新建了一个`bootstrap`分支，那么fetch后本地将会生成一个对应的`remotes/origin/bootstrap`的分支
+
+但是`git fetch`并不会改变本地代码的任何状态，因此可以将fetch简单的理解为download。想要改变本地的状态，需要使用`git pull`
+
+`git pull`可能是我们最熟悉的命令，但它实际上是包含了`fetch`的过程，当执行`git pull`时，Git会先fetch远端的commits到本地，然后再执行`merge`或者`rebase`将新的commits与本地的commits进行合并或者rebase
+
+- merge: `git pull <remote_branch>`
+- rebase: `git pull <remote_branch> --rebase`
 
 ## Resource
 
 - [Learn Git](https://learngitbranching.js.org/)
-- [玩转Git](https://git201901.github.io/github_pages_learning/docs/%E8%8B%8F%E7%8E%B2%E3%80%8A%E7%8E%A9%E8%BD%ACGit%E4%B8%89%E5%89%91%E5%AE%A2%E3%80%8B-%E6%9E%81%E5%AE%A2%E6%97%B6%E9%97%B4.pdf)
