@@ -201,7 +201,12 @@ commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> bugFix, master)
 
 push命令的具体格式为 `git push <remote> <place>`。一个常见的例子是`git push origin master`，其含义为去本地master拿到所有的commit，然后找到remote/origin/下的master，将缺失的commits push上去。
 
-另外一种情况是
+另外一种情况是当你处于某个分支，而却想将commit push到其它分支，这时可以使用`git push <source>:<destination>`，例如
+
+```shell
+> git push origin master^:foo
+```
+上述命令的含义是将master的前一个commit push到`foo`的分支上。如果`foo`不存在，则Git为其在远端创建一个`foo`分支
 
 ## Resource
 
