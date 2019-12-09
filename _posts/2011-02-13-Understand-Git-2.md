@@ -1,8 +1,8 @@
 ---
 updated: '2019-01-09'
 layout: post
-title: 理解Git中的重要概念
-list_title: 理解Git中的重要概念 | Understand Git Concept
+title: Git的内部结构
+list_title: Git的内部结构 | Git Internals
 categories: [Git]
 ---
 

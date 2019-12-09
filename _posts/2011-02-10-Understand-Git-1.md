@@ -1,8 +1,8 @@
 ---
 updated: '2019-01-09'
 layout: post
-title: 理解Git (一)
-list_title: 理解Git (一) | Understand Git Concept Part 1
+title: Git中的一些重要概念
+list_title: Git中的一些重要概念 | Understand Git Concept
 categories: [Git]
 ---
 
@@ -170,7 +170,7 @@ commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> bugFix, master)
   remotes/origin/master    542d9b1 Update(auto commit)
 ```
 
-此时我们会想那为什么不直接在`remote/origin/master`上开发呢？当我们在本地checkout `remote/origin/master`这个分支时，我们会发现HEAD处于了一个Detached的状态，这说明Git限制了该分支不能用来做本地开发，这也是为什么我们在本地还有一个master分支的原因。那`remote/origin/master`什么时候更新呢？当我们执行push操作的时候本地的`master`会同步到远端的master，进而更`remote/origin/master`
+此时我们会想那为什么不直接在`remote/origin/master`上开发呢？当我们在本地checkout `remote/origin/master`这个分支时，我们会发现HEAD处于了一个Detached的状态，这说明Git限制了该分支不能用来做本地开发，这也是为什么我们在本地还有一个master分支做track的原因（其它分支同理）。那`remote/origin/master`什么时候更新呢？当我们执行push操作的时候本地的`master`会同步到远端的master，进而更`remote/origin/master`
 
 ### Fetch & Pull
 
