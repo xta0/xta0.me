@@ -170,7 +170,18 @@ commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> bugFix, master)
   remotes/origin/master    542d9b1 Update(auto commit)
 ```
 
-此时我们会想那为什么不直接在`remote/origin/master`上开发呢？当我们在本地checkout `remote/origin/master`这个分支时，我们会发现HEAD处于了一个Detached的状态，这说明Git限制了该分支不能用来做本地开发，这也是为什么我们在本地还有一个master分支做track的原因（其它分支同理）。那`remote/origin/master`什么时候更新呢？当我们执行push操作的时候本地的`master`会同步到远端的master，进而更`remote/origin/master`
+此时我们会有两个疑问
+
+1. 本地的master分支是怎么创建的呢？
+2. 为什么不直接在`remote/origin/master`上开发呢？
+
+当我们在本地checkout `remote/origin/master`这个分支时，我们会发现HEAD处于了一个Detached的状态，这说明Git限制了该分支不能用来做本地开发，因此Git会为我们创建一个本地分支用来track远端的master，其它分支同理。那`remote/origin/master`什么时候更新呢？当我们执行push操作的时候本地的`master`会同步到远端的master，进而更新`remote/origin/master`
+
+当然我们也可以不使用Git为我们创建的本地master分支，我们也可以自己分支来跟踪远端的master，具体命令为
+
+```shell
+> git checkout -b <branch_name> remote/origin/master
+```
 
 ### Fetch & Pull
 
@@ -185,6 +196,12 @@ commit 70726c576c87a55c333c7c6050c5f37a574d3e1c (HEAD -> bugFix, master)
 
 - merge: `git pull <remote_branch>`
 - rebase: `git pull <remote_branch> --rebase`
+
+### Push
+
+push命令的具体格式为 `git push <remote> <place>`。一个常见的例子是`git push origin master`，其含义为去本地master拿到所有的commit，然后找到remote/origin/下的master，将缺失的commits push上去。
+
+另外一种情况是
 
 ## Resource
 

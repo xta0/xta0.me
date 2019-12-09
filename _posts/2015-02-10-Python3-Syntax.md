@@ -5,41 +5,6 @@ title: Python3 语法速查
 categories: [Python]
 ---
 
-## Language Overview
-
-- **Numbers**
-    - Integral
-        - Integer
-        - Boolean
-    - Non-Integral
-        - Floats(c doubles)
-        - Complex
-        - Decimals
-        - Fractions
-- **Collections**
-    - Sequences
-        - Mutable Lists
-        - Immutable Tuples / String
-    - Sets
-        - Mutable Sets
-        - Immutable Frozen Setes
-    - Mappings
-        - Dictionaries
-
-- **Callables**
-    - User-Defined Functions
-    - Generators
-    - Classes
-    - Instance Methods
-    - Class Instances(`__call__()`)
-    - Built-in Functions (e.g. `len()`,`open()`)
-    - Built-in Methods (e.g. `my_list.append(x)`)
-
-- **Singletons**
-    - None
-    - NotImplemented
-    - Ellipsis(...)
-
 ### Multiline Program
 
 - Implicit

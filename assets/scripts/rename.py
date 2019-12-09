@@ -2,6 +2,8 @@ import os
 import string
 import argparse
 
+
+
 def rename(path,old_keyword,new_keyword):
     for file in os.listdir(path):
         tmp = file
