@@ -1,7 +1,7 @@
 ---
 updated: "2018-08-10"
 layout: post
-list_title: Autonomous Driving | Localization Part 1 | The Histogram Filter 
+list_title: Localization Part 1 | The Histogram Filter 
 title: The Histogram Filter
 categories: [AI,Autonomous-Driving]
 mathjax: true

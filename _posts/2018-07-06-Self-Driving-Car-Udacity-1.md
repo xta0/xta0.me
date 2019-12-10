@@ -1,8 +1,8 @@
 ---
 updated: "2018-07-10"
 layout: post
-list_title: Autonomous Driving | 贝叶斯定理 | The Bayesian Rule
-title: 贝叶斯概率模型
+list_title: The Bayesian Rule | 贝叶斯模型
+title: 贝叶斯模型
 categories: [AI,Autonomous-Driving]
 mathjax: true
 ---
