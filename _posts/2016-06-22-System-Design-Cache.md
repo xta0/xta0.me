@@ -1,8 +1,8 @@
 ---
 updated: "2018-10-21"
 layout: post
-title: 缓存
-list_title: 系统设计入门 | System Design | 缓存 | Cache
+title: 浅谈分布式缓存
+list_title: 浅谈分布式缓存 缓存 | Distributed Cache System
 categories: [backend]
 ---
 

@@ -1,9 +1,9 @@
 ---
 updated: "2018-08-20"
 layout: post
-title: 系统设计概述
-list_title: 系统设计入门 | System Design | 概述 | Overview For Dummies
-categories: [backend]
+title: 学一点系统设计
+list_title: 学一点系统设计 | System Design Overview
+categories: [backend, System Design]
 ---
 
 ### Motavition

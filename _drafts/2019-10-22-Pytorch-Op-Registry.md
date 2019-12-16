@@ -1,12 +1,13 @@
 ---
-list_title: Pytorch源码分析 | Operator的生成与注册
-title: Operator的生成与注册
+list_title: PyTorch中Operator的注册与派发
+title: PyTorch中Operator的注册与派发
 layout: post
-mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
-今天我们接着聊PyTorch的源码，为了搞清楚operator是如何调用的，我们首先要搞清楚他们是如何被注册到PyTorch里面的。
+今天我们接着聊PyTorch的源码，我们将把重点放在Operator的注册与派发上，具体来说，我们要搞清楚两个问题
+
+1. Operator是如何注册到PyTorch里面的，然后再来分析这些Operator是如何被调用的。
 
 ### `gen.py`
 

@@ -1,8 +1,8 @@
 ---
 updated: "2018-08-20"
 layout: post
-title: 负载均衡算法 
-list_title: 系统设计入门 | System Design | 负载均衡| Load Balancer
+title: 浅谈负载均衡
+list_title: 浅谈负载均衡| Load Balancer
 categories: [backend]
 ---
 

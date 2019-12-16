@@ -2,14 +2,11 @@
 updated: "2018-08-23"
 layout: post
 title: CAP 理论
-list_title: 系统设计入门 | System Design | CAP理论 | CAP Theorem
-categories: [backend]
+list_title: CAP理论 | CAP Theorem
+categories: [backend, System Design]
 ---
 
-
-## CAP Theorem
-
-所谓CAP是指对于一个分布式系统，不可能同时满足以下三点：
+今天我们来继续学习系统设计，我们要看一个这样一个理论 - **CAP**。所谓CAP是指对于一个分布式系统，不可能同时满足以下三点：
 
 1. 数据一致性（**C**onsistency），即每次请求返回最新的数据或者返回错误
 2. 可用性(**A**vailibility)，即每次请求都能拿到正确的返回，但不能保证数据是最新的
