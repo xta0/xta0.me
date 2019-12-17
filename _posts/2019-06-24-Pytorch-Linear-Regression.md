@@ -159,13 +159,13 @@ Epoch: 5000, Loss: 2.927647590637207
 #----------------------------
 w,b 5.367083549499512 -17.301189422607422
 ```
-我们循环了5000次，loss收敛在`2.927647`左右，不再下降，此时我们可以认为得到的$\omega$和$b$是我们最终想要的，为了更直观的理解，我们将得到模型画出来
+我们循环了5000次，loss收敛在`2.927647`左右，不再下降，此时我们可以认为得到的$\omega$和$b$是我们最终想要的，为了更直观的理解，我们将训练得到模型画出来，其中黄色的点为我们原始离散数据点，蓝色的线是我们训练好的model，即拟合出来的曲线
 
 <img src="{{site.baseurl}}/assets/images/2019/06/pytorch-lr-1.png">
 
-### PyTorch's autograd
+### Autograd
 
-上述代码并没有什么特别的地方，我们手动的实现了对$\omega$和$b$的求导，但由于上面的model太过简单，因此难度不大。但是对于复杂的model，比如CNN的model，如果用手动求导的方式则会非常复杂，且容易出错。正如我前面所说，PyTorch强大的地方在于不论model多复杂，只要它满足可微分的条件，PyTorch便可以自动帮我们完成求导的计算，即所谓的**autograd**。
+上述代码并没有什么特别的地方，我们手动的实现了对$\omega$和$b$的求导，但由于上面的model太过简单，因此难度不大。但是对于复杂的model，比如CNN的model，涉及到大量的待学习的参数，如果纯用手动求导的方式则会非常复杂，且容易出错。正如我前面所说，PyTorch强大的地方在于不论model多复杂，只要它满足可微分的条件，PyTorch便可以自动帮我们完成求导的计算，即所谓的**autograd**。
 
 简单来说，对所有的Model，我们都可以用一个[Computational Graph](https://xta0.me/2018/01/02/Deep-Learning-1.html)来表示，Graph中的每个节点代表一个运算函数
 
@@ -243,7 +243,7 @@ print("w,b",float(param[0]), float(param[1]))
 
 ### Optimizers
 
-之前机器学习的文章中，我们曾提到过[对传统梯度下降的优化](https://xta0.me/2017/11/17/Machine-Learning-9.html)，常用的有Stochastic Gradient Descent(SGD)，它可以帮助我们加快loss函数收敛速度，从而减少训练时间，类似的优化方法还有很多。PyTorch内部提供了一系列优化算法的API，我们可以通过下面API dump出来
+之前机器学习的文章中，我们曾提到过[对传统梯度下降的优化](https://xta0.me/2017/11/17/Machine-Learning-9.html)，例如当数据量大时，可以使用Stochastic Gradient Descent(SGD)，另外还有些优化算法可以帮助我们加快loss函数收敛速度，从而减少训练时间。PyTorch内部提供了一系列优化算法的API，我们可以通过下面API dump出来
 
 ```python
 import torch.optim as optim
@@ -276,11 +276,9 @@ def train_loop(epochs, learning_rate, params, x, y):
         print(f'Epoch: {epoch}, Loss: {float(loss)}')
     return params
 ```
-到目前为止，我们已经使用PyTorch使用优化了我们的训练代码，回过头来总结一下可以发现PyTorch帮我们解决了两大块重要的工作，一个是自动求导，只需要一行backward方法即可，解放了我们的双手。另一个是提供通用的Optimizer，Optimizer的好处是将算法抽象了出来，通过直接mutate训练过程中间节点的信息达到优化参数的目的，从而不需要破坏training loop，使代码逻辑保持清晰。
+重新训练我们model，观察结果发现和前面的结果一致。此外如果将`SGD`改为`Adam`，则loss函数的收敛速度会加快，4000次即可达到稳定状态。
 
-### Validation
-
-
+发现到目前为止，我们已经使用PyTorch使用优化了我们的训练代码，回过头来总结一下可以发现PyTorch帮我们解决了两大块重要的工作，一个是自动求导，只需要一行backward方法即可，解放了我们的双手。另一个是提供通用的Optimizer，Optimizer的好处是将算法抽象了出来，通过直接mutate训练过程中间节点的信息达到优化参数的目的，从而不需要破坏training loop，使代码逻辑保持清晰。
 
 
 ## Resoures
