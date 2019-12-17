@@ -165,5 +165,83 @@ w,b 5.367083549499512 -17.301189422607422
 
 ### PyTorch's autograd
 
-上述代码并没有什么特别的地方，我们手动的实现了对$\omega$和$\b$的求导，但由于上面的model太过简单，因此难度不大。但是对于复杂的model，比如CNN的model，如果用手动求导的方式则会非常复杂，且容易出错。正如我前面所说，PyTorch强大的地方在于不论model多复杂，它可以自动帮我们完成求导的计算，即所谓的**autograd**。
+上述代码并没有什么特别的地方，我们手动的实现了对$\omega$和$\b$的求导，但由于上面的model太过简单，因此难度不大。但是对于复杂的model，比如CNN的model，如果用手动求导的方式则会非常复杂，且容易出错。正如我前面所说，PyTorch强大的地方在于不论model多复杂，只要它满足可微分的条件，PyTorch便可以自动帮我们完成求导的计算，即所谓的**autograd**。
 
+简单来说，对所有的Model，我们都可以用一个[Computational Graph](https://xta0.me/2018/01/02/Deep-Learning-1.html)来表示，Graph中的每个节点代表一个运算函数
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-1.png">
+
+如上图中的`a`,`b`,`c`为叶子节点，在执行forward pass的时候，PyTorch会记将非叶子节点上的函数，保存在该节点的tensor中，这样当做backward pass的时候便可以很方便的使用链式求导快速计算出叶子节点的导数值。
+
+```python
+a = torch.tensor(3.0, requires_grad=True)
+b = torch.tensor(5.0, requires_grad=True)
+c = torch.tensor(8.0, requires_grad=True)
+```
+这里我们定义了`a`,`b`,`c`三个tensor，并且告诉PyTorch需要对它们进行求导，接下来我们建立Computation Graph
+
+```python
+u = b*c
+v = a+u
+j = 3*v
+```
+
+接下来我们可以验证下每个节点上都有什么信息
+
+```python
+>>> u
+tensor(40., grad_fn=<MulBackward0>)
+>>> j
+tensor(129., grad_fn=<MulBackward0>)
+>>> v
+tensor(43., grad_fn=<AddBackward0>)
+```
+可以看到每个节点上都有`grad_fn`，用来做autograd。上面的图中，j是最终节点，我们可以让j做backward，则它会触发u和v做反向求导，而求导的结果会存放在a,b,c上
+
+```python
+j.backward()
+>>> a.grad
+tensor(3.)
+>>> b.grad
+tensor(24.)
+>>> c.grad
+tensor(15.)
+>>> u.grad #none
+>>> v.grad #none
+>>> j.grad #none
+```
+上面结果可知，只有leaf节点才会累积求导的结果，中间节点不会保存任何中间结果。接下来我们可以用PyTorch的autograd API重写上一节的训练代码
+
+```python
+params = torch.tensor([1.0,0.0], requires_grad=True)
+
+```
+接下来我们不需要自己定义求导函数，而是直接可以使用PyTorch的`backward()`来获得params的导数值
+
+```python
+# use autograd
+def train_loop(epochs, learning_rate, params, x, y):
+    for epoch in range(1, epochs + 1):
+        if params.grad is not None:
+            params.grad_zero()
+        w,b = params
+        t_p = model(x, w, b)
+        loss = loss_fn(y, t_p)
+        loss.backward()
+        params = (params - learning_rate * params.grad).detach().requires_grad_()
+        print(f'Epoch: {epoch}, Loss: {float(loss)}')
+    return params
+
+
+params = torch.tensor([1.0,0.0], requires_grad=True)
+param = train_loop(epochs = 5000, 
+learning_rate = 1e-2, 
+params = params,
+x = t_xn, 
+y = t_y)
+print("w,b",float(param[0]), float(param[1]))
+```
+
+## Resoures
+
+- [AUTOGRAD: AUTOMATIC DIFFERENTIATION](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html#sphx-glr-beginner-blitz-autograd-tutorial-py)
