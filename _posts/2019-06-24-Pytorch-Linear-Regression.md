@@ -161,6 +161,9 @@ w,b 5.367083549499512 -17.301189422607422
 ```
 我们循环了5000次，loss收敛在`2.927647`左右，不再下降，此时我们可以认为得到的$\omega$和$b$是我们最终想要的，为了更直观的理解，我们将得到模型画出来
 
-<img src="{{site.baseurl}}/assets/images/2019/06/pytorch-lr-1.jpg">
+<img src="{{site.baseurl}}/assets/images/2019/06/pytorch-lr-1.png">
 
 ### PyTorch's autograd
+
+上述代码并没有什么特别的地方，我们手动的实现了对$\omega$和$\b$的求导，但由于上面的model太过简单，因此难度不大。但是对于复杂的model，比如CNN的model，如果用手动求导的方式则会非常复杂，且容易出错。正如我前面所说，PyTorch强大的地方在于不论model多复杂，它可以自动帮我们完成求导的计算，即所谓的**autograd**。
+
