@@ -2,7 +2,7 @@
 updated: "2018-10-21"
 layout: post
 title: 浅谈分布式缓存
-list_title: 浅谈分布式缓存 缓存 | Distributed Cache System
+list_title: 浅谈分布式缓存 | Distributed Cache System
 categories: [backend]
 ---
 

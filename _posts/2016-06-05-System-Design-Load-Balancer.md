@@ -2,7 +2,7 @@
 updated: "2018-08-20"
 layout: post
 title: 浅谈负载均衡
-list_title: 浅谈负载均衡| Load Balancer
+list_title: 浅谈负载均衡 | Load Balancer
 categories: [backend]
 ---
 

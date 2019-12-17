@@ -1,8 +1,8 @@
 ---
 layout: post
-list_title: 云计算 | Clouds Computing | Concepts Part 1
+list_title: [笔记] | 云计算 | Clouds Computing | Concepts Part 1 | 
 title: 云计算概述
-categories: [Cloud Compute]
+categories: [Notes, Cloud Compute]
 ---
 
 ### Course Overview
