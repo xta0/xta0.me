@@ -1,7 +1,6 @@
 ---
-list_title: 学一点PyTorch | A Linear Regression Demo Using PyTorch
-title: 学一点PyTorch
-sub_title: A Linear Regression Demo Using PyTorch
+list_title: 学一点 PyTorch | Play with PyTorch
+title: 学一点 PyTorch
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
@@ -9,7 +8,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 PyTorch是Facebook开源的一套Deep Learning的框架，它的API都是基于Python的，因此对Researcher非常友好。我对PyTorch的理解是它是具有自动求导功能的Numpy，当然PyTorch比Numpy肯定要强大的多。由于PyTorch目前仍在快速的迭代中，并且有着愈演愈烈的趋势，我们今天也来凑凑热闹，学一点PyTorch。
 
-### 线性回归
+### Linear Regression
 
 我们使用的例子是一个很简单的[线性回归模型]()，假设我们有一组观测数据如下
 
@@ -58,7 +57,7 @@ $$
 其中$\alpha$为Learning Rate，loss函数对$\omega$的导数，我们可以使用链式求导法则来得到
 
 $$
-\frac {dL}{d\omega} = \frac {dL}{d\hat y} \times {d\hat y}{d\omega}
+\frac {dL}{d\omega} = \frac {dL}{d\hat y} \times \frac {d\hat y}{d\omega}
 $$
 
 对应到代码中，我们需要定义一个求导函数`grad_fn`
@@ -93,7 +92,7 @@ def train(learning_rate,w,b,x,y):
     print("loss: ",loss)
     return (w,b)
 ```
-上面我们先指向了一次forward pass，得到了loss，然后进行了一次backward pass，得到了新的$\omega$和$b$，接着我们又进行了一次forward，又得到了一个新的loss值。我们可以猜想，loss值应该会变小，我们训练一次
+上面我们先执行了一次forward pass，得到了loss，然后进行了一次backward pass，得到了新的$\omega$和$b$，接着我们又进行了一次forward，又得到了一个新的loss值。我们可以猜想，loss值应该会变小，我们训练一次观察一下结果
 
 ```python
 train(learning_rate=1e-2, 
@@ -105,7 +104,7 @@ y=t_y)
 loss:  1763.8846435546875
 loss:  5802484.5
 ```
-我们发现loss的值没有变小，反而变大了。回忆前面机器学习的文章，出现这种情况，有几种可能，比如步长设大了，或者没有对输入数据进行normalization。我们先试着改变步长
+我们发现loss的值没有变小，反而变大了。回忆前面机器学习的文章，出现这种情况，有几种可能，比如`learning_rate`的值过大，或者没有对输入数据进行normalization。我们先试着改变步长
 
 ```python
 train(learning_rate=1e-4, 
@@ -113,7 +112,7 @@ w=torch.tensor(1.0),
 b=torch.tensor(0.0), 
 x=t_x, 
 y=t_y)
-
+#----------------------------
 loss:  1763.8846435546875
 loss:  323.0905456542969
 ```
@@ -126,13 +125,13 @@ w=torch.tensor(1.0),
 b=torch.tensor(0.0), 
 x=t_xn, 
 y=t_y)
-
+#----------------------------
 loss:  80.36434173583984
 loss:  37.57491683959961
 ```
-> 我们当然可以使用更复杂的normalization方法，这里为了简单起见，直接领输入数据乘以0.1
+> 这里我们可以使用更复杂的normalization方法，这里为了简单起见，直接领输入数据乘以0.1
 
-通过一系列操作，loss已经可以收敛了，这说明我们的梯度下降可以正常工作，接下来我们便可以正式训练了，我们队上面代码稍微重构一下
+通过一系列操作，loss已经可以收敛了，这说明我们的梯度下降可以正常工作，接下来我们便可以正式训练了，我们对上面代码稍微重构一下
 
 ```python
 def train_loop(epochs, learning_rate, params, x, y):
@@ -151,13 +150,17 @@ params = torch.tensor([1.0,0.0]),
 x = t_x, 
 y = t_y)
 print("w,b",float(param[0]), float(param[1]))
-
+#----------------------------
 Epoch: 1, Loss:  80.36434173583984
 Epoch: 2, Loss:  37.57491683959961
 ...
-
 Epoch: 4999, Loss: 2.927647352218628
 Epoch: 5000, Loss: 2.927647590637207
-
+#----------------------------
 w,b 5.367083549499512 -17.301189422607422
 ```
+我们循环了5000次，loss收敛在`2.927647`左右，不再下降，此时我们可以认为得到的$\omega$和$b$是我们最终想要的，为了更直观的理解，我们将得到模型画出来
+
+<img src="{{site.baseurl}}/assets/images/2019/06/pytorch-lr-1.jpg">
+
+### PyTorch's autograd
