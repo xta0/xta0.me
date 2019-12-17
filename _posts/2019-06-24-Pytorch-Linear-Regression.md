@@ -217,13 +217,8 @@ tensor(15.)
 接下来我们可以用PyTorch的autograd API重写上一节的训练代码
 
 ```python
-params = torch.tensor([1.0,0.0], requires_grad=True)
-
-```
-接下来我们不需要自己定义求导函数，而是直接可以使用PyTorch的`backward()`来获得params的导数值
-
-```python
 # use autograd
+params = torch.tensor([1.0,0.0], requires_grad=True)
 def train_loop(epochs, learning_rate, params, x, y):
     for epoch in range(1, epochs + 1):
         if params.grad is not None:
@@ -248,7 +243,7 @@ print("w,b",float(param[0]), float(param[1]))
 
 ### Optimizers
 
-之前机器学习的文章中，我们曾提到过[对传统梯度下降的优化](https://xta0.me/2017/11/17/Machine-Learning-9.html)，常用的有Stochastic Gradient Descent(SGD)，等等。PyTorch内部提供了一系列帮助优化算法的API，我们可以通过下面API dump出来
+之前机器学习的文章中，我们曾提到过[对传统梯度下降的优化](https://xta0.me/2017/11/17/Machine-Learning-9.html)，常用的有Stochastic Gradient Descent(SGD)，它可以帮助我们加快loss函数收敛速度，从而减少训练时间，类似的优化方法还有很多。PyTorch内部提供了一系列优化算法的API，我们可以通过下面API dump出来
 
 ```python
 import torch.optim as optim
@@ -266,7 +261,7 @@ params = torch.tensor([1.0,0.0], requires_grad=True)
 learning_rate = 1e-2
 optimizer = optim.SGD([params],lr=learning_rate)
 ```
-接下来我们需要在backward()执行完成后，调用`step()`方法来更新`params`中的值。另外由于optimizer提供了`zero_grad()`的方法，我们可以将上面手动清楚导数值的方式替换成使用`zero_grad()`方法
+接下来我们需要在backward()执行完成后，调用`step()`方法来更新`params`中的值。另外由于optimizer提供了`zero_grad()`的方法，我们可以将上面手动清除导数值的方式替换成使用`zero_grad()`方法
 
 ```python
 def train_loop(epochs, learning_rate, params, x, y):
@@ -281,6 +276,11 @@ def train_loop(epochs, learning_rate, params, x, y):
         print(f'Epoch: {epoch}, Loss: {float(loss)}')
     return params
 ```
+到目前为止，我们已经使用PyTorch使用优化了我们的训练代码，回过头来总结一下可以发现PyTorch帮我们解决了两大块重要的工作，一个是自动求导，只需要一行backward方法即可，解放了我们的双手。另一个是提供通用的Optimizer，Optimizer的好处是将算法抽象了出来，通过直接mutate训练过程中间节点的信息达到优化参数的目的，从而不需要破坏training loop，使代码逻辑保持清晰。
+
+### Validation
+
+
 
 
 ## Resoures
