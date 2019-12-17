@@ -210,7 +210,11 @@ tensor(15.)
 >>> v.grad #none
 >>> j.grad #none
 ```
-上面结果可知，只有leaf节点才会累积求导的结果，中间节点不会保存任何中间结果。接下来我们可以用PyTorch的autograd API重写上一节的训练代码
+上面结果可知，只有leaf节点才会累积求导的结果，中间节点不会保存任何中间结果。
+
+> 关于Autograd详细的实现建议阅读源码，后面如果有时间我们可以写一篇文章专门分析
+
+接下来我们可以用PyTorch的autograd API重写上一节的训练代码
 
 ```python
 params = torch.tensor([1.0,0.0], requires_grad=True)
@@ -227,7 +231,7 @@ def train_loop(epochs, learning_rate, params, x, y):
         w,b = params
         t_p = model(x, w, b)
         loss = loss_fn(y, t_p)
-        loss.backward()
+        loss.backward() #autograd
         params = (params - learning_rate * params.grad).detach().requires_grad_()
         print(f'Epoch: {epoch}, Loss: {float(loss)}')
     return params
@@ -242,6 +246,46 @@ y = t_y)
 print("w,b",float(param[0]), float(param[1]))
 ```
 
+### Optimizers
+
+之前机器学习的文章中，我们曾提到过[对传统梯度下降的优化](https://xta0.me/2017/11/17/Machine-Learning-9.html)，常用的有Stochastic Gradient Descent(SGD)，等等。PyTorch内部提供了一系列帮助优化算法的API，我们可以通过下面API dump出来
+
+```python
+import torch.optim as optim
+dir(optim))
+#----------------------------
+['ASGD', 'Adadelta', 'Adagrad', 'Adam', 'AdamW', 'Adamax', 
+'LBFGS', 'Optimizer', 'RMSprop', 'Rprop', 'SGD', 'SparseAdam',
+'__builtins__', '__cached__', '__doc__', '__file__', '__loader__', 
+'__name__', '__package__', '__path__', '__spec__', 'lr_scheduler']
+```
+Optimizer通常和autograd配合使用，因为在训练的时候它需要修改`tensor.grad`的值，因此Optimizer内部会retain传入tensor。使用Optimizer的方式也很简单，它提供两个API，一个是`zero_grad`用于清空tensor上保存的导数值，另一个是`step()`用来实现具体的optimize的操作。接下来我们为上面的demo引入一个optimizaer
+
+```python
+params = torch.tensor([1.0,0.0], requires_grad=True)
+learning_rate = 1e-2
+optimizer = optim.SGD([params],lr=learning_rate)
+```
+接下来我们需要在backward()执行完成后，调用`step()`方法来更新`params`中的值。另外由于optimizer提供了`zero_grad()`的方法，我们可以将上面手动清楚导数值的方式替换成使用`zero_grad()`方法
+
+```python
+def train_loop(epochs, learning_rate, params, x, y):
+    for epoch in range(1, epochs + 1):    
+        optimizer.zero_grad() #clear grad value on params
+        w,b = params
+        t_p = model(x, w, b)
+        loss = loss_fn(y, t_p)
+        loss.backward()
+        optimizer.step() #update params
+        params = (params - learning_rate * params.grad).detach().requires_grad_()
+        print(f'Epoch: {epoch}, Loss: {float(loss)}')
+    return params
+```
+
+
 ## Resoures
 
+- [Logistic Regression as a Neural Network](https://xta0.me/2018/01/02/Deep-Learning-1.html)
 - [AUTOGRAD: AUTOMATIC DIFFERENTIATION](https://pytorch.org/tutorials/beginner/blitz/autograd_tutorial.html#sphx-glr-beginner-blitz-autograd-tutorial-py)
+- [PyTorch Autograd Explained - In-depth Tutorial](https://www.youtube.com/watch?v=MswxJw-8PvE)
+- [Learning With Large Datasets](https://xta0.me/2017/11/17/Machine-Learning-9.html)
