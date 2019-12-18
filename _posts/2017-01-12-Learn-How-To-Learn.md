@@ -1,13 +1,29 @@
 ---
 layout: post
-list_title: 如何高效学习 | Learn How to Learn
-title: 如何高效学习
-categories: [Life]
+list_title: 笔记 | 如何高效学习 | Learn How to Learn
+title: 如何高效学习[笔记]
+categories: [Learning, Note]
 ---
 
 > [Coursera Link](https://www.coursera.org/learn/learning-how-to-learn)
 
-### Overview
+### Glossary
+
+- [synapse](https://zh.wikipedia.org/wiki/%E7%AA%81%E8%A7%A6): 神经突触，神经元之间的链接接头
+- [dendrites](https://zh.wikipedia.org/wiki/%E6%A0%91%E7%AA%81): 树突，是神经元的一部分，为神经元的输入通道，其功能是将自其他神经元所接收的动作电位（电信号）传送至细胞本体
+- [Astrocytes](): 神经胶质，为神经元提供养分，有助提高记忆力和学习力
+- Neuron Pattern: 对某种问题的思维模式
+- Prefrontal Cortex：前额叶皮质
+- Chunk：信息块
+- acetylcholine：乙酰胆碱
+- dopamine：多巴胺
+- serotonin：血清素
+- [Amygdaloid](https://zh.wikipedia.org/wiki/%E6%9D%8F%E4%BB%81%E6%A0%B8): 杏仁核
+- [Deliberate Practice](): 刻意练习，走出舒适区，持续练习那些困难的部分
+- [Einstellung]()：对某种事务熟悉的思维模式，会阻碍创新思维
+- [Interleaving]()：交替学习
+
+## Overview
 
 - Focused Thinking
 	- Solving problmes
@@ -22,7 +38,6 @@ categories: [Life]
 - Focused Thinking 和 Diffused Thinking在同一时刻无法共存，大脑某一个时刻只能工作在某一个模式下
 
 ![](/assets/images/2016/11/learning-overview-1.png)
-
 
 ### 神经元
 
@@ -89,8 +104,6 @@ categories: [Life]
 	- 当考试遇到难题时，不要死磕，继续向下做，过一段时间，之前想不通的问题可能会有些线索出来 
 
 ## Chunk
-
-###Chunk是什么
 
 Chunk是一个让多个神经元共同运作的神经网络，是用来解决具体事务的信息片段
 
@@ -269,26 +282,7 @@ Chunk是一个让多个神经元共同运作的神经网络，是用来解决具
 	- 先从难题做，卡住了立刻转到简单题，循环往复
 	- 心理暗示和腹式呼吸
 
-
-
-### 专有名词
-
-- [synapse](https://zh.wikipedia.org/wiki/%E7%AA%81%E8%A7%A6): 神经突触，神经元之间的链接接头
-- [dendrites](https://zh.wikipedia.org/wiki/%E6%A0%91%E7%AA%81): 树突，是神经元的一部分，为神经元的输入通道，其功能是将自其他神经元所接收的动作电位（电信号）传送至细胞本体
-- [Astrocytes](): 神经胶质，为神经元提供养分，有助提高记忆力和学习力
-- Neuron Pattern: 对某种问题的思维模式
-- Prefrontal Cortex：前额叶皮质
-- Chunk：信息块
-- acetylcholine：乙酰胆碱
-- dopamine：多巴胺
-- serotonin：血清素
-- [Amygdaloid](https://zh.wikipedia.org/wiki/%E6%9D%8F%E4%BB%81%E6%A0%B8): 杏仁核
-- [Deliberate Practice](): 刻意练习，走出舒适区，持续练习那些困难的部分
-- [Einstellung]()：对某种事务熟悉的思维模式，会阻碍创新思维
-- [Interleaving]()：交替学习
-
-
-## 资料
+## Resources
 
 - [MIT Open Course]()
 - [brainfacts](http://www.brainfacts.org)

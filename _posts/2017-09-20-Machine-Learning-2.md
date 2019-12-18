@@ -9,342 +9,45 @@ mathjax: true
 
 > 文中所用到的图片部分截取自Andrew Ng在[Cousera上的课程](https://www.coursera.org/learn/machine-learning)
 
-### Cost Function
-
-* Hypothesis 函数：
+一个简单的一位线性预测函数为
 
 $$
 h_{\theta}(x)=\theta_0 + {\theta_1}x
 $$
 
-怎么计算参数 θ 呢？需要通过代价函数求解
+在这个函数中$\theta_0$和$\theta_1$是未知的，我们怎么评价这个预测函数的效果呢？显然我们需要将预测结果$h_{\theta}(x)=$和真实结果$y$进行比对，比对的方法有$|h_{\theta}(x)- y|$或者$(h_{\theta}(x)- y)^2$，只要这个值越小，我们就认为我们的预测函数的误差最小，于是我们需要引入一个Cost函数
 
-* cost 函数：
+### cost 函数
 
 $$
 J(\theta_0,\theta_1) = \frac{1}{2m}\sum_{i=1}^m(\hat{y}_{i} - y_i)^2=\frac{1}{2m}\sum_{i=1}^m(h_\theta(x_i)-y_i)^2
 $$
 
-这个式子的含义是找到<math><msub><mi>θ</mi><mn>0</mn></msub><mo>,</mo><msub><mi>θ</mi><mn>1</mn></msub></math>的值使 <math><mi>J</mi><mo stretchy="false">(</mo><msub><mi>θ</mi><mn>0</mn></msub><mo>,</mo><msub><mi>θ</mi><mn>1</mn></msub><mo stretchy="false">)</mo></math>的值最小，为了求导方便系数乘了 1/2
+这个式子的含义是找到$\theta_0$和$\theta_1$的值使$J(\theta_0,\theta_1)$的值最小，其中$m$为训练样本$x$的个数，为了求导方便系数乘了1/2。可见$J(\theta_0,\theta_1)$是一个二元函数。
 
-### Cost Function - Intuition(1)
 
-对于 Hypothesis 函数：
+### Gradient Descent
 
-$$
-h_{\theta}(x)=\theta_0 + \theta_1x
-$$
+由于我们的$J(\theta_0, \theta_1)$是一个convex函数，因此它存在极小值点，为了找到$\theta_0$, $\theta_1$ 使 $J(\theta_0, \theta_1)$值最小，我们需要不断改变他们的值，直到找到$\theta_0$,和$\theta_1$，使 $J(\theta_0, \theta_1)$在改点处的导数为0。
 
-当$\theta_0=0$时，简化为：
+那么$\theta_0$,和$\theta_1$该如何快速的变化到我们想找的点呢？这里就要使用梯度下降法
 
 $$
-h_{\theta}(x) = \theta_1x
+\theta_j := \theta_j - \alpha \frac{\partial J(\theta_0,\theta_1)} {\partial \theta_j}
 $$
 
-对于 cost 函数简化为：
-
-$$
-J(\theta_1) = \frac{1}{2m}\sum_{i=1}^m(\hat{y}_{i} - y_i)^2=\frac{1}{2m}\sum_{i=1}^m(\theta_1(x_i)-y_i)^2
-$$
-
-假设有一组训练集：`(1,1),(2,2),(3,3)`
-
-- 当 $\theta_1=1$ 时，$h_\theta(x) = x$, 有 $J(1) = \frac{1}{2m}(0^2+0^2+0^2)=0$
-- 当 $\theta_1=0.5$ 时，$h_\theta(x) = 0.5x$，有 $J(0.5) = \frac{1}{2m}((0.5-1^2+(1-2)^2+(1.5-3)^2)=0.58$
-- 当 $\theta_1=0$ 时，$h_\theta(x) = 0$, 有 $J(0) = \frac{1}{2m}(1^2+2^2+3^2)=2.3$
-
-以此类推，通过不同的`θ`值可以求出不同的`J(θ)`，如下图所示：
-
-![](/assets/images/2017/09/ml-2.png)
-
-我们的目标是找到一个`θ`值使`J(θ)`最小。显然上述案例中，当`θ=1`时，`J(θ)`最小，因此我们可以得到 Hypothesis 函数：
-
-$$
-h_{\theta}(x) = x
-$$
-
-### Cost Function - Intuition(2)
-
-使用 contour plots 观察<math><mi>J</mi><mo>(</mo><msub><mi>θ</mi><mi>0</mi></msub><mi>,</mi><msub><mi>θ</mi><mi>1</mi></msub><mo>)</mo></math>在二维平面的投影，
-
-> 关于 contour plot[参考](https://nb.khanacademy.org/math/multivariable-calculus/thinking-about-multivariable-function/visualizing-scalar-valued-functions/v/contour-plots）
-
-![](/assets/images/2017/09/ml-3.png)
-
-Taking any color and going along the 'circle', one would expect to get the same value of the cost function. For example, the three green points found on the green line above have the same value for J(θ0,θ1) and as a result, they are found along the same line. The circled x displays the value of the cost function for the graph on the left when θ0 = 800 and θ1= -0.15
-
-Taking another h(x) and plotting its contour plot, one gets the following graphs:
-
-![](/assets/images/2017/09/ml-3-1.png)
-
-When θ0 = 360 and θ1 = 0, the value of J(θ0,θ1) in the contour plot gets closer to the center thus reducing the cost function error. Now giving our hypothesis function a slightly positive slope results in a better fit of the data.
-
-![](/assets/images/2017/09/ml-3-2.png)
-
-The graph above minimizes the cost function as much as possible and consequently, the result of θ1 and θ0 tend to be around 0.12 and 250 respectively. Plotting those values on our graph to the right seems to put our point in the center of the inner most 'circle'.
-
-* Ocatave Demo
-
-```matlab
-function J = computeCost(X, y, theta)
-
-m = length(y); % number of training examples
-
-predictions = X*theta;
-
-sqrErrors = ( predictions - y ).^2;
-
-J = 1/(2*m)*sum(sqrErrors);
-
-end
-```
-
-### Gradient descent
-
-对 Cost 函数：$J(\theta_0, \theta_1)$，找到$\theta_0, \theta_1$ 使 $J(\theta_0, \theta_1)$值最小
-
-* 方法 1. 选择任意<math><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub></math>，例如：<math><msub><mi>θ</mi><mi>0</mi></msub><mo>=</mo><mn>1</mn><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>=</mo><mn>1</mn></math> 
-
-* 方法 2. 不断改变<math><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub></math>使<math><mi>J</mi><mo>(</mo><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>)</mo></math>按梯度方向进行减少，直到找到最小值
-
-* 图形理解
-
-![Altext](/assets/images/2017/09/ml-4.png)
-
-* 梯度下降法： 
-  - `:=` 代表赋值，例如 a:=b 代表把 b 的值赋值给 a，类似的比如 a:=a+1。因此 := 表示的是计算机范畴中的赋值。而=号则代表 truth assertion，a = b 的含义是 a 的值为 b 
-  - `α` 代表 learning rate 是梯度下降的步长 - <math> <mfrac><mi mathvariant="normal">∂</mi><mrow><mi mathvariant="normal">∂</mi><msub><mi>θ</mi><mi>j</mi></msub></mrow></mfrac><mi>J</mi><mo stretchy="false">(</mo><msub><mi>θ</mi><mn>0</mn></msub><mo>,</mo><msub><mi>θ</mi><mn>1</mn></msub><mo stretchy="false">)</mo></math>代表对`θ`求偏导
-
-<math display="block">
-  <msub>
-    <mi>θ</mi>
-    <mi>j</mi>
-  </msub>
-  <mo>:=</mo>
-  <msub>
-	<mi>θ</mi>
-    <mi>j</mi>
-  </msub>
-  <mo>-</mo>
-  <mi>α</mi>
-  <mfrac>
-    <mi mathvariant="normal">∂</mi>
-    <mrow>
-      <mi mathvariant="normal">∂</mi>
-      <msub>
-        <mi>θ</mi>
-        <mi>j</mi>
-      </msub>
-    </mrow>
-  </mfrac>
-  <mi>J</mi>
-  <mo stretchy="false">(</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>0</mn>
-  </msub>
-  <mo>,</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>1</mn>
-  </msub>
-  <mo stretchy="false">)</mo>
-</math>
-
-* 理解梯度下降
-
-梯度下降是求多维函数的极值方法，因此公式是对 <math><msub><mi>θ</mi><mi>j</mi></msub></math> 求导，每一个<math><msub><mi>θ</mi><mi>j</mi></msub></math>代表一元参数，也可以理解为一维向量，上述 case 中，只有<math><msub><mi>θ</mi><mn>0</mn></msub></math>和<math><msub><mi>θ</mi><mn>1</mn></msub></math>两个参数，可以理解在这两个方向上各自下降，他们的向量方向为<math><msup><mi>J</mi><mi>(θ)</mi></msup></math>下降的方向，下降过程是一个同步迭代的过程：
+梯度下降是求多维函数的极值方法，因此上述公式是对 $\theta_j$ 求导，每一个$\theta_j$代表一元参数，也可以理解为一维向量，上述 case 中，只有$\theta_0$和$\theta_1$两个参数，可以理解在这两个方向上各自下降，下降过程是一个不断迭代的过程，直到 $\theta_j$收敛停止变化。如下图所示
 
 ![](/assets/images/2017/09/ml-4.png)
 
-理解二维梯度下降之前，可以先假设<math><msup><mi>J</mi><mi>(θ)</mi></msup></math>是一维的，即只有一个参数，那么上述梯度下降公式简化为：
+对上述例子，我们只需要分别对$\theta_0$,和$\theta_1$进行梯度下降，直至它们收敛
 
-<math display="block">
-  <msub>
-    <mi>θ</mi>
-    <mn>1</mn>
-  </msub>
-  <mo>:=</mo>
-  <msub>
-	 <mi>θ</mi>
-    <mn>1</mn>
-  </msub>
-  <mo>−</mo>
-  <mi>α</mi>
-  <mfrac>
-    <mi>d</mi>
-    <mrow>
-      <mi>d</mi>
-      <msub>
-		 <mi>θ</mi>
-        <mn>1</mn>
-      </msub>
-    </mrow>
-  </mfrac>
-  <mi>J</mi>
-  <mo stretchy="false">(</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>1</mn>
-  </msub>
-  <mo stretchy="false">)</mo>
-</math>
+$$
+\theta_0 := \theta_0 - \alpha \frac {1}{m} \sum_{i=1}{m}(h_\theta(x_i) - y_i) \\
+\theta_1 := \theta_1 - \alpha \frac {1}{m} \sum_{i=1}{m}(h_\theta(x_i) - y_i)
+$$
 
-问题简化为对一元函数求导，假设<math><msup><mi>J</mi><mi>(θ)</mi></msup></math>如下图所示：
-![](/assets/images/2017/09/ml-3-2.png)
-`θ`会逐渐向极值点出收敛，当`θ`到达极值点时，该处导数为 0，则`θ`值不再变化。
-<math display = "block">
-<msub>
-<mi>θ</mi>
-<mn>1</mn>
-</msub>
-<mo>:=</mo>
-<msub>
-<mi>θ</mi>
-<mn>1</mn>
-</msub>
-<mo>−</mo>
-<mi>α</mi>
-<mo>∗</mo>
-<mn>0</mn>
-</math>
-理解了一维的梯度下降，接下来看怎么把它应用到<math><mi>J</mi><mo>(</mo><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub><mo>)</mo></math>上，对<math><msub><mi>θ</mi><mi>0</mi></msub><mo>,</mo><msub><mi>θ</mi><mi>1</mi></msub></math>分别求偏导，得到下面公式：
-
-<math display="block">
-  <mtable>
-    <mtr>
-      <mtd>
-        <mtext>repeat until convergence:{</mtext>
-        <mo fence="false" stretchy="false">{</mo>
-      </mtd>
-      <mtd />
-    </mtr>
-    <mtr>
-      <mtd>
-        <msub>
-          <mi>θ</mi>
-          <mn>0</mn>
-        </msub>
-        <mo>:=</mo>
-      </mtd>
-      <mtd>
-        <msub>
-			<mi>θ</mi>
-          <mn>0</mn>
-        </msub>
-        <mo>−</mo>
-        <mi>α</mi>
-        <mfrac>
-          <mn>1</mn>
-          <mi>m</mi>
-        </mfrac>
-        <munderover>
-          <mo movablelimits="false">∑</mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>m</mi>
-          </mrow>
-        </munderover>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi>h</mi>
-			<mi>θ</mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi>x</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-          </mrow>
-        </msub>
-        <mo stretchy="false">)</mo>
-        <mo>−</mo>
-        <msub>
-          <mi>y</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-          </mrow>
-        </msub>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <msub>
-			<mi>θ</mi>
-          <mn>1</mn>
-        </msub>
-        <mo>:=</mo>
-      </mtd>
-      <mtd>
-        <msub>
-			<mi>θ</mi>
-          <mn>1</mn>
-        </msub>
-        <mo>−</mo>
-        <mi>α</mi>
-        <mfrac>
-          <mn>1</mn>
-          <mi>m</mi>
-        </mfrac>
-        <munderover>
-          <mo movablelimits="false">∑</mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>m</mi>
-          </mrow>
-        </munderover>
-        <mfenced open="(" close=")">
-          <mrow>
-            <mo stretchy="false">(</mo>
-            <msub>
-              <mi>h</mi>
-				<mi>θ</mi>
-            </msub>
-            <mo stretchy="false">(</mo>
-            <msub>
-              <mi>x</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mi>i</mi>
-              </mrow>
-            </msub>
-            <mo stretchy="false">)</mo>
-            <mo>−</mo>
-            <msub>
-              <mi>y</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mi>i</mi>
-              </mrow>
-            </msub>
-            <mo stretchy="false">)</mo>
-            <msub>
-              <mi>x</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mi>i</mi>
-              </mrow>
-            </msub>
-          </mrow>
-        </mfenced>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mo fence="false" stretchy="false">}</mo>
-      </mtd>
-      <mtd />
-    </mtr>
-  </mtable>
-</math>
-	
-对于线性回归，<math><msup><mi>J</mi><mi>(θ)</mi></msup></math>是凸函数(convex function)，因此上述两个式子没有局部极值点，只有全局唯一的一个极值点。梯度下降法通常在离极值点远的地方下降很快，但在极值点附近时会收敛速度很慢。并且，在目标函数是凸函数时，梯度下降法的解是全局最优解。而在一般情况下，梯度下降法不保证求得全局最优解。
+> 注意，上述例子中我们的cost函数是凸函数(convex function)，因此上述两个式子没有局部极值点，只有全局唯一的一个极值点。梯度下降法通常在离极值点远的地方下降很快，但在极值点附近时会收敛速度很慢。因此，梯度下降法的解是全局最优解。而在一般情况下，梯度下降法不保证求得全局最优解。
 
 ## Multiple features
 
