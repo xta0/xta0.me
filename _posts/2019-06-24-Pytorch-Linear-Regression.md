@@ -1,5 +1,5 @@
 ---
-list_title: 学一点 PyTorch | Play with PyTorch
+list_title: 学一点 PyTorch | 线性回归 | Linear Regression with PyTorch
 title: 学一点 PyTorch
 layout: post
 mathjax: true

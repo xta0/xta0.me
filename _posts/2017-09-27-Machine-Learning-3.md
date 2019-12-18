@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 机器学习 | Machine Learning | 分类 | Classification
+list_title: 机器学习 | Machine Learning | 逻辑回归 | Logistic Regression
 title: 分类
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter3
 categories: [Machine Learning,AI]
