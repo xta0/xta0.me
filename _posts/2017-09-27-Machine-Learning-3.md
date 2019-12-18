@@ -1,7 +1,7 @@
 ---
 layout: post
 list_title: 机器学习 | Machine Learning | 逻辑回归 | Logistic Regression
-title: 分类
+title: 逻辑回归
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter3
 categories: [Machine Learning,AI]
 mathjax: true
@@ -15,29 +15,38 @@ $$
 y ∈ {0,1}
 $$
 
-* 0："Negative Class"(e.g., benign tumor)
-* 1: "Positive Class"(e.g., malignant tumor)
+对于分类场景，使用线性回归模型不适合，原因是 $h_{\theta}(x)$ 值域是连续的，不能保证是`0`或`1`，因此我们需要一种新的模型。
 
-对于分类场景，使用线性回归模型不适合，原因是 $h_{\theta}(x)$ 的区间不能保证在`[0,1]`之间，因此需要一种新的模型，叫做 logistic regression - 逻辑回归。
+## Sigmoid函数
 
-## Logistic Regression Model
+在给出模型前，我们先假设$y$的取值是连续的，则对于任意的输入有
 
-在给出模型前，先不考虑 y 的取值是离散的，我们希望能使：$0≤h_{\theta}(x)≤1$，可以将线性函数：$h_{\theta}(x)=\theta^{T}x$ 做如下变换：$h_{\theta}(x)=g(\theta^{T}x)$, 其中g为 $g(z)=\frac{1}{1+e^{-z}}$。可以得到函数曲线如下
+$$
+0≤h_{\theta}(x)≤1
+$$
+
+为了达到这个目的，我们可以将线性函数 $h_{\theta}(x)=\theta^{T}x$ 做如下变换：$h_{\theta}(x)=g(\theta^{T}x)$, 其中g为 
+
+$$
+g(z)=\frac{1}{1+e^{-z}}
+$$
+
+可以得到$g(x)$的函数曲线如下
 
 ![](/assets/images/2017/09/ml-5-1.png)
 
-如上图，函数$g(z)$ 将所有实数映射到了`(0,1]`空间内, $g(z)$ 也叫做**Sigmoid Function**。
+我们看到函数$g(x)$ 将所有实数映射到了`(0,1]`空间内, 则$g(z)$ 也叫做**Sigmoid Function**。
 
-## Decision Boundary
+### Decision Boundary
 
-通过观察函数曲线可以发现，当`z`大于 0 的时候`g(z)≥0.5`，因此只需要判断$\theta^{(T)}x$和0的关系即可：
+通过观察函数曲线可以发现，当`z`大于 0 的时候`g(z)≥0.5`，因此只需要判断$\theta^{(T)}x$和`0`的关系即可：
 
-- $\theta^{(T)}x ≥ 0$ -> $y=1$
-- $\theta^{(T)}x < 0$ -> $y=0$
+- $\theta^{(T)}x ≥ 0$ 可推出 $y=1$
+- $\theta^{(T)}x < 0$ 可推出 $y=0$
 
-### linear decision boundaries
+- Linear Decision Boundaries
 
-举个例子，假设有一个线性预测函数 
+举个例子，假设有一个二维线性预测函数为
 
 $$
 h_{\theta}(x) = g(\theta_0 + \theta_1x_1 + \theta_2x_2)
@@ -65,162 +74,17 @@ $$
 
 ## Cost Function
 
-当我们有了模型以后，接下来的问题便是找到一个代价函数来求解θ值，如果使用之前先行回归的 cost function，即 
+可以看到，所谓的逻辑回归，就是通过sigmoid函数将某个预测函数（可能是非线性函数）的值域限定在某个区域内，从而达到对输出进行分类的效果。 因此当我们有了模型以后，接下来的问题便是找到一个代价函数来求解`θ`值，如果使用之前现行回归的 cost function，即 
 
 $$
 J(\theta) =\frac{1}{2m}\sum_{i=1}^m(h_\theta(x_i)-y_i)^2
 $$
 
-这时会出现$J(\theta)$不是存才多个local minimum的情况，即$J(\theta)$不是一个convex function
-
-> $h(x)$变成了复杂的非线性函数，因此梯度下降无法得到最小值（得到极小值的概率更高）。
-
-因此我们要找到一个逻辑回归可以使用的代价函数，这里略去推导，直接给出函数定义
+由于$h(x)$变成了复杂的非线性函数，这时会出现$J(\theta)$存才多个local minimum的情况，即$J(\theta)$不是一个convex function，因此梯度下降无法得到最小值。因此我们要找到一个新的代价函数
 
 $$
-
+Cost(h_\theta(x),y) =\begin{cases}-log(h_\theta(x)),  & \text{if  $y=1$} \\-log(1-h_\theta(x)),  & \text{if $y=0$}\end{cases}
 $$
-
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-<mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd />
-      <mtd>
-        <mi>J</mi>
-        <mo stretchy="false">(</mo>
-        <mi>&#x03B8;<!-- θ --></mi>
-        <mo stretchy="false">)</mo>
-        <mo>=</mo>
-        <mstyle>
-          <mfrac>
-            <mn>1</mn>
-            <mi>m</mi>
-          </mfrac>
-        </mstyle>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mi>m</mi>
-        </munderover>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi mathvariant="normal">C</mi>
-          <mi mathvariant="normal">o</mi>
-          <mi mathvariant="normal">s</mi>
-          <mi mathvariant="normal">t</mi>
-        </mrow>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi>h</mi>
-          <mi>&#x03B8;<!-- θ --></mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <msup>
-          <mi>x</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <mo>,</mo>
-        <msup>
-          <mi>y</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi mathvariant="normal">C</mi>
-          <mi mathvariant="normal">o</mi>
-          <mi mathvariant="normal">s</mi>
-          <mi mathvariant="normal">t</mi>
-        </mrow>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi>h</mi>
-          <mi>&#x03B8;<!-- θ --></mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <mi>x</mi>
-        <mo stretchy="false">)</mo>
-        <mo>,</mo>
-        <mi>y</mi>
-        <mo stretchy="false">)</mo>
-        <mo>=</mo>
-        <mo>&#x2212;<!-- − --></mo>
-        <mi>log</mi>
-        <mo>&#x2061;<!-- ⁡ --></mo>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi>h</mi>
-          <mi>&#x03B8;<!-- θ --></mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <mi>x</mi>
-        <mo stretchy="false">)</mo>
-        <mo stretchy="false">)</mo>
-        <mspace width="thickmathspace" />
-      </mtd>
-      <mtd>
-        <mtext>if y = 1</mtext>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi mathvariant="normal">C</mi>
-          <mi mathvariant="normal">o</mi>
-          <mi mathvariant="normal">s</mi>
-          <mi mathvariant="normal">t</mi>
-        </mrow>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi>h</mi>
-          <mi>&#x03B8;<!-- θ --></mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <mi>x</mi>
-        <mo stretchy="false">)</mo>
-        <mo>,</mo>
-        <mi>y</mi>
-        <mo stretchy="false">)</mo>
-        <mo>=</mo>
-        <mo>&#x2212;<!-- − --></mo>
-        <mi>log</mi>
-        <mo>&#x2061;<!-- ⁡ --></mo>
-        <mo stretchy="false">(</mo>
-        <mn>1</mn>
-        <mo>&#x2212;<!-- − --></mo>
-        <msub>
-          <mi>h</mi>
-          <mi>&#x03B8;<!-- θ --></mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <mi>x</mi>
-        <mo stretchy="false">)</mo>
-        <mo stretchy="false">)</mo>
-        <mspace width="thickmathspace" />
-      </mtd>
-      <mtd>
-        <mtext>if y = 0</mtext>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
 
 当`y=1`的时候，`J(θ) = 0` -> `h(x)=1`；`J(θ) = ∞` -> `h(x)=0`，如下图所示
 

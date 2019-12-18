@@ -1,6 +1,6 @@
 ---
 list_title: 学一点 PyTorch | 线性回归 | Linear Regression with PyTorch
-title: 学一点 PyTorch
+title: 使用PyTorch
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
