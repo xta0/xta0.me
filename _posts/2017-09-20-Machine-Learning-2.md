@@ -43,8 +43,8 @@ $$
 对上述例子，我们只需要分别对$\theta_0$,和$\theta_1$进行梯度下降，直至它们收敛
 
 $$
-\theta_0 := \theta_0 - \alpha \frac {1}{m} \sum_{i=1}{m}(h_\theta(x_i) - y_i) \\
-\theta_1 := \theta_1 - \alpha \frac {1}{m} \sum_{i=1}{m}(h_\theta(x_i) - y_i)
+\theta_0 := \theta_0 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_i) - y_i) \\
+\theta_1 := \theta_1 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_i) - y_i)
 $$
 
 > 注意，上述例子中我们的cost函数是凸函数(convex function)，因此上述两个式子没有局部极值点，只有全局唯一的一个极值点。梯度下降法通常在离极值点远的地方下降很快，但在极值点附近时会收敛速度很慢。因此，梯度下降法的解是全局最优解。而在一般情况下，梯度下降法不保证求得全局最优解。
