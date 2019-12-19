@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 数据科学 | Data Science | Overview
+list_title: Data Science
 title: Data Science Overview
 categories: [Data Science]
 ---
