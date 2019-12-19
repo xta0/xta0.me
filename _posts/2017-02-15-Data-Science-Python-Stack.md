@@ -149,13 +149,13 @@ np.linalg.eigh(conv)
 ```
 ## Pandas
 
-Panda主要解决数据处理的问题，假如我们有一份csv文件，我们如何有效的操作和管理这份数据呢？对于Data Scientist来说，最好的选择是将这份数据变成矩阵，因为一旦数据变成了矩阵，数学就可以立刻排上用场了。
+Panda主要解决数据处理的问题，假如我们有一份csv文件，我们如何有效的操作和管理这份数据呢？对于Data Scientist来说，最好的选择是将这份数据变成矩阵，因为一旦数据变成了矩阵，数学就可以立刻排上用场了。除了变成矩阵以外，Pandas还提供了一个`DataFrame`的数据结构，可以让我们像操纵数据库一样来操作我们手中的数据。
 
-我们先来看一下如何使用Python做数据加载，用到的数据为[data_2d.csv](https://github.com/lazyprogrammer/machine_learning_examples/blob/master/linear_regression_class/data_2d.csv)。
+我们先来对比看一下如何使用Python和Pandas做数据加载，用到的数据为[data_2d.csv](https://github.com/lazyprogrammer/machine_learning_examples/blob/master/linear_regression_class/data_2d.csv)。
 
 ```python
 import numpy as np 
-
+## Use Python
 data = []
 for line in open("data_2d.csv"):
     row = line.rstrip().split(',')
@@ -163,16 +163,17 @@ for line in open("data_2d.csv"):
     data.append(sample)
 # turns into numpy array
 data = np.array(data)
-```
-
-### DataFrame
-
-Pandas为我们封装了一套data loading的API，同时也引入了**DataFrame**的概念
-
-```python
+#-------------------------------------
+## Use Pandas
 import pandas as pd
 
 data = pd.read_csv("data_2d.csv", header=None)
+```
+### DataFrame
+
+前面提到了Pandas中二维数据都有数据库的表结构来表示，而用来表示表结构的数据结构为`DataFrame`
+
+```python
 print(data.info())
 #--------------------------
 <class 'pandas.core.frame.DataFrame'>
@@ -197,15 +198,8 @@ memory usage: 2.4 KB
 3  55.854342  70.325902  321.773638
 4  49.366550  75.114040  322.465486
 ```
-可以看到DataFrame输出的数据格式和上面打印出来的格式一致，且结构为二维数组
-
-我们也可以使用`as_matrix()`方法将数据转化成Numpy Array
-
-```python
-M = data.as_matrix()
-print(type(M)) #<class 'numpy.ndarray'>
-```
-总的来说，DataFrame的设计是为了方便对数据进行数据库操作，比如根据某种条件查询某条记录，等等
+可以看到DataFrame输出的数据格式和上面打印出来的格式一致，且呈现方式为数据库的表结构。
+总的来说，DataFrame的设计是为了方便对数据进行数据库操作，比如根据某种条件查询某条记录，等等。我们后面会看到
 
 ### Retrieve Column and Row
 
@@ -292,6 +286,15 @@ m = pd.merge(t1,t2,on="user_id")
 2        3  81.775901   5.737648  181.485108  Germany   30  54000.0        No
 3        4  55.854342  70.325902  321.773638    Spain   38  61000.0        No
 4        5  49.366550  75.114040  322.465486  Germany   40      NaN       Yes
+```
+
+### Convert to Matrix
+
+我们也可以使用`as_matrix()`方法将DataFrame转化成Numpy数组
+
+```python
+M = data.as_matrix()
+print(type(M)) #<class 'numpy.ndarray'>
 ```
 
 ### Resources
