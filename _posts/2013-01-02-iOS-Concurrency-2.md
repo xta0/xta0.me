@@ -1,25 +1,27 @@
 ---
 layout: post
-title: 线程同步与互斥锁
-list_title: iOS中的多线程问题 | Thread synchronization 
-categories: [iOS]
+title: iOS中处理线程同步问题
+list_title: iOS中处理线程同步问题 | Thread synchronization 
+categories: [iOS, Thread, Concurrency]
 ---
 
 ## 线程同步
 
 考虑这样一个场景，假如我们有一个计数器从0开始递增，现在有100个线程并发同时修改计数器的值，怎么保证计数器的值有序递增的输出？
 
-```objc
+```cpp
 dispatch_queue_t queue =
 dispatch_queue_create(NULL, DISPATCH_QUEUE_CONCURRENT);
 for(int i=0;i<100;i++){
    dispatch_async(queue, ^{
             self.j +=1;
             printf("%d\n",self.j);
-        });
+    });
 }
 ```
-上述代码中，由于线程是并发的，导致`self.j`在`print`时I/O缓冲区中的数据并不是当前最新的，因此输出的`self.j`的值是乱序的。这个问题的本质是线程之间的同步问题，block中两句代码的执行存在时间差。如果想要保证输出顺序，我们需要强制每个线程执行完这两行代码后，其它线程才能开始执行，即block中的代码具备原子性。
+上述代码中，由于线程是并发的，导致`self.j`在执行`printf`时，I/O缓冲区中的数据并不是当前最新的，因此输出的`self.j`的值是乱序的。这个问题的本质是线程之间的同步问题，block中两句代码的执行存在时间差。如果想要保证输出顺序，我们需要强制每个线程执行完这两行代码后，其它线程才能开始执行，即block中的代码具备原子性。
+
+为了达到这个目的，在iOS中我们有下面几种做法
 
 - 使用GCD提供的串行队列
 
