@@ -8,9 +8,10 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 PyTorch是Facebook开源的一套Deep Learning的框架，它的API都是基于Python的，因此对Researcher非常友好。我对PyTorch的理解是它是具有自动求导功能的Numpy，当然PyTorch比Numpy肯定要强大的多。由于PyTorch目前仍在快速的迭代中，并且有着愈演愈烈的趋势，我们今天也来凑凑热闹，学一点PyTorch。
 
+
 ### Linear Regression
 
-我们使用的例子是一个很简单的[线性回归模型]()，假设我们有一组观测数据如下
+我们使用的例子是一个很简单的[线性回归模型](https://xta0.me/2017/09/20/Machine-Learning-2.html)，假设我们有一组观测数据如下
 
 ```python
 t_y = [0.5, 14.0, 15.0, 28.0, 11.0, 8.0, 3.0, -4.0, 6.0, 13.0, 21.0]
@@ -22,7 +23,11 @@ $$
 t_y = \omega \times t_x + b
 $$
 
-实际上就是对上述的离散点进行线性拟合。我们首先来创建两个tensor
+实际上就是对上述的离散点进行线性拟合。
+
+> 可将这篇文章理解为对之前机器学习文章的PyTorch版本实现
+
+我们首先来创建两个tensor
 
 ```python
 import torch

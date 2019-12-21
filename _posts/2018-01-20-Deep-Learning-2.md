@@ -123,6 +123,14 @@ $$
 ReLU(z) = g(z) = max(0,z)
 $$
 
+实际上可选择的Activation函数有很多种，但它们需要具备下面的条件
+
+1. 必须是非线性的
+2. 需要可微分，可计算梯度
+3. 需要有一个变化sensitive的区域和一个非senstive的区域
+
+如果没有Activation函数，那么model将很不容易被train
+
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w3-3.png" class="md-img-center" width="60%">
 
 ### Back Propagation
@@ -401,6 +409,10 @@ def update_parameters(parameters, grads, learning_rate):
     return parameters
 ```
 
-### All Together
+## Resources
+
+- [Deep Learning Specialization Course on Coursera]()
+- [Deep Learning with PyTorch](https://livebook.manning.com/book/deep-learning-with-pytorch/welcome/v-10/)
+
 
 

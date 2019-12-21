@@ -101,7 +101,7 @@ $$
 
 <img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-resnet-3.png">
 
-那为什么ResNet
+那为什么ResNet是如何解决问题的呢
 
 
 

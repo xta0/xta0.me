@@ -27,7 +27,7 @@ $$
 h_{\theta}(x)=\theta_0 + {\theta_1}x
 $$
 
-在这个函数中$\theta_0$和$\theta_1$是未知的，我们怎么评价这个预测函数的效果呢？显然我们需要将预测结果$h_{\theta}(x)=$和真实结果$y$进行比对，比对的方法有$\|h_{\theta}(x)- y\|$或者$(h_{\theta}(x)- y)^2$，只要这个值越小，我们就认为我们的预测函数的误差最小，于是我们需要引入一个Cost函数
+其中$x$表示房屋大小，$h_{\theta}(x)$表示我们的预测结果。在这个函数中$\theta_0$和$\theta_1$是未知的，我们怎么评价这个预测函数的效果呢？显然我们需要将预测结果$h_{\theta}(x)=$和真实结果$y$进行比对，比对的方法有$\|h_{\theta}(x)- y\|$或者$(h_{\theta}(x)- y)^2$，只要这个值越小，我们就认为我们的预测函数的误差最小，于是我们需要引入一个Cost函数
 
 ### 代价函数
 
@@ -106,9 +106,11 @@ $$
 h_\theta(x) = 80 + 0.1x_1 + 0.01x_2 + 3x_3 - 2x_4
 $$
 
-其中$h_\theta(x)$表示房子的总价，$\theta_0=80$ 代表房子的基础价格，<math><msub><mi>x</mi><mn>1</mn></msub></math>代表这栋房子的 size，<math><msub><mi>θ</mi><mn>1</mn></msub></math>是用 cost function 计算出来对<math><msub><mi>x</mi><mn>1</mn></msub></math>的系数，类似的<math><msub><mi>x</mi><mn>2</mn></msub></math>代表房子的房间数，<math><msub><mi>θ</mi><mn>2</mn></msub></math>是对<math><msub><mi>x</mi><mn>2</mn></msub></math>的系数，等等
+其中$h_\theta(x)$表示房子的总价，$\theta_0=80$ 代表房子的基础价格，$x_1$代表房子的大小，$\theta_1$是待求解的系数，类似的$x_2$代表房子的房间数，$\theta_2$是待求解的系数，等等
 
-在这个式子中$x_0$ 默认为1，即$x_0^{(i)}=1$，可以把每条样本和对应的参数看成两条vector:
+> 注意到，上述式子中$x_0$ 默认为1，即$x_0^{(i)}=1$
+
+如果将$x$和$\theta$式子用向量表示为
 
 <math display="block">
 <mi>x</mi><mo>=</mo>
