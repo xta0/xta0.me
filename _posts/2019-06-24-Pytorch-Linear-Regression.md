@@ -283,6 +283,8 @@ def train_loop(epochs, learning_rate, params, x, y):
 ```
 重新训练我们model，观察结果发现和前面的结果一致。此外如果将`SGD`改为`Adam`，则loss函数的收敛速度会加快，4000次即可达到稳定状态。
 
+### 小结
+
 发现到目前为止，我们已经使用PyTorch使用优化了我们的训练代码，回过头来总结一下可以发现PyTorch帮我们解决了两大块重要的工作，一个是自动求导，只需要一行backward方法即可，解放了我们的双手。另一个是提供通用的Optimizer，Optimizer的好处是将算法抽象了出来，通过直接mutate训练过程中间节点的信息达到优化参数的目的，从而不需要破坏training loop，使代码逻辑保持清晰。
 
 
