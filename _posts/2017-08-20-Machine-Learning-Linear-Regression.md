@@ -1,5 +1,6 @@
 ---
 layout: post
+update: "2019-12-20"
 list_title: 机器学习 | Machine Learning | 线性回归 | Linear Regression 
 title: 线性回归   
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter2
@@ -60,6 +61,10 @@ $$
 
 > 注意，上述例子中我们的cost函数是凸函数(convex function)，因此上述两个式子没有局部极值点，只有全局唯一的一个极值点。梯度下降法通常在离极值点远的地方下降很快，但在极值点附近时会收敛速度很慢。因此，梯度下降法的解是全局最优解。而在一般情况下，梯度下降法不保证求得全局最优解。
 
+### PyTorch实现
+
+- 参考[PyTorch线性回归](https://xta0.me/2019/06/24/Pytorch-Linear-Regression.html)
+
 ## 多维线性回归
 
 回到第一节开头的例子，实际生活中影响房价的因素很多，比如房屋数量，楼层数等等，因此房价的变化是多个变量相互作用的
@@ -103,7 +108,7 @@ $$
 - $x^{(i)}$ 表示第$i$组训练样本
 - $x_j^{(i)}$ 表示第$i$个样本中的第$j$个feature
 
-> 注意，前面一维线性归回的预测函数中，每条样本用$(x_i,y_i)$表示，原因是我们只有一个feature，后面我们统一使用上述的表示方法
+> 注意，前面一维线性归回的预测函数中，每条样本用$(x_i,y_i)$表示，原因是我们只有一个feature，我们可以用下角标表示每条数据，后面我们统一使用上角标来表示
 
 举例来说，$x^{(2)}$表示第二组训练集：
 
@@ -125,7 +130,7 @@ $$
 \\
 ... \\
 \\
-\theta_n := \theta_n - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_n^{i}) - y^{(i)}) ⋅ x_n^{(i)} 
+\theta_n := \theta_n - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_n^{(i)}) - y^{(i)}) ⋅ x_n^{(i)} 
 $$
 
 线性回归梯度计算的 Ocatave Demo
