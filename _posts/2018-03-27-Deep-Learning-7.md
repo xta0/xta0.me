@@ -74,11 +74,11 @@ AlexNet发表后，业界对这个模型做了很多改进的工作，使得其�
 
 前面曾提到过，随着网络的不断加深，会出现梯度“消失”或者梯度“爆炸”的情况。VGG虽然解决了一些问题，但研究人员也发现了一个现象，当将VGG不断加深，直到50多层后，模型的性能不但没有提升，反而开始下降，也就是准确度变差了，网络好像遇到了瓶颈。为了解决这个瓶颈，ResNet提出了残差网络（Residual Network）的概念，从而可以将模型规模从几层，十几层或几十层一直推到上百层的结构，且错误率只有VGG或GoogleNet的一半。这篇论文也获得了2016年CVPR的最佳论文，在发表后获得了超过1万2千次的引用。
 
-前面提到RetNet建立在Residual Block的概念之上，接下来我们就来看看它是怎么解决问题的。
+我们先看看ResNet的模型结构是怎样的，假设我们有一个两层的FC网络如下图所示
 
 <img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-resnet-1.png" width="80%">
 
-假设我们有一个两层的FC网路如上图所示，按照之前介绍的求法，则有下面一些式子
+按照传统的NN求法，则有下面一些式子
 
 $$
 z^{[l+1]} = W^{[l+1]}a^{[l]} + b^{[l+1]} \\
@@ -87,7 +87,7 @@ z^{[l+2]} = W^{[l+2]}a^{[l+1]} + b^{[l+2]} \\
 a^{[l+2]} = g(z^{[l+2]}) \\
 $$
 
-也就是说，如果想要得到$a^{[l+2]}$，必须要经历上面4部求解过程。而Residual Network则直接将$a^{[l]}$作为Residual Block加入到了网络的末尾，如下图所示
+也就是说，如果想要得到$a^{[l+2]}$，必须要经历上面4部求解过程。而Residual Network则直接将$a^{[l]}$作为Residual Block加入到了下一层网络的末尾，如下图所示
 
 <img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-resnet-2.png">
 
@@ -100,6 +100,8 @@ $$
 推而广之，如果我们有一个下图中的"Plain Network"，我们可以将下面的layer两两形成一个Residual Block，进而组成了一个Residual Network
 
 <img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-resnet-3.png">
+
+咋看一下有些奇怪，为什么这种结构就能解决深层网络的训练问题呢?
 
 那为什么ResNet是如何解决问题的呢
 

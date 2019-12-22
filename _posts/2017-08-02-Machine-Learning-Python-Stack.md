@@ -1,14 +1,12 @@
 ---
 layout: post
-list_title: Python Stack For Data Analysis
-title: Python Stack For Data Analysis
-categories: [Data Science, Python, Machine Learning]
+list_title: 机器学习 | Machine Learning | Python工具 | Python Stack For ML
+title: Python Stack For ML
+categories: [Python, Machine Learning]
 mathjax: true
 ---
 
-> 本文将对数据分析常用的Python库做一些简单的介绍，目的是快速了解这些库的作用以及一些常用的使用方法
-
-## Python Stack Overview
+## Python ML Stack Overview
 
 - Numpy
 - Pandas
@@ -296,6 +294,41 @@ m = pd.merge(t1,t2,on="user_id")
 M = data.as_matrix()
 print(type(M)) #<class 'numpy.ndarray'>
 ```
+
+## Matplotlib
+
+Matplotlib用来做数据可视化，API方便易用。例如我们向画一个Sin函数
+
+```python
+import numpy as np 
+import matplotlib.pyplot as plt
+
+x = np.linspace(0,10,100) #from 0 - 10, 100 points
+y = np.sin(x)
+plt.plot(x,y)
+plt.xlabel("Time")
+plt.ylabel("Some function of Time")
+plt.title("My Chart")
+plt.show()
+```
+我们可以用上面的代码绘制任何函数的曲线，观察其形态。实际应用中，更常用的应用场景是我们有一个数据集(`data_1d.csv`)，我们想可视化这份数据，此时我们需要用matplotlib来绘制离散点
+
+```python
+A = pd.read_csv('data_1d.csv', header = None).as_matrix()
+x = A[:,0] #1st column
+y = A[:,1] #2nd column
+plt.scatter(x,y)
+plt.show() 
+```
+另一个常用的功能是绘制直方图，使用方式比较简单。下面我们用Numpy随机生成10000个数，观察起分布状态
+
+```python
+R = np.random.random(10000)
+plt.hist(R)
+plt.show()
+```
+
+
 
 ### Resources
 

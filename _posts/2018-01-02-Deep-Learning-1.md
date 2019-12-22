@@ -12,9 +12,9 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 前面机器学习的课程中，我们曾[介绍过Logistic Regression的概念](https://xta0.me/2017/09/27/Machine-Learning-3.html)，它主要用来解决分类的问题，尤其是True和False的分类。
 
-<img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-0.png" class="md-img-center">
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-0.png" class="md-img-center" width="60%">
 
-我们可以将逻辑回归模型理解为一种简单的分类神经网络，`F(inputs) = {0 or 1}`，我们假设预测函数为线性函数：
+上图所示，我们可以将逻辑回归模型理解为只有一个神经元的神经网络，输入数据通过这个神经元后，得到一组分类结果，公式为
 
 $$
 \hat{y} = \sigma(w^Tx + b)

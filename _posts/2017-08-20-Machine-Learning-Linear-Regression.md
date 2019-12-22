@@ -7,9 +7,9 @@ categories: [Machine Learning,AI]
 mathjax: true
 ---
 
-> 文中所用到的图片部分截取自Andrew Ng在[Cousera上的课程](https://www.coursera.org/learn/machine-learning)
+> 文中部分内容来自和图片来自Andrew Ng在[Cousera上的课程](https://www.coursera.org/learn/machine-learning)
 
-## Single-Feature Linear Regression
+## 一维线性回归
 
 假设我们获得了一份房子大小和价格数据集，如下表所示
 
@@ -60,7 +60,7 @@ $$
 
 > 注意，上述例子中我们的cost函数是凸函数(convex function)，因此上述两个式子没有局部极值点，只有全局唯一的一个极值点。梯度下降法通常在离极值点远的地方下降很快，但在极值点附近时会收敛速度很慢。因此，梯度下降法的解是全局最优解。而在一般情况下，梯度下降法不保证求得全局最优解。
 
-## Multiple-Feature Linear Regression
+## 多维线性回归
 
 回到第一节开头的例子，实际生活中影响房价的因素很多，比如房屋数量，楼层数等等，因此房价的变化是多个变量相互作用的
 
@@ -72,7 +72,7 @@ $$
 | 642      | 2                       | 1                    | 126      |
 | ...      | ...                     | ...                  | ...      |
 
-对应到公式里，则表现为$x$是多维时，公式如下：
+由于多个feature的影响，此时我们的预测函数将变成多维：
 
 $$
 h_\theta(x) = \sum_{j=0}^n\theta_jx_j = \theta_0 + \theta_1x_1 + + \theta_2x_2 + ... + \theta_nx_n
@@ -92,12 +92,6 @@ x^{(2)} =
 \begin{bmatrix}
 1035, 4,  1,  224 
 \end{bmatrix}
-$$
-
-而$x_3^{(2)}$表示上面向量中中第三个元素：
-
-$$
-x_3^{(2)} = 1
 $$
 
 还是举个买房子的例子，假如我们得到如下函数:
@@ -1074,3 +1068,10 @@ If <math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi></math> is noninvertible, th
 * Too many features (e.g. m ≤ n). In this case, delete some features or use "regularization" (to be explained in a later lesson).
 
 Solutions to the above problems include deleting a feature that is linearly dependent with another or deleting one or more features when there are too many features.
+
+
+## Resources
+
+- [Machine Learning](https://www.coursera.org/learn/machine-learning)
+- [Deep Learning with PyTorch](https://classroom.udacity.com/courses/ud188)
+

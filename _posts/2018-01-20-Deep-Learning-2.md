@@ -129,16 +129,15 @@ $$
 2. 需要可微分，可计算梯度
 3. 需要有一个变化sensitive的区域和一个非senstive的区域
 
-如果没有Activation函数，那么model将很不容易被train
-
-<img src="{{site.baseurl}}/assets/images/2018/01/dp-w3-3.png" class="md-img-center" width="60%">
+总的来说Activation函数的作用在于通过非线性变换，让神经网络易于训练，可以更好的适应梯度下降
 
 ### Back Propagation
 
 上述神经网络的Cost函数和前文一样
 
 $$
-J(W^{[1]}, b^{[1]}, W^{[2]}, b^{[2]}) = \frac {1}{m} \sum_{i=1}^mL(\hat{y}, y) = - \frac{1}{m} \sum\limits_{i = 1}^{m} \large{(} \small y^{(i)}\log\left(A^{[2] (i)}\right) + (1-y^{(i)})\log\left(1- A^{[2] (i)}\right) \large{)} \small\tag{13}
+J(W^{[1]}, b^{[1]}, W^{[2]}, b^{[2]}) = \frac {1}{m} \sum_{i=1}^mL(\hat{y}, y) \\
+= - \frac{1}{m} \sum\limits_{i = 1}^{m} \large{(} \small y^{(i)}\log\left(A^{[2] (i)}\right) + (1-y^{(i)})\log\left(1- A^{[2] (i)}\right) \large{)} \small\tag{13}
 $$
 
 其中$Y$为`1xm`的行向量 $Y = [y^{[1]},y^{[2]},...,y^{[m]}]$。对上述式子进行求导，可以得出下面结论(推导过程省略)

@@ -9,9 +9,9 @@ mathjax: true
 
 > 文中所用到的图片部分截取自Andrew Ng在[Cousera上的课程](https://www.coursera.org/learn/machine-learning)
 
-## Background
+## 逻辑回归的问题
 
-神经网络是一个很老的概念，在机器学习领域目前还是主流，之前已经介绍了线性回归和逻辑回归，为什么还要学习神经网络？以non-linear classification为例，如下图所示
+神经网络目前是一个很火的概念，在机器学习领域目前还是主流，之前已经介绍了线性回归和逻辑回归，为什么还要学习神经网络？以non-linear classification为例，如下图所示
 
 ![](/assets/images/2017/09/ml-6-1.png)
 
@@ -2294,3 +2294,8 @@ BP梯度下降的过程如下图所示：
 ![](/assets/images/2017/09/ml-6-16.png)
 
 再回忆一下梯度下降，函数在极值点处的导数
+
+## Resources
+
+- [Machine Learning](https://www.coursera.org/learn/machine-learning)
+- [Deep Learning with PyTorch](https://classroom.udacity.com/courses/ud188)

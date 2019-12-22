@@ -50,3 +50,8 @@ mathjax: true
 回归在数学上来说是建立因变数 <math><mi>Y</mi></math> 与自变数 <math><mi>X</mi></math>之间关系的模型，给定一个点集，能够用一条曲线去拟合之，如果这个曲线是一条直线，那就被称为线性回归，如果曲线是一条二次曲线，就被称为二次回归，回归还有很多的变种，如 locally weighted 回归，logistic 回归，等等。如果得到的预测函数得出的结果是离散的，我们把这种学习问题叫做**分类问题**
 
 回归的最早形式是[最小二乘法](https://zh.wikipedia.org/wiki/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95)，由 1805 年的勒让德(Legendre)[1]，和 1809 年的高斯(Gauss)出版[2]。勒让德和高斯都将该方法应用于从天文观测中确定关于太阳的物体的轨道（主要是彗星，但后来是新发现的小行星）的问题。 高斯在 1821 年发表了最小二乘理论的进一步发展[3]，包括高斯－马尔可夫定理的一个版本。
+
+## Resources
+
+- [Machine Learning](https://www.coursera.org/learn/machine-learning)
+- [Deep Learning with PyTorch](https://classroom.udacity.com/courses/ud188)
