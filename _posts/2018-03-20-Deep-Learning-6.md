@@ -14,44 +14,15 @@ CNN是深度学习中一种处理图像的神经网络，可以用来做图像�
 
 ### 卷积运算
 
-CNN对图片特征的提取是基于卷积运算，由于图片中的像素点在空域上是离散的，因此准确的说是离散卷积运算。如果熟悉信号处理可知，卷积运算在频域上是一种滤波，比如图片的边缘包含大量的高频信息，我们可以设计一个高频滤波器对图片进行卷积，这样只有图片中的高频分量才能通过滤波器，即过滤出了图片的边缘。在空域上，卷积运算是一种加权求和的运算。其具体过程为让一个卷积核（kernel）依次滑过图片中的所有区域，如下图所示
+CNN对图片特征的提取是基于卷积运算，由于图片中的像素点在空域上是离散的，因此准确的说是离散卷积运算。如果熟悉信号处理可知，卷积运算在频域上是一种滤波，比如图片的边缘包含大量的高频信息，我们可以设计一个高频滤波器对图片进行卷积，这样只有图片中的高频分量才能通过滤波器，即过滤出了图片的边缘。<mark>在空域上，卷积运算是一种加权求和的运算</mark>。其具体过程为让一个卷积核（卷积核）依次滑过图片中的所有区域，如下图所示
 
 <div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-conv-kernel.gif"></div>
-
-还是以上面的提到的边缘检测为例，假设我们要提取图片的竖直边缘，我们可以设计下面一个kernel
-
-$$
-\begin{bmatrix}
-1 & 0 & -1  \\
-1 & 0 & -1  \\
-1 & 0 & -1  \\
-\end{bmatrix}
-$$
-
-接下来我们让这个kerel依次滑过图片，如下图中蓝色区域所示
-
-<div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
-<div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-1.png" width="80%"></div>
-<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-2.png" width="80%"></div>
-</div>
-
-对于滑过的蓝色区域，对图中的像素和kernel矩阵进行element-wise的乘积并求和，以左图的第一个window为例，滤波后的像素点为的值为
-
-```shell
-3x1 + 1x1 + 2x1 + 0x0 + 5x0 + 7x0 + 1x(-1) + 8x(-1) + 2x(-1) = -5
-```
-这样当kernel滑过整张图片后，会得到一个4x4的矩阵，包含滤波后的像素值。
-
-<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-3.png" width="40%">
 
 我们可以用Numpy实现上述计算过程
 
 ```python
 def conv_single_step(a_slice_prev, W, b):
     """
-    Apply one filter defined by parameters W on a single slice (a_slice_prev) of the output activation 
-    of the previous layer.
-    
     Arguments:
     a_slice_prev -- slice of input data of shape (f, f, n_C_prev)
     W -- Weight parameters contained in a window - matrix of shape (f, f, n_C_prev)
@@ -69,17 +40,17 @@ def conv_single_step(a_slice_prev, W, b):
     return Z
 ```
 
-同理我们也可以设计一个水平方向的滤波器来提取图片中水平的边缘信息，则通过竖直和水平滤波后的图片如下图所示
+假如我们有一副灰度图片，我们可以选取两个固定的卷积核，分别对图像进行水平和竖直的卷积操作（高通滤波）来提取边缘，结果如下图所示
 
 <div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-14.png"></div>
 
-我们假设图片的大小是`nxn`的，kernel的大小是`fxf`的，那么滤波后图片的大小为
+我们假设图片的大小是`nxn`的，卷积核的大小是`fxf`的，那么滤波后图片的大小为
 
 $$
-n-f+1 \times n-f+1
+(n-f+1) \times (n-f+1)
 $$
 
-对于kernel的选取并不固定，如果熟悉图像处理算法，可知边缘检测的算子有很多种，比如Sobel，拉普拉斯等。但是这些算子的值都是根据经验来确定的，比如Sobel的算子的值为
+如果熟悉图像处理算法，可知边缘检测的算子有很多种，比如Sobel，拉普拉斯等。但是这些算子的值都是根据经验来确定的，比如Sobel的算子的值为
 
 $$
 \begin{bmatrix}
@@ -89,7 +60,7 @@ $$
 \end{bmatrix}
 $$
 
-但基于传统图像处理算法对边缘的提取效果并不是最佳的，与其根据经验值来确定kernel中的值，CNN可以通过训练来找到最佳的kernel，这也是CNN所要最终解决的问题，即通过训练找到各式各样的kernel来帮我们完成最终的任务
+但基于传统图像处理算法对边缘的提取效果并不是最佳的，与其根据经验值来确定卷积核中的值，CNN可以通过训练来找到最佳的卷积核，这也是CNN所要最终解决的问题，<mark>即通过训练找到各式各样的卷积核来帮我们完成最终的任务。<mark>
 
 ### Padding
 
@@ -102,7 +73,7 @@ $$
 我们另$p$为padding的像素数，则卷积后的图片尺寸为
 
 $$
-n+2p-f+1 \times n+2p-f+1 
+(n+2p-f+1) \times (n+2p-f+1)
 $$
 
 在CNN中，我们称Valid为没有padding的卷积运算，称Same为有padding的卷积运算，卷积后的尺寸和原图片相同，此时要求 
@@ -131,14 +102,14 @@ def zero_pad(X, pad):
 
 ### Strided Convolutions
 
-在前面例子中，kernel滑过图片时的步长为1，我们也可以改变kernel滑动的步长，如下图中，kernel滑动的步长为2
+在前面例子中，卷积核滑过图片时的步长为1，我们也可以改变卷积核滑动的步长，如下图中，卷积核滑动的步长为2
 
 <div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
 <div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-4.png"></div>
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-5.png" ></div>
 </div>
 
-上图中，一个7x7的图片和一个3x3的kernel，按照步长为2进行卷积运算，得到的图片大小为3x3。计算方法为
+上图中，一个7x7的图片和一个3x3的卷积核，按照步长为2进行卷积运算，得到的图片大小为3x3。计算方法为
 
 $$
 \lfloor{\frac{n+2p-f}{stride} + 1}\rfloor \times \lfloor{\frac{n+2p-f}{stride} + 1}\rfloor
@@ -178,19 +149,19 @@ rgb rgb rgb ... rgb
 
 同样对于卷积核，也是一个3x3x3的矩阵，对应RGB三个通道。整个卷积运算的过程为RGB三通道图片分别和对应的卷积核进行卷积操作，将结果填充到一个4x4的矩阵中。
 
-注意到，上图中我们只考虑了一种情况，即一张RGB图片和一个kernel进行卷积得到一个4x4的矩阵，这个kernel可以是竖直边缘检测的kernel，那么得到的4x4矩阵则是图片的竖直边缘特征。如果我们要同时提取图片的竖直和水平边缘则需要让图片和另一个kernel进行卷积，得到另一个4x4的矩阵，那么最终的结果将是一个4x4x2的矩阵，如下图所示
+注意到，上图中我们只考虑了一种情况，即一张RGB图片和一个卷积核进行卷积得到一个4x4的矩阵，这个卷积核可以是竖直边缘检测的卷积核，那么得到的4x4矩阵则是图片的竖直边缘特征。如果我们要同时提取图片的竖直和水平边缘则需要让图片和另一个卷积核进行卷积，得到另一个4x4的矩阵，那么最终的结果将是一个4x4x2的矩阵，如下图所示
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-8.png">
 
 > [这个视频](https://eirwumuabdrwrjknwzodsl.coursera-apps.org/notebooks/week1/images/conv_kiank.mp4)更好的展示上述卷积计算的过程
 
-小结一下，对于图片的卷积操作，一张$n \times n \times n_c$的图片和一个$f \times f \times n_c$的kernel做卷积得到的输出为
+小结一下，对于彩色图片的卷积操作，一张$n \times n \times n_c$的图片和n_c^{'}个$f \times f \times n_c$个卷积核做卷积得到的输出为
 
 $$
 n-f+1 \times n-f+1 \times n_c^{'}
 $$
 
-其中$n_c^{'}$为kernel的个数
+其中$n_c^{'}$为卷积核的个数
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-9.png">
 
@@ -202,7 +173,7 @@ a^{[0]} = g(z^{[1]}) \\
 $$
 
 
-对应到CNN中，$a^{[0]}$是我们输入的图片，大小为6x6x3，两个kernel类比于$W^[1]$矩阵，则$W^{[1]}a^{[0]}$类比于$a^{[0]} * W^{[1]}$得到的输出为一个4x4的矩阵，接下来让该矩阵中的各项加上bias，即$b1$，$b2$，再非线性函数$Relu$对其求值，则可得到$a^{[1]}$
+对应到CNN中，$a^{[0]}$是我们输入的图片，大小为6x6x3，两个卷积核类比于$W^[1]$矩阵，则$W^{[1]}a^{[0]}$类比于$a^{[0]} * W^{[1]}$得到的输出为一个4x4的矩阵，接下来让该矩阵中的各项加上bias，即$b1$，$b2$，再非线性函数$Relu$对其求值，则可得到$a^{[1]}$
 
 如果layer $l$是一个convolution layer，另
 
@@ -356,11 +327,11 @@ $$
 
 - **Parameter Sharing**
 
-相比于直接使用FC，使用conv layer的好处在于需要学习的weight数量会显著减少，比如还是上面的例子，如果使用FC，那么第二层的weight数量为 3072 * 4704，这个训练量是巨大的。而如果使用conv layer，待训练的数量只有156个。其背后的原因在于卷积运算的kernel（feature detector）是可以复用的，比如在图片左上角检测边缘的kernel对于图片右下角的边缘也适用。因此我们只需要一个卷积核就可滑过整张图片。
+相比于直接使用FC，使用conv layer的好处在于需要学习的weight数量会显著减少，比如还是上面的例子，如果使用FC，那么第二层的weight数量为 3072 * 4704，这个训练量是巨大的。而如果使用conv layer，待训练的数量只有156个。其背后的原因在于卷积运算的卷积核（feature detector）是可以复用的，比如在图片左上角检测边缘的卷积核对于图片右下角的边缘也适用。因此我们只需要一个卷积核就可滑过整张图片。
 
 - **Sparsity of connections**
 
-对于卷积后图片上每一点的值只和原图中某个局部的区域有关，区域的的大小取决于kernel的大小，和其余的点无关。而对于FC，每个点的计算都和前一个layer的所有点有关联，因此计算效率会大大降低
+对于卷积后图片上每一点的值只和原图中某个局部的区域有关，区域的的大小取决于卷积核的大小，和其余的点无关。而对于FC，每个点的计算都和前一个layer的所有点有关联，因此计算效率会大大降低
 
 ### All Together
 
