@@ -1,9 +1,10 @@
 ---
-list_title: LLVM中的IR
-title: LLVM中的IR
+update: "2019-11-28"
+list_title: 链接与加载 | Linkers and Loaders | LLVM与IR (1) | IR with LLVM Part 1
+title: LLVM中与IR
 layout: post
 mathjax: true
-categories: ["AI", "Machine Learning","Deep Learning"]
+categories: ["LLVM", "Linker","Compiler"]
 ---
 
 我们知道通过编译器生成的中间代码(IR)可以帮助我们更好的做代码优化和代码分析，比如可以针对不同的硬件平台生成不同的汇编代码，或者分析代码的覆盖率等等。今天我们来学习一下LLVM中IR
@@ -246,9 +247,6 @@ define i32 @func1(i32, i32) local_unnamed_addr #0 {
 
 这里需要重点关注一下第二种方式，它不同的地方在于将所有文件的IR进行了一次`llvm-link`后生成了一份总的IR，并且可以根据这份IR做整体的代码优化，即所谓的[Linker Time Optimization](https://llvm.org/docs/LinkTimeOptimization.html)。目前看来这一种很灵活的优化方式，很多大型App都有采用，感兴趣的可以试一下LLVM官方提供的例子。
 
-### LLVM IR的对象模型
-
-LLVM
 
 ## Resources
 
