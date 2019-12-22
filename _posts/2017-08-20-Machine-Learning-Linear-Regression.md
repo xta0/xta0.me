@@ -78,141 +78,39 @@ $$
 h_\theta(x) = \sum_{j=0}^n\theta_jx_j = \theta_0 + \theta_1x_1 + + \theta_2x_2 + ... + \theta_nx_n
 $$
 
+举例来说，$x^{(2)}$表示第二组训练集：
+
+$$
+x^{(2)} = 
+\begin{bmatrix}
+1035 & 4 & 1 & 224 
+\end{bmatrix}
+$$
+
+> 注意上述式子中$x_0$ 默认为1，即$x_0^{(i)}=1$
+
+如果将$x$和$\theta$式子用向量表示，则上述式子也可以表示为：
+
+$$
+h_\theta(x) = 
+\begin{bmatrix}
+\theta_0 & \theta_1 & . & . & . & \theta_n
+\end{bmatrix}
+\begin{bmatrix}
+x_0 \\
+x_1 \\
+...
+x_n\\
+\end{bmatrix}
+= \theta^{T}x
+$$
+
 上述式子给出了单个样本的预测函数，实际应用中上我们的数据集里有多个样本，这里我们用上角标表示，如下
 
 - $m$ 表示样本数
 - $n$ 表示feature个数
 - $x^{(i)}$ 表示第$i$组训练样本
 - $x_j^{(i)}$ 表示第$i$个样本中的第$j$个feature
-
-举例来说，$x^{(2)}$表示第二组训练集：
-
-$$
-x^{(2)} = 
-\begin{bmatrix}
-1035, 4,  1,  224 
-\end{bmatrix}
-$$
-
-还是举个买房子的例子，假如我们得到如下函数:
-
-$$
-h_\theta(x) = 80 + 0.1x_1 + 0.01x_2 + 3x_3 - 2x_4
-$$
-
-其中$h_\theta(x)$表示房子的总价，$\theta_0=80$ 代表房子的基础价格，$x_1$代表房子的大小，$\theta_1$是待求解的系数，类似的$x_2$代表房子的房间数，$\theta_2$是待求解的系数，等等
-
-> 注意到，上述式子中$x_0$ 默认为1，即$x_0^{(i)}=1$
-
-如果将$x$和$\theta$式子用向量表示为
-
-<math display="block">
-<mi>x</mi><mo>=</mo>
-<mfenced open="[" close="]">
-<mtable>
-	<mtr><mtd><msub><mi>x</mi><mn>0</mn></msub></mtd></mtr>
-	<mtr><mtd><msub><mi>x</mi><mn>1</mn></msub></mtd></mtr>
-	<mtr><mtd><mi>...</mi></mtd></mtr>
-	<mtr><mtd><msub><mi>x</mi><mi>n</mi></msub></mtd></mtr>
-</mtable>
-</mfenced>
-<mspace width="2em"></mspace>
-<mi>θ</mi><mo>=</mo>
-<mfenced open="[" close="]">
-<mtable>
-	<mtr><mtd><msub><mi>θ</mi><mn>0</mn></msub></mtd></mtr>
-	<mtr><mtd><msub><mi>θ</mi><mn>1</mn></msub></mtd></mtr>
-	<mtr><mtd><mi>...</mi></mtd></mtr>
-	<mtr><mtd><msub><mi>θ</mi><mi>n</mi></msub></mtd></mtr>
-</mtable>
-</mfenced>
-</math>
-
-对于`x`和`θ`来说，都是`(n+1)x1`的矩阵，而<math><msup><mi>θ</mi><mi>T</mi></msup></math>为`1x(n+1)`，则上述式子也可以表示为：
-
-<math display="block">
-<mtable>
-    <mtr>
-      <mtd>
-        <msub>
-          <mi>h</mi>
-          <mi>θ</mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <mi>x</mi>
-        <mo stretchy="false">)</mo>
-        <mo>=</mo>
-        <mfenced open="[" close="]">
-          <mtable rowspacing="4pt" columnspacing="1em">
-            <mtr>
-              <mtd>
-                <msub>
-                  <mi>θ</mi>
-                  <mn>0</mn>
-                </msub>
-                <mspace width="2em" />
-                <msub>
-          		  <mi>θ</mi>
-                  <mn>1</mn>
-                </msub>
-                <mspace width="2em" />
-                <mo>.</mo>
-                <mo>.</mo>
-                <mo>.</mo>
-                <mspace width="2em" />
-                <msub>
-          		 <mi>θ</mi>
-                  <mi>n</mi>
-                </msub>
-              </mtd>
-            </mtr>
-          </mtable>
-        </mfenced>
-        <mfenced open="[" close="]">
-          <mtable rowspacing="4pt" columnspacing="1em">
-            <mtr>
-              <mtd>
-                <msub>
-                  <mi>x</mi>
-                  <mn>0</mn>
-                </msub>
-              </mtd>
-            </mtr>
-            <mtr>
-              <mtd>
-                <msub>
-                  <mi>x</mi>
-                  <mn>1</mn>
-                </msub>
-              </mtd>
-            </mtr>
-            <mtr>
-              <mtd>
-                <mo>⋮</mo>
-              </mtd>
-            </mtr>
-            <mtr>
-              <mtd>
-                <msub>
-                  <mi>x</mi>
-                  <mi>n</mi>
-                </msub>
-              </mtd>
-            </mtr>
-          </mtable>
-        </mfenced>
-        <mo>=</mo>
-        <msup>
-	       <mi>θ</mi>
-          <mi>T</mi>
-        </msup>
-        <mi>x</mi>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
-
-> 上述式子也叫做`Multivariate linear regression`
 
 ### Gradient Descent for Multiple variables
 
