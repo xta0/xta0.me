@@ -37,7 +37,7 @@ $$
 
 这个式子的含义是找到$\theta_0$和$\theta_1$的值使$J(\theta_0,\theta_1)$的值最小，其中$m$为训练样本$x$的个数，为了求导方便系数乘了1/2。可见$J(\theta_0,\theta_1)$是一个二元函数。
 
-### 梯度下降
+### 二维梯度下降
 
 由于我们的$J(\theta_0, \theta_1)$是一个convex函数，因此它存在极小值点，为了找到$\theta_0$, $\theta_1$ 使 $J(\theta_0, \theta_1)$值最小，我们需要不断改变他们的值，直到找到$\theta_0$,和$\theta_1$，使 $J(\theta_0, \theta_1)$在改点处的导数为0。
 
@@ -55,7 +55,7 @@ $$
 
 $$
 \theta_0 := \theta_0 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_i) - y_i) \\
-\theta_1 := \theta_1 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_i) - y_i)
+\theta_1 := \theta_1 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_i) - y_i) ⋅ x_i 
 $$
 
 > 注意，上述例子中我们的cost函数是凸函数(convex function)，因此上述两个式子没有局部极值点，只有全局唯一的一个极值点。梯度下降法通常在离极值点远的地方下降很快，但在极值点附近时会收敛速度很慢。因此，梯度下降法的解是全局最优解。而在一般情况下，梯度下降法不保证求得全局最优解。
@@ -78,15 +78,6 @@ $$
 h_\theta(x) = \sum_{j=0}^n\theta_jx_j = \theta_0 + \theta_1x_1 + + \theta_2x_2 + ... + \theta_nx_n
 $$
 
-举例来说，$x^{(2)}$表示第二组训练集：
-
-$$
-x^{(2)} = 
-\begin{bmatrix}
-1035 & 4 & 1 & 224 
-\end{bmatrix}
-$$
-
 > 注意上述式子中$x_0$ 默认为1，即$x_0^{(i)}=1$
 
 如果将$x$和$\theta$式子用向量表示，则上述式子也可以表示为：
@@ -94,12 +85,12 @@ $$
 $$
 h_\theta(x) = 
 \begin{bmatrix}
-\theta_0 & \theta_1 & . & . & . & \theta_n
+\theta_0 & \theta_1 & ... & \theta_n
 \end{bmatrix}
 \begin{bmatrix}
 x_0 \\
 x_1 \\
-...
+... 、、、
 x_n\\
 \end{bmatrix}
 = \theta^{T}x
@@ -112,392 +103,30 @@ $$
 - $x^{(i)}$ 表示第$i$组训练样本
 - $x_j^{(i)}$ 表示第$i$个样本中的第$j$个feature
 
-### Gradient Descent for Multiple variables
+> 注意，前面一维线性归回的预测函数中，每条样本用$(x_i,y_i)$表示，原因是我们只有一个feature，后面我们统一使用上述的表示方法
 
-参考一维线性回归的的 cost 函数，多维线性回归的 cost 函数为:
+举例来说，$x^{(2)}$表示第二组训练集：
 
-<math display="block">
-  <mi>J</mi>
-  <mo stretchy="false">(</mo>
-  <mi>θ</mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-<mstyle>
-  <mfrac>
-  <mn>1</mn>
-  <mrow>
-  <mn>2</mn>
-  <mi>m</mi>
-  </mrow>
-  </mfrac>
-</mstyle>
-    <mstyle>
-      <munderover>
-        <mo>∑</mo>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi>i</mi>
-          <mo>=</mo>
-          <mn>1</mn>
-        </mrow>
-        <mi>m</mi>
-      </munderover>
-      <msup>
-        <mfenced open="(" close=")">
-          <mrow>
-            <msub>
-              <mi>h</mi>
-              <mi>θ</mi>
-            </msub>
-            <mo stretchy="false">(</mo>
-            <msub>
-              <mi>x</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mi>i</mi>
-              </mrow>
-            </msub>
-            <mo stretchy="false">)</mo>
-            <mo>−</mo>
-            <msub>
-              <mi>y</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mi>i</mi>
-              </mrow>
-            </msub>
-          </mrow>
-        </mfenced>
-        <mn>2</mn>
-      </msup>
-    </mstyle>
-</math>
+$$
+x^{(2)} = 
+\begin{bmatrix}
+1035 & 4 & 1 & 224 
+\end{bmatrix}
+$$
 
-多维梯度下降公式和前面类似：
+### 多维梯度下降
 
-<math display="block">
-  <msub>
-    <mi>θ</mi>
-    <mi>j</mi>
-  </msub>
-  <mo>:=</mo>
-  <msub>
-	<mi>θ</mi>
-    <mi>j</mi>
-  </msub>
-  <mo>-</mo>
-  <mi>α</mi>
-  <mfrac>
-    <mi mathvariant="normal">∂</mi>
-    <mrow>
-      <mi mathvariant="normal">∂</mi>
-      <msub>
-        <mi>θ</mi>
-        <mi>j</mi>
-      </msub>
-    </mrow>
-  </mfrac>
-  <mi>J</mi>
-  <mo stretchy="false">(</mo>
-  <mi>θ</mi>
-  <mo stretchy="false">)</mo>
-</math>
+参考前面二维梯度下降的求法，多维梯度下降的求法相同
 
-对<math><msub><mi>θ</mi><mi>j</mi></msub></math>求偏导，得到：
-<math display="block">
-<mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-<mtr>
-<mtd />
-<mtd>
-<mtext>repeat until convergence:</mtext>
-<mspace width="thickmathspace" />
-<mo fence="false" stretchy="false">{</mo>
-</mtd>
-</mtr>
-<mtr>
-<mtd>
-<mspace width="thickmathspace" />
-</mtd>
-<mtd>
-<msub>
-<mi>θ</mi>
-<mn>0</mn>
-</msub>
-<mo>:=</mo>
-<msub>
-<mi>θ</mi>
-<mn>0</mn>
-</msub>
-<mo>−</mo>
-<mi>α</mi>
-<mfrac>
-<mn>1</mn>
-<mi>m</mi>
-</mfrac>
-<munderover>
-<mo movablelimits="false">∑</mo>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>=</mo>
-<mn>1</mn>
-</mrow>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>m</mi>
-</mrow>
-</munderover>
-<mo stretchy="false">(</mo>
-<msub>
-<mi>h</mi>
-<mi>θ</mi>
-</msub>
-<mo stretchy="false">(</mo>
-<msup>
-<mi>x</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mo stretchy="false">(</mo>
-<mi>i</mi>
-<mo stretchy="false">)</mo>
-</mrow>
-</msup>
-<mo stretchy="false">)</mo>
-<mo>−</mo>
-<msup>
-<mi>y</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mo stretchy="false">(</mo>
-<mi>i</mi>
-<mo stretchy="false">)</mo>
-</mrow>
-</msup>
-<mo stretchy="false">)</mo>
-<mo>⋅</mo>
-<msubsup>
-<mi>x</mi>
-<mn>0</mn>
-<mrow class="MJX-TeXAtom-ORD">
-<mo stretchy="false">(</mo>
-<mi>i</mi>
-<mo stretchy="false">)</mo>
-</mrow>
-</msubsup>
-</mtd>
-</mtr>
-<mtr>
-<mtd>
-<mspace width="thickmathspace" />
-</mtd>
-<mtd>
-<msub>
-<mi>θ</mi>
-<mn>1</mn>
-</msub>
-<mo>:=</mo>
-<msub>
-<mi>θ</mi>
-<mn>1</mn>
-</msub>
-<mo>−</mo>
-<mi>α</mi>
-<mfrac>
-<mn>1</mn>
-<mi>m</mi>
-</mfrac>
-<munderover>
-<mo movablelimits="false">∑</mo>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>=</mo>
-<mn>1</mn>
-</mrow>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>m</mi>
-</mrow>
-</munderover>
-<mo stretchy="false">(</mo>
-<msub>
-<mi>h</mi>
-<mi>θ</mi>
-</msub>
-<mo stretchy="false">(</mo>
-<msup>
-<mi>x</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mo stretchy="false">(</mo>
-<mi>i</mi>
-<mo stretchy="false">)</mo>
-</mrow>
-</msup>
-<mo stretchy="false">)</mo>
-<mo>−</mo>
-<msup>
-<mi>y</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mo stretchy="false">(</mo>
-<mi>i</mi>
-<mo stretchy="false">)</mo>
-</mrow>
-</msup>
-<mo stretchy="false">)</mo>
-<mo>⋅</mo>
-<msubsup>
-<mi>x</mi>
-<mn>1</mn>
-<mrow class="MJX-TeXAtom-ORD">
-<mo stretchy="false">(</mo>
-<mi>i</mi>
-<mo stretchy="false">)</mo>
-</mrow>
-</msubsup>
-</mtd>
-</mtr>
-<mtr>
-<mtd>
-<mspace width="thickmathspace" />
-</mtd>
-<mtd>
-<msub>
-<mi>θ</mi>
-<mn>2</mn>
-</msub>
-<mo>:=</mo>
-<msub>
-<mi>θ</mi>
-<mn>2</mn>
-</msub>
-<mo>−</mo>
-<mi>α</mi>
-<mfrac>
-<mn>1</mn>
-<mi>m</mi>
-</mfrac>
-<munderover>
-<mo movablelimits="false">∑</mo>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>=</mo>
-<mn>1</mn>
-</mrow>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>m</mi>
-</mrow>
-</munderover>
-<mo stretchy="false">(</mo>
-<msub>
-<mi>h</mi>
-<mi>θ</mi>
-</msub>
-<mo stretchy="false">(</mo>
-<msup>
-<mi>x</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mo stretchy="false">(</mo>
-<mi>i</mi>
-<mo stretchy="false">)</mo>
-</mrow>
-</msup>
-<mo stretchy="false">)</mo>
-<mo>−</mo>
-<msup>
-<mi>y</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mo stretchy="false">(</mo>
-<mi>i</mi>
-<mo stretchy="false">)</mo>
-</mrow>
-</msup>
-<mo stretchy="false">)</mo>
-<mo>⋅</mo>
-<msubsup>
-<mi>x</mi>
-<mn>2</mn>
-<mrow class="MJX-TeXAtom-ORD">
-<mo stretchy="false">(</mo>
-<mi>i</mi>
-<mo stretchy="false">)</mo>
-</mrow>
-</msubsup>
-</mtd>
-</mtr>
-<mtr>
-<mtd />
-<mtd>
-<mo>⋯</mo>
-</mtd>
-</mtr>
-<mtr>
-<mtd>
-<mspace width="thickmathspace" />
-</mtd>
-<mtd>
-<msub>
-<mi>θ</mi>
-<mn>j</mn>
-</msub>
-<mo>:=</mo>
-<msub>
-<mi>θ</mi>
-<mn>j</mn>
-</msub>
-<mo>−</mo>
-<mi>α</mi>
-<mfrac>
-<mn>1</mn>
-<mi>m</mi>
-</mfrac>
-<munderover>
-<mo movablelimits="false">∑</mo>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>i</mi>
-<mo>=</mo>
-<mn>1</mn>
-</mrow>
-<mrow class="MJX-TeXAtom-ORD">
-<mi>m</mi>
-</mrow>
-</munderover>
-<mo stretchy="false">(</mo>
-<msub>
-<mi>h</mi>
-<mi>θ</mi>
-</msub>
-<mo stretchy="false">(</mo>
-<msup>
-<mi>x</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mo stretchy="false">(</mo>
-<mi>i</mi>
-<mo stretchy="false">)</mo>
-</mrow>
-</msup>
-<mo stretchy="false">)</mo>
-<mo>−</mo>
-<msup>
-<mi>y</mi>
-<mrow class="MJX-TeXAtom-ORD">
-<mo stretchy="false">(</mo>
-<mi>i</mi>
-<mo stretchy="false">)</mo>
-</mrow>
-</msup>
-<mo stretchy="false">)</mo>
-<mo>⋅</mo>
-<msubsup>
-<mi>x</mi>
-<mn>j</mn>
-<mrow class="MJX-TeXAtom-ORD">
-<mo stretchy="false">(</mo>
-<mi>i</mi>
-<mo stretchy="false">)</mo>
-</mrow>
-</msubsup>
-</mtd>
-</mtr>
-<mtr>
-<mtd>
-<mo fence="false" stretchy="false">}</mo>
-</mtd>
-</mtr>
-</mtable>
-</math>
+$$
+\theta_0 := \theta_0 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_0^{i}) - y_i) ⋅ x_1^{0} \\
+\theta_1 := \theta_1 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_1^{i}) - y_i) ⋅ x_1^{i} \\
+\theta_2 := \theta_2 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_2^{i}) - y_i) ⋅ x_2^{i} \\
+... \\
+\theta_n := \theta_n - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_n^{i}) - y_i) ⋅ x_n^{i} 
+$$
 
-* 线性回归梯度计算的 Ocatave Demo
+线性回归梯度计算的 Ocatave Demo
 
 ```matlab
 function [theta, J_history] = gradientDescentMulti(X, y, theta, alpha, num_iters)
