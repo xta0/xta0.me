@@ -119,11 +119,13 @@ $$
 参考前面二维梯度下降的求法，多维梯度下降的求法相同
 
 $$
-\theta_0 := \theta_0 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_0^{i}) - y_i) ⋅ x_1^{0} \\
-\theta_1 := \theta_1 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_1^{i}) - y_i) ⋅ x_1^{i} \\
-\theta_2 := \theta_2 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_2^{i}) - y_i) ⋅ x_2^{i} \\
+\theta_0 := \theta_0 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_0^{(i)}) - y^{(i)}) ⋅ x_0^{(i)} \\
+\theta_1 := \theta_1 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_1^{(i)}) - y^{(i)}) ⋅ x_1^{(i)} \\
+\theta_2 := \theta_2 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_2^{(i)}) - y^{(i)}) ⋅ x_2^{(i)} \\
+\\
 ... \\
-\theta_n := \theta_n - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_n^{i}) - y_i) ⋅ x_n^{i} 
+\\
+\theta_n := \theta_n - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_n^{i}) - y^{(i)}) ⋅ x_n^{(i)} 
 $$
 
 线性回归梯度计算的 Ocatave Demo
