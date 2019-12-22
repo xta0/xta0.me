@@ -90,7 +90,7 @@ h_\theta(x) =
 \begin{bmatrix}
 x_0 \\
 x_1 \\
-... 、、、
+... \\
 x_n\\
 \end{bmatrix}
 = \theta^{T}x
