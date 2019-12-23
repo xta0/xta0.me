@@ -6,17 +6,16 @@ categories: ["Philosophy"]
 ---
 
 Author: Tao Xu
+
 Date: 12/08/2019
 
-------------------------------------------------------------------------------------------------------------------------------
+To begin with, there were these guys called the **pre-Socrates**, who mostly concerned about the nature of the universe, and asked questions like - What regulates the Physical process? But they didn't really have answers until **Socrates** showed up. He mostly wandered around Greece, asking irritating questions, and Athens got quite pissed about this and sentenced him to death. He never really wrote anything down, but luckily his student **Plato** did, who then instituted a fairly impactful philosophy that still shapes our lives today.
 
-To begin with, there were these guys called the pre-Socrates, who mostly concerned about the nature of the universe, and asked questions like - What regulates the Physical process? But they didn't really have answers until Socrates showed up. He mostly wandered around Greece, asking irritating questions, and Athens got quite pissed about this and sentenced him to death. He never really wrote anything down, but luckily his student Plato did, who then instituted a fairly impactful philosophy that still shapes our lives today.
+Plato has a student called **Aristotle** who shaped the so-called "Modern Logic". He also argued that what separates humans from the animal kingdom is our ability to reason and not much else - an idea you will find everywhere in the modern age.
 
-Plato has a student called Aristotle who shaped the so-called "Modern Logic". He also argued that what separates humans from the animal kingdom is our ability to reason and not much else - an idea you will find everywhere in the modern age.
+Besides Aristotle, more exciting ideas have been left by the ancient Greeks, such as The **Hedonism** - meaning maximizing your own pleasure; **Atomism**, which means the world is made of two fundamental principles - atoms and void; and then **Skepticism**, which is pretty self-explanatory.
 
-Besides Aristotle, more exciting ideas have been left by the ancient Greeks, such as The Hedonism - meaning maximizing your own pleasure; Atomism, which means the world is made of two fundamental principles - atoms and void; and then Skepticism, which is pretty self-explanatory.
-
-Anyway, the dark age came long and lasted for about one thousand years. Around the 11th century, universities, as we know, popped up in Spain, France, and England. After a few centuries, people were into this so-called Scholasticism, which basically brings the dogma to an academic level, and was all about trying to marry ancient Greek thought to Christian thought. Then there came St. Anselm who came up with the ontological argument for the proof of God, which people still use today.
+Anyway, the dark age came long and lasted for about one thousand years. Around the 11th century, universities, as we know, popped up in Spain, France, and England. After a few centuries, people were into this so-called **Scholasticism**, which basically brings the dogma to an academic level, and was all about trying to marry ancient Greek thought to Christian thought. Then there came St. Anselm who came up with the ontological argument for the proof of God, which people still use today.
 
 About a century later, came the Ockham's razor theory, which supposes there exist two explanations for an occurrence. In this case, the one that requires the smallest number of assumptions is usually correct. Later the black death exploded and wiped out nearly 40% of Europeans and everyone got a bit health-conscious. Around the 15th century, the situation got a lot better that leads to the Renaissance - which literally means rebirth, where people got all nostalgic for the Greeks and Romans again.
 
