@@ -23,9 +23,9 @@ layer  | type | filter shape
 7  | FC | 120*84
 8  | FC | 84*10
 
-### Ale*Net
+### AlexNet
 
-<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-ale*net.png">
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-alexnet.png">
 
 AlexNet是Alex Krizhevsky和他的导师Geoffrey Hinton在2012年的paper中提出的，并获得了当年的ImageNet冠军，识别成功率比第二名高出近10个百分点。相比于LeNet，AlexNet层次更深，有8层卷积层 + 3层FC层，参数更是达到了6千多万个。但它的独到之处还在于下面几点
 
