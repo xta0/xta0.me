@@ -5,7 +5,10 @@ layout: post
 categories: ["Philosophy"]
 ---
 
-> 本文并不是什么严肃文章，写着玩玩
+Author: Tao Xu
+Date: 12/08/2019
+
+------------------------------------------------------------------------------------------------------------------------------
 
 To begin with, there were these guys called the pre-Socrates, who mostly concerned about the nature of the universe, and asked questions like - What regulates the Physical process? But they didn't really have answers until Socrates showed up. He mostly wandered around Greece, asking irritating questions, and Athens got quite pissed about this and sentenced him to death. He never really wrote anything down, but luckily his student Plato did, who then instituted a fairly impactful philosophy that still shapes our lives today.
 
