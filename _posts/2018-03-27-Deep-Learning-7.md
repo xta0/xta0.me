@@ -14,18 +14,18 @@ LetNet-5是Y.LeCun在1998年在的paper中提出的，被用来识别手写数�
 
 layer  | type | filter shape
 -------| ---- | ---- 
-1  | input | 32x32x1
-2  | conv2d | (5x5x1)x6
+1  | input | 32*32*1
+2  | conv2d | (5*5*1)*6
 3  | max pool |  2*2
-4  | conv2d | (5x5x6)x16
+4  | conv2d | (5*5*6)*16
 5  | max pool |  2*2
-6  | conv2d | 400x120
-7  | FC | 120x84
-8  | FC | 84x10
+6  | conv2d | 400*120
+7  | FC | 120*84
+8  | FC | 84*10
 
-### AlexNet
+### Ale*Net
 
-<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-alexnet.png">
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-ale*net.png">
 
 AlexNet是Alex Krizhevsky和他的导师Geoffrey Hinton在2012年的paper中提出的，并获得了当年的ImageNet冠军，识别成功率比第二名高出近10个百分点。相比于LeNet，AlexNet层次更深，有8层卷积层 + 3层FC层，参数更是达到了6千多万个。但它的独到之处还在于下面几点
 
@@ -33,28 +33,28 @@ AlexNet是Alex Krizhevsky和他的导师Geoffrey Hinton在2012年的paper中提�
 2. 使用多GPU进行训练，解决了GPU间通信的问题
 3. 介绍一种归一化方式 - Local Response Normalization，后面被很多学者证明并不是很有效
 
-AlexNet的参数如下
+Ale*Net的参数如下
 
 layer  | type | filter shape
 -------| ---- | ---- 
-1  | input | 224x224x3
-2  | conv1 / Relu | (11x11x3)x96
+1  | input | 224*224*3
+2  | conv1 / Relu | (11*11*3)*96
 3  | LRN | 5
-4  | max pool |  3x3
-5  | conv2 / Relu | (5x5x96)x256
+4  | ma* pool |  3*3
+5  | conv2 / Relu | (5*5*96)*256
 6  | LRN | 5
-7  | max pool |  3x3
-8  | conv3 / Relu | (3x3x256)x384
-9  | conv4 / Relu | (3x3x384)x384
-10  | conv5 / Relu | (3x3x384)x256
-11  | max pool |  3x3
-12  | FC | (6x6x256)x4096
+7  | ma* pool |  3*3
+8  | conv3 / Relu | (3*3*256)*384
+9  | conv4 / Relu | (3*3*384)*384
+10  | conv5 / Relu | (3*3*384)*256
+11  | ma* pool |  3*3
+12  | FC | (6*6*256)*4096
 13  | Dropout | 
-14  | FC | 4096 x 4096
+14  | FC | 4096 * 4096
 15  | Dropout | 
-16  | FC | 4096 x 1000
+16  | FC | 4096 * 1000
 
-在AlexNet提出后，人们逐渐意识到使用CNN进行图像识别确实是一条可行的方法
+在Ale*Net提出后，人们逐渐意识到使用CNN进行图像识别确实是一条可行的方法
 
 ### VGG / VGG 16
 
@@ -64,11 +64,11 @@ AlexNet发表后，业界对这个模型做了很多改进的工作，使得其�
 
 在AlexNet之后，学术界一致认为，从理论上看，神经网络应该是层数越多，泛化能力越强。但实际中，随着网络的不断加深，往往会出现梯度消失和过拟合的情况出现，这使得加深网络十分困难。VGG通过一系列手段解决了这个问题，具体来说
 
-1. 对所有的卷积层统一使用3x3，步长为1，相同padding的kernel
-2. 对所有的pooling层，统一使用使用2x2，步长为2的Max Pooling
+1. 对所有的卷积层统一使用`3*3`，步长为1，相同padding的kernel
+2. 对所有的pooling层，统一使用使用`2*2`，步长为2的Max Pooling
 3. 放弃了AlexNet中引入的LRN技术，原因是这个技巧并没有带来效果的提升
 
-上图中是一个16层的VGG网络，看起来非常规则，因此也得到了一批researcher的热爱，但是该结构一共有大约138million个参数，训练起来很有挑战
+上图中是一个16层的VGG网络，看起来非常规则，因此也得到了一批研究人员的热爱，但是该结构一共有大约138million个参数，训练起来很有挑战
 
 ### ResNet
 
@@ -109,7 +109,31 @@ $$
 
 ### Inception Network
 
-在介绍Inception Network之前，我们需要了解一下1x1 convolution。
+Inception Network也就是GoogLeNet，首次出现在2014年的ILSVRC比赛中，并获得冠军。这个版本是Inception Network的第一个版本，深度为22层和同时期的VCC相比性能差不多，但是参数却只有5M个参数，远远小于VGG。
+
+Inception Network的基本思想是使用不同尺寸的卷积核提取图片信息，然后对这些信息进行融合，从而达到更好的提取图片特征的效果。具体来说，Inception网络中的重要概念是所谓的构建Inception Module，每个Module包含四部分，`1*1`卷积，`3*3`的卷积，`5*5`的卷积，`3*3`的pooling，以及最后对四部分的运算结果进行通道上组合，如下图所示。
+
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-inception-module.png" width="60%">
+
+上面的Module如果不做优化，存在计算量过大的问题，以`5*5`的卷积为例，一次卷积要做大约120m次乘法，其原因在于融合之后的数据维度太高。
+
+为了解决这个问题，需要引入`1*1`卷积的概念。所谓`1 * 1`卷积，顾名思义就是卷积核的尺寸为`1 * 1 * depth`，它的作用在于对数据的降维。在前面文章中可知，Pooling layer可以用来减少输数据水平和竖直尺寸，`1 * 1`的卷积可以帮我们减少输入数据的维度。
+
+上面例子中，我们可以让一个`28 * 28 * 192`的数据先与一个`1 * 1 * 192`的卷积核进行卷积（16卷积核），将得到一个`28 * 28 * 16`的二维数据，再对这份数据进行 `5 * 5 * 16 `的卷积核卷积（32个卷积核），得到`28 * 28 * 32`的数据。经过上述处理后，计算量为12.4m，降到了原来的十分之一。
+
+所谓的Inception网络就是若干个这些Module的级联，如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-inception-network.png">
+
+注意到图中矩形圈出的部分是一个分支，它可以用来观察对应layer的预测结果，以便观察最终结果是否overfitting
+
+
+
+
+
+
+
+
 
 
 
@@ -123,7 +147,8 @@ $$
 
 ### Resources
 
-- [LetNet5 - Gradient-based learning applied to document recognition](https://ieeexplore.ieee.org/document/726791)
-- [AlexNet – ImageNet Classification with Deep Convolutional Neural Networks](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks)
-- [VGG - Very Deep Convolutional Networks for Large-Scale Image Recognition](https://arxiv.org/pdf/1409.1556.pdf)
-- [ResNet - Deep Residual Learning for Image Recognition]()
+- [LetNet5 - Gradient-based learning applied to document recognition](https://ieee*plore.ieee.org/document/726791)
+- [Ale*Net – ImageNet Classification with Deep Convolutional Neural Networks](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks)
+- [VGG - Very Deep Convolutional Networks for Large-Scale Image Recognition](https://ar*iv.org/pdf/1409.1556.pdf)
+- [ResNet - Deep Residual Learning for Image Recognition](https://ar*iv.org/pdf/1512.03385.pdf)
+- [Going Deeper with Convolutions](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43022.pdf)
