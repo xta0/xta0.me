@@ -231,8 +231,6 @@ $$ \gamma_i=\beta_i * \gamma_m + \alpha_i $$
 
 $\gamma_i$表示股价，它的值为市场波动系数$\beta_i$乘以前一天的价格加上个股当天波动的价格$\alpha_i$。按照CAPM理论，在大部分时间内，某家公司的股价应该随着指数的波动而波动，即$\alpha_i$的期望为0，而如果表现出偏离，则说明这家公司具备某些可以挖掘的信息。
 
-{% include _partials/post-footer-2.html %}
-
 ## Resources
 
 - [wiki](http://wiki.quantsoftware.org/index.php?title=QuantSoftware_ToolKit)

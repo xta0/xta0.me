@@ -78,7 +78,7 @@ AlexNet发表后，业界对这个模型做了很多改进的工作，使得其�
 
 我们先看看ResNet的模型结构是怎样的，假设我们有一个两层的FC网络如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-resnet-1.png" width="80%">
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-resnet-1.png" width="50%">
 
 按照传统的NN求法，则有下面一些式子
 
