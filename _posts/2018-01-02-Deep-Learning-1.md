@@ -194,7 +194,14 @@ b  = b - alpha*db
 ```
 上面代码展示了某一次梯度下降的计算过程
 
-## Vectorization 
+### 小结
+
+## Resources
+
+- [Deep Learning Specialization Course on Coursera](https://www.coursera.org/specializations/deep-learning)
+- [Deep Learning with PyTorch](https://livebook.manning.com/book/deep-learning-with-pytorch/welcome/v-10/)
+
+## 附录：Vectorization using Numpy
 
 由于深度学习涉及大量的矩阵间的数值计算，而且数据量有很大，使用`for`计算时间成本太高。Vectorization是用来取代for循环的一种针对矩阵数值计算的计算方式，其底层可以通过GPU或者CPU(SIMD)的并行指令集来实现。不少数值计算库都有相应的实现，比如Python的Numpy，C++的Eigen等。
 
@@ -236,9 +243,7 @@ for i=1 to m
     db += dz[i]
 dw = dw/m
 ```
-### Compute Forward Propagation
-
-回到前面第一节计算矩阵$Z$的式子上
+在前面第一节计算矩阵$Z$的式子上
 
 $$
 Z=
@@ -256,7 +261,6 @@ $$
 ```python
 Z = np.dot(w.T,X) + b #b is a 1x1 number
 ```
-### Compute Backwward Propagation
 
 在通过Loss函数计算w值时，我们曾给出过下面式子
 
@@ -279,7 +283,7 @@ $$
 dZ = A - Y = [a^{(1)} - y^{(1)}, a^{(2)} - y^{(2)}, ... , a^{(m)} - y^{(m)}]
 $$
 
-在前面求解$dw$的代码中，我们虽然将$dw$向量化后减少了一重循环，但最外层还有一个`[1,m]`的for循环，接下来我们的任务是将这个for循环也向量化。
+在前面求解$dw$的代码中，我们虽然将$dw$向量化后减少了一重循环，但最外层还有一个`[1,m]`的for循环，接下来我们也可以将这个for循环向量化。
 
 我们的目的是求解$dw$和$d$`，其中$db$为
 
@@ -309,219 +313,4 @@ dz^{(m)}
 = \frac{1}{m}[x^{(1)}dz^{(1)},..., x^{(m)}dz^{(m)}]
 $$
 
-综上，一个简单的逻辑回归神经网络Python实现如下
-
-```python
-# GRADED FUNCTION: initialize_with_zeros
-def initialize_with_zeros(dim):
-    """
-    This function creates a vector of zeros of shape (dim, 1) for w and initializes b to 0.
-    
-    Argument:
-    dim -- number of features in a given example
-    
-    Returns:
-    w -- initialized vector of shape (dim, 1)
-    b -- initialized scalar (corresponds to the bias)
-    """
-    w = np.zeros([dim,1]) # dimx1
-    b = 0
-    assert(w.shape == (dim, 1))
-    assert(isinstance(b, float) or isinstance(b, int))
-    
-    return w, b
-
-# GRADED FUNCTION: sigmoid
-def sigmoid(z):
-    """
-    Compute the sigmoid of z
-    Arguments:
-    z -- A scalar or numpy array of any size.
-    Return:
-    s -- sigmoid(z)
-    """
-    s = 1/(1+np.exp(-z))
-    return s
-
-# GRADED FUNCTION: propagate
-def propagate(w, b, X, Y):
-    """
-    Arguments:
-    w -- weights, a numpy array of size (num_px * num_px * 3, 1)
-    b -- bias, a scalar
-    X -- data of size (features, #examples)
-    Y -- true "label" vector of size (1, #examples)
-
-    Return:
-    cost -- negative log-likelihood cost for logistic regression
-    dw -- gradient of the loss with respect to w, thus same shape as w
-    db -- gradient of the loss with respect to b, thus same shape as b
-    """
-
-    m = X.shape[1]
-    A = sigmoid(np.dot(w.T, X)+b) # compute activation
-    cost = - 1/m * np.sum(Y*np.log(A) + (1-Y)*np.log(1-A))  #compute cost
-    # BACKWARD PROPAGATION (TO FIND GRAD)
-    dw = 1/m * np.dot(X,(A-Y).T)
-    db = 1/m * np.sum(A-Y)
-
-    assert(dw.shape == w.shape)
-    assert(db.dtype == float)
-    cost = np.squeeze(cost)
-    assert(cost.shape == ())
-    
-    grads = {"dw": dw,
-             "db": db}
-    
-    return grads, cost
-
-# GRADED FUNCTION: optimize
-
-def optimize(w, b, X, Y, num_iterations, learning_rate, print_cost = False):
-    """
-    This function optimizes w and b by running a gradient descent algorithm
-    
-    Arguments:
-    w -- weights, a numpy array of size (num_px * num_px * 3, 1)
-    b -- bias, a scalar
-    X -- data of shape (features, #examples)
-    Y -- true "label" vector of shape (1, #examples)
-    num_iterations -- number of iterations of the optimization loop
-    learning_rate -- learning rate of the gradient descent update rule
-    print_cost -- True to print the loss every 100 steps
-    
-    Returns:
-    params -- dictionary containing the weights w and bias b
-    grads -- dictionary containing the gradients of the weights and bias with respect to the cost function
-    costs -- list of all the costs computed during the optimization, this will be used to plot the learning curve.
-    """
-    
-    costs = []
-    for i in range(num_iterations):
-        # Run propagation
-        grads, cost = propagate(w,b,X,Y)        
-        # Retrieve derivatives from grads
-        dw = grads["dw"]
-        db = grads["db"]
-        # update rule 
-        w = w - learning_rate * dw
-        b = b - learning_rate * db
-        # Record the costs
-        if i % 100 == 0:
-            costs.append(cost)
-        # Print the cost every 100 training iterations
-        if print_cost and i % 100 == 0:
-            print ("Cost after iteration %i: %f" %(i, cost))
-    
-    params = {"w": w,
-              "b": b}
-    
-    grads = {"dw": dw,
-             "db": db}
-    
-    return params, grads, costs
-
-# GRADED FUNCTION: predict
-
-def predict(w, b, X):
-    '''
-    Predict whether the label is 0 or 1 using learned logistic regression parameters (w, b)
-    
-    Arguments:
-    w -- weights, a numpy array of size (num_px * num_px * 3, 1)
-    b -- bias, a scalar
-    X -- data of size (features, #examples)
-    
-    Returns:
-    Y_prediction -- a numpy array (vector) containing all predictions (0/1) for the examples in X
-    '''
-    
-    m = X.shape[1]
-    Y_prediction = np.zeros((1,m))
-    w = w.reshape(X.shape[0], 1)
-    # Compute vector "A" predicting the probabilities of a cat being present in the picture
-    A = sigmoid(np.dot(w.T,X)+b)    
-    for i in range(A.shape[1]):
-        # Convert probabilities A[0,i] to actual predictions p[0,i]
-        if (A[0][i] > 0.5):
-            Y_prediction[0][i] = 1
-        else:
-            Y_prediction[0][i] = 0
-    assert(Y_prediction.shape == (1, m))
-    return Y_prediction
-
-# GRADED FUNCTION: model
-def model(X_train, Y_train, X_test, Y_test, num_iterations = 2000, learning_rate = 0.5, print_cost = False):
-    """
-    Builds the logistic regression model by calling the function you've implemented previously
-    
-    Arguments:
-    X_train -- training set represented by a numpy array of shape (num_px * num_px * 3, m_train)
-    Y_train -- training labels represented by a numpy array (vector) of shape (1, m_train)
-    X_test -- test set represented by a numpy array of shape (num_px * num_px * 3, m_test)
-    Y_test -- test labels represented by a numpy array (vector) of shape (1, m_test)
-    num_iterations -- hyperparameter representing the number of iterations to optimize the parameters
-    learning_rate -- hyperparameter representing the learning rate used in the update rule of optimize()
-    print_cost -- Set to true to print the cost every 100 iterations
-    
-    Returns:
-    d -- dictionary containing information about the model.
-    """
-    #1. initialize parameters with zeros
-    w, b = initialize_with_zeros(X_train.shape[0])
-
-    #2. Gradient descent
-    parameters, grads, costs = optimize(w,b,X_train,Y_train,num_iterations, learning_rate, print_cost)
-    
-    #3. Retrieve parameters w and b from dictionary "parameters"
-    w = parameters["w"]
-    b = parameters["b"]
-    
-    #4. Predict test/train set examples
-    Y_prediction_test = predict(w,b,X_test)
-    Y_prediction_train = predict(w,b,X_train)
-
-    #5. Print train/test Errors
-    print("train accuracy: {} %".format(100 - np.mean(np.abs(Y_prediction_train - Y_train)) * 100))
-    print("test accuracy: {} %".format(100 - np.mean(np.abs(Y_prediction_test - Y_test)) * 100))
-
-    d = {"costs": costs,
-         "Y_prediction_test": Y_prediction_test, 
-         "Y_prediction_train" : Y_prediction_train, 
-         "w" : w, 
-         "b" : b,
-         "learning_rate" : learning_rate,
-         "num_iterations": num_iterations}
-    
-    return d
-
-#Run the following cell to train your model.
-d = model(train_set_x, train_set_y, test_set_x, test_set_y, num_iterations = 2000, learning_rate = 0.005, print_cost = True)
-
-# result
-# Cost after iteration 0: 0.693147
-# Cost after iteration 100: 0.584508
-# Cost after iteration 200: 0.466949
-# Cost after iteration 300: 0.376007
-# Cost after iteration 400: 0.331463
-# Cost after iteration 500: 0.303273
-# Cost after iteration 600: 0.279880
-# Cost after iteration 700: 0.260042
-# Cost after iteration 800: 0.242941
-# Cost after iteration 900: 0.228004
-# Cost after iteration 1000: 0.214820
-# Cost after iteration 1100: 0.203078
-# Cost after iteration 1200: 0.192544
-# Cost after iteration 1300: 0.183033
-# Cost after iteration 1400: 0.174399
-# Cost after iteration 1500: 0.166521
-# Cost after iteration 1600: 0.159305
-# Cost after iteration 1700: 0.152667
-# Cost after iteration 1800: 0.146542
-# Cost after iteration 1900: 0.140872
-# train accuracy: 99.04306220095694 %
-# test accuracy: 70.0 %
-```
-我们可以观察一下cost值得变化情况
-
-<img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-5.png">
+[完整的Python代码]()

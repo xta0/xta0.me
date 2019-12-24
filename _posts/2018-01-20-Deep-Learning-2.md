@@ -410,7 +410,7 @@ def update_parameters(parameters, grads, learning_rate):
 
 ## Resources
 
-- [Deep Learning Specialization Course on Coursera]()
+- [Deep Learning Specialization Course on Coursera](https://www.coursera.org/specializations/deep-learning)
 - [Deep Learning with PyTorch](https://livebook.manning.com/book/deep-learning-with-pytorch/welcome/v-10/)
 
 

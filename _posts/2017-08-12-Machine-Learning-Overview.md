@@ -1,8 +1,7 @@
 ---
 layout: post
-list_title: 机器学习 | Machine Learning | Overview
+list_title: 机器学习 | Machine Learning | 概述 | Overview
 title: Machine Learning Overview
-meta: Coursera Stanford Machine Learning Cousre Note, Chapter1
 categories: [Machine Learning,AI]
 mathjax: true
 ---
@@ -45,9 +44,9 @@ mathjax: true
 
 ![Altext](/assets/images/2017/09/ml-1.png)
 
-> Regression Analysis 是一种统计学上分析数据的方法，目的在于了解两个或多个变数间是否相关、相关方向与强度，并建立数学模型以便观察特定变数来预测研究者感兴趣的变数。更具体的来说，回归分析可以帮助人们了解在只有一个自变量变化时因变量的变化量。一般来说，通过回归分析我们可以由给出的自变量估计因变量的条件期望。
 
-回归在数学上来说是建立因变数 <math><mi>Y</mi></math> 与自变数 <math><mi>X</mi></math>之间关系的模型，给定一个点集，能够用一条曲线去拟合之，如果这个曲线是一条直线，那就被称为线性回归，如果曲线是一条二次曲线，就被称为二次回归，回归还有很多的变种，如 locally weighted 回归，logistic 回归，等等。如果得到的预测函数得出的结果是离散的，我们把这种学习问题叫做**分类问题**
+
+
 
 回归的最早形式是[最小二乘法](https://zh.wikipedia.org/wiki/%E6%9C%80%E5%B0%8F%E4%BA%8C%E4%B9%98%E6%B3%95)，由 1805 年的勒让德(Legendre)[1]，和 1809 年的高斯(Gauss)出版[2]。勒让德和高斯都将该方法应用于从天文观测中确定关于太阳的物体的轨道（主要是彗星，但后来是新发现的小行星）的问题。 高斯在 1821 年发表了最小二乘理论的进一步发展[3]，包括高斯－马尔可夫定理的一个版本。
 
