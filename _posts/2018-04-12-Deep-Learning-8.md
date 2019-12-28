@@ -66,7 +66,7 @@ $$
 
 ### Non-Max Suppression
 
-实际应用中的另一个问题是对于图片中某个目标，我们的模型可能有多个box输出的$p_c$值都大于0.1，如下图所示
+实际应用中的另一个问题是对于图片中某个目标，我们的模型可能有多个box输出的$p_c$值都大于0.1，即都认为自己得到的是正确的bounding box，如下图所示
 
 <div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
 <div><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-12.png"></div>
@@ -77,7 +77,7 @@ $$
 
 1. 首先去掉$p_c$值小于0.6的bounding boxes
 2. 在剩下的box中，选取$p_x$最大的
-3. 在剩下的box中box中去掉那些IoU值大于0.5的
+3. 在剩下的box中去掉那些IoU值大于0.5的
 4. 重复第二步
 
 ### Anchor Boxes
