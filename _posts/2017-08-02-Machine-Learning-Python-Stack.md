@@ -17,7 +17,7 @@ Python系统自带一些数值计算的API，但它们使用起来效率不高�
 
 ## Numpy
 
-Numpy主要用于做矩阵的数值运算，对常用的数学操作做了封装，使用起来极为方便，而且在性能方面也比Python的list要高不少，因此在数值计算方面Numpy非常流行。
+Numpy主要用于做矩阵的数值运算，对常用的数学操作做了封装，使用起来极为方便。在实现方面，Numpy采用了vectorization的实现方式，在性能方面也比Python的list要高不少，因此在数值计算方面Numpy非常流行。
 
 ### Problems with Python list
 
@@ -27,7 +27,7 @@ Python原生的多维数组存在很多缺陷，并不适用于数值计算的�
 2. Python的数组对象不支持数值计算的API，比如矩阵相关运算
 3. Python的解释器效率很低，和直接运行编译好的函数相比，解释器速度会比较慢
 
-### Matrix Products
+### Vectorization and Broadcasting
 
 我们可以来对比一下numpy和python的矩阵点积运算，假设有两个矩阵$a=[x_a,y_a]$, $b=[x_b,y_b]$，则`a`和`b`点积的代数运算为 $a·b=x_ax_b+y_ay_b$，其结果为一个标量。代码如下
 
@@ -68,7 +68,7 @@ Numpy实际上是使用vectorization取代for循环来做运算，这也是为�
 m = np.ones([1,2]) #[1,1]
 m = m*2 #[2,2]
 ```
-可以看出numpy并没有使用for循环，当数组的size很大时，numpy可以极大的节约内存开销和提升开发效率。
+可以看出numpy并没有使用for循环，这个特性在Numpy中也叫做broadcast，当数组的size很大时，numpy可以极大的节约内存开销和提升开发效率。
 
 ### Vectors and Matrices
 
