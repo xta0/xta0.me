@@ -40,7 +40,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 解决这个问题，参考文献[2]，即YOLO算法提供一个不错的思路。YOLO将一张图片分割成$n$*$n$的格子，如下图中$n=3$，即9个格子
 
-<div class="md-flex-h">
+<div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
 <div><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-10.png"></div>
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-15.png"></div>
 </div>
