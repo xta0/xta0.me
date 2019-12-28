@@ -40,10 +40,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 解决这个问题，参考文献[2]，即YOLO算法提供一个不错的思路。YOLO将一张图片分割成$n$*$n$的格子，如下图中$n=3$，即9个格子
 
-<div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
-<div><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-10.png"></div>
-<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-15.png"></div>
-</div>
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-10.png">
 
 在数据标注的时候，我们将待检测目标的中心赋予某一个box，比如上图中的黄点和绿点。然后对该box用下面的一个向量表示
 
@@ -51,7 +48,11 @@ $$
 y = [ p_c, b_x, b_y, b_h, b_w, c_1, c_2,c_3 ]
 $$
 
-其中，$p_c$表示该box中是否有待检测的目标，如果有$p_c$为1，否则为0，$(b_x, b_y, b_h, b_w)$表示目标矩形，其中每个box的左上角为(0,0)，右下角为(1,1)。$(b_x,b_y)$表示目标的中心点，$(b_h, b_w)$表示矩形框的高和宽相对于该box的百分比，最后$c_1, c_2,c_3$表示目标类别。例如上图中黄色矩形为
+其中，$p_c$表示该box中是否有待检测的目标，如果有$p_c$为1，否则为0，$(b_x, b_y, b_h, b_w)$表示目标矩形，其中每个box的左上角为(0,0)，右下角为(1,1)。$(b_x,b_y)$表示目标的中心点，$(b_h, b_w)$表示矩形框的高和宽相对于该box的百分比，如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-15.png"></div>
+
+最后$c_1, c_2,c_3$表示目标类别，比如上图中$c_1$表示行人，$c_2$表示车辆，$c_3$表示摩托车，则上图中黄色box的$y$值为
 
 $$
 y = [1.0, 0.3, 0.4, 0.9, 0.5, 0, 1, 0]
@@ -66,6 +67,7 @@ $$
 <img  src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-11.png">
 
 此时我们要引入一个指标叫做Intersection Over Union (IoU)。它的计算方式为用两个矩形的Intersection部分除以它们的union部分，得到的比值作为准确率。如果IoU的值大于0.5，则认为识别的区域是正确的。当然0.5这个值可以根据实际情况进行调节。
+
 
 ### Non-Max Suppression
 
@@ -82,6 +84,12 @@ $$
 2. 在剩下的box中，选取$p_x$最大的
 3. 在剩下的box中去掉那些IoU值大于0.5的
 4. 重复第二步
+
+在第一步中，我们常用score代替$p_c$作为筛选条件，Score的计算方式如下图
+
+<img  src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-16.png">
+
+上图中，我们假设有一组box1的预测结果，其中$p_1$为$0.6$，说明box1有60%的几率有目标。我们用这个值乘以$c_1...c_80$，例如$Score_{c_3} = 0.6 \times 0.73 = 0.44$。然后再这个80个类别中找出score最大的类别标记在box1上
 
 ### Anchor Boxes
 
@@ -102,6 +110,14 @@ y = [1, b_x, b_y, b_h, b_w, 1, 0, 0, 1,b_x, b_y, b_h,b_w, 0, 1, 0]
 $$
 
 那么如果这个box中有三个目标呢？目前这种情况很少见，YOLO还不能很好的处理这种情况。实际上同一个box中出现两个目标的情况也比较少见。
+
+### YOLO Recap
+
+在引入了Anchor Box之后，一个完整的YOLO模型如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-16.png">
+
+上面模型中的输入为(608 \* 608 \* 3)的图片，输出为（19 \* 19 \* 5 \* 85 ）的矩阵。可以该模型使用了5个Anchor Box，每个box的$y$除了包含$p_c$和$(b_x,b_y,b_h,b_w)$外，还有80个类别。
 
 ### R-CNN
 
