@@ -67,10 +67,8 @@ $$
 实际应用中的另一个问题是对于图片中某个目标可能有多个符合IoU条件的个预测结果，如下图所示
 
 <div class="md-flex-h md-flex-no-wrap" height="60%">
-<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-12.png">
-<div style="flex-shrink:0">
-<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-13.png" class="md-margin-left-12">
-</div>
+<div><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-12.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-13.png"></div>
 </div>
 
 上图中左边是我们的输入图像，根据YOLO算法，将其分为19*19个格子，右边是模型的输出，可见围绕这个一个目标有多个符合IoU条件的矩形，此时我们只需要保留$p_c$值最大的即可
@@ -84,10 +82,10 @@ $$
 此时我们的输出$y$需要包含两个box的信息
 
 $$
-y = [p_c, b_x, b_y, b_h, b_w, c_1, c_2,c_3, p_c,b_x,...,c_3]
+y = [p_c, b_x, b_y, b_h, b_w, c_1, c_2,c_3, p_c,b_x, b_y,..,c_3]
 $$
 
-我们可以用前8个元素表示第一个anchor box（图中垂直的），后8个元素表示第二个anchor box（图中水平的）
+我们可以用前8个元素表示第一个anchor box（图中垂直的），后8个元素表示第二个anchor box（图中水平的）。因此模型的输出变成了3\*3\*16
 
 
 ### R-CNN
