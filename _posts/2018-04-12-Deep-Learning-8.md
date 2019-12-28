@@ -26,7 +26,11 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-8.png">
 
-此时得到结果是一个2\*2\*4的矩阵，包含4组计算结果
+此时得到结果是一个2\*2\*4的矩阵，包含了4组计算结果。实际上这种方式是将4组单独计算合并成了一组。推而广之，假如我们有一个28\*28\*3的窗口，一次运算，我们可以得到64组运算结果
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-4.png">
+
+
 
 
 
