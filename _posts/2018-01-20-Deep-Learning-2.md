@@ -1,6 +1,6 @@
 ---
-list_title: 深度学习 | Shallow Layer Neural Networks | 单层神经网络
-title: Shallow Layer Neural Networks
+list_title: 深度学习 | Neural Networks | 神经网络
+title: Build Neural Networks
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
@@ -15,6 +15,8 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 - $a^{[l]}$：表示第$l$层神经网络
 - $a^{[l]}_i$: 表示第$l$层神经网络的第$i$个节点
 - $a^{[l] (m)}_i$：表示第$m$个训练样本的第$l$层神经网络的第$i$个节点
+
+## 两层神经网络
 
 遵循上述的Notation，一个只有一组训练样本的$(x_1, x_2, x_3)$的两层神经网络可用下图描述
 
@@ -136,11 +138,11 @@ $$
 上述神经网络的Cost函数和前文一样
 
 $$
-J(W^{[1]}, b^{[1]}, W^{[2]}, b^{[2]}) = \frac {1}{m} \sum_{i=1}^mL(\hat{y}, y) \\
-= - \frac{1}{m} \sum\limits_{i = 1}^{m} \large{(} \small y^{(i)}\log\left(A^{[2] (i)}\right) + (1-y^{(i)})\log\left(1- A^{[2] (i)}\right) \large{)} \small\tag{13}
+J(W^{[1]}, b^{[1]}, W^{[2]}, b^{[2]}) = \frac {1}{m} \sum_{i=1}^mL(\hat{y}, y) = \\
+- \frac{1}{m} \sum\limits_{i = 1}^{m} \large{(} \small y^{(i)}\log\left(A^{[2] (i)}\right) + (1-y^{(i)})\log\left(1- A^{[2] (i)}\right) \large{)} \small\tag{13}
 $$
 
-其中$Y$为`1xm`的行向量 $Y = [y^{[1]},y^{[2]},...,y^{[m]}]$。对上述式子进行求导，可以得出下面结论(推导过程省略)
+其中$Y$为`1xm`的行向量 $Y = [y^{[1]},y^{[2]},...,y^{[m]}]$。按照上一节介绍的链式求导法则，对上述Cost函数求导，可以得出下面结论(推导过程省略)
 
 - $dZ^{[2]} = A^{[2]} - Y$ 
 - $dW^{[2]} = \frac{1}{m}dZ^{[2]}A^{[1]^{T}}$ 
@@ -149,21 +151,32 @@ $$
 - $dW^{[1]} = \frac{1}{m}dZ^{[1]}X^{T}$ 
 - $db^{[1]} = \frac{1}{m}np.sum(dz^{[1]}, axis=1, keepdims=True)$
 
-其中$g^{[1]^{'}}(Z^{[1]})$取决于Activation函数的选取，如果使用$tanh$，则$g^{[1]'}(Z^{[1]}) = 1-A^{[1]^2}$
+> 其中$g^{[1]^{'}}(Z^{[1]})$取决于Activation函数的选取，如果使用$tanh$，则$g^{[1]'}(Z^{[1]}) = 1-A^{[1]^2}$
 
 ### Gradient Descent
 
-有了$dW^{[2]}$,$dW^{[1]}$,$db^{[2]}$,$db^{[2]}$，我们变可以使用梯度下降来update $W^{[1]}, b^{[1]}, W^{[2]}, b^{[2]}$了，公式和前面一样
+有了$dW^{[2]}$,$dW^{[1]}$,$db^{[2]}$,$db^{[2]}$的计算公式，我们变可以使用梯度下降来求解 $W^{[1]}, b^{[1]}, W^{[2]}, b^{[2]}$了，其反向求导的过程如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/01/dp-w4-2.png" class="md-img-center" width="80%">
+
+在每次BP完成后，我们需要对$dw$h和$db$进行梯度下降
 
 $$
-\theta = \theta - \alpha \frac{\partial J }{ \partial \theta }
+\begin{align*}
+& W^{[l]} = W^{[l]} - \alpha \text{ } dW^{[l]}  \\
+& b^{[l]} = b^{[l]} - \alpha \text{ } db^{[l]} 
+\end{align*}
 $$
 
 其中对$\alpha$的取值需要注意，不同learning rate的选取对梯度下降收敛的速度有着重要的影响，如下图
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w3-4.gif" class="md-img-center">
 
-### Build a 2-layer Nerual Netwrok
+### Numpy实现
+
+上述两层的神经网络的Numpy实现参考 - 
+
+## 多层神经网络
 
 接下来我们用numpy来实现一个两层的神经网络，第一层的activation函数为Relu，第二层为Sigmoid。
 

@@ -155,10 +155,10 @@ rgb rgb rgb ... rgb
 
 > [这个视频](https://eirwumuabdrwrjknwzodsl.coursera-apps.org/notebooks/week1/images/conv_kiank.mp4)更好的展示上述卷积计算的过程
 
-小结一下，对于彩色图片的卷积操作，一张$n \times n \times n_c$的图片和n_c^{'}个$f \times f \times n_c$个卷积核做卷积得到的输出为
+小结一下，对于彩色图片的卷积操作，一张$n \times n \times n_c$的图片和$n_c^{'}$个$f \times f \times n_c$个卷积核做卷积得到的输出为
 
 $$
-n-f+1 \times n-f+1 \times n_c^{'}
+(n-f+1) \times (n-f+1) \times n_c^{'}
 $$
 
 其中$n_c^{'}$为卷积核的个数
