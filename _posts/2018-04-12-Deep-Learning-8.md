@@ -66,7 +66,7 @@ $$
 
 实际应用中的另一个问题是对于图片中某个目标可能有多个符合IoU条件的个预测结果，如下图所示
 
-<div class="md-flex-h">
+<div class="md-flex-h md-flex-no-wrap">
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-12.png">
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-13.png" class="md-margin-left-12">
 </div>
@@ -79,6 +79,11 @@ $$
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-14.png">
 
+此时我们的输出$y$需要包含两个box的信息
+
+$$
+
+$$
 
 
 ### R-CNN
