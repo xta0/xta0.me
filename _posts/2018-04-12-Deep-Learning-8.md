@@ -30,15 +30,13 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-4.png">
 
-再进一步扩大，我们我们可以让一个图片等同于一个滑动窗口，只进行一次运算即可
-
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-9.png">
+再进一步扩大，我们可以让一个图片等同于一个滑动窗口，因此只进行一次模型运算即可
 
 ### YOLO
 
 上述算法虽然解决了计算效率问题，但是没有解决对目标矩形的定位问题，例如，上面算法中，我们完全有可能碰到这种情况，即没有任何一个窗口能完全覆盖检测目标，如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-3.png" width="60%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-3.png" width="50%">
 
 解决这个问题，参考文献[2]，即YOLO算法提供一个不错的思路。YOLO将一图图片分割成$n$*$n$的几个小区域，如下图中$n=3$，即9个格子
 
@@ -56,7 +54,7 @@ $$
 y = [1.0, 0.3, 0.4, 0.9, 0.5, 0, 1, 0]
 $$
 
-因此，YOLO神经网路的输出便是9个上述目标向量，即输出的数据为3\*3\*8的矩阵。
+因此，YOLO神经网路的输出便是9个上述目标向量，即输出的数据为3\*3\*8的矩阵。由于有$(b_x, b_y, b_h, b_w)$的标注，使得YOLO可以精确的计算出bounding box的位置
 
 
 ## Resources

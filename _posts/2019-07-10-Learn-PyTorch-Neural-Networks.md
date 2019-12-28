@@ -6,4 +6,4 @@ mathjax: true
 categories: ["PyTorch", "Machine Learning","Deep Learning"]
 ---
 
-上一篇文章中我们用PyTorch时间了一个线性回归的model，这篇文章我们将用神经网络来代替线性回归，重新训练
+上一篇文章中我们用PyTorch实现了一个线性回归的model，这篇文章我们将用神经网络来代替线性回归，重新训练
