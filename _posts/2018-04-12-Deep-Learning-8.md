@@ -10,11 +10,11 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 ### Sliding Windonw Detection
 
-一种容易想到的目标检测方式是使用滑动窗口，我们用一个矩形窗口依次滑过图片中的每个区域，每个窗口通过一个已经训练好CNN网络（比如Resnet，GoogLnet等）进行图片识别，如下图所示
+一种容易想到的目标检测方式是使用滑动窗口，我们用一个矩形窗口依次滑过图片中的每个区域，每个窗口通过一个已经训练好分类模型（比如Resnet，GoogLnet等）进行图片识别，如下图所示
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-7.png">
 
-这种方式的问题在于计算量太大，对于每个窗口都需要单独计算。举例来说，上图中的窗口大小为一个14\*14\*3，现在这个窗口向左，右和右下各滑动一次，步长为2，选取Resnet作为图像识别网路，则需要按照上图的方式计算4次，得到4个结果
+这种方式的问题在于计算量太大，对于每个窗口都需要单独计算。举例来说，上图中的窗口大小为一个14\*14\*3，现在这个窗口向左，右和右下各滑动一次，假设步长为2，则需要进行四次模型运算，得到4个结果
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-5.png">
 
@@ -36,7 +36,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 上述算法虽然解决了计算效率问题，但是没有解决对目标矩形的定位问题，例如，上面算法中，我们完全有可能碰到这种情况，即没有任何一个窗口能完全覆盖检测目标，如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-3.png" width="50%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-3.png" width="40%">
 
 解决这个问题，参考文献[2]，即YOLO算法提供一个不错的思路。YOLO将一图图片分割成$n$*$n$的几个小区域，如下图中$n=3$，即9个格子
 
@@ -54,8 +54,36 @@ $$
 y = [1.0, 0.3, 0.4, 0.9, 0.5, 0, 1, 0]
 $$
 
-因此，YOLO神经网路的输出便是9个上述目标向量，即输出的数据为3\*3\*8的矩阵。由于有$(b_x, b_y, b_h, b_w)$的标注，使得YOLO可以精确的计算出bounding box的位置
+因此，YOLO模型的输出便是9个上述目标向量，即3\*3\*8的矩阵。由于存在$(b_x, b_y, b_h, b_w)$的值，使得YOLO可以精确的计算出bounding box的位置，注意到 $(b_x,b_y)$必须在格子内，因此它们值在0到1之间，但是$(b_h,b_w)$可以大于1，因为可能存在目标物体比当前box大的情况。实际应用中，往往将一张图片分成19*19的格子，输出变为19\*19\*8，这降低了多个目标被分配到同一个格子的概率。
 
+### Evaluating Your Algorithm
+
+我们该如何衡量目标检测的准确率呢，比如下图中目标矩形为红色，而实际检测结果却为紫色矩形。
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-11.png">
+
+此时我们要引入一个指标叫做Intersection Over Union (IoU)。它的计算方式为用两个矩形的Intersection部分除以它们的union部分，得到的比值作为准确率。如果IoU的值大于0.5，则认为识别的区域是正确的。当然0.5这个值可以根据实际情况进行调节。
+
+实际应用中的另一个问题是对于图片中某个目标可能有多个符合IoU条件的个预测结果，如下图所示
+
+<div class="md-flex-h">
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-12.png">
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-13.png" class="md-margin-left-12">
+</div>
+
+上图中左边是我们的输入图像，根据YOLO算法，将其分为19*19个格子，右边是模型的输出，可见围绕这个一个目标有多个符合IoU条件的矩形，此时我们只需要保留$p_c$值最大的即可
+
+### Anchor Boxes
+
+前面我们每个box只负责一个目标的检测，但有时候会出现多个目标的中心点集中在同一个box里的情况，如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-14.png">
+
+
+
+### R-CNN
+
+除了YOLO模型外，还有一些模型可以做目标识别，别叫有名的就是R-CNN以它相关的变种
 
 ## Resources
 
