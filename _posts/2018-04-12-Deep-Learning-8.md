@@ -12,23 +12,23 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 一种容易想到的目标检测方式是使用滑动窗口，我们用一个矩形窗口依次滑过图片中的每个区域，每个窗口通过一个已经训练好分类模型（比如Resnet，GoogLnet等）进行图片识别，如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-7.png">
+<img  src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-7.png">
 
 这种方式的问题在于计算量太大，对于每个窗口都需要单独计算。举例来说，上图中的窗口大小为一个14\*14\*3，现在这个窗口向左，右和右下各滑动一次，假设步长为2，则需要进行四次模型运算，得到4个结果
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-5.png">
+<img  src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-5.png">
 
 在参考文献[1]中提到了减少计算量一个方案是将原来神经网路中的FC层变成卷积层，如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-6.png">
+<img  src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-6.png">
 
 还是上图中的滑动窗口，滑动步长为2，则4次滑动运算只需要一次即可完成
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-8.png">
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-8.png">
 
 此时得到结果是一个2\*2\*4的矩阵，包含了当前位置，右边，下边和右下共4组计算结果。实际上这种方式是将上面4次单独计算合并成了一次。推而广之，假如我们有一个更大的的滑动窗口(28\*28\*3)，一次运算，我们可以得到64组运算结果
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-4.png">
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-4.png">
 
 再进一步扩大，我们可以让一个图片等同于一个滑动窗口，因此只进行一次模型运算即可
 
@@ -36,11 +36,11 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 上述算法虽然解决了计算效率问题，但是没有解决对目标矩形的定位问题，例如，上面算法中，我们完全有可能碰到这种情况，即没有任何一个窗口能完全覆盖检测目标，如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-3.png" width="40%">
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-3.png" width="40%">
 
 解决这个问题，参考文献[2]，即YOLO算法提供一个不错的思路。YOLO将一图图片分割成$n$*$n$的几个小区域，如下图中$n=3$，即9个格子
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-10.png">
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-10.png">
 
 在数据标注的时候，我们将待检测目标的中心赋予某一个box，比如上图中的黄点和绿点。然后对该box用下面的一个向量表示
 
@@ -60,13 +60,13 @@ $$
 
 我们该如何衡量目标检测的准确率呢，比如下图中目标矩形为红色，而实际检测结果却为紫色矩形。
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-11.png">
+<img  src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-11.png">
 
 此时我们要引入一个指标叫做Intersection Over Union (IoU)。它的计算方式为用两个矩形的Intersection部分除以它们的union部分，得到的比值作为准确率。如果IoU的值大于0.5，则认为识别的区域是正确的。当然0.5这个值可以根据实际情况进行调节。
 
 实际应用中的另一个问题是对于图片中某个目标可能有多个符合IoU条件的个预测结果，如下图所示
 
-<div class="md-flex-h md-flex-no-wrap">
+<div class="md-flex-h md-flex-no-wrap" height="60%">
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-12.png">
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-13.png" class="md-margin-left-12">
 </div>
@@ -82,7 +82,7 @@ $$
 此时我们的输出$y$需要包含两个box的信息
 
 $$
-
+y = [p_c, b_x, b_y, b_h, b_w, c_1, c_2,c_3, p_c,b_x,...,c_3]
 $$
 
 
