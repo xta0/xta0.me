@@ -64,14 +64,21 @@ $$
 
 此时我们要引入一个指标叫做Intersection Over Union (IoU)。它的计算方式为用两个矩形的Intersection部分除以它们的union部分，得到的比值作为准确率。如果IoU的值大于0.5，则认为识别的区域是正确的。当然0.5这个值可以根据实际情况进行调节。
 
-实际应用中的另一个问题是对于图片中某个目标可能有多个符合IoU条件的个预测结果，如下图所示
+### Non-Max Suppression
 
-<div class="md-flex-h md-flex-no-wrap" height="60%">
+实际应用中的另一个问题是对于图片中某个目标，我们的模型可能有多个box输出的$p_c$值都大于0.1，如下图所示
+
+<div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
 <div><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-12.png"></div>
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-13.png"></div>
 </div>
 
-上图中左边是我们的输入图像，根据YOLO算法，将其分为19*19个格子，右边是模型的输出，可见围绕这个一个目标有多个符合IoU条件的矩形，此时我们只需要保留$p_c$值最大的即可
+上图中左边是我们的输入图像，根据YOLO算法，将其分为19*19个格子，右边是模型的输出，可见有多个$p_c$值符合条件的矩形，这时我们要用一种叫做**Non-Max Suppression**的算法来选出唯一的bounding box，步骤如下
+
+1. 首先去掉$p_c$值小于0.6的bounding boxes
+2. 在剩下的box中，选取$p_x$最大的
+3. 在剩下的box中box中去掉那些IoU值大于0.5的
+4. 重复第二步
 
 ### Anchor Boxes
 
@@ -79,18 +86,23 @@ $$
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-14.png">
 
-此时我们的输出$y$需要包含两个box的信息
+此时我们的标注$y$需要包含两个box的信息
 
 $$
-y = [p_c, b_x, b_y, b_h, b_w, c_1, c_2,c_3, p_c,b_x, b_y,..,c_3]
+y = [p_c, b_x, b_y, b_h, b_w, c_1, c_2, c_3, p_c, b_x, b_y, b_h,b_w, c_1, c_2, c_3]
 $$
 
-我们可以用前8个元素表示第一个anchor box（图中垂直的），后8个元素表示第二个anchor box（图中水平的）。因此模型的输出变成了3\*3\*16
+我们可以用前8个元素表示第一个anchor box（图中垂直的），后8个元素表示第二个anchor box（图中水平的），因此模型的输出变成了3\*3\*16。以图中标注的两个矩形为例，则该box的$y$如下
 
+$$
+y = [1, b_x, b_y, b_h, b_w, 1, 0, 0, 1,b_x, b_y, b_h,b_w, 0, 1, 0]
+$$
+
+那么如果这个box中有三个目标呢？目前这种情况很少见，YOLO还不能很好的处理这种情况。实际上同一个box中出现两个目标的情况也比较少见。
 
 ### R-CNN
 
-除了YOLO模型外，还有一些模型可以做目标识别，别叫有名的就是R-CNN以它相关的变种
+除了YOLO模型外，还有一些模型可以做目标识别，比较有名的就是R-CNN以它相关的变种
 
 ## Resources
 
