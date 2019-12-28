@@ -1,6 +1,6 @@
 ---
 list_title: 深度学习 | Object Detection | 目标检测
-title: Classic CNN Models
+title: Object Detection
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
@@ -14,13 +14,13 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-7.png">
 
-这种方式的问题在于计算量太大，对于每个窗口都需要单独计算。举例来说，上图中的窗口大小为一个14\*14\*3，现在这个窗口向左，右和右下各滑动一次，则需要用的Resnet计算4次，得到4个结果
+这种方式的问题在于计算量太大，对于每个窗口都需要单独计算。举例来说，上图中的窗口大小为一个14\*14\*3，现在这个窗口向左，右和右下各滑动一次，假如用Resnet需要计算4次，得到4个结果
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-5.png">
 
-参考文献[1]中论文提到减少计算量一个方案是将原来神经网路中的FC层变成卷积层，如下图所示
+在参考文献[1]中提到了减少计算量一个方案是将原来神经网路中的FC层变成卷积层，如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-4.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-6.png">
 
 还是上图中的滑动窗口，滑动步长为2，则4次滑动运算只需要一次即可完成
 
