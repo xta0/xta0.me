@@ -36,7 +36,10 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 上述算法虽然解决了计算效率问题，但是没有解决对目标矩形的定位问题，例如，上面算法中，我们完全有可能碰到这种情况，即没有任何一个窗口能完全覆盖检测目标，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-3.png" width="40%">
+<div class="md-flex-h md-flex-no-wrap">
+<div><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-3.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-10.png"></div>
+</div>
 
 解决这个问题，参考文献[2]，即YOLO算法提供一个不错的思路。YOLO将一张图片分割成$n$*$n$的格子，如下图中$n=3$，即9个格子
 
@@ -50,7 +53,7 @@ $$
 
 其中，$p_c$表示该box中是否有待检测的目标，如果有$p_c$为1，否则为0，$(b_x, b_y, b_h, b_w)$表示目标矩形，其中每个box的左上角为(0,0)，右下角为(1,1)。$(b_x,b_y)$表示目标的中心点，$(b_h, b_w)$表示矩形框的高和宽相对于该box的百分比，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-15.png" height="60%">
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-15.png" width="60%">
 
 最后$c_1, c_2,c_3$表示目标类别，比如上图中$c_1$表示行人，$c_2$表示车辆，$c_3$表示摩托车，则上图中黄色box的$y$值为
 
@@ -90,7 +93,7 @@ $$
 
 在第一步中，我们常用score代替$p_c$作为筛选条件，Score的计算方式如下图
 
-<img  src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-16.png">
+<img  src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-17.png">
 
 上图中，我们假设有一组box1的预测结果，其中$p_1$为$0.6$，说明box1有60%的几率有目标。我们用这个值乘以$c_1...c_80$，例如$Score_{c_3} = 0.6 \times 0.73 = 0.44$。然后再这个80个类别中找出score最大的类别标记在box1上
 
