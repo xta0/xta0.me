@@ -1,5 +1,5 @@
 ---
-list_title: 学一点 PyTorch | Learn PyTorch | 线性回归 | Linear Regression with PyTorch
+list_title: 学一点 PyTorch | Learn PyTorch | 训练一个线性回归模型 | Train a Linear Regression model with PyTorch
 title: PyTorch实现线性回归
 layout: post
 mathjax: true
@@ -8,7 +8,7 @@ categories: ["PyTorch", "Machine Learning","Deep Learning"]
 
 ### Motivation
 
-PyTorch是Facebook开源的一套Deep Learning的框架，由于它有基于Python的Frontend API，因此非常容易上手，对Researcher也非常友好。我目前对PyTorch的理解是它是具有自动求导功能的Numpy，当然PyTorch比Numpy肯定要强大的多。学习PyTorch的另一目的是
+PyTorch是Facebook开源的一套Deep Learning的框架，由于它有基于Python的Frontend API，因此非常容易上手，对Researcher也非常友好。我目前对PyTorch的理解是它是具有自动求导功能的Numpy，当然PyTorch比Numpy肯定要强大的多。
 
 ### Linear Regression
 
@@ -18,17 +18,17 @@ PyTorch是Facebook开源的一套Deep Learning的框架，由于它有基于Pyth
 t_y = [0.5, 14.0, 15.0, 28.0, 11.0, 8.0, 3.0, -4.0, 6.0, 13.0, 21.0]
 t_x = [35.7, 55.9, 58.2, 81.9, 56.3, 48.9, 33.9, 21.8, 48.4, 60.4, 68.4]
 ```
-我们的目标是通过模型帮我们学习得到$\omega$和$b$，使下面等式成立
+我们先观察一下数据的分布
+
+<img src="{{site.baseurl}}/assets/images/2019/06/pytorch-lr-0.png">
+
+图中可以看出，我们的数据只有一个feature，我们的目标是找到一个线性模型，使下面等式成立
 
 $$
 t_y = \omega \times t_x + b
 $$
 
-实际上就是对上述的离散点进行线性拟合。
-
-> 可将这篇文章理解为对之前机器学习文章的PyTorch版本实现
-
-我们首先来创建两个tensor
+实际上就是对上述的离散点进行线性拟合。我们首先来创建两个tensor
 
 ```python
 import torch
