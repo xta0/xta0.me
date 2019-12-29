@@ -116,11 +116,73 @@ train_loop(5000, 1e-3, nn.MSELoss(),t_xn, t_y)
 
 上图中实心的点为我们的原始数据，绿色的曲线是神经网络拟合出的曲线，标记为x的点为预测值。
 
-> 由于我们样本点少，我们暂不考虑overfitting的问题。
+> 由于样本点少，暂不考虑过拟合的问题。
 
-小结一下，这一节我们用PyTorch构建了一个两层的神经网络，训练了一个非线性模型，解决了一个简单的回归问题。但上述网络还是太过简单，在下面一节中我们将构建一个多层FC网络解决数字识别问题。
+小结一下，这一节我们用PyTorch构建了一个两层的神经网络，训练了一个非线性模型，解决了一个简单的回归问题。但上述网络还是太过简单，在下面一节中我们将构建一个稍微复杂一点的网络解决数字识别问题。
 
 ### MNIST
 
-这一节我们用全FC层构建一个神经网络来识别数字，
+这一节我们要设计一个神经网络解决识别数字问题，实际上这是一个很经典的问题了，我们用的训练集为著名的MNIST，如下图所示
+
+<div><img src="{{site.baseurl}}/assets/images/2019/06/pytorch-1-2.png"></div>
+
+上图中每个数字图片都是一个灰度图，我们的目标便是构建一个神经网络对上图中每个图片都能识别其中的数字。首先我们要将数据集下载下来
+
+```python
+# Define a transform to normalize the data
+transform = transforms.Compose([transforms.ToTensor(),
+                                transforms.Normalize((0.5,), (0.5,))])
+# Download and load the training data
+trainset = datasets.FashionMNIST('./F_MNIST_data/', download=True, train=True, transform=transform)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True)
+
+# Download and load the test data
+testset = datasets.FashionMNIST('./F_MNIST_data/', download=True, train=False, transform=transform)
+testloader = torch.utils.data.DataLoader(testset, batch_size=64, shuffle=True)
+```
+上述`trainloader`中包含了训练用的图片文件和标注，由于图片是我们神经网络的输入，因此我们需要看一下trainloader中图片的size，遍历trainloader我们可以使用下面方法
+
+```python
+for images, lable in trainloader:
+    print(images.shape) #torch.Size([64, 1, 28, 28])
+    print(labels.shape) #torch.Size([64])
+```
+可以看到images的格式是按照NCWH排列，表示有64组图片，每张图只有一个channel，长宽均为28。
+
+了解了输入tensor的size之后，我们便可以着手设计模型了。首先这是一个分类问题，因此我们的最后一层可以用softmax做分类，前面我们可以用三层FC做hiddnen layer，如下
+
+```python
+FC (784,128)
+ReLU()
+FC (128,64)
+ReLU()
+FC (64,10)
+Softmax()
+```
+和前面不同的是，这次的输出是一个分类问题，因此我们的loss函数要选取不同的，对于Softmax我们可以用`nn.CrossEntropyLoss()`。但根据[文档](https://pytorch.org/docs/stable/nn.html#torch.nn.CrossEntropyLoss)
+
+> This criterion combines `nn.LogSoftmax()` and `nn.NLLLoss()` in one single class. The input is expected to contain scores for each class.
+
+因此我们需要将FC的输出直接传给`CrossEntropyLoss()`,而不是softmax的输出。实际应用中，我们更希望将两者分开，因此这里我们使用`nn.NLLLoss()`。确定了loss函数后，我们可以测试下我们的model
+
+```python
+model = nn.Sequential(nn.Linear(784,128),
+                      nn.ReLU(),
+                      nn.Linear(128,64),
+                      nn.ReLU(),
+                      nn.Linear(64,10),
+                      nn.LogSoftmax()
+)
+
+loss_fn = nn.NLLLoss()
+images,labels = next(iter(trainloader))
+input = images.view(images.shape[0],-1) #[64 x 784]
+output = model(input)
+loss = loss_fn(output, labels)
+print(loss) #tensor(2.3290, grad_fn=<NllLossBackward>)
+```
+
+
+
+
 
