@@ -6,7 +6,7 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
-目标检测指的是通过训练神经网络可以识别出图片中的物体，并用矩形将其框出。它包含两部分，一部分是对图像内容的识别，也就是分类问题，另一个是标记目标在图像中的位置，也就是定位的问题。因此，神经网络的输出也包含了更多的信息，除了包含物体的类别外，还需要包含矩形框的位置信息。
+目标检测指的是给定一个输入的图像，我们希望模型可以分析这个图像里究竟有哪些物体，并能够定位这些物体在整个图像中的位置，对于图像中的每一个像素，能够分析其属于哪一个物体。它包含两部分，一部分是对图像内容的识别，也就是分类问题，另一个是标记目标在图像中的位置，也就是定位的问题。因此，神经网络的输出也包含了更多的信息，除了包含物体的类别外，还需要包含矩形框的位置信息。
 
 ### Sliding Windonw Detection
 
@@ -36,10 +36,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 上述算法虽然解决了计算效率问题，但是没有解决对目标矩形的定位问题，例如，上面算法中，我们完全有可能碰到这种情况，即没有任何一个窗口能完全覆盖检测目标，如下图所示
 
-<div class="md-flex-h md-flex-no-wrap">
-<div><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-3.png"></div>
-<div><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-10.png"></div>
-</div>
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-3.png" width="40%"></div>
 
 解决这个问题，参考文献[2]，即YOLO算法提供一个不错的思路。YOLO将一张图片分割成$n$*$n$的格子，如下图中$n=3$，即9个格子
 
@@ -67,9 +64,11 @@ $$
 
 我们该如何衡量目标检测的准确率呢，比如下图中目标矩形为红色，而实际检测结果却为紫色矩形。
 
-<img  src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-11.png" width="40">
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-11.png">
 
 此时我们要引入一个指标叫做Intersection Over Union (IoU)。它的计算方式为用两个矩形的Intersection部分除以它们的union部分，得到的比值作为准确率。如果IoU的值大于0.5，则认为识别的区域是正确的。当然0.5这个值可以根据实际情况进行调节。
+
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-18.png">
 
 ### Non-Max Suppression
 
@@ -123,7 +122,7 @@ $$
 
 ### R-CNN
 
-除了YOLO模型外，还有一些模型可以做目标识别，比较有名的就是R-CNN以它相关的变种
+除了YOLO模型外，还有一些模型可以做目标识别，比较有名的就是R-CNN以它相关的变种，但是效率上不如YOLO，这里不做展开讨论
 
 ## Resources
 
