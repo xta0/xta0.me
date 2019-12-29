@@ -120,15 +120,16 @@ train_loop(5000, 1e-3, nn.MSELoss(),t_xn, t_y)
 
 小结一下，这一节我们用PyTorch构建了一个两层的神经网络，训练了一个非线性模型，解决了一个简单的回归问题。但上述网络还是太过简单，在下面一节中我们将构建一个稍微复杂一点的网络解决数字识别问题。
 
-### MNIST
+### Fashion MNIST
 
-这一节我们要设计一个神经网络解决识别数字问题，实际上这是一个很经典的问题了，我们用的训练集为著名的MNIST，如下图所示
+这一节我们要设计一个神经网络解决识别衣服的问题，我们要用的数据集是著名的[Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist)，如下图所示
 
-<div><img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-mnist.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-fmnist.png"></div>
 
-上图中每个数字图片都是一个灰度图，我们的目标便是构建一个神经网络对上图中每个图片都能识别其中的数字。首先我们要将数据集下载下来
+上图中每个图片都是一个灰度图，我们的目标便是构建一个神经网络对识别上图中每个图片的内容。首先我们要将数据集下载下来
 
 ```python
+from torchvision import datasets, transforms
 # Define a transform to normalize the data
 transform = transforms.Compose([transforms.ToTensor(),
                                 transforms.Normalize((0.5,), (0.5,))])
@@ -140,47 +141,81 @@ trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True)
 testset = datasets.FashionMNIST('./F_MNIST_data/', download=True, train=False, transform=transform)
 testloader = torch.utils.data.DataLoader(testset, batch_size=64, shuffle=True)
 ```
-上述`trainloader`中包含了训练用的图片文件和标注，由于图片是我们神经网络的输入，因此我们需要看一下trainloader中图片的size，遍历trainloader我们可以使用下面方法
+上述`trainloader`中包含了训练用的图片文件和标注，`testloader`存放我们的测试数据。`transform`的作用是对样本数据做Normalization。接下来我们遍历一下trainloader，观察训练数据的尺寸
 
 ```python
+print(len(trainloader)) #938
 for images, lable in trainloader:
     print(images.shape) #torch.Size([64, 1, 28, 28])
     print(labels.shape) #torch.Size([64])
 ```
-可以看到images的格式是按照NCWH排列，表示有64组图片，每张图只有一个channel，长宽均为28。
+可以看到我们的训练集包含938组训练样本，每组样本的尺寸为64\*1\*28\*28，格式是按照NCWH规则排列，表示每组64张图片，每张图只有一个channel，长宽均为28。
 
-了解了输入tensor的size之后，我们便可以着手设计模型了。首先这是一个分类问题，因此我们的最后一层可以用softmax做分类，前面我们可以用三层FC做hiddnen layer，如下
+了解了输入tensor的size之后，我们便可以着手设计模型了。首先这是一个分类问题，因此我们的最后一层可以用softmax做分类，前面我们可以构建一个四层的FC网络
 
 ```python
-FC (784,128)
+FC (784,256)
+ReLU()
+FC (256,128)
 ReLU()
 FC (128,64)
 ReLU()
 FC (64,10)
 Softmax()
 ```
-和前面不同的是，这次的输出是一个分类问题，因此我们的loss函数要选取不同的，对于Softmax我们可以用`nn.CrossEntropyLoss()`。但根据[文档](https://pytorch.org/docs/stable/nn.html#torch.nn.CrossEntropyLoss)
+和前面不同的是，这次我们要解决的是一个分类问题，loss函数要选取不同的，对于Softmax我们可以用`nn.CrossEntropyLoss()`。但根据[文档](https://pytorch.org/docs/stable/nn.html#torch.nn.CrossEntropyLoss)
 
 > This criterion combines `nn.LogSoftmax()` and `nn.NLLLoss()` in one single class. The input is expected to contain scores for each class.
 
-因此我们需要将FC的输出直接传给`CrossEntropyLoss()`,而不是softmax的输出。实际应用中，我们更希望将两者分开，因此这里我们使用`nn.NLLLoss()`。确定了loss函数后，我们可以测试下我们的model
+我们需要将FC的输出直接传给`CrossEntropyLoss()`,而不是softmax的输出。实际应用中，我们更希望将两者分开，因此这里我们使用`nn.NLLLoss()`。确定了loss函数后，我们可以测试下我们的model
 
 ```python
-model = nn.Sequential(nn.Linear(784,128),
+model = nn.Sequential(nn.Linear(784,256),
+                      nn.ReLU(),
+                      nn.Linear(256,128),
                       nn.ReLU(),
                       nn.Linear(128,64),
                       nn.ReLU(),
                       nn.Linear(64,10),
-                      nn.LogSoftmax()
+                      nn.LogSoftmax(dim=1)
 )
 
-loss_fn = nn.NLLLoss()
 images,labels = next(iter(trainloader))
 input = images.view(images.shape[0],-1) #[64 x 784]
 output = model(input)
-loss = loss_fn(output, labels)
-print(loss) #tensor(2.3290, grad_fn=<NllLossBackward>)
 ```
+这里需要注意的是，对于`nn.LogSoftmax`我们需要指定`dim`的值，`dim=1`表示按row进行sum。我们可以观察一模型的输出
+
+<div><img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-result-1.png"></div>
+
+由于我们的模型还未经训练，因此输出结果基本可以认为是等概率分布，接下来我们按照前面的方法来train我们的模型
+
+```python
+optimizer = optim.Adam(model.parameters(), lr=0.003)
+epochs = 5
+for e in range(epochs):
+    running_loss = 0
+    for images, labels in trainloader:
+        optimizer.zero_grad()
+        inputs = images.view(images.shape[0],-1)
+        outputs = model(inputs)
+        loss = loss_fn(outputs,labels)
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        running_loss += loss.item()
+    else:
+        print(f"Traning loss: {running_loss}")
+```
+迭代5次后Loss收敛在0.317，此时我们跑一张测试集的图片，并观察输出结果
+
+<div><img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-result-2.png"></div>
+
+
+
+
+
+
 
 
 
