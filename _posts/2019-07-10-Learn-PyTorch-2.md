@@ -6,7 +6,7 @@ mathjax: true
 categories: ["PyTorch", "Machine Learning","Deep Learning"]
 ---
 
-上一篇文章中我们用PyTorch实现了一个线性回归的模型，这篇文章我们将用神经网络来代替线性回归，重新训练我们的模型。虽然我们只有一个feature和少量个训练样本，使用神经网络不免有些OverKill了，但使用神经网络的一个有趣之处是我们不知道它最后会帮我们拟合出的什么样的模型。好奇心永远是最好的学习动力，我们下面会用PyTorch的API搭建两个简单的神经网络来拟合出上一篇文章中的模型，最后我们会做一个全FC网络做数字识别。
+上一篇文章中我们用PyTorch实现了一个线性回归的模型，这篇文章我们将用神经网络来重新训练我们的模型。虽然我们只有一个feature和极为少量的训练样本，使用神经网络不免有些OverKill了，但使用神经网络的一个有趣之处是我们不知道它最后会帮我们拟合出的什么样的模型。好奇心永远是最好的学习动力，我们下面会用PyTorch的API搭建两个简单的神经网络来重新拟合上一篇文章中的模型，最后我们会做一个全FC网络做数字识别。
 
 ### 一个神经元的神经网络
 
@@ -25,7 +25,7 @@ linear_model = nn.Linear(1,1)
 output = linear_model(t_xn)
 print(output)
 ```
-上述代码中我们创建了一个`linear_model`，这个model只有一个神经元，输入和输出均为一个tensor。接着我们创建了一个`11x1`的input tensor。由于我们的model没有经过训练，因此输出为一堆无意义的tensor。默认情况下`nn.Linear`包含bias，weight被初始化为一个随机数
+上述代码中我们创建了一个`linear_model`，这个model只有一个神经元，输入和输出只有一个tensor。接着我们创建了一个`11x1`的input tensor。由于我们的model没有经过训练，因此输出为一堆无意义的tensor。默认情况下`nn.Linear`包含bias，而weight值被初始化为一个随机数
 
 ```python
 print("weight: ",linear_model.weight) #tensor([[-0.1335]], requires_grad=True)
@@ -47,7 +47,7 @@ def train_loop(epochs, learning_rate, loss_fn,x, y):
 上述代码中和前一节大同小异，有下面几点值得注意
 
 1. 待训练参数$\omega$和$b$保存在`linear_model.parameters()`中
-2. 由于params保存在了model中，因此PyTorch知道如何update这些参数，而不需要我们手动的进行梯度下降
+2. 由于params保存在了model中，因此PyTorch知道如何update这些参数，不再需要我们手动编写梯度下降的代码
 2. loss函数使用系统自带的`nn.MSELoss`对应上一节的L2 loss函数
 
 由于我们的`linear_module`在数学上就是在计算$y = \omega x + b$，因此我们可以预测训练结果和前文是一致的
@@ -58,11 +58,62 @@ print("params:", list(linear_model.parameters()))
 #tensor([[5.3491]], requires_grad=True), Parameter containing:
 #tensor([-17.1995], requires_grad=True)]
 ```
-训练结果符合我们预期，这说明我们可以使用神经网络来训练线性回归模型，在下一节我们将看到如何使用神经网络构建一个非线性回归的神经网络
+训练结果符合我们预期，感觉这个例子没什么意义，但它告诉我们可以使用神经网络来训练线性回归模型。在下一节我们将继续改进在这个简单的神经网络，从而构建出一个非线性模型。
 
 ### 非线性模型
 
-为了更精准的拟合数据，我们实际上还可以采用非线性模型，比如高阶的线性回归，但与其手动的定义model，我们还是用神经网络帮我们寻找这个模型。不同的是这次我们要对数据做一些非线性变换
+为了更精准的拟合数据，我们可以采用非线性模型，比如高阶的线性回归，但与其手动的定义模型，我们还是用神经网络帮我们寻找这个模型。不同的是这次我们要对数据做一些非线性变换，具体来说是引入一个hidder layer和activation函数。我们新的model结构如下
+
+```python
+seq_model = nn.Sequential(
+    nn.Linear(1,13),
+    nn.Tanh(),
+    nn.Linear(13,1))
+
+print(seq_model)
+# Sequential(
+#   (0): Linear(in_features=1, out_features=13, bias=True)
+#   (1): Tanh()
+#   (2): Linear(in_features=13, out_features=1, bias=True)
+# )
+```
+上述代码中我们引入了一个1*13的hidden layer，然后跟了一个`Tanh()`的非线性变换作为activation，最后的output layer又把结果变成`1x1`tensor，整个model的结构如下图所示
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/07/pytorch-1.png">
+
+在训练我们的模型之前，我们先来分析下有多少个待学习参数。显然对于hidden layer我们有13个$\omega$，13个$b$，对于output layer，我们有一个$\omega$和一个$b$。我们也可以用下面代码来验证
+
+```python
+for name,param in seq_model.named_parameters():
+    print(name, param.shape)
+
+# 0.weight torch.Size([13, 1])
+# 0.bias torch.Size([13])
+# 2.weight torch.Size([1, 13])
+# 2.bias torch.Size([1])
+```
+上述代码会打印出整个network中待学习的参数。接下来我们用同样的代码训练我们的model
+
+```python
+optimizer = optim.SGD(seq_model.parameters(), lr=1e-3)
+def train_loop(epochs, learning_rate, loss_fn,x, y):
+    for epoch in range(1, epochs + 1):    
+        optimizer.zero_grad()
+        t_p = seq_model(x)
+        loss = loss_fn(y, t_p)
+        loss.backward()
+        optimizer.step()
+        print(f'Epoch: {epoch}, Loss: {float(loss)}')
+
+train_loop(5000, 1e-3, nn.MSELoss(),t_xn, t_y)
+```
+5000次迭代后，loss收敛在1.950253963470459，接下来便是激动人心的时刻，我们来可视化一下我们model
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/07/pytorch-2.png">
+
+上图中实心的点为我们的原始数据，绿色的曲线是神经网络拟合出的曲线，标记为x的点为预测值。由于我们样本点少，我们暂不考虑overfitting的问题。
+
+小结一下，这一节我们用PyTorch构建了一个两层的神经网络，训练了一个非线性模型，解决了一个简单的回归问题。但上述网络还是太过简单，在下面一节中我们将构建一个多层FC网络解决数字识别问题。
 
 ### MNIST
 
