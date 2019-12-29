@@ -107,11 +107,16 @@ def train_loop(epochs, learning_rate, loss_fn,x, y):
 
 train_loop(5000, 1e-3, nn.MSELoss(),t_xn, t_y)
 ```
-5000次迭代后，loss收敛在1.950253963470459，接下来便是激动人心的时刻，我们来可视化一下我们model
+5000次迭代后，loss收敛在1.950253963470459，接下来我们来可视化一下我们model，并和上一篇的线性的模型做个比较
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/07/pytorch-2.png">
+<div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
+<div><img src="{{site.baseurl}}/assets/images/2019/06/pytorch-lr-1.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2.png"></div>
+</div>
 
-上图中实心的点为我们的原始数据，绿色的曲线是神经网络拟合出的曲线，标记为x的点为预测值。由于我们样本点少，我们暂不考虑overfitting的问题。
+上图中实心的点为我们的原始数据，绿色的曲线是神经网络拟合出的曲线，标记为x的点为预测值。
+
+> 由于我们样本点少，我们暂不考虑overfitting的问题。
 
 小结一下，这一节我们用PyTorch构建了一个两层的神经网络，训练了一个非线性模型，解决了一个简单的回归问题。但上述网络还是太过简单，在下面一节中我们将构建一个多层FC网络解决数字识别问题。
 
