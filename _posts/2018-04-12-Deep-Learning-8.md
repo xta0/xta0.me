@@ -53,7 +53,7 @@ $$
 
 其中，$p_c$表示该box中是否有待检测的目标，如果有$p_c$为1，否则为0，$(b_x, b_y, b_h, b_w)$表示目标矩形，其中每个box的左上角为(0,0)，右下角为(1,1)。$(b_x,b_y)$表示目标的中心点，$(b_h, b_w)$表示矩形框的高和宽相对于该box的百分比，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-15.png" width="60%">
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-15.png" width="80%">
 
 最后$c_1, c_2,c_3$表示目标类别，比如上图中$c_1$表示行人，$c_2$表示车辆，$c_3$表示摩托车，则上图中黄色box的$y$值为
 
@@ -67,13 +67,9 @@ $$
 
 我们该如何衡量目标检测的准确率呢，比如下图中目标矩形为红色，而实际检测结果却为紫色矩形。
 
-<div class="md-flex-h md-flex-no-wrap">
-<div><img  src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-11.png"></div>
-<div><img  src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-18.png"></div>
-</div>
+<img  src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-11.png" width="40">
 
 此时我们要引入一个指标叫做Intersection Over Union (IoU)。它的计算方式为用两个矩形的Intersection部分除以它们的union部分，得到的比值作为准确率。如果IoU的值大于0.5，则认为识别的区域是正确的。当然0.5这个值可以根据实际情况进行调节。
-
 
 ### Non-Max Suppression
 
