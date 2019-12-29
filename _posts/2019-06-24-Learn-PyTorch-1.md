@@ -20,7 +20,7 @@ t_x = [35.7, 55.9, 58.2, 81.9, 56.3, 48.9, 33.9, 21.8, 48.4, 60.4, 68.4]
 ```
 我们先观察一下数据的分布
 
-<img src="{{site.baseurl}}/assets/images/2019/06/pytorch-lr-0.png">
+<img src="{{site.baseurl}}/assets/images/2019/06/pytorch-lr-0.png" width = "60%">
 
 图中可以看出，我们的数据只有一个feature，我们的目标是找到一个线性模型，使下面等式成立
 

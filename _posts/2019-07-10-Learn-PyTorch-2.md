@@ -124,7 +124,7 @@ train_loop(5000, 1e-3, nn.MSELoss(),t_xn, t_y)
 
 这一节我们要设计一个神经网络解决识别数字问题，实际上这是一个很经典的问题了，我们用的训练集为著名的MNIST，如下图所示
 
-<div><img src="{{site.baseurl}}/assets/images/2019/06/pytorch-1-2.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-mnist.png"></div>
 
 上图中每个数字图片都是一个灰度图，我们的目标便是构建一个神经网络对上图中每个图片都能识别其中的数字。首先我们要将数据集下载下来
 
