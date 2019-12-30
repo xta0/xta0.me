@@ -219,7 +219,7 @@ for e in range(epochs):
 
 <img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-result-2.png">
 
-### The Overfitting Problem
+### 解决过拟合问题
 
 从上图中看，貌似我们的模型还不错，但是我们需要一个量化指标来衡量模型的准确率，常见的做法是在每一个training loop结束时，用我们的测试集测试一次并观察输出结果。由于每一张图片会产生10个结果，我们只取概率最高的一项，而一次loop有64张图片，因此我们的结果是一个`[64,1]`的向量。
 
@@ -295,6 +295,10 @@ with torch.no_grad():
 model.train()#enable dropout
 ```
 重新训练，观察上述两个指标的变化情况，如下图所示。基本上我们可以认为我们的模型可以正常工作了。
+
+### 小结
+
+
 
 <img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-testing-2.png">
 
