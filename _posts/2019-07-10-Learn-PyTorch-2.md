@@ -257,12 +257,9 @@ print("Epoch: {}/{}.. ".format(e+1, epochs),
         "Test Loss: {:.3f}.. ".format(test_loss/len(testloader)),
         "Test Accuracy: {:.3f}".format(accuracy/len(testloader)))
 ```
-这一次我们增加了epochs值为30，然后观察Training Loss和Test Loss两个指标的变化情况，如下图（左）所示
+这一次我们增加了epochs值为30，然后观察Training Loss和Test Loss两个指标的变化情况，如下图所示
 
-<div class="md-flex-h md-no-wrap md-margin-bottom-12">
-<div><img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-testing-1.png"></div>
-<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-testing-2.png"></div>
-</div>
+<img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-testing-1.png">
 
 显然我们出现了overfitting，即training error不断降低，但是testing error却不降反升。为了解决Overfitting，常用手段是引入Dropout层，即对参数做Regularization。修改我们的model，加入`nn.Dropout` module
 
@@ -297,7 +294,9 @@ with torch.no_grad():
             ...
 model.train()#enable dropout
 ```
-重新训练，观察上述两个指标的变化情况，如上面右图所示。基本上我们可以认为我们的模型可以正常工作了。
+重新训练，观察上述两个指标的变化情况，如下图所示。基本上我们可以认为我们的模型可以正常工作了。
+
+<img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-testing-2.png">
 
 ## Resoures
 
