@@ -124,9 +124,9 @@ train_loop(5000, 1e-3, nn.MSELoss(),t_xn, t_y)
 
 这一节我们要设计一个神经网络解决识别衣服的问题，我们要用的数据集是著名的[Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist)，如下图所示
 
-<div><img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-fmnist.png"></div>
+<img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-fmnist.png">
 
-上图中每个图片都是一个灰度图，我们的目标便是构建一个神经网络对识别上图中每个图片的内容。首先我们要将数据集下载下来
+上图中的每个小图都是一张灰度图，我们的目标便是构建一个神经网络来识别每个小图中的内容。首先我们要将数据集下载下来
 
 ```python
 from torchvision import datasets, transforms
@@ -170,23 +170,32 @@ Softmax()
 我们需要将FC的输出直接传给`CrossEntropyLoss()`,而不是softmax的输出。实际应用中，我们更希望将两者分开，因此这里我们使用`nn.NLLLoss()`。确定了loss函数后，我们可以测试下我们的model
 
 ```python
-model = nn.Sequential(nn.Linear(784,256),
-                      nn.ReLU(),
-                      nn.Linear(256,128),
-                      nn.ReLU(),
-                      nn.Linear(128,64),
-                      nn.ReLU(),
-                      nn.Linear(64,10),
-                      nn.LogSoftmax(dim=1)
-)
+class Classifier(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.fc1 = nn.Linear(784, 256)
+        self.fc2 = nn.Linear(256, 128)
+        self.fc3 = nn.Linear(128, 64)
+        self.fc4 = nn.Linear(64, 10)
+        # Dropout module with 0.2 drop probability
+        self.dropout = nn.Dropout(p=0.2)
 
+    def forward(self, x):
+        x = x.view(x.shape[0], -1) #convert the input tensor to [64,784]
+        x = self.dropout(F.relu(self.fc1(x)))
+        x = self.dropout(F.relu(self.fc2(x)))
+        x = self.dropout(F.relu(self.fc3(x)))
+        x = F.log_softmax(self.fc4(x), dim=1)
+
+        return x
+
+model = Classifier()
 images,labels = next(iter(trainloader))
-input = images.view(images.shape[0],-1) #[64 x 784]
-output = model(input)
+output = model(images)
 ```
 这里需要注意的是，对于`nn.LogSoftmax`我们需要指定`dim`的值，`dim=1`表示按row进行sum。我们可以观察一模型的输出
 
-<div><img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-result-1.png"></div>
+<img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-result-1.png">
 
 由于我们的模型还未经训练，因此输出结果基本可以认为是等概率分布，接下来我们按照前面的方法来train我们的模型
 
@@ -197,8 +206,7 @@ for e in range(epochs):
     running_loss = 0
     for images, labels in trainloader:
         optimizer.zero_grad()
-        inputs = images.view(images.shape[0],-1)
-        outputs = model(inputs)
+        outputs = model(images)
         loss = loss_fn(outputs,labels)
         optimizer.zero_grad()
         loss.backward()
@@ -209,15 +217,89 @@ for e in range(epochs):
 ```
 迭代5次后Loss收敛在0.317，此时我们跑一张测试集的图片，并观察输出结果
 
-<div><img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-result-2.png"></div>
+<img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-result-2.png">
 
+### The Overfitting Problem
 
+从上图中看，貌似我们的模型还不错，但是我们需要一个量化指标来衡量模型的准确率，常见的做法是在每一个training loop结束时，用我们的测试集测试一次并观察输出结果。由于每一张图片会产生10个结果，我们只取概率最高的一项，而一次loop有64张图片，因此我们的结果是一个`[64,1]`的向量。
 
+为了得到上述结果我们要用到PyTorch中的`topk`函数，这个函数会返回概率由高到低的前k个结果，对于我们的场景，我们只需要返回第一个，因此用`topk(1,dim=1)`即可。另外由于我们要将预测结果和测试集中的label做比较，因此我们需要确保两个tensor的size是一致的
 
+```python
+images, labels = next(iter(testloader))
+output = torch.exp(model(images)) #convert the output tensor to [0,1]
+top64 = output.topk(1,dim=1) #[64,1]
+labels = labels.view(64,-1) #convert labels to [64.1]
+```
+上述代码可以确保我们的输出结果可以和label进行比较。接下来我们要计算准确率，方法很简单，用比较结果为true的数量除以总数量即可，我们可以使用`torch.mean`
 
+```python
+equals = top64 == labels
+accuracy = torch.mean(equals.type(torch.FloatTensor))
+```
+有了上面的铺垫，现在我们可以在训练中加入validation的代码
 
+```python
+test_loss = 0 
+accuracy = 0
+with torch.no_grad():
+    for images, labels in testloader:
+        log_ps = model(images)
+        test_loss += loss_fn(log_ps, labels) #计算test_loss
+        ps = torch.exp(log_ps)
+        top_p, top_class = ps.topk(1, dim=1)
+        equals = top_class == labels.view(top_class.shape[0],-1) 
+        accuracy += torch.mean(equals.type(torch.FloatTensor)) #计算accuracy
+train_losses.append(running_loss/len(trainloader))
+test_losses.append(test_loss/len(testloader))
+print("Epoch: {}/{}.. ".format(e+1, epochs),
+        "Training Loss: {:.3f}.. ".format(running_loss/len(trainloader)),
+        "Test Loss: {:.3f}.. ".format(test_loss/len(testloader)),
+        "Test Accuracy: {:.3f}".format(accuracy/len(testloader)))
+```
+这一次我们增加了epochs值为30，然后观察Training Loss和Test Loss两个指标的变化情况，如下图（左）所示
 
+<div class="md-flex-h md-no-wrap md-margin-bottom-12">
+<div><img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-testing-1.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-testing-2.png"></div>
+</div>
 
+显然我们出现了overfitting，即training error不断降低，但是testing error却不降反升。为了解决Overfitting，常用手段是引入Dropout层，即对参数做Regularization。修改我们的model，加入`nn.Dropout` module
 
+```python
+class Classifier(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.fc1 = nn.Linear(784, 256)
+        self.fc2 = nn.Linear(256, 128)
+        self.fc3 = nn.Linear(128, 64)
+        self.fc4 = nn.Linear(64, 10)
+        # Dropout module with 0.2 drop probability
+        self.dropout = nn.Dropout(p=0.2)
 
+    def forward(self, x):
+        x = x.view(x.shape[0], -1)
+        x = self.dropout(F.relu(self.fc1(x)))
+        x = self.dropout(F.relu(self.fc2(x)))
+        x = self.dropout(F.relu(self.fc3(x)))
+        x = F.log_softmax(self.fc4(x), dim=1)
 
+        return x
+```
+引入Dropout之后我们还需要修改一下训练代码，当我们对测试数据做forward的时候，需要禁掉Dropout，我们要调一下`model.eval()`，而在下次training开始前，我们再调一下`model.train()`来开启Dropout，代码如下
+
+```python
+with torch.no_grad():
+        model.eval() #disable dropout
+        for images, labels in testloader:
+            ...
+            #validation code
+            ...
+model.train()#enable dropout
+```
+重新训练，观察上述两个指标的变化情况，如上面右图所示。基本上我们可以认为我们的模型可以正常工作了。
+
+## Resoures
+
+- [Deep Learning with PyTorch](https://livebook.manning.com/book/deep-learning-with-pytorch/welcome/v-10/)
+- [Intro to Deep Learning](https://www.udacity.com/course/deep-learning-pytorch--ud188)
