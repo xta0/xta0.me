@@ -6,12 +6,11 @@ mathjax: true
 categories: ["PyTorch", "Machine Learning","Deep Learning"]
 ---
 
-上一篇文章中我们用PyTorch实现了一个线性回归的模型，这篇文章我们将用神经网络来重新训练我们的模型。虽然我们只有一个feature和极为少量的训练样本，使用神经网络不免有些OverKill了，但使用神经网络的一个有趣之处是我们不知道它最后会帮我们拟合出的什么样的模型。好奇心永远是最好的学习动力，我们下面会用PyTorch的API搭建两个简单的神经网络来重新拟合上一篇文章中的模型，最后我们会做一个全FC网络做数字识别。
+上一篇文章中我们用PyTorch实现了一个线性回归的模型，这篇文章我们将用神经网络来重新训练我们的模型。虽然我们只有一个feature和极为少量的训练样本，使用神经网络不免有些OverKill了，但使用神经网络的一个有趣之处是我们不知道它最后会帮我们拟合出的什么样的模型。，我们下面会用PyTorch搭建两个简单的神经网络来重新拟合上一篇文章中的模型，最后我们会做一个稍微复杂一点的全FC网络做灰度图片的分类。
 
 ### 一个神经元的神经网络
 
 PyTorch中神经网络相关的layer称为module，封装在`torch.nn`中，由于我们的模型是线性的，我们可以用`nn.Linear`这个module，此外由于我们只有一个feature，加上我的输出也是一个值，因此我们的神经网络实际上只有一个神经元，输入是一个tensor，输出也是一个tensor。
-
 
 ```python
 import torch
@@ -50,7 +49,7 @@ def train_loop(epochs, learning_rate, loss_fn,x, y):
 2. 由于params保存在了model中，因此PyTorch知道如何update这些参数，不再需要我们手动编写梯度下降的代码
 2. loss函数使用系统自带的`nn.MSELoss`对应上一节的L2 loss函数
 
-由于我们的`linear_module`在数学上就是在计算$y = \omega x + b$，因此我们可以预测训练结果和前文是一致的
+由于我们的`linear_module`在数学上就是在计算$y = \omega x + b$，我们可以猜到训练结果和前文是一致的
 
 ```python
 train_loop(3000, 1e-2, nn.MSELoss(),t_xn, t_y)
@@ -58,7 +57,7 @@ print("params:", list(linear_model.parameters()))
 #tensor([[5.3491]], requires_grad=True), Parameter containing:
 #tensor([-17.1995], requires_grad=True)]
 ```
-训练结果符合我们预期，感觉这个例子没什么意义，但它告诉我们可以使用神经网络来训练线性回归模型。在下一节我们将继续改进在这个简单的神经网络，从而构建出一个非线性模型。
+训练结果符合我们预期，表面上看这个例子好像没什么意义，但它告诉我们可以使用神经网络来训练线性回归模型，在下一节我们将继续改进在这个简单的神经网络。
 
 ### 非线性模型
 
@@ -77,11 +76,11 @@ print(seq_model)
 #   (2): Linear(in_features=13, out_features=1, bias=True)
 # )
 ```
-上述代码中我们引入了一个1*13的hidden layer，然后跟了一个`Tanh()`的非线性变换作为activation，最后的output layer又把结果变成`1x1`tensor，整个model的结构如下图所示
+上述代码中我们引入了一个`[1,13]`的hidden layer，然后跟了一个`Tanh()`的非线性变换作为activation函数，最后的output layer又把结果变成`[1,1]`的tensor，整个model的结构如下图所示
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/07/pytorch-1.png">
 
-在训练我们的模型之前，我们先来分析下有多少个待学习参数。显然对于hidden layer我们有13个$\omega$，13个$b$，对于output layer，我们有一个$\omega$和一个$b$。我们也可以用下面代码来验证
+显然相比于前面的模型，这个模型略微复杂了一些。在训练我们的模型之前，我们先来分析下有多少个待学习参数。对于hidden layer我们有13个$\omega$，13个$b$，对于output layer，我们有一个$\omega$和一个$b$。因此一共有28个待学习的参数，我们也可以用下面代码来查看
 
 ```python
 for name,param in seq_model.named_parameters():
@@ -92,7 +91,7 @@ for name,param in seq_model.named_parameters():
 # 2.weight torch.Size([1, 13])
 # 2.bias torch.Size([1])
 ```
-上述代码会打印出整个network中待学习的参数。接下来我们用同样的代码训练我们的model
+上述代码会打印出整个network中待学习的参数。接下来我们用同样的思路训练我们的模型
 
 ```python
 optimizer = optim.SGD(seq_model.parameters(), lr=1e-3)
@@ -107,7 +106,7 @@ def train_loop(epochs, learning_rate, loss_fn,x, y):
 
 train_loop(5000, 1e-3, nn.MSELoss(),t_xn, t_y)
 ```
-5000次迭代后，loss收敛在1.950253963470459，接下来我们来可视化一下我们model，并和上一篇的线性的模型做个比较
+在5000次迭代后，loss收敛在1.950253963470459，接下来我们来可视化一下我们model，观察一些预测结果，并和上一篇的线性的模型做个比较
 
 <div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
 <div><img src="{{site.baseurl}}/assets/images/2019/06/pytorch-lr-1.png"></div>
@@ -116,9 +115,7 @@ train_loop(5000, 1e-3, nn.MSELoss(),t_xn, t_y)
 
 上图中实心的点为我们的原始数据，绿色的曲线是神经网络拟合出的曲线，标记为x的点为预测值。
 
-> 由于样本点少，暂不考虑过拟合的问题。
-
-小结一下，这一节我们用PyTorch构建了一个两层的神经网络，训练了一个非线性模型，解决了一个简单的回归问题。但上述网络还是太过简单，在下面一节中我们将构建一个稍微复杂一点的网络解决数字识别问题。
+小结一下，这一节我们用PyTorch构建了一个两层的神经网络，训练了一个非线性模型，解决了一个简单的回归问题。但上述网络还是有些简单，在下面一节中我们将构建一个稍微复杂一点的网络来解决分类问题。
 
 ### Fashion MNIST
 
@@ -149,9 +146,9 @@ for images, lable in trainloader:
     print(images.shape) #torch.Size([64, 1, 28, 28])
     print(labels.shape) #torch.Size([64])
 ```
-可以看到我们的训练集包含938组训练样本，每组样本的尺寸为64\*1\*28\*28，格式是按照NCWH规则排列，表示每组64张图片，每张图只有一个channel，长宽均为28。
+可以看到我们的训练集包含938组训练样本，每组样本的尺寸为`[64,1,28,28]`，格式是按照`NCWH`规则排列，表示每组64张图片，每张图只有一个channel，长宽均为28像素。
 
-了解了输入tensor的size之后，我们便可以着手设计模型了。首先这是一个分类问题，因此我们的最后一层可以用softmax做分类，前面我们可以构建一个四层的FC网络
+对于每一张图片来说，由于是灰度图片，只有一个通道，因此我们可以将输入的图片等价为一个`[1x784]`的一维向量，feature数量为像素点的个数。由于feature数量并没有很大，我们不需要引入卷积神经网络，使用若干层Fully Connected Layer（后面简称FC）堆叠即可。
 
 ```python
 FC (784,256)
@@ -163,7 +160,7 @@ ReLU()
 FC (64,10)
 Softmax()
 ```
-和前面不同的是，这次我们要解决的是一个分类问题，loss函数要选取不同的，对于Softmax我们可以用`nn.CrossEntropyLoss()`。但根据[文档](https://pytorch.org/docs/stable/nn.html#torch.nn.CrossEntropyLoss)
+和前面不同的是，这次我们要解决的是一个分类问题，因此我们的输出是`Softmax(x)`后的结果，这会直接影响我们的loss函数的选择。通常情况下，我们可以用`nn.CrossEntropyLoss()`。但根据[文档](https://pytorch.org/docs/stable/nn.html#torch.nn.CrossEntropyLoss)
 
 > This criterion combines `nn.LogSoftmax()` and `nn.NLLLoss()` in one single class. The input is expected to contain scores for each class.
 
@@ -223,7 +220,7 @@ for e in range(epochs):
 
 从上图中看，貌似我们的模型还不错，但是我们需要一个量化指标来衡量模型的准确率，常见的做法是在每一个training loop结束时，用我们的测试集测试一次并观察输出结果。由于每一张图片会产生10个结果，我们只取概率最高的一项，而一次loop有64张图片，因此我们的结果是一个`[64,1]`的向量。
 
-为了得到上述结果我们要用到PyTorch中的`topk`函数，这个函数会返回概率由高到低的前k个结果，对于我们的场景，我们只需要返回第一个，因此用`topk(1,dim=1)`即可。另外由于我们要将预测结果和测试集中的label做比较，因此我们需要确保两个tensor的size是一致的
+为了得到上述结果我们要用到PyTorch中的`topk`函数，这个函数会返回概率由高到低的前k个结果，对于我们的场景，我们只需要返回第一个，因此用`topk(1,dim=1)`即可。另外由于我们要将预测结果和测试集中的label做比较，因此我们需要确保这两个tensor的size是一致的
 
 ```python
 images, labels = next(iter(testloader))
@@ -231,7 +228,7 @@ output = torch.exp(model(images)) #convert the output tensor to [0,1]
 top64 = output.topk(1,dim=1) #[64,1]
 labels = labels.view(64,-1) #convert labels to [64.1]
 ```
-上述代码可以确保我们的输出结果可以和label进行比较。接下来我们要计算准确率，方法很简单，用比较结果为true的数量除以总数量即可，我们可以使用`torch.mean`
+上述代码可以确保我们的输出结果可以和label的size一致。接下来我们要计算准确率，方法很简单，用比较结果为true的数量除以结果数量（10）即可，我们可以使用`torch.mean`
 
 ```python
 equals = top64 == labels
@@ -261,7 +258,7 @@ print("Epoch: {}/{}.. ".format(e+1, epochs),
 
 <img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-testing-1.png">
 
-显然我们出现了overfitting，即training error不断降低，但是testing error却不降反升。为了解决Overfitting，常用手段是引入Dropout层，即对参数做Regularization。修改我们的model，加入`nn.Dropout` module
+显然我们的模型出现了过拟合，即training error不断降低，但是testing error却不降反升。为了解决过拟合，常用手段是引入Dropout层，即对参数做Regularization。修改我们的model，加入dropout
 
 ```python
 class Classifier(nn.Module):
@@ -296,11 +293,9 @@ model.train()#enable dropout
 ```
 重新训练，观察上述两个指标的变化情况，如下图所示。基本上我们可以认为我们的模型可以正常工作了。
 
-### 小结
-
-
-
 <img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-testing-2.png">
+
+小结一下，这个例子中我们训练了一个相对复杂一点的神经网络，并解决了一个图片分类的问题。我们实际上是将图片作为一个一维向量，通过四层全链接网络，最后通过Softmax做分类。注意，实际应用中，我们不能通过上述网络对真正的RGB图片进行分类，而需要引入卷积神经网络。
 
 ## Resoures
 
