@@ -127,24 +127,6 @@ Inception Network的基本思想是使用不同尺寸的卷积核提取图片信
 
 注意到图中矩形圈出的部分是一个分支，它可以用来观察对应layer的预测结果，以便观察最终结果是否overfitting
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ### Resources
 
 - [LetNet5 - Gradient-based learning applied to document recognition](https://ieee*plore.ieee.org/document/726791)

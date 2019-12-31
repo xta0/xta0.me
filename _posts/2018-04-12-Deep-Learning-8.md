@@ -129,3 +129,5 @@ $$
 - [OverFeat: Integrated Recognition, Localization and Detection using Convolutional Networks](https://arxiv.org/abs/1312.6229)
 - [YOLO](https://pjreddie.com/darknet/yolo/)
 - [You Only Look Once: Unified, Real-Time Object Detection](https://arxiv.org/abs/1506.02640)
+- [Deep Learning Specialization Course on Coursera](https://www.coursera.org/specializations/deep-learning)
+- [Deep Learning with PyTorch](https://livebook.manning.com/book/deep-learning-with-pytorch/welcome/v-10/)

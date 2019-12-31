@@ -18,28 +18,6 @@ CNN对图片特征的提取是基于卷积运算，由于图片中的像素点�
 
 <div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-conv-kernel.gif"></div>
 
-我们可以用Numpy实现上述计算过程
-
-```python
-def conv_single_step(a_slice_prev, W, b):
-    """
-    Arguments:
-    a_slice_prev -- slice of input data of shape (f, f, n_C_prev)
-    W -- Weight parameters contained in a window - matrix of shape (f, f, n_C_prev)
-    b -- Bias parameters contained in a window - matrix of shape (1, 1, 1)
-    
-    Returns:
-    Z -- a scalar value, the result of convolving the sliding window (W, b) on a slice x of the input data
-    """
-    # Element-wise product between a_slice_prev and W. Do not add the bias yet.
-    s = np.multiply(a_slice_prev, W)
-    # Sum over all entries of the volume s.
-    Z = s.sum()
-    # Add bias b to Z. Cast b to a float() so that Z results in a scalar value.
-    Z = Z+float(b)
-    return Z
-```
-
 假如我们有一副灰度图片，我们可以选取两个固定的卷积核，分别对图像进行水平和竖直的卷积操作（高通滤波）来提取边缘，结果如下图所示
 
 <div><img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-14.png"></div>
@@ -82,23 +60,7 @@ $$
 p = \frac{f-1}{2}
 $$
 
-在计算机视觉中，`f`通常为奇数。在numpy中我们可以使用下面代码对图片增加padding
-
-```python
-import numpy as np
-
-def zero_pad(X, pad):
-    """
-    Argument:
-    X -- python numpy array of shape (m, n_H, n_W, n_C) representing a batch of m images
-    pad -- integer, amount of padding around each image on vertical and horizontal dimensions
-    
-    Returns:
-    X_pad -- padded image of shape (m, n_H + 2*pad, n_W + 2*pad, n_C)
-    """
-    X_pad = np.pad(X, ((0,0),(pad, pad),(pad, pad),(0,0)), mode='constant', constant_values=(0,0);    
-    return X_pad
-```
+在计算机视觉中，`f`通常为奇数。
 
 ### Strided Convolutions
 
@@ -115,7 +77,7 @@ $$
 \lfloor{\frac{n+2p-f}{stride} + 1}\rfloor \times \lfloor{\frac{n+2p-f}{stride} + 1}\rfloor
 $$
 
-### Convolutions Over Volume 
+### 三维卷积运算
 
 在前面的例子中，我们介绍了二维灰度图片的卷积运算，我们可以将原理推广到三维的RGB图片上，对于RGB图片的卷积运算，我们可以用下图表示
 
@@ -220,76 +182,7 @@ $$
 
 Bias $b^{[l]}$的size为 $n_C^{[l]}$
 
-我们还是用Numpy来实现以下上面的过程
-
-```python
-def conv_forward(A_prev, W, b, hparameters):
-    """
-    Implements the forward propagation for a convolution function
-
-    Arguments:
-    A_prev -- output activations of the previous layer, numpy array of shape (m, n_H_prev, n_W_prev, n_C_prev)
-    W -- Weights, numpy array of shape (f, f, n_C_prev, n_C)
-    b -- Biases, numpy array of shape (1, 1, 1, n_C)
-    hparameters -- python dictionary containing "stride" and "pad"
-
-    Returns:
-    Z -- conv output, numpy array of shape (m, n_H, n_W, n_C)
-    cache -- cache of values needed for the conv_backward() function
-    """
-    # Retrieve dimensions from A_prev's shape
-    (m, n_H_prev, n_W_prev, n_C_prev) = A_prev.shape
-    # Retrieve dimensions from W's shape
-    (f, f, n_C_prev, n_C) = W.shape
-    # Retrieve information from "hparameters"
-    stride = hparameters["stride"]
-    pad = hparameters["pad"]
-    # Compute the dimensions of the CONV output volume using the formula given above. Hint: use int() to floor.
-    n_H = int((n_H_prev - f + 2*pad) / stride + 1)
-    n_W = int((n_W_prev - f + 2*pad) / stride + 1)
-    # Initialize the output volume Z with zeros. 
-    Z = np.zeros((m, n_H, n_W, n_C))
-    # Create A_prev_pad by padding A_prev
-    A_prev_pad = zero_pad(A_prev, pad)
-    for i in range(m):                               # loop over the batch of training examples
-        a_prev_pad = A_prev_pad[i, :, :, :]            # Select ith training example's padded activation
-        for h in range(n_H):                           # loop over vertical axis of the output volume
-            for w in range(n_W):                       # loop over horizontal axis of the output volume
-                for c in range(n_C):                   # loop over channels (= #filters) of the output volume
-                    # Find the corners of the current "slice"
-                    vert_start = stride * h
-                    vert_end = vert_start + f
-                    horiz_start = stride * w
-                    horiz_end = horiz_start + f
-                    # Use the corners to define the (3D) slice of a_prev_pad (See Hint above the cell). 
-                    a_slice_prev = a_prev_pad[vert_start:vert_end, horiz_start:horiz_end, :]
-                    # Convolve the (3D) slice with the correct filter W and bias b, to get back one output neuron. 
-                    Z[i, h, w, c] = conv_single_step(a_slice_prev, W[:, :, :, c], b[:, :, :, c])
-    # Making sure your output shape is correct
-    assert(Z.shape == (m, n_H, n_W, n_C))
-    # Save information in "cache" for the backprop
-    cache = (A_prev, W, b, hparameters)
-    return Z, cache
-```
-测试代码如下
-
-```python
-np.random.seed(1)
-#10张4通道的RGBA图片，每张的大小为5x7
-A_prev = np.random.randn(10,5,7,4)
-#8个fileter，每个filter有4通道
-W = np.random.randn(3,3,4,8)
-b = np.random.randn(1,1,1,8)
-#自定义pad和stride
-hparameters = {"pad" : 1,
-               "stride": 2}
-#通过conv层得到的结果
-Z, cache_conv = conv_forward(A_prev, W, b, hparameters)
-#卷积后得到10张8组3x4的图片
-print("Z's shape:", Z.shape) #(10, 3, 4, 8)
-```
-
-### Pooling layer
+### Pooling
 
 Pooling是用来对输入矩阵进行优化的一种方法。举例来说，下图是对一个4x4的矩阵进行max pooling，得到一个2x2的矩阵
 
@@ -307,9 +200,9 @@ $$
 \lfloor{\frac{n_H-f}{stride} + 1}\rfloor \times \lfloor{\frac{n_W-f}{stride} + 1}\rfloor \times n_C
 $$
 
-### A Convolutional Network Example
+### 一个完整的卷积神经网络
 
-一般来说，一个卷积神经网络有下面几种layer
+最后我们来看一个完整的卷积神经网络，一般来说，一个卷积神经网络有下面几种layer
 
 - Convolution
 - Pooling
@@ -333,16 +226,8 @@ $$
 
 对于卷积后图片上每一点的值只和原图中某个局部的区域有关，区域的的大小取决于卷积核的大小，和其余的点无关。而对于FC，每个点的计算都和前一个layer的所有点有关联，因此计算效率会大大降低
 
-### All Together
 
-假设我们要Train一个CNN来识别图片是不是猫。首先我们有一组Training set $(x^{(i)},y^{(i)}) ... (x^{(m)},y^{(m)})$，接下来我们可以构建一个如下图的CNN
+## Resources
 
-<img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-15.png">
-
-接下来我们还需要一个代价函数来计算error
-
-$$
-J = \frac{1}{m}\sum_{i=1}^mL(\hat{y}^{(i)}, y^{(i)})
-$$
-
-最后我们需要用到前面讲过的梯度下降来最小化error，从得到最终的weight和bias
+- [Deep Learning Specialization Course on Coursera](https://www.coursera.org/specializations/deep-learning)
+- [Deep Learning with PyTorch](https://livebook.manning.com/book/deep-learning-with-pytorch/welcome/v-10/)
