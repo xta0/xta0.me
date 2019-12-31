@@ -197,6 +197,7 @@ output = model(images)
 由于我们的模型还未经训练，因此输出结果基本可以认为是等概率分布，接下来我们按照前面的方法来train我们的模型
 
 ```python
+loss_fn = nn.NLLLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.003)
 epochs = 5
 for e in range(epochs):
