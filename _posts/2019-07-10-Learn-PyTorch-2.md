@@ -296,7 +296,14 @@ model.train()#enable dropout
 
 <img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-testing-2.png">
 
-小结一下，这个例子中我们训练了一个相对复杂一点的神经网络，并解决了一个图片分类的问题。我们实际上是将图片作为一个一维向量，通过四层全链接网络，最后通过Softmax做分类。需要注意的是，我们的模型并不能识别所有的手写图片，实际应用中的模型往往是基于卷积神经网络的。但不管如何，我们还是完整的展示了如何用PyTorch设计并训练一个model。
+小结一下，这个例子中我们训练了一个相对复杂一点的神经网络，并解决了一个图片分类的问题。我们实际上是将图片作为一个一维向量，通过四层全链接网络，最后通过Softmax做分类。需要注意的是，我们的模型并不能识别所有的手写图片，实际应用中的模型往往是基于卷积神经网络的。总结一下上面的步骤
+
+1. 准备数据，并可视化。这一步可以使用PyTorch的`datasets`和`torch.utils.data.DataLoader`
+2. 对数据做预处理，这一步可以使用PyTorch的`transforms`
+3. 设计model
+4. 选取Optimizer和loss函数，训练
+5. 观察training error和validation error，并在validation error区域稳定时停止training
+6. 用测试集测试我们的model
 
 ## Resoures
 
