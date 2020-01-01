@@ -1,6 +1,6 @@
 ---
-list_title: 深度学习 | Face Verification and Neural Style Transfer
-title: Face Verification | Neural Style Transfer
+list_title: 深度学习 | Neural Style Transfer
+title: Neural Style Transfer
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
@@ -24,15 +24,19 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 而对于提取特征来说，我们并不需要后面的FC层，只需要保留前面的卷积层即可。论文中使用VGG19，如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn4-vgg19.png" width="80%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-vgg19.png" width="80%">
 
 虽然我们保留了卷积层，但我们还要知道图片通过每个卷积层之后的输出，也就是说各卷积核到底在提取图片的哪些特征，阅读参考文献[2,3]可知，随着卷积网络的加深，卷积层提取的特征粒度将越来越大，比如前几层的卷积层可识别图片的边缘，颜色等，随着网络的加深，后面几层则可以识别人脸，身体等大型特征。
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn4-features.png" width="90%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-features.png" width="90%">
 
-接下来我们要做的就可以将content image通过VGG网络，并
+接下来我们要做的便是根据这几层的输出来重建一张新的图片，新的图片需要具备原图的重要特征。我们首先创建一张空白图片（或者全是噪声的图片）用$T_c$表示，我们将原图通过某个卷积层后的输出结果用$C_c$表示，接下来我们计算两者的差值，使用下面的式子
 
-在论文中，作者重点观察了`conv1_2`, `conv2_2`, `conv3_2`, `conv4_2`和`conv5_2`这几层的输出
+$$
+L_{content} = /frac{1}{2}/sum(T_c-C_c)^2
+$$
+
+接下来我们便可以用梯度下降法求导，并最终确定$T_c$的值。在论文中，作者重点观察了`conv1_2`, `conv2_2`, `conv3_2`, `conv4_2`和`conv5_2`这几层的输出，发现这几层可以很好的重建原图的特征。
 
 ## Resources
 
