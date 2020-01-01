@@ -10,7 +10,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 所谓Netural Style Transfer是指将一幅图片的style信息提取出来并应用到另一幅图片的content上，从而合成一副同时具备两幅图片特征的新图片。如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/01/dl-cnn4-cat-st.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn4-cat-st.png">
 
 接下来的问题便是
 
@@ -24,11 +24,13 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 而对于提取特征来说，我们并不需要后面的FC层，只需要保留前面的卷积层即可，论文中使用VGG19，如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/01/dl-cnn4-vgg19.png" width="80%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn4-vgg19.png" width="80%">
 
 虽然我们保留了卷积层，但我们还要知道图片通过每个卷积层之后的输出，也就是说各卷积核到底在提取图片的哪些特征，阅读参考文献[2,3]可知，随着卷积网络的加深，卷积层提取的特征粒度将越来越大，比如前几层的卷积层可识别图片的边缘，颜色等，随着网络的加深，后面几层则可以识别人脸，身体等大型特征。
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/01/dl-cnn4-features.png" width="90%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn4-features.png" width="90%">
+
+接下来我们要做的就可以将content image通过VGG网络，并
 
 在论文中，作者重点观察了`conv1_2`, `conv2_2`, `conv3_2`, `conv4_2`和`conv5_2`这几层的输出
 
