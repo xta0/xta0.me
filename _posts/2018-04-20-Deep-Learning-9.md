@@ -18,25 +18,44 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 2. 如何提取style image中的style
 3. 如何提取出的content和style重新组合起来
 
-### 提取content
+### Content Representation
 
 参考文献[1]的论文中提到，使用卷积神经网络来帮我们提取content。这里我们要先重新回顾一下前面的内容，以图像分类为例，一个卷积神经网络可以分为两部分，前一部分是由conv2d和pooling组成的卷积层，其作用是提取图片中的特征。后一部分是由FC层和Softmax组成的分类层，其作用是将图片的特征flatten成一维向量并映射到某个具体的类别上。
 
 而对于提取特征来说，我们并不需要后面的FC层，只需要保留前面的卷积层即可。论文中使用VGG19，如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-vgg19.png" width="80%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-vgg19.png" width="90%">
 
-虽然我们保留了卷积层，但我们还要知道图片通过每个卷积层之后的输出，也就是说各卷积核到底在提取图片的哪些特征，阅读参考文献[2,3]可知，随着卷积网络的加深，卷积层提取的特征粒度将越来越大，比如前几层的卷积层可识别图片的边缘，颜色等，随着网络的加深，后面几层则可以识别人脸，身体等大型特征。
+虽然我们保留了卷积层，但我们还要知道图片通过每个卷积层之后的输出，也就是说各卷积核到底在提取图片的哪些特征，阅读参考文献[2,3]可知，随着卷积网络的加深，卷积层提取的特征粒度将越来越大，比如前几层的卷积层可识别图片的边缘，颜色等，随着网络的加深，后面几层则可以识别人脸，身体等大型特征，如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-features.png" width="90%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-features.png">
 
-接下来我们要做的便是根据这几层的输出来重建一张新的图片，新的图片需要具备原图的重要特征。我们首先创建一张空白图片（或者全是噪声的图片）用$T_c$表示，我们将原图通过某个卷积层后的输出结果用$C_c$表示，接下来我们计算两者的差值，使用下面的式子
+> 在论文中，作者观察了VGG19的`conv1_2`, `conv2_2`, `conv3_2`, `conv4_2`和`conv5_2`这几层的输出，发现使用`conv4_2`可以很好的重建原图的特征。
+
+接下来我们要做的便是根据某输出层(`conv4_2`)的图片来重建一张新的图片，新的图片需要具备原图的重要特征。我们首先创建一张目标图片（空白或者全是噪声的图片）用$G$表示。将原图通过`conv4_2`层的输出用$C$表示，最后来我们计算两者element-wise的差值，使用下面的式子
 
 $$
-L_{content} = \frac{1}{2}\sum(T_c-C_c)^2
+L_{content}(C,G) = \left\|a^{[l][G]} - a^{[l][G]} \right\|^2 = \frac{1}{2}\sum(G-C)^2
 $$
 
-接下来我们便可以用梯度下降法求导，并最终确定$T_c$的值。在论文中，作者重点观察了`conv1_2`, `conv2_2`, `conv3_2`, `conv4_2`和`conv5_2`这几层的输出，发现这几层可以很好的重建原图的特征。
+有了上面的loss函数，我们便可以用梯度下降法使$L_{content}最小，$并最终确定$G$的值。
+
+### Style Representation
+
+这一节我们来讨论如何表示图片中的Style信息。论文中指出图片的style信息可以用feature之间的相关性表示，例如我们有一个张image，通过一个卷积层后得到了一个`[4,4,8]`feature matrix，接下来我们让这个三维矩阵变成二维的`[16,8]`，最后我们另这个二维矩阵乘以它自己的转置
+
+style的提取需要用到Gram矩阵，
+
+### Cost函数
+
+有了content和style，接下来我们需要将它们combine起来，方法还是使用Loss函数，步骤如下
+
+1. 初始化$G$的值为一张随机图片
+
+$$
+L_total = \alpha L_content + \beta L_style
+$$
+
 
 ## Resources
 
