@@ -6,11 +6,13 @@ mathjax: true
 categories: ["PyTorch", "Machine Learning","Deep Learning"]
 ---
 
-上一篇文章中我们用PyTorch实现了一个线性回归的模型，这篇文章我们将用神经网络来重新训练我们的模型。虽然我们只有一个feature和极为少量的训练样本，使用神经网络不免有些OverKill了，但使用神经网络的一个有趣之处是我们不知道它最后会帮我们拟合出的什么样的模型。，我们下面会用PyTorch搭建两个简单的神经网络来重新拟合上一篇文章中的模型，最后我们会做一个稍微复杂一点的全FC网络做灰度图片的分类。
+上一篇文章中我们用PyTorch实现了一个线性回归的模型，这篇文章我们将用神经网络来重新训练我们的模型。虽然我们只有一个feature和极为少量的训练样本，使用神经网络不免有些OverKill了，但使用神经网络的一个有趣之处是我们不知道它最后会帮我们拟合出的什么样的模型。
+
+我们下面会用PyTorch搭建两个简单的神经网络来重新拟合上一篇文章中的模型，最后我们会做一个稍微复杂一点的全FC网络做图片分类。
 
 ### 一个神经元的神经网络
 
-PyTorch中神经网络相关的layer称为module，封装在`torch.nn`中，由于我们的模型是线性的，我们可以用`nn.Linear`这个module，此外由于我们只有一个feature，加上我的输出也是一个值，因此我们的神经网络实际上只有一个神经元，输入是一个tensor，输出也是一个tensor。
+PyTorch中神经网络相关的layer称为module，封装在`torch.nn`中，由于我们的模型是线性的，我们可以用`nn.Linear`这个module，此外由于我们的例子中只有一个feature，加上我的输出也是一个值，因此我们的神经网络实际上只有一个神经元，输入是一个tensor，输出也是一个tensor。
 
 ```python
 import torch
@@ -106,14 +108,16 @@ def train_loop(epochs, learning_rate, loss_fn,x, y):
 
 train_loop(5000, 1e-3, nn.MSELoss(),t_xn, t_y)
 ```
-在5000次迭代后，loss收敛在1.950253963470459，接下来我们来可视化一下我们model，观察一些预测结果，并和上一篇的线性的模型做个比较
+在5000次迭代后，loss收敛在1.950253963470459，接下来我们来可视化一下我们model并观察预测结果
 
 <div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
 <div><img src="{{site.baseurl}}/assets/images/2019/06/pytorch-lr-1.png"></div>
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2.png"></div>
 </div>
 
-上图中实心的点为我们的原始数据，绿色的曲线是神经网络拟合出的曲线，标记为x的点为预测值。
+> 上图中实心的点为我们的原始数据，绿色的曲线是神经网络拟合出的曲线，标记为x的点为预测值。
+
+可见相比于上一节的线性模型，我们训练出了一个非线性的预测函数，但实际上我们并不知道这个函数的具体公式是怎样的（虽然我们可以强行将神经网络展开，但是没有必要，我们只知道我们训练了28个参数，这也是神经网络比较神奇的地方。此外我们的hidden layer有13个neuron，这个值是随意指定的，我们也可以尝试增加更多的hidden layer和调整每个layer的神经元数量来达到更精准的拟合。
 
 小结一下，这一节我们用PyTorch构建了一个两层的神经网络，训练了一个非线性模型，解决了一个简单的回归问题。但上述网络还是有些简单，在下面一节中我们将构建一个稍微复杂一点的网络来解决分类问题。
 

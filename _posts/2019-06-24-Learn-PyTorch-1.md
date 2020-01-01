@@ -249,7 +249,7 @@ print("w,b",float(param[0]), float(param[1]))
 
 ### Optimizers
 
-之前机器学习的文章中，我们曾提到过[对传统梯度下降的优化](https://xta0.me/2017/11/17/Machine-Learning-9.html)，例如当数据量大时，可以使用Stochastic Gradient Descent(SGD)，另外还有些优化算法可以帮助我们加快loss函数收敛速度，从而减少训练时间。PyTorch内部提供了一系列优化算法的API，我们可以通过下面API dump出来
+之前机器学习的文章中，我们曾提到过[对传统梯度下降的优化](https://xta0.me/2017/11/17/Machine-Learning-9.html)，例如当数据量大时，可以使用Stochastic Gradient Descent(SGD)，另外还有些优化算法可以帮助我们加快梯度下降的收敛速度，从而减少训练时间。PyTorch内部提供了一系列优化算法的API
 
 ```python
 import torch.optim as optim
@@ -260,7 +260,7 @@ dir(optim))
 '__builtins__', '__cached__', '__doc__', '__file__', '__loader__', 
 '__name__', '__package__', '__path__', '__spec__', 'lr_scheduler']
 ```
-Optimizer通常和autograd配合使用，因为在训练的时候它需要修改`tensor.grad`的值，因此Optimizer内部会retain传入tensor。使用Optimizer的方式也很简单，它提供两个API，一个是`zero_grad`用于清空tensor上保存的导数值，另一个是`step()`用来实现具体的optimize的操作。接下来我们为上面的demo引入一个optimizaer
+Optimizer通常和autograd配合使用，因为在训练的时候它需要修改tensor的梯度值，因此Optimizer内部会retain传入tensor。使用Optimizer的方式也很简单，它提供两个API，一个是`zero_grad()`用于清空tensor上保存的导数值，另一个是`step()`用来实现具体的optimize的操作。接下来我们为上面的demo引入一个optimizaer
 
 ```python
 params = torch.tensor([1.0,0.0], requires_grad=True)
