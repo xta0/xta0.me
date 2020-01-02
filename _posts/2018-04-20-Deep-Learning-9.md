@@ -88,21 +88,22 @@ $$
 
 ### Cost函数
 
-有了前面两个loss函数，接下来我们只需要将它们Combine起来即可
+有了前面两个loss函数，接下来我们只需要将它们Combine起来即可，其中$\alpha$和$\beta$用来控制style和content的权重
 
 $$
-L_{total} = \alpha J_{content}(S,G) + \beta J_{style}(S,G)
+L_{total} = \alpha J_{content}(S,G) + \beta J_{style}(S,G) \\
+G := G - \alpha \frac{\partial L_{total}} {\partial G}
 $$
 
-其中$\alpha$和$\beta$用来控制style和content的权重。我们接下来要做的就是通过梯度下降来生成$G$中的像素点，整个过程如下图所示
+我们接下来要做的就是通过梯度下降不断迭代，更新$G$中的像素点，整个过程如下图所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-cost.png" width="80%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-cost.png">
 
 ### Result
 
-论文给出了一些数据，模型使用VGG19，content来自`conv4_2`的输出；style则来自`conv1_1`,`conv2_1`,`conv3_1`,`conv4_1`,`conv5_1`几层的输出，$\frac{alpha}{beta} = 1 \times 10^{-4}$，不同$\frac{alpha}{beta}$值对结果影响如下
+论文给出了一些数据，模型使用VGG19，content来自`conv4_2`的输出；style则来自`conv1_1`,`conv2_1`,`conv3_1`,`conv4_1`,`conv5_1`几层的输出，${\alpha}/{\beta} = 1 \times 10^{-4}$，不同的$alpha$和$\beta$的比值对结果影响如下
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-ratio.png" width="80%">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-ratio.png">
 
 
 ## Resources
