@@ -35,10 +35,20 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 接下来我们要做的便是根据某输出层(`conv4_2`)的图片来重建一张新的图片，新的图片需要具备原图的重要特征。我们首先创建一张目标图片（空白或者全是噪声的图片）用$G$表示。将原图通过`conv4_2`层的输出用$C$表示，最后来我们计算两者element-wise的差值，使用下面的式子
 
 $$
-L_{content}(C,G) = \left\|a^{[l][G]} - a^{[l][G]} \right\|^2 = \frac{1}{2}\sum(G-C)^2
+L_{content}(C,G) = \left\|a^{[l][G]} - a^{[l][G]} \right\|^2 = \frac{1}{2}\sum_{i,j}^{n_H,n_w}(G_{i,j}^{[l]}-C_{i,j}^{[l]})^2
 $$
 
-有了上面的loss函数，我们便可以用梯度下降法使$L_{content}最小，$并最终确定$G$的值。
+有了上面的loss函数，我们便可以用梯度下降法使$L_{content}最小，$并最终确定$G$的值，上述式子的对$G$的偏导为
+
+$$
+\begin{equation}
+\frac{\partial L_{content}(C,G)}{\partial G_{i,j}^{[l]}} = \left\{
+\begin{array}{rcl}
+(G^{[l]} - C^{[l]})\_{i,j} & & & & & {G_{i,j}^{[l]} > 0} \\
+0 & & & & {G_{i,j}^{[l]} < 0}
+\end{array} \right.
+\end{equation}
+$$
 
 ### Style Representation
 
@@ -63,8 +73,7 @@ $$
 有了gram矩阵的定义，我们就可以算$S$和$G$在$l$层的loss函数
 
 $$
-J_{style}^{[l]} (S,G) = \left\|G_{k,k^{'}}^{[l](S)} - G_{k,k^{'}}^{[l](G)} \right\|^2 \\
-J_{style}^{[l]} (S,G) = \frac{1}{(2n_H^{[l]}n_W^{[l]}n_C^{[l]})^2}\sum{k}\sum{k^{'}}(G_{k,k^{'}}^{[l](S)}-G_{k,k^{'}}^{[l](G)})^2 \\
+J_{style}^{[l]} (S,G) = \left\|G_{k,k^{'}}^{[l](S)} - G_{k,k^{'}}^{[l](G)} \right\|^2 = \frac{1}{(2n_H^{[l]}n_W^{[l]}n_C^{[l]})^2}\sum_{k}^{n_C}\sum_{k^{'}}^{n_C}(G_{k,k^{'}}^{[l](S)}-G_{k,k^{'}}^{[l](G)})^2 \\
 $$
 
 总的loss函数为
