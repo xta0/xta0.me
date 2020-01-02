@@ -70,7 +70,7 @@ G_{k,k^{'}}^{[l](S)} = \sum_{i=1}^{n_H^{[l]}}\sum_{j=1}^{n_W^{[l]}}a_{i,j,k}^{[l
 G_{k,k^{'}}^{[l](G)} = \sum_{i=1}^{n_H^{[l]}}\sum_{j=1}^{n_W^{[l]}}a_{i,j,k}^{[l](G)}a_{i,j,k^{'}}^{[l](G)}
 $$
 
-实际编程中$G^{[l]}$可以用$AA^{T}$来计算，其size为$(n_c^[l],n_c^[l])$，还是以两个`[4,4,8]`feature矩阵为例，则它们的G矩阵为`[8,8]`。
+实际编程中$G^{[l]}$可以用$AA^{T}$来计算，其size为$(n_c^[l],n_c^[l])$。是以上面两个`[4,4,8]`feature矩阵为例，首先将它们转化为两个`[16,8]`的二维矩阵，然后计算$AA^T$，则得到的G矩阵为`[8,8]`。
 
 有了gram矩阵的定义，我们就可以算$S$和$G$在$l$层的loss函数
 
@@ -78,13 +78,13 @@ $$
 J_{style}^{[l]} (S,G) = \left\|G_{k,k^{'}}^{[l](S)} - G_{k,k^{'}}^{[l](G)} \right\|^2 = \frac{1}{(2n_H^{[l]}n_W^{[l]}n_C^{[l]})^2}\sum_{k}^{n_C}\sum_{k^{'}}^{n_C}(G_{k,k^{'}}^{[l](S)}-G_{k,k^{'}}^{[l](G)})^2 \\
 $$
 
-总的loss函数为
+将所有layer叠加，总的loss函数为
 
 $$
 J_{style}(S,G) = \sum_{l=0}^{L}\omega^{[l]}J_{style}^{[l]} (S,G)
 $$
 
-上述式子对$G$可微，因此我们同样可以用梯度下降找到loss函数的最小值，从而确定$G$
+其中$\omega$的取值在`[0,1]`之间，由于上述式子对$G$可微，我们同样可以用梯度下降找到loss函数的最小值，从而确定$G$
 
 ### Cost函数
 
@@ -94,7 +94,13 @@ $$
 L_{total} = \alpha J_{content}(S,G) + \beta J_{style}(S,G)
 $$
 
-其中$\alpha$和$\beta$用来控制style化的程度，论文中采用$\frac{\alpha}{\beta}$的比值来控制style占图中的比重，其中$\beta$值越大，图片约失真，如下图所示
+其中$\alpha$和$\beta$用来控制style和content的权重。我们接下来要做的就是通过梯度下降来生成$G$中的像素点，整个过程如下图所示
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-cost.png" width="80%">
+
+### Result
+
+论文给出了一些数据，模型使用VGG19，content来自`conv4_2`的输出；style则来自`conv1_1`,`conv2_1`,`conv3_1`,`conv4_1`,`conv5_1`几层的输出，$\frac{alpha}{beta} = 1 \times 10^{-4}$，不同$\frac{alpha}{beta}$值对结果影响如下
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-ratio.png" width="80%">
 
