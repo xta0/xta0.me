@@ -46,7 +46,7 @@ $$
 
 <div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
 <div><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-style-1.png"></div>
-<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-style-2.png"></div>
+<div class="md-margin-left-24"><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-style-2.png"></div>
 </div>
 
 具体来说，假如我们的feature矩阵如左图所示，其中前两层为例（红色和黄色）分别对应右图的两个红色框的feature矩阵，则所谓的相关性可表示为当第一层出现“竖条”这样的图案时，第二层的颜色是“橘黄色”。
@@ -54,8 +54,8 @@ $$
 相关性在数学上可以用**Gram**矩阵表示，我们用$i$,$j$,$k$分别表示$n_i$,$n_j$和$n_c$，用$l$表示第某$l$层，用$a_{i,j,k}^{[l]}$表示feature矩阵，$G,S$分别表示目标图片和Style图片，则$G^{[l]}$的定义如下
 
 $$
-G_{k,k^{'}}^{[l](S)} = \sum{i=1}{n_H^{[l]}}\sum{j=1}{n_W^{[l]}}a_{i,j,k}^{[l](S)}a_{i,j,k^{'}}^{[l](S)} \\
-G_{k,k^{'}}^{[l](G)} = \sum{i=1}{n_H^{[l]}}\sum{j=1}{n_W^{[l]}}a_{i,j,k}^{[l](G)}a_{i,j,k^{'}}^{[l](G)}
+G_{k,k^{'}}^{[l](S)} = \sum_{i=1}^{n_H^{[l]}}\sum_{j=1}^{n_W^{[l]}}a_{i,j,k}^{[l](S)}a_{i,j,k^{'}}^{[l](S)} \\
+G_{k,k^{'}}^{[l](G)} = \sum_{i=1}^{n_H^{[l]}}\sum_{j=1}^{n_W^{[l]}}a_{i,j,k}^{[l](G)}a_{i,j,k^{'}}^{[l](G)}
 $$
 
 实际编程中$G^{[l]}$可以用$AA^{T}$来计算，其size为$(n_c^[l],n_c^[l])$，还是以两个`[4,4,8]`feature矩阵为例，则它们的G矩阵为`[8,8]`。
@@ -63,7 +63,7 @@ $$
 有了gram矩阵的定义，我们就可以计算目标图片和style图片的loss函数
 
 $$
-J_style^{[l]} (S,G) = \frac{1}{(2n_H^[l]n_W^[l]n_C^[l])^2}\sum{k}\sum{k^{'}}(G_{k,k^{'}}^{[l](S)}-G_{k,k^{'}}^{[l](G)})^2
+J_{style}^{[l]} (S,G) = \frac{1}{(2n_H^{[l]}n_W^{[l]}n_C^{[l]})^2}\sum{k}\sum{k^{'}}(G_{k,k^{'}}^{[l](S)}-G_{k,k^{'}}^{[l](G)})^2
 $$
 
 
