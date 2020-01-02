@@ -60,16 +60,20 @@ $$
 
 实际编程中$G^{[l]}$可以用$AA^{T}$来计算，其size为$(n_c^[l],n_c^[l])$，还是以两个`[4,4,8]`feature矩阵为例，则它们的G矩阵为`[8,8]`。
 
-有了gram矩阵的定义，我们就可以计算目标图片和style图片的loss函数
+有了gram矩阵的定义，我们就可以算$S$和$G$在$l$层的loss函数
 
 $$
-J_{style}^{[l]} (S,G) = \frac{1}{(2n_H^{[l]}n_W^{[l]}n_C^{[l]})^2}\sum{k}\sum{k^{'}}(G_{k,k^{'}}^{[l](S)}-G_{k,k^{'}}^{[l](G)})^2
+J_{style}^{[l]} (S,G) = \left\|G_{k,k^{'}}^{[l](S)} - G_{k,k^{'}}^{[l](G)} \right\|^2 \\
+J_{style}^{[l]} (S,G) = \frac{1}{(2n_H^{[l]}n_W^{[l]}n_C^{[l]})^2}\sum{k}\sum{k^{'}}(G_{k,k^{'}}^{[l](S)}-G_{k,k^{'}}^{[l](G)})^2 \\
+$$
+
+总的loss函数为
+
+$$
+J_{style}(S,G) = \sum_{l=0}^{L}\omega^{[l]}J_{style}^{[l]} (S,G)
 $$
 
 
-接下来我们让这个三维矩阵变成二维的`[16,8]`，最后我们另这个二维矩阵乘以它自己的转置
-
-style的提取需要用到Gram矩阵，
 
 ### Cost函数
 
@@ -78,7 +82,7 @@ style的提取需要用到Gram矩阵，
 1. 初始化$G$的值为一张随机图片
 
 $$
-L_total = \alpha L_content + \beta L_style
+L_{total} = \alpha L_{content} + \beta L_{style}
 $$
 
 
