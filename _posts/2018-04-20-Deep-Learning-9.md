@@ -38,17 +38,19 @@ $$
 L_{content}(C,G) = \left\|a^{[l][G]} - a^{[l][G]} \right\|^2 = \frac{1}{2}\sum_{i,j}^{n_H,n_w}(G_{i,j}^{[l]}-C_{i,j}^{[l]})^2
 $$
 
-有了上面的loss函数，我们便可以用梯度下降法使$L_{content}最小，$并最终确定$G$的值，上述式子的对$G$的偏导为
+上述式子的对$G$的偏导为
 
 $$
 \begin{equation}
 \frac{\partial L_{content}(C,G)}{\partial G_{i,j}^{[l]}} = \left\{
 \begin{array}{rcl}
-(G^{[l]} - C^{[l]})\_{i,j} & & & & & {G_{i,j}^{[l]} > 0} \\
-0 & & & & {G_{i,j}^{[l]} < 0}
+{(G^{[l]} - C^{[l]})}_{i,j} & & {G_{i,j}^{[l]} > 0} \\
+0 & &  {G_{i,j}^{[l]} < 0}
 \end{array} \right.
 \end{equation}
 $$
+
+有了上面的loss函数，我们便可以用梯度下降法使$L_{content}最小，$并最终确定$G$的值
 
 ### Style Representation
 
@@ -82,17 +84,19 @@ $$
 J_{style}(S,G) = \sum_{l=0}^{L}\omega^{[l]}J_{style}^{[l]} (S,G)
 $$
 
-
+上述式子对$G$可微，因此我们同样可以用梯度下降找到loss函数的最小值，从而确定$G$
 
 ### Cost函数
 
-有了content和style，接下来我们需要将它们combine起来，方法还是使用Loss函数，步骤如下
-
-1. 初始化$G$的值为一张随机图片
+有了前面两个loss函数，接下来我们只需要将它们Combine起来即可
 
 $$
-L_{total} = \alpha L_{content} + \beta L_{style}
+L_{total} = \alpha J_{content}(S,G) + \beta J_{style}(S,G)
 $$
+
+其中$\alpha$和$\beta$用来控制style化的程度，论文中采用$\frac{\alpha}{\beta}$的比值来控制style占图中的比重，其中$\beta$值越大，图片约失真，如下图所示
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-ratio.png" width="80%">
 
 
 ## Resources
