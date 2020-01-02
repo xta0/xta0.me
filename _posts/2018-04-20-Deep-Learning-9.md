@@ -42,7 +42,32 @@ $$
 
 ### Style Representation
 
-这一节我们来讨论如何表示图片中的Style信息。论文中指出图片的style信息可以用feature之间的相关性表示，例如我们有一个张image，通过一个卷积层后得到了一个`[4,4,8]`feature matrix，接下来我们让这个三维矩阵变成二维的`[16,8]`，最后我们另这个二维矩阵乘以它自己的转置
+这一节我们来讨论如何表示图片中的Style信息。论文中指出图片的style信息可以用feature之间的相关性表示，例如我们有一个张image，通过一个卷积层$l$后得到了一个`[4,4,8]`feature矩阵，则style信息就可以用这8个`[4,4]`矩阵的相关性来表示。
+
+<div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
+<div><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-style-1.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-style-2.png"></div>
+</div>
+
+具体来说，假如我们的feature矩阵如左图所示，其中前两层为例（红色和黄色）分别对应右图的两个红色框的feature矩阵，则所谓的相关性可表示为当第一层出现“竖条”这样的图案时，第二层的颜色是“橘黄色”。
+
+相关性在数学上可以用**Gram**矩阵表示，我们用$i$,$j$,$k$分别表示$n_i$,$n_j$和$n_c$，用$l$表示第某$l$层，用$a_{i,j,k}^{[l]}$表示feature矩阵，$G,S$分别表示目标图片和Style图片，则$G^{[l]}$的定义如下
+
+$$
+G_{k,k^{'}}^{[l](S)} = \sum{i=1}{n_H^{[l]}}\sum{j=1}{n_W^{[l]}}a_{i,j,k}^{[l](S)}a_{i,j,k^{'}}^{[l](S)} \\
+G_{k,k^{'}}^{[l](G)} = \sum{i=1}{n_H^{[l]}}\sum{j=1}{n_W^{[l]}}a_{i,j,k}^{[l](G)}a_{i,j,k^{'}}^{[l](G)}
+$$
+
+实际编程中$G^{[l]}$可以用$AA^{T}$来计算，其size为$(n_c^[l],n_c^[l])$，还是以两个`[4,4,8]`feature矩阵为例，则它们的G矩阵为`[8,8]`。
+
+有了gram矩阵的定义，我们就可以计算目标图片和style图片的loss函数
+
+$$
+J_style^{[l]} (S,G) = \frac{1}{(2n_H^[l]n_W^[l]n_C^[l])^2}\sum{k}\sum{k^{'}}(G_{k,k^{'}}^{[l](S)}-G_{k,k^{'}}^{[l](G)})^2
+$$
+
+
+接下来我们让这个三维矩阵变成二维的`[16,8]`，最后我们另这个二维矩阵乘以它自己的转置
 
 style的提取需要用到Gram矩阵，
 
