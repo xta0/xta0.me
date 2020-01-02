@@ -32,7 +32,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 > 在论文中，作者观察了VGG19的`conv1_2`, `conv2_2`, `conv3_2`, `conv4_2`和`conv5_2`这几层的输出，发现使用`conv4_2`可以很好的重建原图的特征。
 
-接下来我们要做的便是根据某输出层(`conv4_2`)的图片来重建一张新的图片，新的图片需要具备原图的重要特征。我们首先创建一张目标图片（空白或者全是噪声的图片）用$G$表示。将原图通过`conv4_2`层的输出用$C$表示，最后来我们计算两者element-wise的差值，使用下面的式子
+接下来我们要做的便是根据某输出层(例如`conv4_2`)的图片来重建一张新的图片，新的图片需要具备原图的重要特征。我们首先创建一张目标图片（可以直接用原图）并让其通过某层（例如`conv4_2`），结果用$G$表示。接着将原图也通过该层，输出用$C$表示，最后来我们计算$G$和$C$的element-wise的差值，使用下面的式子
 
 $$
 L_{content}(C,G) = \left\|a^{[l][G]} - a^{[l][G]} \right\|^2 = \frac{1}{2}\sum_{i,j}^{n_H,n_w}(G_{i,j}^{[l]}-C_{i,j}^{[l]})^2
@@ -101,7 +101,7 @@ $$
 
 ### Result
 
-论文给出了一些数据，模型使用VGG19，content来自`conv4_2`的输出；style则来自`conv1_1`,`conv2_1`,`conv3_1`,`conv4_1`,`conv5_1`几层的输出，${\alpha}/{\beta} = 1 \times 10^{-4}$，不同的$alpha$和$\beta$的比值对结果影响如下
+论文给出了一些数据，模型使用VGG19，content来自`conv4_2`的输出；style则来自`conv1_1`,`conv2_1`,`conv3_1`,`conv4_1`,`conv5_1`几层的输出，${\alpha}/{\beta} = 1 \times 10^{-4}$，不同的$\alpha$和$\beta$的比值对结果影响如下
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-4-ratio.png">
 
