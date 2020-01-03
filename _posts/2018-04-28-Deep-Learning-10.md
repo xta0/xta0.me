@@ -25,6 +25,13 @@ $$
 
 ### Recurrent Neural Network
 
-RNN的核心概念是每层的输入不仅来自前一层的输出，还来自该层对应的$x\<i\>$，如下图所示
+RNN的核心概念是每层的输入除了对应的$x^{\<i\>}$之外，还来自前一层的输出，如下图所示
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-nn.png">
+
+其中$a^{<0>}> = 0$，$a^{<1>}$, $y^{<1>}$的计算方式如下
+
+$$
+a^{<1>} = g(\omega_{aa}a^{<0>} + \omega_{ax}x^{<1>} + b_a) \\
+\hat y^{<1>} = g(\omega_{ya}a^{<1>} + b_y) \\
+$$
