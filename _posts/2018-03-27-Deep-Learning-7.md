@@ -1,5 +1,5 @@
 ---
-list_title: 深度学习 | Classic CNN Models | 几种经典的CNN Model
+list_title: 深度学习 | Classic CNN Models
 title: Classic CNN Models
 layout: post
 mathjax: true

@@ -1,5 +1,5 @@
 ---
-list_title: 深度学习 | Neural Networks | 神经网络
+list_title: 深度学习 | Neural Networks 
 title: Build Neural Networks
 layout: post
 mathjax: true

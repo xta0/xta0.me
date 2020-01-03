@@ -1,5 +1,5 @@
 ---
-list_title: 深度学习 | Deep Layer Neural Networks | 多层神经网络
+list_title: 深度学习 | Deep Layer Neural Networks
 title: Deep-Layer Neural Networks
 layout: post
 mathjax: true

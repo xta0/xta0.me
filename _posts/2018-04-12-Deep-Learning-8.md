@@ -1,5 +1,5 @@
 ---
-list_title: 深度学习 | Object Detection | 目标检测
+list_title: 深度学习 | Object Detection
 title: Object Detection
 layout: post
 mathjax: true

@@ -1,5 +1,5 @@
 ---
-list_title: 深度学习 | Convolutional Neural Networks | 卷积神经网络
+list_title: 深度学习 | Convolutional Neural Networks
 title: Convolutional Neural Networks
 layout: post
 mathjax: true
