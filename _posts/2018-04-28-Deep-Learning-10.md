@@ -35,3 +35,10 @@ $$
 a^{<1>} = g(\omega_{aa}a^{<0>} + \omega_{ax}x^{<1>} + b_a) \\
 \hat y^{<1>} = g(\omega_{ya}a^{<1>} + b_y) \\
 $$
+
+对于$a^{\<t\>}$, 其中常用的activation函数为$tanh$或$ReLU$，对于$\hat y^{<i>}$，可以用$sigmoid$函数。Generalize一下
+
+$$
+a^{\<t\>} = g(\omega_{aa}a^{\<t-1\>} + \omega_{ax}x^{\<t\>} + b_a) \\
+\hat y^{\<t\>} = g(\omega_{ya}a^{\<t\>} + b_y) \\
+$$
