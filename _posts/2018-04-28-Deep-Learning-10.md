@@ -39,6 +39,8 @@ $$
 对于$a^{\<t\>}$, 其中常用的activation函数为$tanh$或$ReLU$，对于$\hat y^{<i>}$，可以用$sigmoid$函数。Generalize一下
 
 $$
-a^{\<t\>} = g(\omega_{aa}a^{\<t-1\>} + \omega_{ax}x^{\<t\>} + b_a) \\
-\hat y^{\<t\>} = g(\omega_{ya}a^{\<t\>} + b_y) \\
+a^{\<t\>} = g(\Omega_{aa}a^{\<t-1\>} + \Omega_{ax}x^{\<t\>} + b_a) \\
+\hat y^{\<t\>} = g(\Omega_{ya}a^{\<t\>} + b_y) \\
 $$
+
+简单起见，我们可以将$\Omega_{aa}$和$\Omega_{ax}$合并，假设，$\Omega_{aa}$为`[100,100]`, $\Omega_{ax}$为`[100,10000]`(通常来说$\Omega_{ax}$较宽)，则可以将$\Omega_{ax}$放到$\Omega_{aa}$的右边，即$[\Omega_{aa}|\Omega_{ax}]$，则合成后的矩阵$\Omega_{a}$为`[100，10100]`。$\Omega$矩阵合并后，我们也需要将$a^{\<t-1\>}$和$x^{\<t\>}$合并，合并方法类似，从水平改为竖直 $[\frac{a^{\<t-1\>}{x^{\<t\>}}}]$得到`[10100,100]`的矩阵
