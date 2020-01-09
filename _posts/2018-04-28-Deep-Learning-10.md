@@ -87,3 +87,5 @@ $$
 - [Deep Learning Specialization Course on Coursera](https://www.coursera.org/specializations/deep-learning)
 - [Deep Learning with PyTorch](https://livebook.manning.com/book/deep-learning-with-pytorch/welcome/v-10/)
 
+
+
