@@ -97,7 +97,9 @@ Cats average 15 hours of sleep a day. <EOS>
 
 上述的RNN模型可以做到根据前面已有的单词来预测下一个单词是什么
 
-### Sample Sequences
+### GRU
+
+不难发现，上面的RNN模型是基于前面的单词来预测后面出现的单词
 
 ## Resources
 

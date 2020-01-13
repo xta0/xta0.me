@@ -13,6 +13,12 @@ categories: [C,C++]
 
 这种方式的好处是简单粗暴，静态库中的代码和目标工程中的代码一起编译连接，linker可以做全局的symbol级别的optimization，比如strip掉dead code等。使用静态库的劣势在于它会增加binary的大小，更重要的是如果静态库中的代码更新了，整个工程需要重新编译，不够灵活。
 
+在UNIX操作系统中，静态库的表示方法为
+
+```shell
+lib + <library name> + .a
+```
+
 ### 静态链接与`-dead_strip`
 
 静态链接相对来说比较简单，如上图中展示了一个静态库被链接进一个executable的全过程，对于这种情况，binary中最终只会链接静态库中被用到的symbols，如下图所示
