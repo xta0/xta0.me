@@ -49,10 +49,11 @@ categories: [Git,Cheatsheet]
 - revert暂存区的提交: `git reset HEAD -- <filename>` 
 - revert到某个commit `git reset --hard <commit_id>`
 
-### Clean
+### Delete
 
-- 清理工作区的未追踪文件: `git clean -fxd`
-- 清理Git缓存: `git gc`
+- 删除工作区的未追踪文件: `git clean -fxd`
+- 删除暂存区中的文件: `git cache rm <file>`
+- 删除Git缓存: `git gc`
 
 ### Stash
 
@@ -78,15 +79,18 @@ categories: [Git,Cheatsheet]
 
 ### Commit
 
-- 修改本地当前的commit的message：`git commit --amend`
-- 修改本地当前的commit中的个人信息: `git commit --amend --author="name <email>"`
-- 修改本地之前的commit的message：`git rebase -i` 后选择`r`
+- 修改本地当前的commit：`git commit --amend`
+- 修改本地当前的commit的提交信息: `git commit --amend --author="name <email>"`
+- revert本地的commit: `git reset --hard`
+- 修改之前commit的内容
+    - `git rebase -i <commit>^`
+    - 标记要修改的commit为edit
+    - 修改完成后执行`git add`修改添加到暂存区
+    - `git commit --amend`
+    - `git rebase --continue`
 - 合并commit
     - `git rebase -i `
     - pick一个commit作为最终合并后的commit，其它的commit会合并到它上面
-- revert当前本地的commit: `git reset --hard`
-- 删除暂存区中的文件
-    - `git cache rm <file>`
 
 ### Cherry-pick
 
