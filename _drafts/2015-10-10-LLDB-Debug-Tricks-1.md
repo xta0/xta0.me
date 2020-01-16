@@ -28,6 +28,75 @@ lldb -n Finder -w
 pkill Finder
 ```
 
+### 在LLDB中使用`ls`
+
+我们经常希望在LLDB中可以执行`ls`命令，我们需要用 `-f` 参数告诉lldb来执行`/bin/ls`
+
+```shell
+> lldb -f /bin/ls
+(lldb) process launch
+```
+`process launch`命令会列出当前目录下的文件，如果想要切换路径需要用`-w`或者`--`
+
+```shell
+(lldb) process launch -w /Applications
+(lldb) process launch -- /Applications
+```
+如果是相对路径则要用`-X true`告诉LLDB将路径展开
+
+```shell
+(lldb) process launch -X true -- ~/Desktop
+```
+
+实际上上面命令都可以用`run`简化
+
+```shell
+(lldb) help run
+#'run' is an abbreviation for 'process launch -X true --'
+```
+
+### Breakpoint
+
+XCode中自带的符号断点非常强大和好用，但是我们也可以使用LLDB完成更高级的任务。在介绍如何用LLDB之前，我们要先了解`image`命令
+
+```shell
+(lldb) image lookup -n "-[UIViewController viewDidLoad]"
+# Address: UIKitCore[0x0000000000438886] (UIKitCore.__TEXT.__text + 4414950)
+# Summary: UIKitCore`-[UIViewController viewDidLoad]
+```
+上述命令可以打印出`viewDidLoad`在哪个framework中，其中`-n`表示**完全匹配**搜索的函数或者symbol，我们也可以用`-rn` 后面接正则表达式来查询某个符号。
+
+回到LLDB，实践中比较有效的debug方式是加基于Regex的符号断点
+
+```shell
+(lldb) rb '\-\[UIViewController\ ' 
+(lldb) rb . -f DetailViewController.swift #给所有DetailViewController.swift中的方法打断点
+(lldb) rb . #给每行代码都打断点
+(lldb) rb . -s UIKitCore #给UIKitCore这个库打断点
+(lldb) rb . -s UIKitCore -o 1 #one-shot 断点，只hit UIKitCore的第一个方法，执行完后断点自动delete
+```
+还有更复杂的case
+
+```shell
+(lldb) breakpoint set -n "-[UIViewController viewDidLoad]" -C "po $arg1" -G1
+```
+上述命令给所有的`-[UIViewController viewDidLoad]`都打上断点，当hit后执行(`-C`) `po $arg1`，`-G1`的意思是告诉LLDB命令执行完后继续向下执行
+
+
+### MISC
+
+- env
+
+`env`会列出当前lldb环境中所有可见的环境变量，我们可以
+
+```shell
+> lldb -f /bin/ls
+(lldb)env
+(lldb)process launch -v LSCOLORS=Ab -v CLICOLOR=1 -- /Applications/
+```
+
+
+
 
 
 
