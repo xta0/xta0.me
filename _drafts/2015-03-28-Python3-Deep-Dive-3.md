@@ -5,11 +5,9 @@ layout: post
 categories: [Python]
 ---
 
-在介绍函数之前，我们先来复习下Python的一些基础知识
+### Tupe和数组
 
-### Tupes
-
-在介绍函参数之前，先来回顾一下Python中的Tuple，在Python中，Tuple的定义是被`,`分割的value而不是`()`，`()`的作用是为了让Tuple看起来更容易理解
+在Python中，Tuple的定义是被`,`分割的value而不是`()`，`()`的作用是为了让Tuple看起来更容易理解
 
 ```shell
 Python 3.7.0 (default, Mar 15 2017, 12:20:11)
@@ -31,7 +29,26 @@ Type "help", "copyright", "credits" or "license" for more information.
 ```
 如果想要定义一个空的Tuple，可以使用`x=()`，此时编译器理解`()`，或者使用类定义，`x=tuple()`
 
-### Unpacking Values
+和Tuple比较相似的是数组，区别是数组是mutable的，因此在创建时占用更大的空间
+
+```python
+l = [1, 2, 3]
+l.__sizeof__() #64
+t = (1, 2, 3)
+t.__sizeof__() #48
+```
+数组占用空间大的原因是为了后面追加元素时节省开销，而Tuple是immutable的，创建后不能修改，因此不需要额外的空间。由于数组的开销更大，因此在性能上Tuple的创建也较为快些
+
+```shell
+python3 -m timeit 'x=(1,2,3,4,5,6)'
+#20000000 loops, best of 5: 11.6 nsec per loop
+python3 -m timeit 'x=[1,2,3,4,5,6]'
+#5000000 loops, best of 5: 46.7 nsec per loop
+```
+
+### 
+
+### Pack与Unpack
 
 所谓Packed Values是指一些值以某种方式被pack到一起，最常见的有tuple, list, string, set, 和map这些集合类。对于这些集合类，Python提供了一种展开的方式，即将集合类中的元素以tuple的形式展开
 
@@ -86,11 +103,3 @@ a, *b, c = 1,2,3,4 #a = 1, b = [2,3], c = 4
 a, *b = {"key1":123, "key2":456, "key3": 789} #a = "key1", b= ["key2","key3"]
 ```
 `*`也可以用到等号右边
-
-```python
-
-```
-
-
-
-{% include _partials/post-footer-2.html %}

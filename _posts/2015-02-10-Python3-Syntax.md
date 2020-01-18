@@ -5,112 +5,6 @@ title: Python3 语法速查
 categories: [Python]
 ---
 
-### Multiline Program
-
-- Implicit
-    - list literals: `[]`
-    - tuple literals: `()`
-    - dictionary literals: `{}`
-    - set literals: `{}`
-    - function arguments/parameters
-
-
-<div class="highlight md-flex-h">
-<div>
-<pre class="highlight language-python md-height-full">
-<code class="language-python">
-[1, #item1      
-2, #item2
-3  #item3
-]
-</code>
-</pre>
-</div>
-<div class="md-margin-left-12">
-<pre class="highlight language-python md-height-full">
-<code class="language-python">
-def my_func(
-    a,
-    b,  #comment
-    c):
-    print(a,b,c)
-my_func(10, #comment
-        20,30)
-</code>
-</pre>
-</div>
-<div class="md-margin-left-12">
-<pre class="highlight language-python md-height-full">
-<code class="language-python">
-a = { 
-    'key1': 1, #value for key1
-    'leu2': 2, #value for key2
-}
-</code>
-</pre>
-</div>
-</div>
-
-- Explicit
-
-You can break up statements over multiple lines explicitly by using `\`(backslash) character, Multi-line statements are not implicitly converted to a single logical line, commnets cannot be part of a statment
-
-```python
-# WRONG!        #RIGHT          #WRONG
-if  a           if  a \         if  a \
-    and b           and b \         and b \ #Coment
-    and c:          and c:          and c: 
-```
-
-- Multi-Line String Literals
-
-Multi-line string iterals can be created using tirple delimiters (`'` or `"`)
-
-```
-'''This is                     """Thi is
-a multi-line string'''         a multi-line string"""
-```
-A multiline-line string is just a regular string. Be aware that non-visible characters such as newlines, tabs, etc. are actually part of the string-basically anything you type. 
-<div class="highlight md-flex-h">
-<div>
-<pre class="highlight language-python">
-<code class="language-python">
-a = ''' this is a string '''
-# 'this is a string'
-</code>
-</pre>
-</div>
-<div class="md-margin-left-12">
-<pre class="highlight language-python">
-<code class="language-python">
-a = '''this 
-is a string'''
-# 'this\nis a string'
-</code>
-</pre>
-</div>
-</div>
-
-Multiline-strings can be used as a special comments called **docstrings**.
-You can use escaped characters(e.g. `\n`, `\t`), using string formatting, etc.
-
-Escape | What it does.
-------------- | -------------
-`\\` |  Backslash (`\`)
-`\'` | Single-quote (`’`)
-`\"` | Double-quote (`”`)
-`\a` | ASCII bell (BEL)
-`\b` | ASCII backspace (BS)
-`\f` | ASCII formfeed (FF)
-`\n` | ASCII linefeed (LF)
-`\N` | {name} Character named name in the Unicode database (Unicode only)
-`\r` | Carriage Return (CR)
-`\t` | Horizontal Tab (TAB)
-`\uxxxx` | Character with 16-bit hex value `xxxx`
-`\Uxxxxxxxx` | Character with 32-bit hex value `xxxxxxxx`
-`\v` | ASCII vertical tab (VT)
-`\ooo` | Character with octal value `ooo`
-`\xhh` | Character with hex value `hh`
 
 
 ## Printing
@@ -152,10 +46,6 @@ print("Is it greater or equal?", 5 >= -2) #Is it greater or equal? True
     #使用fstring
     print(f"{name} is {age} years old ") #my name is tao
     ```
-- 转义字符
-
-
-
 
 ## Primary Types
 
@@ -295,7 +185,16 @@ def func:
     ```
 
 - **Dictionary**
-    - 无序map
+    - 创建方式
+
+    ```python
+    d1 = {'name': 'jason', 'age': 20, 'gender': 'male'}
+    d2 = dict({'name': 'jason', 'age': 20, 'gender': 'male'})
+    d3 = dict([('name', 'jason'), ('age', 20), ('gender', 'male')])
+    d4 = dict(name='jason', age=20, gender='male')
+    ```
+
+    - 无序字典
 
     ```python
     d={'k1':123, 'k2':[0,1,2], 'k3':{'insidekey':100}}
@@ -303,8 +202,13 @@ def func:
     d['k4']="abc"
     keys = d.keys() 
     ```
+    <mark>Python 3.7后字典变成有序字典</mark>
 
-    - functional API
+    - 访问
+        - 使用`[]`访问，如果key不存在则抛异常
+        - 使用`get(key)`访问，如果key不存在则返回默认值
+
+    - 函数式API
 
     ```python
     #{key:value | 规则}
@@ -1095,6 +999,116 @@ f.seek(0)
 # Read again
 str = f.read() #Second line written to file like object
 ```
+
+## 多行表示
+
+### Multiline Program
+
+- Implicit
+    - list literals: `[]`
+    - tuple literals: `()`
+    - dictionary literals: `{}`
+    - set literals: `{}`
+    - function arguments/parameters
+
+
+<div class="highlight md-flex-h">
+<div>
+<pre class="highlight language-python md-height-full">
+<code class="language-python">
+[1, #item1      
+2, #item2
+3  #item3
+]
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight language-python md-height-full">
+<code class="language-python">
+def my_func(
+    a,
+    b,  #comment
+    c):
+    print(a,b,c)
+my_func(10, #comment
+        20,30)
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight language-python md-height-full">
+<code class="language-python">
+a = { 
+    'key1': 1, #value for key1
+    'leu2': 2, #value for key2
+}
+</code>
+</pre>
+</div>
+</div>
+
+- Explicit
+
+You can break up statements over multiple lines explicitly by using `\`(backslash) character, Multi-line statements are not implicitly converted to a single logical line, commnets cannot be part of a statment
+
+```python
+# WRONG!        #RIGHT          #WRONG
+if  a           if  a \         if  a \
+    and b           and b \         and b \ #Coment
+    and c:          and c:          and c: 
+```
+
+- Multi-Line String Literals
+
+Multi-line string iterals can be created using tirple delimiters (`'` or `"`)
+
+```
+'''This is                     """Thi is
+a multi-line string'''         a multi-line string"""
+```
+A multiline-line string is just a regular string. Be aware that non-visible characters such as newlines, tabs, etc. are actually part of the string-basically anything you type. 
+<div class="highlight md-flex-h">
+<div>
+<pre class="highlight language-python">
+<code class="language-python">
+a = ''' this is a string '''
+# 'this is a string'
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight language-python">
+<code class="language-python">
+a = '''this 
+is a string'''
+# 'this\nis a string'
+</code>
+</pre>
+</div>
+</div>
+
+Multiline-strings can be used as a special comments called **docstrings**.
+You can use escaped characters(e.g. `\n`, `\t`), using string formatting, etc.
+
+Escape | What it does.
+------------- | -------------
+`\\` |  Backslash (`\`)
+`\'` | Single-quote (`’`)
+`\"` | Double-quote (`”`)
+`\a` | ASCII bell (BEL)
+`\b` | ASCII backspace (BS)
+`\f` | ASCII formfeed (FF)
+`\n` | ASCII linefeed (LF)
+`\N` | {name} Character named name in the Unicode database (Unicode only)
+`\r` | Carriage Return (CR)
+`\t` | Horizontal Tab (TAB)
+`\uxxxx` | Character with 16-bit hex value `xxxx`
+`\Uxxxxxxxx` | Character with 32-bit hex value `xxxxxxxx`
+`\v` | ASCII vertical tab (VT)
+`\ooo` | Character with octal value `ooo`
+`\xhh` | Character with hex value `hh`
+
 
 
 

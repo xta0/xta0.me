@@ -15,7 +15,9 @@ categories: [XCode,iOS]
 - 删掉break: `br delete 1`
 - 开关break: `br e 1`,`br di 1`
 - 设置break point: `b MyViewController.m :30`
-- 继续:`c`,下一条:`n`,进入某个函数:`s`
+- 继续:`c`
+- 断点后但不执行`n`, 
+- 进入某个函数:`s`
 - 结束:`finish`
 - 执行表达式`expr`
 
@@ -45,7 +47,9 @@ Enter your debugger command(s).  Type 'DONE' to end.
 - `bt` = `thread backtrace`
 - `br all`
 - `thread list`
-- `frame variable`:
+- `frame info`
+- `frame select <num>`
+- `frame variable`
 
 ```shell
 (lldb) frame variable
@@ -55,6 +59,7 @@ Enter your debugger command(s).  Type 'DONE' to end.
 (lldb) frame variable self
 (TBCityStoreMenuViewController *const) self = 0x09646820
 ```
+- `frame variable -F self`
 - `watchpoint list`
 - `watchpoint delete 1`
 
