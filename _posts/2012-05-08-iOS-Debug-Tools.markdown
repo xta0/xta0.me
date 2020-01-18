@@ -163,6 +163,7 @@ dict : the python session dictionary
 
 otool用来查看Mach-O文件格式
 - `otool -h`:查看头部信息
+- `otool -l`:查看LOAD CMD
 
 ### dSYM & DWARF
 

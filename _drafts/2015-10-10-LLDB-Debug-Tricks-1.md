@@ -55,18 +55,20 @@ pkill Finder
 #'run' is an abbreviation for 'process launch -X true --'
 ```
 
-### Breakpoint
+### `image lookup`
 
-XCode中自带的符号断点非常强大和好用，但是我们也可以使用LLDB完成更高级的任务。在介绍如何用LLDB之前，我们要先了解`image`命令
+image lookup 用来检查symbol的位置
 
 ```shell
 (lldb) image lookup -n "-[UIViewController viewDidLoad]"
 # Address: UIKitCore[0x0000000000438886] (UIKitCore.__TEXT.__text + 4414950)
 # Summary: UIKitCore`-[UIViewController viewDidLoad]
 ```
-上述命令可以打印出`viewDidLoad`在哪个framework中，其中`-n`表示**完全匹配**搜索的函数或者symbol，我们也可以用`-rn` 后面接正则表达式来查询某个符号。
+上述命令可以打印出`viewDidLoad`在哪个framework中，其中`-n`表示**完全匹配**搜索的函数或者symbol，我们也可以用`-rn` 后面接正则表达式来做模糊匹配
 
-回到LLDB，实践中比较有效的debug方式是加基于Regex的符号断点
+### Breakpoint
+
+XCode中自带的符号断点非常强大和好用，我们也可以使用LLDB完成更高级的任务，实践中比较有效的debug方式是加基于Regex的符号断点
 
 ```shell
 (lldb) rb '\-\[UIViewController\ ' 
@@ -82,6 +84,18 @@ XCode中自带的符号断点非常强大和好用，但是我们也可以使用
 ```
 上述命令给所有的`-[UIViewController viewDidLoad]`都打上断点，当hit后执行(`-C`) `po $arg1`，`-G1`的意思是告诉LLDB命令执行完后继续向下执行
 
+将断点信息保存在文件中
+
+```shell
+(lldb) breakpoint write -f /tmp/br.json
+(lldb) platform shell cat /tmp/br.json
+(lldb) breakpoint read -f /tmp/br.json
+```
+上述命令会将断点信息保存到`/tmp/br.json`文件中
+
+### Expression
+
+我们常用的`po`命令是`expression -o --`的简写，
 
 ### MISC
 
