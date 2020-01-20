@@ -107,19 +107,15 @@ The cats, which already ate ..., were full
 ```
 上面例子例子中`cat`和`was`, `cats`和`were`中间隔了一个很长的定语修饰，这就会导致当RNN在预测`was`或者`were`时，由于前面的主语信息(`cat`或者`cats`)位置很靠前，使得预测概率受到影响（如果RNN能识别出此时主语是`cat`/`cats`则`was`/`were`的预测概略应该会提高）。具体在RNN中的表现是当做back prop时，由于网络太深，会出现梯度消失的问题，也就是说我们无法通过back prop来影响到`cat`后者`cats`的weight。
 
-GRU(Gated Recurrent Uinit)被设计用来解决上述问题，其核心思想是为每个token引入一个GRU unit(memory cell)
+GRU(Gated Recurrent Uinit)被设计用来解决上述问题，其核心思想是为每个token引入一个GRU unit - $c^{[t]}$
 
-$$
-c^{[t]} = a^{[t]}
-$$
-
-计算中我们用$\hat c^{[t]}$来逼近$c^{[t]}$
+计算中我们用$\hat c^{[t]}$来逼近$c^{[t]}$，计算方式如下
 
 $$
 \hat c^{[t]} tanh (W_c[c^{[t-1]}, x^{[t]}] + b_c)
 $$
 
-定义Gate为$\Gamma_u ^{[t]}$其中$u$表示update
+虽然我们定义了GRU unit，但是是否要更新它的值则需要通过一个Gate来控制，定义为$\Gamma_u ^{[t]}$其中$u$表示update
 
 $$
 \Gamma_u ^{[t]} \delta (W_u[c^{[t-1]}, x^{[t]}] + b_u)

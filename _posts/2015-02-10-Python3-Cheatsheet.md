@@ -165,6 +165,137 @@ def func:
     `\ooo` | Character with octal value `ooo`
     `\xhh` | Character with hex value `hh`
 
+### Basic Statements
+
+- **And,Or,Not**
+
+```python
+1<2 and 2<3
+2<3>10 #false, 等价于2<3 and 3>10
+100==1 or 2==2
+not 1==1
+```
+- `if-elif-else`
+
+```
+if some_condition: #注意冒号
+    #execute some code 
+elif some_other_condition:
+    #do something different
+else:
+    # do something else
+
+#三元运算
+condition_is_true if condition else condition_is_false
+```
+
+- `for`
+
+    ```python
+    list = [1,2,3]
+    for item in list: #注意冒号
+        print(item)
+
+    #只关注循环次数
+    for _ in list:
+        print('cool')
+
+    #遍历tuple list
+    mylist = [(1,2),(3,4)]
+    for t in mylist:
+        print(t) #(1,2) (3,4)
+    for (a,b) in mylist: #使用pattern matching
+        print(a) #1 3
+        print(b) #2 4
+
+    #遍历map list
+    d = {'k1':1, 'k2':2, 'k3':3}
+    for item in d:
+        print(item) #k1,k2,k3  #只返回key
+
+    for item in d.items(): #返回key-value
+        print(item) #('k1',1),('k2',2),('k3',3)
+
+    for key,value in d.items(): #使用pattern matching
+        print(value)
+    ```
+
+- `while`
+
+    ```python
+    x = 0 
+    while x<5:
+        print(f'value of x is {x}')
+        x += 1
+    else:
+        print('loop end')
+    ```
+
+- `break/continue/pass`
+    - `break`: Breaks out of the current closest enclosing loop.
+    - `continue`: Goes to the top of the closest loop.
+    - `pass`: Does nothing at all.
+
+
+- `range`
+    
+    ```python
+    for num in range(3,10,2):
+        print(num) #打印3到9（不包括10），步长为2的数
+    list(range(0,11,2)) #产生0-10的偶数
+    ```
+
+- `enumerate`
+
+    ```python
+    word = 'adc'
+    for item in enumerate(word): #返回一组tuple
+        print(item) #(0,'a')(1,'b')(2,'c')
+
+    for index,letter in enumerate(word):
+        print(index)
+        print(letter)
+    ```
+
+- `zip`
+
+    ```python
+    list1 = [1,2,3]
+    list2 = ['a','b','c']
+
+    for item in zip(list1, list2):
+        print(item) #(1,'a'),(2,'b'),(3,'c')
+
+    list3 = list(zip(list1,list2))
+    ```
+
+- `in`
+
+    ```python
+    2 in [1,2,3] #True
+    'a' in 'world' #True
+    'mykey' in {'mykey':345} #True
+    d = {'mykey':345}
+    345 in d.values() #True
+    ```
+
+- `import`
+
+    ```python
+    from random import shuffle #从random库中引用shuffle函数
+    list1 = [1,2,3]
+    shuffle(list1)
+    ```
+
+- `input`
+
+    ```python
+    result input('what is your name?') #从键盘接受输入到result，类型是string
+    type(result) #str
+    int(result)
+    float(result)
+    ```
+
 ### 数组
 
 - 创建list
@@ -224,7 +355,27 @@ def myfunc(*args):
     return [x for x in args if x%2 == 0]
 ```
 
-### 字典
+### Tuples
+
+- Immutable，不能修改tuple中的元素
+- Tuple uses parenthesis: `(1,2,3)`
+- Only two methods
+    - `index`
+    - `count`
+
+```python
+t=(1,2,3)
+type(t) #tuple
+t=('one',2)
+t[0] #one
+t[1] 2 #2
+t=('a','a',2)
+t.count('a') #2
+t.index('a') #0
+t[0]='NEW' #TypeError
+```
+
+### 字典(dict)
 
 - 创建方式
 
@@ -270,95 +421,78 @@ d_sorted_by_key #[('a', 2), ('b', 1), ('c', 10)]
 d_sorted_by_value #[('b', 1), ('a', 2), ('c', 10)]
 ```
 
--  **Tuples**
-    - Immutable，不能修改tuple中的元素
-    - Tuple uses parenthesis: `(1,2,3)`
-    - Only two methods
-        - `index`
-        - `count`
+### 集合(set)
 
-    ```python
-    t=(1,2,3)
-    type(t) #tuple
-    t=('one',2)
-    t[0] #one
-    t[1] 2 #2
-    t=('a','a',2)
-    t.count('a') #2
-    t.index('a') #0
-    t[0]='NEW' #TypeError
-    ```
+- 无序哈希表，无法索引
+- 创建
 
-- **Sets**
-    - 无序哈希表，无法索引
-    - 创建
+```python
+s1 = {1, 2, 3}
+s2 = set([1, 2, 3])
+```
 
-    ```python
-    s1 = {1, 2, 3}
-    s2 = set([1, 2, 3])
-    ```
+- 添加元素
 
-    - 添加元素
+```python
+s1.add(1)
+s1.add(2)
+```
+- 删除元素
 
-    ```python
-    s1.add(1)
-    s1.add(2)
-    ```
-    - 删除元素
+```python
+s2.discard(2)
+s2.remove(1)
+s2.clear() 
+```
 
-    ```python
-    s2.discard(2)
-    s2.remove(1)
-    s2.clear() 
-    ```
+- 检查元素存在
 
-    - 检查元素存在
+```python
+b1 = 1 in s1 #true
+b2 = 10 in s2 #false
+```
 
-    ```python
-    b1 = 1 in s1 #true
-    b2 = 10 in s2 #false
-    ```
+- 逻辑操作
 
-    - 逻辑操作
+```python
+#求差集
+s1 = {1,2,3}
+s2 = {2,3,4,5}
+s2.difference(s1) #{2, 3, 4, 5}
+s2.difference_update(s1) #s2更新为二者差集{2, 3, 4, 5}
 
-    ```python
-    #求差集
-    s1 = {1,2,3}
-    s2 = {2,3,4,5}
-    s2.difference(s1) #{2, 3, 4, 5}
-    s2.difference_update(s1) #s2更新为二者差集{2, 3, 4, 5}
+#求交集
+s1 = {1,2,3}
+s2 = {1,2,4}
+s1.intersection(s2) #{1,2}
+s3 = {5,6}
+s1.disjoint(s3) #无交集返回True，有交集返回False
 
-    #求交集
-    s1 = {1,2,3}
-    s2 = {1,2,4}
-    s1.intersection(s2) #{1,2}
-    s3 = {5,6}
-    s1.disjoint(s3) #无交集返回True，有交集返回False
+#父集子集
+s1.issubset(s2)
+s1.issupperset(s1)
 
-    #父集子集
-    s1.issubset(s2)
-    s1.issupperset(s1)
+#求并集
+s1.union(s2)
+s1.update(s2) #将s1更新为s1,s2的并集
+```
 
-    #求并集
-    s1.union(s2)
-    s1.update(s2) #将s1更新为s1,s2的并集
-    ```
+- 排序
 
-    - 排序
+```python
+s = {3, 4, 2, 1}
+sorted(s) # 对集合的元素进行升序排序，返回一个array
+#[1, 2, 3, 4]
+```
 
-    ```python
-    s = {3, 4, 2, 1}
-    sorted(s) # 对集合的元素进行升序排序，返回一个array
-    #[1, 2, 3, 4]
-    ```
+### 文件操作
 
-- **File**
-    - mode
-        - `r`: read
-        - `w`: write
-        - `r+`
-        - `w+`
-        - `a` : append 
+- mode
+    - `r`: read
+    - `w`: write
+    - `r+`
+    - `w+`
+    - `a` : append 
 
     ```python
     myfile=open("./test.txt",mode='r') #_io.TextIOWrapper
@@ -370,154 +504,13 @@ d_sorted_by_value #[('b', 1), ('a', 2), ('c', 10)]
     file.write('THis is a test file!')
     file.close()
     ```
-    - 使用`with`操作
+- 使用`with`操作
 
-    ```py
+    ```python
     with open("welcome.txt") as file: # Use file to refer to the file object
         data = file.read()
         #do something with data
-   ```
-
-
-### Statements
-
-- **And,Or,Not**
-
-```python
-1<2 and 2<3
-2<3>10 #false, 等价于2<3 and 3>10
-100==1 or 2==2
-not 1==1
-```
-- **if-elif-else**
-
-```
-if some_condition: #注意冒号
-    #execute some code 
-elif some_other_condition:
-    #do something different
-else:
-    # do something else
-
-#三元运算
-condition_is_true if condition else condition_is_false
-```
-
-- **for-loops**
-
-```pyton
-list = [1,2,3]
-for item in list: #注意冒号
-    print(item)
-
-#只关注循环次数
-for _ in list:
-    print('cool')
-
-#遍历tuple list
-mylist = [(1,2),(3,4)]
-for t in mylist:
-    print(t) #(1,2) (3,4)
-for (a,b) in mylist: #使用pattern matching
-    print(a) #1 3
-    print(b) #2 4
-
-#遍历map list
-d = {'k1':1, 'k2':2, 'k3':3}
-for item in d:
-    print(item) #k1,k2,k3  #只返回key
-
-for item in d.items(): #返回key-value
-    print(item) #('k1',1),('k2',2),('k3',3)
-
-for key,value in d.items(): #使用pattern matching
-    print(value)
-```
-
-- **while-loops**
-
-```
-while some_boolean_condition:
-    #do something
-else:
-    #do something different
-```
-```python
-x = 0 
-while x<5:
-    print(f'value of x is {x}')
-    x += 1
-else:
-    print('loop end')
-```
-
-- **stop-loop**
-    - `break`: Breaks out of the current closest enclosing loop.
-    - `continue`: Goes to the top of the closest loop.
-    - `pass`: Does nothing at all.
-
-
-- **Useful Operators**
-     - `range`
-    
-    ```python
-    for num in range(3,10,2):
-        print(num) #打印3到9（不包括10），步长为2的数
-    list(range(0,11,2)) #产生0-10的偶数
     ```
-    - `enumerate`
-
-    ```python
-    word = 'adc'
-    for item in enumerate(word): #返回一组tuple
-        print(item) #(0,'a')(1,'b')(2,'c')
-
-    for index,letter in enumerate(word):
-        print(index)
-        print(letter)
-    ```
-
-    - `zip`
-
-    ```python
-    list1 = [1,2,3]
-    list2 = ['a','b','c']
-
-    for item in zip(list1, list2):
-        print(item) #(1,'a'),(2,'b'),(3,'c')
-
-    list3 = list(zip(list1,list2))
-    ```
-
-    - `in`
-
-    ```python
-    2 in [1,2,3] #True
-    'a' in 'world' #True
-    'mykey' in {'mykey':345} #True
-    d = {'mykey':345}
-    345 in d.values() #True
-    ```
-
-    - `import`
-
-    ```python
-    from random import shuffle #从random库中引用shuffle函数
-    list1 = [1,2,3]
-    shuffle(list1)
-    ```
-
-    - `input`
-
-    ```python
-    result input('what is your name?') #从键盘接受输入到result，类型是string
-    type(result) #str
-    int(result)
-    float(result)
-    ```
-
-### Functions
-
 
 ### Decorators
 
@@ -591,7 +584,6 @@ mynums=[1,2,3,4]
 list(map(lambda num:num**2,mynums))
 
 ```
-
 
 ### OOP
 
@@ -673,6 +665,49 @@ len(b) #100
 del b #A book object has been deleted
 ```
 
+### Modules and Packages
+
+- 文件引用
+    
+```python
+### mymodule.py
+def my_func():
+    print("from my_module")
+
+### other files
+from mymodule import my_func
+my_func()
+```
+- 文件夹(package)引用
+
+```
+└── package
+├── __init__.py
+├── main_script.py
+└── subpackage
+    ├── __init__.py
+    └── sub_script.py
+```
+假设包结构如上，Python3中不再需要`__init__.py`
+
+```python
+from package import main_script #引用包内文件
+from package.subpackage import sub_script #引用包内文件
+
+main_script.func_from_mainsript() #调用main_script的方法
+sub_script.func_from_subsript() #调用sub_script的方法
+```
+
+- `__main__`
+
+python没有`main`函数，当执行`python xx.py`时，在`xx.py`内有一个全局变量`__name__`被赋值为`"__main__"`表示这个文件是被直接运行的文件，也就是相当于`main`函数所在的文件。在程序里可以做如下判断:
+
+```python
+if __name == '__main__':
+    #当被直接运行时，需要执行的代码
+    some_func()
+```
+
 ### Errors and Exception
 
 - Three keywords
@@ -742,51 +777,6 @@ class TestCap(unittest.TestCase):
     
 if __name == '__main__':
         unittest.main()
-```
-
-### Modules and Packages
-
-- `PyPI` python的包管理系统，类型`RubyGem`,`NPM`
-    - `pip3 install request`
-- 文件引用
-    
-```python
-### mymodule.py
-def my_func():
-    print("from my_module")
-
-### other files
-from mymodule import my_func
-my_func()
-```
-- 文件夹(package)引用
-
-```
-└── package
-├── __init__.py
-├── main_script.py
-└── subpackage
-    ├── __init__.py
-    └── sub_script.py
-```
-假设包结构如上，注意包内要包含`__init__.py`
-
-```python
-from package import main_script #引用包内文件
-from package.subpackage import sub_script #引用包内文件
-
-main_script.func_from_mainsript() #调用main_script的方法
-sub_script.func_from_subsript() #调用sub_script的方法
-```
-
-- `__main__`
-
-python没有`main`函数，当执行`python xx.py`时，在`xx.py`内有一个全局变量`__name__`被赋值为`"__main__"`表示这个文件是被直接运行的文件，也就是相当于`main`函数所在的文件。在程序里可以做如下判断:
-
-```python
-if __name == '__main__':
-    #当被直接运行时，需要执行的代码
-    some_func()
 ```
 
 ### Generator
