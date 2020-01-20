@@ -27,7 +27,7 @@ $$
 0≤h_{\theta}(x)≤1
 $$
 
-为了达到这个目的，我们可以将线性函数 $h_{\theta}(x)=\theta^{T}x$ 做如下变换：$h_{\theta}(x)=g(\theta^{T}x)$, 其中g为 
+为了达到这个目的，我们需要一个非线性函数$g(x)$将$h_{\theta}(x)$的输出映射到`0`和`1`之间，即$h_{\theta}(x)=\theta^{T}x$ 做如下变换：$h_{\theta}(x)=g(\theta^{T}x)$, 其中$g$为 
 
 $$
 g(z)=\frac{1}{1+e^{-z}}
