@@ -41,7 +41,13 @@ call 0x0A120034 ;calling function whose entry point is 0x0A120034
 ```
 如果该地址位于动态库中，则我们需要在动态库加载时确定好这个地址在内存中的位置。
 
-实际上我们并不需要对动态库中所有的指令或者symbol进行地址修改，对于库中内部的函数或者`static`定义的变量我们可以使用相对offset进行寻址。我们只需要对于export出来的接口或者变量进行地址解析即可。但此时问题来了，正如前面所说，无论是动态库还是使用它的binary，在编译时，linker已经完成了对各自符号地址的计算，因此依靠linker是不可能了。此时我们需要借助loader来帮我们完成任务，这种特殊的loader也叫做**dynamic linker**。
+实际上我们并不需要对动态库中所有的指令或者symbol进行地址修改，对于库中内部的函数或者`static`定义的变量我们可以使用相对offset进行寻址。我们只需要对于export出来的接口或者变量进行地址解析即可。
+
+但此时问题来了，正如前面所说，无论是动态库还是使用它的binary，在编译时，linker已经完成了对各自符号地址的计算，因此依靠linker是不可能了。此时我们需要借助loader来帮我们完成任务，这种特殊的loader也叫做**dynamic loader**。
+
+### `.rel.dyn`
+
+实际上在我们编译bianry时，如果linker发现某些symbol需要在load的时候确定，linker会给这些symbol的地址填充一个临时值(通常是0）
 
 
 

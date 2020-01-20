@@ -99,7 +99,14 @@ Cats average 15 hours of sleep a day. <EOS>
 
 ### GRU
 
-不难发现，上面的RNN模型是基于前面的单词来预测后面出现的单词
+不难发现，上面的RNN模型是基于前面的单词来预测后面出现的单词出现的概率，但是对于一些长句子，单词前后的联系可能被分隔开，比如英语中的定语从句
+
+```shell
+The cat, which already ate ... , was full
+The cats, which already ate ..., were full
+```
+上面例子例子中`cat`和`was`, `cats`和`were`中间隔了一个很长的定语修饰
+
 
 ## Resources
 

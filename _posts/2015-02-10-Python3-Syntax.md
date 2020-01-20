@@ -5,9 +5,7 @@ title: Python3 语法速查
 categories: [Python]
 ---
 
-
-
-## Printing
+### Printing
 
 - 链接字符串
 
@@ -47,7 +45,7 @@ print("Is it greater or equal?", 5 >= -2) #Is it greater or equal? True
     print(f"{name} is {age} years old ") #my name is tao
     ```
 
-## Primary Types
+### Primary Types
 
 - `locals()/globals()`
 
@@ -62,160 +60,215 @@ def func:
     #查看函数内的局部变量
     print(locals()) #{'b': 1, 'a': 's'}
 ```
-### Datastructures
+### Numbers
 
-- **Numbers**   
-    - 进制转换
-        - 十六进制：`hex(12)` 
-        - 二进制：`bin(1234)`
-    - 内置数值运算
-        - 次方:`pow(2,4)`等价`2**4`
-        - 绝对值: `abs(-2)`
-        - 四舍五入：`round(3.9) #4.0`
+- 进制转换
+    - 十六进制：`hex(12)` 
+    - 二进制：`bin(1234)`
+- 内置数值运算
+    - 次方:`pow(2,4)`等价`2**4`
+    - 绝对值: `abs(-2)`
+    - 四舍五入：`round(3.9) #4.0`
 
-- **String**
-    - 支持`[]`索引
+### 字符串
+
+- 表示方式
+    - `s1 = 'string'`
+    - `s2 = "string"`
+    - `s3 = """string"""`
+    - 三者等价 `s1 == s2 == s3 #True`
+
+- 支持`[]`索引
 
     ```py
     a = "hello";
     a[0] #h
     a[-1] #o
     ```
-    - 字符串常量是Immutable,不能用`[]`的方式改变字符串内容
+- 字符串常量是Immutable,不能用`[]`的方式改变字符串内容
 
     ```python
-    name="SAM"
-    name[0]='P' #TypeError: 'str' object does not support item assignment
-    ```
-    - `fstring`格式化字符串
+    s = 'hello'
+    s[0] = 'H' #TypeError: 'str' object does not support item assignment
 
-    ```python
-    binary = "binary"
-    do_not = "don't"
-    y = f"Those who know {binary} and those who {do_not}."
+    s = 'H' + s[1:]
+    s = s.replace('h', 'H')
     ```
 
-    - 获取字串
-        - 使用`[]`索引,格式为`[起始index:结束index:步长]`
-        - 左开右闭区间，类似C++中的迭代器
+- 格式化字符串
+    - 使用`fstring`
+        
+        ```python
+        binary = "binary"
+        do_not = "don't"
+        y = f"Those who know {binary} and those who {do_not}."
+        ```
+
+    - 使用format
 
         ```python
-        a="hello"
-        a[1:] #ello, 包括第一个字符
-        a[:3] #hel, 不包括第三个字符
-        a[1:3] #el
-        a[1:-1] #ell，负数表示从后向前，-1表示倒数第1个字符l，因此区间为[1:4)
-        a[:] #hello
-        a[::] #hello
-        a[::2] #hlo 步长是2，抽取字串
-        a[1:-1:2] #el,起始1，终点-1，步长2
-        a[::-1]#olleh, 反转字符串
+        id = 100
+        name = 'kate'
+        ss = 'no data available for person with id: {}, name: {}'.format(id, name)
         ```
-    - 分割字符串
-        ```python
-        s = 'hello'
-        s.split('e') #['h','llo']
-        s.partition('l') #('he', 'l', 'lo')
-        ```
-    - 其它API
-        - 首字母大写: `s.capitalize` 
-        - 大小写转换: `s.lower()`,`s.upper()` 
-        - 字符出现次数:`s.count('o')`
-        - 字符出现位置: `s.find('o')`
-        - 检查字符是否是数字或字母: `s.isalum()`
-        - 检查字符是否是字母:`s.isalpha()`
-        - 开头结尾：`s.startswith(str)`/`s.endswith(str)`
 
-- **list**
-    - 创建list
+- 获取字串
+    - 使用`[]`索引,格式为`[起始index:结束index:步长]`
+    - 左开右闭区间，类似C++中的迭代器
 
     ```python
-    mylist=[1,2,'three']
-    mylist[2] #three
-    len(mylist) #长度
-    mylist[1] = 10
-    mylist.index(2) #1
+    a="hello"
+    a[1:] #ello, 包括第一个字符
+    a[:3] #hel, 不包括第三个字符
+    a[1:3] #el
+    a[1:-1] #ell，负数表示从后向前，-1表示倒数第1个字符l，因此区间为[1:4)
+    a[:] #hello
+    a[::] #hello
+    a[::2] #hlo 步长是2，抽取字串
+    a[1:-1:2] #el,起始1，终点-1，步长2
+    a[::-1]#olleh, 反转字符串
     ```
-    - 追加元素
+- 分割字符串
 
     ```python
-    list1=['one','two']
-    list1.append('three') #['one', 'two', 'three']
-    list1.append([1,2]) #['one', 'two', 'three', [1, 2]]
-    list1.insert(2,'str') #['one', 'two', 'str', 'three',[1, 2]]
+    s = 'hello'
+    s.split('e') #['h','llo']
+    s.partition('l') #('he', 'l', 'lo')
     ```
-    - 删除元素
+    
+- 其它API
+    - 首字母大写: `s.capitalize` 
+    - 大小写转换: `s.lower()`,`s.upper()` 
+    - 字符出现次数:`s.count('o')`
+    - 字符出现位置: `s.find('o')`
+    - 检查字符是否是数字或字母: `s.isalum()`
+    - 检查字符是否是字母:`s.isalpha()`
+    - 开头结尾：`s.startswith(str)`/`s.endswith(str)`
 
-    ```python
-    val = list.pop() #默认删除尾部
-    val = list.pop(-1) #删除尾部
-    val = list.pop(2) # 删除index=2的元素
-    list1 = [1,2,2,3,4]
-    list1.remove(2) #删除数组中第一个2
-    ```
-    - 拼接list
+- 转义字符
 
-    ```python
-    list1=[1,2,3]
-    list2=[4,5]
-    list3 = list1 + list2 #[1, 2, 3, 4, 5]
-    list1.extend(list2) #等价于list1 = list1+list2
-    ```
-    - 其它API
+    Escape | What it does.
+    ------------- | -------------
+    `\\` |  Backslash (`\`)
+    `\'` | Single-quote (`’`)
+    `\"` | Double-quote (`”`)
+    `\a` | ASCII bell (BEL)
+    `\b` | ASCII backspace (BS)
+    `\f` | ASCII formfeed (FF)
+    `\n` | ASCII linefeed (LF)
+    `\N` | {name} Character named name in the Unicode database (Unicode only)
+    `\r` | Carriage Return (CR)
+    `\t` | Horizontal Tab (TAB)
+    `\uxxxx` | Character with 16-bit hex value `xxxx`
+    `\Uxxxxxxxx` | Character with 32-bit hex value `xxxxxxxx`
+    `\v` | ASCII vertical tab (VT)
+    `\ooo` | Character with octal value `ooo`
+    `\xhh` | Character with hex value `hh`
 
-    ```python
-    list1=[1,2,3]
-    max_num = max(list)
-    min_num = min(list)
-    list1.revers()
-    list1.sort()
-    ```
-    - functional API
+### 数组
 
-    ```python
-    mylist1 = [x for x in 'abc'] # ['a',b,'c']
-    mylist2 = [num**2 for num in range(0,11)] #[0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
-    mylist3 = [x for x in range(0,11) if x%2==1]#[1, 3, 5, 7, 9]
-    mylist4 = [x if x%2 == 0 else 'ODD' for x in range(0,11)] #[0, 'ODD', 2, 'ODD', 4, 'ODD', 6, 'ODD', 8, 'ODD', 10]
-    mylist5 = [x*y for x in [2,4,6] for y in [1,10,100]] #[2, 20, 200, 4, 40, 400, 6, 60, 600]
+- 创建list
 
-    ##返回一个参数为偶数的数组
-    def myfunc(*args):
-        return [x for x in args if x%2 == 0]
-    ```
+```python
+mylist=[1,2,'three']
+mylist[2] #three
+len(mylist) #长度
+mylist[1] = 10
+mylist.index(2) #1
+```
+- 追加元素
 
-- **Dictionary**
-    - 创建方式
+```python
+list1=['one','two']
+list1.append('three') #['one', 'two', 'three']
+list1.append([1,2]) #['one', 'two', 'three', [1, 2]]
+list1.insert(2,'str') #['one', 'two', 'str', 'three',[1, 2]]
+```
+- 删除元素
 
-    ```python
-    d1 = {'name': 'jason', 'age': 20, 'gender': 'male'}
-    d2 = dict({'name': 'jason', 'age': 20, 'gender': 'male'})
-    d3 = dict([('name', 'jason'), ('age', 20), ('gender', 'male')])
-    d4 = dict(name='jason', age=20, gender='male')
-    ```
+```python
+val = list.pop() #默认删除尾部
+val = list.pop(-1) #删除尾部
+val = list.pop(2) # 删除index=2的元素
+list1 = [1,2,2,3,4]
+list1.remove(2) #删除数组中第一个2
+```
+- 拼接list
 
-    - 无序字典
+```python
+list1=[1,2,3]
+list2=[4,5]
+list3 = list1 + list2 #[1, 2, 3, 4, 5]
+list1.extend(list2) #等价于list1 = list1+list2
+```
+- 其它API
 
-    ```python
-    d={'k1':123, 'k2':[0,1,2], 'k3':{'insidekey':100}}
-    d['k2'] #[0,1,2]
-    d['k4']="abc"
-    keys = d.keys() 
-    ```
-    <mark>Python 3.7后字典变成有序字典</mark>
+```python
+list1=[1,2,3]
+max_num = max(list)
+min_num = min(list)
+list1.revers()
+list1.sort()
+```
+- functional API
 
-    - 访问
-        - 使用`[]`访问，如果key不存在则抛异常
-        - 使用`get(key)`访问，如果key不存在则返回默认值
+```python
+mylist1 = [x for x in 'abc'] # ['a',b,'c']
+mylist2 = [num**2 for num in range(0,11)] #[0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+mylist3 = [x for x in range(0,11) if x%2==1]#[1, 3, 5, 7, 9]
+mylist4 = [x if x%2 == 0 else 'ODD' for x in range(0,11)] #[0, 'ODD', 2, 'ODD', 4, 'ODD', 6, 'ODD', 8, 'ODD', 10]
+mylist5 = [x*y for x in [2,4,6] for y in [1,10,100]] #[2, 20, 200, 4, 40, 400, 6, 60, 600]
 
-    - 函数式API
+##返回一个参数为偶数的数组
+def myfunc(*args):
+    return [x for x in args if x%2 == 0]
+```
 
-    ```python
-    #{key:value | 规则}
-    d = {x:x**2 for x in range(10)}#{0: 0, 1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
-    #{key:value | zip(k,v)}
-    d = {k:v**2 for k,v in zip(['a','b'],range(2))} #{'a': 0, 'b': 1}
-    ```
+### 字典
+
+- 创建方式
+
+```python
+d1 = {'name': 'jason', 'age': 20, 'gender': 'male'}
+d2 = dict({'name': 'jason', 'age': 20, 'gender': 'male'})
+d3 = dict([('name', 'jason'), ('age', 20), ('gender', 'male')])
+d4 = dict(name='jason', age=20, gender='male')
+```
+
+- 无序字典
+
+```python
+d={'k1':123, 'k2':[0,1,2], 'k3':{'insidekey':100}}
+d['k2'] #[0,1,2]
+d['k4']="abc"
+keys = d.keys() 
+```
+<mark>Python 3.7后字典变成有序字典</mark>
+
+- 访问
+    - 使用`[]`访问，如果key不存在则抛异常
+    - 使用`get('key')`访问，如果key不存在则返回默认值
+- 删除
+    - `d.pop('key')`
+
+- 函数式API
+
+```python
+#{key:value | 规则}
+d = {x:x**2 for x in range(10)}#{0: 0, 1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81}
+#{key:value | zip(k,v)}
+d = {k:v**2 for k,v in zip(['a','b'],range(2))} #{'a': 0, 'b': 1}
+```
+
+- 按key/vlaue排序
+
+```python
+d = {'b': 1, 'a': 2, 'c': 10}
+d_sorted_by_key = sorted(d.items(), key=lambda x: x[0]) # 根据字典键的升序排序
+d_sorted_by_value = sorted(d.items(), key=lambda x: x[1]) # 根据字典值的升序排序
+d_sorted_by_key #[('a', 2), ('b', 1), ('c', 10)]
+d_sorted_by_value #[('b', 1), ('a', 2), ('c', 10)]
+```
 
 -  **Tuples**
     - Immutable，不能修改tuple中的元素
@@ -237,21 +290,38 @@ def func:
     ```
 
 - **Sets**
-    - Unordered collections of unique elements
+    - 无序哈希表，无法索引
+    - 创建
 
     ```python
-    myset = set()
-    #添加
-    myset.add(1)
-    myset.add(2)
-    #删除
-    myset.discard(2)
-    #清空
-    myset.clear() 
-    # create set using array
-    nset = set([1,2,1,2]) #{1,2}
-    #copy
-    cset = nset.copy()
+    s1 = {1, 2, 3}
+    s2 = set([1, 2, 3])
+    ```
+
+    - 添加元素
+
+    ```python
+    s1.add(1)
+    s1.add(2)
+    ```
+    - 删除元素
+
+    ```python
+    s2.discard(2)
+    s2.remove(1)
+    s2.clear() 
+    ```
+
+    - 检查元素存在
+
+    ```python
+    b1 = 1 in s1 #true
+    b2 = 10 in s2 #false
+    ```
+
+    - 逻辑操作
+
+    ```python
     #求差集
     s1 = {1,2,3}
     s2 = {2,3,4,5}
@@ -272,6 +342,14 @@ def func:
     #求并集
     s1.union(s2)
     s1.update(s2) #将s1更新为s1,s2的并集
+    ```
+
+    - 排序
+
+    ```python
+    s = {3, 4, 2, 1}
+    sorted(s) # 对集合的元素进行升序排序，返回一个array
+    #[1, 2, 3, 4]
     ```
 
 - **File**
@@ -1091,23 +1169,7 @@ is a string'''
 Multiline-strings can be used as a special comments called **docstrings**.
 You can use escaped characters(e.g. `\n`, `\t`), using string formatting, etc.
 
-Escape | What it does.
-------------- | -------------
-`\\` |  Backslash (`\`)
-`\'` | Single-quote (`’`)
-`\"` | Double-quote (`”`)
-`\a` | ASCII bell (BEL)
-`\b` | ASCII backspace (BS)
-`\f` | ASCII formfeed (FF)
-`\n` | ASCII linefeed (LF)
-`\N` | {name} Character named name in the Unicode database (Unicode only)
-`\r` | Carriage Return (CR)
-`\t` | Horizontal Tab (TAB)
-`\uxxxx` | Character with 16-bit hex value `xxxx`
-`\Uxxxxxxxx` | Character with 32-bit hex value `xxxxxxxx`
-`\v` | ASCII vertical tab (VT)
-`\ooo` | Character with octal value `ooo`
-`\xhh` | Character with hex value `hh`
+
 
 
 
