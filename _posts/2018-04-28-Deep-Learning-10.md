@@ -8,12 +8,13 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 ### Sequence Data Notations
 
-- $x^{\langle i \rangle}$, 表示输入$x$中的第$i$个元素
-- $y^{\langle i \rangle}$, 表示输出$y$中的第$i$个元素
-- $x^{(i)\langle t \rangle}$，表示第$i$个输入样本中的第$t$个元素
-- $y^{(i)\langle t \rangle}$，表示第$i$个输出样本中的第$t$个元素
+- $x^{\langle i \rangle}$, 表示输入$x$中的第$i$个token
+- $y^{\langle i \rangle}$, 表示输出$y$中的第$i$个token
+- $x^{(i)\langle t \rangle}$，表示第$i$个输入样本中的第$t$个token
+- $y^{(i)\langle t \rangle}$，表示第$i$个输出样本中的第$t$个token
 - $T_x^{(i)}$，表示第$i$个输入样本的长度
 - $T_y^{(i)}$，表示第$i$个输出样本的长度
+- $x_5^{(2)[3]\langle 4 \rangle}$, 表示第二个输入样本中，第三个layer中第4个token向量中的第五个元素
 
 以文本输入为例，假设我们有一个10000个单词的字典和一个串文本，现在的问题是让我们查字典找出下面文本中是人名的单词
 
@@ -21,10 +22,10 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 "Harry Potter and Hermione Granger invented a new spell."
 ```
 
-我们用$x^{\langle i \rangle}$表示上述句子中的每个单词，则$x^{[1]}$表示"Harry", $x^{[2]}$表示"Potter"，以此类推。假设在我们的字典中，`and`这个单词排在第5位，则$x^{[1]}$的值为
+我们用$x^{\langle i \rangle}$表示上述句子中的每个单词，则$x^{\langle 1 \rangle}$表示"Harry", $x^{\langle 2 \rangle}$表示"Potter"，以此类推。假设在我们的字典中，`and`这个单词排在第5位，则$x^{\langle 1 \rangle}$的值为
 
 $$
-x^{[1]} = [0,0,0,0,1,0, ... ,0]
+x^{\langle 1 \rangle} = [0,0,0,0,1,0, ... ,0]
 $$
 
 其余的$x^{\langle i \rangle}$同理。相应的，上述句子对应的$y$表示如下，其中$y^{\langle i \rangle}$表示是名字的概率
@@ -39,11 +40,11 @@ RNN的核心概念是每层的输入除了对应的$x^{\langle i \rangle}$之外
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-nn-1.png">
 
-其中$a^{[0]} = 0$，$a^{[1]}$, $y^{[1]}$的计算方式如下
+其中$a^{\langle 0 \rangle} = 0$，$a^{\langle 1 \rangle}$, $y^{\langle 1 \rangle}$的计算方式如下
 
 $$
-a^{[1]} = g(W_{aa}a^{[0]} + W_{ax}x^{[1]} + b_a) \\
-\hat y^{[1]} = g(W_{ya}a^{[1]} + b_y) 
+a^{\langle 1 \rangle} = g(W_{aa}a^{\langle 0 \rangle} + W_{ax}x^{\langle 1 \rangle} + b_a) \\
+\hat y^{\langle 1 \rangle} = g(W_{ya}a^{\langle 1 \rangle} + b_y) 
 $$
 
 对于$a^{\langle t \rangle}$, 其中常用的activation函数为$tanh$或$ReLU$，对于$\hat y^{\langle i \rangle}$，可以用$sigmoid$函数。Generalize一下
@@ -53,7 +54,7 @@ a^{\langle t \rangle} = g(W_{aa}a^{[t-1]} + W_{ax}x^{\langle t \rangle} + b_a) \
 \hat y^{\langle t \rangle} = g(W_y a^{\langle t \rangle} + b_y) 
 $$
 
-简单起见，我们可以将$W_{aa}$和$W_{ax}$合并，假设，$W_{aa}$为`[100,100]`, $W_{ax}$为`[100,10000]`(通常来说$W_{ax}$较宽)，则可以将$W_{ax}$放到$W_{aa}$的右边，即$[W_{aa}\|W_{ax}]$，则合成后的矩阵$W_{a}$为`[100，10100]`。$W_a$矩阵合并后，我们也需要将$a^{<{t-1}>}$和$x^{\langle t \rangle}$合并，合并方法类似，从水平改为竖直 $[\frac{a^{[t-1]}}{x^{\langle t \rangle}}]$得到`[10100,100]`的矩阵。
+简单起见，我们可以将$W_{aa}$和$W_{ax}$合并，假设，$W_{aa}$为`[100,100]`, $W_{ax}$为`[100,10000]`(通常来说$W_{ax}$较宽)，则可以将$W_{ax}$放到$W_{aa}$的右边，即$[W_{aa}\|W_{ax}]$，则合成后的矩阵$W_{a}$为`[100，10100]`。$W_a$矩阵合并后，我们也需要将$a^{ \langle {t-1} \rangle}$和$x^{\langle t \rangle}$合并，合并方法类似，从水平改为竖直 $[\frac{a^{\langle {t-1} \rangle}}{x^{\langle t \rangle}}]$得到`[10100,100]`的矩阵。
 
 <mark>因此，我们需要学习的参数便集中在了$W_a$, $b_a$和$W_y$,$b_y$上。</mark>
 
@@ -90,9 +91,9 @@ Cats average 15 hours of sleep a day. <EOS>
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-nn-3.png">
 
-1. 另$x^{[1]}$和$a^{[0]}$均为0，输出$\hat y^{[1]}$是一个softmax结果，表示字典中每个单词出现的概率，是一个`[1,10000]`的向量，由于未经训练，每个单词出现的概率均为`1/10000`
-2. 接下来我们用真实$y^{[1]}$（"Cats"在字典中出现的概率）和 $a^{[1]}$作为下一层的输入，得到$\hat y^{[2]}$，其含义为当给定前一个单词为"Cats"时，当前单词是字典中各个单词的概率即 $P(?? \|Cats)$，因此$\hat y^{[2]}$也是`[1,10000]`的。注意到，此时的$x^{[2]} = y^{[1]}$
-3. 类似的，第三层的输入为真实结果$y^{[2]}$，即$P(average \|Cats)$，和$a^{[2]}$，输出为$\hat y^{[2]}$，表示$P(?? \|Cats average)$。同理，此时$x^{[3]} = y^{[2]}$
+1. 另$x^{\langle 1 \rangle}$和$a^{\langle 0 \rangle}$均为0，输出$\hat y^{\langle 1 \rangle}$是一个softmax结果，表示字典中每个单词出现的概率，是一个`[1,10000]`的向量，由于未经训练，每个单词出现的概率均为`1/10000`
+2. 接下来我们用真实$y^{\langle 1 \rangle}$（"Cats"在字典中出现的概率）和 $a^{\langle 1 \rangle}$作为下一层的输入，得到$\hat y^{\langle 2 \rangle}$，其含义为当给定前一个单词为"Cats"时，当前单词是字典中各个单词的概率即 $P(?? \|Cats)$，因此$\hat y^{\langle 2 \rangle}$也是`[1,10000]`的。注意到，此时的$x^{\langle 2 \rangle} = y^{\langle 1 \rangle}$
+3. 类似的，第三层的输入为真实结果$y^{\langle 2 \rangle}$，即$P(average \|Cats)$，和$a^{\langle 2 \rangle}$，输出为$\hat y^{\langle 2 \rangle}$，表示$P(?? \|Cats average)$。同理，此时$x^{[3]} = y^{\langle 2 \rangle}$
 4. 重复上述步骤，直到走到EOS的位置
 
 上述的RNN模型可以做到根据前面已有的单词来预测下一个单词是什么
@@ -153,7 +154,7 @@ $$
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-2.png">
 
-上述红线表示了$c^{\langle t \rangle}$的记忆过程，通过gate的控制，可以使$c^{[3]} = c^{[1]}$, 从而达到缓存前面信息的作用，进而可以解决梯度消失的问题
+上述红线表示了$c^{\langle t \rangle}$的记忆过程，通过gate的控制，可以使$c^{[3]} = c^{\langle 1 \rangle}$, 从而达到缓存前面信息的作用，进而可以解决梯度消失的问题
 
 ## Resources
 
