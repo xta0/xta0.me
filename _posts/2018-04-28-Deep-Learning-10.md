@@ -14,7 +14,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 - $y^{(i)\langle t \rangle}$，表示第$i$个输出样本中的第$t$个token
 - $T_x^{(i)}$，表示第$i$个输入样本的长度
 - $T_y^{(i)}$，表示第$i$个输出样本的长度
-- $x_5^{(2)[3]\langle 4 \rangle}$, 表示第二个输入样本中，第三个layer中第4个token向量中的第五个元素
+- $x_5^{(2)\langle 3 \rangle\langle 4 \rangle}$, 表示第二个输入样本中，第三个layer中第4个token向量中的第五个元素
 
 以文本输入为例，假设我们有一个10000个单词的字典和一个串文本，现在的问题是让我们查字典找出下面文本中是人名的单词
 
@@ -50,7 +50,7 @@ $$
 对于$a^{\langle t \rangle}$, 其中常用的activation函数为$tanh$或$ReLU$，对于$\hat y^{\langle i \rangle}$，可以用$sigmoid$函数。Generalize一下
 
 $$
-a^{\langle t \rangle} = g(W_{aa}a^{[t-1]} + W_{ax}x^{\langle t \rangle} + b_a) \\
+a^{\langle t \rangle} = g(W_{aa}a^{\langle {t-1} \rangle} + W_{ax}x^{\langle t \rangle} + b_a) \\
 \hat y^{\langle t \rangle} = g(W_y a^{\langle t \rangle} + b_y) 
 $$
 
@@ -93,7 +93,7 @@ Cats average 15 hours of sleep a day. <EOS>
 
 1. 另$x^{\langle 1 \rangle}$和$a^{\langle 0 \rangle}$均为0，输出$\hat y^{\langle 1 \rangle}$是一个softmax结果，表示字典中每个单词出现的概率，是一个`[1,10000]`的向量，由于未经训练，每个单词出现的概率均为`1/10000`
 2. 接下来我们用真实$y^{\langle 1 \rangle}$（"Cats"在字典中出现的概率）和 $a^{\langle 1 \rangle}$作为下一层的输入，得到$\hat y^{\langle 2 \rangle}$，其含义为当给定前一个单词为"Cats"时，当前单词是字典中各个单词的概率即 $P(?? \|Cats)$，因此$\hat y^{\langle 2 \rangle}$也是`[1,10000]`的。注意到，此时的$x^{\langle 2 \rangle} = y^{\langle 1 \rangle}$
-3. 类似的，第三层的输入为真实结果$y^{\langle 2 \rangle}$，即$P(average \|Cats)$，和$a^{\langle 2 \rangle}$，输出为$\hat y^{\langle 2 \rangle}$，表示$P(?? \|Cats average)$。同理，此时$x^{[3]} = y^{\langle 2 \rangle}$
+3. 类似的，第三层的输入为真实结果$y^{\langle 2 \rangle}$，即$P(average \|Cats)$，和$a^{\langle 2 \rangle}$，输出为$\hat y^{\langle 2 \rangle}$，表示$P(?? \|Cats average)$。同理，此时$x^{\langle 3 \rangle} = y^{\langle 2 \rangle}$
 4. 重复上述步骤，直到走到EOS的位置
 
 上述的RNN模型可以做到根据前面已有的单词来预测下一个单词是什么
@@ -111,12 +111,12 @@ The cats, which already ate ..., were full
 GRU(Gated Recurrent Uinit)被设计用来解决上述问题，其核心思想是为每个token引入一个GRU unit - $c^{\langle t \rangle}$，计算方式如下
 
 $$
-\hat c^{\langle t \rangle} tanh (W_c[c^{[t-1]}, x^{\langle t \rangle}] + b_c) \\
-\Gamma_u ^{\langle t \rangle} \delta (W_u[c^{[t-1]}, x^{\langle t \rangle}] + b_u) \\
-c^{\langle t \rangle} = \Gamma_u ^{\langle t \rangle} * \hat c^{\langle t \rangle} + (1-\Gamma_u ^{\langle t \rangle}) * c^{[t-1]}
+\hat c^{\langle t \rangle} tanh (W_c[c^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_c) \\
+\Gamma_u ^{\langle t \rangle} \delta (W_u[c^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_u) \\
+c^{\langle t \rangle} = \Gamma_u ^{\langle t \rangle} * \hat c^{\langle t \rangle} + (1-\Gamma_u ^{\langle t \rangle}) * c^{\langle {t-1} \rangle}
 $$
 
-其中，$\Gamma_u ^{\langle t \rangle}$用来控制是否更新$c^{\langle t \rangle}$的值，$\delta$通常为sigmoid函数，因此$\Gamma_u ^{\langle t \rangle}$的取值为0或1
+其中，$\Gamma_u ^{\langle t \rangle}$用来控制是否更新$c^{\langle t \rangle}$的值，$\delta$通常为sigmoid函数，因此$\Gamma_u ^{\langle t \rangle}$的取值为0或1；`*`为element-wise的乘法运算
 
 回到上面的例子，假设我们`cats`对应的$c^{\langle t \rangle}$值为`0`或`1`, `1`表示主语是单数，`0`表示主语是复数。则直到计算`was/were`之前，$c^{\langle t \rangle}$的值会一直被保留，作为计算时的参考，保留的方式则是通过控制$\Gamma_u ^{\langle t \rangle}$来完成
 
@@ -125,7 +125,7 @@ Tha cat,    which   already   ate ...,   was    full.
     c\langle t \rangle=1                               c\langle t \rangle=1
     g\langle t \rangle=1  g\langle t \rangle=0  g\langle t \rangle=0    g\langle t \rangle=0 ... g\langle t \rangle=0  
 ```
-可以看到当$\Gamma_u ^{\langle t \rangle} $为1时，$c^{\langle t \rangle} = c^{[t-1]} = a^{[t-1]}$，则前面的信息可以被一直保留下来。
+可以看到当$\Gamma_u ^{\langle t \rangle} $为1时，$c^{\langle t \rangle} = c^{\langle {t-1} \rangle} = a^{\langle {t-1} \rangle}$，则前面的信息可以被一直保留下来。
 
 注意到$c^{\langle t \rangle}, \hat c^{\langle t \rangle}, \Gamma_u ^{\langle t \rangle}$均为向量，其中$\Gamma_u ^{\langle t \rangle}$向量中的值为0或1，则上面最后一个式子的乘法计算为element-wise的，这样$\Gamma_u ^{\langle t \rangle}$就可以起到gate的作用。
 
@@ -133,16 +133,16 @@ Tha cat,    which   already   ate ...,   was    full.
 
 Long Short Term Memory(LSTM)是另一种通过建立前后token链接来解决梯度消失问题的方法，相比GRU更为流行一些。和GRU不同的是
 
-1. LSTM使用$a^{[t-1]}$来计算 $\hat c^{\langle t \rangle}$和$\Gamma_u ^{\langle t \rangle}$
+1. LSTM使用$a^{\langle {t-1} \rangle}$来计算 $\hat c^{\langle t \rangle}$和$\Gamma_u ^{\langle t \rangle}$
 2. LSTM使用两个gate来控制$c^{\langle t \rangle}$，一个前面提到的$\Gamma_u ^{\langle t \rangle}$，另一个是forget gate - $\Gamma_f ^{\langle t \rangle}$
 3. LSTM使用了一个output gate来控制$a^{\langle t \rangle}$
 
 $$
-\hat c^{\langle t \rangle} tanh (W_c[a^{[t-1]}, x^{\langle t \rangle}] + b_c) \\
-\Gamma_u ^{\langle t \rangle} \delta (W_u[a^{[t-1]}, x^{\langle t \rangle}] + b_u) \\
-\Gamma_f ^{\langle t \rangle} \delta (W_f[a^{[t-1]}, x^{\langle t \rangle}] + b_f) \\
-c^{\langle t \rangle} = \Gamma_u ^{\langle t \rangle} * \hat c^{\langle t \rangle} + \Gamma_f ^{\langle t \rangle} * c^{[t-1]} \\
-\Gamma_o ^{\langle t \rangle} \delta (W_o[a^{[t-1]}, x^{\langle t \rangle}] + b_o) \\
+\hat c^{\langle t \rangle} tanh (W_c[a^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_c) \\
+\Gamma_u ^{\langle t \rangle} \delta (W_u[a^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_u) \\
+\Gamma_f ^{\langle t \rangle} \delta (W_f[a^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_f) \\
+c^{\langle t \rangle} = \Gamma_u ^{\langle t \rangle} * \hat c^{\langle t \rangle} + \Gamma_f ^{\langle t \rangle} * c^{\langle {t-1} \rangle} \\
+\Gamma_o ^{\langle t \rangle} \delta (W_o[a^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_o) \\
 a^{\langle t \rangle} = \Gamma_o * tanh(c^{\langle t \rangle})
 $$
 
@@ -154,7 +154,7 @@ $$
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-2.png">
 
-上述红线表示了$c^{\langle t \rangle}$的记忆过程，通过gate的控制，可以使$c^{[3]} = c^{\langle 1 \rangle}$, 从而达到缓存前面信息的作用，进而可以解决梯度消失的问题
+上述红线表示了$c^{\langle t \rangle}$的记忆过程，通过gate的控制，可以使$c^{\langle 3 \rangle} = c^{\langle 1 \rangle}$, 从而达到缓存前面信息的作用，进而可以解决梯度消失的问题
 
 ## Resources
 
