@@ -28,7 +28,9 @@ $$
 x^{\langle 1 \rangle} = [0,0,0,0,1,0, ... ,0]
 $$
 
-实际应用中，我们通常用列向量表示，则$x^{\langle i \rangle}$为`[10000,1]`。假如我们一次输入20条训练样本(mini-batch size = 20)，我们一般会将它们横向stack成一个二维矩阵，即RNN的input tensor是`[10000,20]`的。
+注意上面的式子通常用列向量表示，即$x^{\langle i \rangle}$为`[10000,1]`。
+
+> 在实际应用中，$x^{\langle 1 \rangle}$往往是一个2D tensor，因为我们通常一次输入$m$条训练样本(mini-batch)。我们假设`m=20`，则此时我们有20列向量，我们可以横向将它们stack成一个二维矩阵。比如上面例子中，RNN在某个时刻的输入tensor的大小是`[10000,20]`的。
 
 相应的，上述句子对应的$y$表示如下，其中$y^{\langle i \rangle}$表示是名字的概率
 
@@ -38,11 +40,11 @@ $$
 
 ### Recurrent Neural Network
 
-RNN的核心概念是将输入数据切分为为一系列时间片，每个时间片上的数据会通过某一系列运算产生一个输出，并且个时间片上的输入除了对应的$x^{\langle i \rangle}$之外，还有可能来自前一个时间片的输出，如下图所示
+RNN的核心概念是将输入数据切分为为一系列时间片，每个时间片上的数据会通过某一系列运算产生一个输出，并且该时间片上的输入除了有$x^{\langle i \rangle}$之外，还有可能来自前一个时间片的输出，如下图所示
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-nn-1.png">
 
-其中$a^{\langle 0 \rangle} = 0$，$a^{\langle 1 \rangle}$, $y^{\langle 1 \rangle}$的计算方式如下
+图中的$T$表示时间片，$a^{\langle {T_x} \rangle}$为$T$时刻的hidden state。我们令 $a^{\langle 0 \rangle} = 0$，$a^{\langle 1 \rangle}$, 则$y^{\langle 1 \rangle}$的计算方式如下
 
 $$
 a^{\langle 1 \rangle} = g(W_{aa}a^{\langle 0 \rangle} + W_{ax}x^{\langle 1 \rangle} + b_a) \\
@@ -96,8 +98,12 @@ Cats average 15 hours of sleep a day. <EOS>
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-nn-3.png">
 
-1. 另$x^{\langle 1 \rangle}$和$a^{\langle 0 \rangle}$均为0，输出$\hat y^{\langle 1 \rangle}$是一个softmax结果，表示字典中每个单词出现的概率，是一个`[1,10000]`的向量，由于未经训练，每个单词出现的概率均为`1/10000`
-2. 接下来我们用真实$y^{\langle 1 \rangle}$（"Cats"在字典中出现的概率）和 $a^{\langle 1 \rangle}$作为下一层的输入，得到$\hat y^{\langle 2 \rangle}$，其含义为当给定前一个单词为"Cats"时，当前单词是字典中各个单词的概率即 $P(?? \|Cats)$，因此$\hat y^{\langle 2 \rangle}$也是`[1,10000]`的。注意到，此时的$x^{\langle 2 \rangle} = y^{\langle 1 \rangle}$
+其中每个cell的结构如下图所示
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-cell.png">
+
+1. 另$x^{\langle 1 \rangle}$和$a^{\langle 0 \rangle}$均为0，输出$\hat y^{\langle 1 \rangle}$是一个softmax结果，表示字典中每个单词出现的概率，是一个`[10000,1]`的向量，由于未经训练，每个单词出现的概率均为`1/10000`
+2. 接下来我们用真实$y^{\langle 1 \rangle}$（"Cats"在字典中出现的概率）和 $a^{\langle 1 \rangle}$作为下一层的输入，得到$\hat y^{\langle 2 \rangle}$，其含义为当给定前一个单词为"Cats"时，当前单词是字典中各个单词的概率即 $P(?? \|Cats)$，因此$\hat y^{\langle 2 \rangle}$也是`[10000,1]`的。注意到，此时的$x^{\langle 2 \rangle} = y^{\langle 1 \rangle}$
 3. 类似的，第三层的输入为真实结果$y^{\langle 2 \rangle}$，即$P(average \|Cats)$，和$a^{\langle 2 \rangle}$，输出为$\hat y^{\langle 2 \rangle}$，表示$P(?? \|Cats average)$。同理，此时$x^{\langle 3 \rangle} = y^{\langle 2 \rangle}$
 4. 重复上述步骤，直到走到EOS的位置
 
@@ -116,8 +122,8 @@ The cats, which already ate ..., were full
 GRU(Gated Recurrent Uinit)被设计用来解决上述问题，其核心思想是为每个token引入一个GRU unit - $c^{\langle t \rangle}$，计算方式如下
 
 $$
-\hat c^{\langle t \rangle} tanh (W_c[c^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_c) \\
-\Gamma_u ^{\langle t \rangle} \delta (W_u[c^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_u) \\
+\hat c^{\langle t \rangle} = tanh (W_c[c^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_c) \\
+\Gamma_u ^{\langle t \rangle} = \delta (W_u[c^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_u) \\
 c^{\langle t \rangle} = \Gamma_u ^{\langle t \rangle} * \hat c^{\langle t \rangle} + (1-\Gamma_u ^{\langle t \rangle}) * c^{\langle {t-1} \rangle}
 $$
 
@@ -127,8 +133,8 @@ $$
 
 ```shell
 Tha cat,    which   already   ate ...,   was    full.
-    c\langle t \rangle=1                               c\langle t \rangle=1
-    g\langle t \rangle=1  g\langle t \rangle=0  g\langle t \rangle=0    g\langle t \rangle=0 ... g\langle t \rangle=0  
+    c[t]=1                               c[t]=1
+    g[t]=1  g[t]=0  g[t]=0    g[t]=0 ... g[t]=0  
 ```
 可以看到当$\Gamma_u ^{\langle t \rangle} $为1时，$c^{\langle t \rangle} = c^{\langle {t-1} \rangle} = a^{\langle {t-1} \rangle}$，则前面的信息可以被一直保留下来。
 
@@ -143,11 +149,11 @@ Long Short Term Memory(LSTM)是另一种通过建立前后token链接来解决�
 3. LSTM使用了一个output gate来控制$a^{\langle t \rangle}$
 
 $$
-\hat c^{\langle t \rangle} tanh (W_c[a^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_c) \\
-\Gamma_u ^{\langle t \rangle} \delta (W_u[a^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_u) \\
-\Gamma_f ^{\langle t \rangle} \delta (W_f[a^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_f) \\
+\hat c^{\langle t \rangle} = tanh (W_c[a^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_c) \\
+\Gamma_u ^{\langle t \rangle} = \delta (W_u[a^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_u) \\
+\Gamma_f ^{\langle t \rangle} = \delta (W_f[a^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_f) \\
 c^{\langle t \rangle} = \Gamma_u ^{\langle t \rangle} * \hat c^{\langle t \rangle} + \Gamma_f ^{\langle t \rangle} * c^{\langle {t-1} \rangle} \\
-\Gamma_o ^{\langle t \rangle} \delta (W_o[a^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_o) \\
+\Gamma_o ^{\langle t \rangle} = \delta (W_o[a^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_o) \\
 a^{\langle t \rangle} = \Gamma_o * tanh(c^{\langle t \rangle})
 $$
 
