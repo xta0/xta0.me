@@ -107,20 +107,53 @@ The cats, which already ate ..., were full
 ```
 上面例子例子中`cat`和`was`, `cats`和`were`中间隔了一个很长的定语修饰，这就会导致当RNN在预测`was`或者`were`时，由于前面的主语信息(`cat`或者`cats`)位置很靠前，使得预测概率受到影响（如果RNN能识别出此时主语是`cat`/`cats`则`was`/`were`的预测概略应该会提高）。具体在RNN中的表现是当做back prop时，由于网络太深，会出现梯度消失的问题，也就是说我们无法通过back prop来影响到`cat`后者`cats`的weight。
 
-GRU(Gated Recurrent Uinit)被设计用来解决上述问题，其核心思想是为每个token引入一个GRU unit - $c^{[t]}$
-
-计算中我们用$\hat c^{[t]}$来逼近$c^{[t]}$，计算方式如下
+GRU(Gated Recurrent Uinit)被设计用来解决上述问题，其核心思想是为每个token引入一个GRU unit - $c^{[t]}$，计算方式如下
 
 $$
-\hat c^{[t]} tanh (W_c[c^{[t-1]}, x^{[t]}] + b_c)
+\hat c^{[t]} tanh (W_c[c^{[t-1]}, x^{[t]}] + b_c) \\
+\Gamma_u ^{[t]} \delta (W_u[c^{[t-1]}, x^{[t]}] + b_u) \\
+c^{[t]} = \Gamma_u ^{[t]} * \hat c^{[t]} + (1-\Gamma_u ^{[t]}) * c^{[t-1]}
 $$
 
-虽然我们定义了GRU unit，但是是否要更新它的值则需要通过一个Gate来控制，定义为$\Gamma_u ^{[t]}$其中$u$表示update
+其中，$\Gamma_u ^{[t]}$用来控制是否更新$c^{[t]}$的值，$\delta$通常为sigmoid函数，因此$\Gamma_u ^{[t]}$的取值为0或1
+
+回到上面的例子，假设我们`cats`对应的$c^{[t]}$值为`0`或`1`, `1`表示主语是单数，`0`表示主语是复数。则直到计算`was/were`之前，$c^{[t]}$的值会一直被保留，作为计算时的参考，保留的方式则是通过控制$\Gamma_u ^{[t]}$来完成
+
+```shell
+Tha cat,    which   already   ate ...,   was    full.
+    c[t]=1                               c[t]=1
+    g[t]=1  g[t]=0  g[t]=0    g[t]=0 ... g[t]=0  
+```
+可以看到当$\Gamma_u ^{[t]} $为1时，$c^{[t]} = c^{[t-1]} = a^{[t-1]}$，则前面的信息可以被一直保留下来。
+
+注意到$c^{[t]}, \hat c^{[t]}, \Gamma_u ^{[t]}$均为向量，其中$\Gamma_u ^{[t]}$向量中的值为0或1，则上面最后一个式子的乘法计算为element-wise的，这样$\Gamma_u ^{[t]}$就可以起到gate的作用。
+
+### LSTM
+
+Long Short Term Memory(LSTM)是另一种通过建立前后token链接来解决梯度消失问题的方法，相比GRU更为流行一些。和GRU不同的是
+
+1. LSTM使用$a^{[t-1]}$来计算 $\hat c^{[t]}$和$\Gamma_u ^{[t]}$
+2. LSTM使用两个gate来控制$c^{[t]}$，一个前面提到的$\Gamma_u ^{[t]}$，另一个是forget gate - $\Gamma_f ^{[t]}$
+3. LSTM使用了一个output gate来控制$a^{[t]}$
 
 $$
-\Gamma_u ^{[t]} \delta (W_u[c^{[t-1]}, x^{[t]}] + b_u)
+\hat c^{[t]} tanh (W_c[a^{[t-1]}, x^{[t]}] + b_c) \\
+\Gamma_u ^{[t]} \delta (W_u[a^{[t-1]}, x^{[t]}] + b_u) \\
+\Gamma_f ^{[t]} \delta (W_f[a^{[t-1]}, x^{[t]}] + b_f) \\
+c^{[t]} = \Gamma_u ^{[t]} * \hat c^{[t]} + \Gamma_f ^{[t]} * c^{[t-1]} \\
+\Gamma_o ^{[t]} \delta (W_o[a^{[t-1]}, x^{[t]}] + b_o) \\
+a^{[t]} = \Gamma_o * tanh(c^{[t]})
 $$
 
+上述LSTM式子引入了三个gate函数，虽然步骤不较复杂，但是逻辑上还是比较清晰，也容易更好的整合到RNN网络中，下图是一个引入了LSTM的RNN的计算单元
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-1.png">
+
+如果把各个LSTM单元串联起来，则RNN的模型变为
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-2.png">
+
+上述红线表示了$c^{[t]}$的记忆过程，通过gate的控制，可以使$c^{[3]} = c^{[1]}$, 从而达到缓存前面信息的作用，进而可以解决梯度消失的问题
 
 ## Resources
 
