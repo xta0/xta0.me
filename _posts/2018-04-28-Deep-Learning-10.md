@@ -10,11 +10,11 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 - $x^{\langle i \rangle}$, 表示输入$x$中的第$i$个token
 - $y^{\langle i \rangle}$, 表示输出$y$中的第$i$个token
-- $x^{(i)\langle t \rangle}$，表示第$i$个输入样本中的第$t$个token
-- $y^{(i)\langle t \rangle}$，表示第$i$个输出样本中的第$t$个token
-- $T_x^{(i)}$，表示第$i$个输入样本的长度
-- $T_y^{(i)}$，表示第$i$个输出样本的长度
-- $x_5^{(2)\langle 3 \rangle\langle 4 \rangle}$, 表示第二个输入样本中，第三个layer中第4个token向量中的第五个元素
+- $x^{(i)\langle t \rangle}$，表示第$i$条输入样本中的第$t$个token
+- $y^{(i)\langle t \rangle}$，表示第$i$条输出样本中的第$t$个token
+- $n_x$，表示某个输入token向量长度
+- $n_y$，表示某个输出token长度
+- $x_5^{(2)\langle 3 \rangle\langle 4 \rangle}$, 表示第二条输入样本中，第三个layer中第4个token向量中的第五个元素
 
 以文本输入为例，假设我们有一个10000个单词的字典和一个串文本，现在的问题是让我们查字典找出下面文本中是人名的单词
 
@@ -22,13 +22,15 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 "Harry Potter and Hermione Granger invented a new spell."
 ```
 
-我们用$x^{\langle i \rangle}$表示上述句子中的每个单词，则$x^{\langle 1 \rangle}$表示"Harry", $x^{\langle 2 \rangle}$表示"Potter"，以此类推。假设在我们的字典中，`and`这个单词排在第5位，则$x^{\langle 1 \rangle}$的值为
+我们用$x^{\langle i \rangle}$表示上述句子中的每个单词，则$x^{\langle 1 \rangle}$表示"Harry", $x^{\langle 2 \rangle}$表示"Potter"，以此类推。假设在我们的字典中，`and`这个单词排在第5位，则$x^{\langle 1 \rangle}$的值为一个一维向量
 
 $$
 x^{\langle 1 \rangle} = [0,0,0,0,1,0, ... ,0]
 $$
 
-其余的$x^{\langle i \rangle}$同理。相应的，上述句子对应的$y$表示如下，其中$y^{\langle i \rangle}$表示是名字的概率
+实际应用中，我们通常用列向量表示，则$x^{\langle i \rangle}$为`[10000,1]`。假如我们一次输入20条训练样本(mini-batch size = 20)，我们一般会将它们横向stack成一个二维矩阵，即RNN的input tensor是`[10000,20]`的。
+
+相应的，上述句子对应的$y$表示如下，其中$y^{\langle i \rangle}$表示是名字的概率
 
 $$
 y = [1,1,0,1,1,0,0,0,0]
@@ -36,7 +38,7 @@ $$
 
 ### Recurrent Neural Network
 
-RNN的核心概念是每层的输入除了对应的$x^{\langle i \rangle}$之外，还来自前一层的输出，如下图所示
+RNN的核心概念是将输入数据切分为为一系列时间片，每个时间片上的数据会通过某一系列运算产生一个输出，并且个时间片上的输入除了对应的$x^{\langle i \rangle}$之外，还有可能来自前一个时间片的输出，如下图所示
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-nn-1.png">
 
@@ -56,9 +58,12 @@ $$
 
 简单起见，我们可以将$W_{aa}$和$W_{ax}$合并，假设，$W_{aa}$为`[100,100]`, $W_{ax}$为`[100,10000]`(通常来说$W_{ax}$较宽)，则可以将$W_{ax}$放到$W_{aa}$的右边，即$[W_{aa}\|W_{ax}]$，则合成后的矩阵$W_{a}$为`[100，10100]`。$W_a$矩阵合并后，我们也需要将$a^{ \langle {t-1} \rangle}$和$x^{\langle t \rangle}$合并，合并方法类似，从水平改为竖直 $[\frac{a^{\langle {t-1} \rangle}}{x^{\langle t \rangle}}]$得到`[10100,100]`的矩阵。
 
-<mark>因此，我们需要学习的参数便集中在了$W_a$, $b_a$和$W_y$,$b_y$上。</mark>
+$$
+a^{\langle t \rangle} = g(W_a[a^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_a) \\
+\hat y^{\langle t \rangle} = g(W_y a^{\langle t \rangle} + b_y) 
+$$
 
-注意，上图中，对句子中的每个单词$x^{\langle t \rangle}$都能产生一个$\hat y^{\langle t \rangle}$，假设一个句子有$m$个单词，那么这一个句子 - 样本$y^{(i)}$的大小为`[m,m]`
+<mark>因此，我们需要学习的参数便集中在了$W_a$, $b_a$和$W_y$,$b_y$上。</mark>
 
 ### Loss函数
 
