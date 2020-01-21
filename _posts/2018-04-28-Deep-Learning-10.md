@@ -67,6 +67,20 @@ $$
 
 <mark>因此，我们需要学习的参数便集中在了$W_a$, $b_a$和$W_y$,$b_y$上。</mark>
 
+在实际应用中，我们的$x$和$a$通常都是三维的矩阵
+
+```python
+x.shape = (n_x, m, T_x)
+a.shape = (n_a, m, T_a)
+```
+
+其中`n_x`和`n_a`表示向量中元素个数，`m`表示样本数量(句子个数），`T_x`则表示每个样本的时间片数量（可以理解为句子中token的个数）。而$x^{(i)}$或者$a^{(i)}$为某个时刻`t`的切片，即
+
+```python
+x_i = x[:,:,t]
+a_i = a[:,:,t]
+```
+
 ### Loss函数
 
 上一节中我们已经看到，对每条训练样本来说，任何一个单词产生的输出$\hat y^{(i)\langle t \rangle}$是一个一维向量，形式和分类问题类似，因此对于单个单词的loss函数可以用逻辑回归的loss函数
@@ -80,6 +94,11 @@ $$
 $$
 L(\hat y, y) = \sum_{t=1}^{T} L^{\langle t \rangle}(\hat y ^{\langle t \rangle}, y^{\langle t \rangle})
 $$
+
+反向求导的过程如下
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-back-prop-1.png">
+
 
 ### 不同的RNN网络
 
