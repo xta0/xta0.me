@@ -8,10 +8,10 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 ### Sequence Data Notations
 
-- $x^{[i]}$, 表示输入$x$中的第$i$个元素
-- $y^{[i]}$, 表示输出$y$中的第$i$个元素
-- $x^{(i)[t]}$，表示第$i$个输入样本中的第$t$个元素
-- $y^{(i)[t]}$，表示第$i$个输出样本中的第$t$个元素
+- $x^{\langle i \rangle}$, 表示输入$x$中的第$i$个元素
+- $y^{\langle i \rangle}$, 表示输出$y$中的第$i$个元素
+- $x^{(i)\langle t \rangle}$，表示第$i$个输入样本中的第$t$个元素
+- $y^{(i)\langle t \rangle}$，表示第$i$个输出样本中的第$t$个元素
 - $T_x^{(i)}$，表示第$i$个输入样本的长度
 - $T_y^{(i)}$，表示第$i$个输出样本的长度
 
@@ -21,13 +21,13 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 "Harry Potter and Hermione Granger invented a new spell."
 ```
 
-我们用$x^{[i]}$表示上述句子中的每个单词，则$x^{[1]}$表示"Harry", $x^{[2]}$表示"Potter"，以此类推。假设在我们的字典中，`and`这个单词排在第5位，则$x^{[1]}$的值为
+我们用$x^{\langle i \rangle}$表示上述句子中的每个单词，则$x^{[1]}$表示"Harry", $x^{[2]}$表示"Potter"，以此类推。假设在我们的字典中，`and`这个单词排在第5位，则$x^{[1]}$的值为
 
 $$
 x^{[1]} = [0,0,0,0,1,0, ... ,0]
 $$
 
-其余的$x^{[i]}$同理。相应的，上述句子对应的$y$表示如下，其中$y^{[i]}$表示是名字的概率
+其余的$x^{\langle i \rangle}$同理。相应的，上述句子对应的$y$表示如下，其中$y^{\langle i \rangle}$表示是名字的概率
 
 $$
 y = [1,1,0,1,1,0,0,0,0]
@@ -35,7 +35,7 @@ $$
 
 ### Recurrent Neural Network
 
-RNN的核心概念是每层的输入除了对应的$x^{[i]}$之外，还来自前一层的输出，如下图所示
+RNN的核心概念是每层的输入除了对应的$x^{\langle i \rangle}$之外，还来自前一层的输出，如下图所示
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-nn-1.png">
 
@@ -46,31 +46,31 @@ a^{[1]} = g(W_{aa}a^{[0]} + W_{ax}x^{[1]} + b_a) \\
 \hat y^{[1]} = g(W_{ya}a^{[1]} + b_y) 
 $$
 
-对于$a^{[t]}$, 其中常用的activation函数为$tanh$或$ReLU$，对于$\hat y^{[i]}$，可以用$sigmoid$函数。Generalize一下
+对于$a^{\langle t \rangle}$, 其中常用的activation函数为$tanh$或$ReLU$，对于$\hat y^{\langle i \rangle}$，可以用$sigmoid$函数。Generalize一下
 
 $$
-a^{[t]} = g(W_{aa}a^{[t-1]} + W_{ax}x^{[t]} + b_a) \\
-\hat y^{[t]} = g(W_y a^{[t]} + b_y) 
+a^{\langle t \rangle} = g(W_{aa}a^{[t-1]} + W_{ax}x^{\langle t \rangle} + b_a) \\
+\hat y^{\langle t \rangle} = g(W_y a^{\langle t \rangle} + b_y) 
 $$
 
-简单起见，我们可以将$W_{aa}$和$W_{ax}$合并，假设，$W_{aa}$为`[100,100]`, $W_{ax}$为`[100,10000]`(通常来说$W_{ax}$较宽)，则可以将$W_{ax}$放到$W_{aa}$的右边，即$[W_{aa}\|W_{ax}]$，则合成后的矩阵$W_{a}$为`[100，10100]`。$W_a$矩阵合并后，我们也需要将$a^{<{t-1}>}$和$x^{[t]}$合并，合并方法类似，从水平改为竖直 $[\frac{a^{[t-1]}}{x^{[t]}}]$得到`[10100,100]`的矩阵。
+简单起见，我们可以将$W_{aa}$和$W_{ax}$合并，假设，$W_{aa}$为`[100,100]`, $W_{ax}$为`[100,10000]`(通常来说$W_{ax}$较宽)，则可以将$W_{ax}$放到$W_{aa}$的右边，即$[W_{aa}\|W_{ax}]$，则合成后的矩阵$W_{a}$为`[100，10100]`。$W_a$矩阵合并后，我们也需要将$a^{<{t-1}>}$和$x^{\langle t \rangle}$合并，合并方法类似，从水平改为竖直 $[\frac{a^{[t-1]}}{x^{\langle t \rangle}}]$得到`[10100,100]`的矩阵。
 
 <mark>因此，我们需要学习的参数便集中在了$W_a$, $b_a$和$W_y$,$b_y$上。</mark>
 
-注意，上图中，对句子中的每个单词$x^{[t]}$都能产生一个$\hat y^{[t]}$，假设一个句子有$m$个单词，那么这一个句子 - 样本$y^{(i)}$的大小为`[m,m]`
+注意，上图中，对句子中的每个单词$x^{\langle t \rangle}$都能产生一个$\hat y^{\langle t \rangle}$，假设一个句子有$m$个单词，那么这一个句子 - 样本$y^{(i)}$的大小为`[m,m]`
 
 ### Loss函数
 
-上一节中我们已经看到，对每条训练样本来说，任何一个单词产生的输出$\hat y^{(i)[t]}$是一个一维向量，形式和分类问题类似，因此对于单个单词的loss函数可以用逻辑回归的loss函数
+上一节中我们已经看到，对每条训练样本来说，任何一个单词产生的输出$\hat y^{(i)\langle t \rangle}$是一个一维向量，形式和分类问题类似，因此对于单个单词的loss函数可以用逻辑回归的loss函数
 
 $$
-L^{[t]}(\hat y ^{[t]}, y^{[t]}) = - y^{[t]}log{y^{[t]}} - (1-y^{[t]})log{(1-y^{[t]})}
+L^{\langle t \rangle}(\hat y ^{\langle t \rangle}, y^{\langle t \rangle}) = - y^{\langle t \rangle}log{y^{\langle t \rangle}} - (1-y^{\langle t \rangle})log{(1-y^{\langle t \rangle})}
 $$
 
 则对于整个样本（句子），loss函数为每个单词loss的和
 
 $$
-L(\hat y, y) = \sum_{t=1}^{T} L^{[t]}(\hat y ^{[t]}, y^{[t]})
+L(\hat y, y) = \sum_{t=1}^{T} L^{\langle t \rangle}(\hat y ^{\langle t \rangle}, y^{\langle t \rangle})
 $$
 
 ### 不同的RNN网络
@@ -107,42 +107,42 @@ The cats, which already ate ..., were full
 ```
 上面例子例子中`cat`和`was`, `cats`和`were`中间隔了一个很长的定语修饰，这就会导致当RNN在预测`was`或者`were`时，由于前面的主语信息(`cat`或者`cats`)位置很靠前，使得预测概率受到影响（如果RNN能识别出此时主语是`cat`/`cats`则`was`/`were`的预测概略应该会提高）。具体在RNN中的表现是当做back prop时，由于网络太深，会出现梯度消失的问题，也就是说我们无法通过back prop来影响到`cat`后者`cats`的weight。
 
-GRU(Gated Recurrent Uinit)被设计用来解决上述问题，其核心思想是为每个token引入一个GRU unit - $c^{[t]}$，计算方式如下
+GRU(Gated Recurrent Uinit)被设计用来解决上述问题，其核心思想是为每个token引入一个GRU unit - $c^{\langle t \rangle}$，计算方式如下
 
 $$
-\hat c^{[t]} tanh (W_c[c^{[t-1]}, x^{[t]}] + b_c) \\
-\Gamma_u ^{[t]} \delta (W_u[c^{[t-1]}, x^{[t]}] + b_u) \\
-c^{[t]} = \Gamma_u ^{[t]} * \hat c^{[t]} + (1-\Gamma_u ^{[t]}) * c^{[t-1]}
+\hat c^{\langle t \rangle} tanh (W_c[c^{[t-1]}, x^{\langle t \rangle}] + b_c) \\
+\Gamma_u ^{\langle t \rangle} \delta (W_u[c^{[t-1]}, x^{\langle t \rangle}] + b_u) \\
+c^{\langle t \rangle} = \Gamma_u ^{\langle t \rangle} * \hat c^{\langle t \rangle} + (1-\Gamma_u ^{\langle t \rangle}) * c^{[t-1]}
 $$
 
-其中，$\Gamma_u ^{[t]}$用来控制是否更新$c^{[t]}$的值，$\delta$通常为sigmoid函数，因此$\Gamma_u ^{[t]}$的取值为0或1
+其中，$\Gamma_u ^{\langle t \rangle}$用来控制是否更新$c^{\langle t \rangle}$的值，$\delta$通常为sigmoid函数，因此$\Gamma_u ^{\langle t \rangle}$的取值为0或1
 
-回到上面的例子，假设我们`cats`对应的$c^{[t]}$值为`0`或`1`, `1`表示主语是单数，`0`表示主语是复数。则直到计算`was/were`之前，$c^{[t]}$的值会一直被保留，作为计算时的参考，保留的方式则是通过控制$\Gamma_u ^{[t]}$来完成
+回到上面的例子，假设我们`cats`对应的$c^{\langle t \rangle}$值为`0`或`1`, `1`表示主语是单数，`0`表示主语是复数。则直到计算`was/were`之前，$c^{\langle t \rangle}$的值会一直被保留，作为计算时的参考，保留的方式则是通过控制$\Gamma_u ^{\langle t \rangle}$来完成
 
 ```shell
 Tha cat,    which   already   ate ...,   was    full.
-    c[t]=1                               c[t]=1
-    g[t]=1  g[t]=0  g[t]=0    g[t]=0 ... g[t]=0  
+    c\langle t \rangle=1                               c\langle t \rangle=1
+    g\langle t \rangle=1  g\langle t \rangle=0  g\langle t \rangle=0    g\langle t \rangle=0 ... g\langle t \rangle=0  
 ```
-可以看到当$\Gamma_u ^{[t]} $为1时，$c^{[t]} = c^{[t-1]} = a^{[t-1]}$，则前面的信息可以被一直保留下来。
+可以看到当$\Gamma_u ^{\langle t \rangle} $为1时，$c^{\langle t \rangle} = c^{[t-1]} = a^{[t-1]}$，则前面的信息可以被一直保留下来。
 
-注意到$c^{[t]}, \hat c^{[t]}, \Gamma_u ^{[t]}$均为向量，其中$\Gamma_u ^{[t]}$向量中的值为0或1，则上面最后一个式子的乘法计算为element-wise的，这样$\Gamma_u ^{[t]}$就可以起到gate的作用。
+注意到$c^{\langle t \rangle}, \hat c^{\langle t \rangle}, \Gamma_u ^{\langle t \rangle}$均为向量，其中$\Gamma_u ^{\langle t \rangle}$向量中的值为0或1，则上面最后一个式子的乘法计算为element-wise的，这样$\Gamma_u ^{\langle t \rangle}$就可以起到gate的作用。
 
 ### LSTM
 
 Long Short Term Memory(LSTM)是另一种通过建立前后token链接来解决梯度消失问题的方法，相比GRU更为流行一些。和GRU不同的是
 
-1. LSTM使用$a^{[t-1]}$来计算 $\hat c^{[t]}$和$\Gamma_u ^{[t]}$
-2. LSTM使用两个gate来控制$c^{[t]}$，一个前面提到的$\Gamma_u ^{[t]}$，另一个是forget gate - $\Gamma_f ^{[t]}$
-3. LSTM使用了一个output gate来控制$a^{[t]}$
+1. LSTM使用$a^{[t-1]}$来计算 $\hat c^{\langle t \rangle}$和$\Gamma_u ^{\langle t \rangle}$
+2. LSTM使用两个gate来控制$c^{\langle t \rangle}$，一个前面提到的$\Gamma_u ^{\langle t \rangle}$，另一个是forget gate - $\Gamma_f ^{\langle t \rangle}$
+3. LSTM使用了一个output gate来控制$a^{\langle t \rangle}$
 
 $$
-\hat c^{[t]} tanh (W_c[a^{[t-1]}, x^{[t]}] + b_c) \\
-\Gamma_u ^{[t]} \delta (W_u[a^{[t-1]}, x^{[t]}] + b_u) \\
-\Gamma_f ^{[t]} \delta (W_f[a^{[t-1]}, x^{[t]}] + b_f) \\
-c^{[t]} = \Gamma_u ^{[t]} * \hat c^{[t]} + \Gamma_f ^{[t]} * c^{[t-1]} \\
-\Gamma_o ^{[t]} \delta (W_o[a^{[t-1]}, x^{[t]}] + b_o) \\
-a^{[t]} = \Gamma_o * tanh(c^{[t]})
+\hat c^{\langle t \rangle} tanh (W_c[a^{[t-1]}, x^{\langle t \rangle}] + b_c) \\
+\Gamma_u ^{\langle t \rangle} \delta (W_u[a^{[t-1]}, x^{\langle t \rangle}] + b_u) \\
+\Gamma_f ^{\langle t \rangle} \delta (W_f[a^{[t-1]}, x^{\langle t \rangle}] + b_f) \\
+c^{\langle t \rangle} = \Gamma_u ^{\langle t \rangle} * \hat c^{\langle t \rangle} + \Gamma_f ^{\langle t \rangle} * c^{[t-1]} \\
+\Gamma_o ^{\langle t \rangle} \delta (W_o[a^{[t-1]}, x^{\langle t \rangle}] + b_o) \\
+a^{\langle t \rangle} = \Gamma_o * tanh(c^{\langle t \rangle})
 $$
 
 上述LSTM式子引入了三个gate函数，虽然步骤不较复杂，但是逻辑上还是比较清晰，也容易更好的整合到RNN网络中，下图是一个引入了LSTM的RNN的计算单元
@@ -153,7 +153,7 @@ $$
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-2.png">
 
-上述红线表示了$c^{[t]}$的记忆过程，通过gate的控制，可以使$c^{[3]} = c^{[1]}$, 从而达到缓存前面信息的作用，进而可以解决梯度消失的问题
+上述红线表示了$c^{\langle t \rangle}$的记忆过程，通过gate的控制，可以使$c^{[3]} = c^{[1]}$, 从而达到缓存前面信息的作用，进而可以解决梯度消失的问题
 
 ## Resources
 
