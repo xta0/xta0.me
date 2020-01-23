@@ -785,41 +785,6 @@ if __name == '__main__':
         unittest.main()
 ```
 
-### Generator
-
-惰性求值
-
-```python
-def gen_cube(n):
-    for x in range(n):
-        yield x**3
-#返回generator object        
-gen_cube(4) #<generator object gen_cube at 0x10567b150>
-#pull value from gen_cube
-list(gen_cube(4)) #[0, 1, 8, 27]
-
-def gen_fib(n):
-    a = 1
-    b = 1
-    for i in n:
-        yield a
-        a,b = b,a+b
-for number in gen_fib(10):
-    print(number)
-
-def simple_gen():
-    for i in range(3):
-        yield i
-g = simple_gen()
-next(g) #0
-next(g) #1
-next(g) #2
-
-s = "hello"
-next(iter(s))
-```
-
-
 ## Resources for basic Practice
 - [Intermediate Python](http://book.pythontips.com/en/latest/)
 - [Basic Practice](http://codingbat.com/python)
