@@ -8,7 +8,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 > 文中部分图片截取自课程视频[Nerual Networks and Deep Learning](https://www.coursera.org/learn/neural-networks-deep-learning)
 
-CNN是深度学习中一种处理图像的神经网络，可以用来做图像的分类，segmentation，目标检测等等。其工作原理可简单概括为通过神经网络的各层layer不断提取图片特征，通过对这些特征的运算从而达到我们想要的结果。
+CNN是深度学习中一种处理图像的神经网络，可以用来做图像的分类，segmentation，目标检测等等。其工作原理可简单概括为通过神经网络对图片特征的提取来达到我们想要的结果，相比于Full Connected网络，CNN需要学习的参数显著变少，相当于对图像进行了压缩。
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dl-cnn-1-0.png">
 
