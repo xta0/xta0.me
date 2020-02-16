@@ -1,7 +1,7 @@
 ---
-title: HTTPs与非对称加
+title: 非对称加密与HTTPs
 layout: post
-list_title: HTTPs与非对称加密 | Asymmetric Encryption and HTTPs
+list_title: 非对称加密与HTTPs | Asymmetric Encryption and HTTPs
 categories: [Backend, HTTPs]
 updated: '2018-09-14'
 ---
@@ -186,7 +186,9 @@ Bob  -->  public_key_bob --> private_key_CA(public_key_bob) --> Certificate
 ---------------------------------------------------------------------|--
 Alice      <-- public_key_bob <-- public_key_CA(Certiface)? <-- Certificate
 ```
-当Alice知道公钥是可信的之后，再通知Bob校验成功，可以发送消息了。
+当Alice知道公钥是可信的之后，再通知Bob校验成功，可以发送消息了。下面这张图可完整的描绘数据，数字签名，数字证书这几者的关系
+
+<img src="{{site.baseurl}}/assets/images/2016/07/ios-app-sign-2.png" class="md-img-center">
 
 ### TLS的工作方式
 
