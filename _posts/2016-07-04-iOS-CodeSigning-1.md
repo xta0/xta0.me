@@ -6,8 +6,6 @@ title: App的签名原理
 categories: [iOS]
 ---
 
-## 基本概念
-
 App签名属于iOS的安全控制范畴，根据iOS的安全白皮书的序言部分，整套iOS安全体系非常的复杂，分为下面几个主要部分：
 - 系统安全，针对Apple的硬件平台，比如iPhone，iPad等
 - 数据加密与数据安全
@@ -118,12 +116,13 @@ f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision
 在前面数字证书一节中曾提到对二进制进行签名的是证书中的私钥，我们可以使用XCode自带的签名工具手动的对某个App进行签名，比如使用下面命令
 
 ```shell
-codesign -f -s 'iPhone Developer: Tao Xu (Q7PV3L5FKY)' Example.app
+> codesign -f -s 'iPhone Developer: Tao Xu (Q7PV3L5FKY)' Example.app
+> codesign --verify Example.app
 ```
 该命令会用我们证书中的私钥对`Example.app`的Mach-O进行签名，从而得到数字签名（signature），该数字签名会被注入到Mach-O中，因此Binary的结构会被改变。被签名后的App，我们可以使用下面命令查看一个其签名信息
 
 ```shell
-➜  codesign -vv -d Example.app
+> codesign -vv -d Example.app
 
 Executable=/Example/Payload/Example.app/Example
 Identifier=com.idsdk.demo
@@ -140,11 +139,16 @@ Sealed Resources version=2 rules=10 files=19
 Internal requirements count=1 size=172
 ```
 
+### 签名的过程
+
+我们先从最简单的提交App Store的场景说起，这种情况我们只需要遵循基本的SSL加密流程即可，用本地的私钥加密binary，由于我们的公钥在获取证书时已经上传给Apple，因此App Store可以顺利解密，从而检查代码是否被正确加密。
+
+
+
 ### 签名的局限性
 
 对App的签名并不会对代码进行混淆，
 
-## 场景分析
 
 了解了上面的基本概念之后，让我们来分析日常开发中经常遇到的几个涉及代码签名的场景，包括提交AppStore，本地开发，安装ipa和inHouse发布。
 

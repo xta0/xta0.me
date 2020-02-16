@@ -6,88 +6,6 @@ categories: [Backend, HTTPs]
 updated: '2018-09-14'
 ---
 
-### HTTP Verbs
-
-- **GET/POST**
-    - Parameters in URL / Parameters in Body
-    - used for fetching documents / used for updating
-    - maximum URL length / no max length
-    - Ok to cache / not OK to cache
-    - shouldn't change the server / OK to change the server
-
-- **HEAD**
-
-HEAD返回HTTP Response Header信息，这个操作主要用于查询Response大小，资源过期时间等等，通常在HEAD操作之后进行GET操作
-
-```shell
-➜  web git:(master) ✗ nc example.com 80
-HEAD / HTTP/1.1
-Host: example.com
-
-HTTP/1.1 200 OK
-Content-Encoding: gzip
-Accept-Ranges: bytes
-Cache-Control: max-age=604800 ## 缓存时间
-Content-Type: text/html; charset=UTF-8
-Date: Fri, 14 Sep 2016 04:59:20 GMT
-Etag: "1541025663+ident"
-Expires: Fri, 21 Sep 2016 04:59:20 GMT
-Last-Modified: Fri, 09 Aug 2013 23:54:35 GMT
-Server: ECS (dca/532C)
-X-Cache: HIT
-Content-Length: 606 ## 数据大小
-```
-
-- **OPTIONS**
-
-OPTIONS用于查询Server支持的HTTP Verb，但并不是每个Server都支持OPTIONS操作
-
-```shell
-➜  web git:(master) ✗ nc example.com 80
-OPTIONS / HTTP/1.1
-Host: example.com
-
-HTTP/1.1 200 OK
-Allow: OPTIONS, GET, HEAD, POST ##支持verb类型
-Cache-Control: max-age=604800
-Content-Type: text/html; charset=UTF-8
-Date: Fri, 14 Sep 2018 05:03:14 GMT
-Expires: Fri, 21 Sep 2018 05:03:14 GMT
-Server: EOS (vny006/044F)
-Content-Length: 0
-```
-
-> 由于GET，POST，PUT和DELETE操作相对来说比较好理解，这里忽略对他们的介绍
-
-### HOL (Head of the line blocking)
-
-
-当浏览器使用HTTP 1.x请求一个网页时，如果第一个GET请求阻塞了，则会并发最多**六个**线程完继续后面的请求。但是，这里会有一个性能问题，原因是后续的无请求在并发时仍要重新建立HTTP连接，这会造成较大的性能开销。
-
-为了解决这个问题，HTTP 1.1引入了`keep-alive`机制，它允许后面请求复用第一个连接的TCP链路，即使当第一个连接请求完成成后，如果后面五个请求所要传输的资源未完成，则该链路不会关闭，直到资源传输完成。
-
-```shell
-HTTP/1.1 302 Found
-Location: https://facebook.com/
-Content-Type: text/html; charset="utf-8"
-X-FB-Debug: d9bIAXXQY7n1vitm38t6AexXGyCH/Tqa6acd2Dvs7C7/7EwZ3pcv5drbFhV6pwG+Tq5zfkVdfAQ1ajCTcVTGaA==
-Date: Fri, 14 Sep 2016 05:21:42 GMT
-Connection: keep-alive #开启keep alive
-Content-Length: 0
-```
-
-### HTTP/2 Improvements
-
-针对HOL的问题，仅有`keep-alive`机制还不能解决根本问题。考虑到目前Web请求数量激增，以及传输效率问题，HTTP/2 提供了一系列优化措施，包括
-
-1. Binary Protol 传输二进制而不是plain/text
-2. Compressed Header 头部压缩，重复信息复用
-3. Persistent Connections 短链改长链，减少频繁建立短连接的开销
-4. Multiplex Streaming 多路复用，合并资源请求
-5. Server Push 支持push
-
-## HTTPs
-
 {% include _partials/components/lightbox.html param='/assets/images/2008/07/tls.png' param2='1' %}
 
 HTTPs是HTTP + TLS的简写，TLS是用来对HTTP传输的内容进行加密的协议，它工作在应用层以下，传输层以上。要搞清楚TLS的工作方式，需要先搞清楚Hash，数字签名，数字证书，非对称加密等概念。接下来我们便逐一介绍这些名词。
@@ -215,5 +133,85 @@ Alice向Bob索要证书的过程称为TLS的握手阶段，握手流程如下：
 - [数字签名是什么？](http://www.ruanyifeng.com/blog/2011/08/what_is_a_digital_signature.html)
 - [What is a Digital Signature?](http://www.youdzone.com/signature.html)
 - [SSL Handshakes and HTTPs Bindings on IIS](https://blogs.msdn.microsoft.com/kaushal/2013/08/02/ssl-handshake-and-https-bindings-on-iis/)
+
+## 附录 - HTTP Verbs Recap
+
+- **GET/POST**
+    - Parameters in URL / Parameters in Body
+    - used for fetching documents / used for updating
+    - maximum URL length / no max length
+    - Ok to cache / not OK to cache
+    - shouldn't change the server / OK to change the server
+
+- **HEAD**
+
+HEAD返回HTTP Response Header信息，这个操作主要用于查询Response大小，资源过期时间等等，通常在HEAD操作之后进行GET操作
+
+```shell
+➜  web git:(master) ✗ nc example.com 80
+HEAD / HTTP/1.1
+Host: example.com
+
+HTTP/1.1 200 OK
+Content-Encoding: gzip
+Accept-Ranges: bytes
+Cache-Control: max-age=604800 ## 缓存时间
+Content-Type: text/html; charset=UTF-8
+Date: Fri, 14 Sep 2016 04:59:20 GMT
+Etag: "1541025663+ident"
+Expires: Fri, 21 Sep 2016 04:59:20 GMT
+Last-Modified: Fri, 09 Aug 2013 23:54:35 GMT
+Server: ECS (dca/532C)
+X-Cache: HIT
+Content-Length: 606 ## 数据大小
+```
+
+- **OPTIONS**
+
+OPTIONS用于查询Server支持的HTTP Verb，但并不是每个Server都支持OPTIONS操作
+
+```shell
+➜  web git:(master) ✗ nc example.com 80
+OPTIONS / HTTP/1.1
+Host: example.com
+
+HTTP/1.1 200 OK
+Allow: OPTIONS, GET, HEAD, POST ##支持verb类型
+Cache-Control: max-age=604800
+Content-Type: text/html; charset=UTF-8
+Date: Fri, 14 Sep 2018 05:03:14 GMT
+Expires: Fri, 21 Sep 2018 05:03:14 GMT
+Server: EOS (vny006/044F)
+Content-Length: 0
+```
+
+> 由于GET，POST，PUT和DELETE操作相对来说比较好理解，这里忽略对他们的介绍
+
+### HOL (Head of the line blocking)
+
+
+当浏览器使用HTTP 1.x请求一个网页时，如果第一个GET请求阻塞了，则会并发最多**六个**线程完继续后面的请求。但是，这里会有一个性能问题，原因是后续的无请求在并发时仍要重新建立HTTP连接，这会造成较大的性能开销。
+
+为了解决这个问题，HTTP 1.1引入了`keep-alive`机制，它允许后面请求复用第一个连接的TCP链路，即使当第一个连接请求完成成后，如果后面五个请求所要传输的资源未完成，则该链路不会关闭，直到资源传输完成。
+
+```shell
+HTTP/1.1 302 Found
+Location: https://facebook.com/
+Content-Type: text/html; charset="utf-8"
+X-FB-Debug: d9bIAXXQY7n1vitm38t6AexXGyCH/Tqa6acd2Dvs7C7/7EwZ3pcv5drbFhV6pwG+Tq5zfkVdfAQ1ajCTcVTGaA==
+Date: Fri, 14 Sep 2016 05:21:42 GMT
+Connection: keep-alive #开启keep alive
+Content-Length: 0
+```
+
+### HTTP/2 Improvements
+
+针对HOL的问题，仅有`keep-alive`机制还不能解决根本问题。考虑到目前Web请求数量激增，以及传输效率问题，HTTP/2 提供了一系列优化措施，包括
+
+1. Binary Protol 传输二进制而不是plain/text
+2. Compressed Header 头部压缩，重复信息复用
+3. Persistent Connections 短链改长链，减少频繁建立短连接的开销
+4. Multiplex Streaming 多路复用，合并资源请求
+5. Server Push 支持push
 
 
