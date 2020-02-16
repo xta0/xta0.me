@@ -1,10 +1,12 @@
 ---
 layout: post
 updated: "2019-06-20"
-list_title:  iOS的签名原理（一） | App Signing in iOS Part 1
-title: App的签名原理（一）
+list_title:  iOS的签名原理 | App Signing in iOS
+title: App的签名原理
 categories: [iOS]
 ---
+
+## 基本概念
 
 App签名属于iOS的安全控制范畴，根据iOS的安全白皮书的序言部分，整套iOS安全体系非常的复杂，分为下面几个主要部分：
 - 系统安全，针对Apple的硬件平台，比如iPhone，iPad等
@@ -35,11 +37,15 @@ App签名对大多数iOS开发者来说都不陌生，但想搞清楚它的工�
 
 <img src="{{site.baseurl}}/assets/images/2016/07/ios-app-sign-1.png" class="md-img-center">
 
-如果了解SSL的工作原理，这个开发者证书可类比于(注意是类似而不是等同，因为开发者证书中还包含其它内容)数字证书，而Apple就是CA(Certifacate Authority)。我们知道数字证书实际上就是你自己公钥被CA加密的结果，因此<mark>我们拿到的开发证书实际上是Apple用自己的私钥加密过的<mark>，参考《iOS Security WhitePaper》中可知，证书公钥保存在iPhone或者其它终端设备中。
+一个开发者证书中包含了一对本地的公钥，私钥，和一张数字证书，而Apple就是颁发证书的CA(Certifacate Authority)。我们知道数字证书实际上就本地公钥被CA的私钥加密后的结果，因此<mark>我们拿到的开发证书实际上是Apple用自己的私钥加密过的<mark>，参考《iOS Security WhitePaper》中可知，CA的公钥保存在Apple的设备中，比如iPhone。
 
 > The Boot ROM code contains the Apple Root CA public key, which is used to verify that the iBoot bootloader is signed by Apple before allowing it to load
 
-这也就是说当我们用其它的非法证书和App一起下发时，在App安装的过程中，iPhone会用系统中CA的公钥来校验随App下发的证书，如果校验失败则会不会进行安装。注意这一步验证的是证书是否有效，而不是代码是否有效。关于如何验证代码是否被篡改，我们接下来会提到。
+这也就是说当我们用其它的非法证书和App一起下发时，在App安装的过程中，iPhone会用系统中CA的公钥来校验随App下发的证书，如果校验失败则会不会进行安装。注意这一步验证的是证书是否有效，而不是代码是否有效。关于如何验证代码是否被篡改，我们接下来会提到。我们可以用下面命令来查看当前机器上有效的证书
+
+```shell
+> security find-identity -v -p codesigning
+```
 
 接下来我们再看看这个证书里有什么，上图中可以看到证书中包含一把私钥，这个私钥是用来真正对代码签名的，那么对应的公钥在哪里呢？既然是非对称加密，那么公钥一定保存在Apple的Server端了，这是非对称加密的基本策略，这点我们后面再解释。除了私钥，还有什么呢？我们可以通过`security`命令查看
 
@@ -116,7 +122,7 @@ codesign -f -s 'iPhone Developer: Tao Xu (Q7PV3L5FKY)' Example.app
 ```
 该命令会用我们证书中的私钥对`Example.app`的Mach-O进行签名，从而得到数字签名（signature），该数字签名会被注入到Mach-O中，因此Binary的结构会被改变。被签名后的App，我们可以使用下面命令查看一个其签名信息
 
-```
+```shell
 ➜  codesign -vv -d Example.app
 
 Executable=/Example/Payload/Example.app/Example
@@ -134,7 +140,11 @@ Sealed Resources version=2 rules=10 files=19
 Internal requirements count=1 size=172
 ```
 
-### 场景分析
+### 签名的局限性
+
+对App的签名并不会对代码进行混淆，
+
+## 场景分析
 
 了解了上面的基本概念之后，让我们来分析日常开发中经常遇到的几个涉及代码签名的场景，包括提交AppStore，本地开发，安装ipa和inHouse发布。
 
@@ -145,9 +155,9 @@ Internal requirements count=1 size=172
 
 
 
-### 签名的局限性
 
-对App的签名并不会对代码进行混淆，
+
+
 
 
 ## Resource
@@ -156,5 +166,5 @@ Internal requirements count=1 size=172
 - [WWDC2016 How iOS Security Really Works](https://developer.apple.com/videos/play/wwdc2016/705/)
 - [WWDC2016 What's New in Xcode App Signing](https://developer.apple.com/videos/play/wwdc2016/401/)
 - [iOS Code Signing Guide](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40005929-CH1-SW1)
-- [Inside Code Signing](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40005929-CH1-SW1)
+- [Inside Code Signing](https://www.objc.io/issues/17-security/inside-code-signing/)
 - [Advanced Apple Debugging and Reverse Engineering](https://store.raywenderlich.com/products/advanced-apple-debugging-and-reverse-engineering)
