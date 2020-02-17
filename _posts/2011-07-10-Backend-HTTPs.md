@@ -12,21 +12,17 @@ HTTPs是HTTP + TLS的简写，TLS是用来对HTTP传输的内容进行加密的�
 
 ### 非对称加密
 
-所谓非对称加密是指对数据的加密和解密用所用的秘钥不同（公钥加密，私钥解密）。假设Alice要发送一短消息给Bob，Alice首先从Bob那里获得了一个加密消息用的公钥`public_key`，接下来，Alice用`public_key`对消息进行加密后得到了一串密文`12xEm6U`，当Bob收到密文后，用自己的私钥`private_key`进行解密，得到了原文，整个流程如下图所示：
+所谓非对称加密是指对数据的加密和解密用所用的秘钥不同（公钥加密，私钥解密）。假设Bob要发送一短消息给Alice，首先从Alice会向Bob发送一个加密消息用的公钥`public_key`，接下来，Bob便用这个`public_key`对消息进行加密后得到了一串密文`12xEm6U`，当Alice收到密文后，用自己的私钥`private_key`进行解密，得到了原文，整个流程如下图所示：
 
 ```
-Alice: "msg" --public_key("msg")-->  "12xEm6U"
---------------------------------------|------
-                                      |
---------------------------------------|------
- Bob: "msg" <--private_key("msg")-- "12xEm6U"
+Bob: "msg" --> public_key("msg") -->  "12xEm6U"
+------------------------------------------|
+                                          |
+------------------------------------------|
+Alice:"msg" <-- private_key("msg") <-- "12xEm6U"
 ```                                   
 
 在上面的流程中，即使有人在中间窃听得到信息`12xEm6U`，但是由于没有`private_key`，因此也无法解密。非对称加密的方式有很多种，常用的有RSA，RSA的加密方式主要基于对大数的质因数分解，目前看起来还是很难被暴利破解。
-
-### Hash函数
-
-Hash函数用来对字符串进行单向加密，常用的Hash函数有`sha256,sha512,md5`等，Hash函数有两个特点，第一个特点是不可逆，第二个特点是计算结果定长，比如不论输入字符有多长，`sha256`的哈希值永远是256个字符。通常来说，相同的文本会产生相同的Hash值，但由于第二个特性的存在，会导致哈希碰撞，即两个内容不同的文本却可能得到相同的哈希值，因此不能根据Hash值来判断原文本是否相同。
 
 ### 数字签名
 
@@ -42,22 +38,26 @@ Doug: "evil" --public_key("evil")--> "3xgiC0Z"
 Bob: "evil" <--private_key("msg")-- "3xgiC0Z"
 ```
 
-当Bob发现自己被骗后，他立刻明白这种通信方式无法核实信息的来源，于是他决定设计一种数字签名来解决这个问题，具体做法如下:
+当Bob发现自己被骗后，他立刻明白这种通信方式无法核实信息的来源，于是他决定设计一种数字签名来解决这个问题，在介绍数字签名前，需要先了解下Hash函数。
+
+Hash函数用来对字符串进行单向加密，常用的Hash函数有`sha256,sha512,md5`等，Hash函数有两个特点，第一个特点是不可逆，第二个特点是计算结果定长，比如不论输入字符有多长，`sha256`的哈希值永远是256个字符。通常来说，相同的文本会产生相同的Hash值，但由于第二个特性的存在，会导致哈希碰撞，即两个内容不同的文本却可能得到相同的哈希值，因此不能根据Hash值来判断原文本是否相同。
+
+了解了hash函数后，Bob的具体做法如下:
 
 1. 制作数字签名：
     - Bob将要传输给Alice的内容`msg`进行哈希运算得到`e46b3f`（digest）
     - Bob用自己的私钥对digest进行加密得到自己的签名signature
 2. 生成传输文本
-    - Bob将signature附在原传输的文本下面，得到`["msg",signature]`
+    - Bob将signature附在原传输的文本下面，得到`["msg",signature]`，注意"msg"是明文传输的
     - 发送给Alice
 
 当Alice收到消息后，她需要首先验证消息的来源，具体做法如下
 
 1. 检查signature
-    - Alice使用公钥解密signature，如果能解密，说明来源肯定是Bob
-    - Alice将解密后的结果`e46b3f`保存起来
+    - Alice使用Bob给的公钥解密signature，如果能解密，说明来源肯定是Bob
+    - Alice将解密后的结果，也就是`msg`的哈希值`e46b3f`保存起来
 2. 核实内容
-    - Alice用Hash函数对`msg`进行哈希运算
+    - Alice用同样的Hash函数对`msg`进行哈希运算
     - 将得到的结果和`e46b3f`比对，如果相同则表示内容没有被篡改过
 
 上述流程如下：
@@ -70,32 +70,32 @@ Bob -- hash("msg") = "e46b3f" --> private_key("e46b3f") --> signature --> ["msg"
 Alice <-- hash("msg") == "e46b3f"? <-- publicy_key(signature) <-- signature <-- ["msg",signature]
 ```
 
-假如此时中间人Doug再次拦截了Alice与Bob的通信，虽然Doug可以用公钥解开signature窃取通信信息，但是他却没有办法再将篡改后的信息发送给Alice，原因是他没有Bob的私钥，无法对该信息进行加密。此时Doug有两种选择：
+假如此时中间人Doug再次拦截了Alice与Bob的通信，虽然Doug可以用Bob公钥解开signature窃取通信信息，但是他却没有办法再将篡改后的信息发送给Alice，原因是他没有Bob的私钥，无法对该信息进行加密。此时Doug有两种选择：
 
 1. 篡改`msg`，signature不动，将该信息发给Alice
 2. 用公钥解密signature，篡改`msg`，然后再用自己的私钥加密后发给Alice
 
 针对第一种情况，当Alice用公钥解开signature后，会得到`e46b3f`，此时由于Doug篡改了`msg`，使得`hash("msg")!="e46b3f"`校验失败，Alice知道该信息被篡改。针对第二种情况，当Alice试图用Bob的公钥解密signature时，发现无法解密，则Alice知道该信息被并非来自Bob，可能被"掉包"了。
 
-上述流程，其安全的核心在于Bob用自己的私钥进行了加密，即使Bob发出的信息被拦截，篡改，但是由于中间人没有Bob私钥，无法伪造Signature。因此，对于数字签名来说，保护好私钥是最重要的。
+上述流程，其安全的核心在于Bob用自己的私钥对`msg`进行了加密，即使Bob发出的信息被拦截和篡改，但是由于中间人没有Bob私钥，无法伪造Signature。因此，对于数字签名来说，保护好私钥是最重要的。
 
 ### 数字证书
 
-但是上述过程仍有一点瑕疵，假设Doug通过某种方式将Alice电脑上的公钥换成了自己的公钥，然后在拦截下Bob的请求后，Doug首先篡改了`msg`为`evil`，然后用哈希函数算出了`evil`的哈希值为`dx90yf`，最后用自己的私钥对`dx90yf`加密来伪造签名。此时由于Alice的公钥被Doug更换了，因此Alice在收到消息后，用Dogg的公钥可以正常解密，从而再次受到Dogg的攻击。
+但是上述过程仍有漏洞，假设Doug通过某种方式将Alice电脑上的公钥换成了自己的公钥，然后在拦截下Bob的请求后，Doug首先篡改了`msg`为`evil`，然后用哈希函数算出了`evil`的哈希值为`dx90yf`，最后用自己的私钥对`dx90yf`加密来伪造签名。此时由于Alice的公钥被Doug更换了，因此Alice在收到消息后，用Doug的公钥可以正常解密，从而再次受到Doug的攻击。
 
 ```
 Bob -- hash("msg") = "e46b3f" --> private_key_bob("e46b3f") --> signature_bob --> ["msg",signature_bob]
 -----------------------------------------------------------------------------------------------|--------
                                                                                                |
-Doug -- hash("evil") = "dx90yf" --> private_key_dogg("dx90yf") --> signature_doug --> ["evil",signature_doug]
+Doug -- hash("evil") = "dx90yf" --> private_key_Doug("dx90yf") --> signature_doug --> ["evil",signature_doug]
                                                                                                |
 -----------------------------------------------------------------------------------------------|---------
-Alice <-- hash("evil") == "dx90yf"? <-- publicy_key_dogg(signature) <-- signature_doug <-- ["evil",signature_doug]
+Alice <-- hash("evil") == "dx90yf"? <-- publicy_key_Doug(signature) <-- signature_doug <-- ["evil",signature_doug]
 ```
 
 Alice此时发现她被攻击的原因在于她无法知道自己公钥的真伪，她希望能够有一个第三方中介机构（certificate authority，简称CA）可以为她的公钥出具合法的证明，于是Alice让Bob去CA对公钥做认证，认证的方式为：CA用自己的私钥对Bob的公钥以及一些其它信息（比如CA的名称等）进行加密，生成一份**数字证书（Digital Certificate）**。
 
-当Bob得到数字证书后，他在每次和Alice通信之前，Alice都会让Bob先发送证书，Alice收到证书后，会用自己的保存的CA的公钥进行解密，如果可以解密说则明这份证书有效，证书内的公钥是可信的。
+此时在Bob和Alice通信之前，Alice都会让Bob先发送证书，Alice收到证书后，会用自己的保存的CA的公钥进行解密，如果可以解密说则明这份证书有效，证书内的公钥是可信的。
 
 ```
 Bob  -->  public_key_bob --> private_key_CA(public_key_bob) --> Certificate 
@@ -104,9 +104,19 @@ Bob  -->  public_key_bob --> private_key_CA(public_key_bob) --> Certificate
 ---------------------------------------------------------------------|--
 Alice      <-- public_key_bob <-- public_key_CA(Certiface)? <-- Certificate
 ```
-当Alice知道公钥是可信的之后，再通知Bob校验成功，可以发送消息了。下面这张图可完整的描绘数据，数字签名，数字证书这几者的关系
+当Alice知道公钥是可信的之后，首先会通知Bob证书验证成功，接下来两人便可以继续通信了。
+
+总结一下，通过上面一系列手段，我们确认了下面一些事情
+
+1. Alice收到的证书后，如果可以用CA的公钥解密说明该证书中包含的公钥是可信的
+2. Alice用证书中的公钥解密数字签名，如果能解密，说明该公钥是来自Bob的
+3. Alice通过计算Hash值来比对上一步解密后的结果，如果相同，说明传输内容没有被篡改
+
+下面这张图可完整的描绘数据，数字签名，数字证书这几者的关系
 
 <img src="{{site.baseurl}}/assets/images/2016/07/ios-app-sign-2.png" class="md-img-center">
+
+> 实际上上述过程仍然有被攻击的可能，假设Doug同样从CA获取了一份合法的证书，当Bob被Alice在交换证书时，Doug掉包了证书，Alice收到的实际上Doug的证书，那么Alice得到的公钥也就是Doug的公钥。接下来Doug可以篡改Bob发送的数据，篡改完后用同样的Hash函数生成Digest，并用自己的私钥进行加密得到数字签名。此时当Alice收到消息后，她可以用Doug的公钥顺利解密得到Digest，接下来的Hash运算的结果也相同，从而收到Doug的攻击。
 
 ### TLS的工作方式
 

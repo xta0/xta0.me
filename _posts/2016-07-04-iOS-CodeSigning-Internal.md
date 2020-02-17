@@ -119,7 +119,7 @@ f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision
 > codesign -f -s 'iPhone Developer: Tao Xu (Q7PV3L5FKY)' Example.app
 > codesign --verify Example.app
 ```
-该命令会用我们证书中的私钥对`Example.app`的Mach-O进行签名，从而得到数字签名（signature），该数字签名会被注入到Mach-O中，因此Binary的结构会被改变。被签名后的App，我们可以使用下面命令查看一个其签名信息
+该命令会用我们证书中的私钥对`Example.app`的`Example.app`中的内容进行签名，其中对binary加密得到的数字签名（signature）会被注入到Mach-O中，因此Binary的结构会被改变。被签名后的App，我们可以使用下面命令查看一个其签名信息
 
 ```shell
 > codesign -vv -d Example.app
@@ -139,9 +139,25 @@ Sealed Resources version=2 rules=10 files=19
 Internal requirements count=1 size=172
 ```
 
+注意这里的签名不仅仅是对binary有效，
+
 ### 签名的过程
 
-我们先从最简单的提交App Store的场景说起，这种情况我们只需要遵循基本的SSL加密流程即可，用本地的私钥加密binary，由于我们的公钥在获取证书时已经上传给Apple，因此App Store可以顺利解密，从而检查代码是否被正确加密。
+了解上面的基本概念之后，我们来分析三种日常开发中会遇到的签名场景，包括提交AppStore，本地开发，InHouse发布。无论哪种场景我们都需要解决SSL的几条基本问题
+
+1. 验证开发者证书的有效性
+2. 验证数字签名
+3. 验证代码是否被篡改
+
+我们先从最简单的提交App Store的场景说起，这种情况我们用自己的私钥来加密binary，由于公钥在获取证书时已经上传给Apple，因此App Store可以顺利验证数字签名你和代码是否被篡改过，因此2，3条不是问题。此外，由于ipa是通过App Store分发，只要是Apple设备均可安装，因此第一条也没有问题。
+
+接下来，我们再来分析本地开发的情况，这种情况我们对数字签名的验证肯定是不能交给Apple来做，否则每安装一次都要请求一次Apple的Server显然不现实。这样对数字签名的验证就只能在ipa安装到设备上时完成，具体来说步骤如下
+
+1. 安装时通过CA公钥验证开发证书是否有效
+2. 如果有效，则通过CA的公钥提取存在`embedding.mobileprovision`中的签名公钥
+3. 通过该公钥来验证数字签名
+
+此外，AppStore情况不同的是，开发证书签名的ipa是不能随意分发的，不在Provisioning Profiles中的设备是无法安装的。那我们能不能在ipa编译完成后，手动修改里面的`embedding.mobileprovision`？显然这是不可行的，pp文件是要从Apple后台导出的，也就是说Apple会对该文件做一定的加密，因此这就引入了另一层加密。
 
 
 
@@ -153,15 +169,6 @@ Internal requirements count=1 size=172
 了解了上面的基本概念之后，让我们来分析日常开发中经常遇到的几个涉及代码签名的场景，包括提交AppStore，本地开发，安装ipa和inHouse发布。
 
 先说AppStore的场景，
-
-
-
-
-
-
-
-
-
 
 
 ## Resource
