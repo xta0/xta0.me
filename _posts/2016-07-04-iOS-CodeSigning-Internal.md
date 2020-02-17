@@ -58,7 +58,27 @@ fAcTLGucNU+mHD/9LGLlI/NJME2oW2QfCiy7XOUnjj/FG++Hirv026e07xIA2S3R
 qkEDhYZScToVQlJNDVBCmgfQcuaDdt6lxVKW+awJIw==
 -----END CERTIFICATE-----
 ```
-上述命令是将证书按照x509标准的pem格式输出，begin和end之间是base64编码的字符串，这部分信息就是被Apple私钥加密过后的**证书内容**。
+上述命令是将证书按照x509标准的pem格式输出，begin和end之间是base64编码的字符串，这部分信息就是被Apple私钥加密过后的**证书内容**。想要提取证书中的公钥，我们可以先用base64 decode，再用openssl命令将其装换为文本格式
+
+```shell
+> CERT_DATA=MIIFizCCBHOgAwIBAgIIQbYx...
+> echo "$CERT_DATA" | base64 -D > ./cert.cer
+> openssl x509 -in ./cert.cer -inform DER -text -noout
+
+Certificate:
+Data:
+Version: 3 (0x2)
+Serial Number: 786948871528664923 (0xaebcdd447dc4f5b)
+Signature Algorithm: sha256WithRSAEncryption
+Issuer: C=US, O=Apple Inc., OU=Apple Worldwide Developer
+Relations, CN=Apple Worldwide Developer Relations Certification Authority
+Validity
+Not Before: Jan 17 13:26:41 2016 GMT
+Not After : Jan 17 13:26:41 2017 GMT
+Subject: UID=PZYM8XX95Q, CN=iPhone Distribution: Automattic, Inc.
+(PZYM8XX95Q), OU=PZYM8XX95Q,
+...truncated...
+```
 
 总结一下，关于开发者证书，我们需要明白下面两点：
 
@@ -139,7 +159,28 @@ Sealed Resources version=2 rules=10 files=19
 Internal requirements count=1 size=172
 ```
 
-注意这里的签名不仅仅是对binary有效，
+实际上不仅仅是binary需要签名，app中的所有资源文件都需要打包签名，这些资源的hash值保存在`_CodeSignature`目录下的`CodeResources`，该文件是一个xml文件。
+
+```shell
+> cat "$WORDPRESS/_CodeSignature/CodeResources" | head -10
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>files</key>
+	<dict>
+		<key>AboutViewController.nib</key>
+		<data>
+		rSZAWMReahogETtlwDpstztW6Ug=
+		</data>
+```
+我们看到`AboutViewController.nib`文件的hash值为`rSZAWMReahogETtlwDpstztW6Ug=`，这个值可以通过下面命令计算得到
+
+```shell
+openssl sha1 -binary "$WORDPRESS/AboutViewController.nib" | base64
+```
+`CodeResources`中保存了app中所有文件的hash值，app的最终数字签名就是由这些hash值共同生成。因此只要app中的内容发生一点变化，就会导致整个app的签名发生变化。
 
 ### 签名的过程
 
