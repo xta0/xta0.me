@@ -1,8 +1,8 @@
 ---
 layout: post
 updated: "2019-06-20"
-list_title:  iOS的签名原理 | App Signing in iOS
-title: App的签名原理
+list_title:  iOS App的签名机制 | App Signing in iOS Part
+title: iOS App的签名机制
 categories: [iOS]
 ---
 
@@ -99,8 +99,8 @@ f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision
 我们可以通过下面命令查看`mobileprovision`文件的内容：
 
 ```shell
-➜  Provisioning Profiles PP_FILE=$(ls ~/Library/MobileDevice/Provisioning\ Profiles/f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision)
-➜  Provisioning Profiles security cms -D -i "$PP_FILE"
+> PP_FILE=$(ls ~/Library/MobileDevice/Provisioning\ Profiles/f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision)
+> security cms -D -i "$PP_FILE"
 ```
 结果为是一个XML格式的plist文件
 
@@ -182,9 +182,9 @@ openssl sha1 -binary "$WORDPRESS/AboutViewController.nib" | base64
 ```
 `CodeResources`中保存了app中所有文件的hash值，app的最终数字签名就是由这些hash值共同生成。因此只要app中的内容发生一点变化，就会导致整个app的签名发生变化。
 
-### 签名的过程
+### 场景分析
 
-了解上面的基本概念之后，我们来分析三种日常开发中会遇到的签名场景，包括提交AppStore，本地开发，InHouse发布。无论哪种场景我们都需要解决SSL的几条基本问题
+了解上面的基本概念之后，将它们串起来我们便可以分析日常开发中会遇到的签名场景，包括提交AppStore，本地开发，InHouse发布。无论哪种场景我们都需要解决SSL的几条基本问题
 
 1. 验证开发者证书的有效性
 2. 验证数字签名
@@ -199,8 +199,6 @@ openssl sha1 -binary "$WORDPRESS/AboutViewController.nib" | base64
 3. 通过该公钥来验证数字签名
 
 此外，AppStore情况不同的是，开发证书签名的ipa是不能随意分发的，不在Provisioning Profiles中的设备是无法安装的。那我们能不能在ipa编译完成后，手动修改里面的`embedding.mobileprovision`？显然这是不可行的，pp文件是要从Apple后台导出的，也就是说Apple会对该文件做一定的加密，因此这就引入了另一层加密。
-
-
 
 ### 签名的局限性
 
@@ -220,3 +218,26 @@ openssl sha1 -binary "$WORDPRESS/AboutViewController.nib" | base64
 - [iOS Code Signing Guide](https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40005929-CH1-SW1)
 - [Inside Code Signing](https://www.objc.io/issues/17-security/inside-code-signing/)
 - [Advanced Apple Debugging and Reverse Engineering](https://store.raywenderlich.com/products/advanced-apple-debugging-and-reverse-engineering)
+
+## 附录 - App 重签名
+
+对一个App进行重签名，可分为下面三个步骤
+
+1. 用一个有效的provisioning profile来替换app中的`embedded.mobileprovision`
+    - `cp xxx.mobileprovision ${APP}/embedded.mobileprovision`
+2. 改变`Info.plist`中的`CFBundleIdentifier`和`ApplicationIdentifier`, 这一步不是必须的，如果pp是wildcard则只需要改写TeamIdentifier
+    - `plutil -replace CFBundleIdentifier -string GW8XWHWQR7.xxx Info.plist`
+    - `plutil -replace ApplicationIdentifier -string GW8XWHWQR7.xxx Info.plist`
+3. 重签名，生成新的签名信息和entitlements
+    - 创建一个`ent.xml`文件
+    - 拷贝embedded.mobileprovision中的entitlement到dummy.plist中
+        - `security cms -D -i "$PP_PATH" > /tmp/scratch`
+        - `xpath /tmp/scratch '//*[text() = "Entitlements"]/following-sibling::dict'| pbcopy`
+        - 编辑`ent.xml`，插入前一步得到的entitlement信息 - `<dict>...</dict>`
+    - 签名所有的动态库 `codesign -fs "iPhone Developer: xxx (xxxxxx)" ${App}/Framework/*.framework`
+    - 用entitlements签名app
+        - `codesign --entitlements ./ent.xml -f -s "iPhone Developer: xxx (xxxxxx)" ${App}
+4. 使用`mobdevim`或者`ios-deploy`验证
+
+
+
