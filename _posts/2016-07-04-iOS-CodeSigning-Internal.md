@@ -35,20 +35,20 @@ App签名对大多数iOS开发者来说都不陌生，但想搞清楚它的工�
 
 <img src="{{site.baseurl}}/assets/images/2016/07/ios-app-sign-1.png" class="md-img-center">
 
-一个开发者证书中包含了一对本地的公钥，私钥，和一张数字证书，而Apple就是颁发证书的CA(Certifacate Authority)。我们知道数字证书实际上就本地公钥被CA的私钥加密后的结果，因此<mark>我们拿到的开发证书实际上是Apple用自己的私钥加密过的<mark>，参考《iOS Security WhitePaper》中可知，CA的公钥保存在Apple的设备中，比如iPhone。
+一个开发者证书中包含了一对本地的公钥，私钥，和一张数字证书，而Apple就是颁发证书的CA(Certifacate Authority)。我们知道数字证书实际上就是本地公钥被CA的私钥加密后的结果，因此<mark>我们拿到的开发证书实际上是Apple用自己的私钥加密过的<mark>，参考《iOS Security WhitePaper》中可知，CA的公钥保存在Apple的设备中，比如iPhone。
 
 > The Boot ROM code contains the Apple Root CA public key, which is used to verify that the iBoot bootloader is signed by Apple before allowing it to load
 
-这也就是说当我们用其它的非法证书和App一起下发时，在App安装的过程中，iPhone会用系统中CA的公钥来校验随App下发的证书，如果校验失败则会不会进行安装。注意这一步验证的是证书是否有效，而不是代码是否有效。关于如何验证代码是否被篡改，我们接下来会提到。我们可以用下面命令来查看当前机器上有效的证书
+这也就是说当我们用其它的非法证书和App一起下发时，在App安装的过程中，iPhone会用系统中CA的公钥来校验随App下发的证书，如果校验失败则会不会进行安装。注意这一步验证的是证书是否有效，而不是代码是否有效。如何验证代码是否被篡改，需要用到数字掐你明，我们接下来会提到。我们可以用下面命令来查看当前机器上有效的证书
 
 ```shell
 > security find-identity -v -p codesigning
 ```
 
-接下来我们再看看这个证书里有什么，上图中可以看到证书中包含一把私钥，这个私钥是用来真正对代码签名的，那么对应的公钥在哪里呢？既然是非对称加密，那么公钥一定保存在Apple的Server端了，这是非对称加密的基本策略，这点我们后面再解释。除了私钥，还有什么呢？我们可以通过`security`命令查看
+接下来我们再看看这个证书里有什么，上图中可以看到证书中包含一把私钥，这个私钥是用来真正对代码签名的，那么对应的公钥在哪里呢？既然是非对称加密，那么公钥一定保存在Apple的Server端了，这是非对称加密的基本策略。实际上在我们向Apple请求证书的时候，和私钥对应的公钥会被上传到Apple的后台，用来生成数字证书。除了私钥，还有什么呢？我们可以通过`security`命令查看
 
 ```shell
-security find-certificate -c "iPhone Developer: Tao Xu (Q7PV3L5FKY)" -p
+security find-certificate -c "iPhone Developer: xx (xxxx)" -p
 
 -----BEGIN CERTIFICATE-----
 MIIFizCCBHOgAwIBAgIIQbYxvc4mnecwDQYJKoZIhvcNAQELBQAwgZYxCzAJBgNV
@@ -58,7 +58,7 @@ fAcTLGucNU+mHD/9LGLlI/NJME2oW2QfCiy7XOUnjj/FG++Hirv026e07xIA2S3R
 qkEDhYZScToVQlJNDVBCmgfQcuaDdt6lxVKW+awJIw==
 -----END CERTIFICATE-----
 ```
-上述命令是将证书按照x509标准的pem格式输出，begin和end之间是base64编码的字符串，这部分信息就是被Apple私钥加密过后的**证书内容**。想要提取证书中的公钥，我们可以先用base64 decode，再用openssl命令将其装换为文本格式
+上面begin和end之间是一段经过base64编码的字符串，这部分信息就是被Apple（CA）私钥加密过后的**数字证书**，其格式为x509标准的pem。想要提取证书中里的公钥，我们可以先用base64 decode，再用openssl解密
 
 ```shell
 > CERT_DATA=MIIFizCCBHOgAwIBAgIIQbYx...
@@ -139,7 +139,7 @@ f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision
 > codesign -f -s 'iPhone Developer: Tao Xu (Q7PV3L5FKY)' Example.app
 > codesign --verify Example.app
 ```
-该命令会用我们证书中的私钥对`Example.app`的`Example.app`中的内容进行签名，其中对binary加密得到的数字签名（signature）会被注入到Mach-O中，因此Binary的结构会被改变。被签名后的App，我们可以使用下面命令查看一个其签名信息
+该命令首先会对app中所有的资源文件计算Hash值 - Digest，然后会我们本地的私钥对Digest进行加密，最后将得到的数字签名（signature）注入到Binary（MachO）中，因此Binary的结构会被改变。我们可以使用下面命令查看app的签名状态
 
 ```shell
 > codesign -vv -d Example.app
@@ -159,7 +159,7 @@ Sealed Resources version=2 rules=10 files=19
 Internal requirements count=1 size=172
 ```
 
-实际上不仅仅是binary需要签名，app中的所有资源文件都需要打包签名，这些资源的hash值保存在`_CodeSignature`目录下的`CodeResources`，该文件是一个xml文件。
+上面已经提到，在签名时，app中的所有资源文件都需要进行加密，加密的结果会存在`_CodeSignature`目录下的`CodeResources`中，该文件是一个xml文件。
 
 ```shell
 > cat "$WORDPRESS/_CodeSignature/CodeResources" | head -10
@@ -175,12 +175,12 @@ Internal requirements count=1 size=172
 		rSZAWMReahogETtlwDpstztW6Ug=
 		</data>
 ```
-我们看到`AboutViewController.nib`文件的hash值为`rSZAWMReahogETtlwDpstztW6Ug=`，这个值可以通过下面命令计算得到
+我们看到`AboutViewController.nib`文件的签名为`rSZAWMReahogETtlwDpstztW6Ug=`，这个值可以通过下面命令计算得到
 
 ```shell
 openssl sha1 -binary "$WORDPRESS/AboutViewController.nib" | base64
 ```
-`CodeResources`中保存了app中所有文件的hash值，app的最终数字签名就是由这些hash值共同生成。因此只要app中的内容发生一点变化，就会导致整个app的签名发生变化。
+`CodeResources`中保存了app中所有文件的签名值，而app的最终签名会由这些值共同生成。因此只要app中的内容发生一点变化，就会导致整个app的签名发生变化。
 
 ### 场景分析
 
@@ -192,17 +192,17 @@ openssl sha1 -binary "$WORDPRESS/AboutViewController.nib" | base64
 
 我们先从最简单的提交App Store的场景说起，这种情况我们用自己的私钥来加密binary，由于公钥在获取证书时已经上传给Apple，因此App Store可以顺利验证数字签名你和代码是否被篡改过，因此2，3条不是问题。此外，由于ipa是通过App Store分发，只要是Apple设备均可安装，因此第一条也没有问题。
 
-> AppStore的加密过程实际上要比这个复杂，但基本思路是一样的
+> AppStore的加密过程实际上要比这个复杂，Apple会对我们的ipa进行二次加密，这会导致我们原来的证书信息会被抹去，但无论使用哪种证书，其基本思路是一样的
 
-接下来，我们再来分析本地开发的情况，这种情况我们对数字签名的验证肯定是不能交给Apple来做，否则每安装一次都要请求一次Apple的Server显然不现实。这样对数字签名的验证就只能在ipa安装到设备上时完成，具体来说步骤如下
+接下来，我们再来分析本地开发的情况，这种情况对数字签名的验证需要在ipa安装到设备上时完成，具体来说步骤如下
 
 1. 安装时通过CA公钥验证开发证书是否有效
 2. 如果有效，则通过CA的公钥提取存在`embedding.mobileprovision`中的签名公钥
 3. 通过该公钥来验证数字签名
 
-此外，和AppStore情况不同的是，开发证书签名的ipa是不能随意分发的，不在Provisioning Profiles中的设备是无法安装的。那我们能不能在ipa编译完成后，手动修改里面的`embedding.mobileprovision`？显然这是不可行的，如前文所讲，如果修改app中的任何一个文件，整个app的签名都会发生变化，这样在app安装时，将无法通过验证。
+和AppStore情况不同的是，开发证书签名的ipa是不能随意分发的，不在Provisioning Profiles中的设备是无法安装的。那我们能不能在ipa编译完成后，手动修改里面的`embedding.mobileprovision`？显然这是不可行的，如前文所讲，如果修改app中的任何一个文件，整个app的签名都会发生变化，这样在app安装时，将无法通过验证。
 
-最后我们来说InHouse发布，也就是企业发布。这种情况下所使用的证书是Apple的企业证书，数字签名也是由Apple企业证书的私钥完成。在安装企业ipa时，首先需要交换证书，和本地开发模式不同的是，该证书并不是由开发者request的，因此在安装到设备时需要开发者手动同意。同意就意味着该证书有效，那么就可以提取出证书中的公钥（Apple的设备上应该也内置了解密证书用的公钥），用于之后的数字签名验证。<mark>值得注意的是，对于企业证书，没有设备数量的限制</mark>。
+最后我们来说InHouse发布，也就是企业发布。这种情况下所使用的证书是Apple的企业证书，对app的签名使用的也是Apple企业证的私钥。根据最基本的SSL通信规则，在安装企业ipa时，首先需要交换证书，和本地开发模式不同的是，该证书并不是由开发者request的，因此在安装到设备时需要开发者手动同意。同意就意味着该证书有效，那么就可以提取出证书中的公钥（Apple的设备上应该也内置了解密证书用的公钥），用于之后的数字签名验证。<mark>值得注意的是，对于企业证书，没有设备数量的限制</mark>。
 
 ## Resource
 
