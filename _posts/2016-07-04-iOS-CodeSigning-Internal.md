@@ -82,7 +82,7 @@ Subject: UID=PZYM8XX95Q, CN=iPhone Distribution: Automattic, Inc.
 
 总结一下，关于开发者证书，我们需要明白下面两点：
 
-1. 在App安装时证书本身会随着App下发，并且该证书是被Apple加密过的，解密的公钥就存放在iPhone或者iPad设备中，它在设备出厂的时候就被预置到文件系统中了，这一步是非对称加密，发生App安装时，目的是验证开发证书的真伪
+1. 在App安装时证书本身会随着App下发，并且该证书是被Apple加密过的，解密的公钥就存放在Apple的设备中，它在设备出厂的时候就被预置到文件系统中了，这一步是非对称加密，发生App安装时，目的是验证开发证书的真伪
 2. 真正对我们代码进行签名或者说加密的是保存在开发者证书中的私钥，当App被上传到Appstore时，Apple会用对应的公钥进行验证，这一步也是非对称加密，发生在App Store，其目的是确保该程序是合法的，没有被篡改 
 
 ### Provisioning Profiles
@@ -102,7 +102,7 @@ f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision
 > PP_FILE=$(ls ~/Library/MobileDevice/Provisioning\ Profiles/f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision)
 > security cms -D -i "$PP_FILE"
 ```
-结果为是一个XML格式的plist文件
+结果是一个XML格式的plist文件
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -192,23 +192,17 @@ openssl sha1 -binary "$WORDPRESS/AboutViewController.nib" | base64
 
 我们先从最简单的提交App Store的场景说起，这种情况我们用自己的私钥来加密binary，由于公钥在获取证书时已经上传给Apple，因此App Store可以顺利验证数字签名你和代码是否被篡改过，因此2，3条不是问题。此外，由于ipa是通过App Store分发，只要是Apple设备均可安装，因此第一条也没有问题。
 
+> AppStore的加密过程实际上要比这个复杂，但基本思路是一样的
+
 接下来，我们再来分析本地开发的情况，这种情况我们对数字签名的验证肯定是不能交给Apple来做，否则每安装一次都要请求一次Apple的Server显然不现实。这样对数字签名的验证就只能在ipa安装到设备上时完成，具体来说步骤如下
 
 1. 安装时通过CA公钥验证开发证书是否有效
 2. 如果有效，则通过CA的公钥提取存在`embedding.mobileprovision`中的签名公钥
 3. 通过该公钥来验证数字签名
 
-此外，AppStore情况不同的是，开发证书签名的ipa是不能随意分发的，不在Provisioning Profiles中的设备是无法安装的。那我们能不能在ipa编译完成后，手动修改里面的`embedding.mobileprovision`？显然这是不可行的，pp文件是要从Apple后台导出的，也就是说Apple会对该文件做一定的加密，因此这就引入了另一层加密。
+此外，和AppStore情况不同的是，开发证书签名的ipa是不能随意分发的，不在Provisioning Profiles中的设备是无法安装的。那我们能不能在ipa编译完成后，手动修改里面的`embedding.mobileprovision`？显然这是不可行的，如前文所讲，如果修改app中的任何一个文件，整个app的签名都会发生变化，这样在app安装时，将无法通过验证。
 
-### 签名的局限性
-
-对App的签名并不会对代码进行混淆，
-
-
-了解了上面的基本概念之后，让我们来分析日常开发中经常遇到的几个涉及代码签名的场景，包括提交AppStore，本地开发，安装ipa和inHouse发布。
-
-先说AppStore的场景，
-
+最后我们来说InHouse发布，也就是企业发布。这种情况下所使用的证书是Apple的企业证书，数字签名也是由Apple企业证书的私钥完成。在安装企业ipa时，首先需要交换证书，和本地开发模式不同的是，该证书并不是由开发者request的，因此在安装到设备时需要开发者手动同意。同意就意味着该证书有效，那么就可以提取出证书中的公钥（Apple的设备上应该也内置了解密证书用的公钥），用于之后的数字签名验证。<mark>值得注意的是，对于企业证书，没有设备数量的限制</mark>。
 
 ## Resource
 

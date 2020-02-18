@@ -106,6 +106,8 @@ Alice      <-- public_key_bob <-- public_key_CA(Certiface)? <-- Certificate
 ```
 当Alice知道公钥是可信的之后，首先会通知Bob证书验证成功，接下来两人便可以继续通信了。
 
+> 实际上上述过程仍然有被攻击的可能，假设Doug同样从CA获取了一份合法的证书，当Bob被Alice在交换证书时，Doug掉包了证书，Alice收到的实际上Doug的证书，那么Alice得到的公钥也就是Doug的公钥。接下来Doug可以篡改Bob发送的数据，篡改完后用同样的Hash函数生成Digest，并用自己的私钥进行加密得到数字签名。此时当Alice收到消息后，她实际上用的是Doug的公钥解密得到Digest，从而受到Doug的中间人攻击。
+
 总结一下，通过上面一系列手段，我们确认了下面一些事情
 
 1. Alice收到的证书后，如果可以用CA的公钥解密说明该证书中包含的公钥是可信的
@@ -116,7 +118,6 @@ Alice      <-- public_key_bob <-- public_key_CA(Certiface)? <-- Certificate
 
 <img src="{{site.baseurl}}/assets/images/2016/07/ios-app-sign-2.png" class="md-img-center">
 
-> 实际上上述过程仍然有被攻击的可能，假设Doug同样从CA获取了一份合法的证书，当Bob被Alice在交换证书时，Doug掉包了证书，Alice收到的实际上Doug的证书，那么Alice得到的公钥也就是Doug的公钥。接下来Doug可以篡改Bob发送的数据，篡改完后用同样的Hash函数生成Digest，并用自己的私钥进行加密得到数字签名。此时当Alice收到消息后，她可以用Doug的公钥顺利解密得到Digest，接下来的Hash运算的结果也相同，从而收到Doug的攻击。
 
 ### TLS的工作方式
 
