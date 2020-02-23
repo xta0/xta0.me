@@ -15,7 +15,7 @@ categories: [C,C++]
 lib + <library name> + .a
 ```
 
-### 静态链接与`-dead_strip`
+## 静态链接与`-dead_strip`
 
 静态链接相对来说比较简单，如上图中展示了一个静态库被链接进一个executable的全过程，对于这种情况，binary中最终只会链接静态库中被用到的symbols，如下图所示
 
