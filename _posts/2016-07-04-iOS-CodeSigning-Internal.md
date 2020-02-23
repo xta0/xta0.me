@@ -136,7 +136,7 @@ f8920973-a783-49ca-b4a1-cf455dbd0227.mobileprovision
 在前面数字证书一节中曾提到对二进制进行签名的是证书中的私钥，我们可以使用XCode自带的签名工具手动的对某个App进行签名，比如使用下面命令
 
 ```shell
-> codesign -f -s 'iPhone Developer: Tao Xu (Q7PV3L5FKY)' Example.app
+> codesign -f -s 'iPhone Developer: xx (xxxx)' Example.app
 > codesign --verify Example.app
 ```
 该命令首先会对app中所有的资源文件计算Hash值 - Digest，然后会我们本地的私钥对Digest进行加密，最后将得到的数字签名（signature）注入到Binary（MachO）中，因此Binary的结构会被改变。我们可以使用下面命令查看app的签名状态
@@ -149,12 +149,12 @@ Identifier=com.idsdk.demo
 Format=app bundle with Mach-O thin (arm64)
 CodeDirectory v=20200 size=1518 flags=0x0(none) hashes=40+5 location=embedded
 Signature size=4705
-Authority=iPhone Distribution: Tao Xu (GW8XWHWQR7)
+Authority=iPhone Distribution: xx (xxxx)
 Authority=Apple Worldwide Developer Relations Certification Authority
 Authority=Apple Root CA
 Signed Time=Jul 04, 2016 at 11:28:58 AM
 Info.plist entries=26
-TeamIdentifier=GW8XWHWQR7
+TeamIdentifier=xxxx
 Sealed Resources version=2 rules=10 files=19
 Internal requirements count=1 size=172
 ```
@@ -220,17 +220,17 @@ openssl sha1 -binary "$WORDPRESS/AboutViewController.nib" | base64
 1. 用一个有效的provisioning profile来替换app中的`embedded.mobileprovision`
     - `cp xxx.mobileprovision ${APP}/embedded.mobileprovision`
 2. 改变`Info.plist`中的`CFBundleIdentifier`和`ApplicationIdentifier`, 这一步不是必须的，如果pp是wildcard则只需要改写TeamIdentifier
-    - `plutil -replace CFBundleIdentifier -string GW8XWHWQR7.xxx Info.plist`
-    - `plutil -replace ApplicationIdentifier -string GW8XWHWQR7.xxx Info.plist`
+    - `plutil -replace CFBundleIdentifier -string ${TeamID}.xxx Info.plist`
+    - `plutil -replace ApplicationIdentifier -string ${TeamID}.xxx Info.plist`
 3. 重签名，生成新的签名信息和entitlements
     - 创建一个`ent.xml`文件
     - 拷贝embedded.mobileprovision中的entitlement到dummy.plist中
         - `security cms -D -i "$PP_PATH" > /tmp/scratch`
         - `xpath /tmp/scratch '//*[text() = "Entitlements"]/following-sibling::dict'| pbcopy`
         - 编辑`ent.xml`，插入前一步得到的entitlement信息 - `<dict>...</dict>`
-    - 签名所有的动态库 `codesign -fs "iPhone Developer: xxx (xxxxxx)" ${App}/Framework/*.framework`
+    - 签名所有的动态库 `codesign -fs "iPhone Developer: xx (xxxx)" ${App}/Framework/*.framework`
     - 用entitlements签名app
-        - `codesign --entitlements ./ent.xml -f -s "iPhone Developer: xxx (xxxxxx)" ${App}
+        - `codesign --entitlements ./ent.xml -f -s "iPhone Developer: xx (xxxx)" ${App}`
 4. 使用`mobdevim`或者`ios-deploy`验证
 
 
