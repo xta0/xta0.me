@@ -1,6 +1,6 @@
 ---
-list_title: 笔记 | 深度学习 | Sequence Model
-title: Sequence Model
+list_title: 笔记 | 深度学习 | Recurrent Neural Network
+title: Recurrent Neural Network
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
