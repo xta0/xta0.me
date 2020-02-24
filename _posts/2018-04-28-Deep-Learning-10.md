@@ -1,5 +1,5 @@
 ---
-list_title: 深度学习 | Sequence Model
+list_title: 笔记 | 深度学习 | Sequence Model
 title: Sequence Model
 layout: post
 mathjax: true

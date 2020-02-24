@@ -1,5 +1,5 @@
 ---
-list_title: 深度学习 | Object Detection
+list_title: 笔记 | 深度学习 | Object Detection
 title: Object Detection
 layout: post
 mathjax: true

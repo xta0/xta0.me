@@ -1,5 +1,5 @@
 ---
-list_title: 学一点 PyTorch | Learn PyTorch | 线性回归 | Train a Linear Regression model with PyTorch
+list_title: 学一点 PyTorch | Train a Linear Regression Model using PyTorch
 title: PyTorch实现线性回归
 layout: post
 mathjax: true
