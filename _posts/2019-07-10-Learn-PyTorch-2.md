@@ -6,6 +6,8 @@ mathjax: true
 categories: ["PyTorch", "Machine Learning","Deep Learning"]
 ---
 
+<img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-fmnist.png">
+
 上一篇文章中我们用PyTorch实现了一个线性回归的模型，这篇文章我们将用神经网络来重新训练我们的模型。虽然我们只有一个feature和极为少量的训练样本，使用神经网络不免有些OverKill了，但使用神经网络的一个有趣之处是我们不知道它最后会帮我们拟合出的什么样的模型。
 
 我们下面会用PyTorch搭建两个简单的神经网络来重新拟合上一篇文章中的模型，最后我们会做一个稍微复杂一点的全FC网络做图片分类。
@@ -123,11 +125,7 @@ train_loop(5000, 1e-3, nn.MSELoss(),t_xn, t_y)
 
 ### Fashion MNIST
 
-这一节我们要设计一个神经网络解决识别衣服的问题，我们要用的数据集是著名的[Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist)，如下图所示
-
-<img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-fmnist.png">
-
-上图中的每个小图都是一张灰度图，我们的目标便是构建一个神经网络来识别每个小图中的内容。首先我们要将数据集下载下来
+这一节我们来设计一个稍微复杂一点的神经网络来解决图像识别的问题，我们要用的数据集是流行的[Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist)，如文章开头的图片所示。数据集中的每个图片均为`(28 * 28)`的灰度图片
 
 ```python
 from torchvision import datasets, transforms
@@ -300,7 +298,9 @@ model.train()#enable dropout
 
 <img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-testing-2.png">
 
-小结一下，这个例子中我们训练了一个相对复杂一点的神经网络，并解决了一个图片分类的问题。我们实际上是将图片作为一个一维向量，通过四层全链接网络，最后通过Softmax做分类。需要注意的是，我们的模型并不能识别所有的手写图片，实际应用中的模型往往是基于卷积神经网络的。总结一下上面的步骤
+### 小结
+
+这个例子中我们训练了一个相对复杂一点的神经网络，并解决了一个图片分类的问题。我们实际上是将图片作为一个一维向量，通过四层全链接网络，最后通过Softmax做分类。需要注意的是，我们的模型并不能识别所有的手写图片，实际应用中的模型往往是基于卷积神经网络的。总结一下上面的步骤
 
 1. 准备数据，并可视化。这一步可以使用PyTorch的`datasets`和`torch.utils.data.DataLoader`
 2. 对数据做预处理，这一步可以使用PyTorch的`transforms`
