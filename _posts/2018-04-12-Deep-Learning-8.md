@@ -1,5 +1,5 @@
 ---
-list_title: 笔记 | 深度学习 | Object Detection
+list_title: 笔记 | 深度学习 | Object Detection - YOLO
 title: Object Detection
 layout: post
 mathjax: true
@@ -120,7 +120,7 @@ $$
 
 上面模型中的输入为(608 \* 608 \* 3)的图片，输出为（19 \* 19 \* 5 \* 85 ）的矩阵。可以该模型使用了5个Anchor Box，每个box的$y$除了包含$p_c$和$(b_x,b_y,b_h,b_w)$外，还有80个类别。
 
-### R-CNN
+### R-CNN and family
 
 除了YOLO模型外，还有一些模型可以做目标识别，比较有名的就是R-CNN以它相关的变种，但是效率上不如YOLO，这里不做展开讨论
 
