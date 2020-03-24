@@ -1,10 +1,12 @@
 ---
-list_title: 笔记 | 深度学习 | Classic CNN Models
-title: Classic CNN Models
+list_title: 笔记 | 深度学习 | Classic CNN Models Part 1
+title: 几种常见的CNN模型（一）
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
+
+作为CNN部分的收尾，我们用两篇文章来总结一下目前流行的CNN模型，包括图像识别，目标检测，以及运行在mobile上的一些model。
 
 ### LeNet-5
 
