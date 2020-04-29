@@ -44,7 +44,7 @@ RNN的核心概念是将输入数据切分为为一系列时间片，每个时�
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-nn-1.png">
 
-图中的$T$表示时间片，$a^{\langle {T_x} \rangle}$为$T$时刻的hidden state。我们令 $a^{\langle 0 \rangle} = 0$，$a^{\langle 1 \rangle}$, 则$y^{\langle 1 \rangle}$的计算方式如下
+图中的$T$表示时间片，$a^{\langle {T_x} \rangle}$为$T$时刻的hidden state。我们令 $a^{\langle 0 \rangle} = 0$，则 $a^{\langle 1 \rangle}$ 和 $y^{\langle 1 \rangle}$的计算方式如下
 
 $$
 a^{\langle 1 \rangle} = g(W_{aa}a^{\langle 0 \rangle} + W_{ax}x^{\langle 1 \rangle} + b_a) \\
@@ -65,9 +65,7 @@ a^{\langle t \rangle} = g(W_a[a^{\langle {t-1} \rangle}, x^{\langle t \rangle}] 
 \hat y^{\langle t \rangle} = g(W_y a^{\langle t \rangle} + b_y) 
 $$
 
-<mark>因此，我们需要学习的参数便集中在了$W_a$, $b_a$和$W_y$,$b_y$上。</mark>
-
-在实际应用中，我们的$x$和$a$通常都是三维的矩阵
+<mark>因此，我们需要学习的参数便集中在了$W_a$, $b_a$和$W_y$,$b_y$上。</mark> 在实际应用中，我们的$x$和$a$通常都是三维的矩阵
 
 ```python
 x.shape = (n_x, m, T_x)

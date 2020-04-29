@@ -1,6 +1,6 @@
 ---
-list_title: 笔记 | 深度学习 | Classic CNN Models Part 1
-title: 几种常见的CNN模型（一）
+list_title: 笔记 | 深度学习 | Classic CNN Models
+title: 几种常见的CNN模型
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
