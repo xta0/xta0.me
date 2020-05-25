@@ -46,8 +46,6 @@ python3 -m timeit 'x=[1,2,3,4,5,6]'
 #5000000 loops, best of 5: 46.7 nsec per loop
 ```
 
-### 
-
 ### Pack与Unpack
 
 所谓Packed Values是指一些值以某种方式被pack到一起，最常见的有tuple, list, string, set, 和map这些集合类。对于这些集合类，Python提供了一种展开的方式，即将集合类中的元素以tuple的形式展开
@@ -63,8 +61,11 @@ a,b,c = 'xyz' #a->x, b->y, c->z
 但是对于哈希表，`for`循环只得到`key`，因此unpacking的结果也是key，且由于哈希表是无序的，unpacking出来的结果也是不确定的，对于set同理。
 
 ```python
+# unpacking a map object
 d = {'key1':1, 'key2':2, 'key3':3}
 a,b,c = d #a->'key2' b->'key3', c='key1'
+
+# unpacking a set object
 s = {'x','y','z'}
 a,b,c = s #a->'z' b->'x', c='y'
 ```
@@ -77,7 +78,7 @@ a,b = b,a
 ```
 上面代码的执行顺序是先进行RHS求值，然后将得到的值再进行LHS赋值给`a,b`。
 
-- `*`和`**`
+- 使用`*`和`**`进行unpack
 
 在Python 3.5后，可使用`*`做局部的unpack，比如一个集合，我只想unpack第一个元素，然后将剩下部分unpack给另一个变量
 

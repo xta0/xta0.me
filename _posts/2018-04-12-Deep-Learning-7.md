@@ -1,6 +1,6 @@
 ---
-list_title: 笔记 | 深度学习 | Object Detection - YOLO
-title: Object Detection
+list_title: 笔记 | 深度学习 | Object Detection | 目标检测
+title: Object Detection | 目标检测
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
@@ -36,7 +36,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 上述算法虽然解决了计算效率问题，但是没有解决对目标矩形的定位问题，例如，上面算法中，我们完全有可能碰到这种情况，即没有任何一个窗口能完全覆盖检测目标，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-3.png" width="40%"></div>
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-3.png" width="40%">
 
 解决这个问题，参考文献[2]，即YOLO算法提供一个不错的思路。YOLO将一张图片分割成$n$*$n$的格子，如下图中$n=3$，即9个格子
 
@@ -120,9 +120,40 @@ $$
 
 上面模型中的输入为(608 \* 608 \* 3)的图片，输出为（19 \* 19 \* 5 \* 85 ）的矩阵。可以该模型使用了5个Anchor Box，每个box的$y$除了包含$p_c$和$(b_x,b_y,b_h,b_w)$外，还有80个类别。
 
-### R-CNN and family
+## R-CNN和其相关模型
 
-除了YOLO模型外，还有一些模型可以做目标识别，比较有名的就是R-CNN以它相关的变种，但是效率上不如YOLO，这里不做展开讨论
+除了YOLO模型外，还有一些模型可以做目标识别，比较有名的就是R-CNN以它相关的变种。下面简略介绍一下其实现的思路
+
+### Fast R-CNN
+
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn.png">
+
+我们需要首先为图像生成一系列RoIs(Region of Interests)，每一个RoI都是一个bounding box。以Fast R-CNN为例，我们需要为每张图片准备大概2000个。然后用卷积神经网络提取图片中的feature。论文中使用的VGG16。例如，一张`(1, 3, 512, 512)`的图片经过CNN网络后得到一组`(512, 3, 16, 16)`的feature map。
+
+接下来我们要对从feature maps中提取RoI，由于我们的feature map已经从`(512, 512)`变成了`(16, 16)`, 我们的RoI区域也要等比例缩小，例如一个`(x:296, y:192, h:145, w:200)`的bounding box，在feature map中将变成`(x:9.25, y:6, h:4.53, w:6.25 )`如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-4.png">
+
+此时我们发现bbox出现了小数，我们需要其quantize成整数，但是这会损失一部分数据，如下图三所示
+
+<div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
+<div><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-1.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-2.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-3.png"></div>
+</div>
+
+接下来我们要对RoI中的像素进行RoI Pooling，其目的是将各种大小不一的bbox映射成长度统一的vector以便进行后面的FC。具体做法是使用max pooling，还是上面的例子，经过quantization后，我们的bbox变成了`4x6`的，接下来我们用max pooling把它映射成`3x3`的，如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-5.png">
+
+上图中我们发现最下面一行数据也被丢弃掉了。通过RoI Pooling我们可以得到一组`3x3x512`feature map，这也是后面FC层的输入，最终通过两层FC我们得到了两个输出结果，一个是classification，表明RoI中的Object类别，另一个是RoI的bbox，用来标识Object
+
+### Faster R-CNN
+
+相比Fast R-CNN，Faster R-CNN的主要改变是将RoI的提取整合进了网络
+
+
+### Mask R-CNN
 
 ## Resources
 
