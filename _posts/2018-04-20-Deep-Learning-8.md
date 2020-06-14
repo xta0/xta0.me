@@ -16,14 +16,14 @@ LetNet-5是Y.LeCun在1998年在的paper中提出的，被用来识别手写数�
 
 layer  | type | filter shape
 -------| ---- | ---- 
-1  | input | 32\*32\*1
-2  | conv2d | (5\*5\*1)\*6
-3  | max pool |  2*2
-4  | conv2d | (5\*5\*6)\*16
-5  | max pool |  2\*2
-6  | conv2d | 400*120
-7  | FC | 120\*84
-8  | FC | 84\*10
+1  | input | 32 x 32 x 1
+2  | conv2d | (5 x 5 x 1) x 6
+3  | max pool |  2 x 2
+4  | conv2d | (5 x 5 x 6) x 16
+5  | max pool |  2 x 2
+6  | conv2d | 400 x 120
+7  | FC | 120 x 84
+8  | FC | 84 x 10
 
 ### AlexNet
 
@@ -43,18 +43,18 @@ layer  | type | filter shape
 2  | conv1 / Relu | 96 x 3 x 11 x 11
 3  | LRN | 5
 4  | max pool |  3 x 3
-5  | conv2 / Relu | (5\*5\*96)\*256
+5  | conv2 / Relu | (5 x 5 x 96) x 256
 6  | LRN | 5
-7  | max pool |  3\*3
-8  | conv3 / Relu | (3\*3\*256)\*384
-9  | conv4 / Relu | (3\*3\*384)\*384
-10  | conv5 / Relu | (3\*3\*384)\*256
-11  | max pool |  3\*3
-12  | FC | 256 \* 4096 \* 6 \* 6
+7  | max pool |  3 x 3
+8  | conv3 / Relu | (3 x 3 x 256) x 384
+9  | conv4 / Relu | (3 x 3 x 384) x 384
+10  | conv5 / Relu | (3 x 3 x 384) x 256
+11  | max pool |  3 x 3
+12  | FC | 256 x 4096 x 6 x 6
 13  | Dropout | 
-14  | FC | 4096 \* 4096
+14  | FC | 4096 x 4096
 15  | Dropout | 
-16  | FC | 4096 \* 1000
+16  | FC | 4096 x 1000
 
 在AlexNet提出后，人们逐渐意识到使用CNN进行图像识别确实是一条可行的方法
 
