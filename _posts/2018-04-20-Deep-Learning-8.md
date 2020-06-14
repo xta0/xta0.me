@@ -6,8 +6,6 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
-作为CNN部分的收尾，我们用两篇文章来总结一下目前流行的CNN模型，包括图像识别，目标检测，以及运行在mobile上的一些model。
-
 ### LeNet-5
 
 <img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-lenet5.png">
