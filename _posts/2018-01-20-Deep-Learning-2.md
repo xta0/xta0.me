@@ -1,6 +1,6 @@
 ---
-list_title: 笔记 | 深度学习 | Neural Networks 
-title: Build Neural Networks
+list_title: 笔记 | 深度学习 | Shallow Neural Networks 
+title: Shallow Neural Networks 
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
@@ -16,7 +16,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 - $a^{[l]}_i$: 表示第$l$层神经网络的第$i$个节点
 - $a^{[l] (m)}_i$：表示第$m$个训练样本的第$l$层神经网络的第$i$个节点
 
-## 两层神经网络
+## 单神经网络
 
 遵循上述的Notation，一个只有一组训练样本的$(x_1, x_2, x_3)$的两层神经网络可用下图描述
 
@@ -172,11 +172,12 @@ $$
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w3-4.gif" class="md-img-center">
 
-### Numpy实现
+## Resources
 
-上述两层的神经网络的Numpy实现参考 - 
+- [Deep Learning Specialization Course on Coursera](https://www.coursera.org/specializations/deep-learning)
+- [Deep Learning with PyTorch](https://livebook.manning.com/book/deep-learning-with-pytorch/welcome/v-10/)
 
-## 多层神经网络
+## 附录: Numpy实现
 
 接下来我们用numpy来实现一个两层的神经网络，第一层的activation函数为Relu，第二层为Sigmoid。
 
@@ -421,10 +422,7 @@ def update_parameters(parameters, grads, learning_rate):
     return parameters
 ```
 
-## Resources
 
-- [Deep Learning Specialization Course on Coursera](https://www.coursera.org/specializations/deep-learning)
-- [Deep Learning with PyTorch](https://livebook.manning.com/book/deep-learning-with-pytorch/welcome/v-10/)
 
 
 

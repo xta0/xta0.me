@@ -194,8 +194,6 @@ b  = b - alpha*db
 ```
 上面代码展示了某一次梯度下降的计算过程
 
-### 小结
-
 ## Resources
 
 - [Deep Learning Specialization Course on Coursera](https://www.coursera.org/specializations/deep-learning)
