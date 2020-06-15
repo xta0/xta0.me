@@ -130,7 +130,7 @@ Inception Network的基本思想是使用不同尺寸的卷积核提取图片信
 ### Resources
 
 - [LetNet5 - Gradient-based learning applied to document recognition](https://ieee*plore.ieee.org/document/726791)
-- [Ale*Net – ImageNet Classification with Deep Convolutional Neural Networks](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks)
+- [AlexNet – ImageNet Classification with Deep Convolutional Neural Networks](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks)
 - [VGG - Very Deep Convolutional Networks for Large-Scale Image Recognition](https://ar*iv.org/pdf/1409.1556.pdf)
 - [ResNet - Deep Residual Learning for Image Recognition](https://ar*iv.org/pdf/1512.03385.pdf)
 - [Going Deeper with Convolutions](https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/43022.pdf)
