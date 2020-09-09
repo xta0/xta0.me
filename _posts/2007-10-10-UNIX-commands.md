@@ -6,14 +6,14 @@ title: UNIX 常用命令
 categories: [UNIX]
 ---
 
-## 用户管理
+### 用户管理
 
 - `su` 切换用户
 	- `su - USERNAME` 使用 login shell 方式切换用户
 - `sudo` 以其他用户身份执行命令
 	- `visudo` 
 
-## 文件操作
+### 文件操作
 
 - `echo`：输出字符
 	- `echo hello world > ~/text`: `>`为输出流标志，输出文本到text中
@@ -40,6 +40,14 @@ categories: [UNIX]
 	- `rm -rd`：强制递归删除文件夹中的文件
 	- `rm -rf`
 	- `rm -rf test1/test2 -v`：查看删除过程
+
+### 搜索
+
+- `find`: 搜索文件
+	- `find . -name *.c`
+	- `find . -empty`
+- `grep`: 查找文本内容
+	- `grep` "what" ./conversation.txt
 
 ### 统计文件个数
 
