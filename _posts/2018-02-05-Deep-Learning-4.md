@@ -21,12 +21,12 @@ $$
 为了解决Overfitting，我们可以在上面式子的末尾增加一个Regularization项
 
 $$
-J(w,b) = \frac{1}{m}\sum_{i=1}^{m}L(\hat{y}^{(i)}, y^{(i)}) + \frac{\lambda}{2m}{||{w}||{^2}{_2}}
+J(w,b) = \frac{1}{m}\sum_{i=1}^{m}L(\hat{y}^{(i)}, y^{(i)}) + \frac{\lambda}{2m}||{w}|{|{_2}{^2}}
 $$
 
-上述公式末尾的二范数也称作L2 Regularization，其中$\omega$的二范数展开为
+上述公式末尾的二范数也称作L2 Regularization，其中$\omega$的二范数定义为
 
 $$
-{\left\|\omega\right\|}_{2}^{2}} = \sum_{j=1}^{n_x}\omega^{2}_{j} = \omega^T\omega
+{\left\|\omega\right\|}\_{2}^{2}} = \sum_{j=1}^{n_x}\omega^{2}_{j} = \omega^T\omega
 $$
 
