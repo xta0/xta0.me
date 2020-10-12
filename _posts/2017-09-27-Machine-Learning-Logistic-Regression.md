@@ -104,61 +104,11 @@ $$
 Cost(h_\theta(x),y) = -y\log(h_\theta(x)) - (1-y)\log(1-h_\theta(x))
 $$
 
-<math display="block">
-  <mrow class="MJX-TeXAtom-ORD">
-    <mi mathvariant="normal">C</mi>
-    <mi mathvariant="normal">o</mi>
-    <mi mathvariant="normal">s</mi>
-    <mi mathvariant="normal">t</mi>
-  </mrow>
-  <mo stretchy="false">(</mo>
-  <msub>
-    <mi>h</mi>
-    <mi>&#x03B8;<!-- θ --></mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-  <mo>,</mo>
-  <mi>y</mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <mo>&#x2212;<!-- − --></mo>
-  <mi>y</mi>
-  <mspace width="thickmathspace" />
-  <mi>log</mi>
-  <mo>&#x2061;<!-- ⁡ --></mo>
-  <mo stretchy="false">(</mo>
-  <msub>
-    <mi>h</mi>
-    <mi>&#x03B8;<!-- θ --></mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-  <mo stretchy="false">)</mo>
-  <mo>&#x2212;<!-- − --></mo>
-  <mo stretchy="false">(</mo>
-  <mn>1</mn>
-  <mo>&#x2212;<!-- − --></mo>
-  <mi>y</mi>
-  <mo stretchy="false">)</mo>
-  <mi>log</mi>
-  <mo>&#x2061;<!-- ⁡ --></mo>
-  <mo stretchy="false">(</mo>
-  <mn>1</mn>
-  <mo>&#x2212;<!-- − --></mo>
-  <msub>
-    <mi>h</mi>
-    <mi>&#x03B8;<!-- θ --></mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-  <mo stretchy="false">)</mo>
-</math>
+之所以将上述式子简化为一行，其目的是方便使用概率论中的最大似然估计求解，接下来还是通过梯度下降法求解$\theta$，是cost函数最小。我们另$J(\theta)$等于
 
-之所以将上述式子简化为一行，其目的是方便使用概率论中的最大似然估计求解，接下来还是通过梯度下降法求解<math><mi>min></mi><msub><mi>J</mi><mo>(θ)</mo></msub></math>。<math><msub><mi>J</mi><mo>(θ)</mo></msub></math>可完整写为：
+$$
+J(\theta) = -\frac{1}{m}\sum_{i=1}^{m}[(y^{(i)}\log{(h_{(\theta)}(x^{(i)}))} +  (1-y^{(i)})\log{(1-h_{(\theta)}(x^{(i)}))} ]
+$$
 
 <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>J</mi>
