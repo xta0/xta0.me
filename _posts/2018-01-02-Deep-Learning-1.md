@@ -10,11 +10,11 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 ## Logistic Regression Recap
 
-前面机器学习的课程中，我们曾[介绍过Logistic Regression的概念](https://xta0.me/2017/09/27/Machine-Learning-3.html)，它主要用来解决分类的问题，比如预测结果是True或False的二元分类。
+前面机器学习的课程中，我们曾[介绍过Logistic Regression的概念](https://xta0.me/2017/09/27/Machine-Learning-3.html)，它主要用来解决分类的问题，比如预测结果是True或False的二元分类问题。
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-0.png" class="md-img-center" width="60%">
 
-上图所示，我们可以将逻辑回归模型理解为只有一个神经元的神经网络，输入数据通过这个神经元后，得到一组分类结果，公式为
+上图所示，我们可以将逻辑回归模型理解为只有一个神经元的神经网络，输入数据通过这个神经元后，得到一组分类结果。如果我们将x,y都用矩阵表示，则公式为
 
 $$
 \hat{y} = \sigma(w^Tx + b)

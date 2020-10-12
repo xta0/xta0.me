@@ -114,7 +114,7 @@ $$
 向量化的实现为：
 
 $$
-J(\theta) = \frac{m}{1}\cdot (-y^{(T)}log(h) - (1-y)^{(T)}log(1-h))
+J(\theta) = \frac{1}{m}\cdot (-y^{(T)}log(h) - (1-y)^{(T)}log(1-h))
 $$
 
 ### Gradient Descent
