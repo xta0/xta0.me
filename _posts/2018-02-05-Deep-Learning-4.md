@@ -27,6 +27,6 @@ $$
 上述公式末尾的二范数也称作L2 Regularization，其中$\omega$的二范数定义为
 
 $$
-{\left\|\omega\right\|}\_{2}^{2}} = \sum_{j=1}^{n_x}\omega^{2}_{j} = \omega^T\omega
+\sum_{j=1}^{n_x}\omega^{2}_{j} = \omega^T\omega
 $$
 
