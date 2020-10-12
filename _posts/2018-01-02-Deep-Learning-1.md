@@ -10,7 +10,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 ## Logistic Regression Recap
 
-前面机器学习的课程中，我们曾[介绍过Logistic Regression的概念](https://xta0.me/2017/09/27/Machine-Learning-3.html)，它主要用来解决分类的问题，尤其是True和False的分类。
+前面机器学习的课程中，我们曾[介绍过Logistic Regression的概念](https://xta0.me/2017/09/27/Machine-Learning-3.html)，它主要用来解决分类的问题，比如预测结果是True或False的二元分类。
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w2-0.png" class="md-img-center" width="60%">
 

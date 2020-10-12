@@ -19,3 +19,10 @@ J(w,b) = \frac{1}{m}\sum_{i=1}^{m}L(\hat{y}^{(i)}, y^{(i)})
 $$
 
 为了解决Overfitting，我们可以在上面式子的末尾增加一个Regularization项
+
+$$
+J(w,b) = \frac{1}{m}\sum_{i=1}^{m}L(\hat{y}^{(i)}, y^{(i)}) + \frac{2m}{\lambda}{\norm{w}_2{^2}}
+$$
+
+该项也称作L2 Regularization项，其中$\omega$的二范数的平方展开为
+
