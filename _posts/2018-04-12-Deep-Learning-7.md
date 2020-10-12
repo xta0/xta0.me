@@ -1,6 +1,6 @@
 ---
-list_title: 笔记 | 深度学习 | Object Detection | 目标检测
-title: Object Detection | 目标检测
+list_title: 笔记 | 深度学习 | Object Detection 
+title: Object Detection
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
@@ -123,6 +123,12 @@ $$
 ## R-CNN和其相关模型
 
 除了YOLO模型外，还有一些模型可以做目标识别，比较有名的就是R-CNN以它相关的变种。下面简略介绍一下其实现的思路
+
+### R-CNN
+
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-r-cnn-1.png">
+
+R-CNN是Region-based Convolutional Neural Networks的缩写。其主要的思路是
 
 ### Fast R-CNN
 

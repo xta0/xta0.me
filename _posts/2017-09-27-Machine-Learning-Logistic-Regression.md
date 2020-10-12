@@ -100,6 +100,10 @@ $$
 
 上述 Cost Function 可以简化为一行：
 
+$$
+Cost(h_\theta(x),y) = -y\log(h_\theta(x)) - (1-y)\log(1-h_\theta(x))
+$$
+
 <math display="block">
   <mrow class="MJX-TeXAtom-ORD">
     <mi mathvariant="normal">C</mi>
