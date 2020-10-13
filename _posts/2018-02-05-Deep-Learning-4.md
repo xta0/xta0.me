@@ -48,7 +48,10 @@ $$
 
 对于Gradient Descent，我们同样需要加上L2对$\omega$的导数
 
-
+$$
+d\omega = (from backprop) + \frac{\lambda}{m}\omega \\
+\omega^{[l]} := \omega^{[l]} - \alpha d\omega^{[l]} \\
+$$
 
 
 
