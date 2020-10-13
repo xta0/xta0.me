@@ -30,12 +30,12 @@ $$
 ||{w}||{^2} = \sum_{j=1}^{n_x}\omega^{2}_{j} = \omega^T\omega
 $$
 
-除了使用L2范数外，也有些model使用L1范数，即$\frac{\lambda}{2m}||\omega||_1$。如果使用L1范数，得到的$\omega$矩阵会较为稀疏（0很多），不常用。
+除了使用L2范数外，也有些model使用L1范数，即$\frac{\lambda}{2m}\\||\omega\\||_1$。如果使用L1范数，得到的$\omega$矩阵会较为稀疏（0很多），不常用。
 
 对于一般的Neural Network，Cost Function定义为
 
 $$
-J(\omega^{[1]}, b^{[1],...,\omega^{[l]}, b^{[l]}) = \frac{1}{m}\sum_{i=1}^{m}L(y\hat^{(i)}, y^{(i)})  + \frac{\lambda}{2m}||{w}||{^2}
+J(\omega^{[1]}, b^{[1]},...,\omega^{[l]}, b^{[l]}) = \frac{1}{m}\sum_{i=1}^{m}L(y\hat^{(i)}, y^{(i)})  + \frac{\lambda}{2m}||{w}||{^2}
 $$
 
 其中对于某$l$层的L2范数计算方法为
@@ -45,6 +45,10 @@ $$
 $$
 
 其中$i$表示row，$n^{l}$表示当前层有多少neuron(输出)，$j$表示column，$n^{(l-1)}$为前一层的输入有多少个neuron。简单理解，上面的L2范数就是对权重矩阵中的每个元素平方后求和。
+
+对于Gradient Descent，我们同样需要加上L2对$\omega$的导数
+
+
 
 
 
