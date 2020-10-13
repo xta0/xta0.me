@@ -30,11 +30,7 @@ $$
 ||{w}||{^2} = \sum_{j=1}^{n_x}\omega^{2}_{j} = \omega^T\omega
 $$
 
-除了使用L2范数外，也有些model使用L1范数，即
-
-$$
-\frac{\lambda}{2m}||\omega||_1
-$$。
+除了使用L2范数外，也有些model使用L1范数，即$\frac{\lambda}{2m}\|\|\omega\|\|_1$。
 
 如果使用L1范数，得到的$\omega$矩阵会较为稀疏（0很多），不常用。
 
@@ -52,16 +48,22 @@ $$
 
 其中$i$表示row，$n^{l}$表示当前层有多少neuron(输出)，$j$表示column，$n^{(l-1)}$为前一层的输入有多少个neuron。简单理解，上面的L2范数就是对权重矩阵中的每个元素平方后求和。
 
-新增的Regularization项同样会对反响求导产生影响，我们同样需要增加改Regularization项对$\omega$的导数
+新增的Regularization项同样会对反响求导产生影响，我们同样需要增加该Regularization项对$\omega$的导数
 
 $$
-d\omega = (from backprop) + \frac{\lambda}{m}\omega 
+d\omega = (from \ backprop) + \frac{\lambda}{m}\omega 
 $$
 
 Gradient Descent的公式不变
 
 $$
 \omega^{[l]} := \omega^{[l]} - \alpha d\omega^{[l]} 
+$$
+
+将上面$d\omega$带入，可以得到
+
+$$
+\omega^{[l]} := \omega^{[l]} - \alpha[(from \ backprop) + \frac{\lambda}{m}\omega] 
 $$
 
 
