@@ -76,9 +76,16 @@ $$
 
 当$\omega$变小后，$z$会变小，那么输出的结果将趋于于线性
 
-## Dropout
+### Dropout
 
 除了通过引入正则项来减少overfitting外，Dropout也是一种常用的手段。Dropout的思路很简单，每个hidden units将会以一定概率被去掉，去掉后的模型将变得更简单，从而减少overfitting。如下图所示 
 
 <img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-1.png">
 
+Dropout比较流行的实现是inverted dropout，其思路为
+
+1. 产生一个bool矩阵。以$l=3$为例，`d3 = np.random.rand(a3.shape[0], a3.shape[1]) < keep_prob`。其中`keep_prob`表示保留某个hidden unit的概率。则`d3`是一个0和1的bool矩阵
+2. 计算`a3`。 `a3 = np.multiply(a3, d3)`
+3. `a3 /= keep_prob`
+
+神经网络中每层的hidden units数量可能不同，keep_prob的值也可以根据其数量进行调整。Dropout表面上看起来很简单，但实际上它也属于Regularization的一种，具体证明就不展开了。值得注意的是，Dropout会影响back prop，由于hidden units会被随机cut off，Gradient Descent的收敛曲线也将会变得不规则。因此常用的手段一般是先另keep_prop=1，确保曲线收敛，然后再逐层调整keep_prop的值，重新训练。
