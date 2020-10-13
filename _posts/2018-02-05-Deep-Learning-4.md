@@ -63,8 +63,22 @@ $$
 将上面$d\omega$带入，可以得到
 
 $$
-\omega^{[l]} := \omega^{[l]} - \alpha[(from \ backprop) + \frac{\lambda}{m}\omega] 
+\omega^{[l]} := \omega^{[l]} - \alpha[(from \ backprop) + \frac{\lambda}{m}\omega] = (1-\frac{\alpha\lambda}{m})\omega^{[l]} - \alpha(from \ backprop)
 $$
 
+可以看到，在引入正则项后，$\omega^{[l]}$实际上是减小了，因此，L2正则也称作**weight decay**。
 
+引入正则项为什么能减少overfitting呢？我们可以从两方面来考虑。首先通过上面的式子可以看出，如果$\lambda$很大，则$\omega$会变小，极端情况下，会有一部分weights变成0，那么我们hidden units会减少，模型将变得简单。另一个思考的方式是看activation results，我们知道
+
+$$
+z^{[l]} = \omega^{[l]}\alpha^{[l-1]} + b^{[l]}
+$$
+
+当$\omega$变小后，$z$会变小，那么输出的结果将趋于于线性
+
+## Dropout
+
+除了通过引入正则项来减少overfitting外，Dropout也是一种常用的手段。Dropout的思路很简单，每个hidden units将会以一定概率被去掉，去掉后的模型将变得更简单，从而减少overfitting。如下图所示 
+
+<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-1.png">
 
