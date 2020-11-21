@@ -1,12 +1,12 @@
 ---
-list_title: C++ Template Programming
+list_title: 笔记 | C++ Template Programming Part 1
 title: C++ Template Programming
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
-> Notes of <C++ Templates - the complete guide>
+> Notes of [C++ Templates - the complete guide](http://www.tmplbook.com/)
 
 ## Template Argument Deduction
 
@@ -34,6 +34,7 @@ void foo(T t){
     undeclared(); //first-phase compile-time error
     undeclared(T); //second-phase compile-time error
 }
+```
 
 ### Compiling and Linking
 
@@ -44,7 +45,4 @@ Two-phase translation leads to an important problem in the handling of templates
 
 
 
-
-
-```
 
