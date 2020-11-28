@@ -8,6 +8,7 @@ categories: ["C++"]
 ## Back to Basics
 
 - Move Semantics
+- The Hidden Secret of Move Semantics
 
 ### Move Semantics
 
@@ -120,9 +121,23 @@ constexpr remove_reference_t<T>&& move(T&& t) noexcept {
         ```
     - **Use `=default` when possible**
         - Core Guideline C.80: Use `=default` if you have to be explicit about using the default semantics
+    
+    - **Rule of 5 / Rule of 0**
+        - Core Guideline C.21: If you define or `=delete` any copy, move, or destructor function, define or `=delete` them all
+            - destructor
+            - copy constructor
+            - copy assignment operator
+            - move constructor
+            - move assignment operator
+        - Rule of 0: If default behavior is correct for all five, let compiler do everything
+        - Rule of 1: If you must define one of the five, declare all of them explicitly
+
+### The Hidden Secret of Move Semantics
+
+
 
 ### Resources
 
-- [C++ | Templates & Generic Programming | 模板与泛型（二）]()
-- [C++中的右值引用与std::move] ()
+- [模板与泛型（二]()
+- [C++中的右值引用与std::move]()
 - [Back to Basic: Move Semantics](https://www.youtube.com/watch?v=ZG59Bqo7qX4&t=1421s)
