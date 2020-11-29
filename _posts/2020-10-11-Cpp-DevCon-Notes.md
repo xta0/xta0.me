@@ -1,11 +1,9 @@
 ---
-list_title: Notes | CppCon 2020 | Part 1
-title: CppCon 2020 Notes
+list_title: Notes | CppCon 2020 | Move Semantics
+title: Move Semantics
 layout: post
 categories: ["C++"]
 ---
-
-## Back to Basics
 
 - Move Semantics
 - The Hidden Secret of Move Semantics
@@ -138,6 +136,7 @@ constexpr remove_reference_t<T>&& move(T&& t) noexcept {
 
 ### Resources
 
-- [模板与泛型（二]()
-- [C++中的右值引用与std::move]()
+- [模板与泛型(二)](https://xta0.me/2009/09/20/Cpp-Basics-8.html)
+- [C++中的右值引用与std::move](https://xta0.me/2017/03/10/cpp-rvalue-move.html)
 - [Back to Basic: Move Semantics](https://www.youtube.com/watch?v=ZG59Bqo7qX4&t=1421s)
+- [he Hidden Secret of Move Semantics](https://www.youtube.com/watch?v=TFMKjL38xAI)
