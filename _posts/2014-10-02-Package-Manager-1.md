@@ -299,3 +299,13 @@ Anaconda是另一个Python的包管理软件，基本用法如下
   - `conda install -n py36 numpy`
   - `conda uninstall -n py36 numpy`
 
+- export/import的env
+  - `conda env export > env.yaml`
+  - `conda env create -f env.yaml`
+
+### Pip
+
+- Share the list of deps
+  - `pip freeze > requirements.txt`
+  - `pip install -r requirements.txt`
+
