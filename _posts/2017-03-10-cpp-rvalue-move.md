@@ -121,7 +121,7 @@ Dummy&& dm = foo();
 ```cpp
 Dummy&& dm = std::move(foo());
 ```
-此时
+此时在`foo()`执行完成后，临时对象`prvalue`便会释放，因此`dm`将绑定到一个不可用的内存地址，此时`dm`的行为将是undefined behavior
 
 
 ### std::move解决什么问题
@@ -150,13 +150,8 @@ Dummy& Dummy::operator=(Dummy&& rhs)
 ```
 可见我们需要用`swap`来交换两个对象的resource，这意味着`rhs`将拥有`dm`的resource。
 
-### 如何实现`std::move`
 
-
-
-上面已经指出
-
-### std::move的实现
+### 支持move semantics
 
 要让某个对象支持`std::move`需要做下面几件事情
 
