@@ -5,8 +5,10 @@ layout: post
 categories: ["C++"]
 ---
 
-- Move Semantics
-- The Hidden Secret of Move Semantics
+### CppCon Talks
+
+- [Back to Basic: Move Semantics](https://www.youtube.com/watch?v=ZG59Bqo7qX4&t=1421s)
+- [he Hidden Secret of Move Semantics](https://www.youtube.com/watch?v=TFMKjL38xAI)
 
 ### Move Semantics
 
