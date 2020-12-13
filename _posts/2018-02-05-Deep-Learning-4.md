@@ -100,3 +100,27 @@ x:=x-\mu \\
 \sigma^2 = \frac{1}{m}\sum_1^{m}x^{(i)} ** 2 \\
 x:=x / {\sigma^{2}} \\
 $$
+
+归一化前后的$x_1, x_2$分布如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-02.png">
+
+归一化training数据的目的是使training速度加快，因为Gradient Descent收敛加快，如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-03.png">
+
+如果不同的feature数据之间scale比较大，比如`0<x1<1000`, `0<x2<1`，此时将它们归一化将有更好的效果
+
+## Vanishing / Exploding gradients
+
+梯度的消失和爆炸是指在training时导数值很大或者很小，从而导致training不收敛。一种解决方法是对weight进行随机初始化。假设我们有下面的network，它由$l$个full-connected layer组成
+
+<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-04.png">
+
+我们用$\omega^{[i]}$表示每层的weight值，简单起见，我们另activation函数为线性函数$g(z) = z$，另bias为0，则$\hat{y}$为
+
+$$
+\hat{y} = \omega^{[l]}\omega^{[l-1]}\omega^{[l-2]}...\omega^{[2]}\omega^{[1]}X
+$$
+
+
