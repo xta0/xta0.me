@@ -130,8 +130,7 @@ $$
 1.5 & 0 \\ 
 0 & 1.5 \\ 
 \end{bmatrix}
-&
-or
+\to
 \begin{bmatrix}
 0.5 & 0 \\ 
 0 & 0.5 \\ 
