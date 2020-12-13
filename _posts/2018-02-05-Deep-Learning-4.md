@@ -113,7 +113,7 @@ $$
 
 ## Vanishing / Exploding gradients
 
-梯度的消失和爆炸是指对于深层的神经网络，在training时导数值很大或者很小，从而导致training不收敛。一种解决方法是对weight进行随机初始化。假设我们有下面的network，它由$l$个full-connected layer组成
+梯度的消失和爆炸是指对于深层的神经网络，在training时导数值很大或者很小，从而导致training变得非常困难。假设我们有下面的network，它由$l$个full-connected layer组成
 
 <img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-04.png">
 
@@ -130,11 +130,15 @@ $$
 1.5 & 0 \\ 
 0 & 1.5 \\ 
 \end{bmatrix}
-\to
+& 
 \begin{bmatrix}
 0.5 & 0 \\ 
 0 & 0.5 \\ 
 \end{bmatrix}
 $$
 
-则左边的矩阵，$\hat{y}$将指数级增长。而对于右边矩阵，$\hat{y}$将指数级减小
+则左边的矩阵，$a^{[l]}$将指数级增长。而对于右边矩阵，$\hat{y}$将指数级减小，这也会直接影响gradient descent的值（迭代很久，梯度只下降了一点点）。
+
+### Weight Initialization for deep networks
+
+解决梯度爆炸或者消失的一种解决方法是对weight进行随机初始化
