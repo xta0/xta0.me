@@ -89,3 +89,14 @@ Dropout比较流行的实现是inverted dropout，其思路为
 3. `a3 /= keep_prob`
 
 神经网络中每层的hidden units数量可能不同，keep_prob的值也可以根据其数量进行调整。Dropout表面上看起来很简单，但实际上它也属于Regularization的一种，具体证明就不展开了。值得注意的是，Dropout会影响back prop，由于hidden units会被随机cut off，Gradient Descent的收敛曲线也将会变得不规则。因此常用的手段一般是先另keep_prop=1，确保曲线收敛，然后再逐层调整keep_prop的值，重新训练。
+
+## Normalizing Training Sets
+
+对training数据 $X = [x_1, x_2]$，计算均值和方差
+
+$$
+\mu = \frac{1}{m}\sum_1^{m}x^{(i)} \\
+x:=x-\mu \\
+\sigma^2 = \frac{1}{m}\sum_1^{m}x^{(i)} ** 2 \\
+x:=x / {\sigma^{2}} \\
+$$
