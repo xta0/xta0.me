@@ -113,7 +113,7 @@ $$
 
 ## Vanishing / Exploding gradients
 
-梯度的消失和爆炸是指在training时导数值很大或者很小，从而导致training不收敛。一种解决方法是对weight进行随机初始化。假设我们有下面的network，它由$l$个full-connected layer组成
+梯度的消失和爆炸是指对于深层的神经网络，在training时导数值很大或者很小，从而导致training不收敛。一种解决方法是对weight进行随机初始化。假设我们有下面的network，它由$l$个full-connected layer组成
 
 <img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-04.png">
 
@@ -123,4 +123,19 @@ $$
 \hat{y} = \omega^{[l]}\omega^{[l-1]}\omega^{[l-2]}...\omega^{[2]}\omega^{[1]}X
 $$
 
+我们假设每个$\omega^{[l]}\$的值都为
 
+$$
+\begin{bmatrix}
+1.5 & 0 \\ 
+0 & 1.5 \\ 
+\end{bmatrix}
+&
+or
+\begin{bmatrix}
+0.5 & 0 \\ 
+0 & 0.5 \\ 
+\end{bmatrix}
+$$
+
+则左边的矩阵，$\hat{y}$将指数级增长。而对于右边矩阵，$\hat{y}$将指数级减小
