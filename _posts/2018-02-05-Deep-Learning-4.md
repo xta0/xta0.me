@@ -103,7 +103,7 @@ $$
 
 归一化前后的$x_1, x_2$分布如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-02.png">
+<img src="{{site.baseurl}}/assets/images/2018/02/dl-ht-02.png">
 
 归一化training数据的目的是使training速度加快，因为Gradient Descent收敛加快，如下图所示
 
@@ -141,4 +141,18 @@ $$
 
 ### Weight Initialization for deep networks
 
-解决梯度爆炸或者消失的一种解决方法是对weight进行随机初始化
+解决梯度爆炸或者消失的一种解决方法是对weight进行随机初始化。我们先看只有一个neuron的情况，如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-05.png">
+
+我们暂时忽略bias，则$z=\omega_{1}x_{1}+\omega_{2}x_{2}+...+\omega_{n}x_{n}$
+
+为了避免$z$过大或过小，我们一般用下面的方法对weight进行归一化
+
+```python
+W[l] = np.random.rand(W[l].shape) * np.sqrt(2/(n**(l-1)))
+```
+上述式子会将weight的均值归一化到0左右，not too bigger than 1 and not too much less than 1。当activation函数为`Relu`的时候，这个方法比较有效。如果用`tanh`，则可以将`np.sqrt(2/(n**(l-1)))` 替换为`np.sqrt(1/(n**(l-1)))`。
+
+## Numerical approximation of gradients
+
