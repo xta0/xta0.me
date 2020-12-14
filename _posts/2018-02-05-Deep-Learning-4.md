@@ -130,7 +130,7 @@ $$
 1.5 & 0 \\ 
 0 & 1.5 \\ 
 \end{bmatrix}
-or \\
+or 
 \begin{bmatrix}
 0.5 & 0 \\ 
 0 & 0.5 \\ 
@@ -150,7 +150,7 @@ $$
 为了避免$z$过大或过小，我们一般用下面的方法对weight进行归一化
 
 ```python
-W[l] = np.random.rand(W[l].shape) * np.sqrt(2/(n**(l-1)))
+W[l] = np.random.rand(layers_dims[l]) * np.sqrt(2/(n**(l-1)))
 ```
 上述式子会将weight的均值归一化到0左右，not too bigger than 1 and not too much less than 1。当activation函数为`Relu`的时候，这个方法比较有效。如果用`tanh`，则可以将`np.sqrt(2/(n**(l-1)))` 替换为`np.sqrt(1/(n**(l-1)))`。
 
@@ -176,3 +176,6 @@ err = \frac{|| d\theta_{approx} - d\theta ||_2}{||d\theta_{approx}||_2 + ||d\the
 $$
 取$\epsilon=10^{-7}$，则如果$err$能在$10^{-7}$左右说明，梯度计算正确，如果在$10^{-3}$则说明有较大的的问题。
 
+## Resource
+
+- [Improving Deep Neural Networks: Hyperparameter tuning, Regularization and Optimization](https://www.coursera.org/learn/deep-neural-network)
