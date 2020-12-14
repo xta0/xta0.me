@@ -1,6 +1,6 @@
 ---
-list_title: 笔记 | 深度学习 | Hperparameters Tuning
-title: Hperparameters
+list_title: 笔记 | 深度学习 | Regularization
+title: Hperparameters | Regularization
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
@@ -48,6 +48,14 @@ $$
 
 其中$i$表示row，$n^{l}$表示当前层有多少neuron(输出)，$j$表示column，$n^{(l-1)}$为前一层的输入有多少个neuron。简单理解，上面的L2范数就是对权重矩阵中的每个元素平方后求和。
 
+Python代码为
+
+```python
+for l in range(1, L):
+    L2_regularization_cost += (np.sum(np.square(Wl))
+L2_regularization_cost = L2_regularization_cost * lambd/(2*m)
+```
+
 新增的Regularization项同样会对反响求导产生影响，我们同样需要增加该Regularization项对$\omega$的导数
 
 $$
@@ -80,15 +88,30 @@ $$
 
 除了通过引入正则项来减少overfitting外，Dropout也是一种常用的手段。Dropout的思路很简单，每个hidden units将会以一定概率被去掉，去掉后的模型将变得更简单，从而减少overfitting。如下图所示 
 
-<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-1.png">
+<img src="{{site.baseurl}}/assets/images/2018/02/dl-ht-dropout-1.gif">
 
-Dropout比较流行的实现是inverted dropout，其思路为
+Dropout使Activation units不依赖前面layer某些具体的unit，从而使模型更加泛化。在实际应用中，Dropout比较流行的实现是inverted dropout，其思路为
 
-1. 产生一个bool矩阵。以$l=3$为例，`d3 = np.random.rand(a3.shape[0], a3.shape[1]) < keep_prob`。其中`keep_prob`表示保留某个hidden unit的概率。则`d3`是一个0和1的bool矩阵
-2. 计算`a3`。 `a3 = np.multiply(a3, d3)`
-3. `a3 /= keep_prob`
+1. 产生一个bool矩阵, 以$l=3$为例
+    - `d3 = (np.random.rand(a3.shape[0], a3.shape[1]) < keep_prob).astype(int)`
+    - 其中`keep_prob`表示保留某个hidden unit的概率。则`d3`是一个0和1的bool矩阵
+2. 更新`a3`，根据keep_prob去掉某些units
+    - `a3 = a3 * d3`
+3. Invert `a3`中的值。这么做相当于抵消掉去掉hidden units带来的影响
+    - `a3 /= keep_prob`
 
-神经网络中每层的hidden units数量可能不同，keep_prob的值也可以根据其数量进行调整。Dropout表面上看起来很简单，但实际上它也属于Regularization的一种，具体证明就不展开了。值得注意的是，Dropout会影响back prop，由于hidden units会被随机cut off，Gradient Descent的收敛曲线也将会变得不规则。因此常用的手段一般是先另keep_prop=1，确保曲线收敛，然后再逐层调整keep_prop的值，重新训练。
+Numpy的伪代码如下
+
+```python
+Z1 = np.dot(W1, X) + b1
+A1 = relu(Z1)
+D1 = np.random.rand(A1.shape[0], A1.shape[1])  # dropout matrix
+D1 = (D1 < keep_prob).astype(int)  # dropout mask
+A1 = A1*D1  # shut down some units in A1
+A1 = A1/keep_prob  # scale the value of neurons that haven't been shut down
+```
+
+神经网络中每层的hidden units数量可能不同，keep_prob的值也可以根据其数量进行调整。Dropout表面上看起来很简单，但实际上它也属于Regularization的一种，具体证明就不展开了。需要注意的是，Dropout会影响back prop，由于hidden units会被随机cut off，Gradient Descent的收敛曲线也将会变得不规则。因此常用的手段一般是先另keep_prop=1，确保曲线收敛，然后再逐层调整keep_prop的值，重新训练。
 
 ## Normalizing Training Sets
 
@@ -156,13 +179,21 @@ W[l] = np.random.rand(layers_dims[l]) * np.sqrt(2/(n**(l-1)))
 
 ### Gradient checking
 
+在bacKprop的过程中，如果我们不确定梯度计算的值是否准确，我们可以通过求导公式来验证
+
+$$
+\frac{\partial J}{\partial \theta} = \lim_{\varepsilon \to 0} \frac{J(\theta + \varepsilon) - J(\theta - \varepsilon)}{2 \varepsilon} \tag{1}
+$$
+
+具体做法是，将backprop过程中得到梯度值$\frac{\partial J}{\partial \theta}和上述公式求出的梯度值进行比较
+
 Take $W^{[1]},b^{[1]},...,W^{[L]},b^{[L]}$ and reshape into a big vector $\theta$, then
 
 $$
 J(W^{[1]},b^{[1]},...,W^{[L]},b^{[L]}) = J(\theta_1,\theta_2,...,\theta_L ) =  J(\theta)
 $$
 
-Take $dW^{[1]},db^{[1]},...,dW^{[L]},db^{[L]}$ and reshape into a big vector $\d\theta$, then 
+Take $dW^{[1]},db^{[1]},...,dW^{[L]},db^{[L]}$ and reshape into a big vector $d\theta$, then 
 
 $$
 d\theta[i] = \frac{dJ}{d\theta_i}
@@ -174,6 +205,7 @@ Use the following formula to check
 $$
 err = \frac{|| d\theta_{approx} - d\theta ||_2}{||d\theta_{approx}||_2 + ||d\theta||_2}
 $$
+
 取$\epsilon=10^{-7}$，则如果$err$能在$10^{-7}$左右说明，梯度计算正确，如果在$10^{-3}$则说明有较大的的问题。
 
 ## Resource
