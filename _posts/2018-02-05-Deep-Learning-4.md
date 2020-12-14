@@ -185,28 +185,68 @@ $$
 \frac{\partial J}{\partial \theta} = \lim_{\varepsilon \to 0} \frac{J(\theta + \varepsilon) - J(\theta - \varepsilon)}{2 \varepsilon} \tag{1}
 $$
 
-具体做法是，将backprop过程中得到梯度值$\frac{\partial J}{\partial \theta}和上述公式求出的梯度值进行比较
-
-Take $W^{[1]},b^{[1]},...,W^{[L]},b^{[L]}$ and reshape into a big vector $\theta$, then
-
-$$
-J(W^{[1]},b^{[1]},...,W^{[L]},b^{[L]}) = J(\theta_1,\theta_2,...,\theta_L ) =  J(\theta)
-$$
-
-Take $dW^{[1]},db^{[1]},...,dW^{[L]},db^{[L]}$ and reshape into a big vector $d\theta$, then 
-
-$$
-d\theta[i] = \frac{dJ}{d\theta_i}
-d\theta_{approx}[i] = \frac{J(\theta_1,...,\theta_i + \epsilon,...) - J(\theta_1,...,\theta_i - \epsilon,...) }{2\epsilon}
-$$
-
-Use the following formula to check
+具体做法是，将backprop过程中得到梯度值$\frac{\partial J}{\partial \theta}$和上述公式求出的梯度值进行比较。比较方法是根据下面公式计算误差值
 
 $$
 err = \frac{|| d\theta_{approx} - d\theta ||_2}{||d\theta_{approx}||_2 + ||d\theta||_2}
 $$
 
-取$\epsilon=10^{-7}$，则如果$err$能在$10^{-7}$左右说明，梯度计算正确，如果在$10^{-3}$则说明有较大的的问题。
+一般误差的阈值为$\epsilon=10^{-7}$，则如果$err$能在$10^{-7}$左右说明，梯度计算正确，如果在$10^{-3}$则说明有较大的的问题。
+
+Python的伪代码如下
+
+```python
+def gradient_check(x, theta, epsilon = 1e-7):    
+    thetaplus = theta + epsilon
+    thetaminus = theta - epsilon
+    J_plus = forward_propagation(x,thetaplus)
+    J_minus = forward_propagation(x,thetaminus)
+    gradapprox = (J_plus - J_minus) / (2*epsilon)
+    
+    # Check if gradapprox is close enough to the output of backward_propagation()
+    grad = backward_propagation(x, theta)
+    
+    numerator = np.linalg.norm(grad - gradapprox)
+    denominator = np.linalg.norm(grad) + np.linalg.norm(gradapprox)
+    difference = numerator / denominator
+    
+    if difference < 1e-7:
+        print ("The gradient is correct!")
+    else:
+        print ("The gradient is wrong!")
+    return difference
+
+```
+假设我们有下面的network
+
+<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-06.png">
+
+我们将 $W^{[1]},b^{[1]},W^{[2]},b^{[2]},W^{[3]},b^{[3]}$ 存到一个dictionary里并转为一个vector，称为 $\theta$, 如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-07.png">
+
+则我们的cost函数变为
+
+$$
+J(W^{[1]},b^{[1]},...,W^{[L]},b^{[L]}) = J(\theta_1,\theta_2,...,\theta_L ) =  J(\theta)
+$$
+
+相应的，我们也需要将$d\theta$存到一个vector里，即$[dW^{[1]},db^{[1]},dW^{[2]},db^{[2]},dW^{[3]},db^{[3]}]$
+
+接下来我们执行下面步骤
+
+1. 计算`J_plus[i]`
+    - 计算$\theta^{+}$ = `np.copy(parameters_values)`
+    - $\theta^{+} = \theta^{+} + \epsilon$
+    - $J^{+}_i$ = `forward_propagation_n(x, y, vector_to_dictionary(theta_plus))`
+2. 重复上面步骤计算$\theta^{-}$和`J_minus[i]`
+3. 计算导数值 $gradapprox[i] = \frac{J^{+}_i - J^{-}_i}{2 \varepsilon}[i] = \frac{J^{+}_i - J^{-}_i}{2 \varepsilon}$
+
+上述步骤完成后我们将得到一个`gradapprox`的vector，其中`gradapprox[i]`代表对`parameter_values[i]`的导数。接下来我们就可用上述误差函数来计算误差
+
+- Note
+    - Gradient Checking is slow! Approximating the gradient with $\frac{\partial J}{\partial \theta} \approx  \frac{J(\theta + \varepsilon) - J(\theta - \varepsilon)}{2 \varepsilon}$  is computationally costly. For this reason, we don't run gradient checking at every iteration during training. Just a few times to check if the gradient is correct.
+    - Gradient Checking, at least as we've presented it, doesn't work with dropout. You would usually run the gradient check algorithm without dropout to make sure your backprop is correct, then add dropout.
 
 ## Resource
 

@@ -6,4 +6,11 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
+## Mini-batch gradient descent
 
+
+## Exponentially weighted averages
+
+## Gradient descent with momentum
+
+## Adam optimization algorithm
