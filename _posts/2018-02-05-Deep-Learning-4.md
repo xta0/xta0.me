@@ -130,7 +130,7 @@ $$
 1.5 & 0 \\ 
 0 & 1.5 \\ 
 \end{bmatrix}
-& 
+or \\
 \begin{bmatrix}
 0.5 & 0 \\ 
 0 & 0.5 \\ 
@@ -143,7 +143,7 @@ $$
 
 解决梯度爆炸或者消失的一种解决方法是对weight进行随机初始化。我们先看只有一个neuron的情况，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-05.png">
+<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-05.png" width="50%">
 
 我们暂时忽略bias，则$z=\omega_{1}x_{1}+\omega_{2}x_{2}+...+\omega_{n}x_{n}$
 
@@ -154,5 +154,25 @@ W[l] = np.random.rand(W[l].shape) * np.sqrt(2/(n**(l-1)))
 ```
 上述式子会将weight的均值归一化到0左右，not too bigger than 1 and not too much less than 1。当activation函数为`Relu`的时候，这个方法比较有效。如果用`tanh`，则可以将`np.sqrt(2/(n**(l-1)))` 替换为`np.sqrt(1/(n**(l-1)))`。
 
-## Numerical approximation of gradients
+### Gradient checking
+
+Take $W^{[1]},b^{[1]},...,W^{[L]},b^{[L]}$ and reshape into a big vector $\theta$, then
+
+$$
+J(W^{[1]},b^{[1]},...,W^{[L]},b^{[L]}) = J(\theta_1,\theta_2,...,\theta_L ) =  J(\theta)
+$$
+
+Take $dW^{[1]},db^{[1]},...,dW^{[L]},db^{[L]}$ and reshape into a big vector $\d\theta$, then 
+
+$$
+d\theta[i] = \frac{dJ}{d\theta_i}
+d\theta_{approx}[i] = \frac{J(\theta_1,...,\theta_i + \epsilon,...) - J(\theta_1,...,\theta_i - \epsilon,...) }{2\epsilon}
+$$
+
+Use the following formula to check
+
+$$
+err = \frac{|| d\theta_{approx} - d\theta ||_2}{||d\theta_{approx}||_2 + ||d\theta||_2}
+$$
+取$\epsilon=10^{-7}$，则如果$err$能在$10^{-7}$左右说明，梯度计算正确，如果在$10^{-3}$则说明有较大的的问题。
 
