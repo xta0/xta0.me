@@ -1,6 +1,6 @@
 ---
-list_title: 笔记 | 深度学习 | Deep Layer Neural Networks
-title: Deep-Layer Neural Networks
+list_title: 笔记 | 深度学习 | Deep Neural Networks
+title: Deep Neural Networks
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]

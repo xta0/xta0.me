@@ -6,8 +6,6 @@ mathjax: true
 categories: ["PyTorch", "Machine Learning","Deep Learning"]
 ---
 
-<img src="{{site.baseurl}}/assets/images/2019/07/pytorch-2-fmnist.png">
-
 上一篇文章中我们用PyTorch实现了一个线性回归的模型，这篇文章我们将用神经网络来重新训练我们的模型。虽然我们只有一个feature和极为少量的训练样本，使用神经网络不免有些OverKill了，但使用神经网络的一个有趣之处是我们不知道它最后会帮我们拟合出的什么样的模型。
 
 我们下面会用PyTorch搭建两个简单的神经网络来重新拟合上一篇文章中的模型，最后我们会做一个稍微复杂一点的全FC网络做图片分类。
