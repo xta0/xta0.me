@@ -19,3 +19,10 @@ Financial instrument that has some type of monetary value. Some popular securiti
         - Future Contracts
             - A future contract obligates the buyer to buy or seller to sell an asset at a predetermined price at a specified time in the future.
 - Equity Securities (股权证券)
+
+### Market Mechanics
+
+- Stock Exchange，股票交易所，比如上交所，纽交所
+- Broker 券商
+- Market Maker 做市商，理论上买卖双方通过券商进行股票交易，但实际上买卖的股票均来自做市商。有些券商也具有做市商的资质，因此我们买的股票实际上是券商提前买好的，再卖给我们。可见，这中间是有套利空间的。
+
