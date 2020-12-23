@@ -21,7 +21,9 @@ R-CNN是Region-based Convolutional Neural Networks的缩写。其主要的思路
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-r-cnn-1.png">
 
-R-CNN虽然能完成目标检测的任务，但是速度却非常的慢，对于一张图片，通常有大约2000个proposal region，每一个都需要跑一次forward，计算量非常大。另外，R-CNN需要train三个network，分别用来生成proposal region，run image classification以及bounding box regression.
+R-CNN虽然能完成目标检测的任务，但是速度却非常的慢
+- 有2000个region proposal, 训练需要84小时
+- 如果用vGG16，一次inference需要47s
 
 ### Fast R-CNN
 
@@ -105,3 +107,11 @@ Mask R-CNN是基于Faster R-CNN的架构，引入了Instant Segmentation。它�
 </div>
 
 和RoI Pooling相比，RoI Align利用了更多RoI Region周围的像素信息（上图中左边绿色部分），因此可以得到更准确的结果
+
+## Resources
+
+- [R-CNN]()
+- [Fast R-CNN]()
+- [Faster R-CNN]()
+- [Mask R-CNN]()
+- [Selective Search](https://lilianweng.github.io/lil-log/2017/10/29/object-recognition-for-dummies-part-1.html#selective-search)
