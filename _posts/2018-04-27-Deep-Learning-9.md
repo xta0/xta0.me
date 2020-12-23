@@ -6,7 +6,7 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
-除了YOLO模型外，还有一些模型可以做目标识别，比较有名的就是R-CNN以它相关的变种。下面简略介绍一下其实现的思路
+在Objective Detection上比较有名的model是R-CNN以它相关的变种。下面简略介绍一下其实现的思路
 
 ### R-CNN
 
