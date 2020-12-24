@@ -19,3 +19,5 @@ Financial instrument that has some type of monetary value. Some popular securiti
         - Future Contracts
             - A future contract obligates the buyer to buy or seller to sell an asset at a predetermined price at a specified time in the future.
 - Equity Securities (股权证券)
+    - Equity is the value of an owned asset minus the amount of all debts or liabilities on that asset
+    - The net value of something owned
