@@ -18,8 +18,6 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 <img  src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-5.png">
 
-### Fully Convolutional Network 
-
 在参考文献[1]中提到了减少计算量一个方案是将原来神经网路中的FC层变成卷积层，如下图所示
 
 <img  src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-6.png">
@@ -62,7 +60,7 @@ $$
 
 因此，YOLO模型的输出便是9个上述目标向量，即3\*3\*8的矩阵。由于存在$(b_x, b_y, b_h, b_w)$的值，使得YOLO可以精确的计算出bounding box的位置，注意到 $(b_x,b_y)$必须在格子内，因此它们值在0到1之间，但是$(b_h,b_w)$可以大于1，因为可能存在目标物体比当前box大的情况。实际应用中，往往将一张图片分成19*19的格子，输出变为19\*19\*8，这降低了多个目标被分配到同一个格子的概率。
 
-### Evaluating Your Algorithm
+### IoU
 
 我们该如何衡量目标检测的准确率呢，比如下图中目标矩形为红色，而实际检测结果却为紫色矩形。
 

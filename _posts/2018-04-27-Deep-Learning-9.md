@@ -6,17 +6,28 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
-## R-CNN和其相关模型
-
-除了YOLO模型外，还有一些模型可以做目标识别，比较有名的就是R-CNN以它相关的变种。下面简略介绍一下其实现的思路
+在Objective Detection上比较有名的model是R-CNN以它相关的变种。下面简略介绍一下其实现的思路
 
 ### R-CNN
 
-<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-r-cnn-1.png">
-
 R-CNN是Region-based Convolutional Neural Networks的缩写。其主要的思路是
 
+1. 通过selective search为一张图片生成约2000个RoI
+2. 由于生成RoI尺寸大小不同，我们需要将它们warp成一个固定大小的矩形，作为后面CNN网络的输入
+3. 将warp后的RoI输入CNN进行分类
+4. 同时对RoI进行bounding box regression。
+
+整个过程如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-r-cnn-1.png">
+
+R-CNN虽然能完成目标检测的任务，但是速度却非常的慢
+- 有2000个region proposal, 训练需要84小时
+- 如果用vGG16，一次inference需要47s
+
 ### Fast R-CNN
+
+
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn.png">
 
@@ -96,3 +107,11 @@ Mask R-CNN是基于Faster R-CNN的架构，引入了Instant Segmentation。它�
 </div>
 
 和RoI Pooling相比，RoI Align利用了更多RoI Region周围的像素信息（上图中左边绿色部分），因此可以得到更准确的结果
+
+## Resources
+
+- [R-CNN]()
+- [Fast R-CNN]()
+- [Faster R-CNN]()
+- [Mask R-CNN]()
+- [Selective Search](https://lilianweng.github.io/lil-log/2017/10/29/object-recognition-for-dummies-part-1.html#selective-search)

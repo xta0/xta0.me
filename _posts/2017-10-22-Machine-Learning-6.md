@@ -10,7 +10,7 @@ mathjax: true
 
 支持向量机 SVM（support vector machine）是另一种监督学习的算法，它主要用解决**分类**问题（二分类）和**回归分析**中。SVM 和前面几种机器学习算法相比，在处理复杂的非线性方程（不规则分类问题）时效果很好。在介绍 SVM 之前，先回顾一下 logistic regression，在逻辑回归中，我们的预测函数为：
 
-<math display="block"><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>g</mi><mo>(</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi><mo>)</mo><mspace width="2em"></mspace><mi>g</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>=</mo><mstyle><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>z</mi></mrow></msup></mrow></mfrac></mstyle></math>
+<math display="block"><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="fal1se">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>g</mi><mo>(</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi><mo>)</mo><mspace width="2em"></mspace><mi>g</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>=</mo><mstyle><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>z</mi></mrow></msup></mrow></mfrac></mstyle></math>
 
 * 如果要<math><mi>y</mi><mo>=</mo><mn>1</mn></math>，需要<math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>≈</mo><mn>1</mn></math>，即<math><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi> <mo>>></mo><mn>0</mn></math>
 
