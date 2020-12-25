@@ -25,4 +25,9 @@ Financial instrument that has some type of monetary value. Some popular securiti
 - Stock Exchange，股票交易所，比如上交所，纽交所
 - Broker 券商
 - Market Maker 做市商，理论上买卖双方通过券商进行股票交易，但实际上买卖的股票均来自做市商。有些券商也具有做市商的资质，因此我们买的股票实际上是券商提前买好的，再卖给我们。可见，这中间是有套利空间的。
+- Liquidity
+    - The ability to trade an asset at a stable price. 
+    - 市场流通性通常简称流通性或流动性，是指资产能够以一个合理的价格顺利变现的能力
+    - Cash is considered the most liquid asset, because it can be readily traded for other assets. This might not be intuitive, but it helps to think about cash as a financial instrument like any other. Changing currency values can make it worth more or less, just like stocks, but usually the value of cash reduces over time due to inflation.
+
 
