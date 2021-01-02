@@ -62,12 +62,13 @@ $$
 
 因此预测结果$\hat{y}$为`1xm`的向量
 
+
 ### Cost function
 
-对于某一组训练集可知其Loss函数为
+对于某一组训练集可知其cross-entropy loss函数为
 
 $$
-L(\hat(y),y) = - (y\log{\hat{y}}) + (1-y)\log{(1-\hat{y})} 
+L(\hat(y),y) = - (y\log{\hat{y}}) - (1-y)\log{(1-\hat{y})} 
 $$
 
 然后我们对所有$m$组训练集都计算Loss函数，之后再求平均，则可以得到Cost function
@@ -310,6 +311,4 @@ dz^{(m)}
 \end{bmatrix}
 = \frac{1}{m}[x^{(1)}dz^{(1)},..., x^{(m)}dz^{(m)}]
 $$
-
-[完整的Python代码]()
 
