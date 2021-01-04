@@ -123,7 +123,7 @@ train_loop(5000, 1e-3, nn.MSELoss(),t_xn, t_y)
 
 ### Fashion MNIST
 
-这一节我们来设计一个稍微复杂一点的神经网络来解决图像识别的问题，我们要用的数据集是流行的[Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist)，如文章开头的图片所示。数据集中的每个图片均为`(28 * 28)`的灰度图片
+这一节我们来设计一个稍微复杂一点的神经网络来解决图像识别的问题，我们要用的数据集是[Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist)。数据集中的每个图片均为`(28 * 28)`的灰度图片，首先我们来准备数据
 
 ```python
 from torchvision import datasets, transforms
@@ -146,7 +146,7 @@ for images, lable in trainloader:
     print(images.shape) #torch.Size([64, 1, 28, 28])
     print(labels.shape) #torch.Size([64])
 ```
-可以看到我们的训练集包含938组训练样本，每组样本的尺寸为`[64,1,28,28]`，格式是按照`NCWH`规则排列，表示每组64张图片，每张图只有一个channel，长宽均为28像素。
+可以看到我们的训练集包含938组训练样本，每组样本的shape为`[64,1,28,28]`，表示每组64张图片，每张图只有一个channel，长宽均为28像素。
 
 对于每一张图片来说，由于是灰度图片，只有一个通道，因此我们可以将输入的图片等价为一个`[1x784]`的一维向量，feature数量为像素点的个数。由于feature数量并没有很大，我们不需要引入卷积神经网络，使用若干层Fully Connected Layer（后面简称FC）堆叠即可。
 
@@ -298,7 +298,9 @@ model.train()#enable dropout
 
 ### 小结
 
-这个例子中我们训练了一个相对复杂一点的神经网络，并解决了一个图片分类的问题。我们实际上是将图片作为一个一维向量，通过四层全链接网络，最后通过Softmax做分类。需要注意的是，我们的模型并不能识别所有的手写图片，实际应用中的模型往往是基于卷积神经网络的。总结一下上面的步骤
+这个例子中我们训练了一个相对复杂一点的神经网络，并解决了一个图片分类的问题。我们使用Fully Connected Layer作为hidden layer，通过Softmax对结果分类。需要注意的是，我们的模型并不是一个CNN模型，而是将像素点全部打散后将每个像素点作为一个单独的feature。这种实际上损失了图片在spatial方面的信息，只适用于识别简单的，分辨率低的图片。对于复杂高分辨率的图片，需要使用CNN来构建模型
+
+总结一下上面的步骤
 
 1. 准备数据，并可视化。这一步可以使用PyTorch的`datasets`和`torch.utils.data.DataLoader`
 2. 对数据做预处理，这一步可以使用PyTorch的`transforms`
