@@ -248,8 +248,10 @@ with torch.no_grad():
         top_p, top_class = ps.topk(1, dim=1)
         equals = top_class == labels.view(top_class.shape[0],-1) 
         accuracy += torch.mean(equals.type(torch.FloatTensor)) #计算accuracy
+
 train_losses.append(running_loss/len(trainloader))
 test_losses.append(test_loss/len(testloader))
+
 print("Epoch: {}/{}.. ".format(e+1, epochs),
         "Training Loss: {:.3f}.. ".format(running_loss/len(trainloader)),
         "Test Loss: {:.3f}.. ".format(test_loss/len(testloader)),
