@@ -20,11 +20,11 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 以文本输入为例，假设我们有一个10000个单词的字典和一个串文本，现在的问题是让我们查字典找出下面文本中是人名的单词
 
-```
+```shell
 "Harry Potter and Hermione Granger invented a new spell."
 ```
 
-我们用$x^{\langle i \rangle}$表示上述句子中的每个单词，则$x^{\langle 1 \rangle}$表示"Harry", $x^{\langle 2 \rangle}$表示"Potter"，以此类推。假设在我们的字典中，`and`这个单词排在第5位，则$x^{\langle 1 \rangle}$的值为一个一维向量
+我们用$x^{\langle i \rangle}$表示上述句子中的每个单词，则$x^{\langle 1 \rangle}$表示`Harry`, $x^{\langle 2 \rangle}$表示`Potter`，以此类推。假设在我们的字典中，`and`这个单词排在第5位，则$x^{\langle 1 \rangle}$的值为一个一维向量
 
 $$
 x^{\langle 1 \rangle} = [0,0,0,0,1,0, ... ,0]
