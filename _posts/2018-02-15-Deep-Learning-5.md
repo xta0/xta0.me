@@ -14,9 +14,9 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 使用Mini-batch gradient descent会影响training，表现为cost函数不会一直下降，而是不断变化，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-08.png">
+<img src="{{site.baseurl}}/assets/images/2018/02/dl-ht-08.png">
 
-我们用 $X^{{t}}$表示一个batch的训练数据，则
+我们用 $X^{{t}}$ 表示一个batch的训练数据，则
 
 - 当batch size为`m`的时候，称为**Batch Gradient Descent**，此时$(X^{{1}}, Y^{{1}}) = (X, Y)$
 - 当batch size为`1`的时候，称为**Stochastic Gradient Descent**，此时$(X^{{1}}, Y^{{1}}) = (x^{(1)}, y^{(1)}), ..., (X^{{t}}, Y^{{t}}) = (x^{(t)}, y^{(t)})$
@@ -25,8 +25,8 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 在实际应用中，batch size往往在`(1, m)`中选取。三种方式的梯度下降过程如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-09-1.png">
-<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-09-2.png">
+<img src="{{site.baseurl}}/assets/images/2018/02/dl-ht-09-1.png">
+<img src="{{site.baseurl}}/assets/images/2018/02/dl-ht-09-2.png">
 
 总的来说
 
@@ -39,10 +39,10 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 Exponentially weighted averages是移动平均的意思，计算方式如下
 
 $$
-v_t = \Betav_{t-1} + (1-\Beta)\Theta_t
+v_t = \beta v_{t-1} + (1-\beta) \theta_t
 $$
 
-$\Beta$在0和1之间，当$\Beta$越大，曲线平滑，平均的样本数越多，反之曲线波动大，平均样本越少，如下图所示，分别是$\Beta$为0.98，0.9和0.5时的曲线
+$\beta$在0和1之间，当$\beta$越大，曲线平滑，平均的样本数越多，反之曲线波动大，平均样本越少，如下图所示，分别是$\beta$为0.98，0.9和0.5时的曲线
 
 
 
