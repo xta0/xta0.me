@@ -45,3 +45,7 @@ $\Beta$在0和1之间，当$\Beta$越大，曲线平滑，平均的样本数越�
 
 
 ## Adam optimization algorithm
+
+## Resources 
+
+- [An overview of gradient descent optimization algorithms](https://ruder.io/optimizing-gradient-descent/)
