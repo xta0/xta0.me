@@ -19,7 +19,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 我们用 $X^{\{t\}}$ 表示一个batch的训练数据，则
 
 - 当batch size为`m`的时候，称为**Batch Gradient Descent**，此时$(X^{{1}}, Y^{{1}}) = (X, Y)$
-- 当batch size为`1`的时候，称为**Stochastic Gradient Descent**，此时$(X^{{1}}, Y^{{1}}) = (x^{(1)}, y^{(1)}), ..., (X^{{t}}, Y^{{t}}) = (x^{(t)}, y^{(t)})$
+- 当batch size为`1`的时候，称为**Stochastic Gradient Descent**，此时$(X^{{1}}, Y^{{1}}) = (x^{(1)}, y^{(1)}), ..., (X^{\{t\}}, Y^{\{t\}}) = (x^{(t)}, y^{(t)})$
 
 注意，如果使用SGD，梯度下降的过程将极为noise，并不会一直沿着梯度下降最大的方向前进，也不会收敛于某个值，而是在某个区域内不断变化。
 
@@ -28,11 +28,11 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 <img src="{{site.baseurl}}/assets/images/2018/02/dl-ht-09-1.png">
 <img src="{{site.baseurl}}/assets/images/2018/02/dl-ht-09-2.png">
 
-总的来说
+小结一下
 
 1. 如果训练样本很小(`m<2000`)，使用Batch Gradient Descent
-2. 如果使用Mini Batch, `m`可选取2的阶乘，比如64, 128, 256, 512, 1024
-3. 注意单个batch所产生的运算量(forward和backward)是否能fit in当前的内存中
+2. 如果使用Mini Batch, `m`可选取2的阶乘，比如`64`, `128`, `256`, `512`, `1024`
+3. 注意单个batch所产生的运算量(forward和backward)是否能被加载到当前的内存中
 
 ## Gradient descent with momentum
 
