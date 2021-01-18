@@ -16,7 +16,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 <img src="{{site.baseurl}}/assets/images/2018/02/dl-ht-08.png">
 
-我们用 $X^{{t}}$ 表示一个batch的训练数据，则
+我们用 $X^{\{t\}}$ 表示一个batch的训练数据，则
 
 - 当batch size为`m`的时候，称为**Batch Gradient Descent**，此时$(X^{{1}}, Y^{{1}}) = (X, Y)$
 - 当batch size为`1`的时候，称为**Stochastic Gradient Descent**，此时$(X^{{1}}, Y^{{1}}) = (x^{(1)}, y^{(1)}), ..., (X^{{t}}, Y^{{t}}) = (x^{(t)}, y^{(t)})$
