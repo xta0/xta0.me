@@ -14,7 +14,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 使用Mini-batch gradient descent会影响training，表现为cost函数不会一直下降，而是不断变化，如下图所示
 
-<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-07.png">
+<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-08.png">
 
 我们用 $X^{{t}}$表示一个batch的训练数据，则
 
@@ -25,6 +25,8 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 在实际应用中，batch size往往在`(1, m)`中选取。三种方式的梯度下降过程如下图所示
 
+<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-09-1.png">
+<img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-09-2.png">
 
 总的来说
 
