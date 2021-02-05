@@ -12,30 +12,49 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 R-CNN是Region-based Convolutional Neural Networks的缩写。其主要的思路是
 
-1. 通过selective search为一张图片生成约2000个RoI
-2. 由于生成RoI尺寸大小不同，我们需要将它们warp成一个固定大小的矩形，作为后面CNN网络的输入
-3. 将warp后的RoI输入CNN进行分类
-4. 同时对RoI进行bounding box regression。
+1. 找一个Pre-trained的CNN network
+2. 通过selective search为一张图片生成约2000个RoI，每个RoI大小不同
+3. 由于生成RoI尺寸大小不同，我们需要将它们warp成一个固定大小的矩形，作为后面CNN网络的输入。注意warp相当于对原矩形区域的图片进行缩放，而不是截取。
+4. 将warp后的RoI输入Pre-trained CNN model得到feature map (fc7)
+5. 
+6. 将类型判断正确的RoI进行通过一个bbox regression model进行校正。
 
 整个过程如下图所示
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-r-cnn-1.png">
 
 R-CNN虽然能完成目标检测的任务，但是速度却非常的慢
+
 - 有2000个region proposal, 训练需要84小时
 - 如果用vGG16，一次inference需要47s
+- 整个过程需要三个Model，一个feature extraction的CNN model，一个SVM的classifier和一个bounding box的regression model
 
 ### Fast R-CNN
 
+为了让R-CNN更快，Fast R-CNN将上面三个model整合成了一个。其流程为
 
+1. 找一个Pre-trained的CNN network
+2. 通过selective search为一张图片生成约2000个RoI，每个RoI大小不同
+3. 调整Pre-trained的CNN model
+    - 将model最后一个max pooling layer替换为RoI pooling layer。RoI Pooling会输出一个组fixed-length的feature vectors
+    - 将model最后一个FC+softmax(K classes)替换为 FC+softmax(K+1 classes)
+4. model最后有两个输出，分别为
+    - 每个RoI的class概率
+    - 一个bbox的regression model用来对RoI进行校正（按照class分类）
+
+总的来说，Fast R-CNN和RCNN最大的不同在于计算
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn.png">
 
-我们需要首先为图像生成一系列RoIs(Region of Interests)，每一个RoI都是一个bounding box。以Fast R-CNN为例，我们需要为每张图片准备大概2000个。然后用卷积神经网络提取图片中的feature。论文中使用的VGG16。例如，一张`(1, 3, 512, 512)`的图片经过CNN网络后得到一组`(512, 3, 16, 16)`的feature map。
+这里我们需要重点了解一下RoI Pooling
+
+#### RoI Pooling
+
+和R-CNN一样，我们需要为每张图片生成大概2000个RoI。然后用一个Pre-trained CNN model提取图片中的feature，论文中使用的VGG16。例如，一张`(1, 3, 512, 512)`的图片经过CNN网络后得到一组`(512, 3, 16, 16)`的feature map。
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-6.png">
 
-接下来我们要对从feature maps中提取RoI，由于我们的feature map的大小已经从`(512, 512)`变成了`(16, 16)`, 我们的RoI区域也要等比例缩小，例如一个`(x:296, y:192, h:145, w:200)`的bounding box，在feature map中将变成`(x:9.25, y:6, h:4.53, w:6.25 )`如下图所示
+接下来我们要对从feature maps中提取RoI，由于我们的feature map的大小已经从`(512, 512)`变成了`(16, 16)`, 我们的RoI区域也要等比例缩小，例如一个`(x:296, y:192, h:145, w:200)`的bounding box在feature map中将变成`(x:9.25, y:6, h:4.53, w:6.25 )`如下图所示
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-4.png">
 
@@ -60,7 +79,7 @@ R-CNN虽然能完成目标检测的任务，但是速度却非常的慢
 
 ### Mask R-CNN
 
-Mask R-CNN是基于Faster R-CNN的架构，引入了Instant Segmentation。它除了输出目标物体的类型和bbox意外，还输出一个segmeation mask，其结构如下图所示
+Mask R-CNN是基于Faster R-CNN的架构，引入了Instant Segmentation。它除了输出目标物体的类型和bbox意外，还输出一个segmentation mask，其结构如下图所示
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-mask-r-cnn.png">
 
