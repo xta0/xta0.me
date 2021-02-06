@@ -15,8 +15,8 @@ R-CNN是Region-based Convolutional Neural Networks的缩写。其主要的思路
 1. 找一个Pre-trained的CNN network
 2. 通过selective search为一张图片生成约2000个RoI，每个RoI大小不同
 3. 由于生成RoI尺寸大小不同，我们需要将它们warp成一个固定大小的矩形，作为后面CNN网络的输入。注意warp相当于对原矩形区域的图片进行缩放，而不是截取。
-4. 将warp后的RoI输入Pre-trained CNN model得到feature map (fc7)
-5. 
+4. 将每一个warp后的RoI输入Pre-trained CNN model得到feature map (fc7)
+5. 将feature map通过binary SVM classifier进行分类
 6. 将类型判断正确的RoI进行通过一个bbox regression model进行校正。
 
 整个过程如下图所示
@@ -42,7 +42,7 @@ R-CNN虽然能完成目标检测的任务，但是速度却非常的慢
     - 每个RoI的class概率
     - 一个bbox的regression model用来对RoI进行校正（按照class分类）
 
-总的来说，Fast R-CNN和RCNN最大的不同在于计算
+总的来说，Fast R-CNN最大的提升在于它对feature map的提取是一次完成的，而不像R-CNN需要将每一个RoI单独计算，这大大节省了计算资源，提高了计算速度
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn.png">
 
@@ -50,7 +50,7 @@ R-CNN虽然能完成目标检测的任务，但是速度却非常的慢
 
 #### RoI Pooling
 
-和R-CNN一样，我们需要为每张图片生成大概2000个RoI。然后用一个Pre-trained CNN model提取图片中的feature，论文中使用的VGG16。例如，一张`(1, 3, 512, 512)`的图片经过CNN网络后得到一组`(512, 3, 16, 16)`的feature map。
+和R-CNN一样，我们需要为每张图片生成大概2000个RoI。然后用一个Pre-trained CNN model(论文中使用的VGG16)提取图片中的feature。例如，一张`(1, 3, 512, 512)`的图片经过CNN网络后得到一组`(512, 3, 16, 16)`的feature map。
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-6.png">
 
@@ -70,11 +70,21 @@ R-CNN虽然能完成目标检测的任务，但是速度却非常的慢
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-5.png" width="60%">
 
-上图中我们发现最下面一行数据也被丢弃掉了。通过RoI Pooling我们可以得到一组`($roi,512,3,3`的feature map，这也是后面FC层的输入，最终通过两层FC我们得到了两个输出结果，一个是classification，表明RoI中的Object类别，另一个是RoI的bbox，用来标识Object
+上图中我们发现最下面一行数据也被丢弃掉了。通过RoI Pooling我们可以得到一组`($roi,512,3,3`的feature map，这也是后面FC层的输入，最终通过两层FC我们得到了两个输出结果，一个是RoI的class，另一个是RoI的bbox。
+
+虽然Fast R-CNN可以在training和inference的速度上比R-CNN快，但生成region proposal仍然占据了大部分的时间
 
 ### Faster R-CNN
 
-相比Fast R-CNN，Faster R-CNN的主要改变是将RoI的提取整合进了网络
+显然下一步的优化目标就是将region proposal也整合进网络，这也是Faster R-CNN的设计思路，其流程为
+
+1. 找一个Pre-trained的CNN network
+
+
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-faster-r-cnn.png">
+
+
+
 
 
 ### Mask R-CNN
@@ -84,6 +94,8 @@ Mask R-CNN是基于Faster R-CNN的架构，引入了Instant Segmentation。它�
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-mask-r-cnn.png">
 
 由于Mask R-CNN需要生成像素级别的mask，前面提到的RoI Pooling由于损失太多data因此精度大大降低。为了解决这个问题Mask R-CNN对上面RoI pooling的改进，提出了RoI Align。我们下面来重点介绍这个算法
+
+#### RoI Align
 
 前面已经知道RoI Pooling的两次quantization损失了很多data，RoI Align通过使用双线性二次插值弥补了这一点。还是以前面例子来说明，下图是我们前面的bbox，我们的目标还是对其进行3x3的RoI Pooling操作
 

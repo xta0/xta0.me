@@ -74,7 +74,7 @@ x.shape = (n_x, m, T_x)
 a.shape = (n_a, m, T_a)
 ```
 
-其中`n_x`和`n_a`表示向量中元素个数，`m`表示样本数量(句子个数），`T_x`则表示每个样本的时间片数量（可以理解为句子中token的个数）。而$x^{(i)}$或者$a^{(i)}$为某个时刻`t`的切片，即
+其中`n_x`和`n_a`表示batch size，`m`表示样本数量(句子个数），`T_x`则表示每个样本的时间片数量（可以理解为句子中token的个数）。而$x^{(i)}$或者$a^{(i)}$为某个时刻`t`的切片，即
 
 ```python
 x_i = x[:,:,t]
@@ -191,6 +191,10 @@ $$
 - [The Unreasonable Effectiveness of Recurrent Neural Networks](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)
 - [Deep Learning Specialization Course on Coursera](https://www.coursera.org/specializations/deep-learning)
 - [Deep Learning with PyTorch](https://livebook.manning.com/book/deep-learning-with-pytorch/welcome/v-10/)
+- [http://colah.github.io/posts/2015-08-Understanding-LSTMs/](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
+- [Exploring LSTMs](http://blog.echen.me/2017/05/30/exploring-lstms/)
+
+
 
 
 
