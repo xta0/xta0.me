@@ -1,5 +1,5 @@
 ---
-list_title: Notes | CppCon 2020 | Move Semantics
+list_title: Notes | Move Semantics
 title: Move Semantics
 layout: post
 categories: ["C++"]
