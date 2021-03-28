@@ -12,7 +12,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 
 R-CNN是Region-based Convolutional Neural Networks的缩写。其主要的思路是
 
-1. 找一个Pre-trained的CNN network
+1. 找一个Pre-trained的CNN network作为backbone
 2. 通过selective search为一张图片生成约2000个RoI，每个RoI大小不同
 3. 由于生成RoI尺寸大小不同，我们需要将它们warp成一个固定大小的矩形，作为后面CNN网络的输入。注意warp相当于对原矩形区域的图片进行缩放，而不是截取。
 4. 将每一个warp后的RoI输入Pre-trained CNN model得到feature map (fc7)
@@ -31,9 +31,9 @@ R-CNN虽然能完成目标检测的任务，但是速度却非常的慢
 
 ### Fast R-CNN
 
-为了让R-CNN更快，Fast R-CNN将上面三个model整合成了一个。其流程为
+为了解决R-CNN的性能问题，Fast R-CNN将上面三个model整合成了一个。其流程为
 
-1. 找一个Pre-trained的CNN network
+1. 找一个Pre-trained的CNN network作为backbone
 2. 通过selective search为一张图片生成约2000个RoI，每个RoI大小不同
 3. 调整Pre-trained的CNN model
     - 将model最后一个max pooling layer替换为RoI pooling layer。RoI Pooling会输出一个组fixed-length的feature vectors
@@ -78,12 +78,13 @@ R-CNN虽然能完成目标检测的任务，但是速度却非常的慢
 
 显然下一步的优化目标就是将region proposal也整合进网络，这也是Faster R-CNN的设计思路，其流程为
 
-1. 找一个Pre-trained的CNN network
+1. 找一个Pre-trained的CNN network作为backbone
+2. 
 
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-faster-r-cnn.png">
 
-
+### RPN Architecture
 
 
 
