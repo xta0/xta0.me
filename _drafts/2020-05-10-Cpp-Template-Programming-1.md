@@ -38,7 +38,7 @@ void foo(T t){
 
 ### Compiling and Linking
 
-Two-phase translation leads to an important problem in the handling of templates in practice: When a function template is used in a way that triggers its instantiation, a compiler will need to see the template's definition. This breaks the usual compile and link distinction for ordinary functions, when the declarations of a function is sufficient to compile its use. Methods of handling this problem will be discussed later. For the moment, let's take the simplest approach: ***Implement each template inside a header file*.
+Two-phase translation leads to an important problem in the handling of templates in practice: When a function template is used in a way that triggers its instantiation, a compiler will need to see the template's definition. This breaks the usual compile and link distinction for ordinary functions, when the declarations of a function is sufficient to compile its use. Methods of handling this problem will be discussed later. For the moment, let's take the simplest approach: **Implement each template inside a header file**.
 
 
 
