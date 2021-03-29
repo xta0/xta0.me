@@ -42,19 +42,15 @@ R-CNN虽然能完成目标检测的任务，但是速度却非常的慢
     - 每个RoI的class概率
     - 一个bbox的regression model用来对RoI进行校正（按照class分类）
 
-总的来说，Fast R-CNN最大的提升在于它对feature map的提取是一次完成的，而不像R-CNN需要将每一个RoI单独计算，这大大节省了计算资源，提高了计算速度
-
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn.png">
 
-这里我们需要重点了解一下RoI Pooling
+总的来说，<mark>Fast R-CNN最大的提升在于它对feature map的提取是一次完成的</mark>，而不像R-CNN需要将每一个RoI单独计算，这大大节省了计算资源，提高了计算速度。另一个需要掌握的重点是Fast R-CNN使用了RoI Pooling，其原理如下
 
-#### RoI Pooling
-
-和R-CNN一样，我们需要为每张图片生成大概2000个RoI。然后用一个Pre-trained CNN model(论文中使用的VGG16)提取图片中的feature。例如，一张`(1, 3, 512, 512)`的图片经过CNN网络后得到一组`(512, 3, 16, 16)`的feature map。
+我们首先为每张图片生成大概2000个RoI。然后用一个feature extractor(论文中使用的VGG16)的到feature maps。例如，一张`(1, 3, 512, 512)`的图片经过CNN网络后得到一组`(512, 3, 16, 16)`的feature map。
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-6.png">
 
-接下来我们要对从feature maps中提取RoI，由于我们的feature map的大小已经从`(512, 512)`变成了`(16, 16)`, 我们的RoI区域也要等比例缩小，例如一个`(x:296, y:192, h:145, w:200)`的bounding box在feature map中将变成`(x:9.25, y:6, h:4.53, w:6.25 )`如下图所示
+接下来我们要对从feature maps中提取RoI，由于我们之前生成的RoI尺寸是基于图片的原始尺寸`(512, 512)`，而此时的feature map的大小已经从`(512, 512)`变成了`(16, 16)`, 因此我们的RoI区域也要等比例缩小。例如一个`(x:296, y:192, h:145, w:200)`的bounding box在feature map中将变成`(x:9.25, y:6, h:4.53, w:6.25 )`如下图所示
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-4.png">
 
@@ -70,22 +66,32 @@ R-CNN虽然能完成目标检测的任务，但是速度却非常的慢
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-5.png" width="60%">
 
-上图中我们发现最下面一行数据也被丢弃掉了。通过RoI Pooling我们可以得到一组`($roi,512,3,3`的feature map，这也是后面FC层的输入，最终通过两层FC我们得到了两个输出结果，一个是RoI的class，另一个是RoI的bbox。
+上图中我们发现最下面一行数据也被丢弃掉了。通过RoI Pooling我们可以得到一组`($roi,512,3,3)`的feature map，这也是后面FC层的输入，最终通过两层FC我们得到了两个输出结果，一个是RoI的class，另一个是RoI的bbox。
 
 虽然Fast R-CNN可以在training和inference的速度上比R-CNN快，但生成region proposal仍然占据了大部分的时间
 
 ### Faster R-CNN
 
-显然下一步的优化目标就是将region proposal也整合进网络，这也是Faster R-CNN的设计思路，其流程为
+显然下一步的优化目标就是将region proposal也整合进网络，这也是Faster R-CNN的主要设计思路，具体来说
 
-1. 找一个Pre-trained的CNN network作为backbone
-2. 
-
+1. 去掉了Selective Search，增加了一个RPN network来生成RoI
+2. 引入了 anchor box的概念
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-faster-r-cnn.png">
 
-### RPN Architecture
+这里简单先介绍一下RPN的工作原理。假设我们的输入图片尺寸为`(800,800)`，经过VGG后，得到的feature map为`(512, 50, 50)`。接下来我们需要对每个feature map中的每个pixel生成9个bounding box
 
+```python
+anchors_boxes_per_location = 9
+scales = [8, 16, 32]
+ratios = [0.5, 1, 2]
+
+# (1,1)
+ctr_x, ctr_y = 16/2, 16/2
+```
+这样得到的每个bbox的size和ratio都不同。注意，我们虽然是在feature map上对`50 x 50`个点操作，但实际上生成的bbox的大小和位置却是相对于原输入图片的，如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-faster-r-cnn-1.png">
 
 
 ### Mask R-CNN
