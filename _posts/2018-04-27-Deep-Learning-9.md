@@ -54,7 +54,7 @@ R-CNN虽然能完成目标检测的任务，但是速度却非常的慢
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-4.png">
 
-此时我们发现bbox出现了小数，我们需要其quantize成整数，但是这会损失一部分数据，如下图三所示
+此时我们发现bbox出现了小数，我们需要其quantize成整数，但是这会损失一部分数据，如下图三中的深蓝色部分所示
 
 <div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
 <div><img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-1.png"></div>
@@ -66,7 +66,7 @@ R-CNN虽然能完成目标检测的任务，但是速度却非常的慢
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-fast-r-cnn-5.png" width="60%">
 
-上图中我们发现最下面一行数据也被丢弃掉了。通过RoI Pooling我们可以得到一组`($roi,512,3,3)`的feature map，这也是后面FC层的输入，最终通过两层FC我们得到了两个输出结果，一个是RoI的class，另一个是RoI的bbox。
+上图中我们发现最下面一行数据也被丢弃掉了，这是由于在竖直方向上，4无法整除3。通过RoI Pooling我们可以得到一组`($roi,512,3,3)`的feature map，这也是后面FC层的输入，最终通过两层FC我们得到了两个输出结果，一个是RoI的class，另一个是RoI的bbox。
 
 虽然Fast R-CNN可以在training和inference的速度上比R-CNN快，但生成region proposal仍然占据了大部分的时间
 
@@ -102,17 +102,17 @@ Mask R-CNN是基于Faster R-CNN的架构，引入了Instant Segmentation。它�
 
 由于Mask R-CNN需要生成像素级别的mask，前面提到的RoI Pooling由于损失太多data因此精度大大降低。为了解决这个问题Mask R-CNN对上面RoI pooling的改进，提出了RoI Align。我们下面来重点介绍这个算法
 
-#### RoI Align
-
 前面已经知道RoI Pooling的两次quantization损失了很多data，RoI Align通过使用双线性二次插值弥补了这一点。还是以前面例子来说明，下图是我们前面的bbox，我们的目标还是对其进行3x3的RoI Pooling操作
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-roi-align-1.png">
 
-和之前不同的是，我们此时不对x,y,w,h进行取整，而是应用双线性插值，具体做法是将RoI区域划分成3x3的格子，然后计算4个点的位置如下图所示
+和之前不同的是，我们此时不对x,y,w,h进行取整，而是将bbox分成3x3个格子，格子的宽高可以为小数，然后在每个格子内应用双线性插值，如下图所示
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-roi-align-2.png" width="60%">
 
-接下来我们便可以使用下面公式对上面的4个点进行双线性插值计算，其中Q值为每个点对应的像素值
+首先我们在每个格子里取四个点，每个点的位置为格子长宽的三等分点，
+
+其中Q值为每个点对应的像素值
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-roi-align-3.png">
 
@@ -148,8 +148,5 @@ Mask R-CNN是基于Faster R-CNN的架构，引入了Instant Segmentation。它�
 
 ## Resources
 
-- [R-CNN]()
-- [Fast R-CNN]()
-- [Faster R-CNN]()
-- [Mask R-CNN]()
+- [Understanding Region of Interest — (RoI Align and RoI Warp)](https://towardsdatascience.com/understanding-region-of-interest-part-2-roi-align-and-roi-warp-f795196fc193)
 - [Selective Search](https://lilianweng.github.io/lil-log/2017/10/29/object-recognition-for-dummies-part-1.html#selective-search)
