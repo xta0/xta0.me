@@ -94,6 +94,8 @@ ctr_x, ctr_y = 16/2, 16/2
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-faster-r-cnn-1.png">
 
 
+
+
 ### Mask R-CNN
 
 Mask R-CNN是基于Faster R-CNN的架构，引入了Instant Segmentation。它除了输出目标物体的类型和bbox意外，还输出一个segmentation mask，其结构如下图所示
@@ -110,9 +112,7 @@ Mask R-CNN是基于Faster R-CNN的架构，引入了Instant Segmentation。它�
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-roi-align-2.png" width="60%">
 
-首先我们在每个格子里取四个点，每个点的位置为格子长宽的三等分点，
-
-其中Q值为每个点对应的像素值
+首先我们在每个格子里取四个点，每个点的位置为格子长宽的三等分点，每个点的插值结果用下面公式计算，其中Q值为每个点对应的像素值
 
 <img src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-3-roi-align-3.png">
 
