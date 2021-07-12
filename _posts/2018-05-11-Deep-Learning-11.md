@@ -6,10 +6,6 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
-前面我们介绍的神经网络都是静态的，即模型有唯一的输出和唯一的输出。而实际应用中，很多场景是动态的，即模型的输入可能是一系列在时间上连续的一组数据，比如一段语音或者文字或者视频，而输出也不仅仅局限于单一结果，而有可能是多个结果，比如一组文本(翻译)。此外，RNN另一个特点是hidden layer的输入不仅仅来自前一层的输出，还有可能来自外部的输入，比如我们有一段视频数据，我们想判断每一帧图像的类型，则我们不仅需要当前帧的原始图象数据，还需要它前一帧预测的结果。
-
-### History
-
 ### Sequence Data Notations
 
 - $x^{\langle i \rangle}$, 表示输入$x$中的第$i$个token
@@ -44,7 +40,7 @@ $$
 
 ### Recurrent Neural Network
 
-RNN的核心概念是将输入数据切分为为一系列时间片，每个时间片上的数据会通过某一系列运算产生一个输出，并且该时间片上的输入除了有$x^{\langle i \rangle}$之外，还有可能来自前一个时间片的输出，如下图所示
+RNN的输入是一组sequence data，seguence中的每个$x^{\langle i \rangle}$会通过某一系列运算产生一个输出$y^{\langle i \rangle}$，并且该时间片上的输入除了有$x^{\langle i \rangle}$之外，还有可能来自前一个时间片的输出$a^{\langle i-1 \rangle}$，如下图所示
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-nn-1.png">
 
