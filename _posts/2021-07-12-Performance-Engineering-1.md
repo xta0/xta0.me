@@ -58,10 +58,11 @@ print("%.6f" %(end-start))
 ```
 Let's say we have super powerful machine like this.
 
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2021/07/perf-1-0.png">
 
 The Python code takes ~6 hours to run on that powerful machine. Let's break this down.
 
-The algorithm complicity is $2n^3 = 2(2^{12})^3 = 2^{37}$ floating-point-operators. The running time is `21042` seconds. If we divide this two number, we get $2^{37} / 21042 ~ 6.25 MFLOPS$  per second. The peak of this machine is around `836` GFLOPS, so Python gets `0.00075%` of peak, which is slow.
+The algorithm complicity is $2n^3 = 2(2^{12})^3 = 2^{37}$ floating-point-operators. The running time is `21042` seconds. If we divide this two number, we get $2^{37} / 21042 \approx 6.25 (MFLOPS)$  per second. The peak of this machine is around `836` GFLOPS, so Python gets `0.00075%` of peak, which is slow.
 
 If we run the same code in Java, it takes `2738` seconds that is about `46` minutes. 8.8x faster than Python. In C, it takes `1156` seconds, 2x faster than Java and about 18x faster than Python.
 
@@ -106,22 +107,21 @@ The matrices are laid out in memory in **row-major order**. What does this layou
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2021/07/perf-1-1.png">
 
-As we can see in pic, for C, since we're keep updating it, it gets really nice spatial locality (stays in the cache). For A, we go through a linear order, we get a good spatial locality due to the contiguous access. But for B, the access of a each element is distributed far away in memory, not in contiguous postions. So it's not good.
+As we can see in pic, for C, since we keep updating it, it gets really nice spatial locality (stays in the cache). For A, we go through a linear order, we get a good spatial locality due to the contiguous access. But for B, the access of a each element is distributed far away in memory, not in contiguous postions. So it's not good for caching.
 
 Let's take a look at different other ones as shown below
 
 <div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2021/07/perf-1-2.png"></div>
-<div><img src="{{site.baseurl}}/assets/images/2021/07/perf-1-3.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2021/07/perf-1-3.png"></div>
 </div>
-
-
 
 We can just measure the effect of different accesss patterns using the Cachegrind cache simulator
 
 ```shell
 $ valgrind --tool=cachegrind ./mm
 ```
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2021/07/perf-1-4.png">
 
 ### Compiler Optimizations
 
@@ -160,7 +160,11 @@ cilk_for(int i=0; i<n; ++i){
 }
 ```
 
-Here we paralle the `i` loop, which leads to `3.18s`. But we can also parallelize the inner loops, such as `j` loop and `k` loop. It turns out the scheduling overhead for parallelizing inner loops will out-weighted the benifit, so it becomes slower than just parallelizing the outer loop. So the "Rule of Thumb" here is always parallelize outer loop rather than inner loops.
+Here we paralle the `i` loop, which leads to `3.18s`. But we can also parallelize the inner loops, such as `j` loop and `k` loop. 
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2021/07/perf-1-6.png">
+
+It turns out the scheduling overhead for parallelizing inner loops will out-weighted the benifit, so it becomes slower than just parallelizing the outer loop. So the "Rule of Thumb" here is always parallelize outer loop rather than inner loops.
 
 | version | Implementation | Running time (s) | Relative Speedup | Absolute Speedup | GFLOPS | Percent of peak |
 | --------| -------------- | ---------------- | ---------------- | ---------------- | ------ | --------------- |
@@ -183,18 +187,22 @@ How many memory accesses must the looping code perform to fully compute 1 row of
 - `4096 * 1 = 4096` writes to `C`
 - `4096 * 1 = 4096` reads to `A`
 - `4096 * 4096 = 16,777,216` reads from `B`
-- That is `16,785,408` memory access in total.
 
-What if we compute blocks rather than row in matrics? Would that be faster?
+That is `16,785,408` memory access in total for just computing a row of `C` as shown below
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2021/07/perf-1-7.png">
+
+What if we compute blocks rather than rows in matrics? Would that be faster?
 
 Say we divide C into multiple blocks. For each block, it is 64x64. To compute each block we need
 
 - `64 * 64 = 4096` writes to `C`
 - `64 * 4096 = 262,144` reads from A
 - `4096 * 64 = 262,144` reads from `B`
-- That is `528,384` memory accesses in total.
 
-[pic]()
+That is `528,384` memory accesses in total.
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2021/07/perf-1-5.png">
 
 To implement that, we turn the code above to a **tiled** Matrix Multiplication
 
@@ -216,6 +224,8 @@ cilk_for(int ih=0; ih<n; ih += s) {
 
 `s` is a tuning parameter to control how big is the tile. In this case, `32` is the best number.
 
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2021/07/perf-1-8.png">
+
 | version | Implementation | Running time (s) | Relative Speedup | Absolute Speedup | GFLOPS | Percent of peak |
 | --------| -------------- | ---------------- | ---------------- | ---------------- | ------ | --------------- |
 | 1 | Python | 21042 | 1.00 | 1 | 0.007 | 0.001 |
@@ -229,4 +239,73 @@ cilk_for(int ih=0; ih<n; ih += s) {
 
 The tiled implementation performs about `62%` fewer cache references and incurs `68%` fewer cache misses.
 
+It turns out with the L3 caches, we can do nested tiled loops (a bit compilicated, not going to explain in detail.)
 
+| version | Implementation | Running time (s) | Relative Speedup | Absolute Speedup | GFLOPS | Percent of peak |
+| --------| -------------- | ---------------- | ---------------- | ---------------- | ------ | --------------- |
+| 1 | Python | 21042 | 1.00 | 1 | 0.007 | 0.001 |
+| 2 | Java | 2738 | 8.81 | 9 | 0.058 | 0.007 |
+| 3 | C | 1156 | 2.07 | 18 | 0.119 | 0.014 |
+| 4 | + Interchange loops | 177.68 | 6.5 | 118 | 0.774 | 0.093 |
+| 5 | + compiler falgs | 54.64 | 3.25 | 385 | 2.526 | 0.301 |
+| 6 | Parallel loops | 3.04 | 17.97 | 6921 | 45.211 | 5.408 |
+| 7 | +tiling | 1.79 | 1.70 | 11,772 | 76.782 | 9.184 |
+| 8 | Parallel divide-and-conquer | 1.30 | 1.38 | 16,197 | 105.722 | 12.646 |
+
+### Vectorization
+
+Modern microprocessors incorporate vector hardware to process data in a Single-Instruction stream, Multiple-Data stream (SIMD) fashion.
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2021/07/perf-1-9.png">
+
+Each vector register holds multiple words of data so CPU can load multiple bytes in one instruction. In the pic above, let's say 1 word = 32 bits and vector register can hold 4 words which are 128 bits (16 bytes). We know a float number is 4 bytes, then one SIMD instruction can load 4 float numbers. 
+
+Clang/LLVM uses vector instructions automatically when compiling at optimization level `-O2` or higher. Clang/LLVM can be induced to produce a vectorization report as follows:
+
+```shell
+$ clang -03 -std=c99 mm.c -o mm -Rpass=vector
+```
+The command tells you which part of your code will be vectorized. Many machines don't support the newest set of vector instructions, however, so the compiler uses vector instructions conservatively by default. Programmers can direct the compiler to use modern vector instructions using compiler flags such as the following:
+
+- `-mavx`: Use Intel AVX vector instructions.
+- `-mavx2`: Use Intel AVX2 vector instructions.
+- `-mfma`: Use fused multiply-add vector instructions.
+- `-march=<string>`: Use whatever instructions are available on the specific arch.
+
+Due to restrictions on floating-point arithmetic, additional flags, such as `-ffast-math` migth be needed for these vectorization flags to have an effect.
+
+Using the flag `-march=native` and `-ffast-math` nearly doubles the performance. 
+
+| version | Implementation | Running time (s) | Relative Speedup | Absolute Speedup | GFLOPS | Percent of peak |
+| --------| -------------- | ---------------- | ---------------- | ---------------- | ------ | --------------- |
+| 1 | Python | 21042 | 1.00 | 1 | 0.007 | 0.001 |
+| 2 | Java | 2738 | 8.81 | 9 | 0.058 | 0.007 |
+| 3 | C | 1156 | 2.07 | 18 | 0.119 | 0.014 |
+| 4 | + Interchange loops | 177.68 | 6.5 | 118 | 0.774 | 0.093 |
+| 5 | + compiler falgs | 54.64 | 3.25 | 385 | 2.526 | 0.301 |
+| 6 | Parallel loops | 3.04 | 17.97 | 6921 | 45.211 | 5.408 |
+| 7 | +tiling | 1.79 | 1.70 | 11,772 | 76.782 | 9.184 |
+| 8 | Parallel divide-and-conquer | 1.30 | 1.38 | 16,197 | 105.722 | 12.646 |
+| 9 | + compiler vectorization | 0.7 | 1.87 | 30.272 | 196.341 | 23.468 |
+
+### AVX Intrinsic Instructions
+
+Instead of letting compiler vectorize your code, you can also use the AVX instructions directly. Intel provies C-style functions, called **instrinic instructions**, that provide direct access to hardware vector operations.
+
+| version | Implementation | Running time (s) | Relative Speedup | Absolute Speedup | GFLOPS | Percent of peak |
+| --------| -------------- | ---------------- | ---------------- | ---------------- | ------ | --------------- |
+| 1 | Python | 21042 | 1.00 | 1 | 0.007 | 0.001 |
+| 2 | Java | 2738 | 8.81 | 9 | 0.058 | 0.007 |
+| 3 | C | 1156 | 2.07 | 18 | 0.119 | 0.014 |
+| 4 | + Interchange loops | 177.68 | 6.5 | 118 | 0.774 | 0.093 |
+| 5 | + compiler falgs | 54.64 | 3.25 | 385 | 2.526 | 0.301 |
+| 6 | Parallel loops | 3.04 | 17.97 | 6921 | 45.211 | 5.408 |
+| 7 | +tiling | 1.79 | 1.70 | 11,772 | 76.782 | 9.184 |
+| 8 | Parallel divide-and-conquer | 1.30 | 1.38 | 16,197 | 105.722 | 12.646 |
+| 9 | + compiler vectorization | 0.7 | 1.87 | 30,272 | 196.341 | 23.468 |
+| 10 | + AVX instrinsics | 0.39 | 1.76 | 53,292 | 352.408 | 41.677 |
+
+## Resources 
+
+- [MIT 6.172](https://www.youtube.com/watch?v=o7h_sYMk_oc&list=PLUl4u3cNGP63VIBQVWguXxZZi0566y7Wf)
+- [Intel Intrinsics Guide](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=AVX,AVX2,FMA)
