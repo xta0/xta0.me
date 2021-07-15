@@ -16,7 +16,7 @@ categories: ["AI", "Machine Learning","Deep Learning"]
 - $n_y$，表示某个输出token长度
 - $x_5^{(2)\langle 3 \rangle\langle 4 \rangle}$, 表示第二条输入样本中，第三个layer中第4个token向量中的第五个元素
 
-以文本输入为例，假设我们有一个10000个单词的字典和一个串文本，现在的问题是让我们查字典找出下面文本中是人名的单词
+以文本输入为例，假设我们有一个10000个单词的字典和一串文本，现在的问题是让我们查字典找出下面文本中是人名的单词
 
 ```shell
 "Harry Potter and Hermione Granger invented a new spell."
