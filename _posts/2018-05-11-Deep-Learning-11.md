@@ -126,7 +126,7 @@ Cats average 15 hours of sleep a day. <EOS>
 
 上述的RNN模型可以做到根据前面已有的单词来预测下一个单词是什么
 
-### GRU
+### 梯度消失
 
 不难发现，上面的RNN模型是基于前面的单词来预测后面出现的单词出现的概率，但是对于一些长句子，单词前后的联系可能被分隔开，比如英语中的定语从句
 
@@ -135,6 +135,8 @@ The cat, which already ate ... , was full
 The cats, which already ate ..., were full
 ```
 上面例子例子中`cat`和`was`, `cats`和`were`中间隔了一个很长的定语修饰，这就会导致当RNN在预测`was`或者`were`时，由于前面的主语信息(`cat`或者`cats`)位置很靠前，使得预测概率受到影响（如果RNN能识别出此时主语是`cat`/`cats`则`was`/`were`的预测概略应该会提高）。具体在RNN中的表现是当做back prop时，由于网络太深，会出现梯度消失的问题，也就是说我们无法通过back prop来影响到`cat`后者`cats`的weight。
+
+### GRU
 
 GRU(Gated Recurrent Uinit)被设计用来解决上述问题，其核心思想是为每个token引入一个GRU unit - $c^{\langle t \rangle}$，计算方式如下
 
@@ -174,15 +176,38 @@ c^{\langle t \rangle} = \Gamma_u ^{\langle t \rangle} * \hat c^{\langle t \rangl
 a^{\langle t \rangle} = \Gamma_o * tanh(c^{\langle t \rangle})
 $$
 
-上述LSTM式子引入了三个gate函数，虽然步骤不较复杂，但是逻辑上还是比较清晰，也容易更好的整合到RNN网络中，下图是一个引入了LSTM的RNN的计算单元
+上述LSTM式子引入了三个gate函数，虽然步骤比较复杂，但是逻辑上还是比较清晰，也容易更好的整合到RNN网络中，下图是一个引入了LSTM的RNN的计算单元
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-1.png">
 
-如果把各个LSTM单元串联起来，则RNN的模型变为
+每个LSTM单元都是可微分的，它里面一共包含四种运算：加法，乘法，`tanh`和 `sigmoid`每种运算均可微。如果把各个LSTM单元串联起来，则RNN的模型变为
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-2.png">
 
-上述红线表示了$c^{\langle t \rangle}$的记忆过程，通过gate的控制，可以使$c^{\langle 3 \rangle} = c^{\langle 1 \rangle}$, 从而达到缓存前面信息的作用，进而可以解决梯度消失的问题
+上述红线表示了$c^{\langle t \rangle}$的记忆过程，通过gate的控制，可以使$c^{\langle 3 \rangle} = c^{\langle 1 \rangle}$, 从而达到缓存前面信息的作用，进而可以解决梯度消失的问题。
+
+另一种更加直观理解LSTM的方式是LSTM cell看成四个gate的组合
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-3.png">
+
+将每个RNN cell串联起来可已得到
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-4.png">
+
+**Learn Gate**
+
+Learn Gate首先将short-term memroy($STM(t-1)$)和$E_t$进行combine，然后将结果和一个ignore vector进行element-wise的相乘来决定矩阵中那些元素需要保留，哪些舍弃。这个ignore vector同样是通过$STM(t-1)$和$E_t$生成，只是非线性函数用了sigmoid来限制输出的值域。
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-5.png">
+
+其中$N_t$和$i_t$表示为
+
+$$
+N_t = tanh(W_n{[STM_{t-1}, E_t]}+b_n) \\
+i_t = \delta(W_i{[STM_{t-1}, E_t]}+b_i)
+$$
+
+$i_t$ is a vector that will be multiplied element-wisely
 
 ## Resources
 
