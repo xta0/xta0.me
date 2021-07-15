@@ -196,7 +196,7 @@ $$
 
 **Learn Gate**
 
-Learn Gate首先将short-term memroy($STM(t-1)$)和$E_t$进行combine，然后将结果和一个ignore vector进行element-wise的相乘来决定矩阵中那些元素需要保留，哪些舍弃。这个ignore vector同样是通过$STM(t-1)$和$E_t$生成，只是非线性函数用了sigmoid来限制输出的值域。
+Learn Gate首先将short-term memroy($STM_{(t-1)}$)和$E_t$进行combine，然后将结果和一个ignore vector进行element-wise的相乘来决定矩阵中那些元素需要保留，哪些舍弃。这个ignore vector同样是通过$STM_{(t-1)}$和$E_t$生成，只是非线性函数用了sigmoid来限制输出的值域。
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-5.png">
 
@@ -207,7 +207,43 @@ N_t = tanh(W_n{[STM_{t-1}, E_t]}+b_n) \\
 i_t = \delta(W_i{[STM_{t-1}, E_t]}+b_i)
 $$
 
-$i_t$ is a vector that will be multiplied element-wisely
+**Forget Gate**
+
+Forget Gate用来控制long-term memory中哪些保留哪些舍弃，具体做法是$LTM_{t-1}$乘以一个forget factor$f(t)$。
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-6.png">
+
+其中$f(t)$计算如下
+
+$$
+f(t) = \delta(W_f{[STM_{t-1}, E_t]}+b_f)
+$$
+
+**Remember Gate**
+
+Remember Gate将上面两个gate的输出进行相加
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-7.png">
+
+**Use Gate**
+
+Use Gate的输入来自Learn Gate和Forget Gate，组合方式如下
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-8.png">
+
+其中$U_t$和$V_t$的计算方式如下
+
+$$
+U_t = tanh(W_uLTM_{t-1}f_t + b_u)
+V_t = \delta(W_v[STM_{t-1}, E_t] + b_v)
+$$
+
+我们将上面四个gate组合到一起，可以得到下面的结果，和我们上面的结构类似
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-9.png">
+
+
+
 
 ## Resources
 
