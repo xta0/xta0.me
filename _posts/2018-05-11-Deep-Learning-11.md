@@ -234,16 +234,13 @@ Use Gate的输入来自Learn Gate和Forget Gate，组合方式如下
 其中$U_t$和$V_t$的计算方式如下
 
 $$
-U_t = tanh(W_uLTM_{t-1}f_t + b_u)
+U_t = tanh(W_uLTM_{t-1}f_t + b_u) \\
 V_t = \delta(W_v[STM_{t-1}, E_t] + b_v)
 $$
 
 我们将上面四个gate组合到一起，可以得到下面的结果，和我们上面的结构类似
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-9.png">
-
-
-
 
 ## Resources
 
