@@ -20,9 +20,9 @@ This paper makes the following key observations:
 
 - <mark>The main reason to switch to an accelerator/coprocessor is power-efficiency and stability in execution time. Speedup is largely a secondary effect</mark>.
 
-- Inference performance variability in the field is much worse than standalone benchmarking results. Variability poses a problem for user-facing applications with real-time constraints. To study these effects,there is a need for system-level performance modeling.
+- <mark>Inference performance variability in the field is much worse than standalone benchmarking results.</mark> Variability poses a problem for user-facing applications with real-time constraints. To study these effects,there is a need for system-level performance modeling.
 
-## THE LAY OF THE LAND: A LOOK AT SMARTPHONES FACEBOOK RUNS ON
+## A LOOK AT SMARTPHONES FACEBOOK RUNS ON
 
 ### 2.2 Mobile CPUs show little diversity
 
@@ -34,3 +34,8 @@ iOS devices tend to use fewer, more powerful cores while Android devices tend to
 
 About half of the SoCs have two CPU clusters: a cluster of high-performance cores and another cluster of energy-efficient cores. Only a small fraction include three clusters of cores. Cores in the different clusters may differ in microarchitectures, frequency settings, or cache sizes. A few SoCs even have two clusters consisting of identical cores. <mark>In nearly all SoCs, cores within the same cluster have a shared cache, but no cache level is shared between cores in the different clusters.</mark> The lack of a shared cache imposes a high synchronization cost between clusters. For this reason, <mark>Facebook apps target the high-performing cluster by, for example, matching thread and core count for neural network inference</mark>.
 
+### 2.3 The performance difference between a mobile CPU and GPU/DSP is narrow
+
+High-performance GPUs continue to play an important role in the success of deep learning. It may seem natural that mobile GPUs play a similar part for edge neural network inference. However, today nearly all Android devices run inference on mobile CPUs due to the performance limitations of mobile GPUs as well as programmability and software challenges.
+
+Figure 4 shows the peak performance ratio between CPUs and GPUs across Android SoCs. In a median device, the GPU provides only as much theoretical GFLOPS performance as its CPU. 23% of the SoCs have a GPU at least twice as performant as their CPU, and only 11% have a GPU that is 3 times as powerful than its CPU

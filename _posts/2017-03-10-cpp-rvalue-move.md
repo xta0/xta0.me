@@ -64,6 +64,7 @@ void bar(){
 Dummy&& dummy(const Dummy& dm){
   return std::move(dm);
 }
+```
 
 此时`std::move(dm)`接受一个左值`dm`，将它转化成了一个右值引用，这个过程同样没有拷贝，此时返回的右值引用指向的仍是左值`dm`的地址。
 
