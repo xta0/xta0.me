@@ -1,5 +1,5 @@
 ---
-list_title: Paper Reading Notes | [2018] Machine Learning at Facebook - Understanding Inference at the Edge
+list_title: Paper Notes | Machine Learning at Facebook - Understanding Inference at the Edge
 title: Machine Learning at Facebook - Understanding Inference at the Edge
 layout: post
 mathjax: true
@@ -9,7 +9,7 @@ mathjax: true
 
 In our dataset,an overwhelming majority of mobile CPUs use in-order ARM Cortex-A53 and Cortex-A7 cores
 
-Considering theoretical peak FLOP performance, less than 20% of mobile SoCs have a GPU 3× more powerful than CPUs and, on a
+Considering theoretical peak FLOP performance, <mark>less than 20% of mobile SoCs have a GPU 3× more powerful than CPUs</mark> and, on a
 median mobile device, GPUs are only as powerful as CPUs.
 
 This paper makes the following key observations:
