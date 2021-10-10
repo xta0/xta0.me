@@ -5,6 +5,8 @@ layout: post
 mathjax: true
 ---
 
+[paper link](https://research.fb.com/wp-content/uploads/2018/12/Machine-Learning-at-Facebook-Understanding-Inference-at-the-Edge.pdf)
+
 ## Introduction
 
 In our dataset,an overwhelming majority of mobile CPUs use in-order ARM Cortex-A53 and Cortex-A7 cores
