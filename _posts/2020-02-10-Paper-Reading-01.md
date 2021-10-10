@@ -28,7 +28,10 @@ This paper makes the following key observations:
 
 Figure 3 shows a breakdown of the year smartphone CPU cores were designed or released. 72% of primary CPU cores being used in mobile devices today were designed over 6 years ago. Cortex A53 represents more than 48% of the entire mobile processors whereas Cortex A7 represents more than 15% of the mobile processors
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/02/1.png">
+<div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
+<div><img src="{{site.baseurl}}/assets/images/2020/02/1.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2020/02/2.png"></div>
+</div>
 
 iOS devices tend to use fewer, more powerful cores while Android devices tend to have more cores, which are often less powerful. A similar observation was made in 2015 [6]. To optimize a production application for this degree of hardware diversity, <mark>we optimize for the common denominator: the cluster of most performant CPU cores.</mark>
 
@@ -39,3 +42,7 @@ About half of the SoCs have two CPU clusters: a cluster of high-performance core
 High-performance GPUs continue to play an important role in the success of deep learning. It may seem natural that mobile GPUs play a similar part for edge neural network inference. However, today nearly all Android devices run inference on mobile CPUs due to the performance limitations of mobile GPUs as well as programmability and software challenges.
 
 Figure 4 shows the peak performance ratio between CPUs and GPUs across Android SoCs. In a median device, the GPU provides only as much theoretical GFLOPS performance as its CPU. 23% of the SoCs have a GPU at least twice as performant as their CPU, and only 11% have a GPU that is 3 times as powerful than its CPU
+
+Realizable mobile GPUs performance is further bottlenecked by limited memory bandwidth capacities.
+Unlike high-performance discrete GPUs, no dedicated high-bandwidth memory is available on mobile. Moreover, <mark>mobile CPUs and GPUs typically share the same memory controller, competing for the scarce memory bandwidth.</mark>
+
