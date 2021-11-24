@@ -156,7 +156,20 @@ $$
 
 实际中，$n_c^{'}$一般很大，比如`512`，而$f$一般为3，大多数conv的kernel是3x3的。因此mobilenet的计算量大约为普通conv的十分之一
 
+整个MobileNet的结构也非常的straitforward，它由13个(depthwise-conv + pointwise + conv)的block组成，然后是pooling, FC和softmax用来做classification。
 
+### MobileNetv2
+
+MobileNetv2在v1的基础上做了两点改进
+
+1. 引入了Resnet的Residual Connection
+2. 增加了Expansion的layer
+
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-mobilenet-5.png">
+
+上面红色的block也叫做Bottleneck block，整个mobilenetv2的结构由17个bottleneck的block组成，followed by pooling, FC and Softmax for classification.
+
+其中的第一个1x1 pointwise conv(a.k.a Expansion layer)将channel增加到18，最后一个1x1 pointwise conv将channel shrink到3
 
 ### Resources
 
