@@ -26,8 +26,13 @@ Unet是目前一个比较流行的semantic segmentation model，它结构是一�
 
 ### Unet Architecture
 
-Unet结构中一个特别的地方在于skip connection。这个connection实际上是一个element-wise的add操作，它将左边的feature map直接加到右边对应的feature map上
+Unet结构中一个特别的地方在于skip connection。这个connection可以是一个element-wise的add操作也可以是concat操作，它将左边的feature map直接copy到右边对应的feature map上
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/05/dl-cnn-unet-3.png">
 
 对于右边的feature map，经过transpose conv之后，它里面包含high-level，spatial，contextual inforamtion，但是缺少low-level，detail的information。而左边与之对应的feature map则恰好包含这些信息。
+
+### Resources
+
+- [Unet](https://arxiv.org/abs/1505.04597)
+- [Unet Explained](https://www.coursera.org/learn/convolutional-neural-networks/lecture/GIIWY/u-net-architecture)

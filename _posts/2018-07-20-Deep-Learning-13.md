@@ -6,4 +6,4 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
-RNN
+Transformer是

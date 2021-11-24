@@ -171,6 +171,8 @@ MobileNetv2在v1的基础上做了两点改进
 
 其中的第一个1x1 pointwise conv(a.k.a Expansion layer)将channel增加到18，最后一个1x1 pointwise conv将channel shrink到3
 
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-mobilenet-6.png">
+
 ### Resources
 
 - [LetNet5 - Gradient-based learning applied to document recognition](https://ieee*plore.ieee.org/document/726791)
