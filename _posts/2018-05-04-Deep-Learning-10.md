@@ -6,6 +6,16 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
-Sementic Segmentation 可以对图片中像素点进行分类，比如下面例子中，我们将car标记为1，building标记为2，road标记为3。model的输出为一个segmentation map
+Sementic Segmentation 可以对图片中像素点进行分类，比如下面例子中，我们将car标记为1，building标记为2，road标记为3。model的输出为一个segmentation map。
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-unet-0.png">
+
+Unet是目前一个比较流行的semantic segmentation model，它结构是一个U shape，从左到右，feature map的depth逐渐增加，spatial size逐渐减小；从右到左，feature map的depth逐渐减小，spatial size逐渐增加。
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-unet-1.png">
+
+### Transpose Convolution
+
+
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-cnn-unet-2.png">
