@@ -127,6 +127,52 @@ Inception Network的基本思想是使用不同尺寸的卷积核提取图片信
 
 注意到图中矩形圈出的部分是一个分支，它可以用来观察对应layer的预测结果，以便观察最终结果是否overfitting
 
+### MobileNet
+
+MobileNet的核心在于使用Depthwise-separable convolution来减少运算量。对于一次普通的conv操作，其运算量如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-mobilenet-1.png">
+
+Depthwise-separable conv将卷积分成了两步
+
+1. 使用Depthwise conv将每个channel和kernel分别做卷积
+2. 使用一个1x1的Pointwise conv将上一步得到的中间结果进行卷积
+
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-mobilenet-2.png">
+
+其中, Depthwise conv的计算量为
+
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-mobilenet-3.png">
+
+Pointwise conv的计算量为
+
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-mobilenet-4.png">
+
+对比计算量可知，在上面的例子中$n_c^{'} = 3$使用mobilenet减少了大约70%的计算量。Paper中给出的计算公式为
+
+$$
+p = \frac{n_c^{'}}{1} + \frac{f^{2}}{1}
+$$
+
+实际中，$n_c^{'}$一般很大，比如`512`，而$f$一般为3，大多数conv的kernel是3x3的。因此mobilenet的计算量大约为普通conv的十分之一
+
+整个MobileNet的结构也非常的straitforward，它由13个(depthwise-conv + pointwise + conv)的block组成，然后是pooling, FC和softmax用来做classification。
+
+### MobileNetv2
+
+MobileNetv2在v1的基础上做了两点改进
+
+1. 引入了Resnet的Residual Connection
+2. 增加了Expansion的layer
+
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-mobilenet-5.png">
+
+上面红色的block也叫做Bottleneck block，整个mobilenetv2的结构由17个bottleneck的block组成，followed by pooling, FC and Softmax for classification.
+
+其中的第一个1x1 pointwise conv(a.k.a Expansion layer)将channel增加到18，最后一个1x1 pointwise conv将channel shrink到3
+
+<img src="{{site.baseurl}}/assets/images/2018/03/dl-cnn-2-mobilenet-6.png">
+
 ### Resources
 
 - [LetNet5 - Gradient-based learning applied to document recognition](https://ieee*plore.ieee.org/document/726791)
