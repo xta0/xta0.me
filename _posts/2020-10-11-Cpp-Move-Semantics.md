@@ -1,5 +1,5 @@
 ---
-list_title: Notes | Move Semantics
+list_title: Cpp Con | Move Semantics
 title: Move Semantics
 layout: post
 categories: ["C++"]
