@@ -50,14 +50,13 @@ Unlike high-performance discrete GPUs, no dedicated high-bandwidth memory is ava
 
 ### 2.4 Available co-processors: DSPs and NPUs
 
-However DSPs face the same challenge GPUs do – “compute” DSPs are available in only 5% of the Qualcomm-based SoCs the Facebook apps run on.Most DSP do not yet implement vector instructions. While all vendors are adding vector/compute DSPs, it is likely to take many years before we see a large market presence.
+However DSPs face the same challenge GPUs do – “compute” DSPs are available in only 5% of the Qualcomm-based SoCs the Facebook apps run on. Most DSP do not yet implement vector instructions. While all vendors are adding vector/compute DSPs, it is likely to take many years before we see a large market presence.
 
 ### 2.5 Programmability is a primary roadblock for using mobile co-processors
 
 **Vulkan** is a successor to OpenGL and OpenGL ES. It provides similar functionality to OpenGL ES 3.1, but with a new API targeted at minimizing driver overhead. <mark>Looking forward, Vulkan is a promising GPGPU API</mark>. Today, early adoption of Vulkan is limited, <mark>being found on less than 36% of Android devices. </mark>
 
-**Metal** is Apple’s GPU programming language. Mobile GPUs on iOS devices paint a very different picture.Because Apple chipsets with the A-series mobile processors are vertically-designed, the system stack is more tightly integrated for iPhones. Since 2013 all Apple mobile processors, starting with A7, support Metal. Metal is similar to Vulkan but with much wider market share
-and more mature system stack support. 95% of the iOS devices support Metal. <mark>Moreover the peak performance ratio between the GPU and the CPU is approximately 3 to 4 times, making Metal on iOS devices with GPUs an attractive target for efficient neural network inference</mark>. Guided by this data and experimental performance validation, Facebook apps enable GPU-powered neural network inference on iOS for several models.
+**Metal** is Apple’s GPU programming language. Mobile GPUs on iOS devices paint a very different picture.Because Apple chipsets with the A-series mobile processors are vertically-designed, the system stack is more tightly integrated for iPhones. Since 2013 all Apple mobile processors, starting with A7, support Metal. Metal is similar to Vulkan but with much wider market share and more mature system stack support. 95% of the iOS devices support Metal. <mark>Moreover the peak performance ratio between the GPU and the CPU is approximately 3 to 4 times, making Metal on iOS devices with GPUs an attractive target for efficient neural network inference</mark>. Guided by this data and experimental performance validation, Facebook apps enable GPU-powered neural network inference on iOS for several models.
 
 ## MACHINE LEARNING AT FACEBOOK
 
