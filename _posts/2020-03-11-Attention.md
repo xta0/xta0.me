@@ -11,4 +11,7 @@ mathjax: true
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/03/attension-1.png">
 
-The photo above is footage from a person wearing the eye-tracking device, where the orange circle is highlighting where the person is looking at each moment
+The photo above is footage from a person wearing the eye-tracking device, where the orange circle is highlighting where the person is looking at each moment.The idea from computer vision researchers was to try to adopt a method that does that for computer vision models. In machine learning, attention methods give us a mechanism for adding selective focus into a machine learning model. Typically, one that does its processing sequentially. 
+
+Attention is a concept that powers up some of the best performing models spanning both natural language processing and computer vision.
+
