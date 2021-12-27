@@ -1,5 +1,5 @@
 ---
-list_title: Cpp Con | Move Semantics
+list_title: C++ Performance | Move Semantics
 title: Move Semantics
 layout: post
 categories: ["C++"]
