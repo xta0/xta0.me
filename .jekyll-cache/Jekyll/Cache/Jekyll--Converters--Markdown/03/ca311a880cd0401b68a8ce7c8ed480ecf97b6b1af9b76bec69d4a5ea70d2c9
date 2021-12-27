@@ -1,0 +1,292 @@
+I"V<h3 id="prerequist-knowledge">Prerequist Knowledge</h3>
+
+<ul>
+  <li>Automata Theory
+    <ul>
+      <li>Finite State Machine</li>
+      <li>Formal Language</li>
+      <li>Regular Language</li>
+      <li>Context Free Grammar</li>
+      <li>DFA / NFA</li>
+    </ul>
+  </li>
+  <li><a href="">Lexcial Analysis</a></li>
+  <li>Algorithms
+    <ul>
+      <li>Recursion</li>
+    </ul>
+  </li>
+  <li>Tools
+    <ul>
+      <li>Python Syntax</li>
+      <li><a href="https://github.com/dabeaz/ply">Python Lex-Yacc</a></li>
+      <li>Regular Expression</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="正则表达式">正则表达式</h2>
+
+<p>我们先从正则表达式开始说，正则表达式的理论基础为有限状态机，具体来说是DFA和NFA，参考之前编译原理的文章，一个DFA至少要包含下面五部分</p>
+
+<ol>
+  <li>一个确定的状态集合，用 $Q$ 表示</li>
+  <li>一组输入的字符，用 $\sum$ 表示</li>
+  <li>一个状态转移函数（正则表达式），用 $\delta$ 表示</li>
+  <li>一个初始状态，用 $q_0$ 表示，$q_0$ 属于 $Q$ 的一部分</li>
+  <li>一组最终状态(Final State)，用 $F$ 表示，$F \subseteq Q$，也可以叫Accepting State</li>
+</ol>
+
+<p>例如，正则式<code class="highlighter-rouge">r='a+1+'</code>对应的DFA状态图为</p>
+
+<p><img class="md-img-center" src="/assets/images/2015/07/fsm-1.png" /></p>
+
+<p>我们可以用一段Python代码来模拟上述DFA的工作过程：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#定义状态转义函数
+</span><span class="n">edges</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s">'a'</span><span class="p">)</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="c1">#state#1 takes an input of 'a', transfer the state to #2
+</span>    <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">'a'</span><span class="p">)</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="s">'1'</span><span class="p">)</span> <span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="s">'1'</span><span class="p">)</span> <span class="p">:</span> <span class="mi">3</span>
+<span class="p">}</span>
+<span class="c1">#定义状态机的结束状态，可能有多个结束状态，用array表示
+</span><span class="n">accepting</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+<span class="c1">#string: 输入字符
+#current: 当前状态/初始状态
+#edges: 状态转移方程
+#accepting: 最终状态集合
+</span><span class="k">def</span> <span class="nf">fsmsim</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">current</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">accepting</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">string</span> <span class="o">==</span> <span class="s">""</span><span class="p">:</span>
+        <span class="c1">#递归基，如果当前字符处于Accepting State则终止递归，匹配结束
+</span>        <span class="k">return</span> <span class="n">current</span> <span class="ow">in</span> <span class="n">accepting</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">letter</span> <span class="o">=</span> <span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">current</span><span class="p">,</span><span class="n">letter</span><span class="p">)</span>
+        <span class="c1">#进入状态机
+</span>        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+            <span class="n">next_state</span> <span class="o">=</span> <span class="n">edges</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">remaining_string</span> <span class="o">=</span> <span class="n">string</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="c1">#递归
+</span>            <span class="k">return</span> <span class="n">fsmsim</span><span class="p">(</span><span class="n">remaining_string</span><span class="p">,</span><span class="n">next_state</span><span class="p">,</span><span class="n">edges</span><span class="p">,</span><span class="n">accepting</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span><span class="p">;</span>
+
+<span class="c1">#test - case:
+</span><span class="k">print</span><span class="p">(</span><span class="n">fsmsim</span><span class="p">(</span><span class="s">"aaa111"</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">edge</span><span class="p">,</span><span class="n">accepting</span><span class="p">))</span> <span class="c1">#=&gt;True 
+</span><span class="k">print</span><span class="p">(</span><span class="n">fsmsim</span><span class="p">(</span><span class="s">"a1a1a1"</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">edge</span><span class="p">,</span><span class="n">accepting</span><span class="p">))</span> <span class="c1">#=&gt;Flase
+</span><span class="k">print</span><span class="p">(</span><span class="n">fsmsim</span><span class="p">(</span><span class="s">""</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">edge</span><span class="p">,</span><span class="n">accepting</span><span class="p">))</span> <span class="c1">#=&gt;False
+</span></code></pre></div></div>
+<p>回顾一下上面的过程，其思路为:</p>
+
+<ol>
+  <li>由正则式构造出FSM状态机， 状态转移方程用<code class="highlighter-rouge">map&lt;tuple&lt;int,char&gt;,int&gt;</code>表示</li>
+  <li>设计<code class="highlighter-rouge">fsm</code>函数，解析输入字符串</li>
+  <li>观察输入字符串是否匹配正则式（能被状态机接受）</li>
+</ol>
+
+<p>为了加深理解，接下来再来看几个例子，令上述的正则式分别为<code class="highlighter-rouge">r"q*"</code>和<code class="highlighter-rouge">r"[a-b][c-d]?"</code>，则FSM状态机变为（分别对应左图和右图）：</p>
+
+<div class="md-flex-h md-flex-space-around md-margin-bottom-24">
+<div><img class="md-img-center" src="/assets/images/2015/07/fsm-2.png" /></div>
+<div><img class="md-img-center md-margin-left-24" src="/assets/images/2015/07/fsm-3.png" /></div>
+</div>
+
+<p>左图的正则式比较好理解，表示字母<code class="highlighter-rouge">q</code>重复出现0次或者多次，右图的正则式表示第一个字符是<code class="highlighter-rouge">a</code>或者<code class="highlighter-rouge">b</code>，第二个字符是<code class="highlighter-rouge">c</code>或者<code class="highlighter-rouge">d</code>(也可能没有第二个字符)。上述两个正则式对应状态转移函数分别为:</p>
+
+<div class="md-flex-h md-margin-bottom-24">
+<div>
+<pre class="highlight language-python md-no-padding-v md-height-full">
+<code class="language-python">
+edges = {
+    (1,'q'):1
+}
+acpt = [1]
+
+
+# test-case
+print fsmsim("",1,edges,acpt) #True
+print fsmsim("q",1,edges,acpt)#True
+print fsmsim("qq",1,edges,acpt)#True
+print fsmsim("p",1,edges,acpt)#False
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight md-no-padding-v md-height-full">
+<code class="language-python">
+edges = {
+    (1,'a'):2,
+    (1,'b'):2,
+    (2,'c'):3,
+    (2,'d'):3
+}
+acpt = [2,3]
+#test-case
+print fsmsim("a",1,edges,acpt)#True
+print fsmsim("b",1,edges,acpt)#True
+print fsmsim("ad",1,edges,acpt)#True
+print fsmsim("e",1,edges,acpt)#False
+</code>
+</pre>
+</div>
+</div>
+
+<h3 id="nfa">NFA</h3>
+
+<p>Python的<code class="highlighter-rouge">re</code>库对正则表达式解析和<code class="highlighter-rouge">fsmsim</code>类似，但是上面的<code class="highlighter-rouge">fsmsim</code>函数只是实现DFA，没有考虑NFA，具体来说有下面两种情况没有考虑</p>
+
+<ol>
+  <li>Ambiguity</li>
+  <li>$\epsilon$ 状态</li>
+</ol>
+
+<p>考虑下面NFA，输入字符串为<code class="highlighter-rouge">1-23</code></p>
+
+<p><img class="md-img-center" src="/assets/images/2015/07/fsm-4.png" /></p>
+
+<ol>
+  <li>从状态起始点#1开始，输入字符为<code class="highlighter-rouge">1</code>，走到状态#2</li>
+  <li>由于有$\epsilon$ 状态，#2可以直接转化为状态#3</li>
+  <li>状态#3读入<code class="highlighter-rouge">-</code>进入状态4</li>
+  <li>状态#4读入<code class="highlighter-rouge">2</code>进入状态5</li>
+  <li>状态#5读入<code class="highlighter-rouge">3</code>之后，产生Ambiguity，一种可能是回到状态#2，一种可能是停留在#5</li>
+</ol>
+
+<p>不难看出，产生Ambiguity的一个原因是正则式里存在”或”。再来看一个例子，有正则式为<code class="highlighter-rouge">a+|ab+c</code>，由于有<code class="highlighter-rouge">|</code>，因此第一个状态后就出现了分支</p>
+
+<p><img class="md-img-center" src="/assets/images/2015/07/fsm-6.png" /></p>
+
+<p>回忆前面对FSM的python描述，每一组<code class="highlighter-rouge">&lt;状态,输入&gt;</code>的Tuple对应唯一个<code class="highlighter-rouge">next_state</code>，对于NFA，<code class="highlighter-rouge">next_state</code>可能有多个，对此，我们需要遍历<code class="highlighter-rouge">next_states</code>中的所有情况，相应的<code class="highlighter-rouge">fsm</code>函数也需要修改:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">edges</span> <span class="o">=</span> <span class="p">{</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">'a'</span><span class="p">)</span> <span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+          <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">'a'</span><span class="p">)</span> <span class="p">:</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+          <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s">'b'</span><span class="p">)</span> <span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+          <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s">'c'</span><span class="p">)</span> <span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="p">}</span>
+<span class="n">accepting</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span> 
+
+<span class="k">def</span> <span class="nf">nfsmsim</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">current</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">accepting</span><span class="p">):</span> 
+    <span class="k">if</span><span class="p">(</span><span class="n">string</span><span class="o">==</span><span class="s">""</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">current</span> <span class="ow">in</span> <span class="n">accepting</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">letter</span> <span class="o">=</span> <span class="n">string</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">current</span><span class="p">,</span><span class="n">letter</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+            <span class="n">next_states</span> <span class="o">=</span> <span class="n">edges</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">next_states</span><span class="p">:</span>
+                <span class="n">remain_str</span> <span class="o">=</span> <span class="n">string</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="c1">#只有当nfsmsim为true 才返回，false继续尝试
+</span>                <span class="k">if</span> <span class="n">nfsmsim</span><span class="p">(</span><span class="n">remain_str</span><span class="p">,</span><span class="n">state</span><span class="p">,</span><span class="n">edges</span><span class="p">,</span><span class="n">accepting</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="bp">True</span>
+        
+        <span class="k">return</span> <span class="bp">False</span>
+
+<span class="c1"># test case
+</span><span class="k">print</span> <span class="s">"Test case 1 passed: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">nfsmsim</span><span class="p">(</span><span class="s">"abc"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">accepting</span><span class="p">)</span> <span class="o">==</span> <span class="bp">True</span><span class="p">)</span> 
+<span class="k">print</span> <span class="s">"Test case 2 passed: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">nfsmsim</span><span class="p">(</span><span class="s">"aaa"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">accepting</span><span class="p">)</span> <span class="o">==</span> <span class="bp">True</span><span class="p">)</span> 
+<span class="k">print</span> <span class="s">"Test case 3 passed: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">nfsmsim</span><span class="p">(</span><span class="s">"abbbc"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">accepting</span><span class="p">)</span> <span class="o">==</span> <span class="bp">True</span><span class="p">)</span> 
+<span class="k">print</span> <span class="s">"Test case 4 passed: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">nfsmsim</span><span class="p">(</span><span class="s">"aabc"</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">accepting</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">)</span> 
+<span class="k">print</span> <span class="s">"Test case 5 passed: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">nfsmsim</span><span class="p">(</span><span class="s">""</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">edges</span><span class="p">,</span> <span class="n">accepting</span><span class="p">)</span> <span class="o">==</span> <span class="bp">False</span><span class="p">)</span> 
+</code></pre></div></div>
+
+<p>参考之前计算理论的文章可知，对所有NFA都可以转化而为DFA，下图NFA对应的正则表达式为<code class="highlighter-rouge">ab?c</code></p>
+
+<p><img class="md-img-center" src="/assets/images/2015/07/fsm-5.png" /></p>
+
+<p>左边的NFA是对上述正则表达式的一种很直观的实现，右边是与其等价的DFA，它将所有通过<code class="highlighter-rouge">epsilon</code>所到达的状态进行了合并，解决了上述两个问题。</p>
+
+<ul>
+  <li><strong>小结</strong></li>
+</ul>
+
+<ol>
+  <li>string是一组字符的合集</li>
+  <li>每个Regular Expression对应一个DFA，反之亦然</li>
+  <li>NFA可以转化为DFA</li>
+  <li>使用<code class="highlighter-rouge">fsmsim</code>函数来实现regular expression的解析</li>
+</ol>
+
+<p>在实际的解析过程中，我们几乎不会用到<code class="highlighter-rouge">fsmsim</code>函数，而是直接使用正则表达式，但了解其如何工作的对理解Parser很重要，接下来我们将讨论如何如何实现词法分析，将表达式切分成token</p>
+
+<h2 id="词法分析器">词法分析器</h2>
+
+<p>了解了正则表达式的计算原理，我们就可以用它来实现词法分析器。关于什么是Lexer，可以参考之前编译原理的文章，Python提供了一个Lexer的类库<code class="highlighter-rouge">ply</code>，可以方便的将句子切分成token，但有几点需要注意：</p>
+<ol>
+  <li>首先是匹配token的顺序和优先级，比如匹配WORD的正则式为<code class="highlighter-rouge">r'[^ &lt;&gt;]+'</code>，匹配string的正则式为<code class="highlighter-rouge">r'"[^"]+"'</code>，对于下字符<code class="highlighter-rouge">hello "world"</code>,如果WORD的正则在前，则匹配的结果为 [WORD, WORD]，如果STRING在前，则匹配的结果为[WORD, STRING]。</li>
+  <li>另一问题是不同状态机的互斥，例如，代码注释可以穿插在代码中，对注释的解析需要令一个的状态机，和解析HTML Token的状态机互斥，例如下面的代码</li>
+</ol>
+
+<pre><code class="language-HTML"> webpage = '''Welcome to &lt;b&gt;my &lt;!-- careful &lt;/b&gt; --&gt; webpage&lt;/b&gt;'''
+</code></pre>
+
+<p>当遇见<code class="highlighter-rouge">&lt;!--</code>时，进入解析注释的状态机，并将结果排除在Token之外</p>
+
+<p><img src="/assets/images/2015/07/lexer-1.png" alt="" /></p>
+
+<h3 id="html-lexer">HTML Lexer</h3>
+
+<p>这一节我们以HTML文本为例，来实现一个简单的lexer，首先我们可以根据HTML的标签规则生成一组tokens:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tokens</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s">'LANGLE'</span><span class="p">,</span> <span class="c1"># &lt;
+</span>    <span class="s">'LANGLESLASH'</span><span class="p">,</span> <span class="c1">#&lt;/
+</span>    <span class="s">'RANGLE'</span><span class="p">,</span> <span class="c1">#&gt;
+</span>    <span class="s">'EQUAL'</span><span class="p">,</span> <span class="c1">#=
+</span>    <span class="s">'STRING'</span><span class="p">,</span> <span class="c1">#"hello"
+</span>    <span class="s">'WORD'</span> <span class="c1">#welcome!
+</span><span class="p">)</span>
+</code></pre></div></div>
+<p>然后对每个token，我们可以按照<code class="highlighter-rouge">ply</code>的规则给出匹配的正则式，这里特比要注意前面提到的第二点，<code class="highlighter-rouge">ply</code>默认由上到下匹配，一旦命中匹配规则，则会立即返回，不会继续向下匹配。由于篇幅原因，这里不会列出所有的token</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># HTML Tokens
+</span><span class="k">def</span> <span class="nf">t_LANGLESLASH</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="s">r'&lt;/'</span>
+    <span class="k">return</span> <span class="n">token</span>
+
+<span class="k">def</span> <span class="nf">t_LANGLE</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="s">r'&lt;'</span>
+    <span class="k">return</span> <span class="n">token</span>
+<span class="c1">#...
+</span>
+<span class="k">def</span> <span class="nf">t_newline</span><span class="p">(</span><span class="n">token</span><span class="p">):</span>
+    <span class="s">r'\n'</span>
+    <span class="n">token</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">pass</span>
+</code></pre></div></div>
+<p>有了token的正则式，我们便可以用<code class="highlighter-rouge">ply</code>内部的方法，HTML代码token化：</p>
+
+<div class="md-flex-h md-margin-bottom-24">
+<div>
+<pre class="highlight language-python md-no-padding-v md-height-full">
+<code class="language-python">
+htmllexer = lex.lex()
+htmllexer.input(webpage)
+while True:
+    #return next token
+    tok = htmllexer.token() 
+    if not tok: 
+        break
+    print(tok)
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight md-no-padding-v md-height-full">
+<code class="language-python">
+LexToken(WORD,'This',1,0)
+LexToken(WORD,'is',1,5)
+LexToken(LANGLE,'&lt;',2,26)
+LexToken(WORD,'b',2,27)
+LexToken(RANGLE,'&gt;',2,28)
+LexToken(WORD,'my',2,29)
+LexToken(LANGLESLASH,'&lt;/',2,31)
+LexToken(WORD,'b',2,33)
+LexToken(RANGLE,'&gt;',2,34)
+LexToken(WORD,'webpage!',2,36)
+</code>
+</pre>
+</div>
+</div>
+
+:ET

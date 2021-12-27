@@ -1,0 +1,264 @@
+I"�d<h2 id="cookies">Cookies</h2>
+
+<p>a small piece of data stored in the browser for a website, key-value paires, 20 Cookies per website</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Browser                 Server
+    |   --- login ---&gt;    |
+    |                     |
+    |    {uid = 1234}     |
+    |   &lt;--- Cookie ---   |
+    |                     |
+    |    {uid = 1234}     |
+    |   --- Cookie ---&gt;   |
+    |                     |
+    |   &lt;--- User Data--- |
+    |                     |
+</code></pre></div></div>
+<p>Cookies are sent in HTTP headers, something like this:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>HTTP Response
+--------------
+set-Cookie: user_id = 12345
+set-Cookie: last_seen = Dec 25 1985
+
+HTTP Request
+-------------
+Cookie: user_id = 12345; last-seen=Dec 25 1985
+</code></pre></div></div>
+
+<p>我们可以实际查看一下Server返回的Cookie</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>➜  curl -I www.google.com
+HTTP/1.1 200 OK
+Date: Mon, 06 Aug 2018 02:08:03 GMT
+Expires: -1
+Cache-Control: private, max-age=0
+Content-Type: text/html; charset=ISO-8859-1
+P3P: CP="This is not a P3P policy! See g.co/p3phelp for more info."
+Server: gws
+X-XSS-Protection: 1; mode=block
+X-Frame-Options: SAMEORIGIN
+Set-Cookie: 1P_JAR=2018-08-06-02; expires=Wed, 05-Sep-2018 02:08:03 GMT; path=/; domain=.google.com
+Set-Cookie: NID=136=CCO0I2iLHXevLQ9iTtMQcUOKDRmByXVIPRmrnW-6i6b59ZcCDiTASvbns6Dc9C7Sq39qg4wsF3WJ88zwNj2DC27dE2kshTSuE9KSsOsW00Xbhgnyn6ZY4QnJHdCEZNZc; expires=Tue, 05-Feb-2019 02:08:03 GMT; path=/; domain=.google.com; HttpOnly
+Transfer-Encoding: chunked
+Accept-Ranges: none
+Vary: Accept-Encoding
+</code></pre></div></div>
+
+<h3 id="hash-cookies">Hash Cookies</h3>
+
+<p>常用的Hash函数有，CRC,MD5,Sha1,Sha256，其安全性由低到高，Hash的速度由快到慢。Python提供了一些常用的Hash API</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="n">key</span> <span class="o">=</span> <span class="s">"udacity"</span>
+<span class="n">key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">x</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span> <span class="c1">#
+</span></code></pre></div></div>
+<p>可以使用Hash来校验Cookie，假设Cookie的格式为<code class="highlighter-rouge">{visits | hashcode}</code>其中visits表示访问Server的次数</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#Server
+#-----------
+#set-Cookie: {5|e4da3b7fbbce2345d7772b0674a318d5}
+</span>
+<span class="c1">#client
+#-----------
+#Cookie: {5|e4da3b7fbbce2345d7772b0674a318d5}
+</span>
+<span class="c1"># check Cookie 
+</span><span class="k">def</span> <span class="nf">hash_str</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">check_secure_val</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
+    <span class="n">val</span><span class="p">,</span> <span class="n">hashstr</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">'|'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">hashstr</span> <span class="o">==</span> <span class="n">hash_str</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</code></pre></div></div>
+
+<p>上述Hash Cookie的方法任然有一个缺陷，就是可以被伪造，例如可以将<code class="highlighter-rouge">{5|e4da3b7fbbce2345d7772b0674a318d5}</code>替换为<code class="highlighter-rouge">{123|202cb962ac59075b964b07152d234b70}</code>，校验仍然有效。</p>
+
+<p>可以对上述方法做个修改，在计算hash时，加入一个secret key</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Hash(secret_key,Cookie) = hash_code
+</code></pre></div></div>
+
+<p>Python的hash库中提供HMAC(Hash-based Meesage Authentication Code)的API来应对上述场景</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">secret_key</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">([</span><span class="mh">0x13</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">])</span>
+<span class="n">Cookie</span> <span class="o">=</span> <span class="s">"some_Cookie"</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">'utf-8'</span><span class="p">)</span>
+<span class="n">hash_code</span> <span class="o">=</span> <span class="n">hmac</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">secret_key</span><span class="p">,</span><span class="n">Cookie</span><span class="p">)</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+<span class="c1">#f2b280549c1c9edb18d5500d6c01ea51
+</span></code></pre></div></div>
+<h3 id="使用cookie">使用Cookie</h3>
+
+<p>上面介绍了服务端如何生成Cookie，这一节介绍浏览器如何使用Cookie。RFC6265定义了Cookie的一些属性，包含<code class="highlighter-rouge">Expires</code>、<code class="highlighter-rouge">Max-Age</code>、<code class="highlighter-rouge">Domain</code>、<code class="highlighter-rouge">Path</code>、<code class="highlighter-rouge">Secure</code>、<code class="highlighter-rouge">HttpOnly</code>等。这些属性决定浏览器是否接受Server端传来的Cookie</p>
+
+<p>对于浏览器来说，Domain、Path、Name三者唯一确定一个cookie。在浏览器在使用cookie时，不区分Http/Https和端口号。</p>
+
+<ul>
+  <li>Domain是向上通配的</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#写入（Set-Cookie）访问www.example.com</span>
+Set-Cookie: <span class="nv">sid1</span><span class="o">=</span>a<span class="p">;</span> <span class="nv">domain</span><span class="o">=</span>example.com<span class="p">;</span> <span class="nv">path</span><span class="o">=</span>/<span class="p">;</span> <span class="c">#接受</span>
+Set-Cookie: <span class="nv">sid2</span><span class="o">=</span>b<span class="p">;</span> <span class="nv">domain</span><span class="o">=</span>www.example.com<span class="p">;</span> <span class="nv">path</span><span class="o">=</span>/<span class="p">;</span> <span class="c">#接受</span>
+Set-Cookie: <span class="nv">sid3</span><span class="o">=</span>c<span class="p">;</span> <span class="nv">domain</span><span class="o">=</span>pay.example.com<span class="p">;</span> <span class="nv">path</span><span class="o">=</span>/<span class="p">;</span> <span class="c">#拒绝</span>
+
+<span class="c">#读取（Cookie）</span>
+<span class="c">#访问pay.example.com</span>
+Cookie: <span class="nv">sid1</span><span class="o">=</span>a
+        
+<span class="c">#访问www.example.com</span>
+Cookie: <span class="nv">sid1</span><span class="o">=</span>a<span class="p">;</span> <span class="nv">sid2</span><span class="o">=</span>b<span class="p">;</span>
+</code></pre></div></div>
+<ul>
+  <li>Path是向下通配的</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#写入（Set-Cookie）</span>
+
+Set‐Cookie: <span class="nv">sid1</span><span class="o">=</span>a<span class="p">;</span> <span class="nv">domain</span><span class="o">=</span>example.com<span class="p">;</span> <span class="nv">path</span><span class="o">=</span>/<span class="p">;</span>
+Set‐Cookie: <span class="nv">sid2</span><span class="o">=</span>b<span class="p">;</span> <span class="nv">domain</span><span class="o">=</span>example.com<span class="p">;</span> <span class="nv">path</span><span class="o">=</span>/test/<span class="p">;</span>
+
+<span class="c">#读取（Cookie）</span>
+<span class="c">#访问http://example.com/</span>
+Cookie: <span class="nv">sid1</span><span class="o">=</span>a<span class="p">;</span>
+    
+<span class="c">#访问http://example.com/test/</span>
+Cookie: <span class="nv">sid1</span><span class="o">=</span>a<span class="p">;</span> <span class="nv">sid2</span><span class="o">=</span>b
+</code></pre></div></div>
+<p><code class="highlighter-rouge">Expires</code>、<code class="highlighter-rouge">Max-Age</code>可以指定Cookie的有效期，不指定有效期时，Cookie默认为当前session有效，当前session有效指关闭浏览器时Cookie失效。</p>
+
+<h3 id="cookie的安全问题">Cookie的安全问题</h3>
+
+<p>如何盗取Cookie一直是一个热门且重要的安全问题，常用的攻击手段有中间人拦截，XSS，CSRF等等，关于这部分内容和本文主题无关，我们将在后面一篇文章中重点讨论Web Security的问题。</p>
+
+<h2 id="oauth-认证">OAuth 认证</h2>
+
+<p>有了前面Cookie的铺垫，我们可以谈一谈目前比较流行的OAuth认证。所谓OAuth是指使用第三方平台账号进行认证，其认证流程图（以Google为例）如下</p>
+
+<p><a href="/assets/images/2008/07/oauth2-passport.png" data-lightbox="1"><img src="/assets/images/2008/07/oauth2-passport.png" /></a></p>
+
+<p>上面的认证过程分为两部分，一部分是从Google获取登录信息，一部分是将得到的登录信息进行处理，生成Cookie，存到自己的Server上。第一部分的任务流程相对标准化，基本上每个平台都有相应的三方库支持，比如Node.js可以使用<code class="highlighter-rouge">Passport</code>(图中虚线部分)</p>
+
+<p><code class="highlighter-rouge">Passport</code>由两部分构成，一部分是<code class="highlighter-rouge">Passport</code>核心库，用来处理登录逻辑，另一部分是<code class="highlighter-rouge">passpoart strategy</code>用来支持各类登录策略，比如JWT，OAuth等等。上述两个framework分别为</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>npm <span class="nb">install</span> <span class="nt">--save</span> Passport Passport-google-oauth20
+</code></pre></div></div>
+
+<h3 id="config-passport">Config Passport</h3>
+
+<p>我们以Google的OAuth认证为例，介绍如何使用Passport完成OAuth流程。首先需要对<code class="highlighter-rouge">Passport</code>进行初始化：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">passport</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span>
+  <span class="k">new</span> <span class="nx">GoogleStrategy</span><span class="p">(</span>
+    <span class="p">{</span>
+      <span class="na">clientID</span><span class="p">:</span> <span class="nx">keys</span><span class="p">.</span><span class="nx">googleClientID</span><span class="p">,</span>
+      <span class="na">clientSecret</span><span class="p">:</span> <span class="nx">keys</span><span class="p">.</span><span class="nx">googleClientSecret</span><span class="p">,</span>
+      <span class="na">callbackURL</span><span class="p">:</span> <span class="dl">'</span><span class="s1">/auth/google/callback</span><span class="dl">'</span>
+    <span class="p">},</span>
+    <span class="nx">accessToken</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">accessToken</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div></div>
+<p>上述代码初始化<code class="highlighter-rouge">Passport</code>，传入<code class="highlighter-rouge">client_id</code>和<code class="highlighter-rouge">secret</code>以及<code class="highlighter-rouge">callbackURL</code>，注意<code class="highlighter-rouge">callbackURL</code>需要在Google Account中预先配置好，当OAuth请求成功后，Google会使用这个URL返回token。接下来，在Server上配置OAuth登录API:</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">app</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span>
+  <span class="dl">'</span><span class="s1">/auth/google</span><span class="dl">'</span><span class="p">,</span>
+  <span class="nx">passport</span><span class="p">.</span><span class="nx">authenticate</span><span class="p">(</span><span class="dl">'</span><span class="s1">google</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">scope</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">profile</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">email</span><span class="dl">'</span><span class="p">]</span> <span class="c1">//允许访问用户的profile和email信息</span>
+  <span class="p">})</span>
+<span class="p">);</span>
+</code></pre></div></div>
+<p>此时，当我们访问<code class="highlighter-rouge">/auth/google</code>时，<code class="highlighter-rouge">Passport</code>会将上述GET请求的URL替换为：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://accounts.google.com/o/oauth2/v2/auth?response_type=code
+&amp;redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fauth%2Fgoogle%2Fcallback
+&amp;scope=profile%20email
+&amp;client_id=999661698345-ivms5t1s778qp5n4k55sep4odp7t4her.apps.googleusercontent.com
+</code></pre></div></div>
+<p>当请求OAuth请求成功后，Google会调用callback URL，因此我们需要处理该请求的回调(<code class="highlighter-rouge">Passport</code>内部会通过URL中是否存在<code class="highlighter-rouge">code</code>字段来区分该请求是否是callback请求）</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//callback API</span>
+<span class="nx">app</span><span class="p">.</span><span class="kd">get</span><span class="p">(</span><span class="dl">'</span><span class="s1">/auth/google/callback</span><span class="dl">'</span><span class="p">,</span> <span class="nx">passport</span><span class="p">.</span><span class="nx">authenticate</span><span class="p">(</span><span class="dl">'</span><span class="s1">google</span><span class="dl">'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<p>此时，我们再访问<code class="highlighter-rouge">/auth/google</code>，选择一个账号登录，Google会通过callback URL返回登录信息和用户信息，用户信息中重要的是用户<code class="highlighter-rouge">id</code>，我们后面会用这个<code class="highlighter-rouge">id</code>来生成Cookie</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//token</span>
+<span class="nx">ya29</span><span class="p">.</span><span class="nx">GlsgBiHIcv4rAhcYaxNkAn7nJadfm1oNQpCbnz1FO3QczeEke9zdWGc0ZExklr0b6WSJVQEuv_x6oe_cH5YAYrj9cNXeLWLjo3ATvZ_0pM0agI4_ju8</span><span class="o">-</span><span class="nx">KxhUxIkhG</span>
+
+<span class="c1">//user profile</span>
+<span class="p">{</span> <span class="nl">id</span><span class="p">:</span> <span class="dl">'</span><span class="s1">1128784079818168156265</span><span class="dl">'</span><span class="p">,</span>
+  <span class="nx">displayName</span><span class="p">:</span> <span class="dl">'</span><span class="s1">JOHN DOE</span><span class="dl">'</span><span class="p">,</span>
+  <span class="nx">name</span><span class="p">:</span> <span class="p">{</span> <span class="nl">familyName</span><span class="p">:</span> <span class="dl">'</span><span class="s1">DOE</span><span class="dl">'</span><span class="p">,</span> <span class="nx">givenName</span><span class="p">:</span> <span class="dl">'</span><span class="s1">JOHN</span><span class="dl">'</span> <span class="p">},</span>
+  <span class="nx">emails</span><span class="p">:</span> <span class="p">[</span> <span class="p">{</span> <span class="na">value</span><span class="p">:</span> <span class="dl">'</span><span class="s1">johndoe@gmail.com</span><span class="dl">'</span><span class="p">,</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">account</span><span class="dl">'</span> <span class="p">}</span> <span class="p">],</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="cookie-management-in-passportjs">Cookie Management in passport.js</h3>
+
+<p>通过OAuth拿到登录信息和用户信息之后，我们就可以为用户生成Cookie，这个过程同样也是被<code class="highlighter-rouge">Passport</code>在内部封装了，我们只需要在代码中做一些简单的配置即可。首先初始化<code class="highlighter-rouge">Passport</code>中间件：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//Cookie</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span>
+  <span class="nx">CookieSession</span><span class="p">({</span> <span class="c1">//CookieSesssion</span>
+    <span class="na">maxAge</span><span class="p">:</span> <span class="mi">30</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="na">keys</span><span class="p">:</span> <span class="p">[</span><span class="nx">keys</span><span class="p">.</span><span class="nx">CookieKey</span><span class="p">]</span>
+  <span class="p">})</span>
+<span class="p">);</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">passport</span><span class="p">.</span><span class="nx">initialize</span><span class="p">());</span>
+<span class="nx">app</span><span class="p">.</span><span class="nx">use</span><span class="p">(</span><span class="nx">passport</span><span class="p">.</span><span class="nx">session</span><span class="p">());</span>
+</code></pre></div></div>
+<p><code class="highlighter-rouge">CookieSession</code>是一个用来从生成以及解析Cookie的三方库，参考前面一节对Cookie的介绍可知我们需要在Server上放一个私钥同来对Cookie进行非对称加密解密。</p>
+
+<p>接下来，当OAuth请求成功后，<code class="highlighter-rouge">Passport</code>会调用之前注册的回调函数</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nx">accessToken</span><span class="p">,</span> <span class="nx">refreshToken</span><span class="p">,</span> <span class="nx">profile</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">googleId</span> <span class="o">=</span> <span class="nx">profile</span><span class="p">.</span><span class="nx">id</span><span class="p">;</span>
+    <span class="c1">//Get user from mongoDB</span>
+    <span class="nx">User</span><span class="p">.</span><span class="nx">findOne</span><span class="p">({</span> <span class="nx">googleId</span> <span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">user</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">new</span> <span class="nx">User</span><span class="p">({</span> <span class="nx">googleId</span> <span class="p">}).</span><span class="nx">save</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span><span class="nx">user</span> <span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">done</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">user</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">done</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">user</span><span class="p">);</span> <span class="c1">//if found user, save it</span>
+    <span class="p">}</span>
+    <span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>在回调函数中，我们从DB查询user并将得到的结果会传给<code class="highlighter-rouge">Passport</code>，这一步很关键，<code class="highlighter-rouge">Passport</code>会使用<code class="highlighter-rouge">user</code>中的内容来生成Cookie并返回给Browser。</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">passport</span><span class="p">.</span><span class="nx">serializeUser</span><span class="p">((</span><span class="nx">user</span><span class="p">,</span> <span class="nx">done</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> 
+  <span class="nx">done</span><span class="p">(</span><span class="kc">null</span><span class="p">,</span> <span class="nx">user</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span> <span class="c1">//{Cookie, user.id}</span>
+<span class="p">});</span>
+</code></pre></div></div>
+<p>上面代码中指定<code class="highlighter-rouge">user.id</code>的意义在于告诉<code class="highlighter-rouge">passport</code>，在后满的通信中使用<code class="highlighter-rouge">user.id</code>作为通信的session。后面的内容还会提到这个session的作用。</p>
+
+<p>至此，OAuth认证的完整流程就走完了。接下来，当用户的Browser已经存有当前Server的Cookie时，如果该用户再次访问，将走下面的流程：</p>
+
+<p><img src="/assets/images/2011/07/cookie-1.png" /></p>
+
+<p>此时当Server收到请求后，<code class="highlighter-rouge">CookieSession</code>会先解析出Request Header中的Cookie，然后<code class="highlighter-rouge">Passport</code>会根据解析得到的Cookie找到对相应的user，然后将<code class="highlighter-rouge">user</code>绑定到<code class="highlighter-rouge">req.user</code>，将<code class="highlighter-rouge">user.id</code>绑定到<code class="highlighter-rouge">req.session</code>上。</p>
+
+<p>虽然整个过程逻辑上说的通，但是这里有一个疑问，就是<code class="highlighter-rouge">Passport</code>如何根据Cookie找到对应的<code class="highlighter-rouge">user</code>的。能想到的是，一种做法是将Cookie存起来，其中key为Cookie的值，value为<code class="highlighter-rouge">user.id</code>。当有请求到来时，首先根据Cookie找到<code class="highlighter-rouge">user.id</code>，再根据<code class="highlighter-rouge">user.id</code>去获取<code class="highlighter-rouge">user</code>其它信息。但是我们并没告诉<code class="highlighter-rouge">Passport</code>在哪里存Cookie，显然上述过程使用的不是这种方式。</p>
+
+<p>另一种方式则是不存放Cookie, 而是将用户信息<code class="highlighter-rouge">user</code>通过某种方式encode到Cookie中，成为Cookie的一部分。当用户带着Cookie访问时，从Cookie中decode出来，显然上面的过程使用的是这种方式。</p>
+
+<blockquote>
+  <p>在Node.js中第一种方式对应express-session库, 第二种方式对应cookie-session库</p>
+</blockquote>
+
+<p>上述两种方式各有优劣，选用那种方式要看实际应用场景，如果是大规模的分布式系统，用户数据很庞大，建议使用第一种方式；如果是轻量级的小应用，<code class="highlighter-rouge">user</code>信息不复杂，则可以使用第二种方式。</p>
+
+<h2 id="resource">Resource</h2>
+
+<ul>
+  <li><a href="">Intro to backend</a></li>
+</ul>
+:ET

@@ -1,0 +1,363 @@
+I"tu<p>最近在研究和编写BLE相关的代码，花了一个星期的时间，想彻底搞清楚BLE的工作过程和用法需要查阅大量的资料（资料列在了最后面）和不断的编写demo来验证。本文从开发者的角度，从几个方面,总结了下目前对BLE的理解，随着后面研究的深入，内容将会持续补充。</p>
+
+<h2 id="ble-101">BLE 101</h2>
+
+<p>在BLE之前是蓝牙3.0，蓝牙3.0也叫high speed bluetooth主要是为快速传输而设计。蓝牙4.0也叫Bluetooth Low Energy（BLE），起源于Nokia在2001年的一项研究，后来这个研究被IEEE采纳，被标准化为ZigBee，Nokia在这基础上又进一步开发了Wibree标准，在2007年Bluetooth SIG开始基于这个标准构建BLE，在2010年6月发布了蓝牙4.0标准。和传统蓝牙3.0相比，BLE的功耗较低，它设计的初衷是将蓝牙用到纽扣电池的设备上，让这种设备工作的时间更长，传输的距离更远。低功耗的原因主要是下面几点：</p>
+
+<ul>
+  <li>它的协议栈（GATT）重新设计了，packet长度变少了。</li>
+  <li>它采用的是adaptive frequency hopping，这种自适应跳频模式和传统蓝牙相比更省电。</li>
+  <li>只在工作的时候被唤醒。根据WWDC2012中给出的数据来看，BLE会比传统蓝牙节省约8倍的电量，但是它同时也牺牲了一定的性能，传输速率和高速蓝牙相比大大降低（右图），这意味着我们用BLE传大量的数据：</li>
+</ul>
+
+<!-- <div style=" content:''; display: table; clear:both; height=0">
+	<div style="width:50%; float:left; margin-right:10px">
+		
+	</div>
+	<div style="width:50%; float:left">
+		
+	</div>
+</div> -->
+<p>&lt;div style:”display:flex; justify-content:space-between;”&gt;
+    <img src="/assets/images/2014/03/ble-1.png" width="100%" height="150" />
+    <img src="/assets/images/2014/03/ble-2.png" width="100%" height="150" />
+&lt;/div&gt;</p>
+
+<!--<div style="overflow: hidden; width: 100%;">
+
+<div style="display: block; width: 48%;">
+<a style="float: left;"href="/assets/images/2014/03/ble-1.png"><img src="/assets/images/2014/03/ble-1.png" alt="ble-1" width="400" height="150" class="alignnone size-full wp-image-1047"/></a>
+</div>
+
+<div style="float: left; display: block; width: 48%;">
+<a style="margin-left: 4%; href="/assets/images/2014/03/ble-2.png"><img src="/assets/images/2014/03/ble-2.png" alt="ble-2" width="400" height="150" class="alignnone size-full wp-image-1050"/></a>
+</div>
+
+</div>-->
+
+<p>Session703还列出了BLE的几种使用场景：医疗，运动，安全，自动化家居，娱乐，玩具，支付，多人通信。这几种场景在未来都有足够的想象力，目前来看市场上针对这几种场景都有对应的产品，我研究BLE的初衷是玩具，我的目的是通过iPhone控制玩具。这也是BLE的另一个好处，它让iOS设备摆脱了MFi的限制，同时又能和Android设备互联，这点我认为意义更大。在2013年的WWDC上，Apple展示了一种看似很神奇的iBeacon技术，它本质上就是一个特定工作模式的BLE设备，后面我们会来详细讨论iBeacon。</p>
+
+<p>接下来我们来介绍一些BLE的术语：</p>
+
+<ul>
+  <li>
+    <p>Central/Master：可以理解为client，也可以扫描周围的BLE设备同时可以连接这些设备。</p>
+  </li>
+  <li>
+    <p>Peripheral/Slave：可以理解为server，一般是不断的广播自己，可以被Central连接，通过UUID来标识自己。</p>
+  </li>
+  <li>
+    <p>Service：Peripheral设备提供的服务，一个Peripheral可以提供多种自定义服务和标准化的服务：比如设备信息（UUID：0x180A），电池信息（UUID:0X180F）,时间信息（UUID:0X1805等）等。service通过UUID来标识自己。</p>
+  </li>
+  <li>
+    <p>Characteristic：service中支持的数据传输方式，比如，你是想读service中的内容，或者向service中写数据，还是希望service向你push数据等。一个service可以支持多种数据传输方式（characteristic），通过UUID来区分，其中一些UUID是<a href="https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicsHome.aspx">不能被占用的。</a>在数据传输方式上，BLE规定了几种标准的数据传输模式，常用的有4种：</p>
+  </li>
+  <li>
+    <p>Read/write：central和peripheral之间的数据交换。</p>
+  </li>
+  <li>
+    <p>Notify/indicate：由central开启，但是由peripheral发起数据传输，notify允许peripheral向client push数据，indicate是双向的。</p>
+  </li>
+</ul>
+
+<h2 id="packet-format">Packet Format</h2>
+
+<p>在讨论BLE工作方式之前，有必要先了解它的包格式。根据参考文献3，包格式为：</p>
+
+<p><a href="/assets/images/2014/03/ble-3.png"><img src="/assets/images/2014/03/ble-3.png" alt="ble-3" width="340" height="146" class="alignnone size-full wp-image-1086" /></a></p>
+
+<p>包含8bit前缀
+32bit的跳频信道地址，对于广播包，这个值永远是0x8E89BED
+然后是2-39字节的PDU
+最后是24bit的循环校验码。</p>
+
+<p>这中间我们关心的是PDU，因为里面包含了我们要传输的数据。一个PDU首先是2字节的头标识payload的大小和类型（Event_Type，对应第四节的四种广播包类型），然后是6个字节的MAC地址，最后是31字节可用的payload。</p>
+
+<h2 id="ibeacon">iBeacon</h2>
+
+<p>根据上面我们了解的术语，我们先来定义一下iBeacon：</p>
+
+<p>iBeacon是一个不断广播，不提供service，不能被connection的peripheral设备。</p>
+
+<p>它发送的packet的payload如下</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mo">02</span> <span class="mo">01</span> <span class="mo">06</span> <span class="mi">1</span><span class="n">A</span> <span class="n">FF</span> <span class="mi">4</span><span class="n">C</span> <span class="mo">00</span> <span class="mo">02</span> <span class="mi">15</span> <span class="n">B9</span> <span class="mi">40</span> <span class="mi">7</span><span class="n">F</span> <span class="mi">30</span> <span class="n">F5</span> <span class="n">F8</span> <span class="mi">46</span> <span class="mi">6</span><span class="n">E</span> <span class="n">AF</span> <span class="n">F9</span> <span class="mi">25</span> <span class="mi">55</span> <span class="mi">6</span><span class="n">B</span> <span class="mi">57</span> <span class="n">FE</span> <span class="mi">6</span><span class="n">D</span> <span class="mo">00</span> <span class="mi">49</span> <span class="mo">00</span> <span class="mi">0</span><span class="n">A</span> <span class="n">C5</span>
+</code></pre></div></div>
+
+<p>这一共有30字节，也就是payload中的内容，没有PDU的头和MAC地址。这实际上就是iBeacon的包格式：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mo">02</span> <span class="mo">01</span> <span class="mo">06</span> <span class="mi">1</span><span class="n">A</span> <span class="n">FF</span> <span class="mi">4</span><span class="n">C</span> <span class="mo">00</span> <span class="mo">02</span> <span class="mi">15</span><span class="o">:</span> <span class="n">iBeacon</span> <span class="n">prefix</span> <span class="p">(</span><span class="n">fixed</span><span class="p">)</span>
+<span class="n">B9</span> <span class="mi">40</span> <span class="mi">7</span><span class="n">F</span> <span class="mi">30</span> <span class="n">F5</span> <span class="n">F8</span> <span class="mi">46</span> <span class="mi">6</span><span class="n">E</span> <span class="n">AF</span> <span class="n">F9</span> <span class="mi">25</span> <span class="mi">55</span> <span class="mi">6</span><span class="n">B</span> <span class="mi">57</span> <span class="n">FE</span> <span class="mi">6</span><span class="n">D</span><span class="o">:</span> <span class="n">proximity</span> <span class="n">UUID</span> <span class="p">(</span><span class="n">here</span><span class="o">:</span> <span class="n">Estimote</span><span class="err">’</span><span class="n">s</span> <span class="n">fixed</span> <span class="n">UUID</span><span class="p">)</span>
+<span class="mo">00</span> <span class="mi">49</span><span class="o">:</span> <span class="n">major</span>
+<span class="mo">00</span> <span class="mi">0</span><span class="n">A</span><span class="o">:</span> <span class="n">minor</span>
+<span class="n">C5</span><span class="o">:</span> <span class="mi">2</span><span class="err">’</span><span class="n">s</span> <span class="n">complement</span> <span class="n">of</span> <span class="n">measured</span> <span class="n">TX</span> <span class="n">power</span>
+</code></pre></div></div>
+
+<p>也就是说对于31字节的payload，从第6字节开始后的四字节是：4C 00 02 15的advertising packet都属于Apple的iBeacon设备。并且iBeacon不提供service也就不支持peripheral的connection，下面是iBeacon的包格式：</p>
+
+<p><a href="/assets/images/2014/03/ble-4.png"><img src="/assets/images/2014/03/ble-4.png" alt="ble-4" width="322" height="169" class="alignnone size-full wp-image-1093" /></a></p>
+
+<p>由于iBeacon设计的场景就是室内购物，因此它规定了一些字段来应对这种场景：</p>
+
+<ul>
+  <li>
+    <p>UUID:用来区分不同的iBeacon设备，比如有一个连锁店，所有分店内的iBeacon都应该具有相同的UUID。</p>
+  </li>
+  <li>
+    <p>major:2字节，用来归纳一组iBeacon设备，比如同一家店，部署了多个iBeacon，那么他们的major值应该相同。</p>
+  </li>
+  <li>
+    <p>minor:2字节，用来区分每一个iBeacon，同一店中的每个iBeacon的minor值应该不同。</p>
+  </li>
+  <li>
+    <p>TX：这个值直接对应BLE的RSSI，换算方法为RSSI = - (256 - TX)db。以上面的payload为例：RSSI = -(256-197) = -59db。如果是学通信的对这个单位应该并不陌生，蓝牙信号本质上也是电磁波，是电磁波就会有功率，db就是描述功率的幅值，也可以理解为能量的强弱。我们可以通过这个值来计算iBeacon和client的距离，但是这种计算并不精确，因为蓝牙这种电磁波本身就很弱，很难穿墙，对于室内复杂的环境，这个值并不准确。</p>
+  </li>
+</ul>
+
+<p>后面会对iBeacon做代码上的分析，如果你已经了解了基本的BLE工作方式，也可以略过下一节，直接阅读More on iBeacon一节。</p>
+
+<h2 id="ble工作原理">BLE工作原理</h2>
+
+<p>BLE工作在2.4GHZ-2.4835GHZ频段范围内，一共有40信道用来跳频通信，信道间隔为2MHZ（2.4GHZ + 40*2MHZ ~= 2.48GHZ）。在40个信道中，3个信道：No.37，No.38，No.39用来广播数据，剩下37个用来传输数据。</p>
+
+<h3 id="advertising">Advertising</h3>
+
+<p>首先广播数据，BLE设备（peripheral）会在37，38，39信道上间歇性的广播数据，选择这三个信道是为了避开和wifi AP的干扰。同时iphone（central）在37，38，39信道上间歇性的扫描数据：</p>
+
+<p><a href="/assets/images/2014/03/ble-5.png"><img src="/assets/images/2014/03/ble-5.png" alt="ble-5" width="443" height="158" class="alignnone size-full wp-image-1109" /></a></p>
+
+<p>在广播阶段，BLE设备可以广播四种格式的packet：</p>
+
+<ul>
+  <li>
+    <p>Non-connection Advertising : BLE设备会一直处于Advertising状态，设备不可链接，一般Beacon设备都是广播这种packet。</p>
+  </li>
+  <li>
+    <p>Discoverable Advertising : 和第一种类似，但是client可以在不和BLE设备建立链接的情况下发送一个request来获得更多的信息。这种通常不常用。</p>
+  </li>
+  <li>
+    <p>General Advertising:这种就是通用的模式，client可以和BLE设备建立链接并传输数据。</p>
+  </li>
+  <li>
+    <p>Directed Advertising:这种包用来让client快速重连BLE设备，这种模式目前iOS7还不支持。</p>
+  </li>
+</ul>
+
+<h3 id="connection">Connection</h3>
+
+<p>一旦iPhone找到了要连接的BLE设备，它会向BLE设备发送connection的request，如果BLE设备支持链接（iBeacon就不支持），则会通知iPhone链接成功：</p>
+
+<p><a href="/assets/images/2014/03/ble-6.png"><img src="/assets/images/2014/03/ble-6.png" alt="ble-6" width="446" height="195" class="alignnone size-full wp-image-1112" /></a></p>
+
+<p>值得注意的是，这种链接不需要配对的过程，这可能会很奇怪，如果A先链接了BLE设备，那么B则无法链接，这无疑存在着很大的安全隐患，我们后面再来探讨这个问题。</p>
+
+<h3 id="transfer-data">Transfer Data</h3>
+
+<p>链接建立起来后，就可以传数据，值得注意的是，由于前面已经降到BLE是low energy的，它在传数据的时候（比如peripheral向central发送一副很大图片）带宽其实很小的，一次最多发30个byte，而且还不是一次性传完，传输的过程也是有时间间隔的，这意味着传输的时间也会变长。</p>
+
+<p><a href="/assets/images/2014/03/ble-7.png"><img src="/assets/images/2014/03/ble-7.png" alt="ble-7" width="434" height="185" class="alignnone size-full wp-image-1115" /></a></p>
+
+<h3 id="topology">Topology</h3>
+
+<p>拓扑图，什么意思呢？很简单：</p>
+
+<ul>
+  <li>
+    <p>对于可连接的BLE设备，它自己可以是central也可以是peripheral：一个central可以链接多个peripheral，但是一个peripheral只能被一个central连接。</p>
+  </li>
+  <li>
+    <p>对于不可连接的BLE设备，如iBeacon，它只能是peripheral，只能广播数据。</p>
+  </li>
+</ul>
+
+<h2 id="test-and-debug">Test and Debug</h2>
+
+<p>文字理解毕竟不够直观，理解BLE工作方式最好的办法就是亲自Debug。</p>
+
+<p>目前有三种Debug的方式是比较有效的，这三种方式我认为也是理解BLE的最佳学习曲线：</p>
+
+<ul>
+  <li>
+    <p>使用客户端工具摆弄BLE设备，做感性认识，找到规律，形成假设。这个工具推荐使用iOS的一个App：LightBlue。</p>
+  </li>
+  <li>
+    <p>抓包分析，验证你的假设从而得出结论或者提出新的假设。抓包工具在windows下可以使用TI的一个很好用的<a href="http://processors.wiki.ti.com/index.php/BLE_sniffer_guide#Advertisement_packets">Sniffer</a>，在Mac下，比较麻烦，我尝试了使用CSR4.0 USB dongle，失败了，最终的办法是将系统升级到10.9，使用XCode新的蓝牙Hardware Tool:</p>
+  </li>
+</ul>
+
+<div style="overflow: hidden; width: 100%;">
+
+<div style="display: block; width: 33%;">
+<a style="display: block; float: left;" href="/assets/images/2014/03/ble-11.png"><img src="/assets/images/2014/03/ble-11.png" alt="ble-11" width="138" height="192" class="alignnone size-full wp-image-1161" /></a>
+</div>
+
+<div style="float: left; display: block; width: 63%;">
+<a style="display: block; float: left; margin-left:4%;" href="/assets/images/2014/03/ble-12.png"><img src="/assets/images/2014/03/ble-12.png" alt="ble-12" width="480" height="136" class="alignnone size-full wp-image-1164" /></a>
+</div>
+
+</div>
+
+<ul>
+  <li>编写代码，进一步印证你的结论。</li>
+</ul>
+
+<p>这一小节，主要讨论第两点，关于LightBlue的使用简易明了，关于代码，我们放到后面做详细讨论。</p>
+
+<p>由前一节的讨论我们知道，建立通信的第一步是Advertising,我们抓取一个Advertising的packet：</p>
+
+<p><a href="/assets/images/2014/03/ble-131.png"><img src="/assets/images/2014/03/ble-131.png" alt="ble-13" width="453" height="253" class="alignnone size-full wp-image-1178" /></a></p>
+
+<p>EventType标识了这个Advertising packet是前一节提到的第三种，可支持连接的设备。关于EventType的值是不会定义到payload中的（见第二节，关于EventType更多内容，可以参考文献11）。Peer_Address是这个设备的MAC地址，通常这个值能被sniffer抓到，但是在程序中是无法获取的。16bit的UUID是目前来看是service的UUID；Data是packet的payload，第一个字节0x02：后面有两个字节内容，然后是0x03标识后面有三个字节内容。</p>
+
+<p><a href="/assets/images/2014/03/ble-14.png"><img src="/assets/images/2014/03/ble-14.png" alt="ble-14" width="692" height="239" class="alignnone size-full wp-image-1180" /></a></p>
+
+<p>当BLE谁被被scan后，会发一个response的packet给client，里面包含了一些信息：
+LocalName标识了这个设备的name存到了payload中，Data中的字段解析后就是这个localName的名称</p>
+
+<p>在测试中有两点让我很费解的地方：</p>
+
+<ul>
+  <li>在lightBlue中看到的device的UUID:34EE-….是哪里来的？</li>
+  <li>在lightBlue中看到的device的name:ZBModule01是哪里来的？</li>
+</ul>
+
+<p><a href="/assets/images/2014/03/ble-13.png"><img src="/assets/images/2014/03/ble-13.png" alt="ble-13" width="389" height="188" class="alignnone size-full wp-image-1166" /></a></p>
+
+<p>关于这两点的讨论，分别对应参考文献的8和9，从目前搜集到的资料来看，没有答案，又找不到官方的解释，只能猜测，我谈谈自己的看法：
+第一点是device UUID这个值，应该是iOS自己根据某种规则生成的Unique值，然后cache到了系统中的，原因是你是没办法指定设备的UUID的（至少我没找到方法）。而且在不同的iOS设备上看到同一个BLE设备的UUID值是不同的。第二点是ZBModule这个name是怎么读到的呢？Advertising packet的local name和这个值不同，关于这点我还没有线索。</p>
+
+<h2 id="corebluetooth-on-ios-device">CoreBluetooth on iOS device</h2>
+
+<p>接下来我们开始讨论一些代码。</p>
+
+<p>Apple在iPhone4s之后的终端设备开始支持BLE，并提供了一套API叫做CoreBluetooth：</p>
+
+<p><a href="/assets/images/2014/03/ble-8.png"><img src="/assets/images/2014/03/ble-8.png" alt="ble-8" width="242" height="213" class="alignnone size-full wp-image-1120" /></a></p>
+
+<p>CoreBluetooth完整的实现了GATT，但是我个人的观点是CoreBluetooth这个framework设计的不是一般的差：</p>
+
+<ul>
+  <li>API断档很严重，从5.0到7.0</li>
+  <li>回调基于delegate pattern，代码组织很散乱</li>
+  <li>使用CentralManager完成和peripheral的数据传输，CentralManger的代码中居然要耦合peripheral的代码（WWDC2012 session705的demo），再加上上面第二点，20多个回调的方法，轻松完爆你！</li>
+  <li>API设计太麻烦，比如很简单的一个需求：central向一个peripheral写数据，居然要写100多行。</li>
+</ul>
+
+<p>上面列出的第一个问题，我认为是所有问题的根源，设计的时候显然是没有想好，准备先开放一些API给大家玩，收集大家的反馈，如果用的人多，我们再开放一些API。这种想法没错，但是最初的API和framework的设计扩展性太差，使后面版本扩展起来很麻烦，又不能重构，只能这么将就下去了。因此，我极其不建议通过Apple的demo来学习CoreBluetooth，如果没人跟你解释，你根本学不明白。在Github上有一些开源的项目，比如<a href="https://github.com/kickingvegas/YmsCoreBluetooth/blob/master/Deanna/Deanna-Info.plist">YmsCoreBluetooth</a>实现了扫描BLE设备的代码，这个开源项目功能很简单，但是作为学习CoreBluetooth足够了。</p>
+
+<p>2011年iOS 5.0率先引入CoreBluetooth,只提供Central端的API，这意味着你只能作为client链接别人，接受广播。但是，如果你想作为Peripheral和client交换数据，就要用到iOS 6.0的API了：</p>
+
+<p><a href="/assets/images/2014/03/ble-9.png"><img src="/assets/images/2014/03/ble-9.png" alt="ble-9" width="443" height="156" class="alignnone size-full wp-image-1130" /></a></p>
+
+<p>iOS 6.0之后CoreBluetooth的API框架就基本定型了，到了iOS 7.0，Apple对它又进行了一些优化，包括API的重新设计，一些方便的状态判断等。
+在性能上，iOS 6.0先引入了caching机制，这个缓存机制只做到了Central端，也就是说系统会自动cache你扫描到的BLE设备，并且记住它提供的service和characteristic。iOS 7.0在这个基础上增加了更多cache的内容，但是iOS7对BLE最大的优化在传数据上，它提高了20%的传输带宽，此外在支持后台运行上，iOS7做了较大的改动：</p>
+
+<p>比如我们的程序在和BLE设备进行数据传输或者其它操作，它是一个long-term的task，我们把它退到了后台，结果怎样呢？</p>
+
+<p>根据WWDC2013 session703的内容，我们的程序因为系统内存不足要被kill掉，这时候，系统会接管我们的BLE任务，然后让它持续运行。这一点我还没来的及验证，如果真的可行，那确实很cool。想要实现它，首先要修改info.plist：</p>
+
+<p><a href="/assets/images/2014/03/ble-10.png"><img src="/assets/images/2014/03/ble-10.png" alt="ble-10" width="548" height="42" class="alignnone size-full wp-image-1150" /></a></p>
+
+<p>然后在构造CentralManager时，要对指定option:</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">_cbManager</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CBCentralManager</span> <span class="nf">alloc</span><span class="p">]</span><span class="nf">initWithDelegate</span><span class="p">:</span><span class="n">self</span> <span class="nf">queue</span><span class="p">:</span><span class="n">_queue</span> <span class="n">options</span><span class="o">:</span><span class="p">@{</span><span class="n">CBCentralManagerOptionRestoreIdentifierKey</span><span class="o">:</span><span class="n">kCentralRestoreIdentifier</span><span class="p">}];</span><span class="o">&lt;/</span><span class="n">pre</span><span class="o">&gt;</span> 
+</code></pre></div></div>
+
+<p>然后当app在后台被唤起到前台时，CBCentralManager会首先回调这个方法：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">centralManager</span><span class="p">:(</span><span class="n">CBCentralManager</span> <span class="o">*</span><span class="p">)</span><span class="nv">central</span> <span class="nf">willRestoreState</span><span class="p">:(</span><span class="n">NSDictionary</span> <span class="o">*</span><span class="p">)</span><span class="nv">dict</span>
+<span class="p">{</span>
+     <span class="c1">//do something to restore previous state..</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>最后，如果程序中有多个CBCentralManager，在被唤醒时，需要判断一下：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">-</span> <span class="p">(</span><span class="n">BOOL</span><span class="p">)</span><span class="nf">application</span><span class="p">:(</span><span class="n">UIApplication</span> <span class="o">*</span><span class="p">)</span><span class="nv">application</span> <span class="nf">didFinishLaunchingWithOptions</span><span class="p">:(</span><span class="n">NSDictionary</span> <span class="o">*</span><span class="p">)</span><span class="nv">launchOptions</span>
+<span class="p">{</span>
+    <span class="n">NSArray</span><span class="o">*</span> <span class="n">centralManagerIds</span> <span class="o">=</span> <span class="n">launchOptions</span><span class="p">[</span><span class="nf">UIApplicationLaunchOptionsBluetoothCentralsKey</span><span class="p">];</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="n">NSString</span><span class="o">*</span> <span class="n">identifier</span> <span class="k">in</span> <span class="n">centralManagerIds</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">([</span><span class="n">identifier</span> <span class="nf">isEqualToString</span><span class="p">:</span><span class="s">@"abc"</span><span class="p">])</span> <span class="p">{</span>
+            <span class="c1">//get your manager</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    
+    <span class="c1">// Override point for customization after application launch.</span>
+    <span class="k">return</span> <span class="nb">YES</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="more-on-ibeacon">More on iBeacon</h2>
+
+<p>有了上面的基础，我们可以自己定义一个iBeacon设备，他要满足如下条件：</p>
+
+<ul>
+  <li>在packet的Header中，要指定Event_Type为：</li>
+</ul>
+
+<p><a href="/assets/images/2014/03/ble-15.png"><img src="/assets/images/2014/03/ble-15.png" alt="ble-15" width="472" height="25" class="alignnone size-full wp-image-1187" /></a></p>
+
+<ul>
+  <li>它packet的payload中，要符合第三节中提到的规范。</li>
+</ul>
+
+<p>满足这两点，我们可不可以通过CoreBluetooth的API来创建一个CBPeripheralManger来表征iBeacon呢？答案是NO！
+原因是CoreBluetooth创建的CBPeripheralManager都是可链接的设备：“kCBAdvDataServiceUUIDs”。</p>
+
+<p>在WWDC2013中，Apple提供了AirLocate的demo，提供了创建iBeacon的API：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">NSDictionary</span> <span class="o">*</span><span class="n">peripheralData</span> <span class="o">=</span> <span class="nb">nil</span><span class="p">;</span>
+<span class="n">_region</span> <span class="o">=</span> <span class="p">[[</span><span class="n">CLBeaconRegion</span> <span class="nf">alloc</span><span class="p">]</span> <span class="nf">initWithProximityUUID</span><span class="p">:</span><span class="n">self</span><span class="p">.</span><span class="n">uuid</span> <span class="nf">major</span><span class="p">:[</span><span class="n">self</span><span class="p">.</span><span class="n">major</span> <span class="nf">shortValue</span><span class="p">]</span> <span class="n">minor</span><span class="o">:</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">minor</span> <span class="nf">shortValue</span><span class="p">]</span> <span class="n">identifier</span><span class="o">:</span><span class="n">BeaconIdentifier</span><span class="p">];</span>
+<span class="n">peripheralData</span> <span class="o">=</span> <span class="p">[</span><span class="n">_region</span> <span class="nf">peripheralDataWithMeasuredPower</span><span class="p">:</span><span class="n">_power</span><span class="p">];</span>
+<span class="k">if</span><span class="p">(</span><span class="n">peripheralData</span><span class="p">)</span>
+<span class="p">{</span>
+   <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">peripheralManager</span> <span class="nf">startAdvertising</span><span class="p">:</span><span class="n">peripheralData</span><span class="p">];</span>
+<span class="p">}</span> 
+
+</code></pre></div></div>
+<p>这种方式创建出的CBPerpheralManager的类型是：” kCBAdvDataAppleBeaconKey”。</p>
+
+<p>关于iBeacon，我认为有下面几点需要考虑:</p>
+
+<ul>
+  <li>部署</li>
+</ul>
+
+<p>由于BLE工作在2.4GHz，会和wifi的AP产生一定的干扰，因此Beacon在部署上要避开wifi设备。同样，也不能部署在金属架子上，这会影响新号的衰减，影响定位等，部署是个大问题。</p>
+
+<ul>
+  <li>更新</li>
+</ul>
+
+<p>由于目前iBeacon的数据都是烧写死的，不支持在线更新。那么如果大规模部署后，更新数据将是一场灾难。这种情况同样适用于其它的自定义Beacon，一种解决方案是将Beacon和wifi集成，也许Arduino是个不错的选择。</p>
+
+<ul>
+  <li>用作支付</li>
+</ul>
+
+<p>在iBeacon发布之后，Paypal发布他们的Paypal beacon，允许用户通过蓝牙进行支付，PayPal Beacon的系统要比iBeacon复杂的多，PayPal beacon是可连接的beacon，并且上面集成了wifi模块。它的工作模式猜测是下面几步：</p>
+
+<ol>
+  <li>PayPal Beacon广播，客户端发现后与其建立加密的链接。</li>
+  <li>PayPal Beacon收到客户端传来的认证信息后通过wifi到server上进行认证，认证成功后客户端会收到消息。</li>
+  <li>server端认证成功后，会将信息发送给店里的POS机</li>
+  <li>当用户付钱时，需要做进一步的认证，比如收到短信验证码之类的。</li>
+</ol>
+
+<h3 id="resources">Resources</h3>
+
+<ol>
+  <li>WWDC2012 Session 703,705</li>
+  <li>WWDC2013 Session 703<a href="http://home.eng.iastate.edu/~gamari/CprE537_S13/project%20reports/Bluetooth%20LE.pdf"></a></li>
+  <li>Bluetooth Low Energy Version 4.0&lt;/a&gt;</li>
+  <li><a href="http://www.warski.org/blog/2014/01/how-ibeacons-work/">How do iBeacons work?</a></li>
+  <li><a href="https://bluegiga.zendesk.com/entries/25053373--REFERENCE-BLE-master-slave-GATT-client-server-and-data-RX-TX-basics#">BLE master/slave, GATT client/server, and data RX/TX basics</a></li>
+  <li><a href="http://blog.estimote.com/post/57087873876/a-simple-way-to-simulate-apple-ios7-ibeacon-feature">A simple way to simulate Apple iOS7 iBeacon feature with two iOS6 devices</a></li>
+  <li><a href="http://stackoverflow.com/questions/18906988/what-is-the-ibeacon-bluetooth-profile">stackoverflow:What is the iBeacon Bluetooth Profile</a></li>
+  <li><a href="http://e2e.ti.com/support/low_power_rf/f/538/t/282340.aspx">,Peripheral UUID?</a></li>
+  <li><a href="http://e2e.ti.com/support/low_power_rf/f/538/t/186474.aspx">reading the Bluetooth peripheral device name</a></li>
+  <li><a href="http://www.verifone.com/media/3603729/bluetooth-low-energy-beacons-retail-wp.pdf">BLUETOOTH LOW ENERGY, BEACONS AND RETAIL</a></li>
+  <li><a href="http://blog.csdn.net/mov2012/article/details/16367977"> BLE 包结构及传输速率</a></li>
+</ol>
+:ET

@@ -1,0 +1,326 @@
+I"�{<h3 id="generator">Generator</h3>
+
+<p>Generator是Python中协程的实现</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">gen_cube</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">x</span><span class="o">**</span><span class="mi">3</span>
+<span class="c1">#返回generator object        
+</span><span class="n">gen_cube</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="c1">#&lt;generator object gen_cube at 0x10567b150&gt;
+#pull value from gen_cube
+</span><span class="nb">list</span><span class="p">(</span><span class="n">gen_cube</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span> <span class="c1">#[0, 1, 8, 27]
+</span>
+<span class="k">def</span> <span class="nf">gen_fib</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">n</span><span class="p">:</span>
+        <span class="k">yield</span> <span class="n">a</span>
+        <span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="p">,</span><span class="n">a</span><span class="o">+</span><span class="n">b</span>
+<span class="k">for</span> <span class="n">number</span> <span class="ow">in</span> <span class="n">gen_fib</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">simple_gen</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">i</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">simple_gen</span><span class="p">()</span>
+<span class="nb">next</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="c1">#0
+</span><span class="nb">next</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="c1">#1
+</span><span class="nb">next</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="c1">#2
+</span>
+<span class="n">s</span> <span class="o">=</span> <span class="s">"hello"</span>
+<span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">s</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h3 id="asyncwait">Async/Wait</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">async</code>修饰的函数为一个coroutine对象，</li>
+</ul>
+
+<h3 id="regular-expression">Regular Expression</h3>
+
+<ul>
+  <li>正则表达式字符串以<code class="highlighter-rouge">r"regex"</code>表示</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># List of patterns to search for
+</span><span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span> <span class="s">'term1'</span><span class="p">,</span> <span class="s">'term2'</span> <span class="p">]</span>
+<span class="c1"># Text to parse
+</span><span class="n">text</span> <span class="o">=</span> <span class="s">'This is a string with term1, but it does not have the other term.'</span>
+<span class="n">result1</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">patterns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">text</span><span class="p">)</span>
+<span class="n">result2</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">patterns</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">text</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">result1</span><span class="p">)</span><span class="c1">#&lt;_sre.SRE_Match object; span=(22, 27), match='term1'&gt; None
+</span><span class="k">print</span><span class="p">(</span><span class="n">result2</span><span class="p">)</span> <span class="c1">#none
+</span><span class="n">result1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="c1">#22
+</span><span class="n">result1</span><span class="o">.</span><span class="n">end</span><span class="p">()</span> <span class="c1">#27
+</span>
+<span class="c1">##split
+</span><span class="n">split_term</span> <span class="o">=</span> <span class="s">"@"</span>
+<span class="n">phrase</span> <span class="o">=</span> <span class="s">"jayson.xu@foxmail.com"</span>
+<span class="n">list1</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split_term</span><span class="p">,</span> <span class="n">phrase</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">list1</span><span class="p">)</span> <span class="c1">#['jayson.xu', 'foxmail.com
+</span></code></pre></div></div>
+
+<ul>
+  <li>匹配字符的几种方式
+    <ol>
+      <li>以<code class="highlighter-rouge">*</code>结尾，表示被匹配的字符出现0次或者多次</li>
+      <li>以<code class="highlighter-rouge">+</code>结尾，表示被匹配的字符至少出现1次</li>
+      <li>以<code class="highlighter-rouge">?</code>结尾，表示被匹配的字符出现0次或者1次</li>
+      <li>以<code class="highlighter-rouge">{m}</code>结尾，表示被匹配的字符出现m次</li>
+      <li>以<code class="highlighter-rouge">{m,n}</code>结尾，表示被匹配的字符出现[m,n]次</li>
+      <li>以<code class="highlighter-rouge">[mn..]</code>结尾，表示被匹配的字符是m或者n或者…</li>
+    </ol>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">re</span>
+
+<span class="n">test_phrase</span> <span class="o">=</span> <span class="s">'sdsd..sssddd...sdddsddd...dsds...dsssss...sdddd'</span>
+<span class="n">test_patterns</span> <span class="o">=</span> <span class="p">[</span> <span class="s">'sd*'</span><span class="p">,</span>     <span class="c1"># s followed by zero or more d's
+</span>                <span class="s">'sd+'</span><span class="p">,</span>          <span class="c1"># s followed by one or more d's
+</span>                <span class="s">'sd?'</span><span class="p">,</span>          <span class="c1"># s followed by zero or one d's
+</span>                <span class="s">'sd{3}'</span><span class="p">,</span>        <span class="c1"># s followed by three d's
+</span>                <span class="s">'sd{2,3}'</span><span class="p">,</span>      <span class="c1"># s followed by two to three d's
+</span>                <span class="s">'[sd]'</span><span class="p">,</span>          <span class="c1">#either s or d
+</span>                <span class="s">'s[sd]+'</span>        <span class="c1">#s followed by one or more s or d
+</span>                <span class="p">]</span>
+<span class="c1"># ['sd', 'sd', 's', 's', 'sddd', 'sddd', 'sddd', 'sd', 's', 's', 's', 's', 's', 's', 'sdddd']                            
+</span><span class="k">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">test_patterns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">test_phrase</span><span class="p">))</span>
+<span class="c1"># ['sd', 'sd', 'sddd', 'sddd', 'sddd', 'sd', 'sdddd']
+</span><span class="k">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">test_patterns</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">test_phrase</span><span class="p">))</span>
+<span class="c1">#['sd', 'sd', 's', 's', 'sd', 'sd', 'sd', 'sd', 's', 's', 's', 's', 's', 's', 'sd']
+</span><span class="k">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">test_patterns</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">test_phrase</span><span class="p">))</span>
+<span class="c1">#['sddd', 'sddd', 'sddd', 'sddd']
+</span><span class="k">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">test_patterns</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">test_phrase</span><span class="p">))</span>
+<span class="c1">#['sddd', 'sddd', 'sddd', 'sddd']
+</span><span class="k">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">test_patterns</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="n">test_phrase</span><span class="p">))</span>
+</code></pre></div></div>
+
+<ul>
+  <li><mark>过滤</mark>某些字符
+    <ul>
+      <li><code class="highlighter-rouge">[^...]</code>会匹配文本中不在<code class="highlighter-rouge">[]</code>中的字符</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">test_phrase</span> <span class="o">=</span> <span class="s">'This is a string! But it has punctuation. How can we remove it?'</span>
+<span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">'[^!.? ]+'</span><span class="p">,</span><span class="n">test_phrase</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>匹配<mark>英文字符</mark></li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">test_phrase</span> <span class="o">=</span> <span class="s">'This is an example sentence. Lets see if we can find some letters.'</span>
+
+<span class="n">test_patterns</span><span class="o">=</span><span class="p">[</span> <span class="s">'[a-z]+'</span><span class="p">,</span>      <span class="c1"># sequences of lower case letters
+</span>                <span class="s">'[A-Z]+'</span><span class="p">,</span>      <span class="c1"># sequences of upper case letters
+</span>                <span class="s">'[a-zA-Z]+'</span><span class="p">,</span>   <span class="c1"># sequences of lower or upper case letters
+</span>                <span class="s">'[A-Z][a-z]+'</span><span class="p">]</span> <span class="c1"># one upper case letter followed by lower case letters
+</span></code></pre></div></div>
+<ul>
+  <li><mark>匹配特殊字符</mark></li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Code</th>
+      <th>Meaning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">\d</code></td>
+      <td>a digit</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">\D</code></td>
+      <td>a non-digit</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">\s</code></td>
+      <td>whitespace (tab, space, newline, etc.)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">\S</code></td>
+      <td>non-whitespace</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">\w</code></td>
+      <td>alphanumeric</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">\W</code></td>
+      <td>non-alphanumeric</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">test_phrase</span> <span class="o">=</span> <span class="s">'This is a string with some numbers 1233 and a symbol #hashtag'</span>
+
+<span class="n">test_patterns</span><span class="o">=</span><span class="p">[</span> <span class="s">r'\d+'</span><span class="p">,</span> <span class="c1"># sequence of digits
+</span>                <span class="s">r'\D+'</span><span class="p">,</span> <span class="c1"># sequence of non-digits
+</span>                <span class="s">r'\s+'</span><span class="p">,</span> <span class="c1"># sequence of whitespace
+</span>                <span class="s">r'\S+'</span><span class="p">,</span> <span class="c1"># sequence of non-whitespace
+</span>                <span class="s">r'\w+'</span><span class="p">,</span> <span class="c1"># alphanumeric characters
+</span>                <span class="s">r'\W+'</span><span class="p">,</span> <span class="c1"># non-alphanumeric
+</span>                <span class="p">]</span>
+<span class="c1">#['1233']
+</span><span class="k">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">test_patterns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">test_phrase</span><span class="p">))</span>
+<span class="c1">#['This is a string with some numbers ', ' and a symbol #hashtag']
+</span><span class="k">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">test_patterns</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">test_phrase</span><span class="p">))</span>
+<span class="c1">#[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+</span><span class="k">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">test_patterns</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">test_phrase</span><span class="p">))</span>
+<span class="c1">#['This', 'is', 'a', 'string', 'with', 'some', 'numbers', '1233', 'and', 'a', 'symbol', '#hashtag']
+</span><span class="k">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">test_patterns</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">test_phrase</span><span class="p">))</span>
+<span class="c1">#['This', 'is', 'a', 'string', 'with', 'some', 'numbers', '1233', 'and', 'a', 'symbol', 'hashtag']
+</span><span class="k">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">test_patterns</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="n">test_phrase</span><span class="p">))</span>
+<span class="c1">#[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' #']
+</span><span class="k">print</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">test_patterns</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span><span class="n">test_phrase</span><span class="p">))</span>
+</code></pre></div></div>
+<h3 id="stringio">StringIO</h3>
+
+<p>StringIO提供了一个在内存中读写字符串的方式，通过string构建StringIO对象来进行IO操作，可以像操作文件一样操作string</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">StringIO</span>
+<span class="c1"># Arbitrary String
+</span><span class="n">message</span> <span class="o">=</span> <span class="s">'This is just a normal string.'</span>
+<span class="c1"># Use StringIO method to set as file object
+</span><span class="n">f</span> <span class="o">=</span> <span class="n">StringIO</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+<span class="nb">str</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="c1">#'This is just a normal string.'
+</span><span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">' Second line written to file like object'</span><span class="p">)</span>
+<span class="c1"># Reset cursor just like you would a file
+</span><span class="n">f</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># Read again
+</span><span class="nb">str</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span> <span class="c1">#Second line written to file like object
+</span></code></pre></div></div>
+
+<h2 id="stl-module">STL Module</h2>
+
+<p>类似C++的STL</p>
+
+<h3 id="counter">Counter</h3>
+
+<p>返回集合中元素的出现次数</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+
+<span class="c1">#统计元素出现次数
+</span><span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">Counter</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#Counter({1: 3, 3: 3, 2: 2, 4: 1})
+</span><span class="n">s</span> <span class="o">=</span> <span class="s">'asssvavaasvsbsa'</span>
+<span class="n">Counter</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="c1">#Counter({'s': 6, 'a': 5, 'v': 3, 'b': 1})
+</span><span class="n">ss</span> <span class="o">=</span> <span class="s">'How How test is is gonna gonna work work work out'</span>
+<span class="n">words</span> <span class="o">=</span> <span class="n">ss</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">' '</span><span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">words</span><span class="p">)</span> <span class="c1">#Counter({'work': 3, 'How': 2, 'is': 2, 'gonna': 2, 'test': 1, 'out': 1})
+</span><span class="n">c</span><span class="o">.</span><span class="n">most_common</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> 
+</code></pre></div></div>
+<p>其它成员函数</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sum</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>                 <span class="c1"># total of all counts
+</span><span class="n">c</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>                       <span class="c1"># reset all counts
+</span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>                         <span class="c1"># list unique elements
+</span><span class="nb">set</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>                          <span class="c1"># convert to a set
+</span><span class="nb">dict</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>                         <span class="c1"># convert to a regular dictionary
+</span><span class="n">c</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>                       <span class="c1"># convert to a list of (elem, cnt) pairs
+</span><span class="n">Counter</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">list_of_pairs</span><span class="p">))</span>    <span class="c1"># convert from a list of (elem, cnt) pairs
+</span><span class="n">c</span><span class="o">.</span><span class="n">most_common</span><span class="p">()[:</span><span class="o">-</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>       <span class="c1"># n least common elements
+</span><span class="n">c</span> <span class="o">+=</span> <span class="n">Counter</span><span class="p">()</span>                  <span class="c1"># remove zero and negative counts
+</span></code></pre></div></div>
+
+<h3 id="default-dict">Default Dict</h3>
+
+<p>更安全的dictionary，对于访问不存在的key，不会报错</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+<span class="n">d</span><span class="p">[</span><span class="s">'one'</span><span class="p">]</span> <span class="c1">#访问一个不存在的key，返回一个&lt;object object at 0x105424110&gt;
+</span>
+<span class="c1">#自定义默认value
+</span><span class="n">d</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="mi">0</span><span class="p">)</span> <span class="c1">#对于不存在的key，返回value = 0
+</span><span class="n">d</span><span class="p">[</span><span class="s">'one'</span><span class="p">]</span> <span class="c1">#0
+</span></code></pre></div></div>
+
+<h3 id="ordered-dict">Ordered Dict</h3>
+
+<p>有序字典</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="n">d</span><span class="p">[</span><span class="s">'a'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">d</span><span class="p">[</span><span class="s">'b'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">d</span><span class="p">[</span><span class="s">'c'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">d</span><span class="p">[</span><span class="s">'d'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="c1">#顺序输出
+</span>
+<span class="c1">##比较
+</span><span class="n">d1</span> <span class="o">=</span> <span class="p">{</span><span class="s">"a"</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s">"b"</span><span class="p">:</span><span class="mi">2</span><span class="p">}</span>
+<span class="n">d2</span> <span class="o">=</span> <span class="p">{</span><span class="s">"b"</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="s">"a"</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
+<span class="n">d1</span> <span class="o">==</span> <span class="n">d2</span> <span class="c1">#True
+</span>
+<span class="n">d1</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="n">d1</span><span class="p">[</span><span class="s">'a'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">d1</span><span class="p">[</span><span class="s">'b'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">d2</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="n">d2</span><span class="p">[</span><span class="s">'b'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">d2</span><span class="p">[</span><span class="s">'a'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">d1</span> <span class="o">==</span> <span class="n">d2</span> <span class="c1">#False
+</span></code></pre></div></div>
+
+<h3 id="named-tuple">Named Tuple</h3>
+
+<p>可以用名字去索引的tuple</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="n">Dog</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">'Dog'</span><span class="p">,</span><span class="s">'age breed name'</span><span class="p">)</span>
+<span class="n">sam</span> <span class="o">=</span> <span class="n">Dog</span><span class="p">(</span><span class="n">age</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">breed</span><span class="o">=</span><span class="s">'Lab'</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">'Sammy'</span><span class="p">)</span>
+<span class="n">sam</span><span class="o">.</span><span class="n">age</span>
+<span class="n">sam</span><span class="o">.</span><span class="n">breed</span>
+<span class="n">sam</span><span class="o">.</span><span class="n">name</span>
+</code></pre></div></div>
+<h3 id="datetime">Datetime</h3>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#时，分，秒
+</span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="c1">#05:25:01
+</span><span class="k">print</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="nb">min</span><span class="p">)</span> <span class="c1">#00:00:00
+</span><span class="k">print</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="nb">max</span><span class="p">)</span> <span class="c1">#23:59:59.999999
+</span><span class="k">print</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">resolution</span><span class="p">)</span> <span class="c1">#0:00:00.000001
+</span>
+<span class="n">today</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+<span class="n">today</span><span class="o">.</span><span class="n">timetuple</span><span class="p">()</span>
+
+<span class="n">d1</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">11</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">d1</span><span class="p">)</span>
+<span class="n">d2</span> <span class="o">=</span> <span class="n">d1</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">1990</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="python-debugger">Python Debugger</h2>
+
+<ul>
+  <li>使用<code class="highlighter-rouge">pdb</code>打断点</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pdb</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">z</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">r1</span> <span class="o">=</span> <span class="n">x</span><span class="o">+</span><span class="n">z</span>
+<span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span> <span class="c1">#断点调试, q退出
+</span><span class="n">r2</span> <span class="o">=</span> <span class="n">y</span><span class="o">+</span><span class="n">z</span>
+</code></pre></div></div>
+
+<ul>
+  <li>使用<code class="highlighter-rouge">timeit</code>计算代码执行时间</li>
+</ul>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">timeit</span>
+<span class="c1">#将待测试代码执行1000次
+</span><span class="n">timeit</span><span class="o">.</span><span class="n">timeit</span><span class="p">(</span><span class="s">'"-".join(str(n) for n in range(100))'</span><span class="p">,</span> <span class="n">number</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span><span class="c1">#0.034958536038175225
+</span></code></pre></div></div>
+:ET

@@ -1,0 +1,173 @@
+I"H<h3 id="config">Config</h3>
+
+<ul>
+  <li>Global Configuration
+    <ul>
+      <li><code class="highlighter-rouge">git config --global user.name "your_name"</code></li>
+      <li><code class="highlighter-rouge">git config --global user.email "your_email@domain.com"</code></li>
+    </ul>
+  </li>
+  <li>Configuration for project
+    <ul>
+      <li><code class="highlighter-rouge">git config --local user.name "your_name"</code></li>
+      <li><code class="highlighter-rouge">git config --local user.email  "your_email@domain.com"</code></li>
+      <li>该命令实际上是修改<code class="highlighter-rouge">.git</code>下的config文件中的<code class="highlighter-rouge">[user]</code>字段</li>
+    </ul>
+  </li>
+  <li>Show Configuration
+    <ul>
+      <li><code class="highlighter-rouge">git config --list --local</code></li>
+      <li><code class="highlighter-rouge">git config --list --global</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="log">Log</h3>
+
+<ul>
+  <li>查看前5条log：<code class="highlighter-rouge">git long -n5 --graph</code></li>
+</ul>
+
+<h3 id="diff">diff</h3>
+
+<ul>
+  <li>查看commit之间的差异 <code class="highlighter-rouge">git diff &lt;commit_1&gt; &lt;commit_2&gt;</code></li>
+  <li>查看某次commit和HEAD之间的差异 <code class="highlighter-rouge">git diff HEAD &lt;commit_2&gt;</code></li>
+  <li>查看工作区和暂存区的差异 <code class="highlighter-rouge">git diff -- &lt;filename1&gt; &lt;filename2&gt;</code></li>
+  <li>查看暂存区和HEAD之间的差异 <code class="highlighter-rouge">git diff --cached</code></li>
+  <li>查看不同分支之间某个文件的差异 <code class="highlighter-rouge">git diff &lt;branch1&gt; &lt;branch2&gt; -- &lt;filename&gt;</code></li>
+</ul>
+
+<h3 id="file-operations">File Operations</h3>
+
+<p>-Add
+    - <code class="highlighter-rouge">git add -u</code>, 将工作空间新增和被修改的文件添加的暂存区
+    - <code class="highlighter-rouge">git add .</code>, 将工作空间被修改和被删除的文件添加到暂存区(不包含没有纳入Git管理的新增文件)
+    - <code class="highlighter-rouge">git add -A</code>, stash所有修改</p>
+<ul>
+  <li>Remove:
+    <ul>
+      <li><code class="highlighter-rouge">git rm file_name</code></li>
+      <li>同时删除工作区和暂存区的文件</li>
+    </ul>
+  </li>
+  <li>Rename: <code class="highlighter-rouge">git mv file_name_1 file_name_2</code>, 重命名文件</li>
+</ul>
+
+<h3 id="revert">Revert</h3>
+
+<ul>
+  <li>revert更工作区的提交: <code class="highlighter-rouge">git checkout -- &lt;filename&gt;</code></li>
+  <li>revert暂存区的提交: <code class="highlighter-rouge">git reset HEAD -- &lt;filename&gt;</code></li>
+  <li>revert到某个commit <code class="highlighter-rouge">git reset --hard &lt;commit_id&gt;</code></li>
+</ul>
+
+<h3 id="delete">Delete</h3>
+
+<ul>
+  <li>删除工作区的未追踪文件: <code class="highlighter-rouge">git clean -fxd</code></li>
+  <li>删除暂存区中的文件: <code class="highlighter-rouge">git cache rm &lt;file&gt;</code></li>
+  <li>删除Git缓存: <code class="highlighter-rouge">git gc</code></li>
+</ul>
+
+<h3 id="stash">Stash</h3>
+
+<ul>
+  <li>将工作区变更存放到Stash区域: <code class="highlighter-rouge">git stash</code></li>
+  <li>查看Stash内容：<code class="highlighter-rouge">git stash list</code></li>
+  <li>取回Stash中的变更
+    <ul>
+      <li><code class="highlighter-rouge">git stash apply</code></li>
+      <li><code class="highlighter-rouge">git stash pop</code> 会丢掉stash区域里的信息</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="branch">Branch</h3>
+
+<ul>
+  <li>查看分支
+    <ul>
+      <li>查看本地分支,<code class="highlighter-rouge">git branch -av</code></li>
+    </ul>
+  </li>
+  <li>创建新分支
+    <ul>
+      <li>创建本地分支, <code class="highlighter-rouge">git branch &lt;branchName&gt;</code></li>
+      <li>创建远端分支, <code class="highlighter-rouge">git push origin &lt;branchName&gt;</code></li>
+    </ul>
+  </li>
+  <li>切换分支
+    <ul>
+      <li><code class="highlighter-rouge">git checkout &lt;branchName&gt;</code></li>
+      <li>创建新分支并且换:<code class="highlighter-rouge">git checkout -b &lt;branchName&gt;</code></li>
+    </ul>
+  </li>
+  <li>删除分支
+    <ul>
+      <li>删除本地分支：<code class="highlighter-rouge">git branch -d &lt;branchName&gt;</code></li>
+      <li>删除远程分支：<code class="highlighter-rouge">git push origin --delete &lt;branchName&gt;</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="commit">Commit</h3>
+
+<ul>
+  <li>修改本地当前的commit：<code class="highlighter-rouge">git commit --amend</code></li>
+  <li>修改本地当前的commit的提交信息: <code class="highlighter-rouge">git commit --amend --author="name &lt;email&gt;"</code></li>
+  <li>revert本地的commit: <code class="highlighter-rouge">git reset --hard</code></li>
+  <li>修改之前commit的内容
+    <ul>
+      <li><code class="highlighter-rouge">git rebase -i &lt;commit&gt;^</code></li>
+      <li>标记要修改的commit为edit</li>
+      <li>修改完成后执行<code class="highlighter-rouge">git add</code>修改添加到暂存区</li>
+      <li><code class="highlighter-rouge">git commit --amend</code></li>
+      <li><code class="highlighter-rouge">git rebase --continue</code></li>
+    </ul>
+  </li>
+  <li>合并commit
+    <ul>
+      <li><code class="highlighter-rouge">git rebase -i </code></li>
+      <li>pick一个commit作为最终合并后的commit，其它的commit会合并到它上面</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="cherry-pick">Cherry-pick</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">git cherry-pick &lt;commit1&gt; &lt;commit2&gt;,...</code></li>
+</ul>
+
+<h3 id="tag">tag</h3>
+
+<ul>
+  <li>标记某个commit为tag： <code class="highlighter-rouge">git tag &lt;tag_name&gt; &lt;commit&gt;</code></li>
+  <li>查看某个commit和最近tag的关系 <code class="highlighter-rouge">git describe &lt;commit&gt;</code>，结果的格式为
+    <ul>
+      <li><code class="highlighter-rouge">&lt;tag&gt;_&lt;numCommits&gt;_g&lt;hash&gt;</code>表示当前commit - <code class="highlighter-rouge">g&lt;hash&gt;</code>距离<code class="highlighter-rouge">&lt;tag&gt;</code>有<code class="highlighter-rouge">&lt;numCommits&gt;</code>个commit</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="repo">Repo</h3>
+
+<ul>
+  <li>Check remote repo: <code class="highlighter-rouge">git remote -v </code></li>
+  <li>Change repo’s origin <code class="highlighter-rouge">git remote set-url origin https://xxxx.git</code></li>
+  <li>Add remote origin
+    <ul>
+      <li><code class="highlighter-rouge">git remote add upstream xxx</code></li>
+      <li><code class="highlighter-rouge">git fetch upstream</code></li>
+      <li><code class="highlighter-rouge">git merge upstream/master</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="其它">其它</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">gitk</code>， 图形化界面</li>
+</ul>
+:ET

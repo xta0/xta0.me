@@ -1,0 +1,1309 @@
+I"a[<h2 id="c">C</h2>
+
+<h3 id="c语言版本">C语言版本</h3>
+
+<ul>
+  <li>K&amp;R C
+    <ul>
+      <li>1978年，Kernighan和Ritchie的《The C Programmign Language》第一版出版，简称K&amp;R C</li>
+    </ul>
+  </li>
+  <li>ANSI C 和 ISO C
+    <ul>
+      <li>1989年，C语言被标准化，对K&amp;R C进行了扩展，包括了一些新特性，规定了一套标准函数库</li>
+      <li>ISO成立WG14工作小组规定国际标准的C语言。</li>
+    </ul>
+  </li>
+  <li>C99
+    <ul>
+      <li>ANSI标准化后，WG14小组继续改进C语言，1999年出版ISO9899:1999，即C99</li>
+    </ul>
+  </li>
+  <li>C11
+    <ul>
+      <li>2011年12月8日，ISO正式公布C语言新标准草案：ISO/IEC9899:2011, 即C11</li>
+    </ul>
+  </li>
+  <li>标准的问题
+    <ul>
+      <li>C语言规范定义得非常宽泛
+        <ul>
+          <li>long型数据长度不短于int型</li>
+          <li>short型不长于int型</li>
+        </ul>
+      </li>
+      <li>导致：
+        <ul>
+          <li>不同编译器有不同的解释</li>
+          <li>相同的程序在不同的平台上运行结果不同
+            <ul>
+              <li><code class="highlighter-rouge">int</code>在turboC上16位，在VC上32位</li>
+              <li>对<code class="highlighter-rouge">++</code>	,<code class="highlighter-rouge">--</code>的解释不一致</li>
+              <li>对浮点计算的精度不同等</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="变量命名">变量命名</h3>
+
+<ul>
+  <li><strong>匈牙利命名法</strong>
+    <ul>
+      <li>以一个或多个小写字母开头，来指定数据类型</li>
+      <li>其后是一个或多个第一个字母大写的单词，指出变量用途,如：</li>
+      <li><code class="highlighter-rouge">chGrade, nLength, bOnOff, strStudentName</code></li>
+    </ul>
+  </li>
+  <li><strong>驼峰命名</strong>
+    <ul>
+      <li>一个变量的名字由一个或多个单词连接</li>
+      <li>第一个单词以小写字母开始</li>
+      <li>后面单词的首字母大写</li>
+      <li><code class="highlighter-rouge">myFirstName</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="数据部分">数据部分</h2>
+
+<h3 id="整型">整型</h3>
+
+<ul>
+  <li><strong>Signed vs Unsigned</strong>:
+    <ul>
+      <li><code class="highlighter-rouge">unsigned int i = 123</code>对应内存布局为: <code class="highlighter-rouge">00000000 00000000 00000000 01111011</code></li>
+      <li><code class="highlighter-rouge">signed int i = -123</code>对应的内存布局为: <code class="highlighter-rouge">11111111 11111111 11111111 10000101</code></li>
+      <li>对于有符号数，第一个bit用来表示符号位,负数用1表示，正数用0
+        <ul>
+          <li>如果是<code class="highlighter-rouge">int</code>，那么第一个bit表示符号，实际所代表的数值用剩余31位表示</li>
+          <li>如果是<code class="highlighter-rouge">unsigned int</code>，则没有符号位，可以用32位表示每个数</li>
+        </ul>
+      </li>
+      <li>无符号数在内存中以原码的形式存储，有符号数以补码的形式存储，计算方式为
+        <ul>
+          <li><mark>无符号数取反+1</mark></li>
+          <li>例如：求<code class="highlighter-rouge">-1</code>的二进制表示
+            <ol>
+              <li>先确定符号位为<code class="highlighter-rouge">1</code></li>
+              <li>求出<code class="highlighter-rouge">1</code>的原码：<code class="highlighter-rouge">10000000 00000000 00000000 00000001</code></li>
+              <li>对原码部分各位取反: <code class="highlighter-rouge">11111111 11111111 11111111 11111110</code></li>
+              <li><code class="highlighter-rouge">+1</code>: <code class="highlighter-rouge">11111111 11111111 11111111 11111111</code> = <code class="highlighter-rouge">0xffffffff</code></li>
+            </ol>
+          </li>
+        </ul>
+      </li>
+      <li>代码表示
+        <ul>
+          <li>十六进制<code class="highlighter-rouge">0x</code>开头：<code class="highlighter-rouge">int a = 0xffffff12</code></li>
+          <li>八进制<code class="highlighter-rouge">0</code>开头：<code class="highlighter-rouge">int a = 037777777605</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="最大数">最大数</h3>
+
+<ul>
+  <li>无符号<code class="highlighter-rouge">unsigned int</code>:
+    <ul>
+      <li>十六进制： <code class="highlighter-rouge">0xffffffff</code></li>
+      <li>十进制：<code class="highlighter-rouge">4294967295</code> ， <mark>大约42亿</mark></li>
+    </ul>
+  </li>
+  <li>有符号<code class="highlighter-rouge">int</code>:
+    <ul>
+      <li>十六进制 <code class="highlighter-rouge">0x7fffffff</code></li>
+      <li>十进制：<code class="highlighter-rouge">2^31-1</code>，<code class="highlighter-rouge">INT_MAX=2147483647</code>，<mark>大约21亿</mark></li>
+      <li>二进制：<code class="highlighter-rouge">01111111 11111111 11111111 11111111</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="最小数">最小数</h3>
+
+<ul>
+  <li>无符号<code class="highlighter-rouge">unsigned int</code>:
+    <ul>
+      <li>十六进制： <code class="highlighter-rouge">0x000000</code></li>
+      <li>十进制：<code class="highlighter-rouge">0</code></li>
+    </ul>
+  </li>
+  <li>有符号:
+    <ul>
+      <li>十六进制：<code class="highlighter-rouge">0x7fffff</code>(最大有符号数) + <code class="highlighter-rouge">1</code></li>
+      <li>二进制： <code class="highlighter-rouge">10000000 00000000 00000000 00000000</code>（最小有符号数）
+        <ul>
+          <li>
+            <blockquote>
+              <p>C语言规定，当最高位是1，其它位是0时，最高位既表示负号，也表示正数最高位1</p>
+            </blockquote>
+          </li>
+        </ul>
+      </li>
+      <li>十进制：<code class="highlighter-rouge">-2^31</code>，<code class="highlighter-rouge">INT_MIN = -2147483648</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="浮点型">浮点型</h3>
+
+<ul>
+  <li>float : 32bit 精度7位</li>
+  <li>double: 64bit 精度15位</li>
+  <li>long double: 64bit 精度15位</li>
+  <li>浮点型的内存布局
+    <ul>
+      <li>第一位为符号位</li>
+      <li>7位指数位：最多表示2的127次方，最多表示10的38幂</li>
+      <li>24位二进制小数位：最多表示2的24次幂</li>
+    </ul>
+
+    <p><img src="/assets/images/2007/05/float.png" alt="" /></p>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 	<span class="kt">float</span> <span class="n">example</span> <span class="o">=</span> <span class="mf">97.148</span><span class="p">;</span>
+  <span class="kt">char</span> <span class="n">binary</span><span class="p">[</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">)];</span>
+  <span class="n">memcpy</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">example</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">));</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s"> 32-bit float 97.148:  "</span> <span class="o">&lt;&lt;</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">float</span><span class="p">);</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">bitset</span><span class="o">&lt;</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">)</span><span class="o">*</span><span class="mi">8</span> <span class="o">&gt;</span><span class="p">(</span><span class="n">binary</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+  <span class="p">}</span>
+</code></pre></div>    </div>
+    <p>我们可以通过上面代码查看任意浮点数的二进制表示如下，对照上面规则，可以看到<code class="highlighter-rouge">97.148</code>和<code class="highlighter-rouge">97.1485945</code>的差别极大，而<code class="highlighter-rouge">97.1485945</code>和<code class="highlighter-rouge">97.148594576678755667</code>二进制相同，说明后者使用32bit已经表示不下，多余位数被截断。</p>
+
+    <p>```
+  32-bit float 97.148:
+  11000111010010111100001001000010
+ 	32-bit float 97.1485945:
+  00010101010011001100001001000010</p>
+  </li>
+</ul>
+
+ 	32-bit float 97.148594576678755667:
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>00010101010011001100001001000010
+```
+</code></pre></div></div>
+
+<ul>
+  <li>浮点数使用须知
+    <ul>
+      <li>避免将一个很大数和和一个很小数相加或相减，否则会“丢失”小的数</li>
+    </ul>
+
+    <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kt">float</span> <span class="n">a</span> <span class="o">=</span> <span class="mf">123456.789e5</span>
+  <span class="kt">float</span> <span class="n">b</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">20</span>
+  <span class="n">cout</span> <span class="o">&lt;&lt;</span><span class="n">b</span><span class="o">&lt;&lt;</span><span class="n">endl</span>
+  <span class="c1">//由于a是float型，它可写为：`1.23456789e10`,由于它的精度只有7位，因此实际上只能精确到`1.2345678e10`,所以b的值会计算错误</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="const和指针">Const和指针</h3>
+
+<ul>
+  <li>指向常量的指针
+    <ul>
+      <li>不可以通过常量指针修改其指向的内容</li>
+      <li>不可以将常量指针赋值给非常量指针，但可以进行强制类型转换</li>
+    </ul>
+
+    <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="mi">101</span><span class="p">;</span>
+  <span class="k">const</span> <span class="kt">int</span><span class="o">*</span> <span class="n">p1</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">n</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="o">*</span><span class="n">p2</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">m</span><span class="p">;</span>
+  <span class="c1">//*p1 = 100; //compile error!</span>
+  <span class="n">p1</span> <span class="o">=</span> <span class="n">p2</span><span class="p">;</span> <span class="c1">//ok	</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="o">*</span><span class="n">p1</span> <span class="p">);</span> <span class="c1">//101</span>
+  <span class="n">p2</span> <span class="o">=</span> <span class="n">p1</span><span class="p">;</span> <span class="c1">//compile error!</span>
+  <span class="n">p2</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="p">)</span><span class="n">p1</span><span class="p">;</span> <span class="c1">//ok，进行强制类型转换</span>
+</code></pre></div>    </div>
+  </li>
+  <li>指针常量
+    <ul>
+      <li>定义：指针本身是常量，定义的时候要初始化，初始化完成后指针的值（即某对象的地址）不可修改（地址锁定）</li>
+      <li>表示：把<code class="highlighter-rouge">*</code>放在<code class="highlighter-rouge">const</code>之前，即<code class="highlighter-rouge">int *const p = &amp;i;</code></li>
+      <li>含义：
+        <ul>
+          <li>指针常量的值（地址）所指向的内容可以修改，但指针常量自身的值不可以被修改</li>
+        </ul>
+      </li>
+    </ul>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kt">int</span> <span class="n">err</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="o">*</span><span class="k">const</span> <span class="n">pErr</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">err</span><span class="p">;</span>
+  <span class="o">*</span><span class="n">pErr</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">//正确，修改pErr所指向的对象</span>
+  <span class="k">const</span> <span class="kt">double</span> <span class="n">pi</span> <span class="o">=</span> <span class="mf">3.1415926</span>
+  <span class="k">const</span> <span class="kt">double</span> <span class="k">const</span><span class="o">*</span> <span class="n">pop</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">pi</span><span class="p">;</span> <span class="c1">//pip是指向常量对象的常量指针</span>
+  <span class="o">*</span><span class="n">pip</span> <span class="o">=</span> <span class="mf">2.72</span> <span class="c1">//错误</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="引用">引用</h3>
+
+<ul>
+  <li>定义引用时就初始化其值</li>
+  <li>初始化后，它就一直引用该变量，不会再引用别的变量了。</li>
+  <li>引用只能引用变量，不能引用常量和表达式</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">7</span><span class="p">;</span>
+<span class="kt">int</span> <span class="o">&amp;</span><span class="n">r</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
+<span class="n">r</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">r</span><span class="p">;</span> <span class="c1">//4</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">n</span><span class="p">;</span> <span class="c1">//4</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">r</span><span class="p">;</span> <span class="c1">//5</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>引用做参数：<code class="highlighter-rouge">swap(int &amp;a, int &amp;b)</code></li>
+  <li>引用作为函数的返回值：</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">n</span><span class="o">=</span><span class="mi">40</span><span class="p">;</span>
+<span class="kt">int</span><span class="o">&amp;</span> <span class="n">setValue</span><span class="p">()</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+	<span class="n">setValue</span><span class="p">()</span><span class="o">=</span><span class="mi">40</span><span class="p">;</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">n</span><span class="p">;</span> <span class="c1">//40</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>const引用：</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">n</span><span class="o">=</span><span class="mi">100</span><span class="p">;</span>
+<span class="k">const</span> <span class="kt">int</span><span class="o">&amp;</span> <span class="n">r</span> <span class="o">=</span> <span class="n">n</span><span class="p">;</span>
+<span class="n">r</span> <span class="o">=</span> <span class="mi">200</span><span class="p">;</span> <span class="c1">//compiler error</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">300</span><span class="p">;</span> <span class="c1">//fine </span>
+</code></pre></div></div>
+
+<h3 id="static-变量">Static 变量</h3>
+
+<ul>
+  <li>普通局部变量定义：<code class="highlighter-rouge">int a = 0;</code>实际上是<code class="highlighter-rouge">auto int a = 0;</code>,<code class="highlighter-rouge">auto</code>可以省略</li>
+</ul>
+
+<h2 id="运算部分">运算部分</h2>
+
+<h3 id="赋值运算">赋值运算</h3>
+
+<ul>
+  <li>将长数赋值给短数
+    <ul>
+      <li>例如，将long型赋值给short型：</li>
+    </ul>
+
+    <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+  <span class="p">{</span>
+      <span class="kt">long</span> <span class="kt">int</span> <span class="n">long_i</span> <span class="o">=</span> <span class="mh">0x2AAAAAAA</span><span class="p">;</span>
+      <span class="kt">short</span> <span class="n">short_j</span> <span class="o">=</span> <span class="n">long_i</span><span class="p">;</span>
+
+      <span class="c1">//long_i=00101010 10101010 10101010 10101010,会将低16bit赋值给short_j</span>
+      <span class="c1">//即10101010 10101010</span>
+      <span class="c1">//由于short_j是有符号数，那么第一位为1时为负数，即-21846</span>
+  <span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>将短数赋值给长数
+    <ul>
+      <li>将小数赋值给大数对于有符号数的规则为：
+        <ul>
+          <li>若小数的高位为1，则大数的高位补1</li>
+          <li>若小数的高位为0，则大数的高位补0</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>有符号数和无符号数互相赋值
+    <ul>
+      <li>不考虑符号位</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="运算符">运算符</h3>
+
+<ul>
+  <li>运算符优先级：</li>
+</ul>
+
+<p>逻辑非<code class="highlighter-rouge">!</code> &gt; 算术运算 &gt;  关系运算 &gt; <code class="highlighter-rouge">&amp;&amp;</code>和<code class="highlighter-rouge">||</code> &gt; 赋值运算</p>
+
+<ul>
+  <li>逗号运算符
+    <ul>
+      <li>运算符优先级别最低</li>
+      <li>将两个表达式连接起来
+        <ul>
+          <li><code class="highlighter-rouge">exp1</code>,<code class="highlighter-rouge">exp2</code>,<code class="highlighter-rouge">exp3</code>,…<code class="highlighter-rouge">expn</code></li>
+          <li>先求<code class="highlighter-rouge">exp1</code>再求<code class="highlighter-rouge">exp2</code>,…,再求<code class="highlighter-rouge">expn</code>，整个表达式的值为表达式<code class="highlighter-rouge">n</code>的值,例如:<code class="highlighter-rouge">a = 3*5, a*4;</code>展开为<code class="highlighter-rouge">a=15,a*4</code>，结果为<code class="highlighter-rouge">60</code></li>
+        </ul>
+      </li>
+      <li>考虑下面两个式子，x的值分别为多少？
+        <ul>
+          <li><code class="highlighter-rouge">x=(a=3,6*3)</code> x=18</li>
+          <li><code class="highlighter-rouge">x=a=3,6*3</code> x=3</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="位运算">位运算</h3>
+
+<ul>
+  <li>C语言中的位运算有
+    <ul>
+      <li><code class="highlighter-rouge">&amp;</code></li>
+      <li><code class="highlighter-rouge">|</code></li>
+      <li><code class="highlighter-rouge">^</code> 异或，双目运算(需要两个bit参与运算)</li>
+      <li><code class="highlighter-rouge">~</code></li>
+      <li><code class="highlighter-rouge">&lt;&lt;</code>，左移
+        <ul>
+          <li>高位左移后溢出，舍弃不起作用</li>
+          <li>例如<code class="highlighter-rouge">a=15</code>，即<code class="highlighter-rouge">00001111</code>,左移2位得<code class="highlighter-rouge">00111100</code>,即十进制数60 ： <code class="highlighter-rouge">a = a&lt;&lt;2</code></li>
+          <li>左移1位相当于该数乘以2，左移两位相当于该数乘以2的平方
+            <ul>
+              <li>只适用于高位溢出的舍弃bit不包含1的情况</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><code class="highlighter-rouge">&gt;&gt;</code> ，右移
+        <ul>
+          <li>无符号数，低位移除舍弃，高位补0</li>
+          <li>有符号数
+            <ul>
+              <li>若原来的符号位为0，则左边移入0</li>
+              <li>若原来的符号位位1，则左移移入0还是1，由操作系统决定
+                <ul>
+                  <li>若移入0，称为逻辑右移，或简单右移</li>
+                  <li>若移入1，称为算术右移</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>常用的位运算
+    <ul>
+      <li>使特定位翻转
+        <ul>
+          <li>例如使<code class="highlighter-rouge">01111010</code>低4位翻转，可将其与<code class="highlighter-rouge">00001111</code>进行<code class="highlighter-rouge">^</code>运算，得到<code class="highlighter-rouge">01110101</code></li>
+        </ul>
+      </li>
+      <li>使特定位保持不变
+        <ul>
+          <li>与<code class="highlighter-rouge">0</code>进行<code class="highlighter-rouge">^</code></li>
+        </ul>
+      </li>
+      <li>互换两个数的值，而不必使用临时变量
+        <ul>
+          <li>例如<code class="highlighter-rouge">a=3,b=4</code>，交换<code class="highlighter-rouge">a,b</code>可用:</li>
+        </ul>
+
+        <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">^</span><span class="n">b</span><span class="p">;</span>
+  <span class="n">b</span> <span class="o">=</span> <span class="n">b</span><span class="o">^</span><span class="n">a</span><span class="p">;</span>
+  <span class="n">a</span> <span class="o">=</span> <span class="n">a</span><span class="o">^</span><span class="n">b</span><span class="p">;</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="控制语句">控制语句</h2>
+
+<h3 id="for">For</h3>
+
+<ul>
+  <li>for语句的定义</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>for(expr1; expr2; expr3)
+{
+	//语句
+}
+</code></pre></div></div>
+
+<p>执行顺序:</p>
+<ul>
+  <li>先执行<code class="highlighter-rouge">expr1</code></li>
+  <li>判断<code class="highlighter-rouge">expr2</code>是否为true，如果是true执行语句，如果是false则跳出</li>
+  <li>当语句执行完后执行<code class="highlighter-rouge">expr3</code>。</li>
+  <li>执行完<code class="highlighter-rouge">expr3</code>后重新执行<code class="highlighter-rouge">expr1</code></li>
+</ul>
+
+<h3 id="goto">goto</h3>
+
+<ul>
+  <li>无条件转向语句</li>
+  <li>它的一般形式为:
+    <ul>
+      <li><code class="highlighter-rouge">goto 标识符</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="数组">数组</h2>
+
+<h3 id="一维数组">一维数组</h3>
+
+<ul>
+  <li>定义数组:</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">float</span> <span class="n">sheep</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">a2001</span><span class="p">[</span><span class="mi">1000</span><span class="p">];</span>
+
+</code></pre></div></div>
+
+<p>**数组大小不能为变量,可以为符号常量</p>
+
+<ul>
+  <li>
+    <p>数组初始化</p>
+
+    <ul>
+      <li><code class="highlighter-rouge">a[4] = {1,2,3,4};</code></li>
+      <li><code class="highlighter-rouge">a[ ] = {1,2,3,4};</code></li>
+      <li><code class="highlighter-rouge">a[4] = {1,2};</code>剩下的元素自动补0</li>
+      <li><code class="highlighter-rouge">a[4] = {0};</code>初始化一个全0数组</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="二维数组">二维数组</h3>
+
+<ul>
+  <li>定义二维数组
+    <ul>
+      <li><code class="highlighter-rouge">a[3][4]</code>：
+        <ul>
+          <li>定义一个3行4列的数组</li>
+          <li>相当于定义3个一维数组:<code class="highlighter-rouge">a[0]</code>,<code class="highlighter-rouge">a[1]</code>,<code class="highlighter-rouge">a[2]</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>内存布局</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>a[0][0]
+a[0][1]
+a[0][2]
+a[0][3]
+a[1][0]
+...
+a[1][3]
+a[2][0]
+...
+a[2][3]
+</code></pre></div></div>
+
+<ul>
+  <li>初始化
+    <ul>
+      <li><code class="highlighter-rouge">a[3][4] = { {1,2,3,4}, {5,6,7,8}, {9,10,11,12} };</code></li>
+      <li><code class="highlighter-rouge">a[3][4] = { 1,2,3,4, 5,6,7,8, 9,10,11,12}</code>省略里面的括号</li>
+      <li><code class="highlighter-rouge">a[][4] = { 1,2,3,4, 5,6,7,8, 9,10,11,12 }</code></li>
+      <li><code class="highlighter-rouge">a[][4] = { {1},{0,6},{0,0,11} }</code>缺的元素补0</li>
+      <li><code class="highlighter-rouge">a[3][4] = { 0 }</code></li>
+    </ul>
+  </li>
+  <li>访问</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">j</span><span class="o">&lt;</span><span class="mi">4</span><span class="p">;</span> <span class="n">j</span><span class="o">++</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">setw</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+	<span class="p">}</span>
+	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<h3 id="数组的应用">数组的应用</h3>
+
+<ul>
+  <li>桶排序</li>
+  <li>使用下标做统计
+    <ul>
+      <li>一维二维数组</li>
+    </ul>
+  </li>
+  <li>寻找素数</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include&lt;iostream&gt;
+#include&lt;cmath&gt;
+</span>
+<span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+
+	<span class="kt">int</span> <span class="n">sum</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">a</span><span class="p">[</span><span class="mi">100</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">100</span><span class="p">.</span><span class="mi">0</span><span class="p">);</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		
+		<span class="n">sum</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+		
+		<span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">sum</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">){</span>
+			
+			<span class="k">while</span><span class="p">(</span><span class="n">sum</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">){</span>
+				<span class="n">sum</span> <span class="o">+=</span><span class="n">i</span> <span class="p">;</span>
+				<span class="k">if</span><span class="p">(</span><span class="n">sum</span> <span class="o">&lt;</span> <span class="mi">100</span><span class="p">){</span>
+					<span class="n">a</span><span class="p">[</span><span class="n">sum</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">//数组标记出能被i以及i的倍数整除的元素</span>
+				<span class="p">}</span>
+			<span class="p">}</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">2</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="mi">100</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+			<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">i</span><span class="o">&lt;&lt;</span><span class="s">""</span><span class="p">;</span><span class="c1">//输出所有未被标记的即为素数</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<h2 id="字符串">字符串</h2>
+
+<h3 id="字符数组">字符数组</h3>
+
+<ul>
+  <li>定义
+    <ul>
+      <li><code class="highlighter-rouge">char a[4] = {'a','b','c','d'}</code></li>
+      <li><code class="highlighter-rouge">char a[4] = {'a','b'}</code> 剩下的元素被初始化为<code class="highlighter-rouge">\0</code></li>
+      <li><code class="highlighter-rouge">char a[ ] = {'C','h','i','n','a'}</code></li>
+      <li><code class="highlighter-rouge">char a[ ] = "China"</code>使用这种方式初始化，数组末尾会自动多一个<code class="highlighter-rouge">\0</code>
+        <ul>
+          <li><code class="highlighter-rouge">char a[5] = "China"</code>这种初始化方法是错误的</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>赋值
+    <ul>
+      <li>只可以： 在数组定义并且初始化时:<code class="highlighter-rouge">char c[6] = "China"</code></li>
+      <li>不可以：不能用赋值语句将一个字符串常量或字符数组直接赋值给另一个字符数组
+        <ul>
+          <li><code class="highlighter-rouge">str1[] = "China"</code>  错误</li>
+          <li><code class="highlighter-rouge">str1 = "China"</code> 错误</li>
+          <li><code class="highlighter-rouge">str2=str1</code> 错误</li>
+        </ul>
+      </li>
+      <li>正确的赋值方式:</li>
+    </ul>
+
+    <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kt">char</span> <span class="n">str1</span> <span class="o">=</span> <span class="s">"abc"</span><span class="p">,</span> <span class="n">str2</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+  <span class="k">while</span><span class="p">(</span><span class="n">str1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'\0'</span><span class="p">)</span>
+  <span class="p">{</span>
+      <span class="n">str2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">str1</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+      <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">str2</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="sc">'\0'</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>输出/输出
+    <ul>
+      <li>使用<code class="highlighter-rouge">cout</code>输出字符数组，要确保数组以<code class="highlighter-rouge">\0</code>结尾</li>
+      <li>使用<code class="highlighter-rouge">cin</code>输入字符数组时，默认空格和回车作为字符串间断</li>
+    </ul>
+  </li>
+  <li>二位数组</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">char</span> <span class="n">weekday</span><span class="p">[</span><span class="mi">7</span><span class="p">][</span><span class="mi">11</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="s">"Sunday"</span><span class="p">,</span><span class="s">"Monday"</span><span class="p">,</span><span class="s">"Tuesday"</span><span class="p">,</span><span class="s">"Wednesday"</span><span class="p">,</span><span class="s">"Thursday"</span><span class="p">,</span><span class="s">"Firday"</span><span class="p">,</span><span class="s">""</span><span class="n">Saturday</span><span class="p">}.</span>
+<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="mi">7</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">weekday</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<h3 id="常用字符串函数">常用字符串函数</h3>
+
+<ul>
+  <li>字符串长度<code class="highlighter-rouge">strlen</code>，要求字符串以<code class="highlighter-rouge">\0</code>结尾
+    <ul>
+      <li><code class="highlighter-rouge">int i = strlen(len)</code></li>
+    </ul>
+
+    <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">//strlen的实现</span>
+  <span class="kt">int</span> <span class="nf">strlen</span><span class="p">(</span><span class="kt">char</span> <span class="n">d</span><span class="p">[]){</span>
+      <span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+      <span class="k">while</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'\0'</span><span class="p">){</span>
+          <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="n">i</span>
+  <span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>比较字符串<code class="highlighter-rouge">strcmp</code>，如果<code class="highlighter-rouge">p1=p2</code>返回<code class="highlighter-rouge">0</code>，<code class="highlighter-rouge">p1&gt;p2</code>返回一个正值，<code class="highlighter-rouge">p1&lt;p2</code>返回一个负值
+    <ul>
+      <li><code class="highlighter-rouge">bool v = strcmp(str1,str2)</code></li>
+    </ul>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">//strcmp实现</span>
+  <span class="kt">int</span> <span class="nf">strcmp</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">s1</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">s2</span><span class="p">)</span> <span class="p">{</span>
+ 		<span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+ 		<span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">s1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">s2</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="o">++</span><span class="n">i</span> <span class="p">)</span> <span class="p">{</span>
+ 			<span class="k">if</span><span class="p">(</span><span class="n">s1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="sc">'\0'</span> <span class="o">&amp;&amp;</span> <span class="n">s2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="err">‘\</span><span class="mi">0</span><span class="err">'</span><span class="p">)</span>
+ 			<span class="k">return</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// 两个字符串相等</span>
+ 		<span class="p">}</span>
+ 		<span class="c1">// 不等, 比较第一个不同的字符</span>
+ 		<span class="k">return</span> <span class="p">(</span><span class="n">s1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">s2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">abs</span><span class="p">(</span><span class="n">s1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">s2</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+  <span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>追加字符串<code class="highlighter-rouge">strcat</code>
+    <ul>
+      <li><code class="highlighter-rouge">strcat(p1,p2); //将p2追加到p1后面，返回p1</code></li>
+    </ul>
+  </li>
+  <li>拷贝字符串<code class="highlighter-rouge">strcpy</code>
+    <ul>
+      <li><code class="highlighter-rouge">strcpy(p1,p2);//将p2拷贝到p1，返回p1</code></li>
+    </ul>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">//strcpy的实现</span>
+  <span class="kt">char</span><span class="o">*</span> <span class="nf">strcpy</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span> <span class="n">dst</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">src</span><span class="p">){</span>
+      <span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+      <span class="k">while</span><span class="p">(</span><span class="n">src</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'\0'</span><span class="p">){</span>
+          <span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">src</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+          <span class="n">i</span><span class="o">++</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="n">dst</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="sc">'\0'</span><span class="p">;</span>
+      <span class="k">return</span> <span class="n">dst</span><span class="p">;</span>
+  <span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>切分字符串 <code class="highlighter-rouge">strtok</code></li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="kt">char</span> <span class="n">input</span><span class="p">[]</span> <span class="o">=</span> <span class="s">"A bird came down the walk"</span><span class="p">;</span>
+ <span class="kt">char</span> <span class="o">*</span><span class="n">token</span> <span class="o">=</span> <span class="n">strtok</span><span class="p">(</span><span class="n">input</span><span class="p">,</span> <span class="s">" "</span><span class="p">);</span>
+ <span class="k">while</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="p">{</span>
+ 	<span class="n">puts</span><span class="p">(</span><span class="n">token</span><span class="p">);</span>
+ 	<span class="n">token</span> <span class="o">=</span> <span class="n">strtok</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="s">" "</span><span class="p">);</span><span class="c1">//如果第一个参数为null，表示在前一次的位置继续向后查找</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="函数">函数</h2>
+
+<h3 id="函数的声明">函数的声明</h3>
+
+<ul>
+  <li>函数原型：由函数的返回类型，函数名，以及参数表构成的一个符号串，其中参数可以不写名字，例如</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bool</span> <span class="n">checkPrime</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span>
+</code></pre></div></div>
+<ul>
+  <li>函数的原型又称为函数的signature</li>
+  <li>C语言中函数的声明就是使用函数的原型</li>
+</ul>
+
+<h3 id="函数的执行过程">函数的执行过程</h3>
+
+<p>例如：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kt">float</span> <span class="nf">max</span><span class="p">(</span><span class="kt">float</span> <span class="n">a</span><span class="p">,</span> <span class="kt">float</span> <span class="n">b</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">return</span> <span class="n">a</span><span class="o">&gt;</span><span class="n">b</span><span class="o">?</span><span class="n">a</span><span class="o">:</span><span class="n">b</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+	<span class="kt">int</span> <span class="n">m</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">4</span><span class="p">;</span>
+	<span class="kt">float</span> <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	
+	<span class="n">result</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">n</span><span class="p">);</span>
+	
+	<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">result</span><span class="p">;</span>
+	
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+	
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<ol>
+  <li>调用max函数时，开辟新的stack</li>
+  <li>将参数m,n传递过去，max函数接收到的参数a,b是m,n的值，但是m,n有各自的存储空间</li>
+  <li>max执行完成后释放stack</li>
+  <li>接收函数的返回值</li>
+  <li>恢复现场，从断点处执行</li>
+</ol>
+
+<h3 id="参数传递">参数传递</h3>
+
+<ul>
+  <li>实参与形参具有不同的存储单元，实参与形参变量的数据传递是“值传递”</li>
+  <li>函数调用时，系统给形参在函数的stack上分配空间，并将实参的值传递给形参</li>
+  <li>数组名做函数参数</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">change</span><span class="p">(</span><span class="kt">int</span> <span class="n">a</span><span class="p">[]){</span>
+	<span class="c1">//...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<ul>
+  <li>可变参数</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdarg.h&gt;  //包含头文件
+</span><span class="kt">int</span> <span class="nf">sum</span><span class="p">(</span><span class="kt">int</span> <span class="n">num</span><span class="p">,</span> <span class="p">...</span> <span class="p">){</span>
+    <span class="kt">va_list</span> <span class="n">arg_list</span><span class="p">;</span>
+    <span class="n">va_start</span><span class="p">(</span><span class="n">arg_list</span><span class="p">,</span><span class="n">num</span><span class="p">);</span><span class="c1">//最后一个参数提示类型</span>
+    <span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">num</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="n">sum</span> <span class="o">+=</span> <span class="n">va_arg</span><span class="p">(</span><span class="n">arg_list</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span> <span class="c1">//根据type来提取参数</span>
+    <span class="p">}</span>
+    <span class="n">va_end</span><span class="p">(</span><span class="n">arg_list</span><span class="p">);</span> <span class="c1">//成对出现</span>
+    <span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">fmt</span><span class="p">,</span> <span class="p">...)</span>
+<span class="p">{</span>
+    <span class="kt">va_list</span> <span class="n">ap</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">d</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">c</span><span class="p">,</span> <span class="o">*</span><span class="n">s</span><span class="p">;</span>
+    
+    <span class="n">va_start</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="n">fmt</span><span class="p">);</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">*</span><span class="n">fmt</span><span class="p">)</span> <span class="c1">//注意参数顺序要和`fmt`的匹配规则一致</span>
+        <span class="k">switch</span> <span class="p">(</span><span class="o">*</span><span class="n">fmt</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">case</span> <span class="sc">'s'</span><span class="p">:</span>              <span class="cm">/* string */</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">va_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="p">);</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">"string %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">s</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="sc">'d'</span><span class="p">:</span>              <span class="cm">/* int */</span>
+                <span class="n">d</span> <span class="o">=</span> <span class="n">va_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">"int %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">d</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">case</span> <span class="sc">'c'</span><span class="p">:</span>              <span class="cm">/* char */</span>
+                <span class="cm">/* need a cast here since va_arg only
+                 takes fully promoted types */</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="p">)</span> <span class="n">va_arg</span><span class="p">(</span><span class="n">ap</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+                <span class="n">printf</span><span class="p">(</span><span class="s">"char %c</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">c</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="n">va_end</span><span class="p">(</span><span class="n">ap</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"sum :%d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="n">sum</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">));</span>
+	<span class="n">foo</span><span class="p">(</span><span class="s">"%s,%d,%c"</span><span class="p">,</span><span class="s">"hello"</span><span class="p">,</span><span class="mi">123</span><span class="p">,</span><span class="sc">'x'</span><span class="p">);</span> 
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="递归">递归</h3>
+
+<ul>
+  <li>递归调用跟函数的嵌套调用没有区别，开辟新的空间</li>
+  <li>用递归解决具有递推关系的问题
+    <ul>
+      <li>关注点放在求解目标上</li>
+      <li>找到第<code class="highlighter-rouge">n</code>次和<code class="highlighter-rouge">n-1</code>次之间的关系</li>
+      <li>确定第一次的返回结果</li>
+    </ul>
+  </li>
+  <li>递归用来描述重复性的动作，代替循环
+    <ul>
+      <li>连续发生的动作是什么 -&gt; 确定递归函数，入参</li>
+      <li>和前一次动作之间的关系 -&gt; 通项公式</li>
+      <li>边界条件是什么 -&gt; 递归终止的边界</li>
+    </ul>
+  </li>
+  <li>进行”自动分析“
+    <ul>
+      <li>先假设有一个函数能给出答案</li>
+      <li>在利用这个函数的前提下，分析如何解决问题</li>
+      <li>搞清楚最简单的情况下答案是什么</li>
+    </ul>
+  </li>
+  <li>常见的递归问题
+    <ul>
+      <li>打印二进制</li>
+    </ul>
+
+    <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kt">void</span> <span class="nf">convert</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">){</span>
+      <span class="k">if</span><span class="p">((</span><span class="n">x</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">){</span>
+          <span class="n">convert</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">2</span><span class="p">);</span>
+          <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">x</span><span class="o">%</span><span class="mi">2</span><span class="p">;</span>
+      <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+      <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">x</span><span class="p">;</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+</code></pre></div>    </div>
+
+    <ul>
+      <li>汉诺塔问题</li>
+    </ul>
+
+    <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="cm">/*两种解法：
+  1. 可以先枚举—&gt;递推-&gt;得到通项公式
+  2. 简化问题:
+  (1)移动2个 = 两次移动1个的次数 + 移动一次底座
+  (2)移动3个 = 两次移动2个的次数 + 移动一次底座
+  (3)移动n个 = 两次移动(n-1)个的次数 + 移动一次底座
+  */</span>
+  <span class="kt">int</span>  <span class="nf">hanno</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span>
+  <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">){</span>
+          <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="mi">2</span><span class="o">*</span><span class="n">hanno</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>	
+  <span class="p">}</span>
+</code></pre></div>    </div>
+
+    <ul>
+      <li>逆波兰表达式</li>
+    </ul>
+
+    <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="cm">/*
+  逆波兰表达式是一种把运算符前置的算术表达式
+  如：2+3 的逆波兰表示法为 + 2 3 
+  如：(2+3)*4 的逆波兰表示法为 x + 2 3 4
+  输入：x + 11.0 12.0 + 24.0 35.0
+  输出：1357.0
+  */</span>
+	
+  <span class="c1">//伪代码</span>
+  <span class="kt">void</span> <span class="nf">reverse</span> <span class="p">(</span><span class="n">deque</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">s</span><span class="p">){</span>
+      <span class="n">string</span> <span class="n">token</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+      <span class="n">s</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">token</span> <span class="o">==</span> <span class="s">"+"</span><span class="p">)</span> 
+      <span class="p">{</span>
+          <span class="k">return</span> <span class="n">notation</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">+</span> <span class="n">notation</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">token</span> <span class="o">==</span> <span class="s">"-"</span><span class="p">)</span>
+      <span class="p">{</span>
+          <span class="k">return</span> <span class="n">notation</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">-</span> <span class="n">notation</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">token</span> <span class="o">==</span> <span class="s">"x"</span><span class="p">)</span>
+      <span class="p">{</span>
+          <span class="k">return</span> <span class="n">notation</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="n">notation</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">token</span> <span class="o">==</span> <span class="s">"/"</span><span class="p">)</span>
+      <span class="p">{</span>
+          <span class="k">return</span> <span class="n">notation</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">/</span> <span class="n">notation</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">else</span>
+      <span class="p">{</span>
+          <span class="k">return</span> <span class="n">stof</span><span class="p">(</span><span class="n">token</span><span class="p">);</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="inline函数">inline函数</h3>
+
+<p>如果某个函数逻辑简单又被频繁调用，则可以把它声明为内联函数，减少函数栈空间的频繁申请和销毁。编译器在处理内联函数时，会直接将函数体在调用函数处展开</p>
+
+<h2 id="指针">指针</h2>
+
+<h3 id="指针与指针变量">指针与指针变量</h3>
+
+<ul>
+  <li>某个变量的地址称为”指向该变量的指针”，注意:<strong>“地址” == “指针”</strong>
+    <ul>
+      <li><code class="highlighter-rouge">0x0012ff78</code>这个地址就是它指向变量的指针</li>
+      <li>例如，<code class="highlighter-rouge">http://www.nasa.gov/assets/images/content/166502.jpg</code>是一幅图片的指针</li>
+    </ul>
+  </li>
+  <li>
+    <p>存放地址的变量称为<strong>指针变量</strong></p>
+
+    <ul>
+      <li>
+        <p>指针变量也有自己的地址</p>
+      </li>
+      <li>定义:<code class="highlighter-rouge">int *pointer</code>
+        <ul>
+          <li><code class="highlighter-rouge">pointer</code>是变量名</li>
+          <li><code class="highlighter-rouge">*</code>代表变量的类型是指针</li>
+          <li><code class="highlighter-rouge">int</code>表示指针变量的基类型，即指针变量指向变量的类型</li>
+        </ul>
+      </li>
+      <li>赋值，表达式:<code class="highlighter-rouge">&amp;E</code>，取变量<code class="highlighter-rouge">E</code>的地址</li>
+    </ul>
+
+    <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kt">int</span> <span class="o">*</span><span class="n">pointer</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">c</span><span class="o">=</span><span class="mi">100</span><span class="p">;</span>
+  <span class="n">pointer</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">c</span><span class="p">;</span>
+</code></pre></div>    </div>
+    <ul>
+      <li>访问，表达式：<code class="highlighter-rouge">*E</code>，如果<code class="highlighter-rouge">E</code>是指针，返回<code class="highlighter-rouge">E</code>所指向的内容</li>
+    </ul>
+
+    <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kt">int</span> <span class="n">d</span> <span class="o">=</span> <span class="o">*</span><span class="n">pointer</span><span class="p">;</span>
+  <span class="o">*</span><span class="n">pointer</span> <span class="o">=</span> <span class="mi">49</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>例子</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+</span><span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+
+    <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">18</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="n">pointer</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">count</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">pointer</span> <span class="o">=</span> <span class="mi">58</span><span class="p">;</span>
+    <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">count</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="c1">//58</span>
+    <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">pointer</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="c1">// 0x7ffee67631d8</span>
+    <span class="n">cout</span><span class="o">&lt;&lt;&amp;</span><span class="n">count</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="c1">// 0x7ffee67631d8</span>
+    <span class="n">cout</span><span class="o">&lt;&lt;*</span><span class="n">pointer</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="c1">// 58</span>
+    <span class="n">cout</span><span class="o">&lt;&lt;&amp;</span><span class="n">pointer</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="c1">//0x7ffee67631d0</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="highlighter-rouge">&amp;</code>和<code class="highlighter-rouge">*</code>的优先级
+    <ul>
+      <li><code class="highlighter-rouge">*&amp;a = *(&amp;)a</code></li>
+      <li><code class="highlighter-rouge">&amp;*a = &amp;(*)a</code></li>
+      <li><code class="highlighter-rouge">(*a)++ != *(a++)</code></li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/2007/05/priority.png" alt="" /></p>
+
+<h3 id="数组与指针">数组与指针</h3>
+
+<ul>
+  <li>数组名代表数组元素的首地址
+    <ul>
+      <li>数组名相当于指向数组第一个元素的指针</li>
+      <li>对数组名取地址<code class="highlighter-rouge">&amp;a</code>的值等同于数组第一个元素的地址<code class="highlighter-rouge">a</code>，但是含义不同
+        <ul>
+          <li>返回基类型为数组的指针，意思是，当<code class="highlighter-rouge">&amp;a+1</code>是，指针跨过的是整个数组长度和<code class="highlighter-rouge">a+1</code>不同</li>
+        </ul>
+      </li>
+    </ul>
+
+    <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">};</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">a</span><span class="o">&lt;&lt;</span><span class="n">end</span><span class="p">;</span> 			<span class="c1">//0x0028f7c4</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;&amp;</span><span class="n">a</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>			<span class="c1">//0x0028f7c4</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">a</span><span class="o">+</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>			<span class="c1">//0x0028f7c4 + 4  = 0x0028f7c8</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;&amp;</span><span class="n">a</span><span class="o">+</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>		<span class="c1">//0x0028f7c4 + 16 = 0x0028f7d4 </span>
+  <span class="n">cout</span><span class="o">&lt;&lt;*</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>		<span class="c1">//0x0028f7c4</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;*</span><span class="p">(</span><span class="o">&amp;</span><span class="n">a</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>	<span class="c1">//0x0028f7c8</span>
+</code></pre></div>    </div>
+  </li>
+  <li>指向数组的指针：
+    <ul>
+      <li><code class="highlighter-rouge">int a[10]; int *p; p=a;</code>p为指向数组的指针</li>
+      <li><code class="highlighter-rouge">char a[10]; char* p; p = a;</code>p为指向字符串的指针</li>
+    </ul>
+  </li>
+  <li>数组名做函数参数
+    <ul>
+      <li>C++编译器将形参数组名作为指针变量来处理</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">sum</span><span class="p">(</span><span class="kt">int</span> <span class="n">array</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">n</span><span class="p">){</span>
+	<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+		<span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">++</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+	<span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">=</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">};</span>
+	<span class="n">sum</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="mi">10</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>二维数组
+    <ul>
+      <li>理解二维数组</li>
+    </ul>
+
+    <p><img src="/assets/images/2007/05/2-dimension-array-1.png" alt="" /></p>
+
+    <ul>
+      <li>索引二维数组</li>
+    </ul>
+
+    <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">},</span> <span class="p">{</span><span class="mi">9</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">15</span><span class="p">},</span> <span class="p">{</span><span class="mi">17</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span><span class="mi">21</span><span class="p">,</span><span class="mi">23</span><span class="p">}</span> <span class="p">};</span>
+  <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">)[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+      <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="mi">4</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+          <span class="n">cout</span><span class="o">&lt;&lt;*</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="n">j</span><span class="p">)</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> 
+          <span class="c1">// cout&lt;&lt;p[i][j]&lt;&lt;endl;</span>
+      <span class="p">}</span>
+  <span class="p">}</span> 
+</code></pre></div>    </div>
+
+    <p>假设有数组<code class="highlighter-rouge">a</code>，是一个三行四列的数组，如何使用指针来索引？</p>
+
+    <ol>
+      <li>从<code class="highlighter-rouge">p=a</code>开始
+        <ul>
+          <li><code class="highlighter-rouge">a</code>相当于指向<code class="highlighter-rouge">a[3][4]</code>第一个元素的指针，所谓<strong>第一个元素</strong>即是第一个子数组<code class="highlighter-rouge">{1,3,5,7}</code>，所以<code class="highlighter-rouge">a</code>是一个第一个组数组的首地址</li>
+          <li>指针<code class="highlighter-rouge">p</code>的基类型应该与<code class="highlighter-rouge">a</code>相同，即“包含四个整形元素的一维数组”
+            <ul>
+              <li>定义：<code class="highlighter-rouge">int (*p)[4]</code>，<code class="highlighter-rouge">p</code>指向<code class="highlighter-rouge">a</code>的第一个子数组</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>分析<code class="highlighter-rouge">*(*(p+i)+j)</code>
+        <ul>
+          <li><code class="highlighter-rouge">p+i</code>是第<code class="highlighter-rouge">i</code>个子数组的地址，等价于<code class="highlighter-rouge">&amp;a[i]</code></li>
+          <li><code class="highlighter-rouge">*(p+i)</code>等价于<code class="highlighter-rouge">a[i]</code></li>
+          <li><code class="highlighter-rouge">*(p+i)+j</code>等价于<code class="highlighter-rouge">a[i]+j</code>等价于<code class="highlighter-rouge">&amp;a[i][j]</code></li>
+          <li><code class="highlighter-rouge">*(*(p+i)+j)</code>等价于<code class="highlighter-rouge">a[i][j]</code>等价于<code class="highlighter-rouge">p[i][j]</code></li>
+        </ul>
+      </li>
+    </ol>
+  </li>
+  <li>三条规律
+    <ul>
+      <li>数组名相当于指向数组第一个元素的指针</li>
+      <li><code class="highlighter-rouge">&amp;E</code>相当于把<code class="highlighter-rouge">E</code>的管辖范围升了一级</li>
+      <li><code class="highlighter-rouge">*E</code>相当于把<code class="highlighter-rouge">E</code>的管辖范围降了一级</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="指针与函数">指针与函数</h3>
+
+<h4 id="const指针">const指针</h4>
+
+<ul>
+  <li>定义：<code class="highlighter-rouge">const int* p</code>;
+    <ul>
+      <li><code class="highlighter-rouge">const</code>的意思是指向<strong>符号常量</strong>的指针，即指针所指向的内容为常量</li>
+      <li>定义<code class="highlighter-rouge">const</code>指针时，<strong>需要直接初始化其值</strong></li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+	<span class="k">const</span> <span class="kt">int</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">78</span><span class="p">;</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">28</span><span class="p">;</span> <span class="kt">int</span> <span class="n">c</span> <span class="o">=</span> <span class="mi">18</span><span class="p">;</span>
+	<span class="k">const</span> <span class="kt">int</span> <span class="o">*</span><span class="n">pi</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">a</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="o">*</span><span class="n">p2</span> <span class="o">=</span> <span class="n">pi</span><span class="p">;</span> <span class="c1">//error，不能将const指针赋值给非const指针</span>
+	<span class="kt">int</span> <span class="n">p2</span> <span class="o">=</span> <span class="p">(</span><span class="kt">int</span><span class="o">*</span> <span class="p">)</span><span class="n">pi</span><span class="p">;</span> <span class="c1">//可以将const指针强制类型转化为非const指针</span>
+	<span class="o">*</span><span class="n">pi</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span> <span class="c1">//error,*p不能被赋值</span>
+	<span class="n">pi</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">b</span><span class="p">;</span> <span class="c1">//可以，pi本身的值可以修改</span>
+	<span class="o">*</span><span class="n">pi</span> <span class="o">=</span> <span class="mi">68</span><span class="p">;</span> <span class="c1">//error,*p不能被赋值</span>
+	<span class="n">pi</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">c</span><span class="p">;</span> <span class="o">*</span><span class="n">pi</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span> <span class="c1">//error,*p不能被赋值</span>
+
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>数组名函数参数时，为了防止被函数修改，可以加上<strong>const</strong>限定符</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">sum</span><span class="p">(</span><span class="k">const</span> <span class="kt">int</span> <span class="n">array</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">n</span><span class="p">){</span>
+	<span class="c1">//不能对array进行修改</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>指针做函数返回值</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="o">*</span><span class="nf">get</span><span class="p">(</span><span class="kt">int</span> <span class="n">arr</span><span class="p">[][</span><span class="mi">4</span><span class="p">],</span> <span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="kt">int</span> <span class="n">m</span><span class="p">){</span>
+	<span class="kt">int</span> <span class="o">*</span><span class="n">pt</span><span class="p">;</span>
+	<span class="n">pt</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">arr</span> <span class="o">+</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+	<span class="k">return</span> <span class="n">pt</span><span class="p">;</span> <span class="c1">//返回二维数组中arr[n][m]的地址</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+	<span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="mi">4</span><span class="p">]</span><span class="o">=</span><span class="p">{</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">},{</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">},{</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">},{</span><span class="mi">13</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">16</span><span class="p">}</span> <span class="p">};</span>
+	<span class="kt">int</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span>
+	<span class="n">p</span> <span class="o">=</span> <span class="n">get</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;*</span><span class="n">p</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>函数指针
+    <ul>
+      <li>格式：<code class="highlighter-rouge">类型名(*指针变量名*)(参数类型1，参数类型2，...)</code>
+        <ul>
+          <li><code class="highlighter-rouge">int (*pf)(int a, int b)</code></li>
+        </ul>
+      </li>
+      <li>使用：
+        <ul>
+          <li>将函数指针做参数传递，需要<code class="highlighter-rouge">typedef</code>一个类型</li>
+          <li>函数指针可以实现多态</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="struct">Struct</h2>
+
+<h3 id="定义与赋值">定义与赋值</h3>
+
+<ul>
+  <li>
+    <p>定义结构体:
+ 	- 语法：<code class="highlighter-rouge">struct STUDENT {...};</code> , STUDENT<code class="highlighter-rouge">表示结构体类型，类似</code>int,char`等</p>
+  </li>
+  <li>使用结构体定义变量
+    <ul>
+      <li><code class="highlighter-rouge">struct</code> + 结构体类型名 + 变量名:
+        <ul>
+          <li><code class="highlighter-rouge">struct STUDENT stu1, stu2;</code></li>
+          <li>也可以省略<code class="highlighter-rouge">struct</code>关键字 <code class="highlighter-rouge">STUDENT mike = {123, "mike"};</code></li>
+        </ul>
+      </li>
+      <li>使用<code class="highlighter-rouge">typedef</code>:
+        <ul>
+          <li><code class="highlighter-rouge">typedef struct _STUDENT{...}STUDENT;</code>
+            <ul>
+              <li>其中<code class="highlighter-rouge">_STUDENT</code>叫做struct tag，可以省略</li>
+              <li>使用:<code class="highlighter-rouge">STUDENT stu1,stu2</code></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>在声明类型的同时定义变量:</li>
+    </ul>
+
+    <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">struct</span> <span class="n">Person</span> <span class="p">{</span>
+      <span class="kt">char</span> <span class="o">*</span><span class="n">name</span><span class="p">;</span>
+      <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
+      <span class="kt">int</span> <span class="n">height</span><span class="p">;</span>
+      <span class="kt">int</span> <span class="n">weight</span><span class="p">;</span>
+  <span class="p">}</span><span class="n">xt1</span><span class="p">,</span><span class="n">xt2</span><span class="p">;</span>
+</code></pre></div>    </div>
+  </li>
+  <li>结构体之间的拷贝
+    <ul>
+      <li>结构体做函数参数，赋值会产生内存拷贝</li>
+      <li>结构体做函数返回值，也会产生内存拷贝</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">student</span> <span class="n">x1</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">};</span>
+<span class="k">struct</span> <span class="n">student</span> <span class="n">x2</span><span class="p">;</span>
+<span class="n">x2</span> <span class="o">=</span> <span class="n">x1</span><span class="p">;</span>
+<span class="c1">//x2中的值相当于x1中的值的copy，同理，结构体变量做函数参数和返回值也是copy的</span>
+</code></pre></div></div>
+
+<h3 id="结构体的大小">结构体的大小</h3>
+
+<ul>
+  <li>结构体的大小涉及到内存对齐</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+</span><span class="n">using</span> <span class="n">namespace</span> <span class="n">std</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="n">P</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">num</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">name</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="k">union</span> <span class="n">T</span><span class="p">{</span>
+    <span class="kt">int</span> <span class="n">num</span><span class="p">;</span>
+    <span class="kt">char</span> <span class="n">name</span><span class="p">[</span><span class="mi">11</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"size of int: %lu</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span> <span class="c1">//4</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"size of struct: %lu</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">P</span><span class="p">));</span> <span class="c1">// 16</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"size of uion: %lu</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="k">sizeof</span><span class="p">(</span><span class="n">T</span><span class="p">));</span> <span class="c1">//12</span>
+    
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li><code class="highlighter-rouge">union</code>的大小也涉及内存对齐</li>
+</ul>
+
+<blockquote>
+  <p>In a union, at most one of the data members can be active at any time, that is, the value of at most one of the data members can be stored in a union at any time. [Note: one special guarantee is made in order to simplify the use of unions: If a POD-union contains several POD-structs that share a common initial sequence (9.2), and if an object of this POD-union type contains one of the POD-structs, it is permitted to inspect the common initial sequence of any of POD-struct members; see 9.2. ] The size of a union is sufficient to contain the largest of its data members. Each data member is allocated as if it were the sole member of a struct.</p>
+</blockquote>
+
+<h3 id="结构体指针与数组">结构体指针与数组</h3>
+
+<ul>
+  <li>结构体指针</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">Person</span> <span class="p">{</span>
+	<span class="kt">int</span> <span class="n">id_num</span><span class="p">;</span>
+	<span class="kt">char</span> <span class="n">name</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span>
+<span class="p">};</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+	<span class="n">Person</span> <span class="n">mike</span> <span class="o">=</span> <span class="p">{</span><span class="mi">123</span><span class="p">,{</span><span class="sc">'J'</span><span class="p">,</span><span class="sc">'o'</span><span class="p">}};</span>
+	<span class="n">Person</span> <span class="o">*</span><span class="n">one</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">mike</span><span class="p">;</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;*</span><span class="p">(</span><span class="n">one</span><span class="p">).</span><span class="n">id_num</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">one</span><span class="o">-&gt;</span><span class="n">id_num</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>结构体数组
+    <ul>
+      <li>数组名相当于指向数组第一个元素的指针</li>
+      <li>指向元素的之后怎++，则跨过一整个结构体</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="应用">应用</h3>
+
+<ul>
+  <li>链表：
+    <ul>
+      <li>链表头：指向第一个链表节点的指针</li>
+      <li>链表节点：链表中的每一个元素，包括：
+        <ul>
+          <li>当前节点的数据</li>
+          <li>下一个节点的地址</li>
+        </ul>
+      </li>
+      <li>链表尾部：不在指向其他节点，其下一个节点的指针为NULL，表示链表结束</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">student</span><span class="p">{</span>
+    <span class="kt">int</span> <span class="n">id</span><span class="p">;</span>
+    <span class="n">student</span><span class="o">*</span> <span class="n">next</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li>《C程序设计》</li>
+</ul>
+:ET

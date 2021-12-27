@@ -1,0 +1,258 @@
+I"¼6<h3 id="the-four-stages-of-compilation">The Four Stages of Compilation</h3>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-4-1.png" /></p>
+
+<h3 id="source-code-to-assembly-code">Source Code to Assembly Code</h3>
+
+<p>Assembly language provies a convenient symbolic representation of machine code.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int64_t</span> <span class="nf">fib</span><span class="p">(</span><span class="kt">int64_t</span> <span class="n">n</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">n</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">){</span>
+        <span class="k">return</span> <span class="n">n</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>We can do <code class="highlighter-rouge">clang -03 fib.c -S</code> to generate the assembly code, which gives the code like this</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-4-2.png" /></p>
+
+<p>From here, we assemble the assembly code to produce the binary.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$clang</span> fib.s <span class="nt">-o</span> <span class="nt">-fib</span>.o
+</code></pre></div></div>
+<p>Binary executable produced with debug symbols (compiled with <code class="highlighter-rouge">-g</code>) can be dumped using</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$objcdump</span> <span class="nt">-S</span> fib
+</code></pre></div></div>
+
+<p>This will produce the disassembly of the machine code, which is more readable.</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-4-3.png" /></p>
+
+<h3 id="why-assembly">Why Assembly?</h3>
+
+<p>Why botter looking at the assembly of your program?</p>
+
+<ul>
+  <li>The assembly reveals what the compiler did and did not do</li>
+  <li>Bugs can arise at a low level. For example, a bug in the code might only have an effect when compiling with <code class="highlighter-rouge">-03</code>. Further more, sometimes, the compiler is the source of the bug!</li>
+  <li>You can modify the assembly by hand, when all else fails.</li>
+  <li>Reverse engineering: You can decipher what a program does when you only have access to its binary.</li>
+</ul>
+
+<h2 id="x86-64-isa-primer">X86-64 ISA Primer</h2>
+
+<p>The instruction set architecture (ISA) specifies the syntax and semenatics of assemebly, which includes Registers, Instructions, Data types and Memory addressing modes.</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-4-4.png" /></p>
+
+<p>There are a bunch of x86-64 registers</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-4-5.png" /></p>
+
+<ul>
+  <li>The Flags register keeps tracking of whether there is a overflow. Or whether the last operation returns 0, etc.</li>
+  <li>The instruction pointer register</li>
+  <li>The SSE and AVX registers are recently added.These are vector register for SIMD instructions.</li>
+</ul>
+
+<p>The x86-64 general-purpose registers are <strong>aliased</strong>: each has multiple names, which refer to overlapping bytes in the register.</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-4-6.png" /></p>
+
+<p>Here are all the general purpose regiesters</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-4-7.png" /></p>
+
+<p>Some of them are still useful for a particular purpose, such as <code class="highlighter-rouge">rsp</code> is used as stack pointer, and <code class="highlighter-rouge">rbp</code> is used to point to the base of the frame.</p>
+
+<p>The x86-64 Instruction Format is</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;opcode&gt; &lt;operand_list&gt;
+</code></pre></div></div>
+
+<ul>
+  <li><code class="highlighter-rouge">&lt;opcode&gt;</code> is a short mnemonic identifying the type of instruction</li>
+  <li><code class="highlighter-rouge">&lt;operand_list&gt;</code> is 0,1,2 or (rarely) 3 operands, seperated by commas.</li>
+  <li>Typically, all oeprands are sources, and one operand might also be the destiniation.</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#example</span>
+addl %edi, %ecx
+</code></pre></div></div>
+<p>What does <code class="highlighter-rouge">&lt;op&gt; A, B</code> mean? There are two syntax standards namely AT&amp;T Syntax and Intel Syntax. In the AT&amp;T syntax, the second operand is the destination, whereas in the Intel syntax, the first operand is the destination.</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-4-8.png" /></p>
+
+<p>The common x86-64 Opcodes</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-4-9.png" /></p>
+
+<p>Note that, the substraction operation <code class="highlighter-rouge">subq %rax, %rbx</code> computes</p>
+
+<p>Opcodes might be augmented with a suffix that describes the data type of the operation or a condition code.</p>
+
+<ul>
+  <li>An opcode for data movement, arithmetic or logic uses a single-char suffix to inidicate the data type</li>
+  <li>If the suffix is missing, it can usually be inferred from the sizes of the operand registers.</li>
+</ul>
+
+<p>Condiional jumps and conditional moves use a one or two char suffix to indicate the condition codd</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cmpq</span> <span class="err">$</span><span class="mi">4096</span><span class="p">,</span> <span class="o">%</span><span class="n">r14</span>
+<span class="n">jne</span> <span class="p">.</span><span class="n">LBB1_1</span>
+</code></pre></div></div>
+
+<p>In the example above, <code class="highlighter-rouge">ne</code> means the jump should only be taken if the argumetns of the previous comparision are not equal. The previous comparision result is stored in the RFLAG register.</p>
+
+<p>Arithmetic and logic operations update <strong>status flags</strong> in the RFLAGS register. Common RFLAGS register meanings are listed below</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-4-10.png" /></p>
+
+<p>Let take a look at an example</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">decq</span> <span class="o">%</span><span class="n">rbx</span> <span class="c1">// Decremetn %rbx, and set ZF if the result is 0.</span>
+<span class="n">jne</span> <span class="p">.</span><span class="n">LBB7_1</span> <span class="c1">// Jump to the label .LBB7_1 if ZF is not set</span>
+</code></pre></div></div>
+
+<p><strong>Condition Codes</strong></p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-4-11.png" /></p>
+
+<p><strong>x86-64 Direct Addressing Modes</strong></p>
+
+<p>The operands of an instruction specify values using a variety of addressing modes. At most one operand may specify a memory address.</p>
+
+<p>Direct addressing modes</p>
+
+<ul>
+  <li>Immediate: Use the specified value.
+    <ul>
+      <li><code class="highlighter-rouge">movq $172, %rdi</code></li>
+    </ul>
+  </li>
+  <li>Register: Use the value in the speicified register
+    <ul>
+      <li><code class="highlighter-rouge">movq %rcx, %rdi</code></li>
+    </ul>
+  </li>
+  <li>Direct memory: Ues the value at the specified memory address
+    <ul>
+      <li><code class="highlighter-rouge">movq 0x172, %rdi</code></li>
+    </ul>
+  </li>
+</ul>
+
+<p>Indirect Addressing modes</p>
+
+<p>The x86-64 ISA also supports indirect addressing: specifying a memory address by some computation</p>
+
+<ul>
+  <li>Register Indirect: The address is stored in the specified register
+    <ul>
+      <li><code class="highlighter-rouge">movq (%rax), %rdi</code></li>
+    </ul>
+  </li>
+  <li>Register indexed: The address is a constant offset of the value in the specific register
+    <ul>
+      <li><code class="highlighter-rouge">movq 172(%rax), %rdi</code></li>
+    </ul>
+  </li>
+  <li>Instruction-pointer relative: The address is indexed relative to <code class="highlighter-rouge">%rip</code>
+    <ul>
+      <li><code class="highlighter-rouge">movq 172(%rip), %rdi</code></li>
+    </ul>
+  </li>
+  <li>Base Indexed Scale Displacement: The most general form of indirect addressing supported by x86-64
+    <ul>
+      <li><code class="highlighter-rouge">movq 172(%rdi, %rdx, 8), %rax</code></li>
+    </ul>
+  </li>
+</ul>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-4-12.png" /></p>
+
+<p><strong>Jump Instructions</strong></p>
+
+<p>The x86-64 jump instructions, <code class="highlighter-rouge">jmp</code> and <code class="highlighter-rouge">j&lt;condition&gt;</code>, take a <code class="highlighter-rouge">label</code> as their operand, which identifies a location in the code.</p>
+
+<ul>
+  <li>Lables can be symbols, exact addresses, or relative addresses.</li>
+  <li>An <strong>indirect jump</strong> takes as its operand an indirect address.
+    <ul>
+      <li><code class="highlighter-rouge">jmp *%eax</code></li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>// example from fib.s
+jge LBB0_1
+...
+LBB0_1:
+    leaq <span class="nt">-1</span><span class="o">(</span>%rbx<span class="o">)</span>, %rdi
+
+// example from objdump fib
+jge 5 &lt;_fib + 0x15&gt;
+...
+15:
+  leaq <span class="nt">-1</span><span class="o">(</span>%rbx<span class="o">)</span>, %rdi
+</code></pre></div></div>
+
+<h3 id="assembly-idioms">Assembly Idioms</h3>
+
+<p>The XOR opcode <code class="highlighter-rouge">xor A, B</code> computes the bitwise XOR of <code class="highlighter-rouge">A</code> and <code class="highlighter-rouge">B</code>. For example</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xor %rax, %rax
+<span class="c"># zeors the register</span>
+</code></pre></div></div>
+<p>The test opcode <code class="highlighter-rouge">test A, B,</code> computes the bitwise AND of <code class="highlighter-rouge">A</code> and <code class="highlighter-rouge">B</code> and discard the result, preserving the RFLAGS register. For example, the code snippets below checks to see whether the register is 0.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">test</span> %rcx, %rcx
+je 400c0a &lt;mm+0xad&gt;
+
+<span class="nb">test</span> %rax, %rax
+cmovne %rax, %r8
+</code></pre></div></div>
+
+<p>The x86-64 ISA includes several no-op (no operation) instructions, including <code class="highlighter-rouge">nop</code>, <code class="highlighter-rouge">nop A</code> (no-op with an argument), and <code class="highlighter-rouge">data16.</code></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>data16 data16 data16 nopw %cs:0x0<span class="o">(</span>%rax, %rax,1<span class="o">)</span>
+<span class="c"># the instruction does nothing!</span>
+</code></pre></div></div>
+<p>Why would the compiler generate assembly with these idioms? Mainly to optimize instruction memory (e.g., code size, alignment)</p>
+
+<h3 id="floating-point-instruction-sets">Floating-Point Instruction Sets</h3>
+
+<p>Modern x86-64 architectures support scalar (i.e., non-vector) floating-point arithmetic via a couple of different instruction sets</p>
+
+<blockquote>
+  <p>The original 8086 did not have a floating-point unit. Floating point was done in software. And then they made a companion chip that would do floating point and later was integrated to the CPU.</p>
+</blockquote>
+
+<ul>
+  <li>The SSE and AVX Instructions support single-precision and double precision scalar floating-point arithmetic, i.e., <code class="highlighter-rouge">float</code> and <code class="highlighter-rouge">double</code></li>
+  <li>The x87 instructions support single-, double-, and extended-precision scalar floating-point arithmetic, i.e., <code class="highlighter-rouge">float</code>, <code class="highlighter-rouge">double</code>, and <code class="highlighter-rouge">long double</code>.</li>
+</ul>
+
+<h3 id="vector-instructions">Vector Instructions</h3>
+
+<p>Vector instructions generally operate in an elementwise fashion:</p>
+
+<ul>
+  <li>The <code class="highlighter-rouge">i</code>th element of one vector register can only take part in operations with the <code class="highlighter-rouge">i</code>th element of the other vector registers</li>
+  <li>All lanes perfom exactly the same operation on their respective elements of the vector</li>
+  <li>Depending on the architecture, vector memory operands might need to be aligned, meaning their address must be multiple of the vector width.</li>
+  <li>Some architectures support cross-lane operations, such as inserting or extracting subsets of vector elements, permuting the vector, scatter, or gather.</li>
+</ul>
+
+<p>Modern x86-64 architectures support multiple vector-instruction sets</p>
+
+<ul>
+  <li>Modern SSE instruction sets support vector operations aon integer, single-precision, and double-precision floating-point values.</li>
+  <li>The AVX instructions support vector operations on single-precision, and double-precision floating point values</li>
+  <li>The AVX2 instructions add integer-vector operations to the AVX instruction sets</li>
+  <li>The AVX-512 instructions increase the register length to 512 bits and priovide new vector operations, including popcound.</li>
+</ul>
+
+:ET

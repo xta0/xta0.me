@@ -1,0 +1,117 @@
+I"~<h2 id="算法分析">算法分析</h2>
+
+<p>所谓计算机算法，是信息处理的一种手段，它可以借助某种工具，按照一定规则，以明确而机械的形式进行</p>
+
+<h3 id="算法特性">算法特性</h3>
+
+<ul>
+  <li>通用性
+    <ul>
+      <li>对参数化输入进行问题求解</li>
+      <li>保证计算结果的正确性</li>
+    </ul>
+  </li>
+  <li>有效性
+    <ul>
+      <li>算法是有限条指令组成的指令序列</li>
+      <li>即由一系列具体步骤组成</li>
+    </ul>
+  </li>
+  <li>确定性
+    <ul>
+      <li>算法描述中的下一步应该执行的步骤必须明确</li>
+    </ul>
+  </li>
+  <li>有穷性
+    <ul>
+      <li>算法的执行必须在有限步内结束</li>
+      <li>算法不能含有死循环</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>算法A解问题P：
+
+1. 把问题P的任何实例作为算法A的输入
+2. 每部计算结果是确定的
+3. A能够在有限步得到计算记过
+4. 输出正确的解
+</code></pre></div></div>
+
+<h3 id="算法的伪码表示">算法的伪码表示</h3>
+
+<ul>
+  <li>基本符号</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>赋值语句：&lt;- / = 
+分支语句：if...then...[else...]
+循环语句：while, for, repeat until
+转向语句：goto
+输出语句：return
+调用：直接写过程的名字
+注释：//...
+</code></pre></div></div>
+
+<ul>
+  <li>求解最大公约数</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>//输入：非负整数m,n，其中m与n不全为0
+//输出：m与n的最大公约数
+
+Euclid(m,n){
+	while m&gt;0 do
+		r &lt;- n mod m
+		n &lt;- m
+		m &lt;- r
+	return n
+}
+</code></pre></div></div>
+
+<h3 id="复杂度分析的主要方法">复杂度分析的主要方法</h3>
+
+<ul>
+  <li>迭代： 级数求和</li>
+  <li>递归： 递归跟踪 + 递推方程</li>
+</ul>
+
+<h2 id="算法设计">算法设计</h2>
+
+<ul>
+  <li>建模
+    <ul>
+      <li>优化目标</li>
+      <li>约束条件</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="np-hard问题">NP-Hard问题</h3>
+
+<ul>
+  <li>类似问题数千个，大量存在与各个应用领域</li>
+  <li>至今没有找到有效算法
+    <ul>
+      <li>现有算法的运行时间是输入规模的指数或更高阶的函数</li>
+    </ul>
+  </li>
+  <li>至今没有人能证明对于这类问题不存在多项式时间的算法</li>
+  <li>从是否存在多项式时间算法的角度看，这些问题彼此是等价的。<mark>这些问题的难度处于有效计算的边界</mark></li>
+</ul>
+
+<h2 id="资料汇总">资料汇总</h2>
+
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=NcZ2cu7gc-A&amp;list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk">CS106B-Stanford-YouTube</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome">Algorithms-Stanford-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/suanfa-jichu">算法基础</a></li>
+  <li><a href="https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome">算法与数据结构-1-北大-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/gaoji-shuju-jiegou/home/welcome">算法与数据结构-2-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:TsinghuaX+30240184.1x+3T2017/course/">算法与数据结构-1-清华-EDX</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法与数据结构-2-清华-EDX</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms/home/welcome">算法设计与分析-1-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法设计与分析-2-北大-EDX</a></li>
+  <li><a href="https://github.com/lib-pku/libpku/tree/master/%E6%9A%91%E6%9C%9F%E8%AF%BE/acm-icpc%E6%9A%91%E6%9C%9F%E8%AF%BE">libpku</a></li>
+</ul>
+:ET

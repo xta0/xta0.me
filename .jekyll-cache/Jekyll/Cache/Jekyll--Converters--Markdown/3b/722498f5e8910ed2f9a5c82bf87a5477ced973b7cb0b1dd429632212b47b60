@@ -1,0 +1,277 @@
+I"q8<blockquote>
+  <p>Linode 系统版本为：Ubuntu 16.04.5 LTS</p>
+</blockquote>
+
+<h2 id="server基本配置">Server基本配置</h2>
+
+<ul>
+  <li>查看Ubuntu版本号：<code class="highlighter-rouge">cat /etc/issue</code></li>
+  <li>查看Ubuntu自带的package: <code class="highlighter-rouge">cat /etc/apt/sources.list</code></li>
+  <li>检查并更新package: <code class="highlighter-rouge">apt-get upgrade&amp;apt-get update</code></li>
+  <li>删除不需要的package: <code class="highlighter-rouge">sudo apt-get autoremove</code></li>
+  <li>设置hostname：<code class="highlighter-rouge">hostnamectl set-hostname example_hostname</code></li>
+  <li>host文件在<code class="highlighter-rouge">/etc/hosts</code>
+    <ul>
+      <li>关于host的命名: <a href="https://www.linode.com/docs/networking/dns/using-your-systems-hosts-file">Using Your System’s hosts File</a></li>
+    </ul>
+  </li>
+  <li><a href="https://packages.ubuntu.com/">Ubuntu package list</a></li>
+  <li>Install finger: <code class="highlighter-rouge">sudo apt install finger</code>，用户管理插件</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#查看当前users</span>
+xt@linode:~<span class="nv">$ </span>finger
+Login     Name       Tty      Idle  Login Time   Office     Office Phone
+xt        Xu Tao     pts/0          Aug  6 11:00 <span class="o">(</span>198.24.30.144<span class="o">)</span>
+<span class="c">#查看某个user</span>
+xt@linode:~<span class="nv">$ </span>finger xt
+Login: xt             			Name: Xu Tao
+Directory: /home/xt                 	Shell: /bin/bash
+On since Mon Aug  6 11:00 <span class="o">(</span>EDT<span class="o">)</span> on pts/0 from 198.24.30.144
+No mail.
+No Plan.
+</code></pre></div></div>
+<p>所有用户信息保存在<code class="highlighter-rouge">/etc/passwd</code>下面，格式为</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>username:password:UID:GID:UID info:home directory:command/shell
+</code></pre></div></div>
+
+<table>
+  <tbody>
+    <tr>
+      <td><strong>username</strong></td>
+      <td>the user’s login name</td>
+    </tr>
+    <tr>
+      <td><strong>password</strong></td>
+      <td>the password, will simply be an x if it’s encrypted</td>
+    </tr>
+    <tr>
+      <td><strong>user ID (UID)</strong></td>
+      <td>the user’s ID number in the system. 0 is root, 1-99 are for predefined users, and 100-999 are for other system accounts</td>
+    </tr>
+    <tr>
+      <td><strong>group ID (GID)</strong></td>
+      <td>Primary group ID, stored in /etc/group.</td>
+    </tr>
+    <tr>
+      <td><strong>user ID info</strong></td>
+      <td>Metadata about the user; phone, email, name, etc.</td>
+    </tr>
+    <tr>
+      <td><strong>home directory</strong></td>
+      <td>Where the user is sent upon login. Generally /home/</td>
+    </tr>
+    <tr>
+      <td><strong>command/shell</strong></td>
+      <td>The absolute path of a command or shell (usually /bin/bash). Does not have to be a shell though!</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="添加用户">添加用户</h3>
+
+<ul>
+  <li>在/home下创建用户bob: <code class="highlighter-rouge">%adduser bob</code></li>
+  <li>为bob赋予sudo权限: <code class="highlighter-rouge">%gpasswd -a bob sudo</code></li>
+  <li>查看哪些用户有sudo权限
+    <ul>
+      <li><code class="highlighter-rouge">%sudo cat /etc/sudoers</code></li>
+      <li><code class="highlighter-rouge">%sudo ls /etc/sudoers.d</code></li>
+    </ul>
+  </li>
+  <li>令用户密码过期： <code class="highlighter-rouge">%sudo passwd -e bob</code></li>
+  <li>退出server: <code class="highlighter-rouge">%exit</code></li>
+</ul>
+
+<h3 id="配置rsa秘钥">配置RSA秘钥</h3>
+
+<ul>
+  <li>用bob登录: <code class="highlighter-rouge">ssh bob@123.456.78.9</code></li>
+  <li>
+    <p>创建空的rsa key:</p>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">$cd</span> ~/
+  <span class="nv">$mkdir</span> .ssh
+  <span class="nv">$chmod</span> 700 .ssh<span class="sb">`</span>
+  <span class="c">#保存空的rsa key</span>
+  <span class="nv">$vim</span> .ssh/authorized_keys	
+</code></pre></div>    </div>
+  </li>
+  <li>上传本地RSA公钥:<code class="highlighter-rouge">%scp ./id_rsa bob@123.456.78.9:~/</code></li>
+  <li>替换authorized_keys:<code class="highlighter-rouge">%mv id_rsa.pub .ssh/authorized_keys</code></li>
+  <li>限制权限:<code class="highlighter-rouge">%chmod 644 .ssh/authorized_keys</code></li>
+  <li>重新用bob登录验证: <code class="highlighter-rouge">%ssh bob@123.456.78.9</code></li>
+  <li>验证成功后，关掉用户名密码登录
+    <ul>
+      <li><code class="highlighter-rouge">%sudo vim /etc/ssh/sshd_config</code></li>
+      <li>修改<code class="highlighter-rouge">PasswordAuthentication</code>为<code class="highlighter-rouge">NO</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="配置ssh">配置SSH</h3>
+
+<ul>
+  <li>修改ssh配置文件:<code class="highlighter-rouge">%sudo vim /etc/ssh/sshd_config</code></li>
+  <li>修改ssh默认端口22:<code class="highlighter-rouge">Port 445</code>，可选</li>
+  <li>禁止root登录:<code class="highlighter-rouge">PermitRootLogin no</code></li>
+  <li>更新ssh配置:<code class="highlighter-rouge">%sudo service ssh restart</code></li>
+  <li>重新登录: <code class="highlighter-rouge">ssh -p 445 bob@123.456.78.9</code></li>
+  <li>修改了ssh的登录端口后，scp命令也要加上端口号: <code class="highlighter-rouge">scp -P 445 a.zip bob@123.456.78.9:~/</code></li>
+</ul>
+
+<h3 id="配置firewall">配置Firewall</h3>
+
+<ul>
+  <li>ubuntu自带防火墙工具<code class="highlighter-rouge">ufw</code></li>
+  <li>查看<code class="highlighter-rouge">ufw</code>状态：<code class="highlighter-rouge">%sudo ufw status</code></li>
+  <li>打开ssh
+    <ul>
+      <li><code class="highlighter-rouge">sudo ufw allow ssh</code></li>
+      <li>如果修改了ssh port，需要指定端口号:<code class="highlighter-rouge">sudo ufw allow 4444/tcp</code></li>
+    </ul>
+  </li>
+  <li>打开HTTP,SSL/TLS:
+    <ul>
+      <li><code class="highlighter-rouge">sudo ufw allow 80/tcp</code></li>
+      <li><code class="highlighter-rouge">sudo ufw allow 443/tcp</code></li>
+    </ul>
+  </li>
+  <li>查看ufw规则：<code class="highlighter-rouge">sudo ufw show added</code></li>
+  <li>开启ufw：<code class="highlighter-rouge">sudo ufw enable</code></li>
+  <li>关闭ssh:<code class="highlighter-rouge">sudo ufw disable</code></li>
+</ul>
+
+<h3 id="配置fail2ban">配置Fail2Ban</h3>
+
+<ul>
+  <li>安装fail2ban：<code class="highlighter-rouge">apt-get install fail2ban</code></li>
+  <li>配置<code class="highlighter-rouge">jail.conf</code>,修改要创建<code class="highlighter-rouge">jail.local</code>：<code class="highlighter-rouge">cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local</code></li>
+  <li>修改一些简单配置，比如重试时间，次数，开启<code class="highlighter-rouge">[sshd]</code>和<code class="highlighter-rouge">nginx</code>配置等</li>
+  <li>更新fail2ban配置：<code class="highlighter-rouge">sudo fail2ban-client reload</code></li>
+  <li>查看fail2ban状态：<code class="highlighter-rouge">sudo fail2ban-client status</code></li>
+  <li>更多 <a href="https://www.linode.com/docs/security/using-fail2ban-for-security">Fail2Ban</a></li>
+</ul>
+
+<h3 id="配置-dns">配置 DNS</h3>
+
+<p>将linode提供给的name server关联到域名提供商(如godaday)，24~48小时生效</p>
+
+<h3 id="配置-nginx">配置 Nginx</h3>
+
+<ul>
+  <li>install nginx:
+    <ul>
+      <li><code class="highlighter-rouge">sudo apt-get update</code></li>
+      <li><code class="highlighter-rouge">sudo apt-get install nginx</code></li>
+      <li><code class="highlighter-rouge">sudo service nginx start</code></li>
+    </ul>
+  </li>
+  <li>配置fail2ban
+    <ul>
+      <li>找到<code class="highlighter-rouge">[nginx-http-auth]</code>, 增加<code class="highlighter-rouge">enabled=true</code></li>
+    </ul>
+  </li>
+  <li>关于Nginx更详细配置，<a href="https://xta0.me/2011/04/02/Nginx-Setup-1.html">参考之后的文章</a></li>
+</ul>
+
+<h3 id="配置https">配置HTTPs</h3>
+
+<p>这里使用目前还免费的<a href="https://letsencrypt.org/">Let’s Encrypt</a>来配置HTTPs</p>
+
+<ol>
+  <li>暂停nginx： <code class="highlighter-rouge">sudo service stop nginx</code></li>
+  <li>
+    <p>Install Let’s Encrypt:</p>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="nb">sudo </span>git clone https://github.com/letsencrypt/letsencrypt 
+ /opt/letsencrypt
+</code></pre></div>    </div>
+  </li>
+  <li>Obtain a certificate
+    <ul>
+      <li><code class="highlighter-rouge">cd /opt/letsencrypt</code></li>
+      <li><code class="highlighter-rouge">./letencrypt-auto certonly --standalone</code></li>
+    </ul>
+  </li>
+  <li>输入域名
+    <ul>
+      <li><code class="highlighter-rouge">abc.com www.abc.com</code></li>
+    </ul>
+  </li>
+  <li>查看钥证书路径
+    <ul>
+      <li><code class="highlighter-rouge">sudo ls /etc/letsencrypt/live/abc.com</code></li>
+      <li>重要的两个证书
+        <ul>
+          <li><code class="highlighter-rouge">fullchain.pem</code></li>
+          <li><code class="highlighter-rouge">privkey.pem</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="使用certbot管理证书">使用Certbot管理证书</h3>
+
+<p><a href="https://certbot.eff.org/">Certbot</a>是一个HTTPs证书管理工具，和Let’s Encrypt搭配使用非常方便。可参考<a href="https://certbot.eff.org/docs/intro.html">官方文档</a>，执行下面命令</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>apt-get update
+<span class="nv">$ </span><span class="nb">sudo </span>apt-get <span class="nb">install </span>software-properties-common
+<span class="nv">$ </span><span class="nb">sudo </span>add-apt-repository universe
+<span class="nv">$ </span><span class="nb">sudo </span>add-apt-repository ppa:certbot/certbot
+<span class="nv">$ </span><span class="nb">sudo </span>apt-get update
+<span class="nv">$ </span><span class="nb">sudo </span>apt-get <span class="nb">install </span>certbot python-certbot-nginx 
+</code></pre></div></div>
+
+<p>Certbot提供对Nginx的支持，会自动修改Nginx的配置文件，修改内容有两部分，一部分是指定SSL的私钥证书，另一部分是对HTTP的请求进行301重定向到HTTPs端口</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#etc/nginx/nginx.conf</span>
+
+ssl_certificate /.../abc.com/fullchain.pem<span class="p">;</span> <span class="c"># managed by Certbot</span>
+ssl_certificate_key /.../abc.com/privkey.pem<span class="p">;</span> <span class="c"># managed by Certbot</span>
+
+....
+
+<span class="k">if</span> <span class="o">(</span><span class="nv">$host</span> <span class="o">=</span> www.xta0.me<span class="o">)</span> <span class="o">{</span>
+	<span class="k">return </span>301 https://<span class="nv">$host$request_uri</span><span class="p">;</span>
+<span class="o">}</span> <span class="c"># managed by Certbot</span>
+
+<span class="k">if</span> <span class="o">(</span><span class="nv">$host</span> <span class="o">=</span> xta0.me<span class="o">)</span> <span class="o">{</span>
+	<span class="k">return </span>301 https://<span class="nv">$host$request_uri</span><span class="p">;</span>
+<span class="o">}</span> <span class="c"># managed by Certbot</span>
+
+...
+</code></pre></div></div>
+<p>证书配置好之后重启Nginx,访问域名测试HTTPs是否安装成功。</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$sudo</span> service nginx restart
+</code></pre></div></div>
+
+<h3 id="证书更新">证书更新</h3>
+
+<p>SSL证书需要定期更新，<code class="highlighter-rouge">certbot</code>提供了更新证书的命令，手动更新可直接运行<code class="highlighter-rouge">sudo certbot renew</code>。当然我们希望可以自动更新证书，此时需要配置Linux定时任务crontab。crontab的配置文件目录为<code class="highlighter-rouge">/var/spool/cron/crontabs</code>，每个用户都有一份自己的定时任务配置文件。由于这里是要配置SSL证书，需要使用Root权限，因此建议编辑root的crontab：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$sudo</span> su 
+<span class="nv">$crontab</span> <span class="nt">-e</span> <span class="c">#编辑crontab</span>
+</code></pre></div></div>
+<p>在配置文件中添加下面命令，</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#check SSL cert every Monday at 2:30 am</span>
+30 2 <span class="k">*</span> <span class="k">*</span> 3 certbot renew <span class="nt">--post-hook</span> <span class="s2">"service nginx restart"</span> <span class="o">&gt;&gt;</span> /var/log/crontab-cert.log
+</code></pre></div></div>
+<p>该命令会在每周三凌晨2点半检查证书是否过期，如果过期则自动更新，成功后执行<code class="highlighter-rouge">--post-hook</code>后的命令，重启nginx。默认情况下Let’s encrpyt会log日志，路径为<code class="highlighter-rouge">/var/log/letsencrypt</code>，我们也可以重定向日志到自定义文件中，方便查阅。编译完成后，需要令定时任务生效，可执行下面命令</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$sudo</span> service cron reload
+<span class="nv">$sudo</span> service cron restart
+<span class="nv">$sudo</span> service cron status
+</code></pre></div></div>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu-14-04">LAMP” Stack (Linux, Apache, MySQL, PHP)</a></li>
+  <li><a href="https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-ubuntu-14-04">“LEMP” Stack (Linux, nginx, MySQL, PHP)</a></li>
+</ul>
+:ET

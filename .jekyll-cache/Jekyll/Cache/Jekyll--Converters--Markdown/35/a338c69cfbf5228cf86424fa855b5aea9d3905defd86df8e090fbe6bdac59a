@@ -1,0 +1,163 @@
+I"�+<p>Objective-C的<code class="highlighter-rouge">[...]</code>语法来源于smallTalk，其设计初衷是希望它是一种动态的，在运行时决定函数的入口地址。由于objective-C本质上也还是C语言，因此[…]语法在编译后实际上是一条标准C函数：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">id</span> <span class="n">objc_msgSend</span><span class="p">(</span><span class="n">id</span> <span class="n">self</span><span class="p">,</span> <span class="n">SEl</span> <span class="n">OP</span><span class="p">,</span> <span class="p">...)</span>
+</code></pre></div></div>
+
+<p>而C语言是一种静态语言，也就是说，函数的入口在编译的时候就已经确定了(static binding)。例如这样一段代码：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">__attribute__</span><span class="p">((</span><span class="n">noinline</span><span class="p">))</span><span class="kt">void</span> <span class="nf">searchProduct</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"searching product"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">__attribute__</span><span class="p">((</span><span class="n">noinline</span><span class="p">))</span><span class="kt">void</span> <span class="nf">searchShop</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"searching shop"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">search_static</span><span class="p">(</span><span class="kt">int</span> <span class="n">type</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">searchProduct</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+        <span class="n">searchShop</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>我们不让编译器去自动inline代码，searchProduct和searchShop在编译的时候地址已经确定了：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.globl _search_static
+_search_static: ## @search_static
+.cfi_startproc
+Lfunc_begin2:
+.loc 1 48 0
+pushq %rbp
+
+...................
+
+Ltmp20:&lt;/span&gt;
+ ## BB#1:
+.loc 1 50 0
+popq %rbp
+jmp _searchProduct ## TAILCALL
+Ltmp21:&lt;/span&gt;
+LBB2_2:&lt;/span&gt;
+.loc 1 53 0
+popq %rbp
+jmp _searchShop ## TAILCALL
+Ltmp22:&lt;/span&gt;
+Lfunc_end2:
+.cfi_endproc
+</code></pre></div></div>
+
+<p>如果把上面代码改写成下面这样：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">__attribute__</span><span class="p">((</span><span class="n">noinline</span><span class="p">))</span><span class="kt">void</span> <span class="nf">searchProduct</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"searching product"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">__attribute__</span><span class="p">((</span><span class="n">noinline</span><span class="p">))</span><span class="kt">void</span> <span class="nf">searchShop</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"searching shop"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">search_dynamic</span><span class="p">(</span><span class="kt">int</span> <span class="n">type</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">void</span><span class="p">(</span><span class="o">*</span><span class="n">func</span><span class="p">)();</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="n">type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">searchProduct</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">searchShop</span><span class="p">;</span>
+    
+    <span class="n">func</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这样就变成了运行时决定函数地址了。这种方式好处是很灵活，你甚至可以在运行时修改程序执行的结果。但是坏处也很明显，就是需要计算，慢。回退到1986年，OC和C++都刚刚问世，同是面向对象，C++因为其在编译器做大量的事而速度更快，OC由于受当时硬件条件，这种动态绑定的做法效率往往很低。</p>
+
+<p>基本上OC的函数执行都是遵循上面这种模式，判断执行那个函数的条件是objc_msgSend的SEL参数，它是一个opaque string:</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">SEL</span> <span class="n">someSelector</span> <span class="o">=</span> <span class="n">NSSelectorFromString</span><span class="p">(</span><span class="s">@"dealloc"</span><span class="p">)</span>
+</code></pre></div></div>
+<p>而函数的入口地址保存在了：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">objc_method_list</span> <span class="o">**</span><span class="n">methodLists</span> 
+</code></pre></div></div>
+<p>为了效率考虑，这些地址被调用过后会cache住</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">objc_cache</span> <span class="o">*</span><span class="n">cache</span>  
+</code></pre></div></div>
+<p>例如：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>2   CoreFoundation                      0x01a0c903 -[NSObject<span class="o">(</span>NSObject<span class="o">)</span> doesNotRecognizeSelector:] + 275
+3   CoreFoundation                      0x0195f90b ___forwarding___ + 1019
+4   CoreFoundation                      0x0195f4ee _CF_forwarding_prep_0 + 14
+5   libobjc.A.dylib                     0x014c6275 _class_initialize + 599
+6   libobjc.A.dylib                     0x014cd0f1 lookUpImpOrForward + 158
+7   libobjc.A.dylib                     0x014cd04e _class_lookupMethodAndLoadCache3 + 55
+8   libobjc.A.dylib                     0x014d512f objc_msgSend + 139
+9   UIKit                               0x0034b9d4 -[UIViewController loadViewIfReq
+</code></pre></div></div>
+
+<p>虽然有cache或有一些优化在，但效率毕竟还是低于static binding，但对于现在的硬件条件来讲，这个也不算是瓶颈。</p>
+
+<h3 id="overloading的问题">Overloading的问题</h3>
+
+<p>使用Java或者C++，overloading是种很常见的策略，或者很多人习惯通过overloading的参数来区别方法的意思。但是这种技术在OC中却行不通，道理也很简单，overloading也是一种static binding。</p>
+
+<p>以Java代码为例：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nc">testObj</span>
+<span class="o">{</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">searchProduct</span><span class="o">(</span><span class="nc">String</span> <span class="n">name</span><span class="o">)</span>
+	<span class="o">{</span>
+		<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">name</span><span class="o">);</span>
+	<span class="o">}</span>
+	
+	 <span class="kd">public</span> <span class="kt">void</span> <span class="nf">searchProduct</span><span class="o">(</span><span class="kt">int</span> <span class="n">type</span><span class="o">)</span>
+	 <span class="o">{</span>
+			<span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">"%d\n"</span><span class="o">,</span><span class="n">type</span><span class="o">);</span>
+	 <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">main</span> <span class="o">{</span>
+
+	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+		<span class="c1">// TODO Auto-generated method stub</span>
+		<span class="n">testObj</span> <span class="n">obj</span> <span class="o">=</span> <span class="k">new</span> <span class="n">testObj</span><span class="o">();</span>
+		
+		<span class="n">obj</span><span class="o">.</span><span class="na">searchProduct</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
+		<span class="n">obj</span><span class="o">.</span><span class="na">searchProduct</span><span class="o">(</span><span class="s">"iphone"</span><span class="o">);</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>可以看到main.class中，方法的入口地址也确定了。</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>public static void main<span class="o">(</span>java.lang.String[]<span class="o">)</span><span class="p">;</span>
+  Code:
+  <span class="nv">Stack</span><span class="o">=</span>2, <span class="nv">Locals</span><span class="o">=</span>2, <span class="nv">Args_size</span><span class="o">=</span>1
+  0:	new	<span class="c">#15; //class testObj</span>
+  3:	dup
+  4:	invokespecial	<span class="c">#17; //Method testObj."&lt;init&gt;":()V</span>
+  7:	astore_1
+  8:	aload_1
+  9:	iconst_0
+  10:	invokevirtual	<span class="c">#18; //Method testObj.searchProduct:(I)V</span>
+  13:	aload_1
+  14:	ldc	<span class="c">#22; //String iphone</span>
+  16:	invokevirtual	<span class="c">#24; //Method testObj.searchProduct:(Ljava/lang/String;)</span>
+</code></pre></div></div>
+<p>为什么OC不行呢？</p>
+
+<p>对同名的方法，参数类型不同，仅靠SEL是无法区别的：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">@selector</span><span class="p">(</span><span class="n">searchProduct</span><span class="o">:</span><span class="p">)</span>
+</code></pre></div></div>
+<p>如果有同名方法，谁知道该调用哪一个呢？</p>
+
+:ET

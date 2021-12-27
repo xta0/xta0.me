@@ -1,0 +1,139 @@
+I"!(<p>搞了一天一宿，把码流数据都堆放好依旧不能播放，moov的长度和mdat的长度应该都没有问题,不明原因。看看264码流在mp4中如何存吧，先看看264的码流结构，然后再对照文档看看码流在mp4中如何存的。今天看了一小会儿《新一代视频编码压缩标准——H264/AVC》的第7章，H.264的句法和语义，一些基本概念：</p>
+
+<ul>
+  <li>264的码流是分层的，从上到下依次是序列层，图像层，片层</li>
+  <li>264取消了序列层和图像层，用序列参数集（sps）和图像参数集代替（pps）。</li>
+  <li>参数集是一个独立的部分，不依赖于参数集外其它句法。</li>
+  <li>参数集只有在片层句法需要的时候被引用，一个sps可以被多个pps引用，同一个pps也可以被多个图像引用。</li>
+  <li>参数集（sps+pps）和片层（slice）应该分开传输，参数集要用可靠信道传输，如tcp</li>
+  <li>参数集（sps+pps）和片层（slice）应该在解码前被解码器受到</li>
+</ul>
+
+<p>slice中有句法能指出所引用的参数集编号，如下图</p>
+
+<p><img src="/assets/images/2011/11/h264-slices.png" alt="image" /></p>
+
+<p>下面这个图我还没完全理解其含义</p>
+
+<p><img src="/assets/images/2011/11/h264-sequence.png" alt="image" /></p>
+
+<ul>
+  <li>疑惑1：这个I,P代表的是什么？和slice里的I,P帧是一回事么？</li>
+</ul>
+
+<p>I是IDR,当解码到IDR时，清空参考帧队列，将以解码的数据全部抛弃，重新查找参数集，开始一个新的队列</p>
+
+<ul>
+  <li>
+    <p>疑惑2：如果有一个264的码流，是每一个I,P（不知道这个是不是代表I,P帧的意思）都要有一个SPS+PPS，还是整个流只有一个SPS+PPS写在流的最前端</p>
+  </li>
+  <li>
+    <p>疑惑3：这个跟NAL怎么对应起来？？？</p>
+  </li>
+</ul>
+
+<p>翻到前面第六章6.3.3.2 H.264的编码格式（P89）</p>
+
+<p>264按功能来分，分成两层，VCL和NAL，VCL是编码后的码流序列，NAL是用来封装VCL的一种网络打包格式。如图</p>
+
+<p><img src="/assets/images/2011/11/h264-header.png" alt="image" /></p>
+
+<h2 id="6125-h264传输p146">6.12.5 H.264传输（P146）</h2>
+
+<p>每个NAL可以独立的分组传输（放到一个包里），在解码前重新排序。</p>
+
+<p>RBSP的格式如下：</p>
+
+<p><img src="/assets/images/2011/11/h264-rbsp.png" alt="image" />;</p>
+
+<ul>
+  <li>疑惑1：这里面的I,P帧和图1的I,P有什么区别和联系啊？还有图3和图1有什么联系啊？</li>
+</ul>
+
+<h2 id="73-语义">7.3 语义</h2>
+
+<p>数据流在存储在介质上时（理解是存成文件形式，按照ISO的文件格式，例如mp4是ISO xxxx-12）</p>
+
+<p>NAL的起始码为： 0x 00 00 01</p>
+
+<p>但是如果NAL内部出现了起始码，怎么办？答案是在最后一个字节前加入0x03</p>
+
+<p>下面分析一段自己拼凑的不能播放的码流，和能播放的264码流</p>
+
+<p><img src="/assets/images/2011/11/h264-mp4_avc_pps_sps.jpg" alt="image" /></p>
+
+<p>264的sps和pps存在了avc box里面，只要把它提取出来即可</p>
+
+<p>ISO的mp4文件封装格式如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kd">class</span> <span class="nc">AVCDecoderConfigurationRecord</span>
+<span class="o">{</span>
+     <span class="n">unsigned</span> <span class="nf">int</span><span class="o">(</span><span class="mi">8</span><span class="o">)</span> <span class="n">configurationVersion</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">;</span>                              <span class="c1">//4字节</span>
+     <span class="n">unsigned</span> <span class="nf">int</span><span class="o">(</span><span class="mi">8</span><span class="o">)</span> <span class="nc">AVCProfileIndication</span><span class="o">;</span>                              
+     <span class="n">unsigned</span> <span class="nf">int</span><span class="o">(</span><span class="mi">8</span><span class="o">)</span> <span class="n">profile_compatibility</span><span class="o">;</span>
+     <span class="n">unsigned</span> <span class="nf">int</span><span class="o">(</span><span class="mi">8</span><span class="o">)</span> <span class="nc">AVCLevelIndication</span><span class="o">;</span>
+
+     <span class="n">bit</span><span class="o">(</span><span class="mi">6</span><span class="o">)</span> <span class="n">reserved</span> <span class="o">=</span> <span class="err">'</span><span class="mi">111111</span><span class="err">'</span><span class="n">b</span><span class="o">;</span>                                                <span class="c1">//1字节     </span>
+     <span class="n">unsigned</span> <span class="nf">int</span><span class="o">(</span><span class="mi">2</span><span class="o">)</span> <span class="n">lengthSizeMinusOne</span><span class="o">;</span>
+
+     <span class="n">bit</span><span class="o">(</span><span class="mi">3</span><span class="o">)</span> <span class="n">reserved</span> <span class="o">=</span> <span class="err">'</span><span class="mi">111</span><span class="err">'</span><span class="n">b</span><span class="o">;</span>
+     <span class="n">unsigned</span> <span class="nf">int</span><span class="o">(</span><span class="mi">5</span><span class="o">)</span> <span class="n">numOfSequenceParameterSets</span><span class="o">;</span>                      <span class="c1">//定义有多少个SPS，一般为1</span>
+      
+      <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">numOfSequenceParameterSets</span><span class="o">;</span><span class="n">i</span><span class="o">++)</span>
+      <span class="o">{</span>
+         <span class="n">unsigned</span> <span class="nf">int</span><span class="o">(</span><span class="mi">16</span><span class="o">)</span> <span class="n">sequenceParametersSets</span> <span class="o">;</span>                                                 <span class="c1">//SPS的数量，2字节</span>
+         <span class="n">bit</span><span class="o">(</span><span class="mi">8</span><span class="o">*</span><span class="n">sequenceParametersSets</span><span class="o">)</span> <span class="n">sequenceParameterSetNALUUnit</span><span class="o">;</span>                    <span class="c1">//这里就是SPS的内容，依次读取上面指定的数量就OK</span>
+       <span class="o">}</span>
+         
+       <span class="n">unsigned</span> <span class="nf">int</span><span class="o">(</span><span class="mi">8</span><span class="o">)</span> <span class="n">numOfPictureParameterSets</span><span class="o">;</span>                         <span class="c1">//PPS的数量</span>
+       <span class="k">for</span><span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">numOfPictureParameterSets</span><span class="o">;</span><span class="n">i</span><span class="o">++)</span>
+       <span class="o">{</span>
+         <span class="n">unsigned</span> <span class="nf">int</span><span class="o">(</span><span class="mi">16</span><span class="o">)</span> <span class="n">pictureParameterSetlength</span><span class="o">;</span>                                         <span class="c1">//PPS的长度</span>
+         <span class="n">bit</span><span class="o">(</span><span class="mi">8</span><span class="o">*</span><span class="n">picuureParameterSetLength</span><span class="o">)</span> <span class="n">pictureParameterSetNALUnit</span><span class="o">;</span>               <span class="c1">//pps的内容</span>
+       <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<p>SPS和PPS搞明白了，下面再研究下码流，刚才跟师姐探讨，收获不小。</p>
+
+<p>这是264 码流的封装结构，一个NAL头+RBSP形成一个NALU，一个很重要的概念是264是按照NAL单元进行封装的，也就是说解码器只要收到NAL单元就能解码，各个单元间都是独立的。</p>
+
+<h3 id="那如何确定时序呢">那如何确定时序呢？</h3>
+
+<p>这个也是封装在NAL单元里的，解码器收到后自然会按照时序进行重新排列</p>
+
+<h3 id="那前面说的sps和pps呢解码器如何收到呢">那前面说的SPS和PPS呢？解码器如何收到呢？</h3>
+
+<p>这个要说NAL单元的类型了，NAL单元是分类型的，比如说有一个NAL单元可以单独传输SPS和SSP，这个单元在NAL头部里面，在RBSP中的数据就是相关数据，同样NAL类型也可以是slice数据</p>
+
+<p><img src="/assets/images/2011/11/h264-rbsp.png" alt="image" />;</p>
+
+<p>也就是说在mdat后面的数据是这样：<code class="highlighter-rouge">帧长度+NALU。。。帧长度+NALU。。。</code></p>
+
+<p>代码人生那片帖子中的代码意思是这样：</p>
+
+<ul>
+  <li>在mp4文件中找到SPS和PPS</li>
+  <li>把他们写成NALU先放到264流的最前面好让解码器先收到具体做法是0X001+sps数据+0X001+pps数据</li>
+  <li>然后讲264数据打包成NALU接着写入流里面，做法是，0X001+mdat后的每帧数据NALU，不断写入。这样就形成了RAW格式的264码流~</li>
+</ul>
+
+<p>下面再看一个例子，这是我用工具共.MP4文件中抽取的264码流，各式如下</p>
+
+<p><img src="/assets/images/2011/11/h264-mp4-NALU.png" alt="image" /></p>
+
+<p>绿色和蓝色是SPS+PPS，然后视频数据是如何分帧的呢？</p>
+
+<p><img src="/assets/images/2011/11/h264-mp4-NALU2.png" alt="image" /></p>
+
+<p>这是mp4文件中的码流存放格式，先用4字节00 00 02 E1存放该帧长度，然后是该帧类型，从65开始往后的737字节都是这帧的内容</p>
+
+<p><img src="/assets/images/2011/11/h264-mp4-NALU3.png" alt="image" /></p>
+
+<p>到7C结束，正好737字节，下一帧从61开始，61代表P帧，以此类推。。。。</p>
+
+<p>下一步的工作是按照这个思路，整合一段264码流看能不能播放</p>
+
+:ET

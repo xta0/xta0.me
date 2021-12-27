@@ -1,0 +1,312 @@
+I"�[<h2 id="memory-layout">Memory Layout</h2>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">class</span> <span class="n">MySwiftClass</span>
+<span class="p">{</span>
+    <span class="n">let</span> <span class="n">a</span> <span class="o">:</span> <span class="n">UInt64</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">func</span> <span class="n">method</span><span class="p">(){</span> <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>我们首先定义一个类<code class="highlighter-rouge">MySwiftClass</code>，不指定其父类。接着我们想来观察这类的memory layout(x86_64)。</p>
+
+<blockquote>
+  <p>所谓Memory Layout是指一个对象在内存中的存储形式。如果熟悉C++，那么对这个概念不会陌生，即使不熟悉C++，Objective-C对象在内存中也有固定的<a href="https://www.mikeash.com/pyblog/friday-qa-2009-03-13-intro-to-the-objective-c-runtime.html">存储形式</a>。</p>
+</blockquote>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//creat an instance of MySwiftClass</span>
+<span class="n">let</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">MySwiftClass</span><span class="p">()</span>
+<span class="c1">//get it's pointer in memory</span>
+<span class="n">var</span> <span class="n">obj_ptr</span><span class="o">:</span><span class="n">UnsafePointer</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span> <span class="o">=</span> <span class="n">unsafeAddressOf</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<span class="c1">//size of obj</span>
+<span class="n">let</span> <span class="n">l</span><span class="o">:</span><span class="n">UInt</span> <span class="o">=</span> <span class="n">malloc_size</span><span class="p">(</span><span class="n">obj_ptr</span><span class="p">)</span>
+<span class="c1">//memory layout of obj</span>
+<span class="n">let</span> <span class="n">d</span> <span class="o">=</span> <span class="n">NSData</span><span class="p">(</span><span class="n">bytes</span><span class="o">:</span> <span class="n">obj_ptr</span><span class="p">,</span> <span class="n">length</span><span class="o">:</span> <span class="p">(</span><span class="n">Int</span><span class="p">)(</span><span class="n">l</span><span class="p">));</span>
+<span class="n">println</span><span class="p">(</span><span class="s">"%@"</span><span class="p">,</span><span class="n">d</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="highlighter-rouge">obj</code>的大小为32byte</li>
+  <li><code class="highlighter-rouge">obj</code>在内存中的存放格式为<code class="highlighter-rouge">&lt;100d8719 01000000 0c000000 01000000 0a000000 00000000 00000000 00000000&gt;</code></li>
+</ul>
+
+<p>在x86_64上，数据按照little-endian存储，低位在前，高位在后，数据按照64bit对齐内存。前16字节为<a href="">isa pointer</a>:<code class="highlighter-rouge">100d8719 01000000 0c000000 01000000</code>。后16字节为成员变量<code class="highlighter-rouge">a</code>。</p>
+
+<p>从这个结果来看Swift对象的内存格式和Objective-C对象是相同的。</p>
+
+<h2 id="swift-object">Swift Object</h2>
+
+<h3 id="objc_class在哪"><code class="highlighter-rouge">objc_class</code>在哪?</h3>
+
+<p>在Objective-C中，<code class="highlighter-rouge">isa</code>实际上是<code class="highlighter-rouge">objc_class</code>类型的结构体。因此，最先首先想到的办法当然是在Swift的各种framework中看看能否找到<code class="highlighter-rouge">objc_class</code>的定义。翻了半天，只找到了这样一句:</p>
+
+<p><code class="highlighter-rouge">/* Use 'Class' instead of 'struct objc_class *' */</code></p>
+
+<p>这是不是说明Swift的<code class="highlighter-rouge">objc_class</code>不存在呢？通过上一节的分析，应该可以确定<code class="highlighter-rouge">isa</code>是存在的，只是不允许被直接访问了。
+网上有一篇很神奇的文章<a href="http://www.eswick.com/2014/06/inside-swift/">Inside Swift</a>。他是通过逆向Mach-O文件，在<code class="highlighter-rouge">__objc_classlist</code>段，找到了<code class="highlighter-rouge">objc_class</code></p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">objc_class</span> <span class="p">{</span>
+    <span class="kt">uint64_t</span> <span class="n">isa</span><span class="p">;</span>
+    <span class="kt">uint64_t</span> <span class="n">superclass</span><span class="p">;</span>
+    <span class="kt">uint64_t</span> <span class="n">cache</span><span class="p">;</span>
+    <span class="kt">uint64_t</span> <span class="n">vtable</span><span class="p">;</span>
+    <span class="kt">uint64_t</span> <span class="n">data</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<p>其中<code class="highlighter-rouge">vtable</code>能给我们带来一些启示，写过C++的人都知道，这个<code class="highlighter-rouge">vtable</code>叫做<a href="http://en.wikipedia.org/wiki/Virtual_method_table">虚表</a>，用来在运行时决虚函数地址，但是Swift的<code class="highlighter-rouge">vtable</code>却和C++的<code class="highlighter-rouge">vtable</code>有着本质的却别，我们后面会详细解释这个问题。</p>
+
+<h3 id="对象间通信">对象间通信：</h3>
+
+<p>Swift作为一种静态语言，对象间通信是不需要使用Runtime的，这样也间接的<a href="https://www.mikeash.com/pyblog/friday-qa-2014-07-04-secrets-of-swifts-speed.html">提升了性能</a>。但有一个问题，如果一个Swift对象需要和Objective-C对象通信怎么办？例如，有这样一段OC代码，它向<code class="highlighter-rouge">s</code>发消息:</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//MySwiftClass是Swift的Class</span>
+<span class="n">MySwiftClass</span><span class="o">*</span> <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="n">MySwiftClass</span> <span class="nf">new</span><span class="p">];</span>
+<span class="k">if</span><span class="p">([</span><span class="n">s</span> <span class="n">responseToSelector</span><span class="p">(</span><span class="k">@selector</span><span class="p">(</span><span class="n">method</span><span class="p">))]){</span>
+	<span class="p">[</span><span class="n">s</span> <span class="nf">method</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>此时<code class="highlighter-rouge">s</code>需要实现<code class="highlighter-rouge">responseToSelector</code>这样的方法，还需要检查<code class="highlighter-rouge">mehtod</code>这个方法是否存在。这说明<code class="highlighter-rouge">s</code>仍然需要具备在运行时introspect的能力，而我们又没有在<code class="highlighter-rouge">MySwiftClass</code>中定义任何OC的方法，这是怎么做到的呢？</p>
+
+<h3 id="神奇的swiftobject">神奇的SwiftObject</h3>
+
+<p>接着上面的问题，Swift对象为了和OC对象通信，必须要兼容OC的runtime，那么我们如何来验证呢？首先想到的就是在运行时反射出Swift对象的一些信息，由于上文已经创建好了<code class="highlighter-rouge">obj</code>：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">let</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">MySwiftClass</span><span class="p">()</span>
+</code></pre></div></div>
+<p>我们接下来的任务就是反射出<code class="highlighter-rouge">obj</code>更多的信息，关于在Swift中如何拿到这些信息，Mike写了一个<a href="https://github.com/mikeash/memorydumper/blob/master/memory.swift">非常牛逼的工具</a>，这个工具的思路是根据对象address和size，通过<code class="highlighter-rouge">dladdr</code>将里面的内容符号化。这份代码对于理解Swift和C有着很好的帮助。但是仅从实现这个功能来说，不需要那么复杂，我上传了一份比较精简的<a href="https://github.com/akaDealloc/blog/tree/gh-pages/code/swift/swift-basic/chap14-Runtime/chap14.playground">代码</a>。总之，不论用哪种方法，都能得到下面的结果:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>class:Optional("TestSwiftRuntime.MySwiftClass")
+superclass:Optional("SwiftObject")
+ivar:Optional("magic")  type:Optional("{SwiftObject_s=\"isa\"^v\"refCount\"q}")
+ivar:Optional("a") type:Optional("")
+property:Optional("hash") type:Optional("TQ,R")
+property:Optional("superclass") type:Optional("T#,R")
+property:Optional("description") type:Optional("T@\"NSString\",R,C")
+property:Optional("debugDescription") type:Optional("T@\"NSString\",R,C")
+method:Optional("zone") type:Optional("^{_NSZone=}16@0:8") 
+method:Optional("doesNotRecognizeSelector:") type:Optional("v24@0:8:16") 
+method:Optional("description") type:Optional("@16@0:8") 
+method:Optional(".cxx_construct") type:Optional("@16@0:8") 
+method:Optional("retain") type:Optional("@16@0:8") 
+method:Optional("release") type:Optional("v16@0:8") 
+method:Optional("autorelease") type:Optional("@16@0:8") 
+method:Optional("retainCount") type:Optional("Q16@0:8") 
+method:Optional("dealloc") type:Optional("v16@0:8") 
+method:Optional("isKindOfClass:") type:Optional("B24@0:8#16") 
+method:Optional("hash") type:Optional("Q16@0:8") 
+method:Optional("isEqual:") type:Optional("B24@0:8@16") 
+method:Optional("_cfTypeID") type:Optional("Q16@0:8") 
+method:Optional("respondsToSelector:") type:Optional("B24@0:8:16") 
+method:Optional("self") type:Optional("@16@0:8") 
+method:Optional("performSelector:") type:Optional("@24@0:8:16") 
+method:Optional("performSelector:withObject:") type:Optional("@32@0:8:16@24") 
+method:Optional("conformsToProtocol:") type:Optional("B24@0:8@16") 
+method:Optional("performSelector:withObject:withObject:") type:Optional("@40@0:8:16@24@32") 
+method:Optional("isProxy") type:Optional("B16@0:8") 
+method:Optional("isMemberOfClass:") type:Optional("B24@0:8#16") 
+method:Optional("superclass") type:Optional("#16@0:8") 
+method:Optional("class") type:Optional("#16@0:8") 
+method:Optional("debugDescription") type:Optional("@16@0:8") 
+</code></pre></div></div>
+
+<p>我们先来分析一下上面的信息：</p>
+
+<ul>
+  <li>
+    <p>类名：运行时<code class="highlighter-rouge">obj</code>的类名变成了<code class="highlighter-rouge">TestSwiftRuntime.MySwiftClass</code>。格式为: <code class="highlighter-rouge">Target名称.类名</code>。也许有人会注意到，上面的结果和<a href="https://www.mikeash.com/pyblog/friday-qa-2014-07-18-exploring-swift-memory-layout.html">这篇文章</a>得到的结果不一样，它得到类名是混淆过的结果：<code class="highlighter-rouge">_TtC16TestSwiftRuntime12MySwiftClass</code>。产生这个问题的原因是使用API的差别:<code class="highlighter-rouge">String(UTF8String:ptr)</code>和<code class="highlighter-rouge">String.fromCString(ptr)</code>，但这并不是根本原因，根本原因是<a href="http://en.wikipedia.org/wiki/Name_manglin">Name Mangling</a>。</p>
+  </li>
+  <li>
+    <p>父类：<code class="highlighter-rouge">SwiftObject</code>，貌似一个新OC基类出现了，实现了<code class="highlighter-rouge">&lt;NSObject&gt;</code>，因此具备了和其它OC对象通信的能力，但是，和<code class="highlighter-rouge">NSObject</code>不同的是，它还有一个成员变量叫<code class="highlighter-rouge">magic</code>，从TypeEncoding的结果来看，它是一个结构体，有两个成员:<code class="highlighter-rouge">isa</code>，<code class="highlighter-rouge">refCount</code>。功能上貌似是用来做引用计数。更多关于<code class="highlighter-rouge">magic</code>的内容还有待研究。</p>
+  </li>
+  <li>
+    <p>关于成员变量<code class="highlighter-rouge">a</code>：我们为<code class="highlighter-rouge">MySwiftClass</code>定义了一个<code class="highlighter-rouge">UInt32</code>类型的成员<code class="highlighter-rouge">a</code>，但是我们却无法获取它的TypeEncoding，为什么呢？这说明Objective-C的runtime是无法获取到Swift变量的类型的。</p>
+  </li>
+  <li>
+    <p>关于成员方法: 由于<code class="highlighter-rouge">SwiftObject</code>实现了<code class="highlighter-rouge">&lt;NSObject&gt;</code>，因此它实现了一大堆OC的方法。</p>
+  </li>
+  <li>
+    <p>关于成员方法<code class="highlighter-rouge">method()</code>：我们发现<code class="highlighter-rouge">method()</code>根本没有被反射出来，原因在上一节末尾也提到了，Swift对象的method被放到了<code class="highlighter-rouge">vtable</code>里，而Objective-C的运行时是无法发现<code class="highlighter-rouge">vtable</code>的。</p>
+  </li>
+</ul>
+
+<p>能输出这样的结果意味着，这些信息可以被Objective-C在运行时发现，所以我们的Swift对象:<code class="highlighter-rouge">obj</code></p>
+
+<ol>
+  <li>
+    <p>要么自己就是一个Objective-C对象：这点显然不可能了，因为<code class="highlighter-rouge">objc_class</code>的结构是不同的。</p>
+  </li>
+  <li>
+    <p>要么它自己重新实现了上面的方法：这种可能性比较大，按照我的理解，<code class="highlighter-rouge">SwiftObject</code>为了和OC对象通信，对OC所有runtime API的函数原型做了不同的实现，例如上面的例子<code class="highlighter-rouge">[s method]</code>,实际上是<code class="highlighter-rouge">objc_msgSend(s,@selector(method),nil)</code>，系统首先会判断<code class="highlighter-rouge">s</code>的<code class="highlighter-rouge">objc_class</code>类型，如果是Swift对象，则在<code class="highlighter-rouge">s</code>的<code class="highlighter-rouge">vtable</code>中找到<code class="highlighter-rouge">method</code>的地址然后执行。如果是OC对象，则还是老一套。</p>
+  </li>
+</ol>
+
+<h3 id="寻找vtable">寻找vtable</h3>
+
+<p>接下来我们讨论两个Swift对象的通信，上面已经提到，Swift对象的通信基本上是靠<code class="highlighter-rouge">vtable</code>，但是<code class="highlighter-rouge">vtable</code>有无法用OC的runtime反射出来，因此找到<code class="highlighter-rouge">vtable</code>是个比较艰难的问题，这时候，一种办法是依靠Mike的牛逼的工具：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">let</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">MySwiftClass</span><span class="p">()</span>
+<span class="n">var</span> <span class="n">obj_ptr</span><span class="o">:</span><span class="n">UnsafePointer</span><span class="o">&lt;</span><span class="n">Void</span><span class="o">&gt;</span> <span class="o">=</span> <span class="n">unsafeAddressOf</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+<span class="n">dumpmem</span><span class="p">(</span><span class="n">obj_ptr</span><span class="p">)</span>
+</code></pre></div></div>
+<p><code class="highlighter-rouge">dumpmem</code>会在运行时dump出<code class="highlighter-rouge">objc_class</code>中所有的符号：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>...
+Symbol _TFC16TestSwiftRuntime12MySwiftClassg1aVSs6UInt64
+Symbol _TFC16TestSwiftRuntime12MySwiftClasss1aVSs6UInt64
+Symbol _TFC16TestSwiftRuntime12MySwiftClassm1aVSs6UInt64
+Symbol _TFC16TestSwiftRuntime12MySwiftClass6methodfS0_FT_T
+Symbol _TFC16TestSwiftRuntime12MySwiftClasscfMS0_FT_S0
+...
+</code></pre></div></div>
+
+<p>我们根据Name mangling规则找到了<code class="highlighter-rouge">obj</code>的成员方法，先忽略这些诡异的符号，我们后面会详细解释name mangling的问题。从上到下依次为：</p>
+
+<ul>
+  <li><code class="highlighter-rouge">a</code>的<code class="highlighter-rouge">setter</code>方法</li>
+  <li><code class="highlighter-rouge">a</code>的<code class="highlighter-rouge">getter</code>方法</li>
+  <li>一个未知的<code class="highlighter-rouge">m1a</code>方法？</li>
+  <li><code class="highlighter-rouge">a</code>的<code class="highlighter-rouge">method</code>方法</li>
+  <li><code class="highlighter-rouge">a</code>的<code class="highlighter-rouge">init</code>方法</li>
+</ul>
+
+<p>由于这些方法编译器是提前编译好的，因此，还有一种dump 符号的方法是通过查看目标文件的符号表，打开命令行输入:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xcrun swiftc -emit-library -o TestSwiftRuntime -
+class MySwiftClass{
+
+var a:UInt64 = 10
+func method(){}
+
+}
+
+^D
+
+</code></pre></div></div>
+
+<p>此时会在当前目录下生成一个TestSwiftRuntime的目标文件:<code class="highlighter-rouge">TestSwiftRuntime</code></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> xcrun nm -g TestSwiftRuntime 
+</code></pre></div></div>
+
+<p>可以得到和上面相同的结果</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>00000000000015a0 T __TFC16TestSwiftRuntime12MySwiftClass6methodfS0_FT_T_
+0000000000001680 T __TFC16TestSwiftRuntime12MySwiftClassCfMS0_FT_S0_
+00000000000015c0 T __TFC16TestSwiftRuntime12MySwiftClassD
+0000000000001660 T __TFC16TestSwiftRuntime12MySwiftClasscfMS0_FT_S0_
+00000000000015b0 T __TFC16TestSwiftRuntime12MySwiftClassd
+00000000000015f0 T __TFC16TestSwiftRuntime12MySwiftClassg1aVSs6UInt64
+0000000000001630 T __TFC16TestSwiftRuntime12MySwiftClassm1aVSs6UInt64
+0000000000001610 T __TFC16TestSwiftRuntime12MySwiftClasss1aVSs6UInt64
+
+</code></pre></div></div>
+
+<h3 id="name-mangling的规则">Name Mangling的规则</h3>
+
+<p>关于Name mangling，wikipedia上面的解释非常详细，读一遍基本就能明白了。这东西主要是编译器为了区分同名的数据结构设计的一种编码方式，例如下面代码:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>int foo(int a) { return a * 2; }    
+int foo(double a) { return a * 2.0; }
+
+int main() { return foo(1) + foo(1.0); }
+
+</code></pre></div></div>
+
+<p>编译器为了区别这两个方法，需要为他们生成不同的signature，生成的方法就是通过Name mangling。
+上面的代码，我们使用C++的编译器来编译：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0000000100000f30 T __Z3food
+0000000100000f10 T __Z3fooi
+0000000100000000 T __mh_execute_header
+0000000100000f60 T _main
+                 U dyld_stub_binder
+
+</code></pre></div></div>
+
+<p>可以看到编译器为两个<code class="highlighter-rouge">foo</code>方法生成了不同的signature。关于C++编译器Name Mangling的规则可以参考<a href="http://mentorembedded.github.io/cxx-abi/abi.html#mangling">这里</a>。</p>
+
+<p>对于Swift，采用了和C++类似的规则,我们以
+<code class="highlighter-rouge">__TFC16TestSwiftRuntime12MySwiftClass6methodfS0_FT_T_</code>
+这个方法为例：</p>
+
+<ol>
+  <li>
+    <p>Swift中所有的符号都以<code class="highlighter-rouge">_</code>开头。</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">_T</code> 用来标识这个符号是全局的。</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">F</code> 用来标识这个符号代表的是一个函数。</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">C</code> 代表它是从属于一个类的方法。</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">16TestSwiftRuntime</code>代表<code class="highlighter-rouge">module name</code>，16为字符长度。</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">12MySwiftClass</code>代表类名，12为字符长度。</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">6method</code>代表方法名称，6为字符长度。</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">f</code>代表这个方法是<code class="highlighter-rouge">uncurried function</code>，第一个参数是一个隐式参数<code class="highlighter-rouge">self</code>。</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">S0_FT_T_</code>不确定，按照规律来看应该是用来标识入参和返回值的。</p>
+  </li>
+</ol>
+
+<p>demangling可以用下面的命令：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+xcrun swift-demangle __TFC16TestSwiftRuntime12MySwiftClass6methodfS0_FT_T_
+
+//_TFC16TestSwiftRuntime12MySwiftClass6methodfS0_FT_T_ ---&gt; TestSwiftRuntime.MySwiftClass.method (TestSwiftRuntime.MySwiftClass)() -&gt; ()
+
+</code></pre></div></div>
+
+<p>或者用下面API：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c1">//name mangling:</span>
+<span class="n">println</span><span class="p">(</span><span class="n">_stdlib_getTypeName</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span> <span class="c1">//_TtC16TestSwiftRuntime12MySwiftClass</span>
+
+<span class="c1">//demangling:</span>
+<span class="n">println</span><span class="p">(</span><span class="n">_stdlib_demangleName</span><span class="p">(</span><span class="n">_stdlib_getTypeName</span><span class="p">(</span><span class="n">obj</span><span class="p">)))</span> <span class="c1">//TestSwiftRuntime.MySwiftClass</span>
+
+</code></pre></div></div>
+
+<h2 id="更多">更多</h2>
+
+<p>我们上面研究了Swift中对象的内存模型和类结构，而Swift中还有很多非对象类型，比如Struct，Optional对象，继承了NSObject的Swift对象，等等…它们有着各自有趣的特性。这方面Mike做了非常详细的分析和研究，感兴趣的可以直接去阅读他的文章。</p>
+
+<h2 id="总结">总结</h2>
+
+<p>最后我们再来梳理一遍上面的内容：</p>
+
+<ul>
+  <li>
+    <p>首先我们有一个Swift对象：<code class="highlighter-rouge">obj</code>，他没有任何父类，我们通过查看它我在内存中的布局，发现了<code class="highlighter-rouge">isa</code>。</p>
+  </li>
+  <li>
+    <p>然后我们通过OC的运行时，发现<code class="highlighter-rouge">obj</code>有一个父类<code class="highlighter-rouge">SwiftObject</code>，它实现了<code class="highlighter-rouge">&lt;NSObject&gt;</code>的接口，使<code class="highlighter-rouge">obj</code>有了和OC对象通信的能力</p>
+  </li>
+  <li>
+    <p>然后通过查看目标代码的符号表，找到了<code class="highlighter-rouge">vtable</code>里面的方法。</p>
+  </li>
+  <li>
+    <p>最后我们解释了Name Mangling。</p>
+  </li>
+</ul>
+
+<h2 id="further-reading">Further Reading</h2>
+
+<ul>
+  <li><a href="https://realm.io/news/altconf-boris-bugling-swift-funtime/">Swift funtime</a></li>
+  <li><a href="http://www.eswick.com/2014/06/inside-swift/">Inside Swift</a></li>
+  <li><a href="https://www.mikeash.com/pyblog/">Mike’s Blog</a></li>
+</ul>
+
+:ET

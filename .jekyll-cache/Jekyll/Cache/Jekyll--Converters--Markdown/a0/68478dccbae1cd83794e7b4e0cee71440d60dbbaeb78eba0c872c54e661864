@@ -1,0 +1,115 @@
+I"�,<p>前面介绍的几种排序方式主要是以元素比较作为为基本的运算单元，这种排序方式所能达到的上限是$O(n\log{n})$。本文会介绍三种时间复杂度为$O(n)$的排序算法，分别是桶排序，计数排序与基数排序。因为这些排序算法的时间复杂度为线性的，因此也叫做线性排序（Linear Sort）。之所以能做到线性复杂度原因在于这些排序算法并不是基于元素之间的比较和交换，而是采用另外一种空间换时间的思路来提高排序效率。</p>
+
+<h3 id="桶排序">桶排序</h3>
+
+<p>对于桶排序有很多种理解和实现，我们先看一种最简单的，这种方式是借助一组向量做类似<code class="highlighter-rouge">key-value</code>形式的存储，其中<code class="highlighter-rouge">key</code>为待排数组的值，<code class="highlighter-rouge">value</code>为其出现的次数。排序时将待排数组按照<code class="highlighter-rouge">key-value</code>存放到桶中，然后再对桶按照<code class="highlighter-rouge">index</code>从小到大输出<code class="highlighter-rouge">value</code>即可。</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>待排数组:        7 3 8 9 6 1 8 1 2 
+
+空桶：           0 0 0 0 0 0 0 0 0
+
+建桶(count)：    0 2 1 1 0 0 1 1 2 1
+桶index：        0 1 2 3 4 5 6 7 8 9
+</code></pre></div></div>
+
+<p>可以看到，我们只需要将桶按照index输出其对应的value个key即可完成排序</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">bucketSort</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">v</span><span class="p">){</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">bucket</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">x</span><span class="o">:</span><span class="n">v</span><span class="p">){</span>
+        <span class="n">bucket</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">++</span><span class="p">;</span>        
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">bucket</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">j</span><span class="o">&lt;</span><span class="n">bucket</span><span class="p">[</span><span class="n">i</span><span class="p">];</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+            <span class="n">v</span><span class="p">[</span><span class="n">index</span><span class="o">++</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> 
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>上述代码的时间复杂度为$O(n*m)$，原因是我们再第二步进行桶排输出的时候使用了嵌套循环，这个嵌套循环的目的是为了解决排序后的index问题。这种桶排序方式的优点是对待排数据没有要求，如果待排数据足够随机，则时间复杂度可达到$O(n)$。这种方式的弊端在于桶的数量和待排数据的数量相同，如果待排数据有重复，则会导致有空桶，造成空间的浪费。在极端情况下（所有数据都相同，而且都位于最后一个桶中）的时间复杂度为$O(n^2)$。</p>
+
+<p>另一种桶排序的方式为使用有限个桶，将待排数据分散到几个有序的桶中，每个桶中的数据再进行单独排序。桶内排序完成后，再把每个桶中的数据按照顺序依次取出，组成的序列就是有序的了。</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>待排数组: 
+26,7,30,5,8,22,11,38,29,35,10
+
+桶状态:
+|5,7,8|     | 10,11 |   | 22,26,29|     | 30,35,38 |
+|-----|     |-------|   |---------|     | ---------|      
+| 0-9 |     | 10-19 |   | 20-29   |     | 30-39    |
+</code></pre></div></div>
+
+<p>我们来分析一下这种桶排序方式的时间复杂度，如果待排序数据有<code class="highlighter-rouge">n</code>个，我们将它们划分到<code class="highlighter-rouge">m</code>个桶内，则每个桶内有<code class="highlighter-rouge">k=n/m</code>个元素</p>
+
+<h3 id="计数排序counting-sort">计数排序(Counting Sort)</h3>
+
+<p>所谓计数排序是指在桶排序的基础上，增加一个数组保存每个元素的累计值，还是桶排序的第一个例子</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>待排数组:        7 3 8 9 6 1 8 1 2 
+
+index：         0 1 2 3 4 5 6 7 8 9
+count：         0 2 1 1 0 0 1 1 2 1
+
+前若干个桶       0 1 2 3 4 5 6 7 8 9
+累计的count：    0 2 3 4 4 4 5 6 8 9
+</code></pre></div></div>
+<p>改进后的桶内存的元素表示原数组元素对应排序后的index，例如，待排数组中的最后一个元素为2，通过查<code class="highlighter-rouge">total</code>数组，可知<code class="highlighter-rouge">total[2] = 3</code>，即<code class="highlighter-rouge">2</code>的前面有2个元素，2是新数组的第3个元素，因此将2放入到数组<code class="highlighter-rouge">2-1=1</code>的位置，同时令<code class="highlighter-rouge">count-1</code>。</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">bucketSort</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span> <span class="n">v</span><span class="p">){</span>
+    <span class="c1">//copy original array</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">tmpArray</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="c1">//建桶</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">bucket</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">x</span><span class="o">:</span><span class="n">v</span><span class="p">){</span>
+        <span class="n">bucket</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">++</span><span class="p">;</span>        
+    <span class="p">}</span>
+    <span class="c1">//更新桶内count值</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="n">bucket</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bucket</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">bucket</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="c1">//产生排序数组</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="n">tmpArray</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="c1">//x在bucket[x]-1的位置</span>
+        <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">bucket</span><span class="p">[</span><span class="n">x</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="c1">//将x放到排序后的位置</span>
+        <span class="n">v</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>算法分析</li>
+</ul>
+
+<ol>
+  <li>数组长度为<code class="highlighter-rouge">n</code>, 所有记录区间<code class="highlighter-rouge">[0, m)</code>上</li>
+  <li>时间代价
+    <ul>
+      <li>总的时间代价为 $Θ(m+n)$</li>
+      <li><mark>适用于$m$相对于$n$很小的情况，即待排数组比较紧凑的情况</mark></li>
+    </ul>
+  </li>
+  <li>空间代价：
+    <ul>
+      <li>$m$个计数器，长度为$n$的临时数组，$Θ(m+n)$</li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=NcZ2cu7gc-A&amp;list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk">CS106B-Stanford-YouTube</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome">Algorithms-Stanford-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome">算法与数据结构-1-北大-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/gaoji-shuju-jiegou/home/welcome">算法与数据结构-2-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:TsinghuaX+30240184.1x+3T2017/course/">算法与数据结构-1-清华-EDX</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法与数据结构-2-清华-EDX</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms/home/welcome">算法设计与分析-1-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法设计与分析-2-北大-EDX</a></li>
+</ul>
+
+:ET

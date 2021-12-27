@@ -1,0 +1,582 @@
+I"��<h2 id="字符串">字符串</h2>
+
+<ul>
+  <li>字符串，特殊的<mark>线性表</mark>，即元素为字符的线性表</li>
+  <li><code class="highlighter-rouge">n(≥0)</code> 个字符的有限序列<code class="highlighter-rouge">n≥1</code>时，一般记作<code class="highlighter-rouge">S: "c0c1c2...cn-1"</code>
+    <ul>
+      <li>S 是串名字</li>
+      <li><code class="highlighter-rouge">"c0c1c2...cn-1"</code>是串值</li>
+      <li><code class="highlighter-rouge">ci</code>是串中的字符
+        <ul>
+          <li><code class="highlighter-rouge">N</code> 是串长（串的长度）：一个字符串所包含的字符个数</li>
+          <li>空串：长度为零的串，它不包含任何字符内容</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>子串
+    <ul>
+      <li>假设<code class="highlighter-rouge">s1,s2</code> 是两个串：<code class="highlighter-rouge">s1 = a0a1a2…an-1</code>,<code class="highlighter-rouge">s2 = b0b1b2…bm-1</code>,其中 <code class="highlighter-rouge">0 ≤ m ≤ n</code>, 若存整数<code class="highlighter-rouge">i (0 ≤ i ≤n-m)</code>，使得 <code class="highlighter-rouge">b(j) = a(i+j), j =0,1,…,m-1</code>同时成立，则称串<code class="highlighter-rouge">s2</code>是串<code class="highlighter-rouge">s1</code>的子串,<code class="highlighter-rouge">s1</code>为串<code class="highlighter-rouge">s2</code>的主串，或称<code class="highlighter-rouge">s1</code>包含串<code class="highlighter-rouge">s2</code></li>
+      <li>特殊子串
+  – 空串是任意串的子串
+  – 任意串<code class="highlighter-rouge">S</code>都是<code class="highlighter-rouge">S</code>本身的子串
+  – 真子串：非空且不为自身的子串</li>
+    </ul>
+  </li>
+  <li>String类
+    <ul>
+      <li>内部封装了C字符串API</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="字符串的特征向量">字符串的特征向量</h3>
+
+<p>设模式<code class="highlighter-rouge">p</code>由<code class="highlighter-rouge">m</code>个字符组成，记为 <code class="highlighter-rouge">p=p(0)p(1)...p(m-1)</code>，令特征向量<code class="highlighter-rouge">N</code>用来表示模式<code class="highlighter-rouge">P</code>的字符分布特征，简称<code class="highlighter-rouge">N</code>向量由<code class="highlighter-rouge">m</code>个特征数<code class="highlighter-rouge">n(0)...n(m-1)</code>整数组成，记为 <code class="highlighter-rouge">N=n(0)n(1)...n(m-1)</code>,<code class="highlighter-rouge">N</code>也称为next数组，每个<code class="highlighter-rouge">n(j)</code>对应next数组中的元素<code class="highlighter-rouge">next[j]</code></p>
+
+<ul>
+  <li>字符串的特征向量的构造方法</li>
+</ul>
+
+<p>设<code class="highlighter-rouge">P</code>第<code class="highlighter-rouge">j</code>个位置的特征数<code class="highlighter-rouge">n(j)</code>，首尾串最长的<code class="highlighter-rouge">k</code>。 则首串为： <code class="highlighter-rouge">p(0)p(1)...p(k-2)p(k-1)</code>；尾串为： <code class="highlighter-rouge">p(j-k)p(j-k+1)...p(j-2)p(j-1)</code>。特征向量<code class="highlighter-rouge">next[j]</code>为</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+next[j]=
+\begin{cases}\
+-1, & & j=0\\
+max \{ P[0..k-1]=P[j-k..j-1] \} & & k:0<k<j\\
+0, & & other \\
+\end{cases} %]]></script>
+
+<p>即<code class="highlighter-rouge">next[j]</code>为长度为<code class="highlighter-rouge">j</code>的子串的<mark>前(j-1)个字符中最长的首</mark>尾真子串长度<code class="highlighter-rouge">k</code>。假设模式串<code class="highlighter-rouge">P</code>为<code class="highlighter-rouge">aaaabaaaac</code>，则特征向量<code class="highlighter-rouge">N(next[j])</code>的值为：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>P = a  a  a  a  b  a  a  a  a  c
+N = -1 0  1  2  x  0  1  2  3  4
+              (x=3)
+</code></pre></div></div>
+
+<h2 id="模式匹配">模式匹配</h2>
+
+<ul>
+  <li>模式匹配（pattern matching）
+    <ul>
+      <li>目标对象T（字符串）</li>
+      <li>模式P（字符串）</li>
+    </ul>
+  </li>
+  <li>给定模式P，在目标字符串T中搜索与P模式匹配的子串，并返回第一个匹配串首字符的位置</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>T t(0) t(1) ... t(i) t(i+1)... t(i+m-2) t(i+m-1) ... t(n-1)
+                 ||  ||            ||     ||
+P               p(0) p(1) ...... p(m-2)  p(m-1)
+</code></pre></div></div>
+<p>为使模式<code class="highlighter-rouge">P</code>与目标<code class="highlighter-rouge">T</code>匹配，必须满足: <code class="highlighter-rouge">p(0)p(1)p(2)...p(m-1) = t(i)t(i+1)t(i+2)...t(i+m-1)</code></p>
+
+<h3 id="朴素算法">朴素算法</h3>
+
+<ul>
+  <li>以<code class="highlighter-rouge">T</code>的每个字符为起点，向后遍历，看是否与<code class="highlighter-rouge">P</code>匹配</li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">FintPat</span><span class="p">(</span><span class="n">string</span> <span class="n">S</span><span class="p">,</span> <span class="n">string</span> <span class="n">P</span><span class="p">,</span> <span class="kt">int</span> <span class="n">startIndex</span><span class="p">){</span>
+    <span class="kt">int</span> <span class="n">lastIndex</span> <span class="o">=</span> <span class="n">S</span><span class="p">.</span><span class="n">length</span><span class="p">()</span> <span class="o">-</span> <span class="n">P</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">startIndex</span> <span class="o">&lt;</span> <span class="n">lastIndex</span><span class="p">){</span>
+        <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">g</span> <span class="o">=</span> <span class="n">startIndex</span><span class="p">;</span> <span class="n">g</span><span class="o">&lt;=</span><span class="n">LastIndex</span><span class="p">;</span> <span class="n">g</span><span class="o">++</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">P</span> <span class="o">==</span> <span class="n">S</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">P</span><span class="p">.</span><span class="n">length</span><span class="p">())){</span>
+            <span class="k">return</span> <span class="n">g</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<ul>
+  <li>假定目标<code class="highlighter-rouge">T</code>的长度为<code class="highlighter-rouge">n</code>，模式<code class="highlighter-rouge">P</code>，长度为<code class="highlighter-rouge">m(m&lt;=n)</code></li>
+  <li>最坏的情况
+    <ul>
+      <li>每一次循环都不成功，则一共要进行比较<code class="highlighter-rouge">(n-m+1)</code>次
+  – 每一次“相同匹配”比较所耗费的时间，是<code class="highlighter-rouge">P</code>和<code class="highlighter-rouge">T</code>逐个字符比较的时间，最坏情况下共<code class="highlighter-rouge">m</code>次
+  – 整个算法的最坏时间开销估计为<code class="highlighter-rouge">O(m*n)</code></li>
+    </ul>
+  </li>
+  <li>最好情况
+    <ul>
+      <li>在目标的前<code class="highlighter-rouge">m</code>个位置上找到模式
+        <ul>
+          <li>总比较次数：<code class="highlighter-rouge">m</code></li>
+          <li>时间复杂度：<code class="highlighter-rouge">O(m)</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>在实际的软件开发中，大部分情况下模式串和主串都不会太长，而且匹配的时候当遇到不相等的字符时，比较就停止了，并不需要把<code class="highlighter-rouge">m</code>个字符全都看一遍。所以尽管理论意义上时间复杂度为<code class="highlighter-rouge">O(n*m)</code>，但实际上大部分情况下算法效率要比这个好的多。</p>
+
+<h3 id="kmp算法">KMP算法</h3>
+
+<p>所谓KMP算法，是指在不回溯的前提下，通过某种算法来减少不必要的比较，从而最大限度的减少比较次数。在上面朴素法匹配的过程中，不难发现有很多的重复比对，比如下图所示，有目标<code class="highlighter-rouge">T</code>和模式<code class="highlighter-rouge">P</code>两个串，他们在某<code class="highlighter-rouge">j</code>个长度上匹配成功，即<code class="highlighter-rouge">t(i)t(i+1)...t(i+j-1) = p(0)p(1)...p(j-1)</code>，</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>T t(0) t(1) ... t(i) t(i+1) ... t(i+j-2) t(i+j-1) t(i+j)... t(n-1)
+                 |   |          |        |        X
+P               p(0) p(1)   ... p(j-2)   p(j-1)   p(j)
+</code></pre></div></div>
+<p>但是第<code class="highlighter-rouge">j+1</code>个位置出现了不匹配，即<code class="highlighter-rouge">p(j) != t(i+j)</code>，如果按照上面朴素算法，下一步比较应该是将<code class="highlighter-rouge">p(0)</code>向右移动一位，使其指向<code class="highlighter-rouge">t(i+1)</code>，即：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>T t(0) t(1) ... t(i) t(i+1) ... t(i+j-2) t(i+j-1) t(i+j)... t(n-1)
+                |    |          |        |        X
+P               p(0) p(1)   ... p(j-2)   p(j-1)   p(j)
+朴素匹配下一步          p(0) p(1) ... p(j-3)  p(j-2) p(j-1) p(j)
+</code></pre></div></div>
+
+<p>这是我们可以分析一下这一步是否有必要，假如：</p>
+
+<ol>
+  <li><code class="highlighter-rouge">p(0)</code>和<code class="highlighter-rouge">p(1)</code>不相等，由于<code class="highlighter-rouge">p(1)=t(i+1)</code>，则有<code class="highlighter-rouge">p(0) != t(i+1)</code>，显然这一步匹配的结果是可以预先知道的。</li>
+  <li><code class="highlighter-rouge">p(0)</code>和<code class="highlighter-rouge">p(1)</code>相等，由于<code class="highlighter-rouge">p(1)=t(i+1)</code>，则有<code class="highlighter-rouge">p(0) = t(i+1)</code>，同样，这一步匹配的结果也是可以预先知道的。</li>
+</ol>
+
+<p>因此，无论<code class="highlighter-rouge">p(0)</code>和<code class="highlighter-rouge">p(1)</code>的关系如何，这步比较都是多余的，我们只需要通过某种方式就可以提前确定结果，因此朴素的匹配算法有是存在一定冗余的，这个冗余可以理解为，每次目标串<code class="highlighter-rouge">T</code>都需要进行回溯（已经比较到<code class="highlighter-rouge">t(i+j)</code>了，发现不等，需要回到<code class="highlighter-rouge">t(i+1)</code>的位置），因此我们该怎么移动模式串<code class="highlighter-rouge">P</code>来减少冗余的比较呢？仔细思考不难发现，这部分冗余产生的原因是因为朴素的匹配算法没有把模式串中已经比配成功的部分记录下来，这部分信息浪费掉了，导致每次都需要重新来过，我们如果可以把这部分信息以某种方式加以利用，当出现<code class="highlighter-rouge">p(0) != t(i+1)</code>时，根据这部分信息来做出移动位置的计算，使模式串<code class="highlighter-rouge">P</code>大幅度的向后滑动，则可以大大提高匹配效率。</p>
+
+<p>接下来我们就研究一下，这些没有被利用的信息到底是什么。我们还是以上面这种情况作为一般情况进行分析，假设我们有下面两个串：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>T |.... R   E   G   R   E   T....
+        |   |   |   |   X               
+P |     R   E   G   R   O   
+                    |
+P |                 R   E   G   R   O 
+</code></pre></div></div>
+
+<p>当<code class="highlighter-rouge">T</code>和<code class="highlighter-rouge">P</code>串在<code class="highlighter-rouge">E</code>和<code class="highlighter-rouge">O</code>位置出现了不等，此时我们可以将<code class="highlighter-rouge">P</code>串直接向后移动到<code class="highlighter-rouge">R</code>的位置，为什么是<code class="highlighter-rouge">R</code>的位置，这个规律是什么呢？ 仔细观察可发现，<mark>对模式串`P`来说，如果在出现不等位置有尾串和首串相等，则可以直接将`P`向后移动到尾串的起始位置。</mark>接下来的问题就是，我们怎么知道在出现不匹配字符时，它前面的子串是否存在首尾相同的子串，以及这个子串的长度是多少呢？</p>
+
+<p>这就要用到前面一节提到的字符串的<code class="highlighter-rouge">next[]</code>数组，当模式串<code class="highlighter-rouge">P(j)</code>出现失配后，检查<code class="highlighter-rouge">next[j]</code>的值，若<code class="highlighter-rouge">next[j]</code>的值不为<code class="highlighter-rouge">-1</code>或<code class="highlighter-rouge">0</code>，说明则前面子串存在相同的首尾字符串，可以将新的对其位置更新为<code class="highlighter-rouge">P(j)</code>。而KMP算法的核心就在于得到<code class="highlighter-rouge">next[]</code>数组，到这里我们可以大致写出KMP算法的雏形：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">kmp</span><span class="p">(</span><span class="n">String</span> <span class="n">T</span><span class="p">,</span> <span class="n">string</span> <span class="n">P</span><span class="p">,</span> <span class="kt">int</span> <span class="n">start</span><span class="p">){</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">next</span> <span class="o">=</span> <span class="n">buildNext</span><span class="p">(</span><span class="n">P</span><span class="p">);</span> 
+    <span class="kt">int</span> <span class="n">tLen</span> <span class="o">=</span> <span class="n">T</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+    <span class="kt">int</span> <span class="n">pLen</span> <span class="o">=</span> <span class="n">P</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">tLen</span> <span class="o">-</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">pLen</span><span class="p">){</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="n">start</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">i</span><span class="o">&lt;</span><span class="n">tLen</span> <span class="o">&amp;&amp;</span> <span class="n">j</span><span class="o">&lt;</span><span class="n">pLen</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">||</span> <span class="n">j</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">){</span>
+            <span class="n">i</span><span class="o">++</span><span class="p">,</span> <span class="n">j</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="n">j</span> <span class="o">=</span> <span class="n">N</span><span class="p">[</span><span class="n">j</span><span class="p">];</span> <span class="c1">//注意，i不增加</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">j</span> <span class="o">&gt;=</span> <span class="n">pLen</span><span class="p">){</span>
+            <span class="k">return</span> <span class="n">i</span><span class="o">-</span><span class="n">pLen</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>接下来我们看一个具体例子，假设有串<code class="highlighter-rouge">P</code>和目标串<code class="highlighter-rouge">T</code>如下，其中<code class="highlighter-rouge">N</code>为模式串<code class="highlighter-rouge">P</code>的特征向量，如下：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>P =  a b a b a b b
+N = -1 0 0 1 2 3 4
+
+T = a b a b a b a b a b a b a b b
+    | | | | | | x
+P = a b a b a b b (i=6,j=6,N[j]=4)
+</code></pre></div></div>
+<p>可以看到当比较到<code class="highlighter-rouge">i=6, j=6</code>时，<code class="highlighter-rouge">T</code>和<code class="highlighter-rouge">P</code>不相等，此时<code class="highlighter-rouge">P[6]</code>的特征向量，<code class="highlighter-rouge">N[6]=4</code>，因此下一轮需要用<code class="highlighter-rouge">P[4]</code>继续和<code class="highlighter-rouge">T[6]</code>比较，说明首串最大长度为<code class="highlighter-rouge">4</code>，相当于将<code class="highlighter-rouge">P</code>右移<code class="highlighter-rouge">j-k</code>位,即<code class="highlighter-rouge">6-4=2</code>位，得到：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>T = a b a b a b a b a b a b a b b
+        | | | | | | x
+P =     a b a b a b b (i=8,j=6,N[j]=4)
+</code></pre></div></div>
+<p>重复上面步骤，发现在第<code class="highlighter-rouge">i=8,j=6</code>时，出现了失配，继续查表得到<code class="highlighter-rouge">next[6]=4</code>，令<code class="highlighter-rouge">P[4]</code>继续和<code class="highlighter-rouge">T[8]</code>进行比较，因此需要将<code class="highlighter-rouge">P移动</code>j-k<code class="highlighter-rouge">位，即</code>6-4=2`位</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>T = a b a b a b a b a b a b a b b
+            | | | | | | x
+P =         a b a b a b b (i=10,j=6,N[j]=4)
+</code></pre></div></div>
+<p>不断重复上述步骤，直到:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>T = a b a b a b a b a b a b a b b
+                    | | | | | | |
+P =                 a b a b a b b 
+</code></pre></div></div>
+
+<p>上述代码并没有特征向量<code class="highlighter-rouge">next[]</code>是怎么来的，因此接下来的问题是如何得到<code class="highlighter-rouge">next[]</code>数组，假设有子串<code class="highlighter-rouge">P</code>如下，我们先观察一下<code class="highlighter-rouge">next[k]</code>数组的一般规律。</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A B Y ... A B X P(j)
+    |         | 
+</code></pre></div></div>
+
+<p>假设现在要求<code class="highlighter-rouge">j</code>位置的<code class="highlighter-rouge">next[j]</code>的值，那么，如果<code class="highlighter-rouge">X</code>和<code class="highlighter-rouge">Y</code>相同，那么<code class="highlighter-rouge">next[j] = next[j-1] + 1</code>，如果不相同则考虑<code class="highlighter-rouge">X</code>是否和<code class="highlighter-rouge">P[0]</code>相同，即<code class="highlighter-rouge">X</code>是否等于<code class="highlighter-rouge">A</code>，如果相同，则<code class="highlighter-rouge">P[j]=1</code>，不相同则<code class="highlighter-rouge">P[j]=0</code>。</p>
+
+<p>接下来的问题，便是怎么用下标找出<code class="highlighter-rouge">X</code>和<code class="highlighter-rouge">Y</code>。不难看出<code class="highlighter-rouge">X=P(j-1)</code>，由于<code class="highlighter-rouge">X</code>前面的尾串<code class="highlighter-rouge">AB</code>和首串<code class="highlighter-rouge">AB</code>相同，因此可以得到<code class="highlighter-rouge">next[j-1] = 2</code>，那么可以推理得到<code class="highlighter-rouge">Y=P(next[j-1])</code>。完整算法可以实现如下：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">buildNext</span><span class="p">(</span><span class="n">string</span> <span class="n">P</span><span class="p">){</span>
+    <span class="kt">int</span> <span class="n">m</span> <span class="o">=</span> <span class="n">P</span><span class="p">.</span><span class="n">length</span><span class="p">();</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">next</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+    <span class="n">next</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">next</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">j</span> <span class="o">&lt;</span> <span class="n">m</span> <span class="p">){</span>
+        <span class="kt">int</span> <span class="n">index</span> <span class="o">=</span> <span class="n">next</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">index</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">P</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]){</span>
+            <span class="n">next</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">next</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">P</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">P</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">){</span>
+                <span class="n">next</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+                <span class="n">next</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">j</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">next</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>KMP算法复杂度分析：</p>
+
+<ol>
+  <li>循环体中<code class="highlighter-rouge">j = N[j];</code> 语句的执行次数不能超过<code class="highlighter-rouge">n</code>次。否则
+    <ul>
+      <li>由于<code class="highlighter-rouge">j = N[];</code> 每一行必然使得<code class="highlighter-rouge">j</code>减少</li>
+      <li>而使得<code class="highlighter-rouge">j</code>增加的操作只有<code class="highlighter-rouge">j++</code></li>
+      <li>那么，如果<code class="highlighter-rouge">j = N[j];</code>的执行次数超过<code class="highlighter-rouge">n</code>次，最终的结果必然使得<code class="highlighter-rouge">j</code>为比<code class="highlighter-rouge">-1</code>小很多的负数。这是不可能的(<code class="highlighter-rouge">j</code>有时为<code class="highlighter-rouge">-1</code>,但是很快<code class="highlighter-rouge">+1</code>回到<code class="highlighter-rouge">0</code>)。</li>
+    </ul>
+  </li>
+  <li>同理可以分析出求N数组的时间为<code class="highlighter-rouge">O(m)</code>，<mark>KMP算法的时间为Ｏ(n+m)</mark></li>
+</ol>
+
+<h2 id="字符串常见问题">字符串常见问题</h2>
+
+<h3 id="去重问题">去重问题</h3>
+
+<p>字符串去重问题是一个很常见的问题，解法也有很多种，有些语言的库函数可以直接提供high-level的API进行去重。这里提供一个非常巧妙的解法，利用双指针+<code class="highlighter-rouge">set</code>进行一遍扫描即可。题目如下:</p>
+
+<blockquote>
+  <p>Given a string that contains duplicate occurrences of characters, remove these duplicate occurrences. For example, if the input string is “abbabcddbabcdeedebc”, after removing duplicates it should become “abcde”.</p>
+</blockquote>
+
+<p>算法思路如下：</p>
+
+<ol>
+  <li>用一个set保存所有不重复的字母</li>
+  <li>定义两个游标，一个read负责读字符，一个write负责写字符</li>
+  <li>从字符串头部开始移动read
+    <ul>
+      <li>如果read到集合里已经有的字符，则read++，继续向后搜索</li>
+      <li>如果read到set里没有的字符，则向set中添加字符，同时write在当前位置写入该字符, write++, read++</li>
+    </ul>
+  </li>
+  <li>
+    <p>算法伪码如下：</p>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">read_pos</span> <span class="o">=</span> <span class="mi">0</span>
+ <span class="n">write_post</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+ <span class="k">while</span><span class="p">(</span><span class="n">read_pos</span> <span class="o">&lt;</span> <span class="nb">str</span><span class="o">.</span><span class="nb">len</span><span class="p">){</span>
+     <span class="n">c</span> <span class="o">=</span> <span class="nb">str</span><span class="p">[</span><span class="n">read_pos</span><span class="p">]</span>
+     <span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">){</span>
+         <span class="nb">set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+         <span class="nb">str</span><span class="p">[</span><span class="n">write_pos</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">[</span><span class="n">read_pos</span><span class="p">]</span>
+         <span class="n">write_pos</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+     <span class="p">}</span>
+     <span class="n">read_pos</span> <span class="o">+=</span> <span class="mi">1</span>
+ <span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>该算法的时间复杂度为<code class="highlighter-rouge">O(n)</code>，空间复杂度也为<code class="highlighter-rouge">O(n)</code></li>
+</ol>
+
+<p>如果我们要求不使用额外的空间，这道题该怎么解呢？显然我们需要找到另一种方式可以代替<code class="highlighter-rouge">set</code>对字符进行判重，思考前面的算法可以发现，<code class="highlighter-rouge">write</code>游标左边的字符肯定是没有重复的，因此每当<code class="highlighter-rouge">read</code>读取一个新字符时，我们都需要在<code class="highlighter-rouge">[0,write)</code>这个范围内查找一下，看看是否存在，如果存在，说明是重复字符，<code class="highlighter-rouge">read</code>继续向后搜索，<code class="highlighter-rouge">write</code>不动。如果不存在，则按照原来的逻辑<code class="highlighter-rouge">write</code>进行写入，同时更新<code class="highlighter-rouge">write</code>和<code class="highlighter-rouge">read</code>的位置。此时算法的时间复杂度变为了<code class="highlighter-rouge">O(n^2)</code>，空间复杂度为<code class="highlighter-rouge">O(1)</code>。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">read_pos</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">write_post</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">while</span><span class="p">(</span><span class="n">read_pos</span> <span class="o">&lt;</span> <span class="nb">str</span><span class="o">.</span><span class="nb">len</span><span class="p">){</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="nb">str</span><span class="p">[</span><span class="n">read_pos</span><span class="p">]</span>
+    <span class="o">//</span><span class="err">修改判重方法</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">substr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">write</span><span class="p">)){</span>
+        <span class="nb">str</span><span class="p">[</span><span class="n">write_pos</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">[</span><span class="n">read_pos</span><span class="p">]</span>
+        <span class="n">write_pos</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">read_pos</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="分割word问题">分割word问题</h3>
+
+<p>另一个字符串常见的问题是给定一个字符串和一个词典，判断是否可以将该字符串切割成一个或多个字典中的单词。 如下图所示</p>
+
+<p><img src="/assets/images/2010/07/word-break.png" width="80%" /></p>
+
+<p>这个题的解法很多，这里使用一种记忆化递归的方式，算法思路如下：</p>
+
+<ol>
+  <li>从左向右扫描字符，通过index分割字符为左右两部分：<code class="highlighter-rouge">str1= substr(0,i)</code>,<code class="highlighter-rouge">str2=substr(i+1,n-1)</code>;</li>
+  <li>判断<code class="highlighter-rouge">str1</code>是否在字典中，如果不在，继续另<code class="highlighter-rouge">i++</code>向右扫描，如果在字典中，这时看<code class="highlighter-rouge">str2</code>:
+    <ul>
+      <li>如果<code class="highlighter-rouge">str2</code>也在字典中，或者<code class="highlighter-rouge">str2</code>的长度为0，则返回true</li>
+      <li>如果<code class="highlighter-rouge">str2</code>不在字典中，则对<code class="highlighter-rouge">str2</code>进行递归，重复第一步</li>
+    </ul>
+  </li>
+  <li>
+    <p>算法伪码如下</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> n = length of input string
+ for i = 0 to n-1
+     firstword = substring (input string from index [0 , i] )
+     secondword = substring (input string from index [i+1 , n-1] )
+     if dictionary has firstword
+         if secondword is in dictionary OR second word is of zero length, then return true
+         recursively call this method with secondword as input and return true if it can be segmented
+</code></pre></div>    </div>
+    <p>我们可以模拟一个具体例子，假如输入字符串为<code class="highlighter-rouge">hellonow</code>，字典为<code class="highlighter-rouge">[hello, hell, on, now]</code>，按照上面逻辑，当i走到第2个<code class="highlighter-rouge">l</code>时，<code class="highlighter-rouge">hell</code>被分割出来如下：</p>
+  </li>
+</ol>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hell
+    onow
+        on 
+            ow
+            ow
+        ono
+            w
+            w
+        ono
+hello
+      now
+</code></pre></div></div>
+
+<p>我们可以来分析一下上述代码的时间复杂度和空间复杂度，上述过程是一个递归深搜的过程，因此时间复杂度为<code class="highlighter-rouge">O(2^n)</code>，由于每次搜索需要创建<code class="highlighter-rouge">str1,str2</code>，因此空间复杂度为<code class="highlighter-rouge">O(n^2)</code>。</p>
+
+<p>上面这个例子比较简单，待分割的字符也比较短，但是极端情况我们可能会遇到分割字符非常长，且字典中的单词非常短的情况，此时会产生大量的重复计算，进而产生大量的不必要的递归导致的栈开销过高。举一个简单的例子，假如待分割的字符为<code class="highlighter-rouge">aaab</code>，字典为<code class="highlighter-rouge">[a,aa]</code>。显然，该字符是不能被正确切割的，但是计算机并不知道，我们可以分析一下可能产生的重复计算。从上面的伪码可知，递归产生于当<code class="highlighter-rouge">str1</code>满足条件后对<code class="highlighter-rouge">str2</code>的判断，因此我们只需要分析<code class="highlighter-rouge">str2</code>是否会有重复的情况即可，针对这个例子，当<code class="highlighter-rouge">str1=a</code>时，产生的<code class="highlighter-rouge">str2</code>有<code class="highlighter-rouge">[aab,ab,b]</code>会有3次递归，当<code class="highlighter-rouge">str1=aa</code>时，产生的<code class="highlighter-rouge">str2</code>有<code class="highlighter-rouge">[ab,b]</code>产生2次递归，此时我们可以看到，<code class="highlighter-rouge">ab</code>和<code class="highlighter-rouge">b</code>被重复计算了。</p>
+
+<p>解决这个问题，我们需要记录曾经被计算过的，不满足条件的<code class="highlighter-rouge">str2</code>，然后在递归前先对<code class="highlighter-rouge">str2</code>进行判断，可以修改上述伪码为:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>n = length of input string
+for i = 0 to n-1
+    firstword = substring (input string from index [0 , i] )
+    secondword = substring (input string from index [i+1 , n-1] )
+    if dictionary has firstword
+        if secondword is in dictionary OR second word is of zero length, then return true
+
+        if secondword in solved_set
+            continue
+        
+        add secondword to solved_set
+        recursively call this method with secondword as input and return true if it can be segmented
+</code></pre></div></div>
+
+<ul>
+  <li><a href="https://leetcode.com/problems/word-break/description/">word break</a></li>
+  <li><a href="https://leetcode.com/problems/word-break-ii/description/">word break II</a></li>
+</ul>
+
+<h3 id="回文串问题">回文串问题</h3>
+
+<p>检查一个字符串中是否有回文字串也是字符串常见的问题，匹配回文串的方法不难，难的是如何在字符串中找到所有的回文字串，解决这个问题有多种方法，这里介绍一种比较直观的“中心扩散法”，思路如下：</p>
+
+<ol>
+  <li>从左边开始遍历字符串</li>
+  <li>每访问一个字符，要考虑两种情况：
+    <ul>
+      <li>中心为奇数字符情况，则以该字符为中心，向两边扩散，进行回文判定</li>
+      <li>中心为偶数字符情况，则以该字符+下一个字符为中心，向两边扩散</li>
+    </ul>
+  </li>
+  <li>算法的时间复杂度为<code class="highlighter-rouge">O(n)</code>，空间复杂度为<code class="highlighter-rouge">O(1)</code></li>
+</ol>
+
+<p>我们看一个<a href="https://leetcode.com/problems/palindromic-substrings/description/">具体例子</a>，题目要求：</p>
+
+<blockquote>
+  <p>Given a string, your task is to count how many palindromic substrings in this string.The substrings with different start indexes or end indexes are counted as different substrings even they consist of same characters.</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input: "aaa"
+Output: 6
+Explanation: Six palindromic strings: "a", "a", "a", "aa", "aa", "aaa". 
+</code></pre></div></div>
+<p>使用中心扩散法的代码如下</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*
+ 中心扩散 O(n^2)
+ */</span>
+<span class="k">class</span> <span class="nc">Solution</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">countPalindrome</span><span class="p">(</span><span class="kt">int</span> <span class="n">l</span><span class="p">,</span> <span class="kt">int</span> <span class="n">r</span><span class="p">,</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">s</span><span class="p">,</span> <span class="kt">int</span> <span class="n">count</span><span class="p">){</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">l</span><span class="o">&gt;=</span><span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">()){</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">l</span><span class="o">--</span><span class="p">]</span> <span class="o">==</span> <span class="n">s</span><span class="p">[</span><span class="n">r</span><span class="o">++</span><span class="p">]){</span>
+                <span class="n">count</span> <span class="o">++</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">count</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="nl">public:</span>
+    <span class="kt">int</span> <span class="n">countSubstrings</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">s</span><span class="p">.</span><span class="n">length</span><span class="p">();</span><span class="o">++</span><span class="n">i</span><span class="p">){</span>
+            <span class="c1">//中心为奇数</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="n">countPalindrome</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+            <span class="c1">//中心为偶数</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="n">countPalindrome</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">count</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>基于回文字串的问题还有很多变种，更多回文问题参考：</p>
+
+<ul>
+  <li><a href="https://leetcode.com/problems/longest-palindromic-substring/description/">5. Longest Palindromic Substring</a></li>
+  <li><a href="https://leetcode.com/problems/palindrome-number/description/">9. Palindrome Number</a></li>
+  <li><a href="https://leetcode.com/problems/longest-palindromic-subsequence/description/">516. Longest Palindromic Subsequence</a></li>
+</ul>
+
+<h3 id="正则表达式匹配">正则表达式匹配</h3>
+
+<p>此类问题的一般描述为，给你一个字符串，一个模式串，问该模式串是否可以匹配给定的字符串。通常在模式串中，存在某些通配符，例如<code class="highlighter-rouge">.</code>和<code class="highlighter-rouge">*</code>。假设给定字符串<code class="highlighter-rouge">s="fabbbc"</code>，给定的模式串<code class="highlighter-rouge">p=".ab*c"</code>。我们从第一个字符开始匹配，由于<code class="highlighter-rouge">.</code>可以匹配任何字符，因此第一个字符match，接下来我们需要继续比较<code class="highlighter-rouge">s=abbbc</code>和<code class="highlighter-rouge">p=ab*c</code>，显然<code class="highlighter-rouge">s[0]</code>和<code class="highlighter-rouge">p[0]</code>匹配，接下来我们继续匹配<code class="highlighter-rouge">s=bbbc</code>和<code class="highlighter-rouge">p=b*c</code>。可以看出上述匹配过程是一个递归的过程，每当我们完成一次匹配后，用剩余的字符继续匹配。</p>
+
+<p>接下来我们可以总结一下匹配规则：</p>
+
+<ol>
+  <li>当<code class="highlighter-rouge">s</code>和<code class="highlighter-rouge">p</code>的长度都为0时，说明匹配完成，此时返回true</li>
+  <li>当<code class="highlighter-rouge">s</code>和<code class="highlighter-rouge">p</code>的长度都为1时，判断<code class="highlighter-rouge">p[0] = '.' || p[0] == s[0]</code></li>
+  <li>当<code class="highlighter-rouge">p</code>的长度大于1时，check <code class="highlighter-rouge">p[1]=='*'</code>
+    <ul>
+      <li>如果<code class="highlighter-rouge">p[1] != '*'</code>，判断<code class="highlighter-rouge">p[0] = '.' || p[0] == s[0]</code>，如果match，则递归比较<code class="highlighter-rouge">p.substr(1)</code>和<code class="highlighter-rouge">s.substr(1)</code>。如果不match则返回false</li>
+      <li>如果<code class="highlighter-rouge">p[1] == '*'</code>，此时情况比较复杂，我们可以枚举一些情况
+        <ol>
+          <li><code class="highlighter-rouge">s="", p="b*"</code></li>
+          <li><code class="highlighter-rouge">s="a", p="b*"</code></li>
+          <li><code class="highlighter-rouge">s="a", p="b*a"</code></li>
+          <li><code class="highlighter-rouge">s="bb", p="b*"</code></li>
+          <li><code class="highlighter-rouge">s="bba", p="b*a"</code></li>
+          <li><code class="highlighter-rouge">s="a", p="a*a"</code></li>
+        </ol>
+      </li>
+    </ul>
+
+    <p>上面的前三种情况可以归结为一种情况，即比较<code class="highlighter-rouge">p.substr(2)</code>和<code class="highlighter-rouge">s</code>，由于<code class="highlighter-rouge">*</code>代表0个或者多个，如果将<code class="highlighter-rouge">b*</code>从<code class="highlighter-rouge">p</code>中去掉仍然可以匹配，那么<code class="highlighter-rouge">s</code>和<code class="highlighter-rouge">p</code>就是匹配的。而对于后面两种情况，我们则不能简单的将<code class="highlighter-rouge">b*</code>去掉，比如在第4个例子中，如果去掉<code class="highlighter-rouge">b*</code>，则<code class="highlighter-rouge">s="bb"</code>和<code class="highlighter-rouge">p=""</code>，显然是不匹配的，而实际上<code class="highlighter-rouge">s="bb"</code>是满足<code class="highlighter-rouge">p="b*"</code>的。因此这种情况下，我们需要不断的改变s，以第5个例子为例，当发现<code class="highlighter-rouge">s[0] == p[0] || p[0]=='.'</code>后，令<code class="highlighter-rouge">s=s.substr(1)</code>继续比较，直到<code class="highlighter-rouge">s="a"</code>,<code class="highlighter-rouge">p="b*a"</code>，此时再进行一次递归即可回到上面前三条的逻辑。但是这里我们又遗漏了一个场景，即上面第6条，按照之前的逻辑，我们最终会走到<code class="highlighter-rouge">s="",p="a"</code>的判断，显然结果是不正确的。出现这个问题的原因在于，我们不知道<code class="highlighter-rouge">b*</code>后面是否还有其它字符，因此正确的做法是，没当更新一次s时，都需要先进行一次递归比较。</p>
+  </li>
+  <li>综上，上述三条规则可以涵盖所有的场景</li>
+</ol>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">bool</span> <span class="nf">isMatch</span><span class="p">(</span><span class="n">string</span> <span class="n">s</span><span class="p">,</span> <span class="n">string</span> <span class="n">p</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span>  <span class="n">p</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+        <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">p</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span><span class="mi">1</span><span class="p">){</span>
+        <span class="k">return</span> <span class="n">s</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">==</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">||</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="sc">'.'</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'*'</span> <span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+            <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">||</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="sc">'.'</span><span class="p">){</span>
+            <span class="k">return</span> <span class="n">isMatch</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">p</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">//p[1] == '*'</span>
+    <span class="c1">//s="bba", p="b*a"</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">s</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">||</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="sc">'.'</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">isMatch</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">p</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">2</span><span class="p">)){</span>
+            <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="c1">//update s</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="cm">/*
+        s="a", p="b*a"
+        s="x", p="b*"
+    */</span>
+    <span class="k">return</span> <span class="n">isMatch</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">p</span><span class="p">.</span><span class="n">substr</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>    
+<span class="p">}</span>
+</code></pre></div></div>
+<ul>
+  <li><a href="https://leetcode.com/problems/regular-expression-matching/description/">10. Regular Expression Matching</a></li>
+  <li><a href="https://leetcode.com/problems/wildcard-matching/description/">44. Wildcard Matching</a></li>
+</ul>
+
+<h3 id="滑动窗口问题">滑动窗口问题</h3>
+
+<p>滑动窗口是用来寻找符合某种条件子串的一种线性扫描方法，它通过记录滑动窗中字符个数的变化来判断当前状态是否满足条件。其模板如下</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//str is input</span>
+<span class="c1">//p is pattern</span>
+<span class="n">T</span> <span class="nf">slidingWindow</span><span class="p">(</span><span class="n">string</span> <span class="n">str</span><span class="p">,</span> <span class="n">string</span> <span class="n">p</span><span class="p">){</span>
+    <span class="c1">//1. create a hashmap, key is char, value is count</span>
+    <span class="n">unordered_map</span><span class="o">&lt;</span><span class="kt">char</span><span class="p">,</span> <span class="kt">int</span><span class="o">&gt;</span> <span class="n">um</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="o">&amp;</span><span class="n">c</span> <span class="o">:</span> <span class="n">p</span><span class="p">){</span>
+        <span class="n">um</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">counter</span> <span class="o">=</span> <span class="n">um</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+
+    <span class="c1">//2. create a sliding window</span>
+    <span class="kt">int</span> <span class="n">left</span> <span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="kt">int</span> <span class="n">right</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">len</span> <span class="o">=</span> <span class="n">INT_MAX</span><span class="p">;</span>
+
+    <span class="c1">//3. expand right boundary</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">right</span> <span class="o">&lt;</span> <span class="n">str</span><span class="p">.</span><span class="n">length</span><span class="p">()){</span>
+        <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="n">str</span><span class="p">[</span><span class="n">right</span><span class="p">];</span>
+        <span class="c1">//check if c is in the um</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">um</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">){</span>
+            <span class="n">um</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">--</span><span class="p">;</span>
+            <span class="c1">//todo: check point #1</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">um</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+                <span class="n">counter</span> <span class="o">-=</span><span class="mi">1</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        
+        <span class="c1">//todo: check point #2</span>
+        <span class="c1">//check if counter is zero</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">counter</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+            <span class="c1">//todo: check point #3 </span>
+            <span class="c1">//calculate len,</span>
+            <span class="kt">int</span> <span class="n">length</span> <span class="o">=</span> <span class="n">right</span> <span class="o">-</span><span class="n">left</span> <span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+            
+            <span class="c1">//move left boundary</span>
+            <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="n">str</span><span class="p">[</span><span class="n">left</span><span class="p">];</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">um</span><span class="p">.</span><span class="n">count</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">){</span>
+                <span class="n">um</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">++</span><span class="p">;</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">um</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">){</span>
+                    <span class="n">counter</span><span class="o">++</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="c1">//expand the left boundary</span>
+            <span class="n">left</span> <span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="c1">//expand the right boundary</span>
+        <span class="n">right</span> <span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//todo:</span>
+    <span class="k">return</span> <span class="n">some_thing</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><a href="https://leetcode.com/problems/longest-substring-without-repeating-characters/">3. Longest Substring Without Repeating Characters</a></li>
+  <li><a href="https://leetcode.com/problems/minimum-window-substring/description/">76. Minimum Window Substring</a></li>
+  <li><a href="https://leetcode.com/problems/find-all-anagrams-in-a-string/">438. Find All Anagrams In a String</a></li>
+</ul>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="http://www.cs.ucr.edu/~stelo/pattern.html">Pattern Matching Pointer</a></li>
+  <li><a href="http://www-igm.univ-mlv.fr/~lecroq/string/">字符串匹配算法的描述、复杂度分析和C源代码</a></li>
+  <li><a href="https://www.youtube.com/watch?v=NcZ2cu7gc-A&amp;list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk">CS106B-Stanford-YouTube</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome">Algorithms-Stanford-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome">算法与数据结构-1-北大-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/gaoji-shuju-jiegou/home/welcome">算法与数据结构-2-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:TsinghuaX+30240184.1x+3T2017/course/">算法与数据结构-1-清华-EDX</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法与数据结构-2-清华-EDX</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms/home/welcome">算法设计与分析-1-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法设计与分析-2-北大-EDX</a></li>
+</ul>
+
+:ET

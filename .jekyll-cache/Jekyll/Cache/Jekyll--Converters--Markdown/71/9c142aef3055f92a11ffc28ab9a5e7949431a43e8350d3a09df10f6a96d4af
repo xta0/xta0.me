@@ -1,0 +1,161 @@
+I"�@<p>从这一篇开始我们将围绕一种特殊的二叉树及其变种进行长时间的讨论，先从最基本的二叉搜索树开始，所谓二叉搜索树（Binary Search Tree）是具有下列性质的二叉树：</p>
+
+<ol>
+  <li>对于任意节点，设其值为<code class="highlighter-rouge">K</code></li>
+  <li>该节点的左子树(若不空)的任意一个节点的值都小于<code class="highlighter-rouge">K</code></li>
+  <li>该节点的 右子树(若不空)的任意一个节点的值都大于<code class="highlighter-rouge">K</code></li>
+  <li>该节点的左右子树也是BST</li>
+  <li><mark>BST的中序遍历</mark>即是节点的正序排列（从小到大排列）</li>
+</ol>
+
+<p><img src="/assets/images/2008/07/tree-5.jpg" style="margin-left:auto; margin-right:auto;display:block" /></p>
+
+<p>二叉搜索树及其变种是内存中一种重要的树形索引（关于索引，在后面文章中会提到），常用的BST变种有红黑树，伸展树，AVL树等，从这篇文章开始将会依次介绍这些树的特性及其实际应用。</p>
+
+<h3 id="bst的三种操作">BST的三种操作</h3>
+
+<ul>
+  <li><strong>搜索</strong></li>
+</ul>
+
+<p>上图中，假如我们要搜索<code class="highlighter-rouge">20</code>，根据BST的性质，每次只需要检索两个子树之一，直到<code class="highlighter-rouge">20</code>被被找到，或者走到叶子节点停。我们如果将BST的中序遍历序列用数组表示，搜索过程实际上就是二分法:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>15 17 18 20 35 51 60 88 93
+</code></pre></div></div>
+<p>由于每次搜索都是<code class="highlighter-rouge">target</code>和该节点的<code class="highlighter-rouge">value</code>，而且这个过程是重复的，因此可以使用递归来实现，思路为:</p>
+
+<blockquote>
+  <p>后面的例子中，统一使用TreeNode来表示二叉树的节点，可将TreeNode理解为: <code class="highlighter-rouge">typedef TreeNode BinaryTreeNode&lt;int&gt;</code></p>
+</blockquote>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TreeNode</span><span class="o">*</span> <span class="nf">search</span><span class="p">(</span><span class="n">TreeNode</span><span class="o">*</span> <span class="n">node</span><span class="p">,</span> <span class="kt">int</span> <span class="n">target</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">node</span> <span class="o">||</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">val</span> <span class="o">==</span> <span class="n">target</span><span class="p">){</span>         
+        <span class="k">return</span> <span class="n">node</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//递归</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">target</span> <span class="o">&lt;</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">){</span>
+        <span class="k">return</span> <span class="n">search</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">,</span><span class="n">target</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="k">return</span> <span class="n">search</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">,</span><span class="n">target</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>查找的运算时间正比于待查找节点的深度，时间复杂度和二分法相同，均为$O(log_2^{N})$，最坏情况下不超过树的高度，BST退化为单调序列，时间复杂度为$O(N)$。</p>
+
+<ul>
+  <li><strong>插入</strong></li>
+</ul>
+
+<p>插入算法的实现思路是先借助搜索找到插入位置，再进行节点插入，值得注意的是，对于插入节点的位置一定是某个叶子节点左孩子或右孩子为<code class="highlighter-rouge">NULL</code>的位置</p>
+
+<ol>
+  <li>从根节点开始搜索，在停止位置插入一个新叶子节点。</li>
+  <li>假如我们要插入<code class="highlighter-rouge">17</code>，如下图搜索树，直到遇到<code class="highlighter-rouge">19</code>搜索停止，<code class="highlighter-rouge">17</code>成为<code class="highlighter-rouge">19</code>左叶子节点。</li>
+  <li>插入新节点后的二叉树依然保持BST的性质和性能</li>
+</ol>
+
+<p><img src="/assets/images/2008/07/tree-6.jpg" style="margin-left:auto; margin-right:auto;display:block" /></p>
+
+<p>按照上面步骤，其插入的实现思路为:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">insert</span><span class="p">(</span><span class="n">TreeNode</span><span class="o">*</span> <span class="n">node</span><span class="p">,</span><span class="kt">int</span> <span class="n">target</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">target</span> <span class="o">==</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">val</span>  <span class="p">){</span>
+        <span class="k">return</span><span class="p">;</span> <span class="c1">//禁止重复元素插入</span>
+    <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">target</span> <span class="o">&lt;</span> <span class="n">node</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">){</span>
+            <span class="n">node</span> <span class="o">-&gt;</span><span class="n">left</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TreeNode</span><span class="p">(</span><span class="n">target</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="n">insert</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">,</span><span class="n">target</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">){</span>
+            <span class="n">node</span><span class="o">-&gt;</span><span class="n">right</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TreeNode</span><span class="p">(</span><span class="n">target</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="n">insert</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">,</span><span class="n">target</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>插入的运算时间主要来自两部分，一部分是search，一部分是插入节点。最好的时间复杂度为$O(log_2^{N})$，最坏情况下为$O(N)$</p>
+
+<ul>
+  <li><strong>删除</strong></li>
+</ul>
+
+<p>相对于插入操作，节点的删除操作则略为复杂，但仍是基于搜索为主要框架，找到待删除元素后，再根据不同分支做不同的处理：</p>
+
+<ol>
+  <li>如果该节点没有左子树，则使用右子树替换该节点</li>
+  <li>如果该节点没有右子树，则使用左子树替换该节点</li>
+  <li>如果该节点既有左子树也有右子树，则找到右子树中最小的节点，将该节点的值替换为待删除节点的值，删除该节点</li>
+</ol>
+
+<p><img src="/assets/images/2008/07/tree-11.jpg" style="margin-left:auto; margin-right:auto;display:block" /></p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">TreeNode</span><span class="o">*</span> <span class="nf">deleteNode</span><span class="p">(</span><span class="n">TreeNode</span><span class="o">*</span> <span class="n">root</span><span class="p">,</span> <span class="kt">int</span> <span class="n">key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">root</span><span class="p">){</span>
+        <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+    <span class="p">};</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">val</span> <span class="o">&lt;</span> <span class="n">key</span><span class="p">){</span>
+        <span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span> <span class="o">=</span> <span class="n">deleteNode</span><span class="p">(</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">,</span><span class="n">key</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">val</span> <span class="o">&gt;</span> <span class="n">key</span><span class="p">){</span>
+        <span class="n">root</span><span class="o">-&gt;</span><span class="n">left</span> <span class="o">=</span> <span class="n">deleteNode</span><span class="p">(</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">,</span><span class="n">key</span><span class="p">);</span>
+    <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">left</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">){</span>
+            <span class="k">delete</span> <span class="n">root</span><span class="p">;</span>
+            <span class="k">return</span> <span class="nb">NULL</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">){</span>
+            <span class="n">TreeNode</span><span class="o">*</span> <span class="n">right</span> <span class="o">=</span> <span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">;</span>
+            <span class="k">delete</span> <span class="n">root</span><span class="p">;</span>
+            <span class="k">return</span> <span class="n">right</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">){</span>
+            <span class="n">TreeNode</span><span class="o">*</span> <span class="n">left</span> <span class="o">=</span> <span class="n">root</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">;</span>
+            <span class="k">delete</span> <span class="n">root</span><span class="p">;</span>
+            <span class="k">return</span> <span class="n">left</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="c1">//找到右子树中最小的节点</span>
+            <span class="n">TreeNode</span><span class="o">*</span> <span class="n">rt</span> <span class="o">=</span> <span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">;</span>
+            <span class="k">while</span><span class="p">(</span><span class="n">rt</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">){</span>
+                <span class="n">rt</span> <span class="o">=</span> <span class="n">rt</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="c1">//替换为该节点的值</span>
+            <span class="n">root</span><span class="o">-&gt;</span><span class="n">val</span> <span class="o">=</span> <span class="n">rt</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">;</span>
+            <span class="c1">//重复删除过程</span>
+            <span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span> <span class="o">=</span> <span class="n">deleteNode</span><span class="p">(</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">,</span><span class="n">rt</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">root</span><span class="p">;</span>        
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>对于删除算法，同插入操作一样，最好的时间复杂度为$O(log_2^{N})$，最坏情况下为$O(N)$。</p>
+
+<p>实际上，关于BST删除操作，还有个取巧的方法，就是将要删除的节点标记为“已删除”，但是并不真正从树中删除这个节点。这样原本删除的节点还需要存储在内存中，比较浪费内存空间，但是删除操作就变得简单了很多。而且，这种处理方法对插入，查找操作也没有影响。</p>
+
+<h3 id="重复元素">重复元素</h3>
+
+<p>上面的讨论假设BST中没有重复的元素，如果有重复的关键码BST该如何存储呢？有两种方案，第一种是令BST中每个节点保存一个双向链表，相同的数据存放在链表中。第二种方式则是将重复的元素当值更大的节点存入到右子树中，如下图所示</p>
+
+<p><img src="/assets/images/2010/07/bst-dup.png" class="md-img-center" /></p>
+
+<p>当要查找数据的时候，遇到值相同的节点，我们并不停止查找操作，而是继续在右子树中查找，直到遇到叶子节点才停止。这样就可以把键值等于要查找值的所有节点都找出来。</p>
+
+<h3 id="resources">Resources</h3>
+
+<ul>
+  <li><a href="https://en.wikipedia.org/wiki/Binary_search_tree">Binary search tree</a></li>
+  <li><a href="https://zh.wikipedia.org/wiki/%E6%A0%91%E6%97%8B%E8%BD%AC">树旋转</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Tree_rotation">Tree rotation</a></li>
+  <li><a href="https://www.youtube.com/watch?v=NcZ2cu7gc-A&amp;list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk">CS106B-Stanford-YouTube</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome">Algorithms-Stanford-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome">算法与数据结构-1-北大-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/gaoji-shuju-jiegou/home/welcome">算法与数据结构-2-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:TsinghuaX+30240184.1x+3T2017/course/">算法与数据结构-1-清华-EDX</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法与数据结构-2-清华-EDX</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms/home/welcome">算法设计与分析-1-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法设计与分析-2-北大-EDX</a></li>
+</ul>
+
+:ET

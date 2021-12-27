@@ -1,0 +1,468 @@
+I"B�<h2 id="基本概念">基本概念</h2>
+
+<ul>
+  <li>二叉树 (binary tree)由<mark>节点的有限集合构成</mark>
+    <ul>
+      <li>这个有限集合或者为空集 (empty)</li>
+      <li>或者为由一个根节点 (root) 及两棵互不相交、分别称作这个根的左子树(left subtree)和右子树 (right subtree) 的二叉树组成的集合</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/2008/07/tree-1.jpg" style="margin-left:auto; margin-right:auto;display:block" /></p>
+
+<ul>
+  <li>节点
+    <ul>
+      <li>子节点、父节点、最左子节点</li>
+      <li>兄弟节点、左兄弟、右兄弟</li>
+      <li>分支节点、叶节点
+        <ul>
+          <li>没有子树的节点称作 叶节点（或树叶、终端节点）</li>
+          <li>非终端节点称为分支节点</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>边
+    <ul>
+      <li>两个节点的有序对，称作边</li>
+      <li>路径，路径长度</li>
+      <li>祖先，后代
+        <ul>
+          <li>若有一条由<code class="highlighter-rouge">k</code>到达<code class="highlighter-rouge">k(s)</code>的路径，则称<code class="highlighter-rouge">k</code>是<code class="highlighter-rouge">k(s)</code>的祖先，<code class="highlighter-rouge">k(s)</code>是<code class="highlighter-rouge">k</code>的子孙</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>层数
+    <ul>
+      <li>根为第 0 层,其他节点的层数等于其父节点的层数加 1</li>
+      <li>深度：层数最大的叶节点的层数</li>
+      <li>高度：层数最大的叶节点的层数加 1</li>
+    </ul>
+  </li>
+  <li>满二叉树和完全二叉树
+    <ul>
+      <li>满二叉树
+        <ul>
+          <li>所有非叶子节点的节点度为2</li>
+        </ul>
+      </li>
+      <li>完全二叉树
+        <ul>
+          <li>若设二叉树的深度为h，除第h层外，其它各层是满的</li>
+          <li>第h层如果不是满的，则子节点都在最左边</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>扩充二叉树
+    <ul>
+      <li>所有叶子节点变成内部节点，增加树叶，变成满二叉树</li>
+      <li>所有扩充出来的节点都是叶子节点</li>
+      <li>外部路径长度<code class="highlighter-rouge">E</code>和内部路径长度<code class="highlighter-rouge">I</code>满足：<code class="highlighter-rouge">E=I+2n(n是内部节点个数)</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="二叉树性质">二叉树性质</h3>
+
+<ol>
+  <li>在二叉树中，第i层上最多有 $2i (i≥0)$ 个节点</li>
+  <li>深度为 k 的二叉树至多有 $2^{(k+1)}-1 (k≥0)$ 个节点
+    <ul>
+      <li>其中深度(depth)定义为二叉树中层数最大的叶节点的层数</li>
+    </ul>
+  </li>
+  <li>一棵二叉树，若其终端节点数为$n_0$，度为$2$的节点数为$n_2$，则 $n_0=n_2+1$</li>
+  <li><mark>满二叉树定理：非空满二叉树树叶数目等于其分支节点数加1</mark></li>
+  <li>满二叉树定理推论：一个非空二叉树的空子树数目等于其节点数加1</li>
+  <li>有$n$个节点$(n&gt;0)$的完全二叉树的高度为$⌈\log_2(n+1)⌉$，深度为$⌈\log_2(n+1)- 1⌉$</li>
+</ol>
+
+<h2 id="二叉树的存储结构">二叉树的存储结构</h2>
+
+<p>二叉树的各节点随机地存储在内存空间中，节点之间的逻辑关系用指针来链接。我们可以使用二叉链表的方式来表示一个节点，其中<code class="highlighter-rouge">left</code>,<code class="highlighter-rouge">right</code>两个指针指向左右两个子树，<code class="highlighter-rouge">info</code>表示该节点的值，如下：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">BinaryTreeNode</span><span class="p">{</span>
+    <span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">left</span><span class="p">;</span> <span class="c1">// 指向左子树的指针</span>
+    <span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">right</span><span class="p">;</span> <span class="c1">// 指向右子树的指针</span>
+    <span class="n">T</span> <span class="n">info</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<p>对于某些场景，我们也可以在上述结构中再增加一个指向父节点的<code class="highlighter-rouge">parent</code>指针，使其变为三叉链表：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">BinaryTreeNode</span><span class="p">{</span>
+    <span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">left</span><span class="p">;</span> <span class="c1">// 指向左子树的指针</span>
+    <span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">right</span><span class="p">;</span> <span class="c1">// 指向右子树的指针</span>
+    <span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">parent</span><span class="p">;</span> <span class="c1">// 指向父节点的指针</span>
+    <span class="n">T</span> <span class="n">info</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>接下来我们来分析一下使用二叉链表的空间开销，我们令存储密度$\alpha$表示数据结构存储的效率，结构性开销 $\gamma=1-\alpha$，则有</p>
+
+<script type="math/tex; mode=display">\alpha=\frac{数据本身存储量}{整个结构占用的存储总量}</script>
+
+<p>满二叉树为例，满二叉树的一半指针域为空，每个节点存在两个指针，一个数据域，则需要的总空间为<code class="highlighter-rouge">(2p+d)*n</code>，如果<code class="highlighter-rouge">p=d</code>，那么结构性开销为<code class="highlighter-rouge">2p/(sp+d)=2/3</code>，可见满二叉树存储效率并不高，有三分之二的结构性开销。</p>
+
+<h3 id="完全二叉树的顺序存储">完全二叉树的顺序存储</h3>
+
+<ul>
+  <li>由于完全二叉树的结构，可以将二叉树节点按一定的顺序存储到一片连续的存储单元，使节点在序列中的位置反映出相应的结构信息
+    <ul>
+      <li>存储结构实现性的
+        <ul>
+          <li>如下图的完全二叉树，其存储结构为<code class="highlighter-rouge">|3|16|7|23|37|10|21|20|</code></li>
+          <li>我们可以根据一维数组的下标来定位节点的位置</li>
+        </ul>
+      </li>
+      <li>逻辑结构上仍然是二叉树结构</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/2008/07/tree-4.jpg" style="margin-left:auto; margin-right:auto;display:block" /></p>
+
+<ul>
+  <li>下标公式
+    <ul>
+      <li>当<code class="highlighter-rouge">2i+1&lt;n</code>时，节点<code class="highlighter-rouge">i</code>的左孩子是节点<code class="highlighter-rouge">2i+1</code>，否则节点i没有左孩子</li>
+      <li>当<code class="highlighter-rouge">2i+2&lt;n</code> 时，节点<code class="highlighter-rouge">i</code>的右孩子是节点<code class="highlighter-rouge">2i+2</code>，否则节点i没有右孩子</li>
+      <li>当<code class="highlighter-rouge">0&lt;i&lt;n</code> 时，节点<code class="highlighter-rouge">i</code>的父亲是节点<code class="highlighter-rouge">⌊(i-1)/2⌋</code></li>
+      <li>当<code class="highlighter-rouge">i</code>为偶数且<code class="highlighter-rouge">0&lt;i&lt;n</code>时，节点<code class="highlighter-rouge">i</code>的左兄弟是节点<code class="highlighter-rouge">i-1</code>，否则节点<code class="highlighter-rouge">i</code>没有左兄弟</li>
+      <li>当<code class="highlighter-rouge">i</code>为奇数且<code class="highlighter-rouge">i+1&lt;n</code>时，节点i的右兄弟是节点<code class="highlighter-rouge">i+1</code>，否则节点<code class="highlighter-rouge">i</code>没有右兄弟</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="二叉树的遍历">二叉树的遍历</h2>
+
+<p>遍历是一种将树形结构专户为线性结构的方法，对二叉树来说，有4种遍历的次序，分别是</p>
+
+<ol>
+  <li>前序法 (tLR次序，preorder traversal)。
+    <ul>
+      <li>根节点-&gt;左子树-&gt;右子树。</li>
+      <li>上图：<code class="highlighter-rouge">ABDCEGFHI</code></li>
+    </ul>
+  </li>
+  <li>中序法 (LtR次序，inorder traversal)。
+    <ul>
+      <li>左子数-&gt;根节点-&gt;右子树。</li>
+      <li>上图：<code class="highlighter-rouge">DBAEGCHFI</code></li>
+    </ul>
+  </li>
+  <li>后序法 (LRt次序，postorder traversal)。
+    <ul>
+      <li>左子树-&gt;右子树-&gt;根节点</li>
+      <li>上图：<code class="highlighter-rouge">DBGEHIFCA</code></li>
+    </ul>
+  </li>
+  <li>层次遍历
+    <ul>
+      <li>按节点所在层，从上到下依次遍历</li>
+      <li>上图：<code class="highlighter-rouge">ABCDEFGHI</code></li>
+    </ul>
+  </li>
+</ol>
+
+<p>从图论的角度讲，前三种遍历方式也叫做深度优先遍历，最后一种叫做广度优先遍历。</p>
+
+<h3 id="深度优先遍历">深度优先遍历</h3>
+
+<p>由于二叉树的前中后遍历次序具有自相似性，因此可以很方便的使用递归的方式实现</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//递归，前序遍历</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="nf">traverse</span> <span class="p">(</span><span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*</span> <span class="n">root</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">root</span><span class="p">){</span>
+        <span class="k">return</span> <span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//Visit(root); //前序遍历</span>
+    <span class="n">traverse</span><span class="p">(</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">);</span> <span class="c1">// 递归访问左子树</span>
+    <span class="c1">//Visit(root); // 中序</span>
+    <span class="n">traverse</span><span class="p">(</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">);</span> <span class="c1">// 递归访问右子树</span>
+    <span class="c1">//Visit(root); // 后序</span>
+<span class="err">｝</span>
+</code></pre></div></div>
+<p>递归遍历的时间复杂度为 $T(n)=O(1) + T(a) + T(n-a-1) = O(n)$ 这是一个不能再好的时间复杂度了。</p>
+
+<h3 id="迭代实现">迭代实现</h3>
+
+<p>上面介绍的递归遍历是一种简洁并很好理解的算法，而且编译器也会在递归过程中做一些优化，因此效率并不会太差，但是对树层次很深的情况下，可能会有栈溢出的隐患，此时可以将递归解法转为非递归的迭代解法。</p>
+
+<ul>
+  <li><strong>前序遍历</strong></li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">BinaryTree</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">None_Recursive_1</span><span class="p">(</span><span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*</span> <span class="n">root</span><span class="p">){</span>
+    <span class="n">stack</span><span class="o">&lt;</span><span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*</span> <span class="o">&gt;</span> <span class="n">ss</span><span class="p">;</span>
+    <span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*</span> <span class="n">pointer</span> <span class="o">=</span> <span class="n">root</span><span class="p">;</span>
+    <span class="n">ss</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span><span class="c1">// 栈底监视哨</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">pointer</span><span class="p">){</span>
+        <span class="n">Visit</span><span class="p">(</span><span class="n">pointer</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">());</span> <span class="c1">//遍历节点</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">pointer</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">){</span>
+            <span class="n">ss</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">pointer</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">);</span> <span class="c1">//如果该节点有右子树，入栈</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">pointer</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">){</span> <span class="c1">//循环遍历左子树</span>
+            <span class="n">pointer</span> <span class="o">=</span> <span class="n">pointer</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="n">pointer</span> <span class="o">=</span> <span class="n">ss</span><span class="p">.</span><span class="n">top</span><span class="p">();</span> <span class="c1">//右子树</span>
+            <span class="n">ss</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>也可以通过判断栈是否为空作为循环条件，思路为：</p>
+
+<ol>
+  <li>将根节点放入栈中</li>
+  <li>判断栈是否为空，如果不空，取出栈顶节点访问</li>
+  <li>如果该节点有右子树，入栈右子树</li>
+  <li>如果该节点有左子树，入栈左子树</li>
+  <li>重复第2步</li>
+</ol>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">BinaryTree</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">None_Recursive_2</span><span class="p">(</span><span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*</span> <span class="n">root</span><span class="p">){</span>
+    <span class="n">stack</span><span class="o">&lt;</span><span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*</span> <span class="o">&gt;</span> <span class="n">ss</span><span class="p">;</span>
+    <span class="n">ss</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">ss</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+        <span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*</span> <span class="n">top</span> <span class="o">=</span> <span class="n">ss</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+        <span class="n">Visit</span><span class="p">(</span><span class="n">top</span><span class="p">);</span>
+        <span class="n">ss</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">top</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">){</span>
+            <span class="n">ss</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">top</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">);</span> <span class="c1">//先入栈右子树节点</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">top</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">){</span> 
+            <span class="n">ss</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">top</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">);</span> <span class="c1">//后入栈左子树节点</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>中序遍历</strong></li>
+</ul>
+
+<ol>
+  <li>指针指向根节点</li>
+  <li>遇到一个节点，入栈一个节点，指针指向左子节点，继续下降</li>
+  <li>左节点为空时，弹出一个节点，指针指向该节点</li>
+  <li>指针指向右节点</li>
+  <li>循环第1步</li>
+</ol>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">inOrder_Traverse</span><span class="p">(</span><span class="n">TreeNode</span><span class="o">*</span> <span class="n">root</span><span class="p">){</span>
+    <span class="n">stack</span><span class="o">&lt;</span><span class="n">TreeNode</span><span class="o">*</span> <span class="o">&gt;</span><span class="n">st</span><span class="p">;</span>
+    <span class="n">TreeNode</span><span class="o">*</span> <span class="n">pointer</span> <span class="o">=</span> <span class="n">root</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">st</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">||</span> <span class="n">pointer</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">pointer</span><span class="p">){</span>
+            <span class="n">st</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">pointer</span><span class="p">);</span>
+            <span class="n">pointer</span> <span class="o">=</span> <span class="n">pointer</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="n">pointer</span> <span class="o">=</span> <span class="n">st</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+            <span class="n">st</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+            <span class="n">Visit</span><span class="p">(</span><span class="n">pointer</span><span class="p">);</span>
+            <span class="n">pointer</span> <span class="o">=</span> <span class="n">pointer</span> <span class="o">-&gt;</span> <span class="n">right</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><strong>后序遍历</strong></li>
+</ul>
+
+<p>后序遍历相对复杂，需要给栈中元素加上一个特征位：</p>
+
+<ol>
+  <li>Left 表示已进入该节点的左子树，将从左边回来</li>
+  <li>Right 表示已进入该节点的右子树，将从右边回来</li>
+</ol>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">enum</span> <span class="n">Tag</span><span class="p">{</span><span class="n">left</span><span class="p">,</span> <span class="n">rigt</span><span class="p">};</span>
+<span class="k">class</span> <span class="nc">TreeNodeElement</span><span class="p">{</span>
+    <span class="n">TreeNode</span><span class="o">*</span> <span class="n">node</span><span class="p">;</span>
+    <span class="n">Tag</span> <span class="n">tag</span><span class="p">;</span>
+    <span class="n">TreeNodeElement</span><span class="p">(</span><span class="n">TreeNode</span><span class="o">*</span> <span class="n">n</span><span class="p">)</span><span class="o">:</span><span class="n">node</span><span class="p">(</span><span class="n">n</span><span class="p">){</span>
+        <span class="n">tag</span> <span class="o">=</span> <span class="n">left</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>遍历的具体步骤为：</p>
+
+<ol>
+  <li>指针指向根节点</li>
+  <li>如果当前指针不为空，指针沿着左子节点下降，将途径节点标记为left，并入栈</li>
+  <li>左节点下降到末尾后，将栈顶元素弹出</li>
+  <li>如果该元素来自left，将其将其标记为right，重新入栈，指针指向右节点，并沿右节点下降</li>
+  <li>如果该元素来自right，访问该节点，并将指针置为空
+6，重复第2步</li>
+</ol>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">postOrder_Traversal</span><span class="p">(</span><span class="n">TreeNode</span><span class="o">*</span> <span class="n">root</span><span class="p">){</span>
+    <span class="n">stack</span><span class="o">&lt;</span><span class="n">TreeNodeElement</span><span class="o">&gt;</span> <span class="n">st</span><span class="p">;</span>
+    <span class="n">TreeNode</span><span class="o">*</span> <span class="n">pointer</span> <span class="o">=</span>  <span class="n">root</span><span class="p">;</span>   
+    <span class="k">while</span><span class="p">(</span><span class="n">pointer</span> <span class="o">||</span> <span class="o">!</span><span class="n">st</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">pointer</span><span class="p">){</span>
+            <span class="n">TreeNodeElement</span> <span class="n">ele</span><span class="p">(</span><span class="n">pointer</span><span class="p">);</span> <span class="c1">// 沿非空指针压栈，并左路下降</span>
+            <span class="n">ele</span><span class="p">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">left</span><span class="p">;</span>
+            <span class="n">st</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">ele</span><span class="p">);</span> <span class="c1">// 把标志位为Left的节点压入栈</span>
+            <span class="n">pointer</span> <span class="o">=</span> <span class="n">pointer</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="c1">//左子节点下降完毕</span>
+        <span class="n">TreeNodeElement</span> <span class="n">ele</span> <span class="o">=</span> <span class="n">st</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+        <span class="n">st</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="n">pointer</span> <span class="o">=</span> <span class="n">ele</span><span class="p">.</span><span class="n">pointer</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">ele</span><span class="p">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">left</span><span class="p">){</span> <span class="c1">//来自左边</span>
+            <span class="c1">//将其更改为右边，重新入栈</span>
+            <span class="n">ele</span><span class="p">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">right</span><span class="p">;</span>
+            <span class="n">st</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">tag</span><span class="p">);</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="c1">//visit节点</span>
+            <span class="n">visit</span><span class="p">(</span><span class="n">pointer</span><span class="p">);</span>
+            <span class="n">pointer</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="c1">//置为NULL，继续弹栈</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>实际上对于后序遍历的迭代实现还有更为巧妙的一种方法，这种方法的思路和前序遍历类似，前序遍历的顺序为：根–&gt;左节点–&gt;右结点，我们稍微修改一下这个顺序，将其改为：根–&gt;右结点–&gt;左节点。我们按照这个顺序来遍历二叉树会得到一组结果，接下来我们只需要将该结果reverse一下即可得到后序遍历的结果。我们看一个例子</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    4
+  /   \
+ 1     3
+      / 
+     2
+</code></pre></div></div>
+<p>上面这棵二叉树按照上面提到的遍历次序，得到结果为<code class="highlighter-rouge">4 3 2 1</code>，将该序列翻转后得到<code class="highlighter-rouge">1 2 3 4</code>，即后序遍历结果。我们可以先用递归形式的代码模拟这个过程：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">traverse</span> <span class="p">(</span><span class="n">TreeNode</span><span class="o">*</span> <span class="n">root</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">root</span><span class="p">){</span>
+        <span class="k">return</span> <span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">Visit</span><span class="p">(</span><span class="n">root</span><span class="p">);</span> 
+    <span class="n">traverse</span><span class="p">(</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">);</span> <span class="c1">//先访问右结点</span>
+    <span class="n">traverse</span><span class="p">(</span><span class="n">root</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">;</span>
+<span class="err">｝</span>
+</code></pre></div></div>
+<p>将上述代码转为迭代的形式为：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">postOrder_Traversal</span><span class="p">(</span><span class="n">TreeNode</span><span class="o">*</span> <span class="n">root</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">root</span><span class="p">){</span>
+            <span class="k">return</span> <span class="p">{};</span>
+        <span class="p">}</span>
+        <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">res</span><span class="p">;</span>
+        <span class="n">stack</span><span class="o">&lt;</span><span class="n">TreeNode</span><span class="o">*</span> <span class="o">&gt;</span> <span class="n">stk</span><span class="p">;</span>
+        <span class="n">stk</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">root</span><span class="p">);</span>
+        <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">stk</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+            <span class="n">TreeNode</span><span class="o">*</span> <span class="n">node</span> <span class="o">=</span> <span class="n">stk</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+            <span class="n">stk</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+            <span class="n">res</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">val</span><span class="p">);</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">){</span>
+                <span class="n">stk</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">left</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="c1">//先访问右子树，后入栈</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">){</span>
+                <span class="n">stk</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">node</span><span class="o">-&gt;</span><span class="n">right</span><span class="p">);</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">//结果reverse</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">res</span><span class="p">.</span><span class="n">rbegin</span><span class="p">(),</span><span class="n">res</span><span class="p">.</span><span class="n">rend</span><span class="p">()};</span>
+    <span class="p">}</span>
+</code></pre></div></div>
+<p>这种方式的迭代实现比起第一个版本要容易很多，实际应用中也更容易编写，不易出错。</p>
+
+<h3 id="复杂度分析">复杂度分析</h3>
+
+<ul>
+  <li>时间复杂度
+    <ul>
+      <li><mark>在各种遍历中，每个节点都被访问且只被访问一次，时间代价为`O(n)`</mark></li>
+      <li>非递归保存入出栈（或队列）时间
+        <ul>
+          <li>前序、中序，某些节点入/出栈一次， 不超过<code class="highlighter-rouge">O(n)</code></li>
+          <li>后序，每个节点分别从左、右边各入/出一次， <code class="highlighter-rouge">O(n)</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>空间复杂度
+    <ul>
+      <li>栈的深度与树的高度有关
+        <ul>
+          <li>最好 <code class="highlighter-rouge">O(log n)</code></li>
+          <li>最坏 <code class="highlighter-rouge">O(n)</code> ，此时树退化为线性链表</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="广度优先遍历">广度优先遍历</h3>
+
+<p>从二叉树的第0层（根节点）开始，自上至下 逐层遍历；在同一层中，按照 从左到右 的顺序对节点逐一访问。例如上图中，广度优先遍历的顺序为:<code class="highlighter-rouge">ABCDEFGHI</code></p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="n">BinaryTree</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span><span class="n">LevelOrder</span> <span class="p">(</span><span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*</span> <span class="n">root</span><span class="p">){</span>
+    <span class="n">queue</span><span class="o">&lt;</span><span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*&gt;</span> <span class="n">qq</span><span class="p">;</span> <span class="c1">//广搜使用队列</span>
+    <span class="n">BinaryTreeNode</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*</span> <span class="n">pointer</span> <span class="o">=</span> <span class="n">root</span><span class="p">;</span>
+    <span class="n">qq</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">pointer</span><span class="p">);</span>
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">qq</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+        <span class="n">pointer</span> <span class="o">=</span> <span class="n">qq</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+        <span class="n">qq</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="n">Visit</span><span class="p">(</span><span class="n">pointer</span><span class="o">-&gt;</span><span class="n">value</span><span class="p">());</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">pointer</span><span class="o">-&gt;</span><span class="n">leftchild</span><span class="p">()){</span> <span class="c1">//左子树入队</span>
+            <span class="n">qq</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">pointer</span><span class="o">-&gt;</span><span class="n">leftchild</span><span class="p">());</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">pointer</span><span class="o">-&gt;</span><span class="n">rightchild</span><span class="p">()){</span>
+            <span class="n">qq</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">pointer</span><span class="o">-&gt;</span><span class="n">rightchild</span><span class="p">());</span> <span class="c1">//右子树入队</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>时间复杂度
+    <ul>
+      <li>在各种遍历中，每个节点都被访问且只被访问一次，时间代价为O(n)</li>
+      <li>非递归保存入出栈（或队列）时间
+        <ul>
+          <li>宽搜，正好每个节点入/出队一次，<code class="highlighter-rouge">O(n)</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>空间复杂度
+    <ul>
+      <li>与树的最大宽度有关
+        <ul>
+          <li>最好 <code class="highlighter-rouge">O(1)</code></li>
+          <li>最坏 <code class="highlighter-rouge">O(n)</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=NcZ2cu7gc-A&amp;list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk">CS106B-Stanford-YouTube</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome">Algorithms-Stanford-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome">算法与数据结构-1-北大-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/gaoji-shuju-jiegou/home/welcome">算法与数据结构-2-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:TsinghuaX+30240184.1x+3T2017/course/">算法与数据结构-1-清华-EDX</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法与数据结构-2-清华-EDX</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms/home/welcome">算法设计与分析-1-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法设计与分析-2-北大-EDX</a></li>
+</ul>
+
+:ET

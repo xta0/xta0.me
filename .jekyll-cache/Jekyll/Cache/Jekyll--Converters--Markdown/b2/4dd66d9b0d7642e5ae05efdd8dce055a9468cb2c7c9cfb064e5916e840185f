@@ -1,0 +1,439 @@
+I"lC<h3 id="about-nginx">About Nginx</h3>
+
+<ul>
+  <li>created in 2004
+    <ul>
+      <li>High performance, High Concurrency, Low Memory</li>
+      <li>webserver</li>
+      <li>load balancer / reverse proxy</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/2011/04/nginx-1.png" width="70%" /></p>
+
+<h3 id="nginx-vs-apache">Nginx vs Apache</h3>
+
+<ul>
+  <li>Basic Architecture
+    <ul>
+      <li>Apache多个进程，每个进程起一个处理一个请求，</li>
+      <li>Nginx多个进程，每个进程可以实现并发处理多个请求，反向代理</li>
+    </ul>
+  </li>
+  <li>Resource Usage
+    <ul>
+      <li>Apache每个进程都及时处理静态资源的请求也需要加载php等语言环境，有一定overhead的损耗</li>
+      <li>Nginx对静态资源不需要加载语言环境</li>
+    </ul>
+  </li>
+  <li>Performance</li>
+  <li>Configuration
+    <ul>
+      <li>Nginx使用URI定位资源</li>
+      <li>Apache使用文件路径定位资源</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="install-nginx">Install Nginx</h3>
+
+<ul>
+  <li>使用Package Manger
+    <ul>
+      <li><code class="highlighter-rouge">apt-get install nginx</code></li>
+    </ul>
+  </li>
+  <li>配置文件路径
+    <ul>
+      <li><code class="highlighter-rouge">/etc/nginx</code></li>
+    </ul>
+  </li>
+  <li>日志路径
+    <ul>
+      <li><code class="highlighter-rouge">/var/log/nginx/error.log</code></li>
+    </ul>
+  </li>
+  <li>Check Nginx Status
+    <ul>
+      <li><code class="highlighter-rouge">ps aux | grep nginx</code></li>
+    </ul>
+  </li>
+  <li>pid路径
+    <ul>
+      <li><code class="highlighter-rouge">/var/run/nginx.pid</code></li>
+      <li><code class="highlighter-rouge">/run/ngix.pid</code></li>
+    </ul>
+  </li>
+  <li>启动/结束
+    <ul>
+      <li><code class="highlighter-rouge">%sudo nginx</code></li>
+      <li><code class="highlighter-rouge">%sudo service nginx start</code></li>
+      <li><code class="highlighter-rouge">%sudo service nginx restart</code></li>
+      <li><code class="highlighter-rouge">%sudo nginx -s stop</code></li>
+    </ul>
+  </li>
+  <li>使用Systemd标准化Linux任务
+    <ul>
+      <li>路径： <code class="highlighter-rouge">/lib/systemd/system/nginx.service</code></li>
+      <li>修改<code class="highlighter-rouge">nginx.service</code>为：<a href="https://www.nginx.com/resources/wiki/start/topics/examples/systemd/">Nginx Systemd Service Config</a></li>
+      <li>修改完成后reload配置文件
+        <ul>
+          <li><code class="highlighter-rouge">%sudo systemctl daemon-reload</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>后序所有操作均使用systemd
+    <ul>
+      <li><code class="highlighter-rouge">%sudo systemctl status nginx</code></li>
+      <li><code class="highlighter-rouge">%sudo systemctl start nginx</code></li>
+      <li><code class="highlighter-rouge">%sudo systemctl stop nginx</code></li>
+    </ul>
+  </li>
+  <li>配置nginx自动启动
+    <ul>
+      <li><code class="highlighter-rouge">%sudo systemctl enable nginx</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="配置文件基本结构">配置文件基本结构</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">directive</code>, <code class="highlighter-rouge">ngix.conf</code>中的键值对
+    <ul>
+      <li>同名的子directive可以覆盖上一级的directive
+        <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  //注意分号
+  sendfile on;
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li><code class="highlighter-rouge">context</code>,<code class="highlighter-rouge">nginx.conf</code>中的section
+    <ul>
+      <li>context类似scope可被嵌套和继承父类的配置</li>
+      <li>global context用来配置所有的master</li>
+    </ul>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">#global context</span>
+  <span class="s">user www www;</span>
+  <span class="s">error_log /var/log/nginx/error.log</span>
+  <span class="s">pid /run/niginx.pid</span>
+
+  <span class="s">events{</span>
+      <span class="s">worker_connection 4096;</span>
+  <span class="s">}</span>
+
+  <span class="s">#http context</span>
+  <span class="s">http {</span>
+      <span class="s">index.html index index.htm</span>
+
+      <span class="s">#server</span> <span class="c1">#1</span>
+      <span class="s">server{</span>
+          <span class="s">listen 80;</span>
+          <span class="s">server_name</span><span class="pi">:</span> <span class="s">domain.com;</span>
+          <span class="s">access_log /var/log/domain.access.log.main;</span>
+          <span class="s">root html;</span>
+
+          <span class="s">//location用来路由路径</span>
+          <span class="s">location / some_path{</span>
+              <span class="s">add_header header_name header_value;</span>
+          <span class="s">}</span>
+      <span class="err">}</span>
+      <span class="c1">#server #2</span>
+      <span class="s">server{</span>
+          <span class="s">listen 455;</span>
+            
+      <span class="err">}</span>
+<span class="err">  }</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>配置一个基本的Static Website</p>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="s">events{}</span>
+  <span class="s">http{</span>
+      <span class="s">#inlcude mime types for front-end</span>
+      <span class="s">include /etc/nginx/mime.types;</span>
+      <span class="s">#每个server host用一个server来表示</span>
+      <span class="s">server{</span>
+          <span class="s">listen 80;</span>
+          <span class="s">domain abc.com www.abc.com</span>
+          <span class="s">root /usr/home/xx/site/</span>
+      <span class="s">}</span>
+  <span class="s">}</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="location-blocks">Location Blocks</h3>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">server{</span>
+
+    <span class="s">#prefix match</span>
+    <span class="s">#match</span><span class="pi">:</span> <span class="s">domain/greet/, domain/greeting/, domain/greet/more</span> 
+    <span class="s">location /greet{</span>
+        <span class="s">//处理个别路径的请求</span>
+        <span class="s">return 200 "Hello From Nginx From /Greet"</span>
+    <span class="s">}</span>
+
+    <span class="s">#Exact match</span>
+    <span class="s">#match</span><span class="pi">:</span> <span class="s">domain/greet/</span>
+    <span class="s">location =/greet{</span>
+        <span class="s">//处理个别路径的请求</span>
+        <span class="s">return 200 "Hello From Nginx From /Greet"</span>
+    <span class="s">}</span>
+
+    <span class="s">#Regular Expression match, case sensitave</span>
+    <span class="s">#match</span><span class="pi">:</span> <span class="s">domain/greet0/, domain/greet2/, ...domain/greet9/</span>
+    <span class="s">location ~/greet[0-9]{</span>
+        <span class="s">//处理个别路径的请求</span>
+        <span class="s">return 200 "Hello From Nginx From /Greet"</span>
+    <span class="s">}</span>
+
+    <span class="s">#Regular Expression match, case insensitave</span>
+    <span class="s">#match</span><span class="pi">:</span> <span class="s">domain/greet0/, domain/greet2/, ...domain/greet9/</span>
+    <span class="s">location ~*/greet[0-9]{</span>
+        <span class="s">//处理个别路径的请求</span>
+        <span class="s">return 200 "Hello From Nginx From /Greet"</span>
+    <span class="s">}</span>
+<span class="err">}</span>
+</code></pre></div></div>
+
+<p>Nginx对location的匹配规则为，优先级由低到高如下</p>
+
+<ol>
+  <li>Exact Match <code class="highlighter-rouge">= uri</code></li>
+  <li>Preferential Prefix Match <code class="highlighter-rouge">^~uri</code></li>
+  <li>REGEX Match <code class="highlighter-rouge">~* uri</code></li>
+  <li>Prefix Match <code class="highlighter-rouge">uri</code></li>
+</ol>
+
+<p>对所有的子路径，可以配置</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">location / {</span>
+    <span class="s">#如果当前路径不存在，指向404</span>
+    <span class="s">try_files $uri $uri/ =404</span>
+<span class="err">}</span>
+</code></pre></div></div>
+
+<h3 id="security">Security</h3>
+
+<p>如果某个URL只允许管理员访问，可以在Nginx中配置用户名和密码认证</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">location / {</span>
+    <span class="s">auth_basic "Secure Area";</span>
+    <span class="s">auth_basic_user_file /etc/nginx/.htpasswd;</span>
+    <span class="s">try_files $uri $uri/ =404;</span>
+<span class="err">}</span>
+</code></pre></div></div>
+<p>用户名和密码可以使用<code class="highlighter-rouge">apach2-utils</code>：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>% <span class="nb">sudo </span>apt-get <span class="nb">install </span>apache2-utils
+% htpasswd <span class="nt">-c</span> /etc/nginx/.htpasswd user_name
+% <span class="nb">cat</span> /etc/nginx/.htpasswd
+</code></pre></div></div>
+<p>其它一些常用的安全配置</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">http{</span>
+    <span class="s">#hide nginx version from HTTP header</span>
+    <span class="s">server_tokens off;</span>
+    
+    <span class="s">server{</span>
+        <span class="s">#放置页面被其它网站用iframe嵌入</span>
+        <span class="s">add_header X-Frame-Options "SAMEORIGIN";</span>
+        <span class="s">#Cross-site scripting protection</span>
+        <span class="s">add_header X-XSS-Protection "1; mode-block";</span>
+    <span class="s">}</span>
+<span class="err">}</span>
+</code></pre></div></div>
+
+<h3 id="模板语言">模板语言</h3>
+
+<p>Nginx配置中可以使用两类变量</p>
+
+<ul>
+  <li>Configuration Variables
+    <ul>
+      <li><code class="highlighter-rouge">set $var 'somethig'</code></li>
+    </ul>
+  </li>
+  <li>NGINX Module Variables
+    <ul>
+      <li><code class="highlighter-rouge">$http, $uri, $args</code></li>
+      <li><a href="http://nginx.org/en/docs/varindex.html">Built-in variables</a></li>
+    </ul>
+  </li>
+  <li>常用的变量
+    <ul>
+      <li><code class="highlighter-rouge">$host</code>: <code class="highlighter-rouge">domain.com</code></li>
+      <li><code class="highlighter-rouge">$uri</code> : <code class="highlighter-rouge">/inspect</code></li>
+    </ul>
+  </li>
+  <li>逻辑控制</li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">if ($arg_apikey != 1234 ){</span>
+    <span class="s">return 401 "Incorrect API key"</span>
+<span class="err">}</span>
+<span class="c1">#使用自定义变量</span>
+<span class="s">set $weekend 'No';</span>
+<span class="c1">#正则匹配</span>
+<span class="s">if( $date_local ~ 'Saturday|Sunday'){</span>
+    <span class="s">set $weekend 'Yes';</span>
+<span class="err">}</span>
+<span class="s">location /is_weekend{</span>
+    <span class="s">return 200 $weekend;</span>
+<span class="err">}</span>
+</code></pre></div></div>
+
+<h3 id="redirect">Redirect</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">rewrite pattern URI</code></li>
+</ul>
+
+<p>rewrite url进行重新路由</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">rewrite ^/usr/w+ /greet;</span>  <span class="c1">#将^/usr/w+ 路由到/greet</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="highlighter-rouge">return status URI</code>
+    <ul>
+      <li>成功返回字符串：<code class="highlighter-rouge">return 200 some_string</code></li>
+      <li>重定向返回路径：<code class="highlighter-rouge">return 301 https://$host$request_uri</code></li>
+    </ul>
+
+    <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">#HTTPs 重定向</span>
+  <span class="s">server{</span>
+      <span class="s">listen 80;</span>
+      <span class="s">server_name xta0.me www.xta0.me;</span>
+          <span class="s">return 301 https://$host$request_uri;</span>
+  <span class="s">}</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="logs">Logs</h3>
+
+<p>查看log路径<code class="highlighter-rouge">ls -al /var/log/nginx</code>，可以根据不同的server配置不同的log</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">location /secure {</span>
+    <span class="s">access_log /var/log/nginx/secure.access.log;</span>
+    <span class="s">#关闭log</span>
+    <span class="s">access_log off;</span>
+<span class="err">}</span>
+</code></pre></div></div>
+
+<h3 id="worker-process">Worker Process</h3>
+
+<p>Nginx启动后Master Process会启动一个worker process来处理HTTP请求</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>//master process
+//pid #30704
+root 30704 0.0 0.1 125108 1492 ? Ss 10:59 0:00 nginx: master process 
+
+//worker process
+//pid #30706
+www-data 30706 0.0 0.3 125464  3288 ? S 10:59 0:00 nginx: worker process
+</code></pre></div></div>
+<p>我们可以配置worker process的数量, 在配置文件的global context中指定</p>
+
+<pre><code class="language-ymal">work_processers: 2 #产生2个子进程
+</code></pre>
+<p>Nginx的设计是多进程，每个CPU一个进程，在一个进程内增加多个worker_processer并不能提高效率，因为并未实现真正的并发，只是CPU轮训。可通过下面命令查看CPU状态</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>% nproc
+% lscpu
+</code></pre></div></div>
+
+<p>Nginx提供了一种自动配置worker processers的directive，当CPU个数增加时，Nginx的master会自动增加worker_processers的个数</p>
+
+<pre><code class="language-ymal">worker_processers: auto;
+</code></pre>
+
+<p>对于每个worker_processer，可以配置其最大并发连接数，该数值和系统能力相关，可使用<code class="highlighter-rouge">%ulimit -n</code>查看</p>
+
+<pre><code class="language-ymal">events{
+    worker_connections: 1024;
+}
+</code></pre>
+
+<h3 id="buffers--timeouts">Buffers &amp; Timeouts</h3>
+
+<p>Buffer是Nginx用来缓存Response或者Request的内存区，配置如下:</p>
+
+<pre><code class="language-ymal"># Buffer size for POST submissions
+client_body_buffer_size 10K;
+client_max_body_size 8m;
+
+# Buffer size for Headers
+client_header_buffer_size 1k;
+
+# Max time to receive client headers/body
+client_body_timeout 12;
+client_header_timeout 12;
+
+# Max time to keep a connection open for
+keepalive_timeout 15;
+
+# Max time for the client accept/receive a response
+send_timeout 10;
+
+# Skip buffering for static files
+sendfile on;
+
+# Optimise sendfile packets
+tcp_nopush on;
+</code></pre>
+
+<h3 id="headers--epires">Headers &amp; Epires</h3>
+
+<p>Nginx可以通过配置文件向HTTP response的Header中插入字段，一个常用的配置是对静态资源做浏览器级别的缓存，减少对server的频繁调用</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#正则匹配图片请求</span>
+<span class="s">location  ~* \.(jpg|png|jpeg){</span>
+    <span class="s">access_log off;</span>
+    <span class="s">add_haeder Cache-Control public;</span>
+    <span class="s">add_header Pragma public;</span>
+    <span class="s">add_header Vary Accept-Encoding;</span>
+    <span class="s">expires 60m;</span> <span class="c1">#60 mins</span>
+<span class="err">}</span>
+</code></pre></div></div>
+
+<h3 id="gzip">Gzip</h3>
+
+<p>打开HTTP gzip module</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">gzip on;</span>
+<span class="c1">#set to 3 or 4</span>
+<span class="s">gzip_comp_level 3;</span> 
+<span class="s">gzip_types text/css</span>
+<span class="s">gzip_types text/javascript</span>
+</code></pre></div></div>
+
+<h3 id="http2">HTTP2</h3>
+
+<p>HTTP2支持</p>
+
+<ol>
+  <li>Binary Protol 传输二进制而不是plain/text</li>
+  <li>Compressed Header 头部压缩，省空间</li>
+  <li>Persistent Connections 短链改长链，减少频繁建立短连接的开销</li>
+  <li>Multiplex Streaming 多路复用，合并资源请求</li>
+  <li>Server Push 支持push</li>
+</ol>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://nginx.org/en/docs/">Nginx Doc</a></li>
+  <li><a href="https://www.nginx.com/resources/wiki/start/topics/examples/full/">Nginx Configuration Example</a></li>
+  <li><a href="https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/">Nginx Config Pitfalls</a></li>
+  <li><a href="https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts">Nginx Tutorial DigistalOCean</a></li>
+  <li><a href="https://github.com/fcambus/nginx-resources">Nginx Resources Github</a></li>
+</ul>
+
+:ET

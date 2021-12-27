@@ -1,0 +1,121 @@
+I"�(<p><em></em></p>
+
+<p>如果一个对象被key-value-observed ：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">@interface</span> <span class="nc">KVOTestClass</span> <span class="p">:</span> <span class="nc">NSObject</span>
+
+<span class="k">@property</span><span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span><span class="n">strong</span><span class="p">)</span> <span class="n">NSString</span><span class="o">*</span> <span class="n">observedObj</span><span class="p">;</span>
+<span class="k">@property</span><span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span><span class="n">strong</span><span class="p">)</span> <span class="n">NSString</span><span class="o">*</span> <span class="n">unobservedObj</span><span class="p">;</span>
+
+<span class="k">@end</span>
+
+<span class="k">@implementation</span> <span class="nc">KVOTestClass</span>
+
+<span class="k">@end</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="k">@autoreleasepool</span> <span class="p">{</span>
+    
+   <span class="c1">//normal class</span>
+    <span class="n">KVOTestClass</span><span class="o">*</span> <span class="n">normalClass</span> <span class="o">=</span> <span class="p">[</span><span class="n">KVOTestClass</span> <span class="nf">new</span><span class="p">];</span>
+
+    <span class="c1">//KVOed class</span>
+    <span class="n">KVOTestClass</span><span class="o">*</span> <span class="n">kvoClass</span> <span class="o">=</span> <span class="p">[</span><span class="n">KVOTestClass</span> <span class="nf">new</span><span class="p">];</span>
+
+    <span class="p">[</span><span class="n">kvoClass</span> <span class="nf">addObserver</span><span class="p">:</span><span class="n">normalClass</span> <span class="nf">forKeyPath</span><span class="p">:</span><span class="s">@"observerObj"</span> <span class="n">options</span><span class="o">:</span><span class="n">NSKeyValueObservingOptionNew</span>   <span class="n">context</span><span class="o">:</span><span class="nb">NULL</span><span class="p">];</span>
+
+    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">metaClassName</span> <span class="o">=</span> <span class="n">object_getClassName</span><span class="p">(</span><span class="n">kvoClass</span><span class="p">);</span>
+    <span class="n">NSString</span><span class="o">*</span> <span class="n">className</span> <span class="o">=</span> <span class="n">NSStringFromClass</span><span class="p">(</span><span class="n">kvoClass</span><span class="p">.</span><span class="n">class</span><span class="p">);</span>
+
+    <span class="n">NSLog</span><span class="p">(</span><span class="s">@"</span><span class="se">\n</span><span class="s"> kvo object's metaclass : %s </span><span class="se">\n</span><span class="s"> kvo object's class : %@"</span><span class="p">,</span><span class="n">metaClassName</span><span class="p">,</span><span class="n">className</span><span class="p">);</span>
+        
+        <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>输出为：</p>
+
+<p><span style="color: #ff6600;">kvo object’s metaclass : NSKVONotifying_KVOTestClass</span></p>
+
+<p><span style="color: #ff6600;"> kvo object’s class : KVOTestClass</span></p>
+
+<p>有两个问题：</p>
+
+<p>（1）为什么这两个api结果不一样？</p>
+
+<p>（2）NSKVONotifying_KVOTestClass怎么出来的？</p>
+
+<p>第一个问题不属于kvo的讨论范畴，第二个问题是apple的一个trick：</p>
+<blockquote>
+
+  <p>“So how does that work, not needing any code in the observed object? Well it all happens through the power of the Objective-C runtime. When you observe an object of a particular class for the first time, the KVO infrastructure creates a brand new class at runtime that subclasses your class. In that new class, it overrides the set methods for any observed keys. It then switches out the isa pointer of your object (the pointer that tells the Objective-C runtime what kind of object a particular blob of memory actually is) so that your object magically becomes an instance of this new class.”</p>
+</blockquote>
+
+<p>当kvoClass被某个观察者(normalClass)观察时，runtime会为kvoClass动态生成一个subclass（NSKVONotifying_KVOTestClass）来代替kvoClass，方法是改变kvoClass的isa。并且重载了被观察property（observedObj）的setter方法，那么当observedObj的值发生变化时，就可以通知观察者。</p>
+
+<p>但为什么NSStringFromClass或class_getName返回的是KVOTestClass呢？</p>
+
+<p>That’s another trick：</p>
+
+<blockquote>
+
+  <p>Apple really doesn’t want this machinery to be exposed. In addition to setters, the dynamic subclass also overrides the -class method to lie to you and return the original class! If you don’t look too closely, the KVO-mutated objects look just like their non-observed counterparts.</p>
+</blockquote>
+
+<p>原因是这个动态生成的subClass（NSKVONotifying_KVOTestClass）同样override了class方法，来返回它原来类型。</p>
+
+<p>因此使用者根本感觉不出kvoClass这个instance的类型已经发生变化了。</p>
+
+<p>下面这段代码可以看的更清楚：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="n">NSArray</span> <span class="o">*</span><span class="nf">ClassMethodNames</span><span class="p">(</span><span class="n">Class</span> <span class="n">c</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">NSMutableArray</span> <span class="o">*</span><span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSMutableArray</span> <span class="nf">array</span><span class="p">];</span>
+    
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">methodCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">Method</span> <span class="o">*</span><span class="n">methodList</span> <span class="o">=</span> <span class="n">class_copyMethodList</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">methodCount</span><span class="p">);</span>
+    <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="n">methodCount</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="p">[</span><span class="n">array</span> <span class="nf">addObject</span><span class="p">:</span> <span class="n">NSStringFromSelector</span><span class="p">(</span><span class="n">method_getName</span><span class="p">(</span><span class="n">methodList</span><span class="p">[</span><span class="nf">i</span><span class="p">]))];</span>
+    <span class="n">free</span><span class="p">(</span><span class="n">methodList</span><span class="p">);</span>
+    
+    <span class="k">return</span> <span class="n">array</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>然后修改下main函数：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">NSArray</span><span class="o">*</span> <span class="n">normalClassMethods</span> <span class="o">=</span> <span class="n">ClassMethodNames</span><span class="p">(</span><span class="n">object_getClass</span><span class="p">(</span><span class="n">normalClass</span><span class="p">));</span>
+<span class="n">NSArray</span><span class="o">*</span> <span class="n">kvoClassMethods</span>    <span class="o">=</span> <span class="n">ClassMethodNames</span><span class="p">(</span><span class="n">object_getClass</span><span class="p">(</span><span class="n">kvoClass</span><span class="p">));</span>
+        
+<span class="n">NSLog</span><span class="p">(</span><span class="s">@"</span><span class="se">\n</span><span class="s"> normal class : </span><span class="se">\n</span><span class="s"> %@ kvo class: %@ </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="n">normalClassMethods</span><span class="p">,</span><span class="n">kvoClassMethods</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>输出为：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">normal</span> <span class="n">class</span><span class="o">:</span> 
+ <span class="p">(</span>
+    <span class="n">observedObj</span><span class="p">,</span>
+    <span class="s">"setObservedObj:"</span><span class="p">,</span>
+    <span class="n">unobservedObj</span><span class="p">,</span>
+    <span class="s">"setUnobservedObj:"</span><span class="p">,</span>
+    <span class="s">".cxx_destruct"</span>
+<span class="p">)</span> 
+ <span class="n">kvo</span> <span class="n">class</span><span class="o">:</span> 
+ <span class="p">(</span>
+    <span class="s">"setObservedObj:"</span><span class="p">,</span>
+    <span class="n">class</span><span class="p">,</span>
+    <span class="n">dealloc</span><span class="p">,</span>
+    <span class="s">"_isKVOA"</span>
+<span class="p">)</span>
+</code></pre></div></div>
+
+<p>这就一目了然了，normalClass只有getter，setter方法</p>
+
+<p>kvoClass是其子类，由于observedObj被观察，因此override了observedObj的setter方法，同样，class方法也被override用来返回“KVOTestClass”，dealloc方法被override原因是为了释放观察者，而_isKVOA，从命名上看，属于apple的似有api，大概是用来标识这个对象是动态生成的kvo对象。</p>
+
+<p>That’s all</p>
+
+:ET

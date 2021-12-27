@@ -1,0 +1,697 @@
+I"��<p>STL中的算法是一个个函数模板，大多数在<code class="highlighter-rouge">&lt;algorithm&gt;</code>中定义。STL中提供能在各种容器中通用的算法，比如查找，排序等</p>
+<ul>
+  <li><mark>算法通过迭代器来操作容器中的元素</mark>，许多算法可以对容器中的一个局部区间进行操作，因此需要两个参数，一个是起始元素的迭代器，一个是终止元素的后面一个元素的迭代器。比如，排序和查找</li>
+  <li>有的算法返回一个迭代器，比如<code class="highlighter-rouge">find()</code>算法，在容器中查找一个元素，并返回一个指向该元素的迭代器</li>
+  <li>算法可以处理容器，也可以处理普通数组</li>
+  <li>STL中的算法大致可以分为以下七类:
+    <ul>
+      <li>不变序列算法</li>
+      <li>变值算法</li>
+      <li>删除算法</li>
+      <li>变序算法</li>
+      <li>排序算法</li>
+      <li>有序区间算法</li>
+      <li>数值算法</li>
+    </ul>
+  </li>
+  <li>大多重载的算法都是有两个版本的
+    <ol>
+      <li>用 <code class="highlighter-rouge">==</code> 判断元素是否相等, 或用 <code class="highlighter-rouge">&lt;</code> 来比较大小</li>
+      <li>多出一个类型参数 <code class="highlighter-rouge">Pred</code> 和函数形参 <code class="highlighter-rouge">Pred op</code>:
+        <ul>
+          <li>通过表达式 <code class="highlighter-rouge">op(x,y)</code> 的返回值: <code class="highlighter-rouge">ture/false</code>判断<code class="highlighter-rouge">x</code>是否 “等于” <code class="highlighter-rouge">y</code>，或者x是否 “小于” y</li>
+        </ul>
+      </li>
+    </ol>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">iterator</span> <span class="nf">min_element</span><span class="p">(</span><span class="n">iterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">iterator</span> <span class="n">last</span><span class="p">);</span>
+  <span class="n">iterator</span> <span class="nf">min_element</span><span class="p">(</span><span class="n">iterator</span> <span class="n">first</span><span class="p">,</span> <span class="n">iterator</span> <span class="n">last</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">op</span><span class="p">);</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h2 id="不变序列算法">不变序列算法</h2>
+
+<ul>
+  <li>该类算法不会修改算法所作用的容器或对象</li>
+  <li>适用于顺序容器和关联容器</li>
+  <li>时间复杂度都是<code class="highlighter-rouge">O(n)</code></li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>算法</th>
+      <th>功能</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">find</code></td>
+      <td>求两个对象中较小的(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">min</code></td>
+      <td>求两个对象中较小的(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">max</code></td>
+      <td>求两个对象中较大的(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">min_element</code></td>
+      <td>求区间中的最小值(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">max_element</code></td>
+      <td>求区间中的最大值(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">for_each</code></td>
+      <td>对区间中的每个元素都做某种操作</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">count</code></td>
+      <td>计算区间中等于某值的元素个数</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">count_if</code></td>
+      <td>计算区间中符合某种条件的元素个数</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">find</code></td>
+      <td>在区间中查找等于某值的元素</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">find_if</code></td>
+      <td>在区间中查找符合某条件的元素</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">find_end</code></td>
+      <td>在区间中查找另一个区间最后一次出现的位置(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">find_first_of</code></td>
+      <td>在区间中查找第一个出现在另一个区间中的元素 (可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">adjacent_find</code></td>
+      <td>在区间中寻找第一次出现连续两个相等元素的位置(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">search</code></td>
+      <td>在区间中查找另一个区间第一次出现的位置(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">search_n</code></td>
+      <td>在区间中查找第一次出现等于某值的连续n个元素(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">equal</code></td>
+      <td>判断两区间是否相等(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">mismatch</code></td>
+      <td>逐个比较两个区间的元素，返回第一次发生不相等的两个元素的位置(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">lexicographical_compare</code></td>
+      <td>按字典序比较两个区间的大小(可自定义比较器)</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>find</strong></li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">InIt</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="n">InIt</span> <span class="nf">find</span><span class="p">(</span><span class="n">InIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InIt</span> <span class="n">last</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">val</span><span class="p">);</span>
+</code></pre></div></div>
+<p>返回区间 <code class="highlighter-rouge">[first,last)</code> 中的迭代器 <code class="highlighter-rouge">i</code> ,使得 <code class="highlighter-rouge">* i == val</code></p>
+
+<ul>
+  <li><strong>find_if</strong>:</li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">InIt</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
+<span class="n">InIt</span> <span class="nf">find_if</span><span class="p">(</span><span class="n">InIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pr</span><span class="p">);</span>
+</code></pre></div></div>
+<p>返回区间 <code class="highlighter-rouge">[first,last)</code> 中的迭代器 <code class="highlighter-rouge">i</code>, 使得 <code class="highlighter-rouge">pr(*i) == true</code></p>
+
+<ul>
+  <li><strong>for_each</strong></li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">InIt</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Fun</span><span class="o">&gt;</span>
+<span class="n">Fun</span> <span class="nf">for_each</span><span class="p">(</span><span class="n">InIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">Fun</span> <span class="n">f</span><span class="p">);</span>
+</code></pre></div></div>
+<p>对[first, last)中的每个元素e, 执行<code class="highlighter-rouge">f(e)</code>, 要求 <code class="highlighter-rouge">f(e)</code>不能改变<code class="highlighter-rouge">e</code></p>
+
+<ul>
+  <li><strong>count</strong></li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">InIt</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">size_t</span> <span class="nf">count</span><span class="p">(</span><span class="n">InIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InIt</span> <span class="n">last</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">val</span><span class="p">);</span>
+</code></pre></div></div>
+<p>计算[first, last) 中等于val的元素个数(x==y为true算等于)</p>
+
+<ul>
+  <li><strong>count_if</strong></li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">InIt</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
+<span class="kt">size_t</span> <span class="nf">count_if</span><span class="p">(</span><span class="n">InIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pr</span><span class="p">);</span>
+</code></pre></div></div>
+<p>计算[first, last) 中符合pr(e) == true 的元素e的个数</p>
+
+<ul>
+  <li><strong>min_element</strong></li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">FwdIt</span><span class="o">&gt;</span>
+<span class="n">FwdIt</span> <span class="nf">min_element</span><span class="p">(</span><span class="n">FwdIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">FwdIt</span> <span class="n">last</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>返回[first,last) 中最小元素的迭代器, 以 “&lt;” 作比较器</p>
+
+<blockquote>
+  <p>最小指没有元素比它小, 而不是它比别的不同元素都小，因为即便<code class="highlighter-rouge">a!= b</code>, <code class="highlighter-rouge">a&lt;b</code> 和<code class="highlighter-rouge">b&lt;a</code>有可能都不成立</p>
+</blockquote>
+
+<ul>
+  <li><strong>max_element</strong></li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">FwdIt</span><span class="o">&gt;</span>
+<span class="n">FwdIt</span> <span class="nf">max_element</span><span class="p">(</span><span class="n">FwdIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">FwdIt</span> <span class="n">last</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>返回[first,last) 中<strong>最大元素(不小于任何其他元素)</strong>的迭代器，以 “&lt;” 作比较器</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">class</span> <span class="nc">A</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">int</span> <span class="n">n</span><span class="p">;</span>
+    <span class="n">A</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span><span class="o">:</span><span class="n">n</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+<span class="p">};</span>
+<span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span> <span class="k">const</span> <span class="n">A</span> <span class="o">&amp;</span> <span class="n">a1</span><span class="p">,</span> <span class="k">const</span> <span class="n">A</span> <span class="o">&amp;</span> <span class="n">a2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="err">“</span><span class="o">&lt;</span> <span class="n">called</span><span class="err">”</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span> <span class="n">a1</span><span class="p">.</span><span class="n">n</span> <span class="o">==</span> <span class="mi">3</span> <span class="o">&amp;&amp;</span> <span class="n">a2</span><span class="p">.</span><span class="n">n</span> <span class="o">==</span> <span class="mi">7</span> <span class="p">){</span>
+        <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">A</span> <span class="n">aa</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span> <span class="p">};</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">min_element</span><span class="p">(</span><span class="n">aa</span><span class="p">,</span><span class="n">aa</span><span class="o">+</span><span class="mi">5</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">max_element</span><span class="p">(</span><span class="n">aa</span><span class="p">,</span><span class="n">aa</span><span class="o">+</span><span class="mi">5</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">n</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="变值算法">变值算法</h2>
+
+<ul>
+  <li>此类算法会修改源区间或目标区间元素的值</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>算法名称</th>
+      <th>功 能</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">for_each</code></td>
+      <td>对区间中的每个元素都做某种操作</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">copy</code></td>
+      <td>复制一个区间到别处</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">copy_backward</code></td>
+      <td>复制一个区间到别处, 但目标区前是从后往前被修改的</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">transform</code></td>
+      <td>将一个区间的元素变形后拷贝到另一个区间</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">swap_ranges</code></td>
+      <td>交换两个区间内容</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">fill</code></td>
+      <td>用某个值填充区间</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">fill_n</code></td>
+      <td>用某个值替换区间中的n个元素</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">generate</code></td>
+      <td>用某个操作的结果填充区间</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">generate_n</code></td>
+      <td>用某个操作的结果替换区间中的n个元素</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">replace</code></td>
+      <td>将区间中的某个值替换为另一个值</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">replace_if</code></td>
+      <td>将区间中符合某种条件的值替换成另一个值</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">replace_copy</code></td>
+      <td>将一个区间拷贝到另一个区间，拷贝时某个值要换成新值拷过去</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">replace_copy_if</code></td>
+      <td>将一个区间拷贝到另一个区间，拷贝时符合某条件的值要换成新值拷过去</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>transform</strong></li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">InIt</span><span class="p">,</span> <span class="k">class</span> <span class="nc">OutIt</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Unop</span><span class="o">&gt;</span>
+<span class="n">OutIt</span> <span class="nf">transform</span><span class="p">(</span><span class="n">InIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">OutIt</span> <span class="n">x</span><span class="p">,</span> <span class="n">Unop</span> <span class="n">uop</span><span class="p">);</span>
+</code></pre></div></div>
+<p>对[first,last)中的每个迭代器<code class="highlighter-rouge">I</code>:</p>
+<ul>
+  <li>执行 <code class="highlighter-rouge">uop( * I )</code>; 并将结果依次放入从 <code class="highlighter-rouge">x</code> 开始的地方</li>
+  <li>要求 <code class="highlighter-rouge">uop( * I )</code> 不得改变 <code class="highlighter-rouge">*I</code> 的值</li>
+</ul>
+
+<p>模板返回值是个迭代器, 即 <code class="highlighter-rouge">x + (last-first)</code>, x可以和 first相等</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;vector&gt;
+#include &lt;iostream&gt;
+#include &lt;numeric&gt;
+#include &lt;list&gt;
+#include &lt;algorithm&gt;
+#include &lt;iterator&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="k">class</span> <span class="nc">CLessThen9</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">bool</span> <span class="k">operator</span><span class="p">()(</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">9</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+<span class="kt">void</span> <span class="nf">outputSquare</span><span class="p">(</span><span class="kt">int</span> <span class="n">value</span> <span class="p">)</span> <span class="p">{</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">value</span> <span class="o">*</span> <span class="n">value</span> <span class="o">&lt;&lt;</span> <span class="s">" "</span><span class="p">;</span> <span class="p">}</span>
+<span class="kt">int</span> <span class="nf">calculateCube</span><span class="p">(</span><span class="kt">int</span> <span class="n">value</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">value</span> <span class="o">*</span> <span class="n">value</span> <span class="o">*</span> <span class="n">value</span><span class="p">;</span> <span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">const</span> <span class="kt">int</span> <span class="n">SIZE</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">a1</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span> <span class="p">};</span>
+    <span class="kt">int</span> <span class="n">a2</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">100</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span> <span class="p">};</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">v</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span><span class="n">a1</span><span class="o">+</span><span class="n">SIZE</span><span class="p">);</span>
+    <span class="n">ostream_iterator</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">output</span><span class="p">(</span><span class="n">cout</span><span class="p">,</span><span class="s">" "</span><span class="p">);</span> <span class="c1">//输出int类型的值，每输出一个后面链接一个空格</span>
+    <span class="n">random_shuffle</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="n">v</span><span class="p">.</span><span class="n">end</span><span class="p">());</span> <span class="c1">//随机打散</span>
+    <span class="n">copy</span><span class="p">(</span> <span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="n">v</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="n">output</span><span class="p">);</span> <span class="c1">//将v拷贝到output缓冲区输出，7 1 4 6 8 9 5 2 3 10 </span>
+    <span class="n">copy</span><span class="p">(</span> <span class="n">a2</span><span class="p">,</span><span class="n">a2</span><span class="o">+</span><span class="n">SIZE</span><span class="p">,</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">());</span> <span class="c1">//将a2拷贝到v中</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">count</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="n">v</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="mi">8</span><span class="p">);</span>   <span class="c1">//等于2的个数</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">count_if</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="n">v</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="n">CLessThen9</span><span class="p">());</span> <span class="c1">//小于9的个数</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span> <span class="p">(</span><span class="n">min_element</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">v</span><span class="p">.</span><span class="n">end</span><span class="p">()));</span> <span class="c1">//1</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_element</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">v</span><span class="p">.</span><span class="n">end</span><span class="p">()));</span> <span class="c1">//100</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">accumulate</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">v</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="mi">0</span><span class="p">);</span> <span class="c1">//求和,193</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="s">"7) "</span><span class="p">;</span>
+    <span class="n">for_each</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">v</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">outputSquare</span><span class="p">);</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">cubes</span><span class="p">(</span><span class="n">SIZE</span><span class="p">);</span>
+    <span class="n">transform</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a1</span><span class="o">+</span><span class="n">SIZE</span><span class="p">,</span> <span class="n">cubes</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">calculateCube</span><span class="p">);</span> <span class="c1">//对a中的元素应用calculateCube，结果放到cubes数组中</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span> <span class="o">&lt;&lt;</span> <span class="s">"8) "</span><span class="p">;</span>
+    <span class="n">copy</span><span class="p">(</span><span class="n">cubes</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">cubes</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">output</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>上述代码中，<code class="highlighter-rouge">ostream_iterator&lt;int&gt; output(cout ,“ ”);</code>
+定义了一个 <code class="highlighter-rouge">ostream_iterator&lt;int&gt;</code> 对象,可以通过cout输出以 “ ”(空格) 分隔的一个个整数，<code class="highlighter-rouge">copy (v.begin(), v.end(), output);</code>
+导致v的内容在 cout上输出</p>
+
+<ul>
+  <li><strong>copy</strong></li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">InIt</span><span class="p">,</span> <span class="k">class</span> <span class="nc">OutIt</span><span class="o">&gt;</span>
+<span class="n">OutIt</span> <span class="nf">copy</span><span class="p">(</span><span class="n">InIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">InIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">OutIt</span> <span class="n">x</span><span class="p">);</span>
+</code></pre></div></div>
+<p>本函数对每个在区间[0, last - first)中的N执行一次<code class="highlighter-rouge">*(x+N) = *(first + N)</code>, 返回 <code class="highlighter-rouge">x + N</code>,对于<code class="highlighter-rouge">copy(v.begin(),v.end(),output);</code>
+<code class="highlighter-rouge">first</code> 和 <code class="highlighter-rouge">last</code> 的类型是 <code class="highlighter-rouge">vector&lt;int&gt;::const_iterator</code>
+<code class="highlighter-rouge">output</code> 的类型是 <code class="highlighter-rouge">ostream_iterator&lt;int&gt;</code></p>
+
+<p>copy 函数模板(算法)的源代码:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">_II</span><span class="p">,</span> <span class="k">class</span> <span class="nc">_OI</span><span class="o">&gt;</span>
+<span class="kr">inline</span> <span class="n">_OI</span> <span class="nf">copy</span><span class="p">(</span><span class="n">_II</span> <span class="n">_F</span><span class="p">,</span> <span class="n">_II</span> <span class="n">_L</span><span class="p">,</span> <span class="n">_OI</span> <span class="n">_X</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">for</span> <span class="p">(;</span> <span class="n">_F</span> <span class="o">!=</span> <span class="n">_L</span><span class="p">;</span> <span class="o">++</span><span class="n">_X</span><span class="p">,</span> <span class="o">++</span><span class="n">_F</span><span class="p">)</span>
+    <span class="o">*</span><span class="n">_X</span> <span class="o">=</span> <span class="o">*</span><span class="n">_F</span><span class="p">;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">_X</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="删除算法">删除算法</h2>
+
+<ul>
+  <li>删除一个容器里的某些元素，不会使容器里的元素减少</li>
+  <li>删除操作
+    <ul>
+      <li>将所有应该被删除的元素看做空位子</li>
+      <li>用留下的元素从后往前移, 依次去填空位子</li>
+      <li>元素往前移后, 它原来的位置也就算是空位子，也应由后面的留下的元素来填上</li>
+      <li>最后, 没有被填上的空位子, 维持其原来的值不变</li>
+    </ul>
+  </li>
+  <li>删除算法不应作用于关联容器</li>
+  <li>
+    <p>算法复杂度都是<code class="highlighter-rouge">O(n)</code></p>
+  </li>
+  <li><strong>unique</strong></li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">FwdIt</span><span class="o">&gt;</span>
+<span class="n">FwdIt</span> <span class="nf">unique</span><span class="p">(</span><span class="n">FwdIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">FwdIt</span> <span class="n">last</span><span class="p">);</span> <span class="c1">//用 == 比较是否等</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">FwdIt</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
+<span class="n">FwdIt</span> <span class="nf">unique</span><span class="p">(</span><span class="n">FwdIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">FwdIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pr</span><span class="p">);</span> <span class="c1">//用 pr (x,y)为 true说明x和y相等</span>
+</code></pre></div></div>
+
+<p>对<code class="highlighter-rouge">[first,last)</code> 这个序列中连续相等的元素, 只留下第一个返回值是迭代器, 指向元素删除后的区间的最后一个元素的后面</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+<span class="kt">int</span> <span class="n">a</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span> <span class="p">};</span>
+<span class="kt">int</span> <span class="n">b</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span> <span class="p">};</span>
+<span class="n">ostream_iterator</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">oit</span><span class="p">(</span><span class="n">cout</span><span class="p">,</span><span class="s">","</span><span class="p">);</span>
+<span class="kt">int</span> <span class="o">*</span> <span class="n">p</span> <span class="o">=</span> <span class="n">remove</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">a</span><span class="o">+</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"1) "</span><span class="p">;</span> <span class="n">copy</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">a</span><span class="o">+</span><span class="mi">5</span><span class="p">,</span><span class="n">oit</span><span class="p">);</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">//输出 1) 1,3,5,2,5,</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"2) "</span> <span class="o">&lt;&lt;</span> <span class="n">p</span> <span class="o">-</span> <span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span> <span class="c1">//输出 2) 3</span>
+<span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">v</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="n">b</span><span class="o">+</span><span class="mi">6</span><span class="p">);</span>
+<span class="n">remove</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">v</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"3) "</span><span class="p">;</span> <span class="n">copy</span><span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">v</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">oit</span><span class="p">);</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="c1">//输出 3) 1,3,5,6,5,6,</span>
+<span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"4) "</span><span class="p">;</span> <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">v</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="c1">//v中的元素没有减少,输出 4) 6</span>
+<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="变序算法">变序算法</h2>
+
+<ul>
+  <li>变序算法改变容器中元素的顺序，但是不改变元素的值</li>
+  <li>变序算法不适用于关联容器</li>
+  <li>算法复杂度都是<code class="highlighter-rouge">O(n)</code>的</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>算法名称</th>
+      <th>功 能</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">reverse</code></td>
+      <td>颠倒区间的前后次序</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">reverse_copy</code></td>
+      <td>把一个区间颠倒后的结果拷贝到另一个区间，源区间不变</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">rotate</code></td>
+      <td>将区间进行循环左移</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">rotate_copy</code></td>
+      <td>将区间以首尾相接的形式进行旋转后的结果，拷贝到另一个区间，源区间不变</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">next_permutation</code></td>
+      <td>将区间改为下一个排列(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">prev_permutation</code></td>
+      <td>将区间改为上一个排列(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">random_shuffle</code></td>
+      <td>随机打乱区间内元素的顺序</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">partition</code></td>
+      <td>把区间内满足某个条件的元素移到前面，不满足该条件的移到后面</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">stable_patition</code></td>
+      <td>把区间内满足某个条件的元素移到前面不满足该条件的移到后面，而对这两部分元素, 分别保持它们原来的先后次序不变</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>random_shuffle</strong></li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">RanIt</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="nf">random_shuffle</span><span class="p">(</span><span class="n">RanIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">RanIt</span> <span class="n">last</span><span class="p">);</span>
+</code></pre></div></div>
+<p>随机打乱<code class="highlighter-rouge">[first,last)</code>中的元素, 适用于能随机访问的容器</p>
+
+<ul>
+  <li><strong>reverse</strong></li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">BidIt</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="nf">reverse</span><span class="p">(</span><span class="n">BidIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">BidIt</span> <span class="n">last</span><span class="p">);</span>
+</code></pre></div></div>
+<p>颠倒区间[first,last)顺序</p>
+
+<ul>
+  <li><strong>next_permutation</strong></li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">InIt</span><span class="o">&gt;</span>
+<span class="kt">bool</span> <span class="nf">next_permutaion</span> <span class="p">(</span><span class="n">Init</span> <span class="n">first</span><span class="p">,</span><span class="n">Init</span> <span class="n">last</span><span class="p">);</span>
+</code></pre></div></div>
+<p>求数组的下一个排列，比如当前数组顺序是123，可依次输出其余的排列，132，213，231，312，321</p>
+
+<h2 id="排序算法">排序算法</h2>
+
+<ul>
+  <li>不适用于关联容器和list</li>
+  <li>排序算法需要随机访问迭代器的支持</li>
+  <li>比前面的变序算法复杂度更高, 一般是O(nlog(n))</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>算法名称</th>
+      <th>功 能</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">sort</code></td>
+      <td>将区间从小到大排序(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">stable_sort</code></td>
+      <td>将区间从小到大排序并保持相等元素间的相对次序(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">partial_sort</code></td>
+      <td>对区间部分排序, 直到最小的n个元素就位(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">partial_sort_copy</code></td>
+      <td>将区间前n个元素的排序结果拷贝到别处源区间不变(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">nth_element</code></td>
+      <td>对区间部分排序, 使得第n小的元素(n从0开始算)就位, 而且比它小的都在它前面, 比它大的都在它后面(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">make_heap</code></td>
+      <td>使区间成为一个“堆”(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">push_heap</code></td>
+      <td>将元素加入一个是“堆”区间(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">pop_heap</code></td>
+      <td>从“堆”区间删除堆顶元素(可自定义比较器)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">sort_heap</code></td>
+      <td>将一个“堆”区间进行排序，排序结束后，该区间就是普通的有序区间，不再是 “堆”了(可自定义比较器)</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>sort</strong>(快速排序)</li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">RanIt</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="nf">sort</span><span class="p">(</span><span class="n">RanIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">RanIt</span> <span class="n">last</span><span class="p">);</span><span class="c1">//升序排序，判断x&lt;y</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">RanIt</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="nf">sort</span><span class="p">(</span><span class="n">RanIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">RanIt</span> <span class="n">last</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pr</span><span class="p">);</span><span class="c1">//判断x是否应比y靠前, 就看 pr(x,y) 是否为true</span>
+</code></pre></div></div>
+
+<ul>
+  <li>实际上是快速排序, 时间复杂度 <code class="highlighter-rouge">O(n*log(n))</code></li>
+  <li>平均性能最优。但是最坏的情况下, 性能可能非常差，如果要保证 “最坏情况下” 的性能, 那么可以使用<code class="highlighter-rouge">stable_sort</code>
+    <ul>
+      <li><code class="highlighter-rouge">stable_sort</code>实际上是归并排序, 特点是能保持相等元素之间的
+先后次序</li>
+      <li>在有足够存储空间的情况下, 复杂度为 <code class="highlighter-rouge">n * log(n)</code>, 否则复杂度为 <code class="highlighter-rouge">n * log(n) * log(n)</code></li>
+      <li><code class="highlighter-rouge">stable_sort</code> 用法和 <code class="highlighter-rouge">sort</code>相同。</li>
+    </ul>
+  </li>
+  <li>排序算法要求随机存取迭代器的支持, 所以list不能使用，要使用<code class="highlighter-rouge">list::sort</code></li>
+</ul>
+
+<h2 id="有序区间算法">有序区间算法</h2>
+
+<ul>
+  <li>要求所操作的区间是已经从小到大排好序的</li>
+  <li>需要随机访问迭代器的支持</li>
+  <li>有序区间算法不能用于关联容器和list</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>算法名称</th>
+      <th>功 能</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">binary_search</code></td>
+      <td>判断区间中是否包含某个元素，log(n)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">includes</code></td>
+      <td>判断是否一个区间中的每个元素，都在另一个区间中</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">lower_bound</code></td>
+      <td>查找最后一个不小于某值的元素的位置，log(n)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">upper_bound</code></td>
+      <td>查找第一个大于某值的元素的位置，log(n)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">equal_range</code></td>
+      <td>同时获取lower_bound和upper_bound，log(n)</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">merge</code></td>
+      <td>合并两个有序区间到第三个区间</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">set_union</code></td>
+      <td>将两个有序区间的<strong>并集</strong>拷贝到第三个区间</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">set_intersection</code></td>
+      <td>将两个有序区间的<strong>交集</strong>拷贝到第三个区间</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">set_difference</code></td>
+      <td>将两个有序区间的<strong>差集</strong>拷贝到第三个区间</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">set_symmetric_difference</code></td>
+      <td>将两个有序区间的<strong>对称差</strong>拷贝到第三个区间</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">inplace_merge</code></td>
+      <td>将两个连续的有序区间原地合并为一个有序区间</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>binary_search</strong>(折半查找)</li>
+</ul>
+
+<p>要求容器已经有序且支持随机访问迭代器, 返回是否找到</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">FwdIt</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="kt">bool</span> <span class="nf">binary_search</span><span class="p">(</span><span class="n">FwdIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">FwdIt</span> <span class="n">last</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">val</span><span class="p">);</span> <span class="c1">//比较两个元素x, y 大小时, 看 x &lt; y</span>
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">FwdIt</span><span class="p">,</span> <span class="k">class</span> <span class="nc">T</span><span class="p">,</span> <span class="k">class</span> <span class="nc">Pred</span><span class="o">&gt;</span>
+<span class="kt">bool</span> <span class="nf">binary_search</span><span class="p">(</span><span class="n">FwdIt</span> <span class="n">first</span><span class="p">,</span> <span class="n">FwdIt</span> <span class="n">last</span><span class="p">,</span> <span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">val</span><span class="p">,</span> <span class="n">Pred</span> <span class="n">pr</span><span class="p">);</span>
+<span class="c1">//比较两个元素x, y 大小时, 若 pr(x,y) 为true, 则</span>
+<span class="err">认为</span><span class="n">x</span><span class="err">小于</span><span class="n">y</span>
+</code></pre></div></div>
+
+<h2 id="bitset">Bitset</h2>
+
+<ul>
+  <li>定义</li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="kt">size_t</span> <span class="n">N</span><span class="o">&gt;</span>
+<span class="k">class</span> <span class="nc">bitset</span><span class="p">{};</span>
+</code></pre></div></div>
+<p>实际使用的时候, N是个整型常数如:<code class="highlighter-rouge">bitset&lt;40&gt; bst;</code>，其中<code class="highlighter-rouge">bst</code>是一个由40位组成的对象, 用<code class="highlighter-rouge">bitset</code>的函数可以方便地访问任何一位。</p>
+
+<blockquote>
+  <p>注意: 第0位在最右边</p>
+</blockquote>
+
+<ul>
+  <li>成员函数
+    <ul>
+      <li><code class="highlighter-rouge">bitset&lt;N&gt;&amp; operator&amp;=(const bitset&lt;N&gt;&amp; rhs);</code></li>
+      <li><code class="highlighter-rouge">bitset&lt;N&gt;&amp; operator|=(const bitset&lt;N&gt;&amp; rhs);</code></li>
+      <li><code class="highlighter-rouge">bitset&lt;N&gt;&amp; operator^=(const bitset&lt;N&gt;&amp; rhs);</code></li>
+      <li><code class="highlighter-rouge">bitset&lt;N&gt;&amp; operator&lt;&lt;=(size_t num);</code></li>
+      <li><code class="highlighter-rouge">bitset&lt;N&gt;&amp; operator&gt;&gt;=(size_t num);</code></li>
+      <li><code class="highlighter-rouge">bitset&lt;N&gt;&amp; set(); //全部设成1</code></li>
+      <li><code class="highlighter-rouge">bitset&lt;N&gt;&amp; set(size_t pos, bool val = true); //设置某位</code></li>
+      <li><code class="highlighter-rouge">bitset&lt;N&gt;&amp; reset(); //全部设成0</code></li>
+      <li><code class="highlighter-rouge">bitset&lt;N&gt;&amp; reset(size_t pos); //某位设成0</code></li>
+      <li><code class="highlighter-rouge">bitset&lt;N&gt;&amp; flip(); //全部翻转</code></li>
+      <li><code class="highlighter-rouge">bitset&lt;N&gt;&amp; flip(size_t pos); //翻转某</code></li>
+      <li><code class="highlighter-rouge">reference operator[](size_t pos); //返回对某位的引用</code></li>
+      <li><code class="highlighter-rouge">bool operator[](size_t pos) const; //判断某位是否为1</code></li>
+      <li><code class="highlighter-rouge">reference at(size_t pos);</code></li>
+      <li><code class="highlighter-rouge">bool at(size_t pos) const;</code></li>
+      <li><code class="highlighter-rouge">unsigned long to_ulong() const; //转换成整数</code></li>
+      <li><code class="highlighter-rouge">string to_string() const; //转换成字符串</code></li>
+      <li><code class="highlighter-rouge">size_t count() const; //计算1的个数</code></li>
+      <li><code class="highlighter-rouge">size_t size() const;</code></li>
+      <li><code class="highlighter-rouge">bool operator==(const bitset&lt;N&gt;&amp; rhs) const;</code></li>
+      <li><code class="highlighter-rouge">bool operator!=(const bitset&lt;N&gt;&amp; rhs) const;</code></li>
+      <li><code class="highlighter-rouge">bool test(size_t pos) const; //测试某位是否为 1</code></li>
+      <li><code class="highlighter-rouge">bool any() const; //是否有某位为1</code></li>
+      <li><code class="highlighter-rouge">bool none() const; //是否全部为0</code></li>
+      <li><code class="highlighter-rouge">bitset&lt;N&gt; operator&lt;&lt;(size_t pos) const;</code></li>
+      <li><code class="highlighter-rouge">bitset&lt;N&gt; operator&gt;&gt;(size_t pos) const;</code></li>
+      <li><code class="highlighter-rouge">bitset&lt;N&gt; operator~();</code></li>
+      <li><code class="highlighter-rouge">static const size_t bitset_size = N;</code></li>
+    </ul>
+  </li>
+</ul>
+:ET

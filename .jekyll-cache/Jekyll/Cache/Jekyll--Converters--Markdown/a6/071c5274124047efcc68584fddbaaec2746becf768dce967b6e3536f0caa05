@@ -1,0 +1,93 @@
+I")'<p><em></em></p>
+
+<p>最近大家都开始用<a href="https://github.com/AFNetworking/AFNetworking">AFNetworking</a>，今天看了下它网络请求的代码，采用的也是NSOperation+NSURLConnetion并发模型。一般使用这种模型都要解决一个问题：
+NSURLConnection对象在下载完前，所在线程就退出了，NSOperation对象也就接收不到回调。</p>
+
+<p>这个问题在<a href="http://stackoverflow.com/questions/9223537/asynchronous-nsurlconnection-with-nsoperation">stackoverflow</a>上已经讨论了N多次了，其原因也在apple的<a href="https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSURLConnection_Class/Reference/Reference.html#//apple_ref/occ/instm/NSURLConnection/initWithRequest:delegate:startImmediately:">guide line</a>上写的很清楚了：NSURLConnection的delegate方法需要在connection发起的线程的runloop中调用。因此，当发起connection的线程exit了，delegate自然不会被调用，请求也就回不来了。</p>
+
+<p>针对这个问题，通常有这么两种解法：</p>
+
+<ul>
+  <li>所有connection在主线程的runloop中发起，回调也都由主线程的runloop分发：</li>
+</ul>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">NSRunLoop</span> <span class="o">*</span><span class="n">runLoop</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSRunLoop</span> <span class="nf">mainRunLoop</span><span class="p">];</span>
+<span class="p">[</span><span class="n">_connection</span> <span class="nf">scheduleInRunLoop</span><span class="p">:</span><span class="n">runLoop</span> <span class="nf">forMode</span><span class="p">:</span><span class="n">NSRunLoopCommonModes</span><span class="p">];</span>
+<span class="p">[</span><span class="n">_connection</span> <span class="nf">start</span><span class="p">];</span>
+</code></pre></div></div>
+
+<ul>
+  <li>让发起请求的线程不退出，通过内置一个runloop来实现</li>
+</ul>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">NSRunLoop</span> <span class="o">*</span><span class="n">runLoop</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSRunLoop</span> <span class="n">currentRunLoop</span><span class="p">];</span>
+<span class="p">[</span><span class="n">runLoop</span> <span class="n">addPort</span><span class="o">:</span><span class="p">[</span><span class="n">NSPort</span> <span class="n">port</span><span class="p">]</span> <span class="n">forMode</span><span class="o">:</span><span class="n">NSRunLoopCommonModes</span><span class="p">];</span>      
+<span class="p">[</span><span class="n">_connection</span> <span class="n">scheduleInRunLoop</span><span class="o">:</span><span class="n">runLoop</span> <span class="n">forMode</span><span class="o">:</span><span class="n">NSRunLoopCommonModes</span><span class="p">];</span>
+<span class="p">[</span><span class="n">_connection</span> <span class="n">start</span><span class="p">];</span>       
+<span class="p">[</span><span class="n">runLoop</span> <span class="n">run</span><span class="p">];</span>
+</code></pre></div></div>
+
+<p>这两种方法都不可取！</p>
+
+<p>第一种方法是出于性能考虑，当并发的请求很多时，需要大量占用main runloop，会影响GUI性能。</p>
+
+<p>第二种方法问题更大，connection虽然可以顺利完成，但由于线程一直被runloop占据，导致线程永远无法停止，线程池直接失去了对线程的控制，而由于线程无法退出，它的stackframe中引用的NSOperation对象也无法释放，并发数量上去后，无论是CPU的资源还是内存上，都会有问题。</p>
+
+<p>AFNetworking解决这个问题采用了另一种方法：单独起一个global thread，内置一个runloop，所有的connection都由这个runloop发起，回调也都由它接收。这是个不错的想法，既不占用主线程，又不耗CPU资源：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="n">self</span> <span class="nf">performSelector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">operationDidStart</span><span class="p">)</span> 
+			  <span class="nl">onThread:</span><span class="p">[[</span><span class="n">self</span> <span class="nf">class</span><span class="p">]</span> <span class="nf">networkRequestThread</span><span class="p">]</span> 			<span class="nf">withObject</span><span class="p">:</span><span class="nb">nil</span> 
+		 <span class="n">waitUntilDone</span><span class="o">:</span><span class="nb">NO</span> 
+		         <span class="n">modes</span><span class="o">:</span><span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">runLoopModes</span> <span class="nf">allObjects</span><span class="p">]]</span>
+</code></pre></div></div>
+<p>线程代码：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="n">__attribute__</span><span class="p">((</span><span class="n">noreturn</span><span class="p">))</span> <span class="n">networkRequestThreadEntryPoint</span><span class="o">:</span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="n">__unused</span> <span class="n">object</span> <span class="p">{</span>
+    <span class="k">do</span> <span class="p">{</span>
+        <span class="k">@autoreleasepool</span> <span class="p">{</span>
+            <span class="p">[[</span><span class="n">NSRunLoop</span> <span class="nf">currentRunLoop</span><span class="p">]</span> <span class="nf">run</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="nb">YES</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">+</span> <span class="p">(</span><span class="n">NSThread</span> <span class="o">*</span><span class="p">)</span><span class="n">networkRequestThread</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="n">NSThread</span> <span class="o">*</span><span class="n">_networkRequestThread</span> <span class="o">=</span> <span class="nb">nil</span><span class="p">;</span>
+    <span class="k">static</span> <span class="n">dispatch_once_t</span> <span class="n">oncePredicate</span><span class="p">;</span>
+    
+    <span class="n">dispatch_once</span><span class="p">(</span><span class="o">&amp;</span><span class="n">amp</span><span class="p">;</span><span class="n">oncePredicate</span><span class="p">,</span> <span class="o">^</span><span class="p">{</span>
+        <span class="n">_networkRequestThread</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSThread</span> <span class="nf">alloc</span><span class="p">]</span> <span class="nf">initWithTarget</span><span class="p">:</span><span class="n">self</span> <span class="nf">selector</span><span class="p">:</span><span class="k">@selector</span><span class="p">(</span><span class="n">networkRequestThreadEntryPoint</span><span class="o">:</span><span class="p">)</span> <span class="n">object</span><span class="o">:</span><span class="nb">nil</span><span class="p">];</span>
+        <span class="p">[</span><span class="n">_networkRequestThread</span> <span class="nf">start</span><span class="p">];</span>
+    <span class="p">});</span>
+    
+    <span class="k">return</span> <span class="n">_networkRequestThread</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>整个请求流程如下：</p>
+
+<p><img src="/assets/images/2012/11/afnetworking.png" alt="Alt text" /></p>
+
+<p>这个想法其实不是AFNetworking最早想出来的，是apple的一个demo：<a href="https://developer.apple.com/LIBRARY/IOS/samplecode/MVCNetworking/Introduction/Intro.html ">MVCNetworking</a>，AFNetworking简单粗暴的借鉴了这个demo。</p>
+
+<p>不论是AFNetworking还是MVCNetworking，保持runloop的代码均为：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">do</span> <span class="p">{</span>
+        <span class="k">@autoreleasepool</span> 
+        <span class="p">{</span>
+            <span class="p">[[</span><span class="n">NSRunLoop</span> <span class="nf">currentRunLoop</span><span class="p">]</span> <span class="nf">run</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="nb">YES</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>另一种优雅的方式是，直接塞一个input source:</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">@autoreleasepool</span>
+<span class="p">{</span>        
+	<span class="n">NSRunLoop</span> <span class="o">*</span><span class="n">runLoop</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSRunLoop</span> <span class="nf">currentRunLoop</span><span class="p">];</span>
+	<span class="p">[</span><span class="n">runLoop</span> <span class="nf">addPort</span><span class="p">:[</span><span class="n">NSPort</span> <span class="nf">port</span><span class="p">]</span> <span class="nf">forMode</span><span class="p">:</span><span class="n">NSDefaultRunLoopMode</span><span class="p">];</span>
+	<span class="p">[</span><span class="n">runLoop</span> <span class="nf">run</span><span class="p">];</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>更多关于Runloop的基础知识清参考<a href="http://vizlabxt.github.io/blog/2012/11/17/Understanding-Runloop/">前一篇文章</a></p>
+:ET

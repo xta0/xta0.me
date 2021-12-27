@@ -1,0 +1,171 @@
+I"�#<h2 id="stack-storage">Stack Storage</h2>
+
+<p>Array and pointer</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A ----used----- ------unused----
+               |
+               sp
+
+# Allocate x bytes 
+sp += x
+return sp-x
+
+</code></pre></div></div>
+
+<ul>
+  <li>Allocating and freeing take <code class="highlighter-rouge">O(1)</code> time.</li>
+  <li>Must free consistent with stack discipline</li>
+  <li>Limited applicability, but great when it works</li>
+  <li>One can allocate on the call stack using <code class="highlighter-rouge">alloca()</code>, but this function is deprecated, and the compiler is more efficient with fixed-size frames.</li>
+</ul>
+
+<p>Limitation: there is no way to free memory in the middle of the used-region on the stack. ONly the last object can be freed.</p>
+
+<h2 id="heap">Heap</h2>
+
+<p>C provides <code class="highlighter-rouge">malloc()</code> and <code class="highlighter-rouge">free()</code>. C++ provides <code class="highlighter-rouge">new</code> and <code class="highlighter-rouge">delete</code>.</p>
+
+<p>Unlike Java and Python, C and C++ provide no garbage collectors. Heap storage allocated by the programmer must be freed explicitly. Failure to do so can creates a memory leak. Also, watch for dangling pointers and double freeing</p>
+
+<p>Memory checkers (e.g. <code class="highlighter-rouge">AddressSanitizer</code>, <code class="highlighter-rouge">Valgrind</code>) can assist in finding these pernicious bugs.</p>
+
+<h2 id="fixed-size-allocation">Fixed-size Allocation</h2>
+
+<p><img class="md-img-center" src="/assets/images/2021/08/perf-sa-01.png" /></p>
+
+<ul>
+  <li>Every piece of storage has the same size</li>
+  <li>Unused storage has a pointer to next unused block</li>
+</ul>
+
+<p>Allocate 1 object</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x = free;
+free = free-&gt;next;
+return x;
+</code></pre></div></div>
+
+<h3 id="fixed-size-deallocation">Fixed-size Deallocation</h3>
+
+<p><img class="md-img-center" src="/assets/images/2021/08/perf-sa-02.png" /></p>
+
+<p>free object <code class="highlighter-rouge">x</code></p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span><span class="o">-&gt;</span><span class="n">next</span> <span class="o">=</span> <span class="n">free</span><span class="p">;</span>
+<span class="n">free</span> <span class="o">=</span> <span class="n">x</span>
+</code></pre></div></div>
+<ul>
+  <li>Allocating and freeing take <code class="highlighter-rouge">O(1)</code> time</li>
+  <li>Good temporal locality</li>
+  <li>Poor spatial locality due to external fragmentation - blocks distributed across virtual memory - which can increase the size of the page table and cause disk thrashing (page fault)</li>
+  <li>THe translation lookaside buffer(TLB) can also be a problem (map virtual address to physical address)</li>
+</ul>
+
+<h3 id="mitigating-external-fragmentation">Mitigating External Fragmentation</h3>
+
+<ul>
+  <li>Keep a free list per disk page.</li>
+  <li>Allocate from the free list for the fullest page.</li>
+  <li>Free a block of storage to the free list for the page on which the block resides.</li>
+  <li>If a page becomes empty(only free-list items), the virtual-memory system can page it out without affecting program performance</li>
+  <li>90-10 is better than 50-50</li>
+</ul>
+
+<p><img class="md-img-center" src="/assets/images/2021/08/perf-sa-03.png" /></p>
+
+<blockquote>
+  <p>Probability that 2 random accesses hit the same p age = .9 x .9 + .1 x .1 = .82 vs .5 x .5 + .5 x .5 = .5</p>
+</blockquote>
+
+<h2 id="variable-size-allocation">Variable-Size Allocation</h2>
+
+<p><strong>Binned free lists</strong></p>
+
+<ul>
+  <li>Leverage the efficiency of free lists</li>
+  <li>Accept a bounded amount of internal fragmentation</li>
+  <li>Each bin is going to store a particular size</li>
+</ul>
+
+<p><img class="md-img-center" src="/assets/images/2021/08/perf-sa-04.png" /></p>
+
+<p><strong>Allocate x bytes</strong></p>
+
+<ul>
+  <li>If bin <code class="highlighter-rouge">k=[lg x]</code> (以2为底log向上取整) is nonempty, return a block.</li>
+  <li>Otherwise, find a block in the next larger nonempty bin <code class="highlighter-rouge">k' &gt; k</code>, split it up into blocks of size $2^{k^’-1}, 2^{k^’-2}, 2^{k^’-3}, … ,2^{k}, 2^{k}$, and distribute the pieces.</li>
+</ul>
+
+<p>Note that we’ll have two $2^{k}$, one of them will be returned.</p>
+
+<p>For example, <code class="highlighter-rouge">x=3</code>, <code class="highlighter-rouge">k = log[x] = 2</code>. Bin <code class="highlighter-rouge">2</code> is empty</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/08/perf-sa-05.png" /></p>
+
+<p>So we are going to look for a non-empty bin, which is <code class="highlighter-rouge">4</code> in this case. so <code class="highlighter-rouge">k' = 4</code>.</p>
+
+<p>Next, we’ll split the block into <code class="highlighter-rouge">2^(3)</code>, <code class="highlighter-rouge">2^(2)</code>, <code class="highlighter-rouge">2^(2)</code> and return <code class="highlighter-rouge">2^(2) = 4</code>, as shown below.</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/08/perf-sa-06.png" /></p>
+
+<p>if no larger blocks exist, ask the OS to allocate more memory.</p>
+
+<blockquote>
+  <p><code class="highlighter-rouge">mmap</code>, <code class="highlighter-rouge">sbrk</code> those are system calls for asking memory</p>
+</blockquote>
+
+<p>In practice, this exact scheme isn’t used. There are many variants. It turns out that the efficiency is very important for small allocations. The overhead of this scheme could cause performance bottlenecks. In reality, we usually don’t go all the way down to the block of size 1. We might stop at block of size 8 bytes. This does increase internal fragmentations because we have some waste space.</p>
+
+<p>Alternatively, we can also group blocks into pages. All of blocks in the same page have the same size.</p>
+
+<p>The standard implementation of <code class="highlighter-rouge">malloc</code> uses <code class="highlighter-rouge">mmap</code> andd <code class="highlighter-rouge">sbrk</code> to allocate memory. It doesn’t use any memory allocator.</p>
+
+<h3 id="analysis-of-binned-free-lists">Analysis of Binned Free Lists</h3>
+
+<p><strong>Theorem.</strong> Suppose that the maximum amount of heap memory in use at any time by a program is <code class="highlighter-rouge">M</code>. If the heap is managed by a BFL allocator, the amount of virtual memory consumed by heap storage is <code class="highlighter-rouge">O(MlgM)</code></p>
+
+<p><strong>Proof.</strong> An allocation request for a block of size <code class="highlighter-rouge">x</code> consumes <code class="highlighter-rouge">2^{lg[x]} &lt;= 2x</code> storage. Thus, the amount of virtual memory devoted to blocks of size <code class="highlighter-rouge">2^k</code> is at most <code class="highlighter-rouge">2M</code>. Since there are most <code class="highlighter-rouge">lgM</code> free lists, the theorem holds.</p>
+
+<h2 id="storage-layout-of-a-program">Storage Layout of a program</h2>
+
+<p>This is how the virtual memory address space is laid out.</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/08/perf-sa-07.png" /></p>
+
+<p>In practice, the stack and heap pointer are never going to hit each other because we’re working with 64bit addresses.</p>
+
+<h3 id="how-virtual-is-virtual-memory">How virtual is virtual memory</h3>
+
+<p>Q: Since a 64-bit addressed space takes over a century to write at rate of 4 billion bytes per second, we effectively never run out of virtual memory. Why not just allocate out of virtual memory and never free?</p>
+
+<p>A1: Will be running out of physical memory</p>
+
+<p>A2: <strong>External fragmentation</strong> would be horrendous! The performance of the page table would degrade tremendously leading to disk thrashing, since all nonzero memory must be backed up on disk in page-size blocks.</p>
+
+<p><strong>Goal of storage allocators</strong></p>
+
+<p>Use as little virtual memory as possible, and try to keep the used portions relatively compact.</p>
+
+<p>## Garbage Collection</p>
+
+<p><strong>Terminology</strong></p>
+
+<ul>
+  <li><strong>Roots</strong> are objects directly accessible by the program (globals, stack, etc.).</li>
+  <li><strong>Live</strong> objects are reachable from the roots by following pointers.</li>
+  <li><strong>Dead</strong> objects are inaccessible and can be recycled.</li>
+</ul>
+
+<p>In order for GC to work, in general, you need to have the GC identify pointers, which requires</p>
+
+<ul>
+  <li>Strong typing.</li>
+  <li>Prohibit pointer arithmetic (which may slow down some programs). Beacuse if the program changes the location of the pointer, then GC no longer knows where the memory region starts anymore.</li>
+</ul>
+
+<h3 id="reference-counting">Reference Counting</h3>
+
+<p>Keep a count of the number of pointers referencing each object. If the count drops to 0, free the dead object.</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/08/perf-sa-07.png" /></p>
+:ET

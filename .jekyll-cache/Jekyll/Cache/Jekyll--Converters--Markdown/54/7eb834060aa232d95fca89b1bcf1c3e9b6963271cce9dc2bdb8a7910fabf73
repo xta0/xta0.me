@@ -1,0 +1,415 @@
+I"�Y<h2 id="overview">Overview</h2>
+
+<ul>
+  <li>1956年 早起版本的正则语言首次出现，并运用到有限状态机理论中</li>
+  <li>1968年 正则表达式开始兴起，在文本编辑器和语义分析中</li>
+  <li>1980年 Perl中正则表达式提供了更多功能，并逐步标准化</li>
+  <li>1997年 Perl Compatible Regular Expressions被提出，统一了正则表达式的实现方式</li>
+  <li>Regular Expressions Engines
+    <ul>
+      <li>C/C++</li>
+      <li>.NET</li>
+      <li>PHP</li>
+      <li>Java</li>
+      <li>JavasScript</li>
+      <li>Python</li>
+      <li>MySQL</li>
+      <li>UNIX Tools(POSIX,BRE,ERE)</li>
+      <li>Apache(POSIX,BRE,ERE)</li>
+      <li>Perl</li>
+    </ul>
+  </li>
+  <li>Online Tools
+    <ul>
+      <li><a href="https://regex101.com/">Regex 101</a></li>
+    </ul>
+  </li>
+  <li>Basic Syntax
+    <ul>
+      <li>Enclose in Literals such as <code class="highlighter-rouge">/regex/</code></li>
+    </ul>
+  </li>
+  <li>Matching Algorithm
+    <ul>
+      <li>Geedy</li>
+      <li>Backtracking</li>
+    </ul>
+  </li>
+  <li>Modes
+    <ul>
+      <li>Standard Mode: <code class="highlighter-rouge">/regex/</code></li>
+      <li>Global Mode: <code class="highlighter-rouge">/regex/g</code></li>
+      <li>Single Line Mode: <code class="highlighter-rouge">/regex/s</code></li>
+      <li>Case insensitive Mode: <code class="highlighter-rouge">/regex/i</code></li>
+      <li>Multi Line Mode: <code class="highlighter-rouge">/regex/m</code></li>
+    </ul>
+  </li>
+  <li>Meta Characters
+    <ul>
+      <li>[<code class="highlighter-rouge">*</code>,<code class="highlighter-rouge">+</code>,<code class="highlighter-rouge">-</code>,<code class="highlighter-rouge">!</code>,<code class="highlighter-rouge">=</code>,<code class="highlighter-rouge">()</code>,<code class="highlighter-rouge">{}</code>,<code class="highlighter-rouge">[]</code>,<code class="highlighter-rouge">^</code>,<code class="highlighter-rouge">$</code>,<code class="highlighter-rouge">|</code>,<code class="highlighter-rouge">?</code>,<code class="highlighter-rouge">:</code>,<code class="highlighter-rouge">\</code>]</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="syntax">Syntax</h2>
+
+<h3 id="matching-character">Matching Character</h3>
+
+<ul>
+  <li><strong>WildCard</strong>
+    <ul>
+      <li>Notation: <code class="highlighter-rouge">.</code></li>
+      <li>单个字符匹配所有除了换行以外的字符
+        <ul>
+          <li><code class="highlighter-rouge">/.ohn/</code>–&gt;<code class="highlighter-rouge">John</code>,<code class="highlighter-rouge">mohn</code></li>
+          <li><code class="highlighter-rouge">/3.14/</code> –&gt;<code class="highlighter-rouge">3.14</code>,<code class="highlighter-rouge">3x14</code>,…</li>
+        </ul>
+      </li>
+      <li>用<code class="highlighter-rouge">\</code>做转义字符
+        <ul>
+          <li><code class="highlighter-rouge">user\.txt</code> —&gt; <code class="highlighter-rouge">user.txt</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Character Set</strong>
+    <ul>
+      <li>Notion: <code class="highlighter-rouge">[]</code></li>
+      <li>如果<code class="highlighter-rouge">[]</code>前后没有字符，则每个字符都按上述规则匹配
+        <ul>
+          <li><code class="highlighter-rouge">\[abcde]\</code> –&gt; <code class="highlighter-rouge">dcbeas</code></li>
+          <li><code class="highlighter-rouge">[a-zA-Z_.]+@\w+.(com|cn)</code> –&gt; <code class="highlighter-rouge">jayson.xu@foxmail.com</code></li>
+        </ul>
+      </li>
+      <li>如果<code class="highlighter-rouge">[]</code>前后有字符，则只有对应位的单个字符按照规则匹配
+        <ul>
+          <li><code class="highlighter-rouge">/[cd]ash/ </code> -&gt; <code class="highlighter-rouge">cash, dash</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Character Ranges</strong>
+    <ul>
+      <li>Notion: <code class="highlighter-rouge">-</code></li>
+      <li><code class="highlighter-rouge">\[a-z]\</code>,<code class="highlighter-rouge">\[A-Z]\</code>,<code class="highlighter-rouge">\[a-zA-Z]\</code>, <code class="highlighter-rouge">[0-9]</code></li>
+      <li><code class="highlighter-rouge">/[a-z] team/</code> –&gt; <code class="highlighter-rouge">a team , b team, c team ... z team</code></li>
+      <li><code class="highlighter-rouge">/5[0-5]/</code> –&gt; <code class="highlighter-rouge">50, 51, 52, 52, 54, 55</code>
+  ```</li>
+    </ul>
+  </li>
+  <li><strong>Not Symbol</strong>
+    <ul>
+      <li>Notion <code class="highlighter-rouge">^</code></li>
+      <li><code class="highlighter-rouge">/[^abcdef]/</code> matches every character except abcdef</li>
+      <li><code class="highlighter-rouge">/[^cd]ash/</code> matches 4 characters except cash, dash</li>
+      <li><code class="highlighter-rouge">/[^vr]a[nd]ish/</code> matches 6 characters except vanish, radish</li>
+    </ul>
+  </li>
+  <li><strong>Escaping Meta Character</strong>
+    <ul>
+      <li>Notion: <code class="highlighter-rouge">\</code>
+        <ul>
+          <li><code class="highlighter-rouge">a\.txt</code> –&gt; <code class="highlighter-rouge">a.txt</code></li>
+          <li><code class="highlighter-rouge">user\/local</code> -&gt; <code class="highlighter-rouge">user/local</code></li>
+          <li><code class="highlighter-rouge">c:\\user\\local\\a.txt</code> –&gt; <code class="highlighter-rouge">c:\user\local\a.txt</code></li>
+        </ul>
+      </li>
+      <li>换行:<code class="highlighter-rouge">\n</code>, tab: <code class="highlighter-rouge">\t</code></li>
+      <li>在<code class="highlighter-rouge">[]</code>中只有四个字符需要被转义<code class="highlighter-rouge">[-/*]]</code>
+        <ul>
+          <li><code class="highlighter-rouge">[\-]</code> –&gt; <code class="highlighter-rouge">-</code></li>
+          <li><code class="highlighter-rouge">[\-\/]</code> –&gt; <code class="highlighter-rouge">-/</code></li>
+          <li><code class="highlighter-rouge">[\-\/\*]</code> –&gt; <code class="highlighter-rouge">-/*</code></li>
+          <li><code class="highlighter-rouge">[\-\/\*\]]</code> -&gt; <code class="highlighter-rouge">-/*]</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Easy way to write Sets</strong>
+    <ul>
+      <li><code class="highlighter-rouge">\w</code>是<code class="highlighter-rouge">/[a-zA-Z0-9_]/</code>的简写，表示word和下划线集合</li>
+      <li><code class="highlighter-rouge">\W</code>是<code class="highlighter-rouge">/[^a-zA-Z0-9_]/</code>的简写，是上面的补集，表示非word+非下划线</li>
+      <li><code class="highlighter-rouge">\s</code> -&gt; <code class="highlighter-rouge">[\t]</code> -&gt; tab and white space</li>
+      <li><code class="highlighter-rouge">\S</code> -&gt; <code class="highlighter-rouge">[^\t]</code> -&gt; No space, no tab</li>
+      <li><code class="highlighter-rouge">\d</code> -&gt; <code class="highlighter-rouge">\[0-9]\</code> -&gt; digits only</li>
+      <li><code class="highlighter-rouge">[\D]</code> -&gt; no digit</li>
+      <li><code class="highlighter-rouge">[^\d]</code> -&gt; no digit</li>
+    </ul>
+  </li>
+  <li><strong>Quantified Repetition</strong>
+    <ul>
+      <li>Notation: <code class="highlighter-rouge">*</code>
+        <ul>
+          <li>Match zero or more of previous
+            <ul>
+              <li><code class="highlighter-rouge">/Buz*/</code> –&gt; <code class="highlighter-rouge">Bu,Buz,Buzz,Buzzz,...</code></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Notation: <code class="highlighter-rouge">+</code>
+        <ul>
+          <li>Match one or more of previous
+            <ul>
+              <li><code class="highlighter-rouge">[0-9]+</code> –&gt; match all numbers</li>
+              <li><code class="highlighter-rouge">[0-9][0-9][0-9]+</code> –&gt; <code class="highlighter-rouge">[x]012, [x]2, [x]86</code></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Notation: <code class="highlighter-rouge">?</code>
+        <ul>
+          <li>Match one or zero previous
+            <ul>
+              <li><code class="highlighter-rouge">/Flavou?r/</code> –&gt; <code class="highlighter-rouge">Flavour, Flavor</code></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Notion: <code class="highlighter-rouge">{number}</code>,<code class="highlighter-rouge">{min, max}</code>,<code class="highlighter-rouge">{min,}</code>
+        <ul>
+          <li>Match exactly <em>number</em> of previous
+            <ul>
+              <li><code class="highlighter-rouge">/[0-9]{3}/</code> –&gt; <code class="highlighter-rouge">000,723, [x]45, [x]4544</code></li>
+              <li>phone number: <code class="highlighter-rouge">/[0-9]{3}-[0-9]{4}-[0-9]{4}/</code></li>
+            </ul>
+          </li>
+          <li>Match as least <em>min</em> but not more than <em>max</em> of previous characters
+            <ul>
+              <li><code class="highlighter-rouge">/[0-9]{3,5}/</code> –&gt; <code class="highlighter-rouge">000,727, [x]45,4545,[x]454545</code></li>
+            </ul>
+          </li>
+          <li>Match at least <em>min</em> times
+            <ul>
+              <li><code class="highlighter-rouge">/[0-9]{3,}/</code> –&gt; <code class="highlighter-rouge">000,723, [x]45, 4545, 345435</code></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Lazy Expressions</strong>
+    <ul>
+      <li>Greey mode
+        <ul>
+          <li>如果当前Quantifier满足条件，则一直向后匹配，直到末尾，到达末尾后，如果发现还有未执行的正则符号，则进行backtrack，从后向前搜索。</li>
+          <li><code class="highlighter-rouge">/".+"/</code> –&gt; This is <mark>"Jason" from "Microsoft"</mark> developer team.
+            <ol>
+              <li>首先找到第一个引号位置</li>
+              <li><code class="highlighter-rouge">.+</code>匹配一个字符<code class="highlighter-rouge">J</code>后，由greedy的特性，<code class="highlighter-rouge">.+</code>会一直向后匹配到整个字符串结尾<code class="highlighter-rouge">.</code></li>
+              <li><code class="highlighter-rouge">.+</code>发现后面还有一个<code class="highlighter-rouge">"</code>未使用，因此从字符串末尾开始向前回溯，直到遇到第一个<code class="highlighter-rouge">"</code></li>
+            </ol>
+          </li>
+        </ul>
+      </li>
+      <li>Lazy mode
+        <ul>
+          <li>“repeat minimum number of times.”</li>
+          <li>在Quantifier后<code class="highlighter-rouge">*,+,?</code>加上<code class="highlighter-rouge">?</code>表示lazy求值</li>
+          <li><code class="highlighter-rouge">/".+?"/</code> –&gt; This is <mark>"Jason"</mark> from <mark>"Microsoft"</mark> developer team. 分析下这个例子
+            <ol>
+              <li>首先找到第一个引号位置</li>
+              <li><code class="highlighter-rouge">.+</code>匹配一个字符<code class="highlighter-rouge">J</code>，由于<code class="highlighter-rouge">.+</code>被声明成了lazy(跟随<code class="highlighter-rouge">?</code>)，因此匹配一次后，会将匹配控制权交给<code class="highlighter-rouge">?</code>之后的字符，即第二个引号</li>
+              <li>第二个引号匹配<code class="highlighter-rouge">a</code>不满足，将控制权交还给<code class="highlighter-rouge">.+</code>，<code class="highlighter-rouge">.+</code>成功匹配<code class="highlighter-rouge">a</code>后继续将控制权交给第二个引号</li>
+              <li>重复过程3，直到遇到下一个<code class="highlighter-rouge">"</code>，则第一次匹配完成</li>
+              <li>接着从<code class="highlighter-rouge">f</code>开始，继续重复步骤1</li>
+              <li>上述正则表达式也等价于<code class="highlighter-rouge">/"[^"]"+/</code></li>
+            </ol>
+          </li>
+        </ul>
+      </li>
+      <li>One more example
+        <ul>
+          <li><code class="highlighter-rouge">\d+ \d+</code> —&gt; <mark>123 456</mark></li>
+          <li><code class="highlighter-rouge">\d+ \d+?</code> —&gt; <mark>123 4</mark>56</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Group</strong>
+    <ul>
+      <li>Notion：<code class="highlighter-rouge">()</code></li>
+      <li>增加可读性, 不能出现在<code class="highlighter-rouge">[]</code>中</li>
+      <li><code class="highlighter-rouge">/(xyz)+/</code> —&gt; <mark>xyzxyz</mark>abcdef1234<mark>xyz</mark></li>
+      <li><code class="highlighter-rouge">/([a-z]+[0-9]{0,3}) team/</code> —&gt; <code class="highlighter-rouge">abcds812team</code>,<code class="highlighter-rouge">zero team</code></li>
+    </ul>
+  </li>
+  <li><strong>Alternation/Choice</strong>
+    <ul>
+      <li>Notion: <code class="highlighter-rouge">|</code></li>
+      <li>和括号搭配使用, 允许嵌套</li>
+      <li><code class="highlighter-rouge">/boy|gird/</code> —&gt; <code class="highlighter-rouge">boy</code>, <code class="highlighter-rouge">girl</code></li>
+      <li><code class="highlighter-rouge">/I think (China|Brazil|England) will win the world cup in 2050./</code></li>
+      <li><code class="highlighter-rouge">/((Jane|John) likes blue|(Tom|Jim) likes green)/</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="matching-positions">Matching Positions</h3>
+
+<ul>
+  <li><strong>Anchors</strong>
+    <ul>
+      <li>Notion: <code class="highlighter-rouge">^,%</code>
+        <ul>
+          <li>如果<code class="highlighter-rouge">^</code>出现在正则式开头，表示匹配以<code class="highlighter-rouge">^</code>后面字符开头，以<code class="highlighter-rouge">$</code>前一个字符结尾的串。Anchor字符用来确定匹配位置。</li>
+          <li><code class="highlighter-rouge">^a[a-z]+a</code> –&gt;<code class="highlighter-rouge">america</code></li>
+          <li><code class="highlighter-rouge">^[^a-zA-Z]+</code> –&gt;<code class="highlighter-rouge">123</code>,<code class="highlighter-rouge">$#%</code></li>
+          <li><code class="highlighter-rouge">^[A-Z][a-zA-Z, ]+\.</code> –&gt; 匹配英文每段的第一句话</li>
+          <li><code class="highlighter-rouge">[A-Z][a-zA-Z, ]+\.$</code> –&gt; 匹配英文每段的最后一句话</li>
+        </ul>
+      </li>
+      <li>Notion: <code class="highlighter-rouge">\b,\B</code>
+        <ul>
+          <li>用来分割word, word由<code class="highlighter-rouge">[a-zA-Z0-9_]</code>构成
+            <ul>
+              <li><code class="highlighter-rouge">\b(\w)+\b\</code>匹配所有word</li>
+              <li><code class="highlighter-rouge">\b[a-z]+\b</code>匹配文本中所有小写单词</li>
+              <li><code class="highlighter-rouge">\b[A-Z]+\b</code>匹配文本中所有大写单词</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="advacnced-topics">Advacnced Topics</h3>
+
+<ul>
+  <li><strong>Group &amp; Backreference</strong>
+    <ul>
+      <li>Notion: <code class="highlighter-rouge">(ab)(cd)\1\2</code></li>
+      <li>用标号<code class="highlighter-rouge">\1,\2</code>指代前面前面的group
+        <ul>
+          <li><code class="highlighter-rouge">/(ab)(cd)\1\2/</code> –&gt; <code class="highlighter-rouge">abcdabcd</code></li>
+          <li><code class="highlighter-rouge">/(Bruce) Wayne \1/</code> –&gt; <code class="highlighter-rouge">Bruce Wayne Bruce</code></li>
+          <li><code class="highlighter-rouge">&lt;([a-z][a-z0-9]*)&gt;.*&lt;\/\1&gt;</code></li>
+        </ul>
+      </li>
+      <li>A python example</li>
+    </ul>
+
+    <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kn">import</span> <span class="nn">re</span>
+
+  <span class="n">regex</span> <span class="o">=</span> <span class="s">r'^(\d{2})-(\w{3})\s(\d{9})\s([A-Z][\w .]+)\s(\d{4})'</span>
+  <span class="nb">str</span> <span class="o">=</span> <span class="s">"01-SSN 123324134 S.Neis Steve 1997"</span>
+  <span class="n">m</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span>
+
+  <span class="k">print</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span> <span class="c1"># 01-SSN 123324134 S.Neis Steve 1997
+</span>  <span class="k">print</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="c1">#01
+</span>  <span class="k">print</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="c1">#SSN
+</span>  <span class="k">print</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span> <span class="c1">#123324134
+</span>  <span class="k">print</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span> <span class="c1">#S.Neis Steve
+</span>  <span class="k">print</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span> <span class="c1">#1997
+</span></code></pre></div>    </div>
+  </li>
+  <li><strong>Non-Capturing Groups</strong>
+    <ul>
+      <li>可以令正则式成组，但是不引用它们</li>
+      <li>Notion: <code class="highlighter-rouge">?:</code>
+        <ul>
+          <li><code class="highlighter-rouge">?</code> –&gt; Give this group a different meaning</li>
+          <li><code class="highlighter-rouge">:</code> –&gt; The meaning is non-capturing</li>
+        </ul>
+      </li>
+      <li>Advantages
+        <ul>
+          <li>Increase Speed</li>
+          <li>Make a room to caputures necessary groups</li>
+        </ul>
+      </li>
+      <li><code class="highlighter-rouge">/(ab)(?:cd)\1/</code> —&gt; <code class="highlighter-rouge">abcdab, [x]abcdabcd</code></li>
+      <li><code class="highlighter-rouge">/(?:red) looks (white)\1 to me</code> —&gt; <code class="highlighter-rouge">\1</code>指向的是<code class="highlighter-rouge">white</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="assertions">Assertions</h3>
+
+<ul>
+  <li>Look Ahead Assertions
+    <ul>
+      <li><strong>Positive Look Ahead Assertions</strong>
+        <ul>
+          <li>Notion: <code class="highlighter-rouge">?=</code>
+            <ul>
+              <li><code class="highlighter-rouge">?</code> –&gt; Give this group a different meaning</li>
+              <li><code class="highlighter-rouge">=</code> –&gt; The meaning is PLAA</li>
+            </ul>
+          </li>
+          <li>用来匹配出现在某个字符前面的字符
+            <ul>
+              <li><code class="highlighter-rouge">/long(?=island)</code> –&gt; 只匹配出现在<code class="highlighter-rouge">island</code>之前的long
+                <ul>
+                  <li><mark>long</mark>island, <code class="highlighter-rouge">[x]longbeach</code></li>
+                </ul>
+              </li>
+              <li><code class="highlighter-rouge">/a(?=b)/</code> –&gt; <mark>a</mark>b</li>
+              <li><code class="highlighter-rouge">\b[a-z][A-Z]+\b(?=\.)</code>—&gt;匹配所有句号前面的单词</li>
+            </ul>
+          </li>
+          <li>另一种写法是<code class="highlighter-rouge">(?=)</code>在前，表示过滤条件
+            <ul>
+              <li><code class="highlighter-rouge">\b(?=\w*ce)(?=\w*O)[a-z][A-Z]+\b(?=\.)</code>—&gt;匹配所有句号前面的单词，并且是以<code class="highlighter-rouge">ce</code>结尾，<code class="highlighter-rouge">O</code>开头的</li>
+              <li>电话号码正则式为<code class="highlighter-rouge">\d{3}-\d{3}-\d{4}</code>
+                <ul>
+                  <li><code class="highlighter-rouge">(?=^[0-6\-]+$)\d{3}-\d{3}-\d{4}</code>–&gt; 匹配电话号码数字在<code class="highlighter-rouge">0-6</code>之间的</li>
+                  <li><code class="highlighter-rouge">(?=^[0-6\-]+$)(?=.*321)\d{3}-\d{3}-\d{4}</code>–&gt; 匹配电话号码数字在<code class="highlighter-rouge">0-6</code>之间的，且有321的号码</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><strong>Negative Look Ahead Assertions</strong>
+        <ul>
+          <li>Notion: <code class="highlighter-rouge">?!</code></li>
+          <li>用来匹配不出现在某个字符后面的字符串
+            <ul>
+              <li><code class="highlighter-rouge">/long(?!island)</code> –&gt; 只匹配<code class="highlighter-rouge">long</code>后面不是<code class="highlighter-rouge">island</code>的字符串
+                <ul>
+                  <li><mark>long</mark>beach,<mark>long</mark>drive, <code class="highlighter-rouge">[x]longisland</code></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Look Behind Assertions
+    <ul>
+      <li><strong>Positive Look Behind Assertions</strong>
+        <ul>
+          <li>Notion: <code class="highlighter-rouge">?&lt;=</code></li>
+          <li>用来匹配出现在某个字符后面的字符
+            <ul>
+              <li><code class="highlighter-rouge">(?&lt;=long)island</code> –&gt; long<mark>island</mark></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><strong>Negative Look Behind Assertions</strong>
+        <ul>
+          <li>Notion: <code class="highlighter-rouge">?&lt;!</code></li>
+          <li>用来匹配前面不是某个字符的字符串
+            <ul>
+              <li><code class="highlighter-rouge">(?&lt;!long)island</code> –&gt; xx<mark>island</mark></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>所有能用Looke Behind Assertions 表示的情况，也能用Looke Ahead Assertions表示，因此</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="resource">Resource</h2>
+
+<ul>
+  <li><a href="https://github.com/zeeshanu/learn-regex">Learn regex the easy way</a></li>
+  <li><a href="http://shop.oreilly.com/product/9780596528126.do">精通正则表达式</a></li>
+  <li><a href="https://regex101.com/">Regex101</a></li>
+</ul>
+:ET

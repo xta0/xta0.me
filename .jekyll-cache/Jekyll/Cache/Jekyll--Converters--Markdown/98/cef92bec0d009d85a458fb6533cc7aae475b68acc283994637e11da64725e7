@@ -1,0 +1,340 @@
+I"vz<blockquote>
+  <p>持续更新，补充C++新增feature,目录结构遵循《C++ Primer》</p>
+</blockquote>
+
+<h3 id="定义基类">定义基类</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Quote</span><span class="p">{</span>
+<span class="nl">public:</span>
+	<span class="n">Quote</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+	<span class="n">Quote</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">book</span><span class="p">,</span> <span class="kt">double</span> <span class="n">price</span><span class="p">)</span><span class="o">:</span><span class="n">bookNo</span><span class="p">(</span><span class="n">book</span><span class="p">),</span><span class="n">price</span><span class="p">(</span><span class="n">price</span><span class="p">){};</span>
+	<span class="n">string</span> <span class="n">isbn</span><span class="p">()</span> <span class="k">const</span><span class="p">{</span>
+		<span class="k">return</span> <span class="n">bookNo</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">virtual</span> <span class="kt">double</span> <span class="n">net_price</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">n</span><span class="p">)</span> <span class="k">const</span> <span class="p">{</span>
+		<span class="k">return</span> <span class="n">n</span><span class="o">*</span> <span class="n">price</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="k">virtual</span> <span class="o">~</span><span class="n">Quote</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span> <span class="c1">//对析构函数进行动态绑定</span>
+<span class="nl">private:</span>
+	<span class="n">string</span> <span class="n">bookNo</span><span class="p">;</span>
+<span class="nl">protected:</span>
+	<span class="kt">double</span> <span class="n">price</span><span class="o">=</span><span class="mf">0.0</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>上面我们定义了一个基类，有下面几点需要注意：</p>
+
+<ol>
+  <li>基类通常都应该定义一个虚的析构函数，即是它不执行任何操作</li>
+  <li>区分两种成员函数，一种是希望子类继承调用的，编译期即可确定函数地址；一种是希望子类重写的，用<code class="highlighter-rouge">virtual</code>声明，函数地址在运行时进行动态绑定</li>
+  <li><code class="highlighter-rouge">virtual</code>只用于成员函数声明，不能出现在定义中</li>
+  <li>访问范围说明符
+    <ul>
+      <li>基类的private成员：可以被下列函数访问：
+        <ul>
+          <li>基类的成员函数</li>
+          <li>基类的友员函数</li>
+        </ul>
+      </li>
+      <li>基类的public成员：可以被下列函数范根：
+        <ul>
+          <li>基类的成员函数</li>
+          <li>基类的友员函数</li>
+          <li>派生类的成员函数</li>
+          <li>派生类的友员函数</li>
+          <li>其他函数</li>
+        </ul>
+      </li>
+      <li>基类的protected成员：可以被下列函数访问：
+        <ul>
+          <li>基类的成员函数</li>
+          <li>基类的友员函数</li>
+          <li>子类内部的成员函数可以访问父类protected成员</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="定义子类">定义子类</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Bulk_Quote</span><span class="o">:</span> <span class="k">public</span> <span class="n">Quote</span><span class="p">{</span>
+<span class="nl">public:</span>
+	<span class="n">Bulk_Quote</span><span class="p">()</span> <span class="o">=</span> <span class="k">default</span><span class="p">;</span>
+	<span class="n">Bulk_Quote</span><span class="p">(</span> <span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span><span class="p">,</span> <span class="kt">double</span><span class="p">,</span> <span class="kt">size_t</span><span class="p">,</span> <span class="kt">double</span><span class="p">);</span>
+	<span class="c1">//override虚函数</span>
+	<span class="kt">double</span> <span class="n">net_price</span><span class="p">(</span><span class="kt">size_t</span> <span class="p">)</span> <span class="k">const</span> <span class="k">override</span><span class="p">;</span>
+<span class="nl">private:</span>
+	<span class="kt">size_t</span> <span class="n">min_qty</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> 
+	<span class="kt">double</span> <span class="n">discount</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<ul>
+  <li>子类拥有基类全部的成员函数和成员变量，不论是<code class="highlighter-rouge">private</code>, <code class="highlighter-rouge">protected</code> 还是 <code class="highlighter-rouge">public</code>，在子类的各个成员函数中，不能访问父类的<code class="highlighter-rouge">private</code>成员</li>
+  <li><mark>C++ 11</mark>可以允许子类使用<code class="highlighter-rouge">override</code>关键字显式声明override父类的成员函数</li>
+  <li>子类对象的内存空间
+    <ul>
+      <li>等于父类对象的内存空间 + 子类对象自己的成员变量的体积</li>
+      <li>在子类对象中，包含着父类对象，而且父类对象的存储位置位于派生类对象新增的成员变量之前</li>
+    </ul>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>       Quote  ----------- 
+              | bookNo  |
+              | price   |
+              |---------|
+  Bulk_Quote  | min_qty |
+              | discount|
+              -----------
+</code></pre></div>    </div>
+  </li>
+  <li>子类到父类的类型转换
+    <ul>
+      <li><strong>从子类向基类的类型转换只对指针或者引用有效</strong></li>
+      <li>不存在从基类向子类的隐式转换</li>
+    </ul>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">Quote</span> <span class="n">item</span><span class="p">;</span> <span class="c1">//父类对象</span>
+  <span class="n">Quote_Bulk</span> <span class="n">bulk</span><span class="p">;</span> <span class="c1">//子类对象</span>
+  <span class="n">Quote</span><span class="o">*</span> <span class="n">p</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">item</span><span class="p">;</span> <span class="c1">//基类指针，p指向Quote对象</span>
+  <span class="n">p</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">bulk</span><span class="p">;</span> <span class="c1">//基类指针隐式绑定到子类对象</span>
+  <span class="n">Quote</span> <span class="o">&amp;</span><span class="n">r</span> <span class="o">=</span> <span class="n">bulk</span><span class="p">;</span> <span class="c1">//基类引用隐式绑定到子类对象</span>
+
+  <span class="c1">//不能将父类指针隐式转为子类指针</span>
+  <span class="n">Quote</span> <span class="n">base</span><span class="p">;</span>
+  <span class="n">Bulk_Quote</span><span class="o">*</span> <span class="n">bulkp</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">base</span><span class="p">;</span> <span class="c1">//wrong!</span>
+  <span class="n">Bulk_Quote</span><span class="o">&amp;</span> <span class="n">bulkRef</span> <span class="o">=</span> <span class="n">base</span><span class="p">;</span> <span class="c1">//wrong!</span>
+</code></pre></div>    </div>
+  </li>
+  <li>子类的构造与析构
+    <ul>
+      <li>子类构造过程
+        <ol>
+          <li>先执行基类的构造函数，初始化父类的成员变量</li>
+          <li>调用成员对象类的构造函数，初始化成员对象</li>
+          <li>调用自身构造函数</li>
+        </ol>
+      </li>
+      <li>子类析构过程
+        <ol>
+          <li>调用成员对象类的析构函数</li>
+          <li>调用父类的析构函数</li>
+          <li>调用自身析构函数</li>
+        </ol>
+      </li>
+    </ul>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">Bulk_Quote</span><span class="p">(</span> <span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">book</span><span class="p">,</span> <span class="kt">double</span> <span class="n">p</span><span class="p">,</span> 
+  <span class="kt">size_t</span> <span class="n">qty</span><span class="p">,</span> <span class="kt">double</span> <span class="n">disc</span><span class="p">)</span><span class="o">:</span>
+  <span class="n">Quote</span><span class="p">(</span><span class="n">book</span><span class="p">,</span><span class="n">p</span><span class="p">),</span><span class="n">min_qty</span><span class="p">(</span><span class="n">qty</span><span class="p">),</span><span class="n">discount</span><span class="p">(</span><span class="n">disc</span><span class="p">){</span>
+      <span class="c1">//使用统一构造函数初始化基类成员</span>
+  <span class="p">};</span>
+</code></pre></div>    </div>
+    <p>上述代码我们显式的初始化了基类成员，如果不调父类的构造函数，则基类成员将被默认初始化。另外需要注意一点，对基类成员的初始化应该尽量遵循接口调用，即使用基类的构造函数初始化基类成员，而不是在子类中直接修改基类成员的值。</p>
+  </li>
+  <li>子类调用父类的成员
+    <ul>
+      <li>如果子类override了父类同名的成员变量，访问父类的成员变量时需要使用<code class="highlighter-rouge">父类类名::成员名</code>;</li>
+      <li>成员函数同理：<code class="highlighter-rouge">父类类名::成员函数名;</code></li>
+    </ul>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">struct</span> <span class="n">Base</span><span class="p">{</span>
+      <span class="n">Base</span><span class="p">()</span><span class="o">:</span><span class="n">mem</span><span class="p">(</span><span class="mi">0</span><span class="p">){}</span>
+      <span class="kt">int</span> <span class="n">get_mem</span><span class="p">(){</span>
+          <span class="k">return</span> <span class="n">Base</span><span class="o">::</span><span class="n">mem</span><span class="p">;</span> <span class="c1">//显式声明返回自己的mem</span>
+      <span class="p">}</span>
+      <span class="kt">int</span> <span class="n">memfcn</span><span class="p">();</span>
+      <span class="kt">int</span> <span class="n">mem</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">struct</span> <span class="n">Derived</span><span class="o">:</span><span class="k">public</span> <span class="n">Base</span><span class="p">{</span>
+      <span class="n">Derived</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">)</span><span class="o">:</span><span class="n">mem</span><span class="p">(</span><span class="n">i</span><span class="p">){}</span> <span class="c1">//i初始化Derived::mem, 父类的mem进行默认初始化</span>
+      <span class="kt">int</span> <span class="n">get_mem</span><span class="p">(){</span>
+          <span class="k">return</span> <span class="n">mem</span><span class="p">;</span> <span class="c1">//返回的是Derived::mem</span>
+      <span class="p">}</span>
+      <span class="c1">//这个会覆盖掉基类的同名方法</span>
+      <span class="kt">int</span> <span class="n">memfcn</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
+      <span class="c1">//覆盖父类成员</span>
+      <span class="kt">int</span> <span class="n">mem</span><span class="p">;</span>
+  <span class="p">}</span>
+	
+  <span class="n">Derived</span> <span class="nf">d</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+  <span class="n">d</span><span class="p">.</span><span class="n">get_mem</span><span class="p">();</span> <span class="c1">//42;</span>
+
+  <span class="n">Derived</span> <span class="n">d</span><span class="p">;</span> <span class="n">Base</span> <span class="n">b</span><span class="p">;</span>
+  <span class="n">b</span><span class="p">.</span><span class="n">memfcn</span><span class="p">();</span> <span class="c1">//调用Base::memfcn</span>
+  <span class="n">d</span><span class="p">.</span><span class="n">memfcn</span><span class="p">(</span><span class="mi">19</span><span class="p">);</span> <span class="c1">//调用Derived::memfcn</span>
+  <span class="n">d</span><span class="p">.</span><span class="n">memfcn</span><span class="p">();</span> <span class="c1">//wrong!，此时编译器无法确定是调用自己的memfcn忘了传参，还是要调用父类的memfcn</span>
+  <span class="n">d</span><span class="p">.</span><span class="n">Base</span><span class="o">::</span><span class="n">memfcn</span><span class="p">();</span> <span class="c1">//正确，需要显式调用</span>
+</code></pre></div>    </div>
+    <blockquote>
+      <p>派生类除了override虚函数外，尽量不要覆盖基类的同名的成员或者方法</p>
+    </blockquote>
+
+    <ul>
+      <li>如果父类不希望子类覆写自己的共有成员函数，则需要加上<code class="highlighter-rouge">final</code>关键字</li>
+    </ul>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">struct</span> <span class="n">B</span><span class="p">{</span>
+      <span class="kt">int</span> <span class="n">f1</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="k">const</span> <span class="k">final</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">struct</span> <span class="n">C</span><span class="o">:</span><span class="k">public</span> <span class="n">B</span><span class="p">{</span>
+      <span class="kt">int</span> <span class="n">f1</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span> <span class="k">const</span><span class="p">;</span> <span class="c1">//wrong!</span>
+  <span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>使用静态成员变量</p>
+
+    <p>对于基类的静态成员，不管存在多少子类，都只存在唯一实例，属于类本身，可以通过命名空间访问，也可以通过对象访问。</p>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">class</span> <span class="nc">Base</span><span class="p">{</span>
+  <span class="nl">public:</span>
+      <span class="k">static</span> <span class="kt">void</span> <span class="n">statmem</span><span class="p">();</span>
+  <span class="p">};</span>
+  <span class="k">class</span> <span class="nc">Derived</span><span class="o">:</span><span class="k">public</span> <span class="n">Base</span><span class="p">{</span>
+  <span class="nl">public:</span>
+      <span class="kt">void</span> <span class="n">f</span><span class="p">(</span><span class="k">const</span> <span class="n">Derived</span><span class="o">&amp;</span> <span class="n">other</span><span class="p">){</span>
+          <span class="n">Base</span><span class="o">::</span><span class="n">statmem</span><span class="p">();</span> <span class="c1">//通过命名空间访问</span>
+          <span class="n">Derived</span><span class="o">::</span><span class="n">statmem</span><span class="p">();</span> <span class="c1">//通过命名空间访问</span>
+          <span class="n">other</span><span class="p">.</span><span class="n">statmem</span><span class="p">();</span> <span class="c1">//通过对象访问</span>
+          <span class="n">statmem</span><span class="p">();</span> <span class="c1">//使用this访问</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h2 id="虚函数">虚函数</h2>
+
+<p>C++中当使用一个基类型的引用或者指针调用一个虚函数时，会执行动态绑定（即在运行时根据调用者的具体类型来决定执行哪个虚函数），由于编译器在编译的时候无法确定哪个虚函数被执行，<mark>因此虚函数必须有定义</mark>。同样，这里有一个概念需要特别明确：<mark>动态绑定只发生在指针或者引用调用虚函数</mark>。这里有两个条件，一是调用方为指针或者引用类型，二是调用的函数为虚函数。</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Base</span><span class="p">{</span>
+<span class="nl">public:</span>
+	<span class="k">virtual</span> <span class="kt">void</span> <span class="n">print1</span><span class="p">(){</span>
+		<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"base print1"</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+	<span class="p">};</span>
+	<span class="kt">void</span> <span class="n">print2</span><span class="p">(){</span>
+		<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"base print2"</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">Derived</span><span class="o">:</span><span class="k">public</span> <span class="n">Base</span><span class="p">{</span>
+<span class="nl">public:</span>
+	<span class="kt">void</span> <span class="n">print1</span><span class="p">()</span> <span class="k">override</span><span class="p">{</span>
+		<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"child print1"</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+	<span class="p">}</span>
+	<span class="kt">void</span> <span class="n">print2</span><span class="p">(){</span>
+		<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"base print2"</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">Derived</span> <span class="n">child</span><span class="p">;</span>
+<span class="n">Base</span><span class="o">&amp;</span> <span class="n">parent</span> <span class="o">=</span> <span class="n">child</span><span class="p">;</span>
+<span class="n">parent</span><span class="p">.</span><span class="n">print1</span><span class="p">();</span> <span class="c1">//会发生动态绑定，因为parent的实际类型为child，因此会调用child的print1</span>
+<span class="n">parent</span><span class="p">.</span><span class="n">print2</span><span class="p">();</span> <span class="c1">//不会发生动态绑定，print2不是虚函数，调用parent的print2</span>
+
+<span class="n">Base</span> <span class="n">parent2</span> <span class="o">=</span> <span class="n">child</span><span class="p">;</span>
+<span class="n">parent2</span><span class="p">.</span><span class="n">print1</span><span class="p">();</span> <span class="c1">//不会发生动态绑定，调用parent的print1，因为parent2不是指针或引用类型</span>
+</code></pre></div></div>
+<blockquote>
+  <p>类比Objective-C可以发现，在OC中类的成员方法都是”虚的”，不区分方法是不是virtual，C++相对来说限制了一定的动态性。</p>
+</blockquote>
+
+<h3 id="多态">多态</h3>
+
+<p>所谓多态是指<mark>指针或者引用对象的静态类型和它们在运行时的动态类型不相同</mark>，则我们可以说这个指针或者引用有多种类型。上面例子中，<code class="highlighter-rouge">parent.print1()</code>就属于多态调用，虽然<code class="highlighter-rouge">parent</code>被声明成了一个基类型(<code class="highlighter-rouge">Base</code>)的引用，但在运行时它的实际类型为<code class="highlighter-rouge">Derived</code>，因此将会调用子类的<code class="highlighter-rouge">print1</code>方法。为了加深对动态绑定的理解，我们再来看一个例子</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Base</span> <span class="p">{</span>  
+<span class="nl">public:</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">vf1</span><span class="p">()</span> <span class="p">{</span> <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"Base::vf1"</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">vf2</span><span class="p">()</span> <span class="p">{</span> <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"Base::vf2"</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">f1</span><span class="p">()</span> <span class="p">{</span> <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"Base::f1"</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">f2</span><span class="p">()</span> <span class="p">{</span> <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">__func__</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="p">}</span> 
+<span class="nl">private:</span>
+    <span class="kt">int</span> <span class="n">var1</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">var2</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">Derived</span><span class="o">:</span> <span class="k">public</span> <span class="n">Base</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">vf1</span><span class="p">()</span> <span class="p">{</span> <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"Derived::vf1"</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">f1</span><span class="p">()</span> <span class="p">{</span> <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"Derived::f1"</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">f3</span><span class="p">()</span> <span class="p">{</span> <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"Derived::f3"</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+<span class="nl">private:</span>
+    <span class="kt">int</span> <span class="n">var3</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="c1">// experiment vtable and vptr</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="n">Derived</span> <span class="n">d</span><span class="p">;</span>
+    <span class="n">Base</span><span class="o">&amp;</span> <span class="n">b</span> <span class="o">=</span> <span class="n">d</span><span class="p">;</span>
+    <span class="n">b</span><span class="p">.</span><span class="n">vf1</span><span class="p">();</span> <span class="c1">//Derived::vf1</span>
+    <span class="n">b</span><span class="p">.</span><span class="n">f1</span><span class="p">();</span> <span class="c1">//Base::f1</span>
+    <span class="n">b</span><span class="p">.</span><span class="n">vf2</span><span class="p">();</span> <span class="c1">////Base::vf2</span>
+    <span class="n">b</span><span class="p">.</span><span class="n">Base</span><span class="o">::</span><span class="n">vf1</span><span class="p">();</span> <span class="c1">//Base::vf1</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这个例子和前面的例子类似，由于<code class="highlighter-rouge">b</code>的类型是引用，且<code class="highlighter-rouge">vf1</code>是虚函数，因此在调用该函数的时候发生了动态绑定，而<code class="highlighter-rouge">f1</code>是普通成员函数，编译器在编译的时候即可根据<code class="highlighter-rouge">b</code>的静态类型来找到<code class="highlighter-rouge">f1</code>，因此会调用基类的<code class="highlighter-rouge">f1</code>函数。如果想要调用基类的<code class="highlighter-rouge">vf1</code>，则需要显式的调用。</p>
+
+<p>C++是如何实现动态绑定的呢？答案是使用<mark>虚表</mark>。如果一个类中有虚函数，那么这个类的对象中会有一个指向虚表的指针:</p>
+
+<p><img src="/assets/images/2009/09/vtbl.png" alt="" /></p>
+
+<p>可以把虚表理解为一个指针数组，数组中的每个元素是一个指针变量，指向某个函数地址。运行时如果发生动态绑定则通过对指针数组进行寻址：<code class="highlighter-rouge">(*(p-&gt;vptr)[n])(p)</code>来得到具体调用的函数，如上图所示。</p>
+
+<p>值得注意的是，如果一个类的构造函数中有虚函数调用，则不会发生多态，因为构造对象时需要明确对象的类型。此外，类的析构函数尽量定义为虚函数，这样会确保在发生多态时，子类的析构函数会被调用。比如下面代码：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CSon</span><span class="p">{</span>
+<span class="nl">public:</span> 
+	<span class="o">~</span><span class="n">CSon</span><span class="p">(){};</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">CGrandson</span><span class="o">:</span> <span class="n">CSon</span><span class="p">{</span>
+<span class="nl">public:</span> 
+	<span class="o">~</span><span class="n">CGrandson</span><span class="p">(){};</span>
+<span class="p">};</span> 
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+	<span class="n">CSon</span><span class="o">*</span> <span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="n">CGrandson</span><span class="p">();</span>
+	<span class="k">delete</span> <span class="n">p</span><span class="p">;</span>
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>上面代码中，当<code class="highlighter-rouge">delete p</code>时，由于析构函数不是虚函数，因此编译器会调用<code class="highlighter-rouge">CSon</code>的析构函数，而不会调用<code class="highlighter-rouge">CGrandson</code>的析构函数。这显然不是我们希望的结果，我们希望当<code class="highlighter-rouge">p</code>释放时，先调用<code class="highlighter-rouge">~CGrandson()</code>而后调用<code class="highlighter-rouge">~CSon()</code>。因此，解决办法将让父类的析构函数变为虚函数:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">CSon</span><span class="p">{</span>
+<span class="nl">public:</span> 
+	<span class="k">virtual</span> <span class="o">~</span><span class="n">CSon</span><span class="p">(){};</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h3 id="接口与抽象类">接口与抽象类</h3>
+
+<p>使用多态可以让某个基类具有类似“接口”的能力，对于某些场景，我们只需要调用具有虚函数的基类对象即可，也就是所谓的面向接口编程。</p>
+
+<blockquote>
+  <p>可将类中的虚函数类比为Java中的Interface或者Objective-C中的protocol</p>
+</blockquote>
+
+<p>在C++中定义接口的一种方式是使用纯虚函数（用<code class="highlighter-rouge">=0</code>表示），定义了纯虚函数的类称为<strong>抽象基类</strong>，抽象基类不能被实例化，就好比接口不能被实例化一样，它需要某个对象实现这个接口，对应到C++则是需要某个子类继承抽象类，并实现接口（纯虚函数）。</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Disc_Quote</span><span class="o">:</span><span class="k">public</span> <span class="n">Quote</span><span class="p">{</span>
+<span class="nl">public:</span>
+	<span class="n">Disc_Quote</span><span class="p">(</span> <span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">book</span><span class="p">,</span> <span class="kt">double</span> <span class="n">p</span><span class="p">,</span><span class="kt">size_t</span> <span class="n">qty</span><span class="p">,</span> <span class="kt">double</span> <span class="n">disc</span><span class="p">)</span><span class="o">:</span>
+	<span class="n">Quote</span><span class="p">(</span><span class="n">book</span><span class="p">,</span><span class="n">p</span><span class="p">),</span><span class="n">quantity</span><span class="p">(</span><span class="n">qty</span><span class="p">),</span><span class="n">discount</span><span class="p">(</span><span class="n">disc</span><span class="p">){};</span>
+
+	<span class="c1">//pure virtual function</span>
+	<span class="kt">double</span> <span class="n">net_price</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">price</span><span class="p">)</span> <span class="k">const</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="nl">private:</span>
+	<span class="kt">size_t</span> <span class="n">quantity</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> 
+	<span class="kt">double</span> <span class="n">discount</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="n">Disc_Quote</span> <span class="n">dq</span><span class="p">;</span> <span class="c1">//wrong! 抽象类不能被实例化</span>
+</code></pre></div></div>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="http://www.charleshouserjr.com/Cplus2.pdf">C++ Primer</a></li>
+</ul>
+
+:ET

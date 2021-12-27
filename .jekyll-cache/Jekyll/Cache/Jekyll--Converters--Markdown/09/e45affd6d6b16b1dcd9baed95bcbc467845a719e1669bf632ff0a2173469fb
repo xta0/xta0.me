@@ -1,0 +1,33 @@
+I"J<p>Sementic Segmentation 可以对图片中像素点进行分类，比如下面例子中，我们将car标记为1，building标记为2，road标记为3。model的输出为一个segmentation map。</p>
+
+<p><img class="md-img-center" src="/assets/images/2018/05/dl-cnn-unet-0.png" /></p>
+
+<p>Unet是目前一个比较流行的semantic segmentation model，它结构是一个U shape，从左到右，feature map的depth逐渐增加，spatial size逐渐减小；从右到左，feature map的depth逐渐减小，spatial size逐渐增加。</p>
+
+<p><img class="md-img-center" src="/assets/images/2018/05/dl-cnn-unet-1.png" /></p>
+
+<h3 id="transpose-convolution">Transpose Convolution</h3>
+
+<p>其中Unet的右半边需要用到Transpose Conv，其运算过程如下</p>
+
+<p><img class="md-img-center" src="/assets/images/2018/05/dl-cnn-unet-2.png" /></p>
+
+<p>上面例子中的输入是一个<code class="highlighter-rouge">(2x2)</code>的tensor，conv kernel是<code class="highlighter-rouge">(3x3)</code>，输出是一个<code class="highlighter-rouge">(4x4)</code>的tensor。其中，padding = 1, stride = 2。</p>
+
+<p>使用Transpose conv的一个好处是kernel是train出来的，因此比直接用upsample得到的segmentation map更准确。缺点是会增加model的size。</p>
+
+<h3 id="unet-architecture">Unet Architecture</h3>
+
+<p>Unet结构中一个特别的地方在于skip connection。这个connection可以是一个element-wise的add操作也可以是concat操作，它将左边的feature map直接copy到右边对应的feature map上</p>
+
+<p><img class="md-img-center" src="/assets/images/2018/05/dl-cnn-unet-3.png" /></p>
+
+<p>对于右边的feature map，经过transpose conv之后，它里面包含high-level，spatial，contextual inforamtion，但是缺少low-level，detail的information。而左边与之对应的feature map则恰好包含这些信息。</p>
+
+<h3 id="resources">Resources</h3>
+
+<ul>
+  <li><a href="https://arxiv.org/abs/1505.04597">Unet</a></li>
+  <li><a href="https://www.coursera.org/learn/convolutional-neural-networks/lecture/GIIWY/u-net-architecture">Unet Explained</a></li>
+</ul>
+:ET

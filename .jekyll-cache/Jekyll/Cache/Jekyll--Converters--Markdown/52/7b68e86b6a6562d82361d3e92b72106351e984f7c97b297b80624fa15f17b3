@@ -1,0 +1,364 @@
+I"��<h2 id="dijkstra算法">Dijkstra算法</h2>
+
+<p>路径的权值在某些场合下是非常重要的，比如两地间飞机的票价，两个网络节点间数据传输的延迟等等。DFS和BFS在搜索两个节点路径时不会考虑边的权值问题，如果加入权值，那么两点间权值最小的路径不一定是BFS得到的最短路径，如下图中求$\{a,f\}$两点间的BFS的结果为$\{a,e,f\}$，cost为9，而cost最少的路径为$\{a,d,g,h,f\}$，其值为6</p>
+
+<p><img src="/assets/images/2008/08/graph-9.jpg" style="margin-left:auto; margin-right:auto;display:block" /></p>
+
+<p>Dijkstra算法研究的是单源最短路径(single-source shortest paths)问题，即给定带权图 <code class="highlighter-rouge">G = &lt;V,E&gt;</code>，其中每条边 $(v_i，v_j)$ 上的权 $W[v_i，v_j]$ 是一个<strong>非负实数</strong>。计算从任给的一个源点<code class="highlighter-rouge">s</code>到所有其他各结点的最短路径。</p>
+
+<p>Dijkstra算法的基本思想是使用贪心法维护一个数据结构，记录当前两点间的最短路径，然后不断更新路径值，直到找到最终解。</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">dijkstra</span><span class="p">(</span><span class="nx">v1</span><span class="p">,</span><span class="nx">v2</span><span class="p">):</span>
+    <span class="c1">//初始化所有节点的cost值</span>
+    <span class="k">for</span> <span class="nx">v</span> <span class="k">in</span> <span class="nx">all</span> <span class="nx">vertexes</span><span class="p">{</span>
+        <span class="nx">v</span><span class="p">.</span><span class="nx">cost</span> <span class="o">=</span> <span class="nx">maximum</span>
+    <span class="p">}</span>
+    <span class="nx">v1</span><span class="p">.</span><span class="nx">cost</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="c1">//创建一个最小堆保存顶点，优先级最低的顶点在堆顶部</span>
+    <span class="nx">priority_queue</span> <span class="nx">pq</span><span class="p">(</span><span class="nx">v1</span><span class="p">.</span><span class="nx">cost</span><span class="p">);</span>
+
+    <span class="k">while</span> <span class="o">!</span><span class="p">(</span><span class="nx">pq</span><span class="p">.</span><span class="nx">empty</span><span class="p">()){</span>
+        <span class="nx">v</span> <span class="o">=</span> <span class="nx">pq</span><span class="p">.</span><span class="nx">front</span><span class="p">();</span> <span class="c1">//弹出优先级最低的vertex</span>
+        <span class="nx">v</span><span class="p">.</span><span class="nx">status</span> <span class="o">=</span> <span class="nx">visited</span>
+        <span class="k">if</span> <span class="nx">v</span> <span class="o">==</span> <span class="nx">v2</span><span class="p">:</span>
+            <span class="c1">//找到v2</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="c1">//遍历v的每一个未被访问的相邻节点</span>
+         <span class="k">for</span> <span class="nx">n</span> <span class="p">:</span> <span class="nx">v</span><span class="p">.</span><span class="nx">unvisited_neighbors</span><span class="p">:</span>
+            <span class="c1">//计算到达n的cost</span>
+            <span class="nx">cost</span> <span class="p">:</span><span class="o">=</span> <span class="nx">v</span><span class="p">.</span><span class="nx">cost</span> <span class="o">+</span> <span class="nx">weight</span> <span class="k">of</span> <span class="nx">edge</span><span class="p">(</span><span class="nx">v</span><span class="p">,</span><span class="nx">n</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nx">cost</span> <span class="o">&lt;</span> <span class="nx">n</span><span class="p">.</span><span class="nx">cost</span><span class="p">:</span>
+                <span class="nx">n</span><span class="p">.</span><span class="nx">cost</span> <span class="o">=</span> <span class="nx">cost</span>
+                <span class="c1">//记录前驱节点</span>
+                <span class="nx">n</span><span class="p">.</span><span class="nx">prev</span> <span class="o">=</span> <span class="nx">v</span>
+                <span class="nx">pq</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span> <span class="nx">n</span><span class="p">.</span><span class="nx">cost</span> <span class="p">)</span>
+    <span class="p">}</span>
+    <span class="c1">//使用v2的前驱节点，重建到v1的路径</span>
+</code></pre></div></div>
+
+<p>上述是Dijkstra算法的伪码，我们通过下面一个例子看看它是如何工作的。如下图所示，假设我们要求从$\{a,f\}$的权值最短路径。</p>
+
+<p><img src="/assets/images/2008/08/graph-10.jpg" style="margin-left:auto; margin-right:auto;display:block" /></p>
+
+<ol>
+  <li>
+    <p>初始化各节点的cost为无穷大，令<code class="highlighter-rouge">a</code>的cost为0，放入优先级队列pq</p>
+  </li>
+  <li>
+    <p>从pq中取出顶部节点，访问它的相邻节点<code class="highlighter-rouge">b,d</code>，计算到达<code class="highlighter-rouge">b,d</code>的cost，分别为<code class="highlighter-rouge">2,1</code>，由于<code class="highlighter-rouge">2,1</code>均小于<code class="highlighter-rouge">b,d</code>原来的cost(无穷大)，因此将<code class="highlighter-rouge">b,d</code>的cost更新，放入到优先队列，第一次选择（循环）结束，此时队列中的顶点为<code class="highlighter-rouge">pqueue = {d:1,b:2}</code></p>
+  </li>
+  <li>
+    <p>重复步骤2，pq顶部的节点为<code class="highlighter-rouge">d</code>,找到<code class="highlighter-rouge">d</code>相邻的节点<code class="highlighter-rouge">c,f,g,e</code>分别计算各自的权重为<code class="highlighter-rouge">3,9,5,3</code>，均小于各自cost值（无穷大），因此<code class="highlighter-rouge">c,f,g,e</code>入队，第二次循环结束，此时队列中的顶点为<code class="highlighter-rouge">pqueue = {b:2,c:3,e:3,g:5,f:9}</code></p>
+  </li>
+  <li>
+    <p>重复步骤2，pq顶部的节点为<code class="highlighter-rouge">b</code>，找到<code class="highlighter-rouge">b</code>相邻的节点<code class="highlighter-rouge">d,e</code>，由于<code class="highlighter-rouge">d</code>在上一步中已经被访问了，于是略过<code class="highlighter-rouge">d</code>，计算<code class="highlighter-rouge">b</code>到<code class="highlighter-rouge">e</code>的cost为2+10=12，大于<code class="highlighter-rouge">e</code>在上一步得到的cost<code class="highlighter-rouge">3</code>，因此直接返回。第三次循环结束，此时队列中的顶点为<code class="highlighter-rouge">pqueue = {c:3,e:3,g:5,f:9}</code></p>
+  </li>
+  <li>
+    <p>重复步骤2，pq顶部的节点为<code class="highlighter-rouge">c</code>,找到<code class="highlighter-rouge">d</code>相邻的节点<code class="highlighter-rouge">f</code>，计算到达<code class="highlighter-rouge">f</code>的权重为<code class="highlighter-rouge">8</code>，小于队列中的<code class="highlighter-rouge">9</code>，说明该条路径优于第三步产生的路径，于是更新<code class="highlighter-rouge">f</code>的cost为<code class="highlighter-rouge">8</code>，更新<code class="highlighter-rouge">f</code>的前驱节点为<code class="highlighter-rouge">c</code>。第四次循环结束，此时队列中的顶点为<code class="highlighter-rouge">pqueue = {e:3,g:5,f:8}</code></p>
+  </li>
+  <li>
+    <p>重复步骤2，pq顶部的节点为<code class="highlighter-rouge">e</code>，找到<code class="highlighter-rouge">e</code>相邻的节点<code class="highlighter-rouge">g</code>，计算<code class="highlighter-rouge">e</code>到<code class="highlighter-rouge">g</code>的cost为<code class="highlighter-rouge">3+6=9</code>，大于<code class="highlighter-rouge">g</code>在之前得到的cost<code class="highlighter-rouge">5</code>，因此直接返回。第五次循环结束，此时队列中的顶点为<code class="highlighter-rouge">pqueue = {g:5,f:8}</code></p>
+  </li>
+  <li>
+    <p>重复步骤2，pq顶部的节点为<code class="highlighter-rouge">g</code>，找到<code class="highlighter-rouge">g</code>相邻的节点<code class="highlighter-rouge">f</code>，计算<code class="highlighter-rouge">g</code>到<code class="highlighter-rouge">f</code>的cost为<code class="highlighter-rouge">5+1=6</code>，小于<code class="highlighter-rouge">f</code>在之前得到的cost<code class="highlighter-rouge">8</code>，说明从<code class="highlighter-rouge">g</code>到达<code class="highlighter-rouge">f</code>这条路径更优，于是更新<code class="highlighter-rouge">f</code>的cost为<code class="highlighter-rouge">6</code>，更新<code class="highlighter-rouge">f</code>的前驱节点为<code class="highlighter-rouge">g</code>，此次循环结束，此时队列中的顶点为<code class="highlighter-rouge">pqueue = {f:8}</code></p>
+  </li>
+  <li>
+    <p>重复步骤2，发现已经到达节点<code class="highlighter-rouge">f</code>因此整个循环结束。然后从<code class="highlighter-rouge">f</code>开始根据前驱节点依次回溯，得到路径<code class="highlighter-rouge">f&lt;-g&lt;-d&lt;-a</code>，为权值最优路径。</p>
+  </li>
+</ol>
+
+<p>从上面的求解过程可以发现Dijkstra算法实际上是一种<mark>贪心算法</mark>，即每一步都找当前最优解（最小堆堆顶元素)。对于贪心法，它实际上是动态规划算法的特例，因此要求每一步的重复子结构解具有无后效性。对应到Dijkstra算法，要求路径的权值不能为负数。因为如果出现负数，当前的最优选择在后面不一定是最优。</p>
+
+<ul>
+  <li>Dijkstra算法时间复杂度</li>
+</ul>
+
+<p>对于稀疏图，Dijkstra算法使用最小堆实现效率较高：</p>
+
+<ol>
+  <li>初始化: $O(v)$</li>
+  <li>While循环： $O(v)$
+    <ul>
+      <li>remove vertex from pq: $O(\log{V})$</li>
+      <li>potentially perform E updates on cost/previous</li>
+      <li>update costs in pq: $O(\log{V})$</li>
+    </ul>
+  </li>
+  <li>路径重建： $O(E)$</li>
+  <li>总的时间复杂度为: $O(V\log{V}+E\log{V}) = O(E\log{V})$ (如果图是连通的，有$V=O(E)$)</li>
+</ol>
+
+<h2 id="a-算法">A* 算法</h2>
+
+<p>A*是另一种寻找权值最优路径的方法，它是对Dijkstra算法的一种改进。Dijkstra虽然可以找到最短路径，但是BFS的寻找过程却不是最高效的，如下图所示</p>
+
+<p><img class="md-img-center" src="/assets/images/2010/08/a-star-2.png" width="60%" /></p>
+
+<p>假设我们要从中心点走到最右边的点，由于从中心扩散出去的每个点权值都相同，Dijkstra算法会在四个方向上不断尝试每个扩散出去的点，显然，这种搜法包含大量的无效搜索。仔细思考不难发现，其原因在于Dijkstra算法基于贪心策略每次只能确定当前最短距离，而不知道哪个方向才能逼近终点，如下图中，Dijkstra每次只能确定由a节点确定b节点，而对于终点c在哪则毫无所知，没有任何信息：</p>
+
+<p><img class="md-img-center" src="/assets/images/2010/08/a-star-1.png" /></p>
+
+<p>针对这个问题，A*算法改进了Dijkstra，引入了一个Heuristic的估计函数来来确定节点的扩散方向，使其可以沿着终点方向逼近，如下图所示</p>
+
+<p><img class="md-img-center" src="/assets/images/2010/08/a-star-3.png" /></p>
+
+<p>在引入了一个Heuristic函数后，我们相当于知道了一些额外的信息，这些信息可以帮助我们减少不必要的搜索。假设我们想要找从<code class="highlighter-rouge">a</code>到<code class="highlighter-rouge">c</code>的权值最小路径，对于任何中间节点<code class="highlighter-rouge">b</code>，我们要计算两个值</p>
+
+<ol>
+  <li>从<code class="highlighter-rouge">a</code>到<code class="highlighter-rouge">b</code>确定的权值(同Dijkstra)</li>
+  <li>从<code class="highlighter-rouge">b</code>到<code class="highlighter-rouge">c</code>的估计值（estimated cost）</li>
+</ol>
+
+<p>A*的整体算法框架同Dijkstra相同，只需要将最小堆中存放的cost改为<code class="highlighter-rouge">cost(n) + H(n,target)</code>即可</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">v1</span><span class="p">.</span><span class="n">cost</span> <span class="o">=</span> <span class="n">H</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">)</span>
+<span class="n">priority_queue</span> <span class="nf">pq</span><span class="p">(</span><span class="n">v1</span><span class="p">);</span>
+<span class="c1">//...</span>
+<span class="n">pq</span><span class="p">.</span><span class="n">push</span><span class="p">(</span> <span class="n">n</span><span class="p">.</span><span class="n">cost</span> <span class="o">+</span> <span class="n">H</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">v2</span><span class="p">)</span> <span class="p">)</span>
+</code></pre></div></div>
+<p>A* 算法的难点在于如何找到合适的Heuristic函数，不同的搜索场景，使用的Heuristic也不相同，例如下面场景，我们希望从a走到c:</p>
+
+<p><img class="md-img-center" src="/assets/images/2010/08/a-star-4.png" width="50%" /></p>
+
+<p>此时可以将Heuristic函数定义为:<code class="highlighter-rouge">H(p1,p2) = abs(p1.x-p2.x) + abs(p1.-p2.y)</code>，则根据这个公式计算出的cost值如上图中每个格子所示，可以看到，从a点扩散出去的节点不再是等cost的，而是越偏向c点，cost的值越低。</p>
+
+<p>关于Heuristic函数有一点需要特别注意的是，对终点cost的估计不能over estimate，也就是估计出来的值比实际值要大很多，这样会导致真实的最短路径一直被压在最小堆中，产生不必要的冗余计算。虽然Heuristic函数不可以over estimate，但是却可以under estimate。</p>
+
+<p>最后我们以一个迷宫的例子来直观的比较一下Dijkstra和<code class="highlighter-rouge">A*</code>算法的效率，如下图所示，左边为Dijkstra算法结果，需要走<code class="highlighter-rouge">103</code>步，右边是<code class="highlighter-rouge">A*</code>算法，只需要<code class="highlighter-rouge">25</code>步（图中格子之间路径的cost均为1）</p>
+
+<div class="md-flex-h md-flex-no-wrap">
+<div><img class="md-img-center" src="/assets/images/2010/08/dijkstra-maze.png" /></div>
+<div class="md-margin-left-12"><img class="md-img-center" src="/assets/images/2010/08/a-star-maze.png" /></div>
+</div>
+
+<h2 id="最小生成树">最小生成树</h2>
+
+<p>所谓生成树(Spanning Tree)是连接无环图中所有顶点的边的集合。如下图所示，我们将左边的图去环后得到了右边的无环图，该图即是一棵生成树</p>
+
+<p><img src="/assets/images/2008/08/graph-11.jpg" style="margin-left:auto; margin-right:auto;display:block" /></p>
+
+<p>所谓最小生成树，是图中所有生成树中权值之和最小的一棵,简称 MST(minimum-cost spanning tree)。</p>
+
+<ul>
+  <li><strong>Kruskal’s algorithm</strong></li>
+</ul>
+
+<p>Kruskal算法是一种贪心算法，主要步骤如下：</p>
+
+<ol>
+  <li>将图$G$中所有边放入最小堆$E$</li>
+  <li>删除图$G$中的所有边，剩下$n$个顶点，此时图的状态为无边的森林$T=&lt;V,{}&gt;$</li>
+  <li>在$E$中弹出权值最小边，如果该边的两个顶点在$T$中不连通，则将其加入到$E$中，否则忽略这条边</li>
+  <li>依次类推，直到$E$为空，此时就得到图$G$的一颗最小生成树</li>
+</ol>
+
+<p><img src="/assets/images/2008/08/graph-12.jpg" style="margin-left:auto; margin-right:auto;display:block" /></p>
+
+<p>如上图所示，首先将所有边放入优先队列，则权值最小的<code class="highlighter-rouge">a</code>在堆顶，然后<code class="highlighter-rouge">a</code>出队，其两个顶点不连通，因此将该边放入图中（标红），当<code class="highlighter-rouge">e</code>出队的时候，我们发现<code class="highlighter-rouge">e</code>的两个顶点可以已通过<code class="highlighter-rouge">a,d</code>连通，因此<code class="highlighter-rouge">e</code>被忽略。按照此规则，以此类推，最终得到最小生成树（图中红色边）为:<code class="highlighter-rouge">a,b,c,d,f,h,i,k,p</code>总权值为<code class="highlighter-rouge">1+2+3+4+6+8+9+11+16 = 60</code>。不难看出，上述规则依旧是贪心法，每次选择权值最小的路径，其伪码如下：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">kruskal</span><span class="p">(</span><span class="nx">graph</span><span class="p">):</span>
+    <span class="c1">//创建一个最小堆</span>
+    <span class="nx">priority_queue</span> <span class="nx">pq</span>
+    <span class="c1">//将图中所有边放最小堆中，则权值cost最小的边在堆顶</span>
+    <span class="k">for</span> <span class="nx">edge</span> <span class="p">:</span> <span class="nx">graph</span><span class="p">.</span><span class="nx">all_edges</span><span class="p">:</span>
+        <span class="nx">pq</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">edge</span><span class="p">)</span> 
+    <span class="c1">//此时产生n个顶点，对应n个等价类</span>
+    <span class="k">while</span> <span class="nx">equal_num</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="c1">//等价类个数&gt;1,说明还没有形成树</span>
+        <span class="c1">//循环</span>
+        <span class="k">while</span> <span class="nx">not</span> <span class="nx">pq</span><span class="p">.</span><span class="nx">empty</span><span class="p">():</span>
+            <span class="nx">e</span> <span class="o">=</span> <span class="nx">pq</span><span class="p">.</span><span class="nx">front</span><span class="p">()</span>
+            <span class="nx">pq</span><span class="p">.</span><span class="nx">pop</span><span class="p">()</span>
+            <span class="nx">v1</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="k">from</span><span class="p">()</span>
+            <span class="nx">v2</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">to</span><span class="p">()</span>
+            <span class="c1">//如果v1，v2两点不连通，则把该边放入图中，否则忽略这条边</span>
+            <span class="k">if</span> <span class="nx">graph</span><span class="p">.</span><span class="nx">different</span><span class="p">(</span><span class="nx">v1</span><span class="p">,</span> <span class="nx">v2</span><span class="p">):</span> <span class="c1">//判断v1,v2是否不连通</span>
+                <span class="nx">graph</span><span class="p">.</span><span class="nx">union</span><span class="p">(</span><span class="nx">v1</span><span class="p">,</span><span class="nx">f2</span><span class="p">);</span> <span class="c1">//合并两个顶点所在的等价类</span>
+                <span class="c1">//将该条边放入图中</span>
+                <span class="nx">graph</span><span class="p">.</span><span class="nx">addEdge</span><span class="p">(</span><span class="nx">v1</span><span class="p">,</span><span class="nx">v2</span><span class="p">)</span>
+                <span class="c1">//等价类个数-1</span>
+                <span class="nx">equal_num</span> <span class="o">-=</span> <span class="mi">1</span>
+</code></pre></div></div>
+
+<p>Kruskal算法使用了路径压缩（并查集）来合并等价类，<code class="highlighter-rouge">different()</code> 和 <code class="highlighter-rouge">Union()</code> 函数几乎是常数。假设可能对几乎所有边都判断过了，则最坏情况下算法时间代价为$\Theta(e\log{e})$，即堆排序的时间,通常情况下只找了略多于 n 次，MST 就已经生成，因此，<mark>时间代价接近于$\Theta(e\log{e})$</mark></p>
+
+<ul>
+  <li><strong>Prim’s algorithm</strong></li>
+</ul>
+
+<p>Prim算法和上面算法类似，也是采用贪心的策略，不同的是Prim算法每次取权值最小边对应的顶点，具体如下（代码见附录）：</p>
+
+<ol>
+  <li>从图中任意一个顶点开始 (例如A)，首先把这个顶点包括在MST中</li>
+  <li>然后从图中选一个与A点连通，但不再MST中的顶点B，并且A到B的权值最小的一条边连同B一起加入到MST中</li>
+  <li>如此进行下去，每次往 MST 里加一个顶点和一条权最小的边，直到把所有的顶点都包括进 MST 里</li>
+  <li>算法结束时, MST中包含了原图中的n-1条边</li>
+</ol>
+
+<p><img src="/assets/images/2008/08/graph-13.jpg" style="margin-left:auto; margin-right:auto;display:block" /></p>
+
+<p>Prim 算法非常类似于 Dijkstra 算法，算法中的距离值不需要累积，直接用最小边，而确定代价最小的边就需要总时间$O(n^2)$；取出权最小的顶点后，修改 D 数组共需要时间$O(e)$，因此<mark>共需要花费$O(n^2)$的时间</mark>。Prim算法适合于稠密图，对于稀疏图，可以像 Dijkstra 算法那样用堆来保存距离值。</p>
+
+<h2 id="拓扑排序">拓扑排序</h2>
+
+<p>所谓拓扑排序，是一种对<mark>有向无环图</mark>顶点排序的方式，排序的规则为两个顶点之间的前后位置，比如从顶点$v_i$到顶点$v_j$有一条有向边$(v_i, v_j)$，那么我们认为$v_i$在$v_j$的前面。</p>
+
+<p>生活中有很多拓扑排序的场景，比如任务之间的依赖关系，学生的选课等，以选课为例，假如我们有如下课程，它们之间的依赖关系为：</p>
+
+<div>
+    <table>
+    <thead>
+        <tr><th>课程代号</th><th>课程名称</th><th>先修课程</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr><td>C1</td><td>高等数学</td><td></td></tr>
+        <tr><td>C2</td><td>程序设计</td><td></td></tr>
+        <tr><td>C3</td><td>离散数学</td><td>C1，C2</td></tr>
+        <tr><td>C4</td><td>数据结构</td><td>C2，C3</td></tr>
+        <tr><td>C5</td><td>算法分析</td><td>C2</td></tr>
+        <tr><td>C6</td><td>编译技术</td><td>C4,C5</td></tr>
+        <tr><td>C7</td><td>操作系统</td><td>C4,C9</td></tr>
+        <tr><td>C8</td><td>普通物理</td><td>C1</td></tr>
+        <tr><td>C9</td><td>计算机原理</td><td>C8</td></tr>
+    </tbody>
+    </table>
+</div>
+
+<p>如下图所示，如果我们要修完图表中的课程，我们该按照怎样的顺序选课，才能保证课程能够正常修完呢(在修某一门课程前，要先修完它的先序课程)？我们可以首先按照节点间的先决条件（课程之间的关联关系）来构建一个有向无环图图，如图(a)所示，然后将图(a)等价的转化为图(b)，显然，图(b)就是一份可行的选课顺序。</p>
+
+<p><img src="/assets/images/2008/08/graph-7.png" width="500px" class="md-img-center" /></p>
+
+<p>实际上，许多应用问题，都可转化和描述为这一标准形式：给定描述某一实际应用的有向图（图(b)），如何在与该图“相容”的前提下，将所有顶点排成一个线性序列（图(c)）。此处的“相容”，准确的含义是：每一顶点都不会通过边，指向其在此序列中的前驱顶点。这样的一个线性序列，称作原有向图的一个拓扑排序（topological sorting）。</p>
+
+<p>对于有向无环图，它的拓扑序列必然存在，但是却不一定唯一，如上面的例子，$C_1$,$C_2$互换后，仍然是一个拓扑排序。我们可以一种<mark>BFS遍历</mark>的方式来得到这样一组拓扑序列，方法如下</p>
+
+<ol>
+  <li>从图中选择任意一个入度为0的顶点且输出</li>
+  <li>从图中删掉此顶点及其所有的出边，则其所有相邻节点入度减少1</li>
+  <li>回到第 1 步继续执行</li>
+</ol>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">TopsortbyQueue</span><span class="p">(</span><span class="n">Graph</span><span class="o">&amp;</span> <span class="n">G</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">G</span><span class="p">.</span><span class="n">VerticesNum</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">G</span><span class="p">.</span><span class="n">status</span><span class="p">(</span><span class="n">G</span><span class="p">.</span><span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">=</span> <span class="n">UNVISITED</span><span class="p">;</span> <span class="c1">// 初始化</span>
+    <span class="p">}</span>
+    <span class="n">queue</span><span class="o">&lt;</span><span class="n">Vertex</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">Q</span><span class="p">;</span> <span class="c1">// 使用STL中的队列</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">G</span><span class="p">.</span><span class="n">VerticesNum</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span> <span class="c1">// 入度为0的顶点入队</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">G</span><span class="p">.</span><span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">indegree</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">Q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">while</span> <span class="p">(</span><span class="o">!</span><span class="n">Q</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span> <span class="c1">// 如果队列非空</span>
+        <span class="n">Vertex</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">v</span> <span class="o">=</span> <span class="n">Q</span><span class="p">.</span><span class="n">front</span><span class="p">();</span> 
+        <span class="n">Q</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> <span class="c1">// 获得队列顶部元素， 出队</span>
+        <span class="n">Visit</span><span class="p">(</span><span class="n">G</span><span class="p">,</span><span class="n">v</span><span class="p">);</span> 
+        <span class="n">G</span><span class="p">.</span><span class="n">status</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">=</span> <span class="n">VISITED</span><span class="p">;</span> <span class="c1">// 将标记位设置为VISITED</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">Edge</span> <span class="n">e</span> <span class="o">=</span> <span class="n">G</span><span class="p">.</span><span class="n">FirstEdge</span><span class="p">(</span><span class="n">v</span><span class="p">);</span> <span class="n">G</span><span class="p">.</span><span class="n">IsEdge</span><span class="p">(</span><span class="n">e</span><span class="p">);</span> <span class="n">e</span> <span class="o">=</span> <span class="n">G</span><span class="p">.</span><span class="n">NextEdge</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">Vertex</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">v</span> <span class="o">=</span> <span class="n">G</span><span class="p">.</span><span class="n">toVertex</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+            <span class="n">v</span><span class="p">.</span><span class="n">indegree</span><span class="o">--</span><span class="p">;</span> <span class="c1">// 相邻的顶点入度减1    </span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">v</span><span class="p">.</span><span class="n">indegree</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span> <span class="c1">// 顶点入度减为0则入队</span>
+            <span class="n">Q</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+        <span class="p">}</span> 
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">G</span><span class="p">.</span><span class="n">VerticesNum</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span> <span class="c1">// 判断图中是否有环</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">G</span><span class="p">.</span><span class="n">status</span><span class="p">(</span><span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="n">UNVISITED</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="err">“</span> <span class="err">此图有环！”</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="resources">Resources</h3>
+
+<ul>
+  <li><a href="https://www.gamedev.net/articles/programming/artificial-intelligence/a-pathfinding-for-beginners-r2003/">A* Algorithm For Beginners</a></li>
+  <li><a href="http://theory.stanford.edu/~amitp/GameProgramming/AStarComparison.html">Introduction to A*</a></li>
+  <li><a href="https://www.youtube.com/watch?v=NcZ2cu7gc-A&amp;list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk">CS106B-Stanford-YouTube</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome">Algorithms-Stanford-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome">算法与数据结构-1-北大-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/gaoji-shuju-jiegou/home/welcome">算法与数据结构-2-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:TsinghuaX+30240184.1x+3T2017/course/">算法与数据结构-1-清华-EDX</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法与数据结构-2-清华-EDX</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms/home/welcome">算法设计与分析-1-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法设计与分析-2-北大-EDX</a></li>
+</ul>
+
+<h3 id="附录1">附录1</h3>
+
+<ul>
+  <li>Kruskal’s algorithm</li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">Kruskal</span><span class="p">(</span><span class="n">Graph</span><span class="o">&amp;</span> <span class="n">G</span><span class="p">,</span> <span class="n">Edge</span><span class="o">*</span> <span class="o">&amp;</span><span class="n">MST</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// MST存最小生成树的边</span>
+    <span class="n">ParTree</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="n">G</span><span class="p">.</span><span class="n">VerticesNum</span><span class="p">());</span> <span class="c1">// 等价类</span>
+    <span class="n">MinHeap</span><span class="o">&lt;</span><span class="n">Edge</span><span class="o">&gt;</span> <span class="n">H</span><span class="p">(</span><span class="n">G</span><span class="p">.</span><span class="n">EdgesNum</span><span class="p">());</span> <span class="c1">// 最小堆</span>
+    <span class="n">MST</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Edge</span><span class="p">[</span><span class="n">G</span><span class="p">.</span><span class="n">VerticesNum</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span> <span class="c1">// 为数组MST申请空间</span>
+    <span class="kt">int</span> <span class="n">MSTtag</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// 最小生成树的边计数</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">G</span><span class="p">.</span><span class="n">VerticesNum</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="c1">// 将所有边插入最小堆H中</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">Edge</span> <span class="n">e</span> <span class="o">=</span> <span class="n">G</span><span class="p">.</span> <span class="n">FirstEdge</span><span class="p">(</span><span class="n">i</span><span class="p">);</span> <span class="n">G</span><span class="p">.</span><span class="n">IsEdge</span><span class="p">(</span><span class="n">e</span><span class="p">);</span> <span class="n">e</span> <span class="o">=</span> <span class="n">G</span><span class="p">.</span> <span class="n">NextEdge</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">G</span><span class="p">.</span><span class="n">FromVertex</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">G</span><span class="p">.</span><span class="n">ToVertex</span><span class="p">(</span><span class="n">e</span><span class="p">))</span><span class="c1">// 防重复边</span>
+                <span class="n">H</span><span class="p">.</span><span class="n">Insert</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">EquNum</span> <span class="o">=</span> <span class="n">G</span><span class="p">.</span><span class="n">VerticesNum</span><span class="p">();</span> <span class="c1">// 开始有n个独立顶点等价类</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">EquNum</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 当等价类的个数大于1时合并等价类</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">H</span><span class="p">.</span><span class="n">isEmpty</span><span class="p">())</span> <span class="p">{</span>
+            <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"不存在最小生成树."</span> <span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+            <span class="k">delete</span> <span class="p">[]</span> <span class="n">MST</span><span class="p">;</span>
+            <span class="n">MST</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span> <span class="c1">// 释放空间</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">Edge</span> <span class="n">e</span> <span class="o">=</span> <span class="n">H</span><span class="p">.</span><span class="n">RemoveMin</span><span class="p">();</span> <span class="c1">// 取权最小的边</span>
+        <span class="kt">int</span> <span class="n">from</span> <span class="o">=</span> <span class="n">G</span><span class="p">.</span><span class="n">FromVertex</span><span class="p">(</span><span class="n">e</span><span class="p">);</span> <span class="c1">// 记录该条边的信息</span>
+        <span class="kt">int</span> <span class="n">to</span> <span class="o">=</span> <span class="n">G</span><span class="p">.</span><span class="n">ToVertex</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">Different</span><span class="p">(</span><span class="n">from</span><span class="p">,</span><span class="n">to</span><span class="p">))</span> <span class="p">{</span> <span class="c1">// 边e的两个顶点不在一个等价类</span>
+            <span class="n">A</span><span class="p">.</span><span class="n">Union</span><span class="p">(</span><span class="n">from</span><span class="p">,</span><span class="n">to</span><span class="p">);</span> <span class="c1">// 合并边的两个顶点所在的等价类</span>
+            <span class="n">AddEdgetoMST</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="n">MST</span><span class="p">,</span><span class="n">MSTtag</span><span class="o">++</span><span class="p">);</span> <span class="c1">// 将边e加到MST</span>
+            <span class="n">EquNum</span><span class="o">--</span><span class="p">;</span> <span class="c1">// 等价类的个数减1</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>Prim’s algorithm</li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">Prim</span><span class="p">(</span><span class="n">Graph</span><span class="o">&amp;</span> <span class="n">G</span><span class="p">,</span> <span class="kt">int</span> <span class="n">s</span><span class="p">,</span> <span class="n">Edge</span><span class="o">*</span> <span class="o">&amp;</span><span class="n">MST</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// s是始点，MST存边</span>
+    <span class="kt">int</span> <span class="n">MSTtag</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="c1">// 最小生成树的边计数</span>
+    <span class="n">MST</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Edge</span><span class="p">[</span><span class="n">G</span><span class="p">.</span><span class="n">VerticesNum</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span> <span class="c1">// 为数组MST申请空间</span>
+    <span class="n">Dist</span> <span class="o">*</span><span class="n">D</span><span class="p">;</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Dist</span><span class="p">[</span><span class="n">G</span><span class="p">.</span> <span class="n">VerticesNum</span><span class="p">()];</span> <span class="c1">// 为数组D申请空间</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">G</span><span class="p">.</span><span class="n">VerticesNum</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// 初始化Mark和D数组</span>
+        <span class="n">G</span><span class="p">.</span><span class="n">Mark</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">UNVISITED</span><span class="p">;</span>
+        <span class="n">D</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">index</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+        <span class="n">D</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">length</span> <span class="o">=</span> <span class="n">INFINITE</span><span class="p">;</span>
+        <span class="n">D</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">pre</span> <span class="o">=</span> <span class="n">s</span><span class="p">;</span> <span class="c1">// D[i].pre = -1 呢？</span>
+    <span class="p">}</span>
+    <span class="n">D</span><span class="p">[</span><span class="n">s</span><span class="p">].</span><span class="n">length</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">G</span><span class="p">.</span><span class="n">Mark</span><span class="p">[</span><span class="n">s</span><span class="p">]</span><span class="o">=</span> <span class="n">VISITED</span><span class="p">;</span> <span class="c1">// 开始顶点标记为VISITED</span>
+    <span class="kt">int</span> <span class="n">v</span> <span class="o">=</span> <span class="n">s</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">G</span><span class="p">.</span><span class="n">VerticesNum</span><span class="p">()</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span><span class="c1">// 因为v的加入，需要刷新与v相邻接的顶点的D值</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">Edge</span> <span class="n">e</span> <span class="o">=</span> <span class="n">G</span><span class="p">.</span><span class="n">FirstEdge</span><span class="p">(</span><span class="n">v</span><span class="p">);</span> <span class="n">G</span><span class="p">.</span><span class="n">IsEdge</span><span class="p">(</span><span class="n">e</span><span class="p">);</span> <span class="n">e</span> <span class="o">=</span> <span class="n">G</span><span class="p">.</span><span class="n">NextEdge</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">G</span><span class="p">.</span><span class="n">Mark</span><span class="p">[</span><span class="n">G</span><span class="p">.</span><span class="n">ToVertex</span><span class="p">(</span><span class="n">e</span><span class="p">)]</span> <span class="o">!=</span> <span class="n">VISITED</span> <span class="o">&amp;&amp;</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">G</span><span class="p">.</span><span class="n">ToVertex</span><span class="p">(</span><span class="n">e</span><span class="p">)].</span><span class="n">length</span> <span class="o">&gt;</span> <span class="n">e</span><span class="p">.</span><span class="n">weight</span><span class="p">))</span> <span class="p">{</span>
+                <span class="n">D</span><span class="p">[</span><span class="n">G</span><span class="p">.</span><span class="n">ToVertex</span><span class="p">(</span><span class="n">e</span><span class="p">)].</span><span class="n">length</span> <span class="o">=</span> <span class="n">e</span><span class="p">.</span><span class="n">weight</span><span class="p">;</span>
+                <span class="n">D</span><span class="p">[</span><span class="n">G</span><span class="p">.</span><span class="n">ToVertex</span><span class="p">(</span><span class="n">e</span><span class="p">)].</span><span class="n">pre</span> <span class="o">=</span> <span class="n">v</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">minVertex</span><span class="p">(</span><span class="n">G</span><span class="p">,</span> <span class="n">D</span><span class="p">);</span> <span class="c1">// 在D数组中找最小值记为v</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">v</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span> <span class="c1">// 非连通，有不可达顶点</span>
+            <span class="n">G</span><span class="p">.</span><span class="n">Mark</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">VISITED</span><span class="p">;</span> <span class="c1">// 标记访问过</span>
+            <span class="n">Edge</span> <span class="n">edge</span><span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">].</span><span class="n">pre</span><span class="p">,</span> <span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">].</span><span class="n">index</span><span class="p">,</span> <span class="n">D</span><span class="p">[</span><span class="n">v</span><span class="p">].</span><span class="n">length</span><span class="p">);</span> <span class="c1">// 保存边</span>
+            <span class="n">AddEdgetoMST</span><span class="p">(</span><span class="n">edge</span><span class="p">,</span> <span class="n">MST</span><span class="p">,</span> <span class="n">MSTtag</span><span class="o">++</span><span class="p">);</span> <span class="c1">// 将边加入MST</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">minVertex</span><span class="p">(</span><span class="n">Graph</span><span class="o">&amp;</span> <span class="n">G</span><span class="p">,</span> <span class="n">Dist</span><span class="o">*</span> <span class="o">&amp;</span> <span class="n">D</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">MinDist</span> <span class="o">=</span> <span class="n">INFINITY</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">G</span><span class="p">.</span><span class="n">VerticesNum</span><span class="p">();</span> <span class="n">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">G</span><span class="p">.</span><span class="n">Mark</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">UNVISITED</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">D</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">MinDist</span><span class="p">)){</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="c1">// 保存当前发现的最小距离顶点</span>
+            <span class="n">MinDist</span> <span class="o">=</span> <span class="n">D</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">v</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

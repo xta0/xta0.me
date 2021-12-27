@@ -1,0 +1,214 @@
+I"fB<p>感谢大家的努力，<a href="https://github.com/xta0/VZInspector">Inspector终于开源了</a>! Inspector是一个可以在App内部运行的debugger，功能类似Instrument，可以监测App在运行时的状态信息。最开始在项目中运用，得到了团队成员的一致认可，因此我决定将它从业务中剥离出来，希望可以复用到每个独立的工程中。</p>
+
+<h3 id="简介">简介</h3>
+
+<p>VZInspector 是一个给 iOS 开发者使用的 debug 工具，包含日志查询、取色、控件检查、视觉稿比对等功能，同时提供了丰富的接口方便自行定制。</p>
+
+<h3 id="如何使用">如何使用</h3>
+
+<p>使用 Cocoapods</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pod 'VZInspector'
+</code></pre></div></div>
+<p>VZInspector 在类加载时会被自动添加至状态栏，只需确保 VZInspector 被正确添加到工程即可。</p>
+
+<h2 id="功能简介">功能简介</h2>
+
+<p>这部分按照 VZInspector 界面上的功能区块，分别介绍 VZInspector 内置的功能以及可自定义的功能。</p>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/RPZQsqbWsOwTxWJOlmnu.png" alt="" /></p>
+
+<h3 id="内存占用">内存占用</h3>
+
+<p>App 当前内存占用显示在 Status 顶部，折线显示内存占用变化趋势。</p>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/afguRqvEaRvWTWUqyQqT.png" width="42%" /></p>
+
+<h3 id="dashboard">Dashboard</h3>
+
+<p>这里显示一些常用信息，比如 uid、视图栈、特定 UserDefaults 的值等，默认显示设备信息和视图栈，可以通过以下代码自定义该区域内容。点击“R”按钮会重新获取该区域内容。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">setupVZInspector</span> <span class="p">{</span>
+    <span class="p">[</span><span class="n">VZInspector</span> <span class="n">addObserveCallback</span><span class="o">:^</span><span class="n">NSString</span> <span class="o">*</span><span class="p">{</span>
+        <span class="c1">//返回需要追加显示的信息</span>
+    <span class="p">}];</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/oYPnOnEaNHBpHFtZuYZC.png" width="42%" /></p>
+
+<h4 id="自定义">自定义</h4>
+
+<p>在 Memory Usage 区域上面有一个自定义区域，供你放置一些开关，例如我们在这里做了环境切换、清理内存缓存的功能，环境切换功能深受测试同学喜欢。自定义示例如下：</p>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/FsTJcKeWkrnHbvJZSsWy.png" width="42%" /></p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//自定义 Dashboard 开关</span>
+<span class="p">[</span><span class="n">VZInspector</span> <span class="n">addDashboardSwitch</span><span class="o">:</span><span class="err">@</span><span class="s">"发布环境"</span> <span class="n">Highlight</span><span class="o">:</span><span class="n">productEnv</span><span class="o">?:</span><span class="n">NO</span> <span class="n">Callback</span><span class="o">:^</span><span class="p">{</span>
+    <span class="c1">//按钮点击动作</span>
+<span class="p">}];</span>
+</code></pre></div></div>
+
+<h3 id="log">Log</h3>
+
+<p>Log 界面显示 NSLog 输出的信息，可以在不连接 Xcode 时直接查看日志，最新的日志在顶部显示。此外顶部提供了过滤功能；右下区域的三个按钮分别对应 <code class="highlighter-rouge">回到顶部</code>、<code class="highlighter-rouge">打开/关闭自动刷新</code> 和 <code class="highlighter-rouge">刷新</code> 操作。</p>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/PlhYfAHDWHckNlzDRxvC.png" width="42%" /></p>
+
+<h4 id="自定义-1">自定义</h4>
+
+<p>顶部搜索框可以进行简单过滤，为了避免每次输入相同关键词，你可以用下面的代码添加关键词过滤按钮。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//设置 Log 过滤关键词</span>
+<span class="p">[</span><span class="n">VZLogInspector</span> <span class="n">sharedInstance</span><span class="p">].</span><span class="n">searchList</span> <span class="o">=</span> <span class="err">@</span><span class="p">[</span><span class="err">@</span><span class="s">"keyword1"</span><span class="p">,</span> <span class="err">@</span><span class="s">"keyword2"</span><span class="p">];</span>
+</code></pre></div></div>
+
+<p>设置好的关键词会以按钮形式显示，点击即可显示相应关键词的过滤结果。</p>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/EOeXOWnEXmUIJzhPPVcn.png" width="42%" /></p>
+
+<h3 id="toolbox">Toolbox</h3>
+
+<p>Toolbox 界面提供了一些常用小工具，例如网络日志查看、控件检查、帧率监测。开关类的工具在打开时会在右上角显示 <code class="highlighter-rouge">ON</code>。</p>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/NFjyyyDYlWranbwqqrGJ.png" width="42%" /></p>
+
+<h4 id="logs">Logs</h4>
+
+<p>Logs 用来实时查看网络请求的状态、返回等，需要自行配置网关信息，如下所示：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">setupNetworkMonitorConfig</span>
+<span class="p">{</span>
+    <span class="p">[</span><span class="n">VZInspector</span> <span class="n">setShouldHookNetworkRequest</span><span class="o">:</span><span class="nb">true</span><span class="p">];</span>
+    
+    <span class="p">[[</span><span class="n">VZNetworkInspector</span> <span class="n">sharedInstance</span><span class="p">]</span> <span class="n">addTransactionTitleFilter</span><span class="o">:^</span><span class="n">NSString</span> <span class="o">*</span><span class="p">(</span><span class="n">VZNetworkTransaction</span> <span class="o">*</span><span class="n">transaction</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">([</span><span class="n">transaction</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">URL</span><span class="p">.</span><span class="n">host</span> <span class="n">rangeOfString</span><span class="o">:</span><span class="err">@</span><span class="s">"YourGatewayKeyword"</span><span class="p">].</span><span class="n">location</span> <span class="o">!=</span> <span class="n">NSNotFound</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">NSString</span> <span class="o">*</span><span class="n">operationType</span> <span class="o">=</span> <span class="p">[</span><span class="n">transaction</span><span class="p">.</span><span class="n">request</span> <span class="n">valueForHTTPHeaderField</span><span class="o">:</span><span class="err">@</span><span class="s">"Operation-Type"</span><span class="p">];</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">operationType</span><span class="p">.</span><span class="n">length</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">NSData</span> <span class="o">*</span><span class="n">bodyData</span> <span class="o">=</span> <span class="p">[</span><span class="n">transaction</span> <span class="n">postBodyData</span><span class="p">];</span>
+                <span class="n">NSString</span> <span class="o">*</span><span class="n">body</span> <span class="o">=</span> <span class="p">[[</span><span class="n">NSString</span> <span class="n">alloc</span><span class="p">]</span> <span class="n">initWithData</span><span class="o">:</span><span class="n">bodyData</span> <span class="n">encoding</span><span class="o">:</span><span class="n">NSUTF8StringEncoding</span><span class="p">];</span>
+                
+                <span class="n">NSString</span> <span class="o">*</span><span class="n">parten</span> <span class="o">=</span> <span class="err">@</span><span class="s">"operationType=([a-zA-Z0-9.]*)"</span><span class="p">;</span>
+                <span class="n">NSRegularExpression</span> <span class="o">*</span><span class="n">reg</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSRegularExpression</span> <span class="n">regularExpressionWithPattern</span><span class="o">:</span><span class="n">parten</span> <span class="n">options</span><span class="o">:</span><span class="n">kNilOptions</span> <span class="n">error</span><span class="o">:</span><span class="n">nil</span><span class="p">];</span>
+                <span class="n">NSTextCheckingResult</span><span class="o">*</span> <span class="n">match</span> <span class="o">=</span> <span class="p">[</span><span class="n">reg</span> <span class="n">firstMatchInString</span><span class="o">:</span><span class="n">body</span> <span class="n">options</span><span class="o">:</span><span class="n">kNilOptions</span> <span class="n">range</span><span class="o">:</span><span class="n">NSMakeRange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="n">body</span> <span class="n">length</span><span class="p">])];</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">match</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="n">operationType</span> <span class="o">=</span> <span class="p">[</span><span class="n">body</span> <span class="n">substringWithRange</span><span class="o">:</span><span class="p">[</span><span class="n">match</span> <span class="n">rangeAtIndex</span><span class="o">:</span><span class="mi">1</span><span class="p">]];</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">operationType</span><span class="p">.</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">return</span> <span class="n">operationType</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">nil</span><span class="p">;</span>
+    <span class="p">}];</span>
+    
+    <span class="p">[</span><span class="n">VZNetworkInspector</span> <span class="n">setIgnoreDelegateClasses</span><span class="o">:</span><span class="p">[</span><span class="n">NSSet</span> <span class="n">setWithObjects</span><span class="o">:</span><span class="err">@</span><span class="s">"ClassesYouWantToIgnore"</span><span class="p">,</span> <span class="n">nil</span><span class="p">]];</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/CZsKCOoQqvVShvXuBvMe.gif" width="54%" /></p>
+
+<h3 id="crash">Crash</h3>
+
+<p>可以捕获 App 的 Crash 日志，开启方法：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//打开 crash 捕获</span>
+<span class="p">[</span><span class="n">VZInspector</span> <span class="n">setShouldHandleCrash</span><span class="o">:</span><span class="n">YES</span><span class="p">];</span>
+</code></pre></div></div>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/yiPVhgfTflDCNCppHbqW.gif" width="54%" /></p>
+
+<h3 id="sandbox">Sandbox</h3>
+
+<p>用来展示应用沙盒文件，对于文本和图片文件，点击可以预览。</p>
+
+<h4 id="grid">Grid</h4>
+
+<p>网格工具用来做视觉检查，比如简单的控件对齐、控件尺寸等。</p>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/keAaCYqIrWXrDrIKTlle.png" width="42%" /></p>
+
+<h4 id="border">Border</h4>
+
+<p>边框检查工具能显示当前界面所有控件的边框，可以用来进行视觉检查。此外你可以设置类前缀关键词，比如“O2O”，这样就会将所有“O2O”开头的类的类名显示出来。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//自定义显示类名的控件类前缀</span>
+<span class="p">[</span><span class="n">VZInspector</span> <span class="n">setClassPrefixName</span><span class="o">:</span><span class="err">@</span><span class="s">"O2O"</span><span class="p">];</span>
+</code></pre></div></div>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/peZONIaIGMrgXVHRtoIX.png" width="42%" /></p>
+
+<h4 id="warning">Warning</h4>
+
+<p>Warning 用来模拟内存警告，可以帮你验证 <code class="highlighter-rouge">didReceiveMemoryWarning</code> 里的逻辑，当打开的时候，可以在 “Memory Usage” 区域看到红色闪烁标识。</p>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/VrKmCCmDOtRDHDOpxplj.gif" width="42%" /></p>
+
+<h4 id="image">Image</h4>
+
+<p>Image 工具用于检查界面上的图片，比如查看图片尺寸，图片 URL。</p>
+
+<p><img width="375" src="https://zos.alipayobjects.com/rmsportal/sLcDoANhuJAnCJLGUUhu.png" /></p>
+
+<p>工具栏的按钮从左到右依次为：</p>
+<ul>
+  <li><strong>返回</strong></li>
+  <li><strong>分享</strong>，可以在手机上把当前选择的图片 AirDrop 到电脑上</li>
+  <li><strong>复制</strong>，可以把选择的图片和描述复制到剪切板，再按 Ctrl+C 从模拟器复制出来</li>
+  <li><strong>切换</strong>，点击切换是否开启选择模式，关闭选择模式来操作界面</li>
+</ul>
+
+<p>选择图片后会把图片置顶显示，并显示出被裁剪的部分。<br />
+屏幕上方（或下方）显示图片和 View 的尺寸、scale、宽高比，图片帧数。另外 O2O 中额外增加了图片 URL 的显示。</p>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/NilgLxXiNvseQvMWZrrw.gif" width="54%" /></p>
+
+<p>如果点击的位置有多个重叠的图片，可以多次点击来切换选择的图片。</p>
+
+<h4 id="location">Location</h4>
+
+<p>Location 工具用来模拟经纬度，打开开关后输入经纬度即可。界面上也提供了一些常用城市的经纬度。</p>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/SvxVXKmZCZdAKoIfNxKa.png" width="42%" /></p>
+
+<h4 id="framerate">FrameRate</h4>
+
+<p>帧率监测工具可以将帧率显示在状态栏上。注：模拟器无法精准检测帧率，仅在真机上有效。</p>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/CcYGjANpxFKwWGwClIfk.png" width="42%" /></p>
+
+<h4 id="colorpicker">ColorPicker</h4>
+
+<p>提供屏幕取色的功能。</p>
+<ul>
+  <li>按像素取值，并将颜色展示在下面控制板</li>
+  <li>拖动底部的slider可以控制放大倍率（5 ~ 30倍)</li>
+  <li>拖动取色器可以移动取色的位置，在取色器外滑动可以慢速移动，方便按像素取值移动</li>
+</ul>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/aXzSooMHomzqjxPqfKlo.gif" width="54%" /></p>
+
+<h4 id="design">Design</h4>
+
+<p>提供设计稿对比工具。演示可以查看这个 <a href="https://os.alipayobjects.com/rmsportal/sZLAZAuTqKqJXSdvDMQR.mp4">视频</a></p>
+
+<ul>
+  <li>将设计稿存入相册后，点击选图，选中设计稿。</li>
+  <li>打开调整开关，调整设计稿的透明度、大小和位置。</li>
+  <li>关闭开关可以正常操作界面，并对比与设计稿的差异。</li>
+</ul>
+
+<h3 id="plugin">Plugin</h3>
+
+<p>插件界面方便你在 VZInspector 中放置自己开发的插件，如下图所示。这部分完全是业务相关的工具，可以使用下面的代码进行自定义。</p>
+
+<p><img src="https://zos.alipayobjects.com/rmsportal/rppyFgFjBgKijArhvTOZ.png" width="42%" /></p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//添加自定义插件</span>
+<span class="n">VZInspectorToolItem</span> <span class="o">*</span><span class="n">scan</span> <span class="o">=</span> <span class="p">[</span><span class="n">VZInspectorToolItem</span> <span class="n">itemWithName</span><span class="o">:</span><span class="err">@</span><span class="s">"scan"</span> <span class="n">icon</span><span class="o">:</span><span class="n">icon</span> <span class="n">callback</span><span class="o">:^</span><span class="p">{</span>
+    <span class="c1">//按钮点击动作</span>
+<span class="p">}];</span>
+<span class="p">[</span><span class="n">VZInspector</span> <span class="n">addToolItem</span><span class="o">:</span><span class="n">scan</span><span class="p">];</span>
+</code></pre></div></div>
+
+:ET

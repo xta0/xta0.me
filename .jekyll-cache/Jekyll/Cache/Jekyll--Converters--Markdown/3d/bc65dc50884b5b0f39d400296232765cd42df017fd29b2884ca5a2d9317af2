@@ -1,0 +1,312 @@
+I"W�<h2 id="python-ml-stack-overview">Python ML Stack Overview</h2>
+
+<ul>
+  <li>Numpy</li>
+  <li>Pandas</li>
+  <li>Matplotlib</li>
+  <li>Scipy</li>
+</ul>
+
+<p>Python系统自带一些数值计算的API，但它们使用起来效率不高；<a href="https://www.python-course.eu/numpy.php">Numpy</a>被设计用来专门做数值计算，底层做了大量的优化；Pandas是Numpy的封装；Matplotlib用来做数据可视化</p>
+
+<h2 id="numpy">Numpy</h2>
+
+<p>Numpy主要用于做矩阵的数值运算，对常用的数学操作做了封装，使用起来极为方便。在实现方面，Numpy采用了vectorization的实现方式，在性能方面也比Python的list要高不少，因此在数值计算方面Numpy非常流行。</p>
+
+<h3 id="problems-with-python-list">Problems with Python list</h3>
+
+<p>Python原生的多维数组存在很多缺陷，并不适用于数值计算的场景，比如</p>
+
+<ol>
+  <li>Python数组中的数字是Object类型，有很大的overhead</li>
+  <li>Python的数组对象不支持数值计算的API，比如矩阵相关运算</li>
+  <li>Python的解释器效率很低，和直接运行编译好的函数相比，解释器速度会比较慢</li>
+</ol>
+
+<h3 id="vectorization-and-broadcasting">Vectorization and Broadcasting</h3>
+
+<p>我们可以来对比一下numpy和python的矩阵点积运算，假设有两个矩阵$a=[x_a,y_a]$, $b=[x_b,y_b]$，则<code class="highlighter-rouge">a</code>和<code class="highlighter-rouge">b</code>点积的代数运算为 $a·b=x_ax_b+y_ay_b$，其结果为一个标量。代码如下</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span> 
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mi">100000</span>
+
+<span class="c1">## Python code
+## use a for loop
+</span><span class="k">def</span> <span class="nf">slow_dot_product</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="p">):</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">e</span><span class="p">,</span><span class="n">f</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">e</span><span class="o">*</span><span class="n">f</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+<span class="n">dt0</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span> 
+    <span class="n">slow_dot_product</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+<span class="n">dt1</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">dt0</span>
+
+<span class="c1">## numpy version 
+</span><span class="n">dt0</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+    <span class="c1">#numpy dot product
+</span>    <span class="n">a</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="n">dt2</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">-</span> <span class="n">dt0</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">"dt1/dt2: "</span><span class="p">,</span> <span class="n">dt1</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="n">dt2</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">())</span> <span class="c1">#~40
+</span></code></pre></div></div>
+
+<p>Numpy实际上是使用vectorization取代for循环来做运算，这也是为什么numpy会特别快的原因。另一个能提高效率的场景是对每个矩阵的元素做运算：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span> <span class="c1">#[1,1]
+</span><span class="n">m</span> <span class="o">=</span> <span class="n">m</span><span class="o">*</span><span class="mi">2</span> <span class="c1">#[2,2]
+</span></code></pre></div></div>
+<p>可以看出numpy并没有使用for循环，这个特性在Numpy中也叫做broadcast，当数组的size很大时，numpy可以极大的节约内存开销和提升开发效率。</p>
+
+<h3 id="vectors-and-matrices">Vectors and Matrices</h3>
+
+<p>向量和矩阵是最基本的数值计算单元，我们还是来对比下Python和Numpy的实现</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#二维数组
+# Python
+</span><span class="n">L</span> <span class="o">=</span> <span class="p">[</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="p">]</span>
+<span class="c1"># Numpy
+</span><span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="p">])</span>
+<span class="nb">type</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="c1">#&lt;class 'numpy.ndarray'&gt;
+</span></code></pre></div></div>
+<p>在定义上看，没有太大区别，但是在访问矩阵元素上，Numpy支持以tuple作为脚标进行访问</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#Python
+</span><span class="n">a</span> <span class="o">=</span> <span class="n">L</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#矩阵左上角元素
+#Numpy
+</span><span class="n">a</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> 
+</code></pre></div></div>
+
+<h3 id="generating-matrices-to-work-with">Generating Matrices to Work With</h3>
+
+<p>除了前面提到的使用<code class="highlighter-rouge">np.array</code>创建矩阵的方法外，Numpy还提供了很多其它的API来创建特殊的矩阵</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#zeors
+</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="c1">#一维zero g数组
+</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span> <span class="c1">#5x5的zero数组
+#ones
+</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="c1">#linspace
+</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">30</span><span class="p">)</span> <span class="c1">#start, end , 点的个数 =&gt; 产生等距的点的数组
+#单位阵
+</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="c1">#4x4的单位阵
+#Random number
+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#按照等概率分布产生一个[0-1)之间的随机数
+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span> <span class="c1">#产生一个[0-1)之间的3x3矩阵
+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="c1">#产生5个随机数，服从一维正态分布
+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span> <span class="c1">#产生10x10个随机数，服从二维正态分布
+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span> <span class="c1">#产生10个[1,100)之间的随机数组
+</span></code></pre></div></div>
+
+<h3 id="matrix-operations">Matrix Operations</h3>
+
+<p>除了定义矩阵之外，Numpy还内置了很多矩阵运算的API</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">#转置矩阵
+</span><span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="p">])</span>
+<span class="n">transposM</span> <span class="o">=</span> <span class="n">M</span><span class="o">.</span><span class="n">T</span> <span class="c1">#array([[1, 3], [2, 4]])
+#逆矩阵
+</span><span class="n">inverseM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="c1">#array([[-2. ,  1. ],[ 1.5, -0.5]])
+</span><span class="n">M</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">inverseM</span><span class="p">)</span> <span class="c1">#should be identity matrix
+#矩阵的秩
+</span><span class="n">detM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="c1">#对角矩阵
+</span><span class="n">diagM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="c1">#矩阵的外积 
+</span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">outerProduct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="c1">#array([[3, 4], [6, 8]])
+#矩阵的内积
+</span><span class="n">innerProduct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inner</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span> <span class="c1">#same as a.dot(b)
+#矩阵的对角线求和
+</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="o">.</span><span class="nb">sum</span><span class="p">()</span> <span class="c1">#5
+</span><span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="c1">#5
+#矩阵的协方差
+</span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">conv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+<span class="c1">#特征值和特征向量
+</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">conv</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="n">conv</span><span class="p">)</span>
+</code></pre></div></div>
+<h2 id="pandas">Pandas</h2>
+
+<p>Panda主要解决数据处理的问题，假如我们有一份csv文件，我们如何有效的操作和管理这份数据呢？对于Data Scientist来说，最好的选择是将这份数据变成矩阵，因为一旦数据变成了矩阵，数学就可以立刻排上用场了。除了变成矩阵以外，Pandas还提供了一个<code class="highlighter-rouge">DataFrame</code>的数据结构，可以让我们像操纵数据库一样来操作我们手中的数据。</p>
+
+<p>我们先来对比看一下如何使用Python和Pandas做数据加载，用到的数据为<a href="https://github.com/lazyprogrammer/machine_learning_examples/blob/master/linear_regression_class/data_2d.csv">data_2d.csv</a>。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span> 
+<span class="c1">## Use Python
+</span><span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="s">"data_2d.csv"</span><span class="p">):</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">','</span><span class="p">)</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">row</span><span class="p">))</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+<span class="c1"># turns into numpy array
+</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<span class="c1">#-------------------------------------
+## Use Pandas
+</span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"data_2d.csv"</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+</code></pre></div></div>
+<h3 id="dataframe">DataFrame</h3>
+
+<p>前面提到了Pandas中二维数据都有数据库的表结构来表示，而用来表示表结构的数据结构为<code class="highlighter-rouge">DataFrame</code></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">info</span><span class="p">())</span>
+<span class="c1">#--------------------------
+</span><span class="o">&lt;</span><span class="k">class</span> <span class="err">'</span><span class="nc">pandas</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">DataFrame</span><span class="s">'&gt;</span><span class="err">
+</span><span class="s">RangeIndex: 100 entries, 0 to 99</span><span class="err">
+</span><span class="s">Data columns (total 3 columns):</span><span class="err">
+</span><span class="s">0    100 non-null float64</span><span class="err">
+</span><span class="s">1    100 non-null float64</span><span class="err">
+</span><span class="s">2    100 non-null float64</span><span class="err">
+</span><span class="s">dtypes: float64(3)</span><span class="err">
+</span><span class="s">memory usage: 2.4 KB</span><span class="err">
+</span></code></pre></div></div>
+
+<p>上面代码给出了DateFrame的结构，我们可以使用<code class="highlighter-rouge">head()</code>做一下数据预览</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<span class="c1">#----------------------------------
+</span>           <span class="mi">0</span>          <span class="mi">1</span>           <span class="mi">2</span>
+<span class="mi">0</span>  <span class="mf">17.930201</span>  <span class="mf">94.520592</span>  <span class="mf">320.259530</span>
+<span class="mi">1</span>  <span class="mf">97.144697</span>  <span class="mf">69.593282</span>  <span class="mf">404.634472</span>
+<span class="mi">2</span>  <span class="mf">81.775901</span>   <span class="mf">5.737648</span>  <span class="mf">181.485108</span>
+<span class="mi">3</span>  <span class="mf">55.854342</span>  <span class="mf">70.325902</span>  <span class="mf">321.773638</span>
+<span class="mi">4</span>  <span class="mf">49.366550</span>  <span class="mf">75.114040</span>  <span class="mf">322.465486</span>
+</code></pre></div></div>
+<p>可以看到DataFrame输出的数据格式和上面打印出来的格式一致，且呈现方式为数据库的表结构。
+总的来说，DataFrame的设计是为了方便对数据进行数据库操作，比如根据某种条件查询某条记录，等等。我们后面会看到</p>
+
+<h3 id="retrieve-column-and-row">Retrieve Column and Row</h3>
+
+<p>在Numpy数组中我们可以使用 <code class="highlighter-rouge">data[0]</code>返回第0行数据，但是在DataFrame中，<code class="highlighter-rouge">data[0]</code>表示的是返回名字为<code class="highlighter-rouge">0</code>的column中的所有数据</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#&lt;class 'pandas.core.series.Series'&gt;
+</span></code></pre></div></div>
+<p>Pandas中的Series类型是一维数组。我们也可以同时获取多个column的值，此时返回结果将为二维数据，因此类型为DataFrame。</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]]</span>
+</code></pre></div></div>
+<p>有了这个功能，我们便可以做条件查询，例如返回第一列中所有小于5的数据条目，我们可以这么写</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="p">[</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">5</span> <span class="p">]</span>
+<span class="c1">#---------------------------------
+</span>           <span class="mi">0</span>          <span class="mi">1</span>           <span class="mi">2</span>
+<span class="mi">5</span>   <span class="mf">3.192702</span>  <span class="mf">29.256299</span>   <span class="mf">94.618811</span>
+<span class="mi">44</span>  <span class="mf">3.593966</span>  <span class="mf">96.252217</span>  <span class="mf">293.237183</span>
+<span class="mi">54</span>  <span class="mf">4.593463</span>  <span class="mf">46.335932</span>  <span class="mf">145.818745</span>
+<span class="mi">90</span>  <span class="mf">1.382983</span>  <span class="mf">84.944087</span>  <span class="mf">252.905653</span>
+<span class="mi">99</span>  <span class="mf">4.142669</span>  <span class="mf">52.254726</span>  <span class="mf">168.034401</span>
+</code></pre></div></div>
+
+<p>那么如何返回DataFrame中的行呢？可以使用<code class="highlighter-rouge">iloc</code>或<code class="highlighter-rouge">ix</code>，返回数据的类型同样是一维的Series</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">row0</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">row0</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h3 id="add-a-new-column">Add a New Column</h3>
+
+<p>如果我们想要增加一个新的Column，简单的方法可以用<code class="highlighter-rouge">data[3]=1.0</code>。这会另所有的row都增加一个名字为3的1.0的column，显然实际应用中，这种情况很少见，大多数情况是column的值需要从其它column中得来。这时候我们需要使用<code class="highlighter-rouge">apply()</code>函数</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="nb">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">col</span><span class="p">:</span> <span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">col</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="c1">#-----------------------------------------------
+</span>           <span class="mi">0</span>          <span class="mi">1</span>           <span class="mi">2</span>            <span class="mi">3</span>
+<span class="mi">0</span>  <span class="mf">17.930201</span>  <span class="mf">94.520592</span>  <span class="mf">320.259530</span>  <span class="mf">1694.773232</span>
+<span class="mi">1</span>  <span class="mf">97.144697</span>  <span class="mf">69.593282</span>  <span class="mf">404.634472</span>  <span class="mf">6760.618304</span>
+<span class="mi">2</span>  <span class="mf">81.775901</span>   <span class="mf">5.737648</span>  <span class="mf">181.485108</span>   <span class="mf">469.201342</span>
+<span class="mi">3</span>  <span class="mf">55.854342</span>  <span class="mf">70.325902</span>  <span class="mf">321.773638</span>  <span class="mf">3928.006993</span>
+<span class="mi">4</span>  <span class="mf">49.366550</span>  <span class="mf">75.114040</span>  <span class="mf">322.465486</span>  <span class="mf">3708.121018</span>
+</code></pre></div></div>
+<p>此时我们发现DataFrame中增加了一个名为<code class="highlighter-rouge">3</code>的column，其值为col[0]和col[1]的乘积。<code class="highlighter-rouge">axis=1</code>表示将计算结果应用在所有行上</p>
+
+<h3 id="joins">Joins</h3>
+
+<p>前面已经提到过，DataFrame的作用是提供一系列类似数据操作的API，便于我们方便处理数据。假设我们有两个csv文件，我们可以将它们当做两个表，各自结构如下</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">t1</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"table1.csv"</span><span class="p">)</span>
+<span class="n">t2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">"table2.csv"</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">t1</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="c1">#-------------------------------------------
+</span>   <span class="n">user_id</span>   <span class="n">feature1</span>   <span class="n">feature2</span>    <span class="n">feature3</span>
+<span class="mi">0</span>        <span class="mi">1</span>  <span class="mf">17.930201</span>  <span class="mf">94.520592</span>  <span class="mf">320.259530</span>
+<span class="mi">1</span>        <span class="mi">2</span>  <span class="mf">97.144697</span>  <span class="mf">69.593282</span>  <span class="mf">404.634472</span>
+<span class="mi">2</span>        <span class="mi">3</span>  <span class="mf">81.775901</span>   <span class="mf">5.737648</span>  <span class="mf">181.485108</span>
+<span class="mi">3</span>        <span class="mi">4</span>  <span class="mf">55.854342</span>  <span class="mf">70.325902</span>  <span class="mf">321.773638</span>
+<span class="mi">4</span>        <span class="mi">5</span>  <span class="mf">49.366550</span>  <span class="mf">75.114040</span>  <span class="mf">322.465486</span>
+<span class="k">print</span><span class="p">(</span><span class="n">t2</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="c1">#-------------------------------------------
+</span>  <span class="n">user_id</span> <span class="n">Country</span>  <span class="n">Age</span>   <span class="n">Salary</span> <span class="n">Purchased</span>
+<span class="mi">1</span>          <span class="n">France</span>   <span class="mi">44</span>  <span class="mf">72000.0</span>        <span class="n">No</span>
+<span class="mi">2</span>           <span class="n">Spain</span>   <span class="mi">27</span>  <span class="mf">48000.0</span>       <span class="n">Yes</span>
+<span class="mi">3</span>         <span class="n">Germany</span>   <span class="mi">30</span>  <span class="mf">54000.0</span>        <span class="n">No</span>
+<span class="mi">4</span>           <span class="n">Spain</span>   <span class="mi">38</span>  <span class="mf">61000.0</span>        <span class="n">No</span>
+<span class="mi">5</span>         <span class="n">Germany</span>   <span class="mi">40</span>      <span class="n">NaN</span>       <span class="n">Yes</span>
+</code></pre></div></div>
+<p>接下来我们可以将两个表按照<code class="highlighter-rouge">user_id</code>进行JOIN，对应Python代码为</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">m</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="s">"user_id"</span><span class="p">)</span>
+<span class="c1">#or: t1.merge(t2,on="user_id")
+#----------------------------------------------------------------------------
+</span>   <span class="n">user_id</span>   <span class="n">feature1</span>   <span class="n">feature2</span>    <span class="n">feature3</span>  <span class="n">Country</span>  <span class="n">Age</span>   <span class="n">Salary</span> <span class="n">Purchased</span>
+<span class="mi">0</span>        <span class="mi">1</span>  <span class="mf">17.930201</span>  <span class="mf">94.520592</span>  <span class="mf">320.259530</span>   <span class="n">France</span>   <span class="mi">44</span>  <span class="mf">72000.0</span>        <span class="n">No</span>
+<span class="mi">1</span>        <span class="mi">2</span>  <span class="mf">97.144697</span>  <span class="mf">69.593282</span>  <span class="mf">404.634472</span>    <span class="n">Spain</span>   <span class="mi">27</span>  <span class="mf">48000.0</span>       <span class="n">Yes</span>
+<span class="mi">2</span>        <span class="mi">3</span>  <span class="mf">81.775901</span>   <span class="mf">5.737648</span>  <span class="mf">181.485108</span>  <span class="n">Germany</span>   <span class="mi">30</span>  <span class="mf">54000.0</span>        <span class="n">No</span>
+<span class="mi">3</span>        <span class="mi">4</span>  <span class="mf">55.854342</span>  <span class="mf">70.325902</span>  <span class="mf">321.773638</span>    <span class="n">Spain</span>   <span class="mi">38</span>  <span class="mf">61000.0</span>        <span class="n">No</span>
+<span class="mi">4</span>        <span class="mi">5</span>  <span class="mf">49.366550</span>  <span class="mf">75.114040</span>  <span class="mf">322.465486</span>  <span class="n">Germany</span>   <span class="mi">40</span>      <span class="n">NaN</span>       <span class="n">Yes</span>
+</code></pre></div></div>
+
+<h3 id="convert-to-matrix">Convert to Matrix</h3>
+
+<p>我们也可以使用<code class="highlighter-rouge">as_matrix()</code>方法将DataFrame转化成Numpy数组</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">M</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">M</span><span class="p">))</span> <span class="c1">#&lt;class 'numpy.ndarray'&gt;
+</span></code></pre></div></div>
+
+<h2 id="matplotlib">Matplotlib</h2>
+
+<p>Matplotlib用来做数据可视化，API方便易用。例如我们向画一个Sin函数</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span> 
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span> <span class="c1">#from 0 - 10, 100 points
+</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s">"Time"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s">"Some function of Time"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s">"My Chart"</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+<p>我们可以用上面的代码绘制任何函数的曲线，观察其形态。实际应用中，更常用的应用场景是我们有一个数据集(<code class="highlighter-rouge">data_1d.csv</code>)，我们想可视化这份数据，此时我们需要用matplotlib来绘制离散点</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">A</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">'data_1d.csv'</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">A</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#1st column
+</span><span class="n">y</span> <span class="o">=</span> <span class="n">A</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#2nd column
+</span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</code></pre></div></div>
+<p>另一个常用的功能是绘制直方图，使用方式比较简单。下面我们用Numpy随机生成10000个数，观察起分布状态</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="resources">Resources</h3>
+
+<ul>
+  <li><a href="https://www.python-course.eu/numpy.php">Numpy</a></li>
+</ul>
+:ET

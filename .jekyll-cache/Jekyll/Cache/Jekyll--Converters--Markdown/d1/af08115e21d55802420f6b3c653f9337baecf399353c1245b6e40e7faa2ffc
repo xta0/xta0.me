@@ -1,0 +1,344 @@
+I"��<blockquote>
+  <p>本文为”Learn You a Haskell for Great Good”读书笔记</p>
+</blockquote>
+
+<h2 id="递归">递归</h2>
+
+<p>haskell用递归代替for/while循环</p>
+
+<ul>
+  <li>递归求最大值</li>
+</ul>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">maximumVal</span> <span class="o">::</span> <span class="p">(</span><span class="kt">Ord</span> <span class="n">a</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="o">-&gt;</span><span class="n">a</span>
+<span class="n">maximumVal</span> <span class="kt">[]</span> <span class="o">=</span> <span class="n">error</span> <span class="s">"error"</span>
+<span class="n">maximumVal</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
+<span class="n">maximumVal</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="n">xs</span><span class="p">)</span> 
+	<span class="o">|</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">maxTail</span> <span class="o">=</span> <span class="n">x</span> 
+	<span class="o">|</span> <span class="n">otherwise</span> <span class="o">=</span> <span class="n">maxTail</span>
+	<span class="kr">where</span> <span class="n">maxTail</span> <span class="o">=</span> <span class="n">maximumVal</span> <span class="n">xs</span>
+</code></pre></div></div>
+
+<p>我们取个 List [2,5,1] 做例子来看看它的工作原理。
+当调用 maximum’ 处理它时，前两个模式不会被匹配，而第三个模式匹配了它并将其分为 2 与 [5,1]。
+where 子句再取 [5,1] 的最大值。
+于是再次与第三个模式匹配，并将 [5,1] 分割为 5 和 [1]。
+继续，where 子句取 [1] 的最大值，这时终于到了边缘条件！回传 1。
+进一步，将 5 与 [1] 中的最大值做比较，易得 5，现在我们就得到了 [5,1] 的最大值。
+再进一步，将 2 与 [5,1] 中的最大值相比较，可得 5 更大，最终得 5。</p>
+
+<p>改用 max 函数会使代码更加清晰。
+如果你还记得，max 函数取两个值做参数并回传其中较大的值。
+如下便是用 max 函数重写的 maximun’</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">maximum'</span> <span class="o">::</span> <span class="p">(</span><span class="kt">Ord</span> <span class="n">a</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="n">a</span>   
+<span class="n">maximum'</span> <span class="kt">[]</span> <span class="o">=</span> <span class="n">error</span> <span class="s">"maximum of empty list"</span>   
+<span class="n">maximum'</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>   
+<span class="n">maximum'</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="n">xs</span><span class="p">)</span> <span class="o">=</span> <span class="n">max</span> <span class="n">x</span> <span class="p">(</span><span class="n">maximum'</span> <span class="n">xs</span><span class="p">)</span>
+</code></pre></div></div>
+
+<ul>
+  <li>实现take</li>
+</ul>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">take'</span> <span class="o">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">i</span><span class="p">,</span> <span class="kt">Ord</span> <span class="n">i</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">i</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="n">take'</span> <span class="n">n</span> <span class="kr">_</span>
+	 <span class="o">|</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">=</span> <span class="kt">[]</span>
+<span class="n">take'</span> <span class="kr">_</span> <span class="kt">[]</span> <span class="o">=</span> <span class="kt">[]</span>
+<span class="n">take'</span> <span class="n">n</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="n">xs</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span> <span class="o">:</span> <span class="n">take'</span> <span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">xs</span>
+</code></pre></div></div>
+
+<ul>
+  <li>实现reverse</li>
+</ul>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">reverse'</span> <span class="o">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>
+<span class="n">reverse'</span> <span class="kt">[]</span> <span class="o">=</span> <span class="kt">[]</span>
+<span class="n">reverse'</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="n">xs</span><span class="p">)</span> <span class="o">=</span> <span class="n">reverse'</span> <span class="n">xs</span> <span class="o">++</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+</code></pre></div></div>
+
+<ul>
+  <li>实现zip</li>
+</ul>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">zip'</span> <span class="o">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)]</span>   
+<span class="n">zip'</span> <span class="kr">_</span> <span class="kt">[]</span> <span class="o">=</span> <span class="kt">[]</span>   
+<span class="n">zip'</span> <span class="kt">[]</span> <span class="kr">_</span> <span class="o">=</span> <span class="kt">[]</span>   
+<span class="n">zip'</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="n">xs</span><span class="p">)</span> <span class="p">(</span><span class="n">y</span><span class="o">:</span><span class="n">ys</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span><span class="o">:</span><span class="n">zip'</span> <span class="n">xs</span> <span class="n">ys</span>
+</code></pre></div></div>
+
+<ul>
+  <li>快速排序</li>
+</ul>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">quicksort</span> <span class="o">::</span> <span class="p">(</span><span class="kt">Ord</span> <span class="n">a</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>   
+<span class="n">quicksort</span> <span class="kt">[]</span> <span class="o">=</span> <span class="kt">[]</span>   
+<span class="n">quicksort</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="n">xs</span><span class="p">)</span> <span class="o">=</span>   
+  <span class="kr">let</span> <span class="n">smallerSorted</span> <span class="o">=</span> <span class="n">quicksort</span> <span class="p">[</span><span class="n">a</span> <span class="o">|</span> <span class="n">a</span> <span class="o">&lt;-</span> <span class="n">xs</span><span class="p">,</span> <span class="n">a</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">]</span>  
+      <span class="n">biggerSorted</span> <span class="o">=</span> <span class="n">quicksort</span> <span class="p">[</span><span class="n">a</span> <span class="o">|</span> <span class="n">a</span> <span class="o">&lt;-</span> <span class="n">xs</span><span class="p">,</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="n">x</span><span class="p">]</span>   
+  <span class="kr">in</span> <span class="n">smallerSorted</span> <span class="o">++</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">++</span> <span class="n">biggerSorted</span>
+</code></pre></div></div>
+
+<h2 id="高阶函数">高阶函数</h2>
+
+<p>其实理解高阶函数从数学的角度比较好理解</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x) = x^2
+g(x) = 2x+1
+f(g(x)) = (2x+1)^2 = 4x^2+4x+1
+</code></pre></div></div>
+
+<p>这种就是高阶函数</p>
+
+<ul>
+  <li>currying:</li>
+</ul>
+
+<p>把一个函数的多个参数分解成多个函数
+然后把函数多层封装起来，每层函数都返回一个函数去接收下一个参数这样，可以简化函数的多个参数。</p>
+
+<p>以max为例</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">getMaxValue</span> <span class="n">x</span>  <span class="o">=</span> <span class="n">max</span> <span class="mi">4</span> <span class="mi">5</span>
+</code></pre></div></div>
+
+<p>把空格放到两个东西之间，称作函数调用。它有点像个运算符，并拥有最高的优先级。</p>
+
+<p>这个等价于：</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">getMaxValue2</span> <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">max</span> <span class="mi">4</span><span class="p">)</span> <span class="mi">5</span>
+</code></pre></div></div>
+
+<p>理解:</p>
+
+<p>根据currying，(max 4)会拿4和内部的一个变量比较，这个变量值可能是0，比较后这个变量的值为4
+然后它返回一个函数，这个函数接受一个参数，并且内部已经有了一个值了，这个值可能为4
+最后将参数5传入这个函数，这个函数拿5和内部的变量4比较，则返回5</p>
+
+<p>再看一个乘法：</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">multThree</span> <span class="o">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">a</span> 
+<span class="n">multThree</span> <span class="n">x</span> <span class="n">y</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">z</span>
+</code></pre></div></div>
+
+<p>假设输入为multThree 3 5 9，根据空格，它的执行过程为：</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(((</span><span class="n">multThree</span> <span class="mi">3</span><span class="p">)</span><span class="mi">5</span><span class="p">)</span><span class="mi">9</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>比较大小的函数：</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">compareWithHundred</span> <span class="o">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">,</span><span class="kt">Ord</span> <span class="n">a</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">Ordering</span> 
+<span class="n">compareWithHundred</span> <span class="n">x</span> <span class="o">=</span> <span class="n">compare</span> <span class="mi">100</span> <span class="n">x</span> 
+</code></pre></div></div>
+
+<p>这个函数也可以忽略掉参数</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">compareWithHundredWithoutX</span> <span class="o">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">,</span><span class="kt">Ord</span> <span class="n">a</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">Ordering</span> 
+<span class="n">compareWithHundredWithoutX</span> <span class="o">=</span> <span class="n">compare</span> <span class="mi">100</span> 
+
+<span class="n">applyTwice</span> <span class="o">::</span> <span class="p">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">a</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="n">a</span>   
+<span class="n">applyTwice</span> <span class="n">f</span> <span class="n">x</span> <span class="o">=</span> <span class="n">f</span> <span class="p">(</span><span class="n">f</span> <span class="n">x</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<p>首先注意这类型声明。 
+在此之前我们很少用到括号，因为 (-&gt;) 是自然的右结合，不过在这里括号是必须的。
+它标明了首个参数是个参数与回传值类型都是a的函数，第二个参数与回传值的类型也都是a
+我们姑且直接把它看作是取两个参数回传一个值，其首个参数是个类型为 (a-&gt;a) 的函数,第二个参数是个 a</p>
+
+<p>例如：</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ghci</span><span class="o">&gt;</span> <span class="n">applyTwice</span> <span class="p">(</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span> <span class="mi">10</span>   
+</code></pre></div></div>
+
+<p>这里第一个参数为fx = x+3，x省略了，第二个参数为10
+计算时是： f(10)= 13 13+3 = 16
+数学模型为：f(f(x)) = (x+3)+3 = x+6</p>
+
+<p>实现zipwith,求两个数组的 f 操作</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">zipWith'</span> <span class="o">::</span> <span class="p">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">b</span> <span class="o">-&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">c</span><span class="p">]</span>   
+<span class="n">zipWith'</span> <span class="kr">_</span> <span class="kt">[]</span> <span class="kr">_</span> <span class="o">=</span> <span class="kt">[]</span>   
+<span class="n">zipWith'</span> <span class="kr">_</span> <span class="kr">_</span> <span class="kt">[]</span> <span class="o">=</span> <span class="kt">[]</span>   
+<span class="n">zipWith'</span> <span class="n">f</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="n">xs</span><span class="p">)</span> <span class="p">(</span><span class="n">y</span><span class="o">:</span><span class="n">ys</span><span class="p">)</span> <span class="o">=</span> <span class="n">f</span> <span class="n">x</span> <span class="n">y</span> <span class="o">:</span> <span class="n">zipWith'</span> <span class="n">f</span> <span class="n">xs</span> <span class="n">ys</span>
+
+</code></pre></div></div>
+
+<p>例如求和</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ghci</span><span class="o">&gt;</span> <span class="n">zipWith'</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>   
+<span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+
+</code></pre></div></div>
+<p>首先f是一个接受两个参数，返回一个参数的函数
+f x y 返回的就是 x+y</p>
+
+<p>各种花样</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ghci</span><span class="o">&gt;</span> <span class="n">zipWith'</span> <span class="n">max</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>   
+<span class="p">[</span><span class="mi">7</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>   
+<span class="n">ghci</span><span class="o">&gt;</span> <span class="n">zipWith'</span> <span class="p">(</span><span class="o">++</span><span class="p">)</span> <span class="p">[</span><span class="s">"foo "</span><span class="err">，</span><span class="s">"bar "</span><span class="err">，</span><span class="s">"baz "</span><span class="p">]</span> <span class="p">[</span><span class="s">"fighters"</span><span class="err">，</span><span class="s">"hoppers"</span><span class="err">，</span><span class="s">"aldrin"</span><span class="p">]</span>   
+<span class="p">[</span><span class="s">"foo fighters"</span><span class="p">,</span><span class="s">"bar hoppers"</span><span class="p">,</span><span class="s">"baz aldrin"</span><span class="p">]</span>   
+<span class="n">ghci</span><span class="o">&gt;</span> <span class="n">zipWith'</span> <span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="p">(</span><span class="n">replicate</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">]</span>   
+<span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span><span class="p">]</span>   
+<span class="n">ghci</span><span class="o">&gt;</span> <span class="n">zipWith'</span> <span class="p">(</span><span class="n">zipWith'</span> <span class="p">(</span><span class="o">*</span><span class="p">))</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]]</span> <span class="p">[[</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],[</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>   
+<span class="p">[[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">],[</span><span class="mi">9</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">30</span><span class="p">],[</span><span class="mi">10</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">]]</span>
+
+</code></pre></div></div>
+<ul>
+  <li>map：取一个函数和 List 做参数，遍历该 List 的每个元素来调用该函数产生一个新的 List。 看下它的类型声明和实现:</li>
+</ul>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">map</span> <span class="o">::</span> <span class="p">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="n">b</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span>   
+<span class="n">map</span> <span class="kr">_</span> <span class="kt">[]</span> <span class="o">=</span> <span class="kt">[]</span>   
+<span class="n">map</span> <span class="n">f</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="n">xs</span><span class="p">)</span> <span class="o">=</span> <span class="n">f</span> <span class="n">x</span> <span class="o">:</span> <span class="n">map</span> <span class="n">f</span> <span class="n">xs</span>
+
+</code></pre></div></div>
+
+<p>从这类型声明中可以看出，它取一个取 a 回传 b 的函数和一组 a 的 List，并回传一组 b。 
+这就是 Haskell 的有趣之处：有时只看类型声明就能对函数的行为猜个大致。
+map 函数多才多艺，有一百万种用法。如下是其中一小部分:</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ghci</span><span class="o">&gt;</span> <span class="n">map</span> <span class="p">(</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span>   
+<span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+
+</code></pre></div></div>
+
+<p>这个和list comprehension相同[x+3 | x &lt;- [1,3,2,3,5]] 
+map多个条件也仅仅遍历一遍数组</p>
+
+<p>filter：函数取一个限制条件和一个 List，回传该 List 中所有符合该条件的元素</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">filter</span> <span class="o">::</span> <span class="p">(</span><span class="n">a</span> <span class="o">-&gt;</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span>   
+<span class="n">filter</span> <span class="kr">_</span> <span class="kt">[]</span> <span class="o">=</span> <span class="kt">[]</span>   
+<span class="n">filter</span> <span class="n">p</span> <span class="p">(</span><span class="n">x</span><span class="o">:</span><span class="n">xs</span><span class="p">)</span>    
+    <span class="o">|</span> <span class="n">p</span> <span class="n">x</span>       <span class="o">=</span> <span class="n">x</span> <span class="o">:</span> <span class="n">filter</span> <span class="n">p</span> <span class="n">xs</span>   
+    <span class="o">|</span> <span class="n">otherwise</span> <span class="o">=</span> <span class="n">filter</span> <span class="n">p</span> <span class="n">xs</span>
+
+
+<span class="n">ghci</span><span class="o">&gt;</span> <span class="n">filter</span> <span class="p">(</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>   
+<span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>   
+
+</code></pre></div></div>
+
+<p>takeWhile 函数，它取一个限制条件和 List 作参数，然后从头开始遍历这一 List，并回传符合限制条件的元素</p>
+
+<p>所有小于 10000 的奇数的平方和
+ghci&gt; sum (takeWhile (&lt;10000) (filter odd (map (^2) [1..])))</p>
+
+<ul>
+  <li>lambda:就是匿名函数。有些时候我们需要传给高阶函数一个函数，而这函数我们只会用这一次，这就弄个特定功能的 lambda</li>
+</ul>
+
+<p>编写 lambda，就写个 \ (因为它看起来像是希腊字母的 lambda  如果你斜视的厉害)
+后面是用空格分隔的参数，-&gt; 后面就是函数体。
+通常我们都是用括号将其括起，要不然它就会占据整个右边部分。</p>
+
+<p>例如，表达式:</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">map</span> <span class="p">(</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="err">与</span> <span class="n">map</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">+</span><span class="mi">3</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+
+</code></pre></div></div>
+
+<p>对于多个参数：</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ghci</span><span class="o">&gt;</span> <span class="n">zipWith</span> <span class="p">(</span><span class="nf">\</span><span class="n">a</span> <span class="n">b</span> <span class="o">-&gt;</span> <span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="mi">30</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span> 
+
+</code></pre></div></div>
+
+<ul>
+  <li>fold : fold 取一个二元函数，一个初始值(我喜欢管它叫累加值)和一个需要折叠的 List。
+这个二元函数有两个参数，即累加值和 List 的首项(或尾项)，回传值是新的累加值。
+然后，以新的累加值和新的 List 首项调用该函数，如是继续。
+到 List 遍历完毕时，只剩下一个累加值，也就是最终的结果。</li>
+</ul>
+
+<p>首先看下 foldl 函数，也叫做左折叠。
+它从 List 的左端开始折叠，用初始值和 List 的头部调用这二元函数，得一新的累加值，并用新的累加值与 List 的下一个元素调用二元函数。
+如是继续。</p>
+
+<p>我们再实现下 sum，这次用 fold 替代那复杂的递归：</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sum'</span> <span class="o">::</span> <span class="p">(</span><span class="kt">Num</span> <span class="n">a</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="n">a</span>   
+<span class="n">sum'</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">foldl</span> <span class="p">(</span><span class="nf">\</span><span class="n">acc</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span> <span class="mi">0</span> <span class="n">xs</span>
+
+</code></pre></div></div>
+
+<p>acc是累加值
+由于使用foldl，那么x是数组的第一个元素
+0 是起始值
+计算过程是拿数组的x和acc相加，作为新的x，然后递归</p>
+
+<p>这条语句等于foldl (+) [1,2,3]</p>
+
+<p>实现’elem’</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">elem'</span> <span class="o">::</span> <span class="p">(</span><span class="kt">Eq</span> <span class="n">a</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="n">a</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="o">-&gt;</span> <span class="kt">Bool</span>   
+<span class="n">elem'</span> <span class="n">y</span> <span class="n">ys</span> <span class="o">=</span> <span class="n">foldl</span> <span class="p">(</span><span class="nf">\</span><span class="n">acc</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="kr">if</span> <span class="n">x</span> <span class="o">==</span> <span class="n">y</span> <span class="kr">then</span> <span class="kt">True</span> <span class="kr">else</span> <span class="n">acc</span><span class="p">)</span> <span class="kt">False</span> <span class="n">ys</span>
+
+</code></pre></div></div>
+
+<p>所有遍历 List 中元素并据此回传一个值的操作都可以交给 fold 实现。
+{!无论何时需要遍历 List 并回传某值，都可以尝试下 fold!}。
+因此，fold的地位可以说与 map和 filter并驾齐驱，同为函数式编程中最常用的函数之一。</p>
+
+<p>foldl1是fold的简化版，初始值默认为数组的第一个元素
+上面求和的函数用foldl1实现如下：</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">sum1</span> <span class="n">xs</span> <span class="o">=</span> <span class="n">foldl1</span> <span class="p">(</span><span class="nf">\</span><span class="n">acc</span> <span class="n">x</span> <span class="o">-&gt;</span> <span class="n">acc</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span> <span class="n">xs</span>
+
+</code></pre></div></div>
+
+<p>这条语句等于:</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">foldl1</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+
+</code></pre></div></div>
+<p>scanl 和 scanr 与 foldl 和 foldr 相似，只是它们会记录下累加值的所有状态到一个 List。
+也有 scanl1 和 scanr1。</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ghci</span><span class="o">&gt;</span> <span class="n">scanl</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>   
+<span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">]</span>   
+<span class="n">ghci</span><span class="o">&gt;</span> <span class="n">scanr</span> <span class="p">(</span><span class="o">+</span><span class="p">)</span> <span class="mi">0</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>   
+<span class="p">[</span><span class="mi">11</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>  
+
+</code></pre></div></div>
+
+<ul>
+  <li>Function composition:函数的迭代：f(g(x)) 在haskell中的表示</li>
+</ul>
+
+<p>先看一个map函数</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">val</span> <span class="o">=</span> <span class="n">map</span> <span class="p">(</span><span class="nf">\</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">negate</span> <span class="p">(</span><span class="n">abs</span> <span class="n">x</span><span class="p">))</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">19</span><span class="p">,</span><span class="mi">24</span><span class="p">]</span>   
+<span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">19</span><span class="p">,</span><span class="o">-</span><span class="mi">24</span><span class="p">]</span>
+
+</code></pre></div></div>
+
+<p>先求绝对值再求反
+也可以合并执行：</p>
+
+<div class="language-haskell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">val2</span> <span class="o">=</span> <span class="n">map</span> <span class="p">(</span><span class="n">negate</span> <span class="o">.</span> <span class="n">abs</span><span class="p">)</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">19</span><span class="p">,</span><span class="mi">24</span><span class="p">]</span>   
+
+<span class="n">oddSquareSum</span> <span class="o">::</span> <span class="kt">Integer</span>   
+<span class="n">oddSquareSum</span> <span class="o">=</span> <span class="n">sum</span> <span class="p">(</span><span class="n">takeWhile</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">10000</span><span class="p">)</span> <span class="p">(</span><span class="n">filter</span> <span class="n">odd</span> <span class="p">(</span><span class="n">map</span> <span class="p">(</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">])))</span>
+
+<span class="n">oddSquareSum</span> <span class="o">::</span> <span class="kt">Integer</span>   
+<span class="n">oddSquareSum</span> <span class="o">=</span> <span class="n">sum</span> <span class="o">.</span> <span class="n">takeWhile</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">10000</span><span class="p">)</span> <span class="o">.</span> <span class="n">filter</span> <span class="n">odd</span> <span class="o">.</span> <span class="n">map</span> <span class="p">(</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span> <span class="o">$</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">]</span>
+
+<span class="n">oddSquareSum</span> <span class="o">::</span> <span class="kt">Integer</span>   
+<span class="n">oddSquareSum</span> <span class="o">=</span>    
+    <span class="kr">let</span> <span class="n">oddSquares</span> <span class="o">=</span> <span class="n">filter</span> <span class="n">odd</span> <span class="o">$</span> <span class="n">map</span> <span class="p">(</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span> <span class="p">[</span><span class="mi">1</span><span class="o">..</span><span class="p">]</span>   
+        <span class="n">belowLimit</span> <span class="o">=</span> <span class="n">takeWhile</span> <span class="p">(</span><span class="o">&lt;</span><span class="mi">10000</span><span class="p">)</span> <span class="n">oddSquares</span>   
+    <span class="kr">in</span>  <span class="n">sum</span> <span class="n">belowLimit</span>
+
+</code></pre></div></div>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="http://learnyouahaskell.com/">Learn You a Haskell for Great Good!</a></li>
+  <li><a href="http://www.cs.nott.ac.uk/~gmh/book.html">Haskell-Book</a></li>
+</ul>
+:ET

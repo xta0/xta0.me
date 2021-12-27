@@ -1,0 +1,60 @@
+I"�
+<h2 id="reverse-proxy">Reverse Proxy</h2>
+
+<p>所谓Reverse Proxy是指对内部服务的代理，client的请求先到达Nginx，Nginx会根据配置文件来分发请求到内部的server上</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>client              server
+                
+    | domain           |
+    | ------------&gt;  nginx                     
+    |                  | ----&gt; index.html
+    | domain/path1     |
+    | ------------&gt;    | -----&gt; localhost: 9999 (nodejs server)   
+    |                  |
+    | domain/path2     |
+    | ------------&gt;    | -----&gt; localhost: 8888 (python server)
+
+</code></pre></div></div>
+
+<p>例如，配置文件如下</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">events{}</span>
+<span class="s">http{</span>
+    <span class="s">server{</span>
+        <span class="s">listen 8888;</span>
+        <span class="s">location /php{</span>
+            <span class="s">proxy_pass 'http://localhost:9999'</span>
+        <span class="s">}</span>
+        <span class="s">location /nginxorg{</span>
+            <span class="s">proxy_pass 'https://nginx.org'</span>
+        <span class="s">}</span>
+    <span class="s">}</span>
+<span class="err">}</span>
+</code></pre></div></div>
+
+<p>另一个使用Ngix做反向代理的好处是，可以在request的header中插入字段传递给内部的server，也可以在response的header中插入字段，传递给client</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">server{</span>
+    <span class="s">listen 8888;</span>
+    <span class="s">location /php{</span>
+        <span class="s">#set header on proxy request</span>
+        <span class="s">proxy_set_header proxied nginx;</span>
+        <span class="s">proxy_pass 'http://localhost:9999'</span>
+    <span class="s">}</span>
+    <span class="s">location /nginxorg{</span>
+        <span class="s">proxy_pass 'https://nginx.org'</span>
+    <span class="s">}</span>
+<span class="err">}</span>
+</code></pre></div></div>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://nginx.org/en/docs/">Nginx Doc</a></li>
+  <li><a href="https://www.nginx.com/resources/wiki/start/topics/examples/full/">Nginx Configuration Example</a></li>
+  <li><a href="https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/">Nginx Config Pitfalls</a></li>
+  <li><a href="https://www.digitalocean.com/community/tutorials/understanding-the-nginx-configuration-file-structure-and-configuration-contexts">Nginx Tutorial DigistalOCean</a></li>
+  <li><a href="https://github.com/fcambus/nginx-resources">Nginx Resources Github</a></li>
+</ul>
+
+:ET

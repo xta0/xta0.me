@@ -1,0 +1,284 @@
+I"�,<h2 id="概述">概述</h2>
+
+<ul>
+  <li>算法时间复杂度
+    <ul>
+      <li>针对<mark>基本运算</mark>，计算算法所<mark>运算的次数</mark></li>
+    </ul>
+  </li>
+  <li>定义基本运算
+    <ul>
+      <li>排序：元素之间的<strong>比较</strong></li>
+      <li>检索：被检索元素x与数组元素的<strong>比较</strong></li>
+      <li>整数乘法：每位数字相乘1次，m位和n位整数相乘要做mxn次<strong>位乘</strong></li>
+    </ul>
+  </li>
+</ul>
+
+<blockquote>
+  <p>代码的执行次数会因为编程语言的实现方式不同而有所差异，因此严格定义次数基本做不到</p>
+</blockquote>
+
+<ul>
+  <li>两种时间复杂度
+    <ul>
+      <li>最坏情况下的时间复杂度 $W(n) $
+        <ul>
+          <li>输入规模为 $n $的实例所需要的最长时间</li>
+        </ul>
+      </li>
+      <li>平均情况下的时间复杂度 $A(n) $
+        <ul>
+          <li>输入规模为 $n $的实例需要时间的概率分布</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>$A(n) $的计算公式</li>
+</ul>
+
+<p>设 $S $是规模为 $n $的实例集，每个实例 $I $的概率是 $PI $，算法对实例 $I $执行的基本运算次数是 $t^{I} $，则平均情况下的时间复杂度为</p>
+
+<script type="math/tex; mode=display">A(n) = \sum_{I∈S}{P^{I}}{t^{I}}</script>
+
+<ul>
+  <li>算法渐进分析</li>
+</ul>
+
+<p>如果一个段程序分为几个步骤，时间复杂度分别为: $n^2 $, $100n $, $\log^{(n)}和 $1000 $，那么该程序总的时间复杂度为：</p>
+
+<script type="math/tex; mode=display">f(n) = n^2 + 100n + \log^{(n)} + 1000</script>
+
+<ol>
+  <li>当数据规模$n$逐步增大时，观察$f(n)$的增长趋势</li>
+  <li>当$n$增大到一定值后，计算公式中影响最大的就是$n$的幂次最高的项</li>
+  <li><mark>常量系数（constant factor）和低幂次项（low-order term）都可以忽略</mark></li>
+</ol>
+
+<blockquote>
+  <p>在算法复杂性分析中，$\log{n}$是以2为底的对数，以其他数值为底，算法量级不变</p>
+</blockquote>
+
+<h2 id="大o分析法">大O分析法</h2>
+
+<h3 id="大o表示法">大O表示法</h3>
+
+<p><mark>大O表示法：表达函数增长率的上限</mark>。令函数 $f $， $g $定义域为自然数，值域为非负实数集，如果<mark>存在正数 $c $和 $n_0 $</mark>，使得任意 $n&gt;=n_0 $，都有 $0&lt;=f(n)&lt;=c*g(n) $，称 $f(n) $的渐进上界是 $g(n) $，记作 $f(n) = O(g(n)) $。表示 $f(n) $在 $O(g(n)) $的<mark>集合</mark>中，简称 $f(n) $是 $O(g(n)) $的。</p>
+
+<p>看一个具体例子：假设  $f(n) = n^2 + n $, 则：</p>
+
+<ol>
+  <li>$f(n) = O(n^2) $, 取 $c=2, n_0=1 $即可;</li>
+  <li>$f(n) = O(n^3) $, 取 $c=1 $,  $n_0=2 $即可</li>
+</ol>
+
+<p>对于大O表示法有：</p>
+
+<ol>
+  <li>$f(n) $的阶<mark>小于等于 $g(n) $的阶</mark></li>
+  <li>$c $的存在有多个，只要指出一个即可</li>
+  <li>对前面有限个 $n $值可以不满足不等式</li>
+</ol>
+
+<h3 id="小o表示法">小O表示法</h3>
+
+<p>函数 $f $， $g $定义域为自然数，值域为非负实数集，如果<mark>对任意正数 $c $和 $n0 $</mark>，使得任意 $n&gt;=n0 $，都有 $0&lt;=f(n)&lt;c*g(n) $，记作 $f(n) = o(g(n)) $。</p>
+
+<p>看一个具体例子，假设 $f(n) = n^2 + n$, 则 $f(n) = O(n^3)$。这个例子中：</p>
+
+<ol>
+  <li>$c&gt;=1$ 显然成立, 因为$n^2+n &lt; cn^3 (n_0=2)$</li>
+  <li>任意给定 $1&gt;c&gt;0$, 取 $n_0&gt;⌈2/c⌉$ 即可,因为 $c_n&gt;=c_0&gt;2$ (当n&gt;=n0),有$n^2+n &lt; 2n^2 &lt; cn^3$</li>
+</ol>
+
+<p>对小O表示法，有</p>
+
+<ol>
+  <li>$f(n) $的<mark>阶小于 $g(n) $的阶</mark></li>
+  <li>对不同的正数 $c $, $n0 $不一样， $c $越小， $n0 $越大</li>
+  <li>对前面有限个 $n $值可以不满足不等式</li>
+</ol>
+
+<h3 id="大ω表示法">大Ω表示法</h3>
+
+<p><mark>大Ω表示法：主要用于确认算法时间复杂度的下界</mark>。如果存在正数 $c $和 $n0 $，使得对所有 $n&gt;=n0 $，都有 $0&lt;= cg(n)&lt;=f(n) $，则称 $f(n) $的渐进下界是 $g(n) $，记作 $f(n) =  Ω(g(n)) $</p>
+
+<p>看一具体例子，设$f(n) = n^2 + n$, 则</p>
+
+<ol>
+  <li>$f(n) = Ω(n^2)$, 取$c=1, n_0=1$ 即可</li>
+  <li>$f(n) = Ω(100n)$, 取$c=1/100$, $n_0=1$即可</li>
+</ol>
+
+<p>对于大Ω表示法有：</p>
+
+<ol>
+  <li>$f(n) $的阶<mark>大于等于 $g(n) $的阶</mark></li>
+  <li>$c $的存在有多个，只要指出一个即可</li>
+  <li>对前面有限个 $n $值可以不满足不等式</li>
+</ol>
+
+<h3 id="大θ表示法">大Θ表示法</h3>
+
+<p><mark>大θ表示法：当上，下限相同时则可以用Θ表示法</mark>。如果存在常数 $c1 $, $c2 $，以及整数 $n0 $，使得对任意的正整数 $n&gt;=n0 $，都有： $c1g(n)&lt;= f(n) &lt;= c2g(n) $，或者 $f(n) = O(g(n)) $且 $f(n)=Ω(g(n)) $，则称 $f(n) = Θ(g(n)) $。</p>
+
+<p>看一个具体例子，假设 $f(n) = n^2 + n$, $g(n) = 100n^2$，那么有$f(n) = Θ(g(n))$</p>
+
+<p>对大Θ表示法有:</p>
+
+<ol>
+  <li>$f(n) $的<mark>大于等于 $g(n) $的阶</mark></li>
+  <li>对前面有限个 $n $值可以满足不等式</li>
+</ol>
+
+<h4 id="函数渐进界定理">函数渐进界定理</h4>
+
+<ul>
+  <li>定理1： 设 $f $和 $g $是定义域为自然数集合的函数
+    <ol>
+      <li>如果<math><munderover><mo>limit</mo><mo>n→∞</mo></munderover><mi>f(n)</mi><mo>/</mo><mi>g(n)</mi></math>存在，并且等于某个常数 $c&gt;0 $，那么<math><mi>f(n)</mi><mo>=</mo><mi>Θ</mi><mo stretchy="false">(</mo><mi>g(n)</mi><mo stretchy="false">)</mo></math></li>
+      <li>如果<math><munderover><mo>limit</mo><mo>n→∞</mo></munderover><mi>f(n)</mi><mo>/</mo><mi>g(n)</mi><mo>=</mo><mn>0</mn></math>存在，那么<math><mi>f(n)</mi><mo>=</mo><mi>o</mi><mo stretchy="false">(</mo><mi>g(n)</mi><mo stretchy="false">)</mo></math></li>
+      <li>如果<math><munderover><mo>limit</mo><mo>n→∞</mo></munderover><mi>f(n)</mi><mo>/</mo><mi>g(n)</mi><mo>=</mo><mo>+∞</mo></math>存在，那么<math><mi>f(n)</mi><mo>=</mo><mi>ω</mi><mo stretchy="false">(</mo><mi>g(n)</mi><mo stretchy="false">)</mo></math></li>
+    </ol>
+  </li>
+  <li>定理2：</li>
+  <li>
+    <p>定理3：设 $f $和 $g $是定义域为自然数集合的函数，若对某个其它函数 $h $，有<math><mi>f</mi><mo>=</mo><mi>O(h)</mi></math>和<math><mi>g</mi><mo>=</mo><mi>O(h)</mi></math>，那么<math><mi>f</mi><mo>+</mo><mi>g</mi><mo>=</mo><mi>O(h)</mi></math></p>
+  </li>
+  <li>
+    <p>函数增长率的界限通常不止一个，尽量找到最<mark>紧</mark>的</p>
+  </li>
+  <li>大O表示法的运算法则
+    <ul>
+      <li>加法规则:  $f1(n) + f2(n) = O(max(f1(n),f2(n))) $
+        <ul>
+          <li>顺序结构， $if $结构， $switch $结构</li>
+        </ul>
+      </li>
+      <li>乘法规则:  $f1(n) * f2(n) = O(f1(n) * f2(n)) $
+        <ul>
+          <li>$for，while，do-while结构 $</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="几类重要的渐进函数">几类重要的渐进函数</h2>
+
+<ol>
+  <li>至少指数级：<math><msup><mn>2</mn><mi>n</mi></msup></math>, <math><msup><mn>3</mn><mi>n</mi></msup></math>,<math><mi>n</mi><mo>!</mo></math> …</li>
+  <li>多项式级：<math><mi>n</mi></math>, <math><msup><mi>n</mi><mn>2</mn></msup></math>, <math><msup><mi>n</mi><mn>1/2</mn></msup></math>, …</li>
+  <li>对数多项式级别：<math><mi>nlogn</mi></math>, <math><msup><mi>log</mi><mn>2</mn></msup><mi>n</mi></math>, <math><mi>nloglogn</mi></math>, …</li>
+  <li>指数与阶乘
+    <ul>
+      <li>
+        <math><mi>n</mi><mo>!</mo><mo>=</mo><mi>o</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mi>n</mi></msup><mo stretchy="false">)</mo></math>
+      </li>
+      <li>
+        <math><mi>n</mi><mo>!</mo><mo>=</mo><mi>ω</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mi>n</mi></msup><mo stretchy="false">)</mo></math>
+      </li>
+      <li>
+        <math><mi>log(n!)</mi><mo>=</mo><mi>Θ</mi><mo stretchy="false">(</mo><mi>nlogn</mi><mo stretchy="false">)</mo></math>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<p><img src="/assets/images/2007/08/bigo.png" width="60%" /></p>
+
+<p>上图是上述几种函数的增长率曲线，由此不难看出：<math display="inline"><msup><mi>2</mi><mi>n</mi></msup><mo>&gt;</mo><msup><mi>n</mi><mi>2</mi></msup><mo>&gt;</mo><msubsup><mi>nlog</mi> <mi>2</mi> <mi>n</mi></msubsup> <mo>&gt;</mo><msubsup><mi>n</mi> <mi></mi> <mi></mi></msubsup><mo>&gt;</mo><msubsup><mi>log</mi> <mi>2</mi> <mi>n</mi></msubsup>  
+</math></p>
+
+<p>为了直观的了解$O(1)$和$O(n^2)$的差别，假设数据样本的规模为<code class="highlighter-rouge">2000</code></p>
+
+<ul>
+  <li>$O(1)$ 的算法需要$1$次运算</li>
+  <li>$O(\log{n})$ 的算法需要$7$次运算</li>
+  <li>$O(n)$ 的算法需要$2000$次运算</li>
+  <li>$O(n\log{n})$ 的算法需要$14000$次运算</li>
+  <li>$O(n2)$ 的算法需要$4000000$次运算</li>
+</ul>
+
+<h3 id="常用操作算法复杂度">常用操作算法复杂度</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>时间复杂度</th>
+      <th>算法</th>
+      <th>最坏情况</th>
+      <th>平均情况</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>$O(1)$</td>
+      <td>元素之间的基本运算</td>
+      <td>$O(1)$</td>
+      <td>$O(1)$</td>
+    </tr>
+    <tr>
+      <td>$log(n) $</td>
+      <td>二分查找</td>
+      <td>$log(n) $</td>
+      <td>$log(n) $</td>
+    </tr>
+    <tr>
+      <td>$O(n) $</td>
+      <td>集合遍历，顺序查找</td>
+      <td>$O(m+n+…)$</td>
+      <td>$O(n)$</td>
+    </tr>
+    <tr>
+      <td>$O(nlogn) $</td>
+      <td>堆排序</td>
+      <td>$O(nlogn) $</td>
+      <td>$O(nlog(n)) $</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>二分归并排序</td>
+      <td>$O(nlog(n)) $</td>
+      <td>$O(nlog(n)) $</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>快速排序</td>
+      <td>$O(n^2) $</td>
+      <td>$O(nlog(n)) $</td>
+    </tr>
+    <tr>
+      <td>$O(n^2) $</td>
+      <td>插入排序</td>
+      <td>$O(n^2) $</td>
+      <td>$O(n^2) $</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>冒泡排序</td>
+      <td>$O(n^2) $</td>
+      <td>$O(n^2) $</td>
+    </tr>
+    <tr>
+      <td>$O(2^n) $</td>
+      <td>斐波那契数列</td>
+      <td>$O(2^n)$</td>
+      <td>$O(2^n)$</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=NcZ2cu7gc-A&amp;list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk">CS106B-Stanford-YouTube</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome">Algorithms-Stanford-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome">算法与数据结构-1-北大-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/gaoji-shuju-jiegou/home/welcome">算法与数据结构-2-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:TsinghuaX+30240184.1x+3T2017/course/">算法与数据结构-1-清华-EDX</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法与数据结构-2-清华-EDX</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms/home/welcome">算法设计与分析-1-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法设计与分析-2-北大-EDX</a></li>
+</ul>
+:ET

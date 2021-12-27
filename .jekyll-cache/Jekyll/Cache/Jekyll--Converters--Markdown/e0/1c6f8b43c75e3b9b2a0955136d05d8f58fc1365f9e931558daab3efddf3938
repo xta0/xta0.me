@@ -1,0 +1,255 @@
+I"�p<p>深搜的另外两个经典案例是N皇后问题和求解数独问题，由于这两个问题较为复杂，解空间的范围太大，如果不做优化，当数据规模变大时，其算法时间将会呈指数级上升。因此我们需要寻找一些优化技巧，剪枝就是其中一个常用的手段。所谓剪枝是指在深搜过程中，对不必要的路径进行裁剪，从而加快搜索速度。</p>
+
+<h3 id="n皇后问题">N皇后问题</h3>
+
+<blockquote>
+  <p>给你个NxN的棋盘，在棋盘上摆放N个皇后，使得这N个皇后无法相互攻击（皇后可以横竖攻击，对角线攻击），如下图中是一个8皇后问题的一个解，请给出满足N皇后条件的所有摆法</p>
+</blockquote>
+
+<p><img src="/assets/images/2015/08/8-queens.png" /></p>
+
+<p>解这个问题的思路就是用DFS不断的递归+回溯，穷举所有的可能的情况。其算法步骤如下：</p>
+
+<ol>
+  <li>由于每个行或者列只能放置一个皇后，因此DFS可以按行搜索，在每行中不断尝试每个列的位置</li>
+  <li>当放置一个皇后后，在棋盘上将该位置以及其可能攻击的位置均置为不可用</li>
+  <li>搜索到不可用的位置时，直接跳过，进行剪枝操作</li>
+  <li>算法时间复杂度为指数级</li>
+</ol>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//表示盘中的每个点</span>
+<span class="k">struct</span> <span class="n">PT</span><span class="p">{</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">j</span><span class="p">;</span>
+    <span class="kt">bool</span> <span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span> <span class="n">PT</span><span class="o">&amp;</span> <span class="n">pt</span><span class="p">)</span> <span class="k">const</span><span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">pt</span><span class="p">.</span><span class="n">i</span><span class="p">){</span>
+            <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="o">==</span><span class="n">pt</span><span class="p">.</span><span class="n">i</span><span class="p">){</span>
+            <span class="k">return</span> <span class="n">j</span><span class="o">&lt;</span><span class="n">pt</span><span class="p">.</span><span class="n">j</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">Solution</span> <span class="p">{</span>
+    <span class="c1">//放置一个皇后，更新棋盘状态</span>
+    <span class="n">set</span><span class="o">&lt;</span><span class="n">PT</span><span class="o">&gt;</span> <span class="n">place</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="kt">int</span> <span class="n">j</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;&gt;&amp;</span> <span class="n">board</span><span class="p">){</span>
+        <span class="n">set</span><span class="o">&lt;</span><span class="n">PT</span><span class="o">&gt;</span> <span class="n">us</span><span class="p">;</span>
+        <span class="c1">//竖向</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">k</span><span class="o">&lt;</span><span class="n">board</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">k</span><span class="o">++</span><span class="p">){</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">board</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span><span class="sc">'.'</span> <span class="o">&amp;&amp;</span> <span class="n">board</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'Q'</span><span class="p">){</span>
+                <span class="n">board</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="sc">'.'</span><span class="p">;</span>
+                <span class="n">us</span><span class="p">.</span><span class="n">insert</span><span class="p">({</span><span class="n">k</span><span class="p">,</span><span class="n">j</span><span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">//横向</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">k</span><span class="o">&lt;</span><span class="n">board</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">k</span><span class="o">++</span><span class="p">){</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">board</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'.'</span> <span class="o">&amp;&amp;</span> <span class="n">board</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'Q'</span><span class="p">){</span>
+                <span class="n">board</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span><span class="o">=</span> <span class="sc">'.'</span><span class="p">;</span>
+                <span class="n">us</span><span class="p">.</span><span class="n">insert</span><span class="p">({</span><span class="n">i</span><span class="p">,</span><span class="n">k</span><span class="p">});</span>
+            <span class="p">}</span>
+            
+        <span class="p">}</span>
+        <span class="c1">//对角线1</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">j</span><span class="p">;</span> <span class="n">p</span><span class="o">&gt;=</span><span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">q</span><span class="o">&gt;=</span><span class="mi">0</span> <span class="p">;</span> <span class="n">p</span><span class="o">--</span><span class="p">,</span><span class="n">q</span><span class="o">--</span><span class="p">){</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">board</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="n">q</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'.'</span> <span class="o">&amp;&amp;</span> <span class="n">board</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="n">q</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'Q'</span><span class="p">){</span>
+                <span class="n">board</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="sc">'.'</span><span class="p">;</span>
+                <span class="n">us</span><span class="p">.</span><span class="n">insert</span><span class="p">({</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="o">=</span><span class="n">i</span><span class="p">,</span><span class="n">q</span><span class="o">=</span><span class="n">j</span><span class="p">;</span> <span class="n">p</span><span class="o">&lt;</span><span class="n">board</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="o">&amp;&amp;</span><span class="n">q</span><span class="o">&lt;</span><span class="n">board</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">p</span><span class="o">++</span><span class="p">,</span><span class="n">q</span><span class="o">++</span><span class="p">){</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">board</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="n">q</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'.'</span> <span class="o">&amp;&amp;</span> <span class="n">board</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="n">q</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'Q'</span><span class="p">){</span>
+                <span class="n">board</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="sc">'.'</span><span class="p">;</span>
+                <span class="n">us</span><span class="p">.</span><span class="n">insert</span><span class="p">({</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="c1">//对角线2</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="o">=</span><span class="n">i</span><span class="p">,</span><span class="n">q</span><span class="o">=</span><span class="n">j</span><span class="p">;</span> <span class="n">p</span><span class="o">&gt;=</span><span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">q</span><span class="o">&lt;</span><span class="n">board</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="n">p</span><span class="o">--</span><span class="p">,</span><span class="n">q</span><span class="o">++</span><span class="p">){</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">board</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="n">q</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'.'</span> <span class="o">&amp;&amp;</span> <span class="n">board</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="n">q</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'Q'</span><span class="p">){</span>
+                <span class="n">board</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="sc">'.'</span><span class="p">;</span>
+                <span class="n">us</span><span class="p">.</span><span class="n">insert</span><span class="p">({</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="o">=</span><span class="n">i</span><span class="p">,</span><span class="n">q</span><span class="o">=</span><span class="n">j</span><span class="p">;</span> <span class="n">p</span><span class="o">&lt;</span><span class="n">board</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">q</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span><span class="n">p</span><span class="o">++</span><span class="p">,</span><span class="n">q</span><span class="o">--</span><span class="p">){</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">board</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="n">q</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'.'</span> <span class="o">&amp;&amp;</span> <span class="n">board</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="n">q</span><span class="p">]</span> <span class="o">!=</span> <span class="sc">'Q'</span><span class="p">){</span>
+                <span class="n">board</span><span class="p">[</span><span class="n">p</span><span class="p">][</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="sc">'.'</span><span class="p">;</span>
+                <span class="n">us</span><span class="p">.</span><span class="n">insert</span><span class="p">({</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">});</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">board</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="sc">'Q'</span><span class="p">;</span>
+        <span class="n">us</span><span class="p">.</span><span class="n">insert</span><span class="p">({</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">});</span>
+        <span class="k">return</span> <span class="n">us</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="c1">//回溯棋子后复原棋盘状态</span>
+    <span class="kt">void</span> <span class="n">unplace</span><span class="p">(</span><span class="n">set</span><span class="o">&lt;</span><span class="n">PT</span><span class="o">&gt;&amp;</span> <span class="n">us</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;&gt;&amp;</span> <span class="n">board</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">itor</span> <span class="o">=</span> <span class="n">us</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span> <span class="n">itor</span><span class="o">!=</span><span class="n">us</span><span class="p">.</span><span class="n">end</span><span class="p">();</span> <span class="n">itor</span><span class="o">++</span><span class="p">){</span>
+            <span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="o">*</span><span class="n">itor</span><span class="p">;</span>
+            <span class="n">board</span><span class="p">[</span><span class="n">p</span><span class="p">.</span><span class="n">i</span><span class="p">][</span><span class="n">p</span><span class="p">.</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="sc">'x'</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">//深搜</span>
+    <span class="kt">void</span> <span class="n">dfs</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">,</span> <span class="kt">int</span> <span class="n">row</span><span class="p">,</span> <span class="kt">int</span> <span class="n">sz</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;&gt;&amp;</span> <span class="n">board</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;&gt;&amp;</span> <span class="n">result</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">){</span>
+            <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">v</span><span class="p">;</span>
+            <span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">vec</span><span class="o">:</span><span class="n">board</span><span class="p">){</span>
+                <span class="n">string</span> <span class="n">tmp</span><span class="o">=</span><span class="s">""</span><span class="p">;</span>
+                <span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">c</span><span class="o">:</span><span class="n">vec</span><span class="p">){</span>
+                    <span class="n">tmp</span><span class="o">+=</span><span class="n">c</span><span class="p">;</span>
+                <span class="p">}</span>
+                <span class="n">v</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">tmp</span><span class="p">);</span>
+            <span class="p">}</span>
+            <span class="n">result</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="c1">//按行搜索，尝试列位置，j代表列</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">&lt;</span><span class="n">sz</span> <span class="o">&amp;&amp;</span> <span class="n">row</span><span class="o">&lt;</span><span class="n">sz</span><span class="p">;</span><span class="n">j</span><span class="o">++</span><span class="p">){</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">board</span><span class="p">[</span><span class="n">row</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">==</span> <span class="sc">'x'</span><span class="p">){</span> <span class="c1">//剪枝</span>
+                <span class="c1">//choose</span>
+                <span class="k">auto</span> <span class="n">pts</span> <span class="o">=</span> <span class="n">place</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="n">board</span><span class="p">);</span>
+                <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"set state: "</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+                <span class="n">log</span><span class="p">(</span><span class="n">board</span><span class="p">);</span>
+                <span class="n">n</span><span class="o">-=</span><span class="mi">1</span><span class="p">;</span>
+                <span class="c1">//深搜</span>
+                <span class="n">dfs</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">row</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">sz</span><span class="p">,</span><span class="n">board</span><span class="p">,</span><span class="n">result</span><span class="p">);</span>
+                <span class="c1">//backtrack</span>
+                <span class="n">n</span><span class="o">+=</span><span class="mi">1</span><span class="p">;</span>
+                <span class="n">unplace</span><span class="p">(</span><span class="n">pts</span><span class="p">,</span> <span class="n">board</span><span class="p">);</span>
+                <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"reset state: "</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+                <span class="n">log</span><span class="p">(</span><span class="n">board</span><span class="p">);</span>
+
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="c1">//打印棋盘状态</span>
+   <span class="kt">void</span> <span class="n">log</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;&gt;&amp;</span> <span class="n">board</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">vec</span><span class="o">:</span><span class="n">board</span><span class="p">){</span>
+            <span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="n">c</span><span class="o">:</span><span class="n">vec</span><span class="p">){</span>
+                <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">c</span><span class="o">&lt;&lt;</span><span class="s">" "</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="s">"--------"</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+<span class="nl">public:</span>
+    <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;&gt;</span> <span class="n">solveNQueens</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;&gt;</span> <span class="n">board</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="sc">'x'</span><span class="p">));</span>
+        <span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;&gt;</span> <span class="n">ans</span><span class="p">;</span>
+        <span class="n">dfs</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">board</span><span class="p">,</span><span class="n">ans</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">ans</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h3 id="sudoku问题">Sudoku问题</h3>
+
+<p>我们再来看一道数独问题，和N皇后问题一样，求解数独问题也是一个利用暴力搜索的典型应用。</p>
+
+<blockquote>
+  <p>将数字1到9,填入9x9矩阵中的小方格，使得矩阵中的每行，每列，每个3x3的小格子内，9个数字都会出现”。</p>
+</blockquote>
+
+<div class="md-flex-h md-flex-no-wrap md-margin-bottom-12">
+<div><img src="/assets/images/2015/08/Sudoku-1.jpg" /></div>
+<div class="md-margin-right-12"><img src="/assets/images/2015/08/Sudoku-2.jpg" /></div>
+</div>
+
+<p>解数独问题的思路为在每个空位依次尝试从1-9的每个值，每放置一个后进行DFS搜索，如果所有空位都能填满则返回一组解，如果有空位不满足条件，则进行回朔，重置状态后再换另一个数字尝试DFS，知道尝试完所有的空位。</p>
+
+<p>```cpp</p>
+
+<p>vector&lt;vector<bool>&gt; row_state(9,vector<bool>(10,false)); //标志位，存放每行1-9出现的标志，1为放置，0为未放置
+vector&lt;vector<bool>&gt; col_state(9,vector<bool>(10,false)); //标志位，存放每列1-9出现的标志，1为放置，0为未放置
+vector&lt;vector<bool>&gt; block_state(9,vector<bool>(10,false)); //标志位，存放每个小块1-9出现的标志，1为放置，0为未放置</bool></bool></bool></bool></bool></bool></p>
+
+<p>//根据x，y计算对应的block index
+int blockIndex(int r, int c){
+  return r/3 * 3 + c/3;
+}</p>
+
+<p>//每放一个棋子需要更新 state
+void set_state(int r, int c, int num, bool value){
+  int index = blockIndex(r,c);
+  col_state[c][num] = value;
+  row_state[r][num] = value;
+  block_state[index][num] = value;
+}
+//当前位置是否已经被放置过
+bool is_valid(int r, int c , int num){
+  int index = blockIndex(r,c);
+  if(!row_state[r][num] &amp;&amp; 
+     !col_state[c][num] &amp;&amp; 
+     !block_state[index][num]){
+    return true;
+  }
+  return false;
+}
+bool dfs(int index, vector&lt;pair&lt;int,int»&amp; blanks, vector&lt;vector<char>&gt;&amp; board){</char></p>
+
+<p>if(index &gt;= blanks.size()){
+    return true;
+  }
+  int row = blanks[index].first;
+  int col = blanks[index].second;</p>
+
+<p>//每个空白位置尝试1-9
+  for(int n=1;n&lt;=9;n++){<br />
+      if(!is_valid(row,col,n)){
+        continue;
+      }
+      //choose
+      set_state(row,col,n,true);
+      //dfs
+      if(dfs(index+1,blanks,board)){
+        //剪枝
+        return true;
+      }else{
+        //backtracking<br />
+        set_state(row,col,n,false);
+      }
+  }
+  return false;
+}</p>
+
+<p>bool sudokuSolve( const vector&lt;vector<char>&gt;&amp; input ) {</char></p>
+
+<p>vector&lt;vector<char>&gt; board = input;
+  vector&lt;pair&lt;int,int&gt;&gt; blanks;</char></p>
+
+<p>for(int i=0; i&lt;board.size(); i++){
+    for(int j=0;j&lt;board.size();j++){
+      char c = board[i][j];
+      int num = c-‘0’;
+      if(c == ‘.’){
+        blanks.push_back({i,j});
+      }else{
+        //modify the board
+        set_state(i,j,num,true);
+      }
+    } 
+  }
+  //深搜
+  return dfs(0,blanks,board);
+}</p>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=NcZ2cu7gc-A&amp;list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk">CS106B-Stanford-YouTube</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome">Algorithms-Stanford-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome">算法与数据结构-1-北大-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/gaoji-shuju-jiegou/home/welcome">算法与数据结构-2-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:TsinghuaX+30240184.1x+3T2017/course/">算法与数据结构-1-清华-EDX</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法与数据结构-2-清华-EDX</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms/home/welcome">算法设计与分析-1-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法设计与分析-2-北大-EDX</a></li>
+</ul>
+
+<h3 id="关于dfs的更多问题">关于DFS的更多问题</h3>
+
+<ul>
+  <li><a href="https://leetcode.com/problems/generate-parentheses/description/">22. Generate Parentheses</a></li>
+  <li><a href="https://leetcode.com/problems/n-queens/description/">51. N-Queens</a></li>
+  <li><a href="https://leetcode.com/problems/n-queens-ii/">52. N-Queens II</a></li>
+</ul>
+:ET

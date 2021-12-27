@@ -1,0 +1,245 @@
+I"b<p>WWDC是Apple一年一度的开发者大会，作为一名从2011年就参与抽门票的iOS工程师，今年有机会去参加非常难得，实现了人生一大心愿，对于那些未能参加的同学，我争取将这次参会的细节更多的展现与还原，也可作为一份攻略供后来人参考，但由于个人时间和精力有限，无法Cover到的细节请参考其它人的文章和Apple的文档</p>
+
+<h3 id="参会准备">参会准备</h3>
+
+<p>今年的WWDC在加州小镇圣何塞（San Jose）举办，参会门票依旧是在开发者中随机发放，从身边抽中的情况看，今年中国开发者的中签比率比往年要高一些。抽到票的小伙伴需缴纳1599美金的门票费，Apple会发你一个参会凭证，接下来就可以准备出发去美帝了。</p>
+
+<p>出发前首先要搞定签证问题，赴美参会一般是B1/B2签证（如果有它类型签证，比如L签，则无需再办签证），杭州的同学一般是去上海使馆面签，面试官会问你很多问题来判断你是否有移民倾向，回答注意不要有移民倾向即可。顺利的话签证可以立刻通过，如果没通过则要仔细阅读回执单，问清楚是哪里出了问题，然后等待漫长的check流程，可以在<a href="https://ceac.state.gov/CEACStatTracker/Status.aspx">这里</a>查看签证处理进度。</p>
+
+<p>签证拿到后就可以定机票酒店了，在杭州的同学可以选择乘坐美联航直飞三藩的航班，上海的同学可以选择乘坐美联航飞到三藩，也可以选择乘坐国航飞到San Jose机场。出发前，如果条件允许可以考虑先租好车，这能极大的提升在美出行体验，租车一般可以通过Herz,Enterprise这样的平台，车型比较多，看大家个人喜好了，国外对租车限制不是很严，满18岁再带上国内的驾照就可以上路了</p>
+
+<p>接下来要还要搞定住宿问题，可以选择Apple推荐的宾馆，一般来说，这些宾馆都在会场附近，可以步行十分钟左右达到会场的地方。当然，因为是在城区 (downtown) 里，就算优惠过价格一般也不菲。如果有一同参加的小伙伴，完全可以搭伙住一个标间。另外，租车的朋友也可以选择离会场远一点的地方住，不用担心交通问题，美帝高速真的很方便，开着Google Map 当心不要开错路。</p>
+
+<h3 id="check-in">Check In</h3>
+
+<p>到达酒店安顿好之后就可以考虑去会场报道了，地点在<code class="highlighter-rouge">McEnry Convention Center</code>，Check In被安排在会议召开的前一天，一般是周日。可以选择早点过去，这也是第一次能看到来自全世界的开发者，不分年龄种族和文化差异，Everyone speaks Swift! 挺奇妙的感觉。工作人员带你Check In后会给你一个胸牌，也就是这几天通行的凭证，还会给你一件衣服（今年是一个黑色夹克）和一些纪念品，之后可以去广场上吃东西，今年是非常难吃的卷饼，可以在这拍照留念。另外，如果时间充裕的话还也可以顺路去逛逛斯坦福感受下这个地球上最好的大学 (之一) 的氛围，就在 Palo Alto 站下来走一下就到。在斯坦福的对外书店里你也可以找到很多纪念品。</p>
+
+<p><img class="md-img-center" src="/assets/images/2017/06/wwdc-2017-01.JPG" /></p>
+
+<h2 id="keynote和平台新特性">KeyNote和平台新特性</h2>
+
+<p>WWDC的第一场发布会是KeyNote，安排在周一上午10：00，主要介绍今年推出的新技术和新产品，如果想近距离观赏Apple各高管演讲需要前一天提前几个小时去排队（很多狂热的老外凌晨2点就过去了）才能坐到前几排。我们大概是凌晨4点过去的，入会场的时候已经是在会场中部了。</p>
+
+<p>整个keynote发布会思路比较清晰，库克先讲了Apple的开发者生态，公布几个数字：全球<strong>1600w</strong>开发者，去年一年就增加了<strong>300w</strong>，当天到场<strong>5300</strong>名开发者，自<strong>75</strong>个国家，其中最小的一枚是<strong>10岁</strong>的澳洲小学生，最老的也是来自日本的一位<strong>82</strong>岁的老奶奶。这些数字确实很震撼。</p>
+
+<p>接下来各个高管上来走秀介绍tvOS,WatchOS,macOS,iOS的重要更新，这里记了一些重点的更新：</p>
+
+<ul>
+  <li>【tvOS】和Amazon有了合作</li>
+  <li>【watchOS4】 在Siri，UI，Music上有了增强，和一些健身设备可以进行NFC通信</li>
+  <li>【macOS（<strong>High Sierra</strong>）】将使用Apple自己的文件系统<strong>APFS</strong>和<strong>H.265</strong>视频压缩标准，压缩率比H.264提高40%。GPU方面发布<strong>metal2</strong>，提供了VRSDK同时集成了Unity3D的渲染引擎。<strong>产品上</strong>整合iMac和MacPro两条产品线，发布了一款超牛逼的<strong>iMacPro</strong>，CPU最多支持18核，GPU使用AMD Radeon Vega，硬盘SSD容量4TB</li>
+  <li>【iOS11】在讲iOS 11之前先给了个数据<strong>83%</strong>的用户已经升级到<strong>iOS 10</strong>，对比Android只有<strong>7%</strong>的用户升级到了Android 7。iOS 11整体听下来的亮点不是特别多，首先是Apple Pay支持使用iMessage进行转账了，Siri支持翻译，相机、photo、music有些优化，App Store改版了增加了灰度发布的机制（<strong>Phase release</strong>)，最后提到了为中国用户单独开发一些功能，比如相机支持识别扫二维码；当天印象比较深的是苹果推出了两个很有想象力的Framework：<strong>ARKit</strong>和<strong>ML Kit</strong>分在AR和机器学习两个领域给开发者提供了平台。</li>
+  <li>【iPad】新的<strong>iPadPro</strong>更大了，由9.7inch变成10.5inch，屏幕增大20%，硬件上，屏幕刷新频率最高支持120帧/秒，CPU使用新一代A10x,6核,比A9x快30%。iOS 11为iPad提供了一系列Mac上才有的功能，比如<strong>Drag&amp;Drop</strong>，Docker，多任务处理，文件系统，多窗口，基本上将移动平台的能力和PC进行了一个完美的结合，如库克所说，iOS 11将iPadPro带到了一个全新的高度，值得入手</li>
+  <li>【Music】推出了家庭music智能硬件<strong>HomePod</strong>,$349美金,今年12月开始对对US，UK，Australia发售，国内估计明年才买得到</li>
+</ul>
+
+<p>下午的Session是平台新特性（platform state of the union），会重点介绍提到了这次的几个创新点（终于有点干货了，但也是走马观花的性质）以下是当时速记的内容。</p>
+
+<ul>
+  <li><strong>XCode9</strong>用Swift重写了，并提供了很多代码编写和重构的便捷工具，同时支持多台模拟器共存，真机设备支持无线调试了；</li>
+  <li><strong>Swift4</strong>在3的基础上进行了些优化，改动不是特别大，提供3.2和4两种编译模式，开发者可以无缝迁移；</li>
+  <li><strong>Drag&amp;Drop</strong>，支持App间跨进程通信和协作；同样iPad Pro上增加了一个文件系统，可以像PC一样浏览iPad中的文件，办公能力更强大；</li>
+  <li><strong>Photo和Image</strong>讲的内容比较多，摄像头支持识别二维码了 ; Apple研发了自己的图片压缩标准：<strong>HEVC</strong>，大概的原理是：在原先多帧拍图片的基础上结合深度信息，HDR和高分辨率再加上硬件编解码达到了较高的图片压缩水准;</li>
+  <li><strong>Depth</strong>：AVDepthData这framework提供可提取图片深度信息的API给开发者尝试不同场景的使用</li>
+  <li><strong>Vision</strong>：提供了检测人脸，形状，文字，条码以及Object Tracking的API，底层使用CoreML，是机器学习的一些场景化应用</li>
+  <li><strong>CoreML</strong>：Apple提供的机器学习SDK，并提供了一套workflow，大概思路是利用一个已有的机器学习框架（比如Caffe）训练数据然后通过苹果开源的一套工具将训练结果转换成iOS可识别的ML Model然后在XCode中集成使用，这部分讲的很快，也只讲了个大概，接下来的Session会重点介绍</li>
+  <li><strong>metal2</strong>：作为GPU计算的基础framework，二代增强了GPU计算能力，应用程序可以更多的直接操纵GPU而节省CPU使用的时间，它也是ML计算的基础。</li>
+  <li><strong>VR</strong>，APPLE也开始搞VR了，提供VR开发工具和调试工具，并在xcode和instrument中深度集成，有意思的是如果要用MacBook Pro开发VR需要额外买一个开发套件，599美金。另外VR对帧率有着较高的要求，1s要渲染100帧，这对VR应用开发有很高的挑战</li>
+  <li><strong>AR</strong>，Apple的AR Kit提供了一套AR开发模型，开发者需要理解坐标系，场景，光线等概念，渲染层面AR可以使用底层的metal2，或者顶层的Sprite Kit和Scene Kit。</li>
+</ul>
+
+<h2 id="关于session">关于Session</h2>
+
+<p>如果只想了解一个大概，那么第一天的内容就足够了，接下来的四天是一百多个Session车轮战，地点还是在Convention Center，有三个Hall和4个Room。基本上一小时会有3-4个Session同时进行，大家只能选择自己感兴趣的Topic，一天最多能参加5场，听下来已经非常累了。篇幅有限，选了今年大热的几个关于CoreML的Session，记录了当时的第一印象，更多Session可以去官网查阅</p>
+
+<h3 id="703-introduce-to-coreml">703 Introduce to CoreML</h3>
+
+<p>这个Session讲的很初级，对ML的原理没有介绍，基本上是从工程化的角度讲如在App里何使用已经训练好的Model，让工程师不关心训练过程和实现细节，只专注应用场景的使用。因此从设计上也是解耦掉的，训练集Model单独产生，然后通过工具转成XCode可识别CoreML Model，同时生成Swift Class在代码里使用</p>
+
+<p><img class="md-img-center" src="/assets/images/2017/06/wwdc-2017-02.JPG" /></p>
+
+<p>CoreML SDK底层依赖Accelerate和MPS两个Framework，其中Accelerate今年也有了增强可提供更复杂的矩阵运算，MPS是基于Metal的支持GPU计算的framework。接下来是工程师演示demo，将一个flower的训练集导入到App中，识别花花。</p>
+
+<h4 id="710-core-ml-in-depth">710 Core ML in Depth</h4>
+
+<p>这个Session讲了三个内容</p>
+
+<ol>
+  <li>User Case，比如识别信用卡，语音识别，签名识别等，不是特别有说服力</li>
+  <li>CoreML的硬件加速支持</li>
+  <li>转换工具</li>
+</ol>
+
+<p>对于CoreML的model，可以把它理解成一个预测函数，接受五种类型作为输入：Numeric，Categories，Images，Arrays，Dictionaries。接着举了Text的一个例子，大概意思是识别句子中的情感，UI做相应的展现。这个case 输入是句子（text）经过NLP切分成单词集合，用dictionary表示：</p>
+
+<pre><code class="language-JSON">{
+	"Core":1,
+	"ML":1,
+	"is":1,
+	"awesome":1,
+	"I":1,
+	"Love":1,
+	"Using":1,
+	"it":1
+}
+</code></pre>
+<p>经过预测函数得到输出结果：double类型，接下来的一个例子是键盘输入提示次的预判，稍微复杂一点，但是原理类似。接下来讲了CoreML的底层运算加速，没有讲原理，大概说了说CoreML会根据应用场景来选择使用GPU运算还是CPU运算。最后讲了如何获取CoreML model，两个来源，一个是使用Apple提供的预先训练好的，另一个是自己制作，如果自己制作Core ML model，需要使用Apple开源的一套python工具 coremltool</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install coremltools
+</code></pre></div></div>
+
+<p>对所有的CoreML model，Apple提供一个通用的specification，然后通过convertor将面各类机器学习框架的结果转换到CoreML model的格式上来，现场演示了如何将Caffe model 转换为CoreML model，思路很清晰，也很容易看懂</p>
+
+<h3 id="vision-framework">Vision Framework</h3>
+
+<p>与ML关联的另一个Session是Vision，Vision在CoreML的基础上提供了一系列High Level的API来解决计算机视觉问题，比如人脸检测，文字检测，矩形检测，条码检测和物体追踪。一个工程师讲了使用Vision的一套Sequence：创建<code class="highlighter-rouge">Request</code>, 创建<code class="highlighter-rouge">Handler</code>,处理<code class="highlighter-rouge">Observation</code>回调，以检测矩形内的数字demo为例，代码如下见附录，使用iOS 11和XCode9 亲测demo如下:</p>
+
+<div class="md-flex-h md-flex-no-wrap">
+    <div>
+        <img src="/assets/images/2017/06/wwdc-2017-03.jpeg" />
+    </div>
+    <div>
+        <img src="/assets/images/2017/06/wwdc-2017-04.jpeg" />
+    </div>
+</div>
+
+<h3 id="nlp">NLP</h3>
+
+<p>这个Session开始将了一些应用场景，如果你的App是和文本相关的，文档编辑，笔记识别，演讲翻译等都需要用到NLP，然后介绍了NLP引擎包含哪些部分，从上到下依次是语言识别，Token切分，词性分析（大概意思名词，动词，形容词之类的），词形还原(大概意思是划分出句子中的主谓宾补状等成分)，专有名词识别。</p>
+
+<p>接下来将今年对<code class="highlighter-rouge">NSLinguisticTagger</code>这个类的增强，下面几个方面：</p>
+
+<ul>
+  <li>TaggingUnit支持word，sentence，paragraph，document 四种粒度</li>
+  <li>提供了一个新API：<code class="highlighter-rouge">dominantLanguage</code>用来识别语种，解决了原先只能在word level识别的痛点，新API只要传入一个string即可识别</li>
+  <li>底层进行了重构，提高了稳定性和识别准确度，上层API保持不变</li>
+</ul>
+
+<p>Demo部分演示了两个一个是Mac的应用叫Winnow，将的是如何使用NLP搜索照片，另一个是iOS的应用，功能是识别feed中的关键字</p>
+
+<pre><code class="language-code">import UIKit
+import Foundation
+
+public let text = """
+                  Tim Cook is the CEO of Apple Inc. that is headquartered in Cupertino, California.
+                  """
+let tagger = NSLinguisticTagger(tagSchemes:[.nameType], options:0);
+tagger.string = text
+
+let options:NSLinguisticTagger.Options = [.omitWhitespace,.omitPunctuation,.joinNames]
+let range = NSRange(location:0, length: text.utf16.count)
+let tags:[NSLinguisticTag] = [NSLinguisticTag.personalName,.placeName,.organizationName]
+
+tagger.enumerateTags(in: range, unit: .word, scheme: .nameType, options: options) { (tag, tokenRange, _) in
+    
+    if let tag = tag, tags.contains(tag) {
+        let name = (text as NSString).substring(with: tokenRange);
+        print(name);
+    }
+}
+</code></pre>
+<p>最后给出了性能数据：</p>
+
+<ul>
+  <li>iPhone 7上汉语的tokenization速度比过去提高了30%</li>
+  <li>名字识别速度比过去提高了80%</li>
+  <li>iOS 11上<code class="highlighter-rouge">NSLinguisticTagger </code>单线程每秒能处理5w个token，多线程8w个</li>
+</ul>
+
+<h3 id="小结">小结</h3>
+
+<p>上面介绍了4个和机器学习相关的Session，除了这几个Session以外，在Image，AR，Photo等多个Session也经常提到machine learning，总的来说ML已经成了新的热点名词贯穿在各个Session之间。但是从各个Session演示的demo来看，都是一些很基础的模式识别（现在流行叫机器学习），比如识别人脸，矩形，植物，物体追踪，虽然这些技术在几年前就已经很成熟了，但是应用在iPhone上还是需要标准化的工程模式，Apple抽象了这一套接入标准。</p>
+
+<p>仔细想想，在客户端上做ML的场景有多少呢？除了几个非常必要的键盘场景，其它生活中的场景还真的想不出太多，</p>
+
+<p>在工程方面，训练集要打入包内不够灵活，结果预判不准确会直接影响功能的正常使用，而且只能等待下一个迭代才能修复（虽然号称系统更新可以推送新的model，但更新周期比较长）。通常来说客户端可以负责特征信息提取，识别运算放到Server端更合适。如果一定要完全在端上运算，可能需要使用Apple提供的集中场景的训练集，这些训练集的准确度是可以保证的。</p>
+
+<h2 id="labs">Labs</h2>
+
+<p>Labs提供一个可以和Apple工程师近距离接触的机会，只有前来参会的人员才能享受，你可以将开发过程中遇到的问题和他们进行面对面交流。Labs的时间和Session是冲突的，因此对于想去的Lab只能放弃听Session的机会。另外，对于特别火的lab，比如ML，AR要排队进入，每个人只有10分钟的时间。对于不火的Lab，比如LLVM这些，可以进去随便聊。</p>
+
+<p>总的来说这些Lab大多数是面向个人开发者的，我参加了几个Lab，整体感受不是特别好，对于集团几个大型App的复杂度已经远远超出了一般工程师的理解范围，所面临的问题这些lab里的工程师也没有太好的解决办法，因此很鸡肋，不要抱太高的期望。我参加了三个Lab，分别是CoreText，Compiler和CocoaTouch，问了一些底层的问题和一些<code class="highlighter-rouge">UITableView</code>的问题都没有得到很好的解答。</p>
+
+<p><img class="md-img-center" src="/assets/images/2017/06/wwdc-2017-05.JPG" /></p>
+
+<h3 id="纪念品">纪念品</h3>
+
+<p>Convention Center的Hall1 是没有Session，全开放的活动大厅，里面可以吃饭也可以购买WWDC的纪念品，纪念品有T恤，杯子，笔，胸针，帽子等。如果想买要趁早，第一天就要去排队，到了第三天的时候，好看的已经被买空了，剩下的都是Size不全的。如果想买Apple的纪念品可以去Apple的Compony Store，在著名的Infinite Loop #1位置，里面有T恤，杯子，水壶，笔等等，价格适中</p>
+
+<h3 id="其它的一些见闻">其它的一些见闻</h3>
+
+<ul>
+  <li>关于Apple与AI</li>
+</ul>
+
+<p>过去认为Apple在AI方面的产品落后于Google和Amazon等公司，按照Apple的风格，在推出产品前决不先讨论技术，对新产品做到绝对保密，保持神秘感，因此Apple只讨论即将推出的技术，而不讨论未来（这点和Google，FB等不太一样，因此很多人觉得Apple对未来技术没什么规划），今年WWDC上讨论的产品都是今年要推出的产品，就AI来说，苹果不是没有在开发相关技术，只是很少拿出来讨论，都融入在各个产品的功能中了，比如Siri，iPhone电池的续航，Apple不讨论AI在系统层面如何应用，因为用户根本不关心，更多的是从产品的角度出发，提升用户体验是第一位的</p>
+
+<ul>
+  <li>关于移动支付</li>
+</ul>
+
+<p>和同行的小伙伴都有一个感受就是美国买东西基本不需要带现金，一张信用卡搞定，支付宝，微信，paypal之类的移动支付工具基本上看不到。倒不是说国外的先进，只是它们的信用体系起步很早，现在已经很完善了，相反国内在这方面起步较晚，因此移动支付才有了机会</p>
+
+<ul>
+  <li>关于硅谷</li>
+</ul>
+
+<p>由于行程安排的很紧，只去了抽空去了Facebook，Fackbook园区里随处可见<strong>Hack</strong>的字眼，这也是他们公司的文化象征，公司里吃的喝的大部分都是免费的，还有街机游戏厅，工作区的设计和阿里很像，走进去有种回到公司的感觉（怀疑是参照FB设计的）。很早就很羡慕FB的工程师文化，约了FB的几个朋友聊天，有一些感受，一是FB的管理方式很扁平化，大家都是工程师，没有太多的层级感，资深一点的是Tech Lead，但是也是不带人的，Manager和工程师的地位是平等，并且Manager的存在感不是很高。另一点是在招人上无论校招社招基本都会问Algorithm，所以即使是刷题，基础也一定要扎实，Algorithm过了之后才会考虑问问System Design，国内的社招更偏向后者，往往会忽视对基础的要求。一旦面试过了之后FB会对新人进行长达6周的培训，不关心你的背景，只要能顺利完成，原本做前端的也可以加入后端的项目组，自由度很高</p>
+
+<p class="md-p-center md-margin-top-24">（全文完）</p>
+
+<h2 id="附录">附录</h2>
+
+<ul>
+  <li>Vision模式识别</li>
+</ul>
+
+<div class="language-swift highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//创建Request:</span>
+<span class="kd">lazy</span> <span class="k">var</span> <span class="nv">rectanglesRequest</span><span class="p">:</span> <span class="kt">VNDetectRectanglesRequest</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="kt">VNDetectRectanglesRequest</span><span class="p">(</span><span class="nv">completionHandler</span><span class="p">:</span> <span class="k">self</span><span class="o">.</span><span class="n">handleRectangles</span><span class="p">)</span>
+<span class="p">}()</span>
+
+<span class="c1">//...</span>
+
+<span class="c1">//创建Handler:</span>
+<span class="k">let</span> <span class="nv">handler</span> <span class="o">=</span> <span class="kt">VNImageRequestHandler</span><span class="p">(</span><span class="nv">ciImage</span><span class="p">:</span> <span class="n">ciImage</span><span class="p">,</span> <span class="nv">orientation</span><span class="p">:</span> <span class="kt">Int32</span><span class="p">(</span><span class="n">orientation</span><span class="o">.</span><span class="n">rawValue</span><span class="p">))</span>
+ 
+<span class="c1">//...</span>
+
+<span class="c1">//处理Request,放到background thread:    </span>
+<span class="k">do</span> <span class="p">{</span>
+ <span class="k">try</span> <span class="n">handler</span><span class="o">.</span><span class="nf">perform</span><span class="p">([</span><span class="k">self</span><span class="o">.</span><span class="n">rectanglesRequest</span><span class="p">])</span>
+<span class="p">}</span> 
+<span class="k">catch</span> <span class="p">{</span>
+      <span class="nf">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">//...</span>
+
+<span class="c1">//处理回调：</span>
+<span class="kd">func</span> <span class="nf">handleRectangles</span><span class="p">(</span><span class="nv">request</span><span class="p">:</span> <span class="kt">VNRequest</span><span class="p">,</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">?)</span> <span class="p">{</span>
+  
+   <span class="k">guard</span> <span class="k">let</span> <span class="nv">observations</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">results</span> <span class="k">as?</span> <span class="p">[</span><span class="kt">VNRectangleObservation</span><span class="p">]</span>
+	<span class="k">else</span> <span class="p">{</span> <span class="nf">fatalError</span><span class="p">(</span><span class="s">"unexpected result type from VNDetectRectanglesRequest"</span><span class="p">)</span> <span class="p">}</span>
+   <span class="k">guard</span> <span class="k">let</span> <span class="nv">detectedRectangle</span> <span class="o">=</span> <span class="n">observations</span><span class="o">.</span><span class="n">first</span> 
+   <span class="k">else</span> <span class="p">{</span>
+            <span class="kt">DispatchQueue</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="n">async</span> <span class="p">{</span>
+                <span class="k">self</span><span class="o">.</span><span class="n">classificationLabel</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">"No rectangles detected."</span>
+            <span class="p">}</span>
+            <span class="k">return</span>
+        <span class="p">}</span>
+	
+	<span class="c1">//得到识别到的矩形</span>
+	
+	<span class="o">...</span>
+		
+	<span class="c1">//使用CoreML model的分类器做数字识别</span>
+	<span class="k">let</span> <span class="nv">handler</span> <span class="o">=</span> <span class="kt">VNImageRequestHandler</span><span class="p">(</span><span class="nv">ciImage</span><span class="p">:</span> <span class="n">correctedImage</span><span class="p">)</span>
+        <span class="k">do</span> <span class="p">{</span>
+            <span class="k">try</span> <span class="n">handler</span><span class="o">.</span><span class="nf">perform</span><span class="p">([</span><span class="n">classificationRequest</span><span class="p">])</span>
+        <span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+            <span class="nf">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+        <span class="p">}</span>
+</code></pre></div></div>
+
+:ET

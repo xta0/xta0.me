@@ -1,0 +1,437 @@
+I"}�<p>今天开始我们来讨论下C/C++程序的链接，加载和执行，我们将把重点放在目标文件的链接和加载上。</p>
+
+<p>一般来说，源文件编译完成后会生成<code class="highlighter-rouge">.o</code>文件，多个<code class="highlighter-rouge">.o</code>文件和一些lib，一起link得到可执行文件，下面是GCC的一些常用编译选项，我们稍后会用到：</p>
+
+<ul>
+  <li><code class="highlighter-rouge">-c</code>: 用来生成<code class="highlighter-rouge">.o</code>文件</li>
+  <li><code class="highlighter-rouge">-o</code> : 用来创建目标文件</li>
+  <li><code class="highlighter-rouge">-g</code>: 编译器在输出文件中包含debug信息，产生dSYM符号表</li>
+  <li><code class="highlighter-rouge">-Wall</code>:编译器编译时打出warning信息,强烈推荐使用这个选项。</li>
+  <li><code class="highlighter-rouge">-I+dir</code>: 除了在main.c当前目录和系统默认目录中寻找.h外，还在dir目录寻找，注意，dir是一个绝对路径。</li>
+  <li><code class="highlighter-rouge">-01,-02,-03</code>: 编译器优化程度</li>
+</ul>
+
+<blockquote>
+  <p>如果使用macOS，gcc实际上是Clang的alias，binary的结构为Mach-O，而不是UNIX的ELF格式，不过这并不影响理解本文的内容</p>
+</blockquote>
+
+<h2 id="object-files">Object Files</h2>
+
+<p>我们先从最基本的目标文件开始分析，现在假设我们有三个文件:<code class="highlighter-rouge">function.h</code>,<code class="highlighter-rouge">function.m</code>和<code class="highlighter-rouge">main.c</code>，代码如下</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//function.h</span>
+<span class="cp">#define FIRST_OPTION
+#ifdef FIRST_OPTION
+#define MULTIPLIER (3.0)
+#else
+#define MULTIPLIER (2.0)
+#endif
+</span>
+<span class="kt">float</span> <span class="nf">add_and_multiply</span><span class="p">(</span><span class="kt">float</span> <span class="n">x</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y</span><span class="p">);</span>
+
+<span class="c1">//function.c</span>
+<span class="cp">#include "function.h"
+</span>
+<span class="kt">int</span> <span class="n">nCompletionStatus</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">float</span> <span class="nf">add</span><span class="p">(</span><span class="kt">float</span> <span class="n">x</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">float</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">z</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">float</span> <span class="nf">add_and_multiply</span><span class="p">(</span><span class="kt">float</span> <span class="n">x</span><span class="p">,</span> <span class="kt">float</span> <span class="n">y</span><span class="p">){</span>
+    <span class="kt">float</span> <span class="n">z</span> <span class="o">=</span> <span class="n">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+    <span class="n">z</span> <span class="o">*=</span> <span class="n">MULTIPLIER</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">z</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">//main.c</span>
+<span class="cp">#include "function.h"
+</span>
+<span class="k">extern</span> <span class="kt">int</span> <span class="n">nCompletionStatus</span><span class="p">;</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">float</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">1</span><span class="p">.</span><span class="mi">5</span><span class="p">;</span>
+    <span class="kt">float</span> <span class="n">z</span><span class="p">;</span>
+
+    <span class="n">z</span> <span class="o">=</span> <span class="n">add_and_multiply</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+    <span class="n">nCompletionStatus</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>为了生成目标文件<code class="highlighter-rouge">.o</code>，我们可以使用gcc对上述源码进行编译</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gcc <span class="nt">-c</span> <span class="k">function</span>.c
+gcc <span class="nt">-c</span> main.c
+</code></pre></div></div>
+<p>执行上面两行命令后，我们可以得到<code class="highlighter-rouge">funtion.o</code>和<code class="highlighter-rouge">main.o</code>。接下来我们来简单的分析一下目标文件的格式以及里面所包含的内容，在UNIX环境中，我们可以使用下面的工具帮助我们分析</p>
+
+<ul>
+  <li><strong>nm</strong>: 显示目标文件中的symbol列表</li>
+  <li><strong>objdump</strong>: 提供了一系列选项可以最目标文件做比较详细的分析，比如<code class="highlighter-rouge">-S</code>选项可以dump出汇编代码</li>
+  <li><strong>readelf</strong>: 读取并显示ELF格式文件的信息</li>
+</ul>
+
+<p>以<code class="highlighter-rouge">function.o</code>为例，使用<code class="highlighter-rouge">readelf -a function.o</code></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>readelf <span class="nt">-a</span> <span class="k">function</span>.o
+ELF Header:
+  Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00
+  Class:                             ELF64
+  Data:                              2<span class="s1">'s complement, little endian
+  Version:                           1 (current)
+  OS/ABI:                            UNIX - System V
+  ABI Version:                       0
+  Type:                              REL (Relocatable file)
+  Machine:                           Advanced Micro Devices X86-64
+  Version:                           0x1
+  Entry point address:               0x0
+  Start of program headers:          0 (bytes into file)
+  Start of section headers:          808 (bytes into file)
+  Flags:                             0x0
+  Size of this header:               64 (bytes)
+  Size of program headers:           0 (bytes)
+  Number of program headers:         0
+  Size of section headers:           64 (bytes)
+  Number of section headers:         12
+  Section header string table index: 9
+
+Section Headers:
+  [Nr] Name              Type             Address           Offset
+       Size              EntSize          Flags  Link  Info  Align
+  [ 0]                   NULL             0000000000000000  00000000
+       0000000000000000  0000000000000000           0     0     0
+  [ 1] .text             PROGBITS         0000000000000000  00000040
+       000000000000006a  0000000000000000  AX       0     0     1
+  [ 2] .rela.text        RELA             0000000000000000  00000280
+       0000000000000018  0000000000000018   I      10     1     8
+  [ 3] .data             PROGBITS         0000000000000000  000000aa
+       0000000000000000  0000000000000000  WA       0     0     1
+  [ 4] .bss              NOBITS           0000000000000000  000000ac
+       0000000000000004  0000000000000000  WA       0     0     4
+  [ 5] .comment          PROGBITS         0000000000000000  000000ac
+       0000000000000036  0000000000000001  MS       0     0     1
+  [ 6] .note.GNU-stack   PROGBITS         0000000000000000  000000e2
+       0000000000000000  0000000000000000           0     0     1
+  [ 7] .eh_frame         PROGBITS         0000000000000000  000000e8
+       0000000000000058  0000000000000000   A       0     0     8
+  [ 8] .rela.eh_frame    RELA             0000000000000000  00000298
+       0000000000000030  0000000000000018   I      10     7     8
+  [ 9] .shstrtab         STRTAB           0000000000000000  000002c8
+       0000000000000059  0000000000000000           0     0     1
+  [10] .symtab           SYMTAB           0000000000000000  00000140
+       0000000000000108  0000000000000018          11     8     8
+  [11] .strtab           STRTAB           0000000000000000  00000248
+       0000000000000033  0000000000000000           0     0     1
+Key to Flags:
+  W (write), A (alloc), X (execute), M (merge), S (strings), l (large)
+  I (info), L (link order), G (group), T (TLS), E (exclude), x (unknown)
+  O (extra OS processing required) o (OS specific), p (processor specific)
+
+There are no section groups in this file.
+
+There are no program headers in this file.
+
+Relocation section '</span>.rela.text<span class="s1">' at offset 0x280 contains 1 entries:
+  Offset          Info           Type           Sym. Value    Sym. Name + Addend
+00000000004a  000900000002 R_X86_64_PC32     0000000000000000 add - 4
+
+Relocation section '</span>.rela.eh_frame<span class="s1">' at offset 0x298 contains 2 entries:
+  Offset          Info           Type           Sym. Value    Sym. Name + Addend
+000000000020  000200000002 R_X86_64_PC32     0000000000000000 .text + 0
+000000000040  000200000002 R_X86_64_PC32     0000000000000000 .text + 24
+
+The decoding of unwind sections for machine type Advanced Micro Devices X86-64 is not currently supported.
+
+Symbol table '</span>.symtab<span class="s1">' contains 11 entries:
+   Num:    Value          Size Type    Bind   Vis      Ndx Name
+     0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND
+     1: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS function.c
+     2: 0000000000000000     0 SECTION LOCAL  DEFAULT    1
+     3: 0000000000000000     0 SECTION LOCAL  DEFAULT    3
+     4: 0000000000000000     0 SECTION LOCAL  DEFAULT    4
+     5: 0000000000000000     0 SECTION LOCAL  DEFAULT    6
+     6: 0000000000000000     0 SECTION LOCAL  DEFAULT    7
+     7: 0000000000000000     0 SECTION LOCAL  DEFAULT    5
+     8: 0000000000000000     4 OBJECT  GLOBAL DEFAULT    4 nCompletionStatus
+     9: 0000000000000000    36 FUNC    GLOBAL DEFAULT    1 add
+    10: 0000000000000024    70 FUNC    GLOBAL DEFAULT    1 add_and_multiply
+</span></code></pre></div></div>
+
+<p>上述命令给出了<code class="highlighter-rouge">function.o</code>中一些比较关键的信息，比如第一段的文件描述，第二段的section header信息，以及后面的重定位表和符号表等等。如果我们只要分析linker和loader，那么我们暂时不需要理解全部的内容，但是需要特别关注一些重要的section。实际上对于每个section，它们都是一个有起始实地址和固定长度构成的一段连续空间。其中，有四个section需要特别关注</p>
+
+<ol>
+  <li><code class="highlighter-rouge">.text</code>段，也叫代码段，用来存放汇编指令</li>
+  <li><code class="highlighter-rouge">.data</code>段，也叫数据段，用来保存程序里设置好的初始化数据信息</li>
+  <li><code class="highlighter-rouge">.rela.text</code>段，叫做重定位表(Relocation Table)。在表里，保存了所有未知跳转的指令</li>
+  <li><code class="highlighter-rouge">.symtab</code>段，也叫做符号表，用来存放当前文件里定义的函数和对应的地址</li>
+</ol>
+
+<h2 id="linkers">Linkers</h2>
+
+<p>在有了编译生成的<code class="highlighter-rouge">.o</code>文件后，Linker要做的事情就是将这些文件link在一起，具体来说过程如下，linker会扫描所有的目标文件，将所有符号表中的信息收集起来，构成一个全局的符号表，然后再根据重定位表，把所有不确定的跳转指令根据符号表里地址，进行一次修正。最后，把所有的目标文件的section分别进行合并，形成最终的可执行代码。对于前面的例子，我们有两个目标文件，linker的过程如下图所示</p>
+
+<p><img class="md-img-center" src="/assets/images/2015/01/linker.png" /></p>
+
+<p>如果将上述步骤分解开来，则linker的执行步骤可大致分为两部分：符号解析(Symbol Resolution)和地址绑定(Relocation)</p>
+
+<h3 id="符号解析symbol-resolution">符号解析（Symbol Resolution）</h3>
+
+<p>我们可以使用前面提到的<code class="highlighter-rouge">nm</code>命令来快速看一下<code class="highlighter-rouge">function.o</code>和<code class="highlighter-rouge">main.o</code>中都有哪些symbol</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#function.o</span>
+0000000000000000    T add
+0000000000000024    T add_and_multiply
+0000000000000000    B nCompletionStatus
+
+<span class="c">#main.o</span>
+                    U add_and_multiply
+0000000000000000    T main
+                    U nCompletionStatus
+</code></pre></div></div>
+
+<p>通过观察上面的符号表，可以发现</p>
+
+<ol>
+  <li>
+    <p>每个符号都有自己的类型。比如在<code class="highlighter-rouge">main.o</code>中，由于<code class="highlighter-rouge">add_and_multiply</code>是定义在另一个目标文件中，因此对于<code class="highlighter-rouge">main.o</code>来说，编译器并不知道这个符号在哪里，因此用<code class="highlighter-rouge">U</code>表示。<code class="highlighter-rouge">nCompletionStatus</code>同理。而对于<code class="highlighter-rouge">function.o</code>来说，这两个函数就定义在自身的目标文件中，编译器是知道它们的位置的，因此用<code class="highlighter-rouge">T</code>和<code class="highlighter-rouge">B</code>表示。更多关于符号的含义可参考文末的附录。</p>
+  </li>
+  <li>
+    <p>每个符号都有自己的地址。它们的地址都是相对的都是相对于该目标文件的偏移，并不是虚拟内存中的地址。我们可以通过观察汇编代码来进一步验证，使用 <code class="highlighter-rouge">objdump -d function.o</code>得到<code class="highlighter-rouge">function.o</code>的汇编代码如下</p>
+  </li>
+</ol>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Disassembly of section .text:
+
+0000000000000000 &lt;add&gt;:
+   0:	55                   	push   %rbp
+   1:	48 89 e5             	mov    %rsp,%rbp
+   4:	f3 0f 11 45 ec       	movss  %xmm0,-0x14<span class="o">(</span>%rbp<span class="o">)</span>
+   9:	f3 0f 11 4d e8       	movss  %xmm1,-0x18<span class="o">(</span>%rbp<span class="o">)</span>
+   e:	f3 0f 10 45 ec       	movss  <span class="nt">-0x14</span><span class="o">(</span>%rbp<span class="o">)</span>,%xmm0
+  13:	f3 0f 58 45 e8       	addss  <span class="nt">-0x18</span><span class="o">(</span>%rbp<span class="o">)</span>,%xmm0
+  18:	f3 0f 11 45 <span class="nb">fc       	</span>movss  %xmm0,-0x4<span class="o">(</span>%rbp<span class="o">)</span>
+  1d:	f3 0f 10 45 <span class="nb">fc       	</span>movss  <span class="nt">-0x4</span><span class="o">(</span>%rbp<span class="o">)</span>,%xmm0
+  22:	5d                   	pop    %rbp
+  23:	c3                   	retq
+
+0000000000000024 &lt;add_and_multiply&gt;:
+  24:	55                   	push   %rbp
+  25:	48 89 e5             	mov    %rsp,%rbp
+  28:	48 83 ec 20          	sub    <span class="nv">$0x20</span>,%rsp
+  2c:	f3 0f 11 45 ec       	movss  %xmm0,-0x14<span class="o">(</span>%rbp<span class="o">)</span>
+  31:	f3 0f 11 4d e8       	movss  %xmm1,-0x18<span class="o">(</span>%rbp<span class="o">)</span>
+  36:	f3 0f 10 45 e8       	movss  <span class="nt">-0x18</span><span class="o">(</span>%rbp<span class="o">)</span>,%xmm0
+  3b:	8b 45 ec             	mov    <span class="nt">-0x14</span><span class="o">(</span>%rbp<span class="o">)</span>,%eax
+  3e:	0f 28 c8             	movaps %xmm0,%xmm1
+  41:	89 45 e4             	mov    %eax,-0x1c<span class="o">(</span>%rbp<span class="o">)</span>
+  44:	f3 0f 10 45 e4       	movss  <span class="nt">-0x1c</span><span class="o">(</span>%rbp<span class="o">)</span>,%xmm0
+  49:	e8 00 00 00 00       	callq  4e &lt;add_and_multiply+0x2a&gt;
+  4e:	66 0f 7e c0          	movd   %xmm0,%eax
+  52:	89 45 <span class="nb">fc             	</span>mov    %eax,-0x4<span class="o">(</span>%rbp<span class="o">)</span>
+  55:	f3 0f 10 45 <span class="nb">fc       	</span>movss  <span class="nt">-0x4</span><span class="o">(</span>%rbp<span class="o">)</span>,%xmm0
+  5a:	f3 0f 58 c0          	addss  %xmm0,%xmm0
+  5e:	f3 0f 11 45 <span class="nb">fc       	</span>movss  %xmm0,-0x4<span class="o">(</span>%rbp<span class="o">)</span>
+  63:	f3 0f 10 45 <span class="nb">fc       	</span>movss  <span class="nt">-0x4</span><span class="o">(</span>%rbp<span class="o">)</span>,%xmm0
+  68:	c9                   	leaveq
+  69:	c3                   	retq
+</code></pre></div></div>
+
+<p>因此可以猜想，linker接下来要做的事情就是将所有<code class="highlighter-rouge">Undefined</code>符号进行地址绑定（动态库中的符号暂不考虑）以及算出每个符号在虚拟内存中的真实地址</p>
+
+<h3 id="relocation">Relocation</h3>
+
+<p>Section的Relocation很简单，就是将所有目标文件的各个段按照某种规则进行合并，比如上面图中的，text段合并，符号表合并等等。在合并的过程中，需要计算每个段在实际虚拟内存中的地址，比如前面提到的<code class="highlighter-rouge">main.o</code>中的<code class="highlighter-rouge">main</code>符号的地址为<code class="highlighter-rouge">0x0000000000000000</code>，<code class="highlighter-rouge">function.o</code>中<code class="highlighter-rouge">add</code>地址也为<code class="highlighter-rouge">0x0000000000000000</code>。显然，在实际的内存中，不管是<code class="highlighter-rouge">add</code>还是<code class="highlighter-rouge">main</code>的地址是不可能为<code class="highlighter-rouge">0x0000000000000000</code>的。这时候就需要Relocation发挥作用，将所有section的地址重新分配到合理的位置。但需要注意的是，在分配的过程中要保证每个Section的连续性不被破坏，因此linker是需要知道每个section的大小和范围。</p>
+
+<p><img class="md-img-center" src="/assets/images/2009/05/c-compile-1.png" /></p>
+
+<p>下面我们来通过观察汇编代码来具体看一下是上述过程，我们还是使用<code class="highlighter-rouge">objdump</code>命令来反汇编目标文件</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>objdump <span class="nt">-d</span> <span class="nt">-S</span> main.o
+
+main.o:     file format elf64-x86-64
+Disassembly of section .text:
+0000000000000000 main:
+0:	55                   	push   rbp
+1:	48 89 e5             	mov    rbp,rsp
+4:	48 83 ec 20          	sub    rsp,0x20
+8:	f3 0f 10 05 00 00 00 	movss  xmm0,DWORD PTR <span class="o">[</span>rip+0x0]        <span class="c"># 10 &lt;main+0x10&gt;</span>
+f:	00
+10:	f3 0f 11 45 f4       	movss  DWORD PTR <span class="o">[</span>rbp-0xc],xmm0
+15:	f3 0f 10 05 00 00 00 	movss  xmm0,DWORD PTR <span class="o">[</span>rip+0x0]        <span class="c"># 1d &lt;main+0x1d&gt;</span>
+1c:	00
+1d:	f3 0f 11 45 f8       	movss  DWORD PTR <span class="o">[</span>rbp-0x8],xmm0
+22:	f3 0f 10 45 f8       	movss  xmm0,DWORD PTR <span class="o">[</span>rbp-0x8]
+27:	8b 45 f4             	mov    eax,DWORD PTR <span class="o">[</span>rbp-0xc]
+2a:	0f 28 c8             	movaps xmm1,xmm0
+2d:	89 45 ec             	mov    DWORD PTR <span class="o">[</span>rbp-0x14],eax
+30:	f3 0f 10 45 ec       	movss  xmm0,DWORD PTR <span class="o">[</span>rbp-0x14]
+35:	e8 00 00 00 00       	call   3a &lt;main+0x3a&gt;
+3a:	66 0f 7e c0          	movd   eax,xmm0
+3e:	89 45 <span class="nb">fc             	</span>mov    DWORD PTR <span class="o">[</span>rbp-0x4],eax
+41:	c7 05 00 00 00 00 01 	mov    DWORD PTR <span class="o">[</span>rip+0x0],0x1        <span class="c"># 4b &lt;main+0x4b&gt;</span>
+48:	00 00 00
+4b:	b8 00 00 00 00       	mov    eax,0x0
+50:	c9                   	leave
+51:	c3                   	ret
+</code></pre></div></div>
+<p>上述是<code class="highlighter-rouge">main</code>函数的汇编指令，我们发现在第#35行，有一个<code class="highlighter-rouge">call</code>的指令，参考<code class="highlighter-rouge">main</code>函数的源码可知，这个指令是用来调用<code class="highlighter-rouge">add_and_multiply</code>函数的，但是由于这个<code class="highlighter-rouge">.o</code>中<code class="highlighter-rouge">_add_and_multiply</code>符号未知，<code class="highlighter-rouge">call</code>变成调用自己，显然是不正确的。因此，我们可以猜想在最终的binary中，这行指令应该会发生变化，linker会对符号进行解析和地址绑定。</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$gcc</span> <span class="k">function</span>.c mian.c <span class="nt">-o</span> demoApp
+<span class="nv">$objdump</span> <span class="nt">-D</span> demoApp
+
+0000000000400540 main:
+  400540:	55                   	push   rbp
+  400541:	48 89 e5             	mov    rbp,rsp
+  400544:	48 83 ec 20          	sub    rsp,0x20
+  400548:	f3 0f 10 05 d4 00 00 	movss  xmm0,DWORD PTR <span class="o">[</span>rip+0xd4]        <span class="c"># 400624 &lt;_IO_stdin_used+0x4&gt;</span>
+  40054f:	00
+  400550:	f3 0f 11 45 f4       	movss  DWORD PTR <span class="o">[</span>rbp-0xc],xmm0
+  400555:	f3 0f 10 05 cb 00 00 	movss  xmm0,DWORD PTR <span class="o">[</span>rip+0xcb]        <span class="c"># 400628 &lt;_IO_stdin_used+0x8&gt;</span>
+  40055c:	00
+  40055d:	f3 0f 11 45 f8       	movss  DWORD PTR <span class="o">[</span>rbp-0x8],xmm0
+  400562:	f3 0f 10 45 f8       	movss  xmm0,DWORD PTR <span class="o">[</span>rbp-0x8]
+  400567:	8b 45 f4             	mov    eax,DWORD PTR <span class="o">[</span>rbp-0xc]
+  40056a:	0f 28 c8             	movaps xmm1,xmm0
+  40056d:	89 45 ec             	mov    DWORD PTR <span class="o">[</span>rbp-0x14],eax
+  400570:	f3 0f 10 45 ec       	movss  xmm0,DWORD PTR <span class="o">[</span>rbp-0x14]
+  400575:	e8 80 ff ff ff       	call   4004fa add_and_multiply
+  40057a:	66 0f 7e c0          	movd   eax,xmm0
+  40057e:	89 45 <span class="nb">fc             	</span>mov    DWORD PTR <span class="o">[</span>rbp-0x4],eax
+  400581:	c7 05 a9 0a 20 00 01 	mov    DWORD PTR <span class="o">[</span>rip+0x200aa9],0x1        <span class="c"># 601034 &lt;nCompletionStatus&gt;</span>
+  400588:	00 00 00
+  40058b:	b8 00 00 00 00       	mov    eax,0x0
+  400590:	c9                   	leave
+  400591:	c3                   	ret
+  400592:	66 2e 0f 1f 84 00 00 	nop    WORD PTR cs:[rax+rax<span class="k">*</span>1+0x0]
+  400599:	00 00 00
+  40059c:	0f 1f 40 00          	nop    DWORD PTR <span class="o">[</span>rax+0x0]
+</code></pre></div></div>
+<p>对比两段汇编代码，不难发现，前者的BaseAddress是<code class="highlighter-rouge">0000000000000000</code>，每条汇编指令前面的数字是该指令的offset。而后者的BaseAddreess变成了<code class="highlighter-rouge">0000000000400540</code>，说明Linker对每个目标文件的汇编指令做了地址修正，另外，<code class="highlighter-rouge">call</code>指令后的符号变成了我们期望的函数符号<code class="highlighter-rouge">add_and_multiply</code>，地址为<code class="highlighter-rouge">4004fa</code>。说明Linker完成的符号和地址的绑定。</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>00000000004004fa &lt;add_and_multiply&gt;:
+4004fa:	55                   	push   rbp
+4004fb:	48 89 e5             	mov    rbp,rsp
+...
+40051a:	f3 0f 10 45 e4       	movss  xmm0,DWORD PTR <span class="o">[</span>rbp-0x1c]
+40051f:	e8 b2 ff ff ff       	call   4004d6 &lt;add&gt;
+400524:	66 0f 7e c0          	movd   eax,xmm0
+...
+40053e:	c9                   	leave
+40053f:	c3                   	ret
+</code></pre></div></div>
+
+<p>另一关于Code Modification比较好的例子是<strong>Linkers and loaders</strong>这本书中的例子，假设某个目标文件在编译完后有下面x86的一段汇编代码</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A1 34 12 00 00 mov a, %eax
+A3 00 00 00 00 mov %eax, b
+</code></pre></div></div>
+<p>这两行代码的意思是将<code class="highlighter-rouge">a</code>中的值通过寄存器赋值给<code class="highlighter-rouge">b</code>。其中每行指令由一个opcode + 4字节的地址组成，由于<code class="highlighter-rouge">a</code>位于该目标文件内，地址为<code class="highlighter-rouge">0x1234</code>，由于x86使用的是right-to-left order，因此<code class="highlighter-rouge">a</code>的地址表示为<code class="highlighter-rouge">34 12 00 00</code>。<code class="highlighter-rouge">b</code>是一个import进来的变量，在编译时，编译器并不知道<code class="highlighter-rouge">b</code>在哪里，因此地址为<code class="highlighter-rouge">00 00 00 00 </code>。</p>
+
+<p>当link完成后，假设<code class="highlighter-rouge">a</code>所在的text段的偏移量为<code class="highlighter-rouge">0x1000</code>，因此<code class="highlighter-rouge">a</code>的地址变成了<code class="highlighter-rouge">0x11234</code>而<code class="highlighter-rouge">b</code>所在的地址为<code class="highlighter-rouge">0x9A12</code>，则上述两条指令会被linker改写为</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>A1 34 12 10 00 mov a, %eax
+A3 12 9A 00 00 mov %eax, b
+</code></pre></div></div>
+
+<p>当Relocation完成后，每个section和symbol的虚拟内存地址也就确定了，至此linker的任务也就完成了。</p>
+
+<h2 id="loaders">Loaders</h2>
+
+<p>现在我们已经有了一个link好的binary文件了，当我们执行它的时候，Loader会将binary中的section按照一定规则加载到内存中。实际上Loader的工作就这么简单，但是所谓的“一定规则”确又很复杂，具体来说Loader面临的挑战主要是如何为每个可执行文件找到一片连续的内存空间。解决这个问题有两个办法，一个是使用内存分段，一个是使用内存分页</p>
+
+<h3 id="segmentation">Segmentation</h3>
+
+<p>内存分段的思路很简单，就是找出一段连续的物理内存，然后和虚拟内存进行映射得到虚拟内存地址，再将这个地址分给被load的binary。这种思路虽然简单，但有一个很大的问题就是内存碎片。如下图所示，当C程序退出后，释放的128MB内存成了不连续的空间，当有loader要加载D程序时，会发现没有足够的连续内存空间可以使用。</p>
+
+<p><img class="md-img-center" src="/assets/images/2015/01/loader-1.png" /></p>
+
+<p>解决这个问题，可以使用内存的置换技术，即将程序B先写入到硬盘，释放内存空间来装在D，当D装载完成后，再将B读入到内存中。但是由于内存置换的成本极高，硬盘访问的速度要比内存慢太多，因此这种方案有很大的性能问题。</p>
+
+<h3 id="paging">Paging</h3>
+
+<p>为了解决内存碎片和交换问题，现代操作系统采用了内存分页的技术。它将物理内存和虚拟内存均切分成4KB大小的一页。由于数据量小，这种切分带来的好处在于内存置换的成本变低了。</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>getconf PAGE_SIZE <span class="c">#4096</span>
+</code></pre></div></div>
+
+<p>进一步讲，当程序加载时，loader不需要将程序一次性加载到物理内存中，而是可以按需加载，当需要用到虚拟内存里的指令和数据时，操作系统触发CPU的缺页错误，然后触发加载虚拟内存中的页到物理内存。</p>
+
+<p>这并不是说一段连续完整程序可以被零散的映射物理内存中，程序的寻址空间在内存中依旧是一段连续的区域，只不过当出现内存碎片或者物理内存不足时，系统进行内存置换的成本变小了(因为置换现在是以4KB为单位，速度变快了)。如下图中，当程序A试图加载第三片虚拟内存到物理内存中时，会触发系统的内存置换</p>
+
+<p><img class="md-img-center" src="/assets/images/2015/01/loader-2.png" /></p>
+
+<p>总的来说loader可以将程序和物理内存隔离开，然程序不需要考虑实际的物理内存地址，大小和分配方案，大大降低了程序编写复杂度。</p>
+
+<h3 id="executable">Executable</h3>
+
+<p>当loader将程序完全加载到内存中后，程序就可以运行了。如果从C/C++程序的角度看，那么程序的入口应该就是main函数，而如果从loaders的角度看，则在main函数执行之前程序就已经start了。我们还是通过反汇编上面的<code class="highlighter-rouge">demoApp</code>来观察</p>
+
+<blockquote>
+  <p>注意，这里的<code class="highlighter-rouge">demoApp</code>依旧是ELF格式</p>
+</blockquote>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Disassembly of section .text:
+
+00000000004003e0 &lt;_start&gt;:
+  4003e0:	31 ed                	xor    %ebp,%ebp
+  4003e2:	49 89 d1             	mov    %rdx,%r9
+  4003e5:	5e                   	pop    %rsi
+  4003e6:	48 89 e2             	mov    %rsp,%rdx
+  4003e9:	48 83 e4 f0          	and    <span class="nv">$0xfffffffffffffff0</span>,%rsp
+  4003ed:	50                   	push   %rax
+  4003ee:	54                   	push   %rsp
+  4003ef:	49 c7 c0 10 06 40 00 	mov    <span class="nv">$0x400610</span>,%r8
+  4003f6:	48 c7 c1 a0 05 40 00 	mov    <span class="nv">$0x4005a0</span>,%rcx
+  4003fd:	48 c7 c7 40 05 40 00 	mov    <span class="nv">$0x400540</span>,%rdi
+  400404:	e8 b7 ff ff ff       	callq  4003c0 &lt;__libc_start_main@plt&gt;
+  400409:	f4                   	hlt
+  40040a:	66 0f 1f 44 00 00    	nopw   0x0<span class="o">(</span>%rax,%rax,1<span class="o">)</span>
+</code></pre></div></div>
+<p>我们看到代码段(text section)的第一个函数是<code class="highlighter-rouge">_start</code>，这个函数最后又调用了<code class="highlighter-rouge">__libc_start_main</code>函数。我们先看看这个函数的原型</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">__libc_start_main</span><span class="p">(</span>
+    <span class="kt">int</span> <span class="o">*</span><span class="p">(</span><span class="n">main</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span> <span class="o">*</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span> <span class="o">*</span><span class="p">),</span>  <span class="cm">/* address of main function */</span>
+    <span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> 
+    <span class="kt">char</span> <span class="o">*</span> <span class="o">*</span> <span class="n">ubp_av</span><span class="p">,</span> 
+    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">init</span><span class="p">)</span> <span class="p">(</span><span class="kt">void</span><span class="p">),</span> <span class="cm">/* address of init function */</span>
+    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">fini</span><span class="p">)</span> <span class="p">(</span><span class="kt">void</span><span class="p">),</span> 
+    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">rtld_fini</span><span class="p">)</span> <span class="p">(</span><span class="kt">void</span><span class="p">),</span> 
+    <span class="kt">void</span> <span class="p">(</span><span class="o">*</span> <span class="n">stack_end</span><span class="p">));</span>
+</code></pre></div></div>
+<p>这个函数的定义在libc中，由于篇幅有限，源码就不展开分析了，但是我们可以大致猜到它的作用，即初始化程序进程中的环境变量，为main函数的执行做准备，比如某个类的构造函数使用了<code class="highlighter-rouge">__attribute__((constructor))</code>这种keyword，那么在main函数执行前，自定义的初始化逻辑将被执行。</p>
+
+<h3 id="小结">小结</h3>
+
+<p>到目前为止，我们已经对linkers和loaders有了一些直观的感觉，当然这些感觉还很表面，很多细节问题还不是很清楚，比如Symbol Resolution的具体过程是怎样的，Relocation时偏移地址是如何计算的，动态库是如何加载的，等等。我们将在后面逐步讨论这些问题</p>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://www.amazon.com/Linkers-Kaufmann-Software-Engineering-Programming/dp/1558604960">Linkers and Loaders</a></li>
+  <li><a href="https://www.amazon.com/Advanced-C-Compiling-Milan-Stevanovic/dp/1430266678">Advanced C and C++ compiling</a>
+    <h3 id="nm命令"><code class="highlighter-rouge">nm</code>命令</h3>
+  </li>
+</ul>
+
+<blockquote>
+  <p>注意，<code class="highlighter-rouge">nm</code>命令不会列出DLL的entry point，除非有和它关联的符号表。</p>
+</blockquote>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- A :absolute symbol, global
+- a :absolute symbol, local
+- B :uninitialized data (bss), global
+- b :uninitialized data (bss), local
+- D :initialized data, global
+- d :initialized data, local
+- F :file name
+- l :line number entry (see -a option)
+- N :no defined type, global; this is an unspecified type, compared to the undefined type U
+- n :no defined type, local; this is an unspecified type, compared to the undefined type U
+- S :section symbol, global
+- s :section symbol, local
+- T :text symbol, global
+- t :text symbol, local (static)
+- U :undefined symbol
+- ? :unknown symbol
+</code></pre></div></div>
+
+:ET

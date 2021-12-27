@@ -1,0 +1,249 @@
+I"�q<h3 id="require函数">require函数</h3>
+
+<p>Node.js采用CommonJS规范，每个文件就是一个模块，有自己的作用域。在一个文件里面定义的变量、函数、类，都是私有的，对其他文件不可见。每个模块内部，<code class="highlighter-rouge">module</code>变量代表当前模块。这个变量是一个对象，它的<code class="highlighter-rouge">exports</code>属性（即<code class="highlighter-rouge">module.exports</code>）是对外的接口。加载某个模块，其实是加载该模块的<code class="highlighter-rouge">module.exports</code>属性。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//module1.js</span>
+<span class="kd">function</span> <span class="nx">greet</span><span class="p">(){</span>
+    <span class="nx">consolo</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">greet!</span><span class="dl">'</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">greet</span><span class="p">;</span>
+
+<span class="c1">//app.js</span>
+<span class="kd">var</span> <span class="nx">greet</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./module1.js</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">greet</span><span class="p">();</span> <span class="c1">//greet!</span>
+</code></pre></div></div>
+<p>上面例子中，<code class="highlighter-rouge">module.exports</code>返回的是一个函数对象</p>
+
+<h3 id="module对象">module对象</h3>
+
+<p>每个JS文件内部都有一个<code class="highlighter-rouge">module</code>对象，代表当前模块，<code class="highlighter-rouge">module</code>它的原型是<code class="highlighter-rouge">Module</code>。猜想<code class="highlighter-rouge">module</code>对象创建的过程为：</p>
+
+<ol>
+  <li>当编译<code class="highlighter-rouge">require</code>时，找到<code class="highlighter-rouge">.js</code>文件，<code class="highlighter-rouge">Module</code>会为其生成一个<code class="highlighter-rouge">id</code>并注册到一个全局对象中维护</li>
+  <li>创建<code class="highlighter-rouge">module</code>对象和该<code class="highlighter-rouge">id</code>绑定</li>
+  <li>编译该<code class="highlighter-rouge">.js</code>文件时，从<code class="highlighter-rouge">id</code>索引到<code class="highlighter-rouge">module</code>对象</li>
+</ol>
+
+<p>我们先写一个空的<code class="highlighter-rouge">module</code>，观察其所有属性：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">module</span><span class="p">);</span>
+
+<span class="cm">/*
+Module {
+  id: '.',
+  exports: {},
+  parent: null,
+  filename: '/home/user/path/to/module.js',
+  loaded: false,
+  children: [],
+  paths:[...]
+}
+*/</span>
+</code></pre></div></div>
+<p>各属性其含义如下：
+(1) <code class="highlighter-rouge">module.id</code>: 模块的识别符，通常是带有绝对路径的模块文件名。
+(2) <code class="highlighter-rouge">module.filename</code> 模块的文件名，带有绝对路径。
+(3) <code class="highlighter-rouge">module.loaded</code> 返回一个布尔值，表示模块是否已经完成加载。
+(4) <code class="highlighter-rouge">module.parent</code> 返回一个对象，表示调用该模块的模块，当该模块被<code class="highlighter-rouge">require</code>时，<code class="highlighter-rouge">parent</code>指向<code class="highlighter-rouge">require</code>该模块的模块
+(5) <code class="highlighter-rouge">module.children</code> 返回一个数组，表示该模块要用到的其他模块。例如，当前模块<code class="highlighter-rouge">require</code>了3个其它模块，那么<code class="highlighter-rouge">children</code>数组的值为这3个模块对象
+(6) <code class="highlighter-rouge">module.exports</code> 表示模块对外输出的值。</p>
+
+<h3 id="require-behind-sence">Require Behind Sence</h3>
+
+<p>有了前面的铺垫，接下来我们可以分析Node.js中实现<code class="highlighter-rouge">require</code>函数的源码</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//module1.js</span>
+<span class="kd">function</span> <span class="nx">greet</span><span class="p">(){</span>
+    <span class="nx">consolo</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">greet!</span><span class="dl">'</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">greet</span><span class="p">;</span>
+
+<span class="c1">//app.js</span>
+<span class="kd">var</span> <span class="nx">greet</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./module1.js</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">greet</span><span class="p">();</span> 
+</code></pre></div></div>
+
+<p>接下来从<code class="highlighter-rouge">app.js</code>的第一句开始，前面已经提到<code class="highlighter-rouge">require</code>并非是一个编译器的预处理符号，而是一个函数，需要被解释器解释执行，可以在<code class="highlighter-rouge">require</code>处打一个断点，观察Nodejs的执行过程。</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="kd">var</span> <span class="nx">greet</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./module1</span><span class="dl">'</span><span class="p">);</span>
+  <span class="nx">greet</span><span class="p">();</span>
+</code></pre></div></div>
+<p>断点后，首先进入内部的<code class="highlighter-rouge">require</code>函数，传入path为当前文件的路径</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kd">function</span> <span class="nx">require</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="nx">exports</span><span class="p">.</span><span class="nx">requireDepth</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nx">mod</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="nx">path</span><span class="p">);</span> <span class="c1">//返回mod.require,path是当前文件路径</span>
+    <span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+      <span class="nx">exports</span><span class="p">.</span><span class="nx">requireDepth</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</code></pre></div></div>
+
+<p>我们最终得到的<code class="highlighter-rouge">var greet</code>就是<code class="highlighter-rouge">mod.require(path);</code>这个函数的返回值，继续看看这个函数干了什么事情</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Loads a module at the given file path. Returns that module's</span>
+<span class="c1">// `exports` property.</span>
+<span class="nx">Module</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">require</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">assert</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="dl">'</span><span class="s1">missing path</span><span class="dl">'</span><span class="p">);</span>
+  <span class="nx">assert</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">path</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">string</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">path must be a string</span><span class="dl">'</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">Module</span><span class="p">.</span><span class="nx">_load</span><span class="p">(</span><span class="nx">path</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span> <span class="cm">/* isMain */</span> <span class="kc">false</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>从这个函数的注释中可知，该函数会加载<code class="highlighter-rouge">path</code>文件中所有的module，并返回它们的<code class="highlighter-rouge">exports</code>成员，因此<code class="highlighter-rouge">var greet</code>的值间接来自<code class="highlighter-rouge">Module._load</code>的返回值。除此之外，这个函数并未做其它事情，而是直接调用了<code class="highlighter-rouge">Module._load</code>函数</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Check the cache for the requested file.</span>
+<span class="c1">// 1. If a module already exists in the cache: return its exports object.</span>
+<span class="c1">// 2. If the module is native: call `NativeModule.require()` with the</span>
+<span class="c1">//    filename and return the result.</span>
+<span class="c1">// 3. Otherwise, create a new module for the file and save it to the cache.</span>
+<span class="c1">//    Then have it load  the file contents before returning its exports</span>
+<span class="c1">//    object.</span>
+<span class="nx">Module</span><span class="p">.</span><span class="nx">_load</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">parent</span><span class="p">,</span> <span class="nx">isMain</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">//1. check cache</span>
+    <span class="c1">//2. check native</span>
+    <span class="c1">//3. create a new module</span>
+    <span class="c1">//filename : "xxxx/module1.js"</span>
+    <span class="c1">//parent: "xxxx/app.js"</span>
+    <span class="kd">var</span> <span class="nx">module</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Module</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">parent</span><span class="p">);</span>
+    <span class="c1">//...</span>
+    <span class="nx">Module</span><span class="p">.</span><span class="nx">_cache</span><span class="p">[</span><span class="nx">filename</span><span class="p">]</span> <span class="o">=</span> <span class="nx">module</span><span class="p">;</span>
+    <span class="nx">tryModuleLoad</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">filename</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>省略掉一些代码，注释上看，这个函数只做三件事，检查缓存中是否有这个module，检查该module是否是NativeModule，所谓NativeModule是Node.js中V8部分的C++代码，显然，这里的<code class="highlighter-rouge">module1.js</code>不是NativeModule，于是走到了第三步，创建一个新的JS Module，两个参数分别为<code class="highlighter-rouge">module1.js</code>的路径和当前<code class="highlighter-rouge">app.js</code>文件的路径。</p>
+
+<p><mark>这个函数很关键，从这里开始，便有了module对象</mark>，而在创建完module后，将其放入了全局的<code class="highlighter-rouge">Module._cache</code>中，但此时创建的<code class="highlighter-rouge">module</code>对象是个空壳，如果访问<code class="highlighter-rouge">module.exports</code>返回的是一个空对象，因此接下来需要执行load module的操作即<code class="highlighter-rouge">tryModuleLoad</code>函数，最后将制作好的<code class="highlighter-rouge">module.exports</code>对象返回给<code class="highlighter-rouge">var greet</code>对象。</p>
+
+<p>到这里基本流程就走完了，但实际上<code class="highlighter-rouge">tryModuleLoad</code>的实现非常复杂，其大概思路为读取<code class="highlighter-rouge">module1.js</code>中的代码，调用JavasScript Core的Native代码(V8)进行求值后返回。对此感兴趣的同学可继续阅读附录中的内容，不想了解细节的同学，看到这里也就足够了。</p>
+
+<h3 id="more-on-require">More on Require</h3>
+
+<p>如果被require的文件过多，可以将他们放到文件夹中，并创建一个<code class="highlighter-rouge">index.js</code>文件用来索引其它被<code class="highlighter-rouge">require</code>的文件。假设文件结构如下</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>├── app.js
+├── greet
+│   ├── English.js
+│   ├── Spanish.js
+│   ├── config.json
+│   └── index.js
+</code></pre></div></div>
+
+<p>在<code class="highlighter-rouge">app.js</code>中可以通过<code class="highlighter-rouge">require './greet'</code>来间接应用<code class="highlighter-rouge">English.js</code>和<code class="highlighter-rouge">Spanish.js</code>两个Module，<code class="highlighter-rouge">require './greet'</code>会调用默认<code class="highlighter-rouge">require './greet/index.js'</code>：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//index.js</span>
+<span class="kd">var</span> <span class="nx">e</span> <span class="o">=</span> <span class="nx">require</span> <span class="p">(</span><span class="dl">'</span><span class="s1">./English</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nx">require</span> <span class="p">(</span><span class="dl">'</span><span class="s1">./Spanish</span><span class="dl">'</span><span class="p">)</span>
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">english</span><span class="p">:</span><span class="nx">e</span><span class="p">,</span>
+    <span class="na">spanish</span><span class="p">:</span><span class="nx">s</span>
+<span class="p">}</span>
+<span class="c1">//app.js</span>
+<span class="kd">var</span> <span class="nx">greet</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">./greet</span><span class="dl">'</span><span class="p">)</span>
+<span class="nx">greet</span><span class="p">.</span><span class="nx">english</span><span class="p">();</span>
+<span class="nx">greet</span><span class="p">.</span><span class="nx">spanish</span><span class="p">();</span>
+</code></pre></div></div>
+
+<h3 id="native-modules">Native Modules</h3>
+
+<p>上面我们分析了<code class="highlighter-rouge">require</code>的内部实现，其中在<code class="highlighter-rouge">module.load</code>的函数中，我们发现Node.js可以load native的module，其源码为：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Module</span><span class="p">.</span><span class="nx">_load</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">request</span><span class="p">,</span> <span class="nx">parent</span><span class="p">,</span> <span class="nx">isMain</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">//...</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">NativeModule</span><span class="p">.</span><span class="nx">nonInternalExists</span><span class="p">(</span><span class="nx">filename</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nx">debug</span><span class="p">(</span><span class="dl">'</span><span class="s1">load native module %s</span><span class="dl">'</span><span class="p">,</span> <span class="nx">request</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">NativeModule</span><span class="p">.</span><span class="nx">require</span><span class="p">(</span><span class="nx">filename</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="c1">///....</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>因此我们可以尝试在Node.js中require Native的Module，可以到Node.js的文档中找到所有的Native Module，可以随便尝试一个</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">util</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">utl</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">name</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">Tony</span><span class="dl">"</span><span class="p">;</span>
+<span class="c1">//看起来像C的print</span>
+<span class="kd">var</span> <span class="nx">greeting</span> <span class="o">=</span> <span class="nx">util</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="dl">'</span><span class="s1">Hello, %s</span><span class="dl">'</span><span class="p">,</span><span class="nx">name</span><span class="p">);</span>
+<span class="nx">util</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">greeting</span><span class="p">);</span> <span class="c1">//10 Mar 01:56:23 - Hello, Tony</span>
+</code></pre></div></div>
+<p>需要注意的是，在<code class="highlighter-rouge">require</code> native module时，不需要指定路径和后缀名，如果有同名的js module，在require的时候需要加上路径，例如<code class="highlighter-rouge">require('path/util')</code></p>
+
+<h3 id="小结">小结</h3>
+
+<ol>
+  <li>所有代码都运行在模块作用域，不会污染全局作用域。</li>
+  <li>模块可以多次加载，但是只会在第一次加载时运行一次，然后运行结果就被缓存了，以后再加载，就直接读取缓存结果。要想让模块再次运行，必须清除缓存。</li>
+  <li>模块加载的顺序，按照其在代码中出现的顺序。</li>
+</ol>
+
+<h3 id="es6-syntax">ES6 Syntax</h3>
+
+<p>在ES6中，<code class="highlighter-rouge">require</code>和<code class="highlighter-rouge">module.exports</code>变成了<code class="highlighter-rouge">export</code>和<code class="highlighter-rouge">import</code>，例如</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//module1.js</span>
+<span class="k">export</span> <span class="kd">function</span> <span class="nx">greet</span><span class="p">(){</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Greeting!</span><span class="dl">"</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//app.js</span>
+<span class="k">import</span> <span class="o">*</span> <span class="k">as</span> <span class="nx">greeter</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">greet</span><span class="dl">'</span><span class="p">;</span>
+<span class="nx">greeter</span><span class="p">.</span><span class="nx">greet</span><span class="p">();</span>
+</code></pre></div></div>
+
+<h3 id="附录-tryloadmodule的实现">附录 tryLoadModule的实现</h3>
+
+<p><code class="highlighter-rouge">tryLoadModule</code>首先会执行<code class="highlighter-rouge">module.load</code>函数，如下</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">Module</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">load</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">//....</span>
+  <span class="kd">var</span> <span class="nx">extension</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">extname</span><span class="p">(</span><span class="nx">filename</span><span class="p">)</span> <span class="o">||</span> <span class="dl">'</span><span class="s1">.js</span><span class="dl">'</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">Module</span><span class="p">.</span><span class="nx">_extensions</span><span class="p">[</span><span class="nx">extension</span><span class="p">])</span> <span class="nx">extension</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">.js</span><span class="dl">'</span><span class="p">;</span>
+  <span class="nx">Module</span><span class="p">.</span><span class="nx">_extensions</span><span class="p">[</span><span class="nx">extension</span><span class="p">](</span><span class="k">this</span><span class="p">,</span> <span class="nx">filename</span><span class="p">);</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">loaded</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+  <span class="c1">//...</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">extension</code>为Module文件类型，如果没有指定，则默认为<code class="highlighter-rouge">.js</code>，另外运行时可以看到<code class="highlighter-rouge">Module._extensions</code>可支持的文件类型有三种，<code class="highlighter-rouge">.js/.json/.node</code>。每种类型的文件，对应一个解析的API，接下来会执行<code class="highlighter-rouge">Module.extensions[.js](this,filename)</code></p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Native extension for .js</span>
+<span class="nx">Module</span><span class="p">.</span><span class="nx">_extensions</span><span class="p">[</span><span class="dl">'</span><span class="s1">.js</span><span class="dl">'</span><span class="p">]</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">module</span><span class="p">,</span> <span class="nx">filename</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">content</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="dl">'</span><span class="s1">utf8</span><span class="dl">'</span><span class="p">);</span>
+  <span class="nx">module</span><span class="p">.</span><span class="nx">_compile</span><span class="p">(</span><span class="nx">internalModule</span><span class="p">.</span><span class="nx">stripBOM</span><span class="p">(</span><span class="nx">content</span><span class="p">),</span> <span class="nx">filename</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>这个函数首先读取了<code class="highlighter-rouge">module1.js</code>中的代码，接下来调用<code class="highlighter-rouge">module._compile</code>对这部分代码做了一些预处理，具体为</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">NativeModule</span><span class="p">.</span><span class="nx">wrap</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">script</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">NativeModule</span><span class="p">.</span><span class="nx">wrapper</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="nx">script</span> <span class="o">+</span> <span class="nx">NativeModule</span><span class="p">.</span><span class="nx">wrapper</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="p">};</span>
+
+<span class="nx">NativeModule</span><span class="p">.</span><span class="nx">wrapper</span> <span class="o">=</span> <span class="p">[</span>
+<span class="dl">'</span><span class="s1">(function (exports, require, module, __filename, __dirname) { </span><span class="dl">'</span><span class="p">,</span>
+<span class="dl">'</span><span class="se">\n</span><span class="s1">});</span><span class="dl">'</span>
+<span class="p">];</span>
+</code></pre></div></div>
+
+<p>这里很有意思，所谓的<code class="highlighter-rouge">module._compile</code>实际上是将module中的代码包装了一层变为了IIFE的形式</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">require</span><span class="p">,</span> <span class="nx">module</span><span class="p">,</span> <span class="nx">__filename</span><span class="p">,</span> <span class="nx">__dirname</span><span class="p">){</span>
+    <span class="kd">function</span> <span class="nx">greet</span><span class="p">(){</span>
+        <span class="nx">consolo</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">greet!</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">greet</span><span class="p">;</span>
+<span class="p">})</span>
+</code></pre></div></div>
+<p>接着将包装后的代码丢给 <code class="highlighter-rouge">vm.js</code>中的<code class="highlighter-rouge">runInThisContext</code>来执行，该函数用来和V8通信，返回一个<code class="highlighter-rouge">compilerWrapper</code>的对象，该对象会来执行<code class="highlighter-rouge">module1.js</code>中的代码, 即<code class="highlighter-rouge">module.exports = greet</code></p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//参数this.exports即为module.exports</span>
+<span class="nx">result</span> <span class="o">=</span> <span class="nx">compiledWrapper</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">exports</span><span class="p">,</span> <span class="nx">require</span><span class="p">,</span> <span class="k">this</span><span class="p">,</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">dirname</span><span class="p">);</span>
+
+<span class="c1">//module1.js</span>
+<span class="kd">function</span> <span class="nx">greet</span><span class="p">(){</span>
+    <span class="nx">consolo</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">greet!</span><span class="dl">'</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="o">&gt;</span> <span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="nx">greet</span><span class="p">;</span> <span class="c1">//执行这一句</span>
+</code></pre></div></div>
+
+:ET

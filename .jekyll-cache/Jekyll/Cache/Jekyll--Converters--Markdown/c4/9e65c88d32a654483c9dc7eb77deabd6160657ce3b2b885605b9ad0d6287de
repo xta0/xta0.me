@@ -1,0 +1,57 @@
+I"<p>最近被迫在大量的使用__unsafe_unretained pointer，用起来坑太多了
+先看一段必然会crash的代码：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Do any additional setup after loading the view.</span>
+ <span class="n">_welcomeView</span> <span class="o">=</span> <span class="p">[[</span><span class="n">ATCSearchLivingWelcomeView</span> <span class="nf">alloc</span><span class="p">]</span><span class="nf">initWithFrame</span><span class="p">:</span><span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">)];</span>
+ <span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">view</span> <span class="nf">addSubview</span><span class="p">:</span><span class="n">_welcomeView</span><span class="p">];</span>
+ 
+ <span class="n">__unsafe_unretained</span> <span class="n">MXSecondViewController</span><span class="o">*</span> <span class="n">unsafeSelf</span> <span class="o">=</span> <span class="n">self</span><span class="p">;</span>
+ <span class="p">[</span><span class="n">_welcomeView</span> <span class="nf">startAnimatingWithCompletionBlock</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
+     <span class="p">[</span><span class="n">unsafeSelf</span> <span class="nf">internalMethod</span><span class="p">];</span>
+ <span class="p">}];</span>
+</code></pre></div></div>
+
+<p>假设welcomeView的animation执行10秒，那么animation结束前，释放controller，必然会crash。原因也很简单，由于<code class="highlighter-rouge">unsafeSelf</code>的类型是<code class="highlighter-rouge">__unsafe_unretained</code>的，那么它所指向的对象在dealloc之后，自己也不会<code class="highlighter-rouge">nil</code>，因此，<code class="highlighter-rouge">unsafeSelf</code>变成了野指针。</p>
+
+<p>通常这种问题解决的办法是当controller dealloc的时候将回调的block手动释放：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">dealloc</span><span class="p">{</span>
+    <span class="n">_welcomeView</span><span class="p">.</span><span class="n">block</span> <span class="o">=</span> <span class="nb">nil</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>但是这种方法治标不治本而已，总不能将block全部暴露出来手动释放一遍，因此，我们需要一种通用的解决方法。</p>
+
+<p>我们先来分析下，问题产生的原因：</p>
+
+<p>多数情况下使用<code class="highlighter-rouge">__unsafe_unretained</code>指针是由于在iOS5.0下无法使用<code class="highlighter-rouge">__weak</code>，但又要解决使用block产生的retain-cycle。就上面那个例子来说，对象间的引用关系如左图，当Controller释放后，对象间关系变成了右图：</p>
+
+<div class="md-flex-h">
+<div><img src="/assets/images/2013/11/retain-1.png" /></div>
+<div class="md-margin-left-12"><img src="/assets/images/2013/11/retain-2.png" /></div>
+</div>
+
+<p>解决这个问题，一种通用的解决方案来是mike ash的这边文章<a href="http://www.mikeash.com/pyblog/friday-qa-2010-07-16-zeroing-weak- references-in-objective-c.html">MAZeroingWeakRef</a>。</p>
+
+<p>使用方法如下：</p>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">MXT_ZeroingWeakRef</span><span class="o">*</span> <span class="n">ref</span> <span class="o">=</span> <span class="p">[[</span><span class="n">MXT_ZeroingWeakRef</span> <span class="nf">alloc</span><span class="p">]</span><span class="nf">initWithTarget</span><span class="p">:</span><span class="n">self</span><span class="p">];</span>
+<span class="p">[</span><span class="n">_welcomeView</span> <span class="nf">startAnimatingWithCompletionBlock</span><span class="p">:</span><span class="o">^</span><span class="p">{</span>
+
+    <span class="p">[</span><span class="n">ref</span><span class="p">.</span><span class="n">target</span> <span class="nf">internalMethod</span><span class="p">];</span>
+<span class="p">}];</span>
+</code></pre></div></div>
+<p>MXT_ZeroingWeakRef是我对MAZeroingWeakRef的精简和改写，去掉了CoreFoundation对象的兼容。但是思路基本上是一致的。这种用法和C++0x或BOOST库中的智能指针类似：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">weak_ptr</span><span class="o">&lt;</span><span class="n">DataBase</span><span class="o">&gt;</span> <span class="n">DBObserver</span> <span class="o">=</span> <span class="n">self</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>里面实现的思路有些绕，确实要花一点时间才能把它完全理清楚。最关键的一点是”isa-swizzling”，也就是apple实现<a href="/blog/?p=18">KVO</a>的办法，理解了这个，剩下的就迎刃而解了。</p>
+
+<h2 id="further-reading">Further Reading</h2>
+
+<ul>
+  <li><a href="https://mikeash.com/pyblog/introducing-mazeroingweakref.html">Introduce to MAZeroingWeakRef</a></li>
+  <li><a href="https://github.com/mikeash/MAZeroingWeakRef">Github MAZeroingWeakRef</a></li>
+</ul>
+:ET

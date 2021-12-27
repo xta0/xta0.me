@@ -1,0 +1,253 @@
+I"��<p>如果有某种数据需要被两个线程共享，如果该数据是<code class="highlighter-rouge">read-only</code>则没有问题，如果是可读写的，则会有几率出现<code class="highlighter-rouge">race condition</code>的情况，即一个线程在进行读操作时，另一个线程在进行写操作，这时对于读操作的线程将有机率读到不完整的数据。共享数据对于多线程来说是一个很经典的问题，解决这个问题的办法有很多种，比如设计无锁的数据结构，使用原子操作等，这些将在后面的文章中做具体分析，本节将先介绍最基本的互斥锁</p>
+
+<h3 id="使用mutex">使用mutex</h3>
+
+<p><strong>互斥(mutex exclusive)</strong>是指当某个线程已经获得某个数据的控制权时，其它线程如果想访问该数据只能等待前面线程释放控制权。具体来说，当某线程需要访问共享数据时，首先需要lock the mutex associated with the data，当访问完成时，unlock the mutex。但实际情况往往并不是这么简单，后面我们会分析种种情况。</p>
+
+<p>C++中提供了<code class="highlighter-rouge">std::mutex</code>类来操作mutex，但实际应用中并不建议直接操纵<code class="highlighter-rouge">mutex</code>对象，因为<code class="highlighter-rouge">unlock()</code>操作很难覆盖所有代码执行的路径，尤其是当出现异常的情况，可能会导致mutex无法被<code class="highlighter-rouge">unlock()</code>。常见的做法是使用上面曾介绍过的RAII技术，将<code class="highlighter-rouge">mutex</code>与某个对象的声明周期进行绑定，而C++ 11恰好提供了这样一个类<code class="highlighter-rouge">std::lock_guard</code>：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">some_list</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">mutex</span> <span class="n">some_mutex</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">write</span><span class="p">(</span><span class="kt">int</span> <span class="n">new_values</span><span class="p">){</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">guard</span><span class="p">(</span><span class="n">some_mutex</span><span class="p">);</span>
+    <span class="n">some_list</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">new_values</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="kt">bool</span> <span class="nf">find</span><span class="p">(</span><span class="kt">int</span> <span class="n">value_to_find</span><span class="p">){</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">guard</span><span class="p">(</span><span class="n">some_mutex</span><span class="p">);</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">find</span><span class="p">(</span><span class="n">some_list</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">some_list</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">value_to_find</span><span class="p">)</span> <span class="o">!=</span> <span class="n">some_list</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>上面是一个简单的使用mutex的例子，当<code class="highlighter-rouge">guard</code>对象析构时，会自调用<code class="highlighter-rouge">some_mutex.unlock()</code>来释放mutex。然后在实际应用中，我们不太会定义全局的mutex对象，而是将其定义在某个类中和某个data关联：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">some_data</span><span class="p">{</span>
+	<span class="kt">int</span> <span class="n">value</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nf">data_wrapper</span><span class="p">(){</span>
+<span class="nl">private:</span>
+	<span class="n">some_data</span> <span class="n">data</span><span class="p">;</span>
+	<span class="n">std</span><span class="o">::</span><span class="n">mutex</span> <span class="n">m</span><span class="p">;</span>
+<span class="nl">public:</span>
+	<span class="kt">void</span> <span class="n">process_data</span><span class="p">(){</span>
+		<span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">guard</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+		<span class="n">do_something_with_data</span><span class="p">(){</span>
+			<span class="c1">//</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>上面我们将<code class="highlighter-rouge">mutex</code>和要保护的<code class="highlighter-rouge">data</code>关联起来，<code class="highlighter-rouge">lock_guard</code>之锁住与该<code class="highlighter-rouge">data</code>相关的<code class="highlighter-rouge">mutex</code>。但是这里要注意<code class="highlighter-rouge">do_something_with_data()</code>这个方法，在这个方法中要保证对<code class="highlighter-rouge">data</code>的直接操作，如果将<code class="highlighter-rouge">data</code>通过某种方式传到该函数以外，而在该函数外部来操作<code class="highlighter-rouge">data</code>，则<code class="highlighter-rouge">data</code>的线程安全将无法保证，显然这不是一个好的编程习惯，因此要避免。</p>
+
+<p>由于绝大多数的STL数据结构都不是线程安全的，因此使用<code class="highlighter-rouge">mutex</code>并不能保证对某些数据结构接口操作的原子性，例如对stack的操作：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">stack</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">s</span><span class="p">;</span>
+<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">s</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span> <span class="c1">//--1</span>
+	<span class="kt">int</span> <span class="n">value</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">top</span><span class="p">();</span> <span class="c1">//--2</span>
+	<span class="n">s</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> <span class="c1">//--3</span>
+	<span class="n">do_something</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>上述代码中，如果<code class="highlighter-rouge">s</code>被线程共享，则在<code class="highlighter-rouge">1,2,3</code>这个三个位置均有可能发生<code class="highlighter-rouge">race condition</code>，进而带来数据不一致。例如，假设当前<code class="highlighter-rouge">stack</code>只有一个数据，当线程1判断了<code class="highlighter-rouge">empty() == false</code>后，线程2执行了<code class="highlighter-rouge">s.pop()</code>，此时线程1继续执行<code class="highlighter-rouge">s.top()</code>则会发生crash。另一个比较有趣的<code class="highlighter-rouge">race condition</code>的可能是这样的：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>        thread #1               thread #2
+-------------------------|-----------------------
+if(!empty()){            |
+                         | if(!empty()){
+    int value = s.top(); |
+                         |    int value = s.top();
+    s.pop();             |  
+                         |  s.pop();
+    do_something(value); | 
+                         |    do_something(value);
+}                        |
+                         | }
+--------------------------------------------------
+</code></pre></div></div>
+
+<p>如果<code class="highlighter-rouge">stack</code>中有两个以上的元素，上面两个线程均不会crash，只不过在逻辑上会有些问题，它们将读到相同的元素，并且<code class="highlighter-rouge">stack</code>被<code class="highlighter-rouge">pop</code>了两次。</p>
+
+<p><code class="highlighter-rouge">mutex</code>对接口操作失效的原因在于其粒度太大了，<code class="highlighter-rouge">mutex</code>无法真正lock到对内部data的操作上。解决这个问题需要重新设计一个线程安全的数据结构，篇幅原因，这里不做过多介绍，在后面几篇文章中将对这个问题做更详细的论述</p>
+
+<h3 id="死锁问题">死锁问题</h3>
+
+<p>上面使用mutex的场景是多个线程竞争<strong>同一个</strong>公共资源，而死锁则是多个线程同时在等待对方释放资源从而进入无休止的等待状态。死锁发生的条件通常是一个线程需要同时操作两份或者多份公共资源，每份公共资源都有一个mutex，当该线程（thread #1）已经获取了某个资源(B)的mutex后，试图获取资源(A)的mutex时，发现该mutex已经被另一个线程(thread #2)占据，而另一个线程(thread #2)则是相同的逻辑，它获取了该资源(A)的mutex，同时等待另一个线程(thread #1)释放资源(B)的mutex，从而两个线程进入死锁状态。</p>
+
+<p>产生上面问题的原因是每个线程试图同时获取两个mutex，C++ 11中提供了一种可以同时获取两个或多个mutex的方法，使用<code class="highlighter-rouge">std::lock</code>:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">some_class</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">swap</span><span class="p">(</span><span class="n">some_class</span><span class="o">&amp;</span> <span class="n">v1</span><span class="p">,</span> <span class="n">some_class</span><span class="o">&amp;</span> <span class="n">v2</span><span class="p">);</span>
+<span class="k">class</span> <span class="nc">X</span><span class="p">{</span>
+<span class="nl">private:</span> 
+    <span class="n">some_class</span> <span class="n">data</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">mutex</span> <span class="n">m</span><span class="p">;</span>
+<span class="nl">public:</span>
+    <span class="k">friend</span> <span class="kt">void</span> <span class="n">swap</span><span class="p">(</span><span class="n">X</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">X</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lhs</span> <span class="o">==</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">){</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">lock</span><span class="p">(</span><span class="n">lhs</span><span class="p">.</span><span class="n">m</span><span class="p">,</span> <span class="n">rhs</span><span class="p">.</span><span class="n">m</span><span class="p">);</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock_a</span><span class="p">(</span><span class="n">lhs</span><span class="p">.</span><span class="n">m</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">adopt_lock</span><span class="p">);</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock_b</span><span class="p">(</span><span class="n">rhs</span><span class="p">.</span><span class="n">m</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">adopt_lock</span><span class="p">);</span>
+        <span class="n">swap</span><span class="p">(</span><span class="n">lhs</span><span class="p">.</span><span class="n">data</span><span class="p">,</span> <span class="n">rhs</span><span class="p">.</span><span class="n">data</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">std::lock</code>可以保证同时获取多个共享数据的mutex，从而一次性锁住两块内存区域。如果<code class="highlighter-rouge">std::lock()</code>在获取其中一个mutex时发生了异常，则会自动释放已经获取的mutex。而<code class="highlighter-rouge">std::adopt_lock</code>表示<code class="highlighter-rouge">lhs.m</code>已经被<code class="highlighter-rouge">std::lock</code>所占用，则<code class="highlighter-rouge">std::lock_guard</code>在构造<code class="highlighter-rouge">lock_a</code>时无需对<code class="highlighter-rouge">lhs.m</code>再次lock，只需获得其所有权(引用)即可。</p>
+
+<h3 id="避免死锁的一些办法">避免死锁的一些办法</h3>
+
+<p>死锁的产生不一定局限于对某个mutex的获取与等待，即使在无锁的情况下，两个线程互相<code class="highlighter-rouge">join()</code>也会进入死锁状态。要避免死锁的根本方法是避免两个线程之间相互等待的情况发生。下面给出几种常用的避免死锁的方式</p>
+
+<ol>
+  <li>
+    <p>避免锁的嵌套</p>
+
+    <p>当某个线程已经获得某种锁时，不要尝试继续获取其它的锁。如果需要同时获取多个锁的控制，使用<code class="highlighter-rouge">std::lock()</code>做批量处理。</p>
+  </li>
+  <li>
+    <p>尽量减少锁的粒度</p>
+
+    <p>当某个线程获得lock之后，其后面的代码应尽量避免调用其它非操作共享数据的API，尽量减少非共享数据外的控制逻辑。</p>
+  </li>
+  <li>
+    <p>按照某种固定顺序获得lock</p>
+
+    <p>将需要同时lock的场景重构为可以分几步执行的情况，每一步lock一次，做完这一步则unlock，保证操作的有序进行</p>
+  </li>
+</ol>
+
+<h3 id="使用stdunique_lock">使用<code class="highlighter-rouge">std::unique_lock</code></h3>
+
+<p>细心观察，可发现前面提到的<code class="highlighter-rouge">guard_lock</code>存在一定的局限性，即根据RAII原则，只有当<code class="highlighter-rouge">guard_lock</code>对象释放时，mutex才会被unlock。这个特性依赖函数执行完成来析构<code class="highlighter-rouge">guard_lock</code>对象。但是如果希望在函数执行完之前再做一些其它操作，那么这部分操作将不可避免的被包含在锁中，破坏锁的粒度。因此我们需要一个更灵活的lock。</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">some_class</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">swap</span><span class="p">(</span><span class="n">some_class</span><span class="o">&amp;</span> <span class="n">v1</span><span class="p">,</span> <span class="n">some_class</span><span class="o">&amp;</span> <span class="n">v2</span><span class="p">);</span>
+<span class="k">class</span> <span class="nc">X</span><span class="p">{</span>
+<span class="nl">private:</span> 
+    <span class="n">some_class</span> <span class="n">data</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">mutex</span> <span class="n">m</span><span class="p">;</span>
+<span class="nl">public:</span>
+    <span class="k">friend</span> <span class="kt">void</span> <span class="n">swap</span><span class="p">(</span><span class="n">X</span><span class="o">&amp;</span> <span class="n">lhs</span><span class="p">,</span> <span class="n">X</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lhs</span> <span class="o">==</span> <span class="o">&amp;</span><span class="n">rhs</span><span class="p">){</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">unique_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock_a</span><span class="p">(</span><span class="n">lhs</span><span class="p">.</span><span class="n">m</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">defer_lock</span><span class="p">);</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">unique_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">lock_b</span><span class="p">(</span><span class="n">rhs</span><span class="p">.</span><span class="n">m</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">defer_lock</span><span class="p">);</span>
+		<span class="n">std</span><span class="o">::</span><span class="n">lock</span><span class="p">(</span><span class="n">lock_a</span><span class="p">,</span> <span class="n">lock_b</span><span class="p">);</span>
+        <span class="n">swap</span><span class="p">(</span><span class="n">lhs</span><span class="p">.</span><span class="n">data</span><span class="p">,</span> <span class="n">rhs</span><span class="p">.</span><span class="n">data</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<p>上述代码的功能和使用<code class="highlighter-rouge">std::lock_guard</code>相同。分析如下：</p>
+
+<ol>
+  <li>当构造<code class="highlighter-rouge">std::unique_lock&lt;std::mutex&gt;</code>对象时，第二个参数为<code class="highlighter-rouge">std::defer_lock</code>表示在构造<code class="highlighter-rouge">lock_a</code>或<code class="highlighter-rouge">lock_b</code>时，不持有mutex。</li>
+  <li>当<code class="highlighter-rouge">std::lock(lock_a, lock_b);</code>执行时，<code class="highlighter-rouge">lock_a</code>和<code class="highlighter-rouge">lock_b</code>才会分别执行<code class="highlighter-rouge">lhs.m.lock()</code>和<code class="highlighter-rouge">rhs.m.lock()</code>。可以看出<code class="highlighter-rouge">std::unique_lock</code>的<code class="highlighter-rouge">lock，unlock</code>方法不过是透传给mutex来完成，而其内部维护了一个关于mutex的状态，该状态用于表明其是否真正持有mutex对象</li>
+  <li>这个状态可以通过<code class="highlighter-rouge">owns_lock()</code>来查看，如果其持有mutex对象，则在其析构函数中要调用mutex的<code class="highlighter-rouge">unlock()</code>方法，如果其不持有，则不需要调。</li>
+</ol>
+
+<p>从某种意义上讲，<code class="highlighter-rouge">std::unique_lock</code>是对mutex的一种封装，因此相对<code class="highlighter-rouge">std::lock_guard</code>它有一定的开销，但它却更灵活，可以defer lock和转移对mutex的控制权，这两个特性在某些场合非常有用。</p>
+
+<blockquote>
+  <p>对大部分场景，如果<code class="highlighter-rouge">std::lock_guard</code>够用，则不需使用<code class="highlighter-rouge">std::unique_lock</code></p>
+</blockquote>
+
+<p>由于<code class="highlighter-rouge">std::unique_lock</code>可以调用<code class="highlighter-rouge">unlock</code>，因此它也可以较好的控制锁的粒度</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">get_and_process_data</span><span class="p">(){</span>
+	<span class="n">std</span><span class="o">::</span><span class="n">unique_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="o">&gt;</span> <span class="n">my_lock</span><span class="p">(</span><span class="n">data_mutex</span><span class="p">);</span>
+	<span class="n">Data_Object</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_some_data</span><span class="p">();</span>
+	<span class="n">my_lock</span><span class="p">.</span><span class="n">lock</span><span class="p">();</span>
+	<span class="n">Result_Object</span> <span class="n">result</span> <span class="o">=</span> <span class="n">process_some_data</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+	<span class="n">my_lock</span><span class="p">.</span><span class="n">unlock</span><span class="p">();</span>
+	<span class="n">write_result</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">result</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="对象初始化的线程安全">对象初始化的线程安全</h3>
+
+<p>如果某个指针需要进行惰性初始化：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">some_resource</span><span class="o">&gt;</span> <span class="n">resource_ptr</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(){</span>
+	<span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">resource_ptr</span><span class="p">){</span>
+		<span class="n">resource_ptr</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="k">new</span> <span class="n">some_resource</span><span class="p">);</span>
+	<span class="p">}</span>
+	<span class="n">resource_ptr</span><span class="o">-&gt;</span><span class="n">do_something</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>如果两个线程同时访问该段代码，很有可能出现的情况是一个线程在执行完<code class="highlighter-rouge">resource_ptr.reset(new some_resource);</code>时，另一个线程刚好走到<code class="highlighter-rouge">resource_ptr-&gt;do_something();</code>因此，<code class="highlighter-rouge">resource_ptr-&gt;do_something();</code>可能会被执行两遍。除了上述可能，还有一系列其它的可能情况，这里不一一列举。</p>
+
+<p>解决这个问题，C++ 11提供了<code class="highlighter-rouge">std::once_flag</code>和<code class="highlighter-rouge">std::call_once</code>两个函数：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">some_resource</span><span class="o">&gt;</span> <span class="n">resource_ptr</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">once_flag</span> <span class="n">resource_flag</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(){</span>
+	<span class="n">std</span><span class="o">::</span><span class="n">call_once</span><span class="p">(</span><span class="n">resource_flag</span><span class="p">,</span> <span class="p">[]{</span>
+		<span class="n">resource_ptr</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="k">new</span> <span class="n">some_resource</span><span class="p">);</span>
+	<span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">std::call_once</code>的调用方式和<code class="highlighter-rouge">std::thread</code>的构造函数以及<code class="highlighter-rouge">std::bind</code>函数相同，即第二个参数可以是一个函数指针，functor或者lambda表达式，后面参数为该函数所用到的参数。<code class="highlighter-rouge">std::once_flag</code>对象也可被定义为某个类的成员变量使用</p>
+
+<h3 id="reader-writed-mutex">Reader-Writed Mutex</h3>
+
+<p>考虑下面一个场景,一个DNS表中存放了域名和IP地址的对应关系，虽然实际情况是DNS地址不会经常更新，但如果有新的条目加入进来，则需要对其进行修改。实际应用中，对DNS表的查找访问往往是多个线程同时进行的，因此当这个表需要被修改时，需要一条线程来完成这个工作，为了保证DNS表的线程安全，我们希望“写线程”在修改时，其它读线程不会读到错误数据。</p>
+
+<p>这种情况下是不能读写都加锁的，由于写操作频率很低，导致则大量的读操会被无意义的锁block，性能会大大降低；如果只给写操作加锁，读操作不加锁，则会发生<code class="highlighter-rouge">race condition</code>的情况，比如有可能读到写了一半的不完整数据。因此我们需要一种新的锁结构来解决上面问题，我们希望这总锁可以让读线程并发访问不受影响，只当写操作时block读线程，等写操作完成后，读线程继续执行。这种锁叫做“读写锁”，它用来处理写操作不频繁，读操作频繁的场景。所有的读写锁都需要遵循下面三个原则：</p>
+
+<ol>
+  <li>允许多个线程同时读取共享变量</li>
+  <li>只允许一个线程写共享变量</li>
+  <li>如果一个线程正在执行写操作，此时禁止线程读取变量</li>
+</ol>
+
+<p>读写锁与互斥锁的一个重要区别就是读写锁允许多个线程同时读取变量，而互斥锁是不允许的，这是读写锁在读多写少场景下性能由于互斥锁的关键。但是<strong>读写锁本身的操作时互斥的</strong>，但一个线程在写时，其它线程是不允许进行读写操作的。C++ 17标准库新增了<code class="highlighter-rouge">shared_mutex</code>对应这类读写锁的实现。</p>
+
+<ol>
+  <li>对于写操作，可以使用<code class="highlighter-rouge">std::lock_gurad&lt;std::shared_mutex&gt;</code></li>
+  <li>对于读操作，可以使用<code class="highlighter-rouge">std::shared_lock&lt;std::shared_mutex&gt;</code></li>
+</ol>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">dns_entry</span><span class="p">{</span> 
+	<span class="c1">//some code </span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">dns_cache</span><span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span> <span class="n">dns_entry</span><span class="o">&gt;</span> <span class="n">entries</span><span class="p">;</span>
+    <span class="k">mutable</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_mutex</span> <span class="n">entry_mutex</span><span class="p">;</span>
+<span class="nl">public:</span>
+    <span class="n">dns_entry</span> <span class="n">find_entry</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">domain</span> <span class="p">)</span> <span class="k">const</span><span class="p">{</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">shared_lock</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_mutex</span><span class="o">&gt;</span> <span class="n">lk</span><span class="p">(</span><span class="n">entry_mutex</span><span class="p">);</span>
+        <span class="k">auto</span> <span class="n">itor</span> <span class="o">=</span> <span class="n">entries</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">domain</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">itor</span> <span class="o">!=</span> <span class="n">entries</span><span class="p">.</span><span class="n">end</span><span class="p">()){</span>
+            <span class="k">return</span> <span class="n">itor</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">;</span>
+        <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+            <span class="k">return</span> <span class="n">dns_entry</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">update_or_add_entry</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">domain</span><span class="p">,</span> <span class="n">dns_entry</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">dns_details</span><span class="p">){</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">lock_guard</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_mutex</span><span class="o">&gt;</span> <span class="n">lg</span><span class="p">(</span><span class="n">entry_mutex</span><span class="p">);</span>
+        <span class="n">entries</span><span class="p">[</span><span class="n">domain</span><span class="p">]</span> <span class="o">=</span> <span class="n">dns_details</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<p>在上面的场景中，如果某个线程想进行写操作，则需要等所有读操作的线程执行完，并释放<code class="highlighter-rouge">shared_mutex</code>之后才能执行。同理，当写线程执行时，读操作线程被block，无法获取<code class="highlighter-rouge">shared_mutex</code>，写线程也需要等待当前的写线程完成后，才能重新获取<code class="highlighter-rouge">shared_mutex</code>。</p>
+
+<h3 id="recursive-mutex">Recursive Mutex</h3>
+
+<p>对于同一个mutex对象，如果在一个线程内被连续<code class="highlighter-rouge">lock()</code>多次，则会导致<code class="highlighter-rouge">undefined behavior</code>，但是如果某些情况下，一个线程需要对同一个mutex对象进行多次<code class="highlighter-rouge">lock()</code>操作，这时可以使用C++提供的另一种recursive mutex，<code class="highlighter-rouge">std::recursive_mutex</code>它的用法和普通的mutex相同，不同的是它的对象可以在同一个线程内可以被<code class="highlighter-rouge">lock()</code>多次。但有一点要注意的是，当另一个线程试图获取对<code class="highlighter-rouge">std::recursive_mutex</code>对象的控制权时，该对象必须要释放它分配出去的所有锁，即如果它之前进行了三次<code class="highlighter-rouge">unlock()</code>操作，那么需要配对的进行三次<code class="highlighter-rouge">unlock()</code>操作。同样的，并不建议直接使用<code class="highlighter-rouge">std::recursive_mutex</code>，还是需要使用它的封装类<code class="highlighter-rouge">std::lock_guard</code>和<code class="highlighter-rouge">std::unique_lock</code>。</p>
+
+<p>对于绝大多数情况来说，如果代码中遇到需要使用recursive mutex的场景，那说明该段代码需要重构。一种使用recursive mutex的典型场景是某个类对象被多个线程共享，对此在类的每个成员函数中都加了锁保护内部数据的读写，如果在每个成员函数中都只操作该类的内部数据，则没有任何问题，但是某些情况下在某个成员函数中部会访问另一个成员函数，这时候就出现类中的同一个mutex对象被<code class="highlighter-rouge">lock</code>两次的情况，如果是普通的mutex则会出问题，因此一个简单粗暴的解决办法就是将普通的mutex替换为recursive mutex。但是这种做法并不推荐，并且这种调用也是一个很糟糕的设计，遇到这种情况，可以将调用另一个成员函数的函数拆成两个粒度更小的函数，保证每个函数都只做一件事情。</p>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://www.manning.com/books/c-plus-plus-concurrency-in-action?">《C++ Concurrency in Action》</a></li>
+  <li><a href="">《C++ Primer 3rd edition》</a></li>
+  <li><a href="https://www.classes.cs.uchicago.edu/archive/2013/spring/12300-1/labs/lab6/">C++ 11 Concurrency</a></li>
+  <li><a href="https://www.educative.io">Modern C++ Concurrency in Practice: Get the most out of any machine</a></li>
+</ul>
+:ET

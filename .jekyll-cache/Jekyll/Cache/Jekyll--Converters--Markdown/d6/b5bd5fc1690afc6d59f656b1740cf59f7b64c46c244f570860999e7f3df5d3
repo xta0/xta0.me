@@ -1,0 +1,33 @@
+I"�<h2 id="tuples">Tuples</h2>
+
+<p><code class="highlighter-rouge">tuple</code>是C++11新引入的feature，类似<code class="highlighter-rouge">pair</code>模板，<code class="highlighter-rouge">tuple</code>中的每个元素都可以有不同的类型，和<code class="highlighter-rouge">pair</code>不同的是，tuple可以有任意多个成员。我们可以使用两种方式来构造<code class="highlighter-rouge">tuple</code>对象</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//default init method, each member is set to default value</span>
+<span class="n">tuple</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="p">,</span> <span class="kt">size_t</span><span class="p">,</span> <span class="kt">size_t</span><span class="o">&gt;</span> <span class="n">threeD</span><span class="p">;</span>  <span class="c1">//all members are set to 0</span>
+<span class="n">tuple</span><span class="o">&lt;</span><span class="n">string</span><span class="p">,</span> <span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="n">list</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">items</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"constants"</span><span class="p">,</span>
+    <span class="p">{</span><span class="mf">3.14</span><span class="p">,</span> <span class="mf">2.718</span><span class="p">},</span>
+    <span class="mi">42</span><span class="p">,</span>
+    <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">}</span>
+<span class="p">};</span>
+<span class="c1">//use make_tuple</span>
+<span class="k">auto</span> <span class="n">item</span> <span class="o">=</span> <span class="n">make_tuple</span><span class="p">(</span><span class="s">"0-999-78345-X"</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mf">20.00</span><span class="p">);</span>
+</code></pre></div></div>
+<p>访问tuple对象有些奇怪，我们不能用<code class="highlighter-rouge">tuple.get</code>，而是需要用标准库函数<code class="highlighter-rouge">std::get</code>来访问。<code class="highlighter-rouge">std::get</code>是一个函数模板，我需要指定tuple成员的位置作为模板参数，此外，<code class="highlighter-rouge">std::get</code>返回的是tuple元素的<strong>引用</strong></p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">auto</span> <span class="n">book</span> <span class="o">=</span> <span class="n">get</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">(</span><span class="n">item</span><span class="p">);</span> <span class="c1">//返回item的第一个成员</span>
+<span class="k">auto</span> <span class="n">cnt</span> <span class="o">=</span> <span class="n">get</span><span class="o">&lt;</span><span class="mi">1</span><span class="o">&gt;</span><span class="p">(</span><span class="n">item</span><span class="p">);</span> <span class="c1">//返回item的第二个成员</span>
+</code></pre></div></div>
+<p>当tuple的成员较多时，想要表示tuple对象的类型往往会很复杂，我们可以使用下面两个模板函数来查询tuple成员的数量和类型</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="k">decltype</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="n">trans</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="raii">RAII</h3>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="http://www.charleshouserjr.com/Cplus2.pdf">C++ Primer</a></li>
+</ul>
+:ET

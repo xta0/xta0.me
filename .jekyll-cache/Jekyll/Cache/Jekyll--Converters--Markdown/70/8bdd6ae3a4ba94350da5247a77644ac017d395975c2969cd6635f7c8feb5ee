@@ -1,0 +1,331 @@
+I"�<blockquote>
+  <p>持续更新，补充C++新增feature,目录结构遵循《C++ Primer》</p>
+</blockquote>
+
+<h2 id="动态内存">动态内存</h2>
+
+<ul>
+  <li>静态内存：保存局部static对象，类static数据成员，以及定义在任何函数之外的变量</li>
+  <li>栈内存：保存定在函数内非static对象，</li>
+  <li>堆内存：动态分配与回收</li>
+</ul>
+
+<p>对于静态内存和栈内存中的对象，编译器负责销毁，对栈对象，栈被回收后即被销毁，static对象在使用之前分配，在程序结束时销毁。对于堆上的对象，由程序来控制，当对象不再使用时，需要代码显式将其删除。</p>
+
+<p>对于动态内存的管理，<mark>C++ 11</mark>中引入了三类智能指针，定义在<code class="highlighter-rouge">&lt;memory&gt;</code>头文件</p>
+
+<ul>
+  <li><strong>shared_ptr</strong>: 允许多个指针指向同一对象</li>
+  <li><strong>unique_ptr</strong>: “独占”所指向的对象</li>
+  <li><strong>weak_ptr</strong>: 弱引用，指向<code class="highlighter-rouge">shared_ptr</code>所管理的对象</li>
+</ul>
+
+<p>当然也可以直接使用<code class="highlighter-rouge">new</code>和<code class="highlighter-rouge">delete</code>来直接控制内存</p>
+
+<h3 id="new--delete">new &amp; delete</h3>
+
+<p><code class="highlighter-rouge">new</code>在对象上开辟一个具有某类型大小的空间，并且可以对该块内存进行初始化，默认情况下，动态分配的对象时默认初始化的，即调用类的默认构造函数来初始化。</p>
+
+<p>如果在执行<code class="highlighter-rouge">new</code>的时候，内存耗尽，则系统会抛出<code class="highlighter-rouge">std::bad_alloc</code>的异常，也可以向<code class="highlighter-rouge">new</code>传参控制其行为</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//pi指向一个动态分配的，未初始化的无名对象</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">p1</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">;</span> 
+<span class="c1">//定义并初始化</span>
+<span class="kt">int</span> <span class="o">*</span><span class="nf">p2</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">100</span><span class="p">));</span>
+<span class="n">string</span> <span class="o">*</span><span class="n">p2</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">string</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="sc">'9'</span><span class="p">);</span> 
+<span class="c1">//如果内存不足，不抛异常，返回一个空指针</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">p3</span> <span class="o">=</span> <span class="k">new</span> <span class="p">(</span><span class="n">nothrow</span><span class="p">)</span> <span class="kt">int</span><span class="p">;</span> 
+</code></pre></div></div>
+
+<p>对于<code class="highlighter-rouge">delete</code>，在实际应用中也会有很多问题，比如下面的情况:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="o">*</span><span class="nf">p</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+<span class="k">auto</span> <span class="n">q</span> <span class="o">=</span> <span class="n">p</span><span class="p">;</span>
+<span class="k">delete</span> <span class="n">p</span><span class="p">;</span>
+<span class="n">p</span> <span class="o">=</span> <span class="nb">nullptr</span><span class="p">;</span>
+</code></pre></div></div>
+<p>当<code class="highlighter-rouge">p</code>被delete后，其内存被释放掉，对于<code class="highlighter-rouge">q</code>来说，却不知道，仍会继续访问，从而出现异常。类似的问题还有指针的double free，以及将指针作为函数的返回值返回后，使用者忘记delete该指针（或许根本不清楚这个指针怎么来的），而造成内存泄漏</p>
+
+<h3 id="unique_ptr">unique_ptr</h3>
+
+<p>当需要使用智能指针时，可以首先考虑使用<code class="highlighter-rouge">unique_ptr</code>，使用它几乎和使用原始指针一样，并且性能上几乎没有损耗。不同的是一个<code class="highlighter-rouge">unique_ptr</code>独占一个资源的控制权(<code class="highlighter-rouge">exclusive ownership</code>)，指针，你不能用两个<code class="highlighter-rouge">unique_ptr</code>来控制同一份资源，即某个时刻只能有一个<code class="highlighter-rouge">unique_ptr</code>指向一个给定的对象。使用<code class="highlighter-rouge">unique_ptr</code>另一个方便之处是，你不需要担心资源的释放，当<code class="highlighter-rouge">unique_ptr</code>对象销毁时，被管理的资源也将自动被销毁。</p>
+
+<ul>
+  <li>创建</li>
+</ul>
+
+<p>创建<code class="highlighter-rouge">unique_ptr</code>必须采用直接初始化的形式，<mark>并且不支持拷贝与赋值操作</mark></p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//创建一个int指针</span>
+<span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p1</span><span class="p">(</span><span class="k">new</span> <span class="nf">int</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+<span class="c1">//创建一个string[]数组</span>
+<span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">string</span><span class="p">[]</span><span class="o">&gt;</span> <span class="n">ps</span><span class="p">(</span><span class="k">new</span> <span class="n">string</span><span class="p">[</span><span class="mi">3</span><span class="p">]);</span>
+<span class="c1">//不支持拷贝构造和赋值操作</span>
+<span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p2</span><span class="p">(</span><span class="n">p1</span><span class="p">);</span> <span class="c1">//wrong;</span>
+<span class="k">auto</span> <span class="n">p3</span> <span class="o">=</span> <span class="n">p1</span><span class="p">;</span> <span class="c1">//wrong</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="highlighter-rouge">make_unique</code></li>
+</ul>
+
+<p><mark>C++ 14</mark>引入了<code class="highlighter-rouge">make_unique</code>函数，可以用来创建<code class="highlighter-rouge">unique_ptr</code>，官方文档也推荐使用这种方式以取代<code class="highlighter-rouge">new</code>的方式，但是这种方式也有局限性，其中之一是它不支持自定义的<code class="highlighter-rouge">delete</code>函数（后面会介绍）</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//使用new</span>
+<span class="k">auto</span> <span class="n">ptr</span> <span class="o">=</span> <span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">widget</span><span class="o">&gt;</span> <span class="p">(</span><span class="k">new</span> <span class="nf">widget</span><span class="p">(</span><span class="n">params</span><span class="p">));</span>
+<span class="c1">//使用make</span>
+<span class="k">auto</span> <span class="n">ptr</span> <span class="o">=</span> <span class="n">make_unique</span><span class="o">&lt;</span><span class="n">widget</span><span class="o">&gt;</span><span class="p">(</span><span class="n">params</span><span class="p">);</span>
+</code></pre></div></div>
+
+<ul>
+  <li>控制权转移</li>
+</ul>
+
+<p>一个<code class="highlighter-rouge">unique_ptr</code>可以通过<code class="highlighter-rouge">release()</code>方法将对某个内置指针的控制权转移给另一个<code class="highlighter-rouge">unique_ptr</code>对象，</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">p1</span><span class="p">(</span><span class="k">new</span> <span class="nf">string</span><span class="p">(</span><span class="s">"abc"</span><span class="p">));</span> <span class="c1">//交出控制权后，p1=nullptr</span>
+<span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">p2</span><span class="p">(</span><span class="n">p1</span><span class="p">.</span><span class="n">release</span><span class="p">());</span>
+<span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">p3</span><span class="p">(</span><span class="n">p2</span><span class="p">.</span><span class="n">release</span><span class="p">());</span>
+<span class="c1">//p1 == nullptr &amp; p2 == nullptr</span>
+</code></pre></div></div>
+<p>注意，<code class="highlighter-rouge">release</code>操作是切断了<code class="highlighter-rouge">unique_ptr</code>和其内部指针之间的联系，<code class="highlighter-rouge">release</code>返回的指针通常用来初始化另一个智能指针</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">p2</span><span class="p">.</span><span class="n">release</span><span class="p">();</span> <span class="c1">//wrong，p2不会释放内存，却丢失了内置指针</span>
+<span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="n">p2</span><span class="p">.</span><span class="n">release</span><span class="p">();</span> <span class="c1">//正确，但是要手动delete p</span>
+</code></pre></div></div>
+
+<ul>
+  <li>作为返回值</li>
+</ul>
+
+<p>不能拷贝<code class="highlighter-rouge">unique_ptr</code>的规则有一个例外，我们可以拷贝或赋值一个将要销毁的<code class="highlighter-rouge">unique_ptr</code></p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">clone</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">){</span>
+  <span class="k">return</span> <span class="n">unique_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="n">p</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<ul>
+  <li>释放资源</li>
+</ul>
+
+<p><code class="highlighter-rouge">unique_ptr</code>支持自定义析构函数，其析构函数必须将其类型用于构造<code class="highlighter-rouge">unique_ptr</code>。</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//p指向一个类型为objT的对象，并使用一个类型为delT的函数释放资源</span>
+<span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">objT</span><span class="p">,</span> <span class="n">delT</span><span class="o">&gt;</span> <span class="n">p</span> <span class="p">(</span><span class="k">new</span> <span class="n">objT</span><span class="p">,</span> <span class="n">fcn</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">f</span><span class="p">(</span><span class="n">destination</span> <span class="o">&amp;</span><span class="n">d</span><span class="p">){</span>
+  <span class="n">connnection</span> <span class="n">c</span> <span class="o">=</span> <span class="n">connect</span><span class="p">(</span><span class="o">&amp;</span><span class="n">d</span><span class="p">);</span>
+  <span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">connection</span><span class="p">,</span> <span class="k">decltype</span><span class="p">(</span><span class="n">end_connection</span><span class="p">)</span><span class="o">*</span> <span class="o">&gt;</span><span class="n">p</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="p">,</span><span class="n">end_connection</span><span class="p">);</span> 
+<span class="p">}</span>
+</code></pre></div></div>
+<p>注意上述代码中在<code class="highlighter-rouge">decltype(end_connection)</code>后必须加一个<code class="highlighter-rouge">*</code>表示函数指针。</p>
+
+<h3 id="shared_ptr">shared_ptr</h3>
+
+<p>最安全的分配和使用动态内存的方法是使用<code class="highlighter-rouge">make_shared&lt;T&gt;</code>函数，头文件定义在<code class="highlighter-rouge">&lt;memory&gt;</code>中，<code class="highlighter-rouge">make_shared</code>参数和待构造对象的构造函数参数相同，<code class="highlighter-rouge">make_shared</code>会将其参数透传给类的构造函数。</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//指向一个值为32的int型指针r</span>
+<span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p3</span> <span class="o">=</span> <span class="n">make_shared</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+<span class="n">cout</span><span class="o">&lt;&lt;*</span><span class="n">p3</span> <span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="c1">//42</span>
+<span class="c1">//创建指向值为“ccc”的字符串指针</span>
+<span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">p4</span><span class="o">=</span> <span class="n">make_shared</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="sc">'c'</span><span class="p">);</span>
+<span class="c1">//使用auto</span>
+<span class="k">auto</span> <span class="n">p5</span> <span class="o">=</span> <span class="n">make_shared</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;&gt;</span><span class="p">();</span>
+</code></pre></div></div>
+<p>除了使用<code class="highlighter-rouge">make_shared</code>以外，还可以使用<code class="highlighter-rouge">new</code>来创建指针，当时用<code class="highlighter-rouge">new</code>时，必须使用其<code class="highlighter-rouge">explicit</code>的构造函数，而不能通过隐式的类型转换</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// /shared_ptr&lt;int&gt; p1 = new int(10); //wrong！</span>
+<span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p1</span><span class="p">(</span><span class="k">new</span> <span class="nf">int</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span> <span class="c1">//correct, 使用直接初始化形式</span>
+<span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">clone</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span><span class="p">){</span>
+  <span class="c1">//return new int(p); //worng</span>
+  <span class="k">return</span> <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">(</span><span class="n">p</span><span class="p">));</span> <span class="c1">//correct</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>这里需要注意一种情况，不要混用普通指针和<code class="highlighter-rouge">shared_ptr</code>，在创建<code class="highlighter-rouge">shared_ptr</code>时就new对象或者使用<code class="highlighter-rouge">make_shared</code>，考虑下面情况</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p</span> <span class="o">=</span> <span class="k">new</span><span class="p">(</span><span class="kt">int</span><span class="p">(</span><span class="mi">10</span><span class="p">));</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">ptr</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">get</span><span class="p">();</span> <span class="c1">//返回p管理的指针</span>
+<span class="p">{</span>
+  <span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="n">q</span> <span class="p">(</span><span class="n">ptr</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">//q被释放，导致`ptr`指向的内存被释放，此时p并不知情</span>
+<span class="kt">int</span> <span class="n">foo</span> <span class="o">=</span> <span class="o">*</span><span class="n">p</span><span class="p">;</span> <span class="c1">//crash</span>
+</code></pre></div></div>
+<p>当使用一个已经初始化的指针赋给<code class="highlighter-rouge">q</code>时，会导<code class="highlighter-rouge">p</code>和<code class="highlighter-rouge">q</code>管理同一片内存，并且这种情况下，且各自的引用计数均为1，二者中任何一个被销毁会导致该内存被释放，会有野指针访问或者double free的风险</p>
+
+<p><mark>避免将一个已经初始化的指针来构造`shared_ptr`对象</mark></p>
+
+<ul>
+  <li>拷贝和赋值</li>
+</ul>
+
+<p>当对<code class="highlighter-rouge">shared_ptr</code>对象进行拷贝时，会影响到其引用计数，每个<code class="highlighter-rouge">shared_ptr</code>都关联一个引用计数，来记录有多少个其它的<code class="highlighter-rouge">shared_ptr</code>指向相同的对象。当发生拷贝时，引用计数+1，拷贝可以发生在构造函数，函数传参以及函数返回值。</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="n">make_shared</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span> <span class="c1">//p所指向对象的引用计数 = 1</span>
+<span class="c1">//可以使用unique()查看被管理的资源是否是自己独有</span>
+<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">p</span><span class="p">.</span><span class="n">unique</span><span class="p">()</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="c1">//true;</span>
+<span class="k">auto</span> <span class="nf">q</span><span class="p">(</span><span class="n">p</span><span class="p">);</span> <span class="c1">//q执行拷贝构造，引用计数+1</span>
+<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">p</span><span class="p">.</span><span class="n">unique</span><span class="p">()</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="c1">//false, 因为p和q共享该资源</span>
+<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">q</span><span class="p">.</span><span class="n">user_count</span><span class="p">()</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="c1">//引用计数为2</span>
+</code></pre></div></div>
+
+<p>当给一个<code class="highlighter-rouge">shared_ptr</code>对象赋一个新值或是该对象被销毁时，其管理的引用计数会-1。一旦引用计数为0，则<code class="highlighter-rouge">shared_ptr</code>会自动释放对象内存。</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">auto</span> <span class="n">r</span> <span class="o">=</span> <span class="n">make_shared</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">19</span><span class="p">);</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">q</span><span class="p">;</span> 
+<span class="c1">//q指向对象的引用计数+1</span>
+<span class="c1">//r指向对象的引用计数-1</span>
+<span class="c1">//r的引用计数为0，自动释放内存</span>
+</code></pre></div></div>
+<p>使用<code class="highlighter-rouge">shared_ptr</code>的一个好处是不需要惦记何时去释放对象，一个例子是用<code class="highlighter-rouge">shared_ptr</code>对象做返回值</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span> <span class="n">factory</span><span class="p">(</span><span class="n">T</span> <span class="n">arg</span><span class="p">){</span>
+  <span class="k">return</span> <span class="n">mark_shared</span><span class="o">&lt;</span><span class="n">Foo</span><span class="o">&gt;</span><span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>按照以往的经验，使用这种方式来返回一直指针是有风险的，原因在于使用者很有可能不知道怎么处理这个指针；如果使用<code class="highlighter-rouge">shared_ptr</code>则可以让使用者无需关心这个问题</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">use_factory</span><span class="p">(</span><span class="n">T</span> <span class="n">arg</span><span class="p">){</span>
+  <span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="n">factor</span><span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+  <span class="k">return</span> <span class="n">p</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">//p离开作用于，内存自动释放</span>
+</code></pre></div></div>
+<p>再看一个函数传参的例子</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">process</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">ptr</span><span class="p">){</span>
+  <span class="c1">//ptr被copy，引用计数+1</span>
+  <span class="n">do_some_thing</span><span class="p">();</span>
+  <span class="c1">//ptr被释放，引用计数-1</span>
+<span class="p">}</span>
+<span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">p</span><span class="p">(</span><span class="k">new</span> <span class="nf">int</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+<span class="n">process</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="kt">int</span> <span class="n">i</span><span class="o">=*</span><span class="n">p</span><span class="p">;</span>
+</code></pre></div></div>
+<ul>
+  <li>使用<code class="highlighter-rouge">reset</code></li>
+</ul>
+
+<p><code class="highlighter-rouge">reset</code>的作用是使<code class="highlighter-rouge">shared_ptr</code>指针指向一个新的对象：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">auto</span> <span class="n">p6</span> <span class="o">=</span> <span class="n">make_shared</span><span class="o">&lt;</span><span class="n">DynamicArray</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+<span class="n">p6</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="k">new</span> <span class="nf">DynamicArray</span><span class="p">(</span><span class="mi">11</span><span class="p">));</span>
+</code></pre></div></div>
+<p>这里需要注意一个问题，如果<code class="highlighter-rouge">p6</code>是当前内存对象的唯一持有者，那么当<code class="highlighter-rouge">p6</code>被reset时，内存对象被释放，但是如果<code class="highlighter-rouge">p6</code>不是唯一持有者的时，如果<code class="highlighter-rouge">p6</code>想要修改该内存对象，右不影响其它持有者，则需要单独拷贝一份内存</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">p6</span><span class="p">.</span><span class="n">unique</span><span class="p">()){</span>
+  <span class="n">p6</span><span class="p">.</span><span class="n">reset</span><span class="p">(</span><span class="k">new</span> <span class="n">string</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="o">*</span><span class="n">p</span> <span class="o">+=</span> <span class="n">newVal</span><span class="p">;</span>
+</code></pre></div></div>
+
+<ul>
+  <li>释放资源</li>
+</ul>
+
+<p>默认情况下当<code class="highlighter-rouge">shared_ptr</code>对象析构时，会调用<code class="highlighter-rouge">delete</code>来释放内部管理的对象的内存。<code class="highlighter-rouge">shared_ptr</code>也提供了自定义释放的方法，可以在构造时，传入一个lambda表达式，函数指针或者Functor来自定义析构逻辑</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//使用lambda表达式清理int数组</span>
+<span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">sp</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="mi">10</span><span class="p">],[](</span><span class="o">*</span><span class="n">p</span><span class="p">){</span>
+  <span class="k">delete</span> <span class="p">[]</span><span class="n">p</span><span class="p">;</span>
+<span class="p">})</span>
+</code></pre></div></div>
+<ul>
+  <li>API整理</li>
+</ul>
+
+<table>
+  <tbody>
+    <tr>
+      <td><code class="highlighter-rouge">shared_ptr&lt;T&gt; p(q)</code></td>
+      <td>q是内置指针</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">shared_ptr&lt;T&gt; p(u)</code></td>
+      <td>u是unique_ptr，p从u那里接管了对象的所有权，将u置为空</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">shared_ptr&lt;T&gt; p(q,d)</code></td>
+      <td>q是内置指针，d是自定义析构函数</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">shared_ptr&lt;T&gt; p(p2,d)</code></td>
+      <td>p是shared_ptr<T> p2的拷贝，d是自定义析构函数</T></td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">reset</code></td>
+      <td>若p是唯一指向其对象的shared_ptr, reset会释放此对象</td>
+    </tr>
+    <tr>
+      <td><code class="highlighter-rouge">reset(q)</code></td>
+      <td>p指向内置指针q</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="weak_ptr">weak_ptr</h3>
+
+<p><code class="highlighter-rouge">weak_ptr</code>是一种不控制所指对象生命周期的智能指针，它指向由一个<code class="highlighter-rouge">shared_ptr</code>管理的对象，将<code class="highlighter-rouge">weak_ptr</code>绑定到<code class="highlighter-rouge">shared_ptr</code>不会影响改变后者的引用计数。一旦最后一个指向对象的<code class="highlighter-rouge">shared_ptr</code>被销毁，对象内存就会被释放，即是有<code class="highlighter-rouge">weak_ptr</code>存在，对象依旧会被释放。</p>
+
+<p>创建一个<code class="highlighter-rouge">weak_ptr</code>对象，需要传入<code class="highlighter-rouge">shared_ptr</code>。使用<code class="highlighter-rouge">weak_ptr</code>时，不能直接访问其内置指针，因为对象可能已经被释放，需要先使用<code class="highlighter-rouge">lock</code>检查对象是否存在，进而访问</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="n">make_shared</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+<span class="n">weak_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">wp</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="k">if</span><span class="p">(</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">np</span> <span class="o">=</span> <span class="n">wp</span><span class="p">.</span><span class="n">lock</span><span class="p">()){</span> <span class="c1">//lock返回一个shared_ptr对象</span>
+  <span class="n">cout</span><span class="o">&lt;&lt;*</span><span class="n">np</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="动态数组">动态数组</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">new</code>和数组</li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="o">*</span><span class="n">pia</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span> <span class="c1">//10个未初始化的int</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">pia2</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="mi">10</span><span class="p">]();</span> <span class="c1">//10个初值为0的int</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">pia3</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">23</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">};</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">psa</span> <span class="o">=</span> <span class="k">new</span> <span class="n">string</span><span class="p">[</span><span class="mi">10</span><span class="p">];</span> <span class="c1">//10个空string</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">psa2</span> <span class="o">=</span> <span class="k">new</span> <span class="n">string</span><span class="p">[</span><span class="mi">10</span><span class="p">]();</span> <span class="c1">//10个空string</span>
+
+<span class="c1">//delete</span>
+<span class="k">delete</span> <span class="p">[]</span> <span class="n">pia</span><span class="p">;</span>
+</code></pre></div></div>
+<p>在销毁数组中的对象时，析构顺序按照逆序进行，即最后一个元素先被销毁</p>
+
+<ul>
+  <li>使用智能指针</li>
+</ul>
+
+<p>与<code class="highlighter-rouge">new</code>对应，C++ 11中刻意使用<code class="highlighter-rouge">std::unique_ptr&lt;int[]&gt;</code>类型来包装动态数组</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">unique</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">[]</span><span class="o">&gt;</span> <span class="n">up</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="mi">10</span><span class="p">]);</span>
+<span class="n">up</span><span class="p">.</span><span class="n">release</span><span class="p">();</span> <span class="c1">//自动delete []销毁其指针</span>
+</code></pre></div></div>
+<p>由于<code class="highlighter-rouge">unique_ptr</code>指向一个数组，因此没有点或者箭头成员运算符，如果想要遍历数组，可以还是用<code class="highlighter-rouge">for</code>循环</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="mi">10</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
+  <span class="n">up</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="c1">//unique_ptr支持下标运算</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>如果想要使用<code class="highlighter-rouge">shared_ptr</code>则需要为其指定析构函数</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">sp</span><span class="p">(</span><span class="k">new</span> <span class="kt">int</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="p">[](</span><span class="kt">int</span> <span class="o">*</span><span class="n">p</span><span class="p">){</span> <span class="k">delete</span> <span class="p">[]</span> <span class="n">p</span><span class="p">;});</span>
+</code></pre></div></div>
+<p>另外，<code class="highlighter-rouge">shared_ptr</code>并不支持下标运算，因此想要遍历数组需要通过<code class="highlighter-rouge">get()</code>得到指针周再遍历，这不是一种好的选择。</p>
+
+<h3 id="使用allocator">使用<code class="highlighter-rouge">allocator</code></h3>
+
+<p><code class="highlighter-rouge">new</code>有一些灵活上的局限性，其中一方面是它将内存分配和对象构造结合在了一起，类似的，<code class="highlighter-rouge">delete</code>也将对象析构和内存释放结合在了一起。对于单个对象，这种策略是可行的，但是当分配一大块内存时，我们希望将内存的分配和对象的构造进行分离。C++ 标准库中的<code class="highlighter-rouge">allocator</code>提供了可以帮助我们完成这个工作</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">allocator</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span> <span class="k">const</span> <span class="n">p</span> <span class="o">=</span> <span class="n">alloc</span><span class="p">.</span><span class="n">allocate</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="http://www.charleshouserjr.com/Cplus2.pdf">C++ Primer</a></li>
+  <li><a href="https://www.amazon.com/Effective-Modern-Specific-Ways-Improve/dp/1491903996/">Effective Modern C++</a></li>
+</ul>
+:ET

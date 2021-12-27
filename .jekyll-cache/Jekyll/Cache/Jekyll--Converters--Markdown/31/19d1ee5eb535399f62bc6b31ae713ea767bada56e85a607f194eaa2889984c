@@ -1,0 +1,417 @@
+I"H�<h2 id="runloop的事件轮训">Runloop的事件轮训</h2>
+
+<p>了解Runloop的工作方式很重要，以前一直以为Main Runloop是一个60fps的回调，后来发现这种理解是不对的，60fps是屏幕的刷新频率，工作在更底层，它和Runloop并没有直接对应的关系。Runloop实质上是一种Event Loop，类似的消息模型每个GUI操作系统都有，比如早期Windows程序中(MFC)有：</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">while</span><span class="p">(</span><span class="n">GetMessage</span><span class="p">(</span><span class="o">&amp;</span><span class="n">msg</span><span class="p">,</span><span class="nb">NULL</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+<span class="p">{</span>
+   <span class="n">TranslateMessage</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">msg</span><span class="p">);</span>
+   <span class="n">DispatchMessage</span> <span class="p">(</span><span class="o">&amp;</span><span class="n">msg</span><span class="p">)</span> <span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>根据Apple开放的Runloop代码来看，思路是一样的:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">CFRunLoopRun</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>	<span class="cm">/* DOES CALLOUT */</span>
+    <span class="kt">int32_t</span> <span class="n">result</span><span class="p">;</span>
+    <span class="k">do</span> <span class="p">{</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">CFRunLoopRunSpecific</span><span class="p">(</span><span class="n">CFRunLoopGetCurrent</span><span class="p">(),</span> <span class="n">kCFRunLoopDefaultMode</span><span class="p">,</span> <span class="mf">1.0e10</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+        <span class="n">CHECK_FOR_FORK</span><span class="p">();</span>
+    <span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">kCFRunLoopRunStopped</span> <span class="o">!=</span> <span class="n">result</span> <span class="o">&amp;&amp;</span> <span class="n">kCFRunLoopRunFinished</span> <span class="o">!=</span> <span class="n">result</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>追着看下去，最终执行的函数是<code class="highlighter-rouge">__CFRunLoopRun</code>。根据Apple的官方文档所载：</p>
+
+<blockquote>
+  <p>A run loop receives events from two different types of sources. Input sources deliver asynchronous events, usually messages from another thread or from a different application. Timer sources deliver synchronous events, occurring at a scheduled time or repeating interval. Both types of source use an application-specific handler routine to process the event when it arrives.</p>
+</blockquote>
+
+<p>Runloop只检测两种类型的事件，一种是Input Sources，通常是来自其它线程或进程。另一种是同步事件，来自Timer。这两种事件都可以在app中被获取并做处理：</p>
+
+<p><img src="/assets/images/2012/11/runloop.png" width="496" height="262" /></p>
+
+<p>如果想要获取Runloop事件的回调，可以注册observer:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">CFRunLoopObserverContext</span> <span class="n">context</span> <span class="o">=</span> <span class="p">{</span>
+   <span class="mi">0</span><span class="p">,</span>
+   <span class="p">(</span><span class="n">__bridge</span> <span class="kt">void</span> <span class="o">*</span><span class="p">)(</span><span class="n">self</span><span class="p">),</span>
+   <span class="nb">NULL</span><span class="p">,</span>
+   <span class="nb">NULL</span><span class="p">,</span>
+   <span class="nb">NULL</span>
+<span class="p">};</span>
+<span class="n">CFRunLoopObserverRef</span> <span class="n">observerRef</span> <span class="o">=</span> <span class="n">CFRunLoopObserverCreate</span><span class="p">(</span><span class="n">kCFAllocatorDefault</span><span class="p">,</span> <span class="n">kCFRunLoopAllActivities</span><span class="p">,</span> <span class="n">YES</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">runloopCallback</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">context</span><span class="p">);</span>
+<span class="n">CFRunLoopAddObserver</span><span class="p">(</span><span class="n">CFRunLoopGetCurrent</span><span class="p">(),</span> <span class="n">observerRef</span><span class="p">,</span> <span class="n">kCFRunLoopCommonModes</span><span class="p">);</span>
+</code></pre></div></div>
+<p>上面代码以Main Runloop为例，注册了一个回调函数:<code class="highlighter-rouge">runloopCallback</code>,同时指定了要监听事件类型为<code class="highlighter-rouge">kCFRunLoopAllActivities</code>。在回调函数中，将被监听的事件打印出来：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">runloopCallback</span><span class="p">(</span><span class="n">CFRunLoopObserverRef</span> <span class="n">observer</span><span class="p">,</span> <span class="n">CFRunLoopActivity</span> <span class="n">activity</span><span class="p">,</span> <span class="kt">void</span> <span class="o">*</span><span class="n">info</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">NSString</span><span class="o">*</span> <span class="n">activityStr</span> <span class="o">=</span> <span class="err">@</span><span class="s">"unkown"</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(((</span><span class="n">activity</span> <span class="o">&gt;&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">activityStr</span> <span class="o">=</span> <span class="err">@</span><span class="s">"kCFRunLoopEntry"</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(((</span><span class="n">activity</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">)</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">){</span>
+        <span class="n">activityStr</span> <span class="o">=</span> <span class="err">@</span><span class="s">"kCFRunLoopBeforeTimers"</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(((</span><span class="n">activity</span> <span class="o">&gt;&gt;</span> <span class="mi">2</span><span class="p">)</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">){</span>
+        <span class="n">activityStr</span> <span class="o">=</span> <span class="err">@</span><span class="s">"kCFRunLoopBeforeSources"</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(((</span><span class="n">activity</span> <span class="o">&gt;&gt;</span> <span class="mi">5</span><span class="p">)</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">){</span>
+        <span class="n">activityStr</span> <span class="o">=</span> <span class="err">@</span><span class="s">"kCFRunLoopBeforeWaiting"</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(((</span><span class="n">activity</span> <span class="o">&gt;&gt;</span> <span class="mi">6</span><span class="p">)</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">){</span>
+        <span class="n">activityStr</span> <span class="o">=</span> <span class="err">@</span><span class="s">"kCFRunLoopAfterWaiting"</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span> <span class="k">if</span> <span class="p">(((</span><span class="n">activity</span> <span class="o">&gt;&gt;</span> <span class="mi">7</span><span class="p">)</span><span class="o">&amp;</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">){</span>
+        <span class="n">activityStr</span> <span class="o">=</span> <span class="err">@</span><span class="s">"kCFRunLoopExit"</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">else</span>
+    <span class="p">{</span>
+        <span class="n">activityStr</span> <span class="o">=</span> <span class="err">@</span><span class="s">"kCFRunLoopAllActivities"</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"[%.4f] activity:%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="n">CFAbsoluteTimeGetCurrent</span><span class="p">(),</span><span class="n">activityStr</span><span class="p">.</span><span class="n">UTF8String</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>可以看出，RunloopActivity包含下面这6种事件:</p>
+
+<ol>
+  <li><code class="highlighter-rouge">kCFRunLoopEntry</code>：Runloop准备启动</li>
+  <li><code class="highlighter-rouge">kCFRunLoopBeforeTimers</code>：Runloop准备处理timer事件</li>
+  <li><code class="highlighter-rouge">kCFRunLoopBeforeSources</code>：Runloop准备处理input sources</li>
+  <li><code class="highlighter-rouge">kCFRunLoopBeforeWaiting</code>：Runloop准备进入休眠</li>
+  <li><code class="highlighter-rouge">kCFRunLoopAfterWaiting</code>：Runloop被唤醒准备处理消息</li>
+  <li><code class="highlighter-rouge">kCFRunLoopExit</code>：Runloop退出</li>
+</ol>
+
+<p>如果程序监听了<code class="highlighter-rouge">kCFRunLoopAllActivities</code>，那么当Runloop中某个event触发的时候，程序会收该event事件的回调。运行上面代码，观察下面的日志：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>471507989.6447] activity:kCFRunLoopEntry
+<span class="o">[</span>471507989.6448] activity:kCFRunLoopBeforeTimers
+<span class="o">[</span>471507989.6448] activity:kCFRunLoopBeforeSources
+<span class="o">[</span>471507989.6456] activity:kCFRunLoopBeforeTimers
+<span class="o">[</span>471507989.6456] activity:kCFRunLoopBeforeSources
+<span class="o">[</span>471507989.6456] activity:kCFRunLoopBeforeWaiting
+...
+<span class="o">[</span>471507991.0989] activity:kCFRunLoopAfterWaiting
+<span class="o">[</span>471507991.0993] activity:kCFRunLoopBeforeTimers
+<span class="o">[</span>471507991.0993] activity:kCFRunLoopBeforeSources
+<span class="o">[</span>471507991.0993] activity:kCFRunLoopBeforeWaiting
+</code></pre></div></div>
+
+<p>可以发现，Runloop会在启动的时候依次轮训Timer,Sources，过一阵后，如果没有任何的Input Source发生或Timer，Runloop将进入<code class="highlighter-rouge">kCFRunLoopBeforeWaiting</code>，即休眠状态。这时候，如果有touch事件进来，相当于产生了一个Input Source，这时候：</p>
+
+<ol>
+  <li>Runloop会先发一个被唤醒的回调：<code class="highlighter-rouge">kCFRunLoopAfterWaiting</code></li>
+  <li>接着处理touch事件，<code class="highlighter-rouge">kCFRunLoopBeforeSources</code>会回调</li>
+  <li>触发app中的 <code class="highlighter-rouge">- (void)touchesBegan:(NSSet* )touches withEvent:(UIEvent *)event</code>方法。</li>
+  <li>重新进入休眠状态</li>
+  <li>当touch end的时候又会唤醒Runloop，重复上面的操作的操作。</li>
+</ol>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>471512170.7319] activity:kCFRunLoopBeforeSources
+VZRunloopSample[40478:3595823] <span class="nb">touch </span>began
+<span class="o">[</span>471512170.7327] activity:kCFRunLoopBeforeSources
+<span class="o">[</span>471512170.7328] activity:kCFRunLoopBeforeSources
+<span class="o">[</span>471512170.7328] activity:kCFRunLoopBeforeWaiting
+<span class="o">[</span>471512170.8271] activity:kCFRunLoopBeforeSources
+VZRunloopSample[40478:3595823] <span class="nb">touch </span>end
+<span class="o">[</span>471512170.8277] activity:kCFRunLoopBeforeSources
+<span class="o">[</span>471512170.8277] activity:kCFRunLoopBeforeWaiting
+<span class="o">[</span>471512171.4833] activity:kCFRunLoopBeforeSources
+<span class="o">[</span>471512171.4833] activity:kCFRunLoopBeforeWaiting
+</code></pre></div></div>
+
+<p>类似的，如果有Timer进来，<code class="highlighter-rouge">kCFRunLoopBeforeTimers</code>会先回调，接着再执行Timer的callback函数。</p>
+
+<h2 id="什么是input-sources">什么是Input Sources</h2>
+
+<p>上面提到了很多次Input Sources，那么什么是Input Sources呢？文档的解释是:</p>
+
+<blockquote>
+  <p>Input sources deliver events asynchronously to your threads.</p>
+</blockquote>
+
+<p>就是说Input Sources的作用是向Runloop所在线程异步的投递消息，消息源有两种，一种是Port-based的，它监听应用来自Mach Port发出的消息；另一种是自定义消息，它来自其它线程。无论是哪种消息源，都可以被Runloop监听。</p>
+
+<h3 id="port-based-sources">Port-based Sources</h3>
+
+<p>OSX提供了一种基于MachPort的线程或进程间的通信方式，这种方式需要添加一个NSMachPort对象到Runloop的Source中，当Port中有消息发送过来时，会唤醒Runloop来处理消息:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Delegates are sent this if they respond, otherwise they</span>
+<span class="c1">// are sent handlePortMessage:; argument is the raw Mach message</span>
+<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">handleMachMessage</span><span class="o">:</span><span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="n">msg</span><span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</code></pre></div></div>
+<p>注意，参数<code class="highlighter-rouge">msg</code>的类型为<code class="highlighter-rouge">NSPortMessage</code>，这个类在OSX中可以正常使用，原因是OSX对app没有进程通信的限制，但是在iOS中，这个类只在<code class="highlighter-rouge">NSPort.h</code>中有一个前向声明，无法直接使用，推测涉及到沙盒安全的问题，因此还没找到iOS中使用<code class="highlighter-rouge">NSPort</code>进行线程通信的方法。</p>
+
+<blockquote>
+  <p>2015年12月14日，补充：在iOS8之后，有了Application Group的概念，在一个group里的application可以使用<code class="highlighter-rouge">CFMessagePortCreateLocal</code> API打开port进行通信</p>
+</blockquote>
+
+<h3 id="自定义的input-sources">自定义的Input Sources</h3>
+
+<p>文档中给出的这张图已经说的很清楚了：</p>
+
+<p><img src="/assets/images/2012/11/runloop2.png" width="475" height="233" /></p>
+
+<p>如果想使用自定义的Input Source向Runloop投递消息，需要使用CoreFoundation的API，Foundation的API不提供创建自定义的Input Source，根据文档，使用Input Source需要如下步骤：</p>
+
+<ol>
+  <li>创建一个<code class="highlighter-rouge">CFRunloopContextRef</code>,实现三个回调函数:
+    <ul>
+      <li><code class="highlighter-rouge">void	(*schedule)(void *info, CFRunLoopRef rl, CFStringRef mode);</code></li>
+      <li><code class="highlighter-rouge">void	(*cancel)(void *info, CFRunLoopRef rl, CFStringRef mode);</code></li>
+      <li><code class="highlighter-rouge">void	(*perform)(void *info);</code></li>
+    </ul>
+  </li>
+  <li>通过上面的context创建一个RunloopSourceRef:
+    <ul>
+      <li><code class="highlighter-rouge">CFRunLoopSourceRef runLoopSource = CFRunLoopSourceCreate(NULL, 0, &amp;context);</code></li>
+    </ul>
+  </li>
+  <li>将创建的RunloopSource添加到当前的Runloop中:
+    <ul>
+      <li><code class="highlighter-rouge">CFRunLoopRef runLoop = CFRunLoopGetCurrent();</code></li>
+      <li><code class="highlighter-rouge">CFRunLoopAddSource(runLoop, runLoopSource, kCFRunLoopDefaultMode);</code></li>
+    </ul>
+  </li>
+  <li>向RunloopSource发送Signal，唤醒Runloop处理事件</li>
+</ol>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">CFRunLoopSourceSignal</span><span class="p">(</span><span class="n">runLoopSource</span><span class="p">);</span>
+<span class="n">CFRunLoopWakeUp</span><span class="p">(</span><span class="n">runloop</span><span class="p">);</span>
+</code></pre></div></div>
+<p>使用这种方式可以实现线程间的通信，通常用于子线程向主线程通信，但是数据传递会很麻烦，暂时想不到应用场景。</p>
+
+<h3 id="使用performselector">使用PerformSelector</h3>
+
+<p>除了上面两种Input Sources，<code class="highlighter-rouge">performSelector</code>也是通过runloop执行的，<code class="highlighter-rouge">selector</code>对应的方法在Runloop中串行执行，<code class="highlighter-rouge">performSelector</code>通常用在主线程，如果要在其它线程使用，需要这个线程有一个活着的Runloop保持线程不退出。</p>
+
+<h2 id="理解runloop-modes">理解Runloop Modes</h2>
+
+<p>官方文档对Runloop Modes的描述有只有三小段文字，但信息量确非常的大，说的也很晦涩。首先是说Runloop Mode包含一组input sources，timers和observers的集合，只有mode中包含的Source才会被Runloop扫描到。理解Runloop Mode，要先看下<code class="highlighter-rouge">CFRunLoop</code>的结构：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">__CFRunLoop</span> <span class="p">{</span>
+    <span class="n">CFRuntimeBase</span> <span class="n">_base</span><span class="p">;</span>
+    <span class="n">pthread_mutex_t</span> <span class="n">_lock</span><span class="p">;</span>			<span class="cm">/* locked for accessing mode list */</span>
+    <span class="n">__CFPort</span> <span class="n">_wakeUpPort</span><span class="p">;</span>			<span class="c1">// used for CFRunLoopWakeUp </span>
+    <span class="n">Boolean</span> <span class="n">_unused</span><span class="p">;</span>
+    <span class="k">volatile</span> <span class="n">_per_run_data</span> <span class="o">*</span><span class="n">_perRunData</span><span class="p">;</span> <span class="c1">// reset for runs of the run loop</span>
+    <span class="n">pthread_t</span> <span class="n">_pthread</span><span class="p">;</span>
+    <span class="kt">uint32_t</span> <span class="n">_winthread</span><span class="p">;</span>
+    <span class="n">CFMutableSetRef</span> <span class="n">_commonModes</span><span class="p">;</span>
+    <span class="n">CFMutableSetRef</span> <span class="n">_commonModeItems</span><span class="p">;</span>
+    <span class="n">CFRunLoopModeRef</span> <span class="n">_currentMode</span><span class="p">;</span>
+    <span class="n">CFMutableSetRef</span> <span class="n">_modes</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">_block_item</span> <span class="o">*</span><span class="n">_blocks_head</span><span class="p">;</span>
+    <span class="k">struct</span> <span class="n">_block_item</span> <span class="o">*</span><span class="n">_blocks_tail</span><span class="p">;</span>
+    <span class="n">CFTypeRef</span> <span class="n">_counterpart</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>通过这个结构可以看到, 每一个<code class="highlighter-rouge">CFRunloop</code>中都包含一个<code class="highlighter-rouge">_commonModes</code>的集合，它用来保存Runloop支持的mode类型（包括系统默认的mode和自定义的mode），我们可以在运行时访问<code class="highlighter-rouge">__CFRunLoop</code>这个结构，来查看<code class="highlighter-rouge">_commonModes</code>中具体保存了哪些mode:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">CFRunLoopRef</span> <span class="n">runloopRef</span> <span class="o">=</span> <span class="n">CFRunLoopGetCurrent</span><span class="p">();</span>
+<span class="k">struct</span> <span class="n">__CFRunLoop</span><span class="o">*</span> <span class="n">runloopStructPointer</span> <span class="o">=</span> <span class="n">runloopRef</span><span class="p">;</span>
+</code></pre></div></div>
+<p>上面代码中，打印出的<code class="highlighter-rouge">_commonModes</code>结构如下：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>//当前Runloop支持两种mode:
+common modes = &lt;CFBasicHash 0x7f9f43601ea0 [0x1013297b0]&gt;{type = mutable set, count = 2,
+entries =&gt;
+0 : &lt;CFString 0x10244c270 [0x1013297b0]&gt;{contents = "UITrackingRunLoopMode"}
+2 : &lt;CFString 0x101349b60 [0x1013297b0]&gt;{contents = "kCFRunLoopDefaultMode"}
+}
+</code></pre></div></div>
+
+<p>每一个<code class="highlighter-rouge">CFRunloop</code>中还包含一个<code class="highlighter-rouge">_commonModeItems</code>集合，它用来保存某个Mode中支持的消息源，包括<code class="highlighter-rouge">Timer/Input Source/Observers</code>, 类型为<code class="highlighter-rouge">CFRunLoopSourceRef</code>。每当有一个上述对象添加进来时，便向这个集合增加一个元素:<code class="highlighter-rouge">CFSetAddValue(rl-&gt;_commonModeItems, rls);</code>。在默认情况下，当Runloop启动后，系统会自动在<code class="highlighter-rouge">_commonModeItems</code>中添加一些列Source和Observer。</p>
+
+<p>此外，每一个<code class="highlighter-rouge">CFRunloop</code>中还包含一个<code class="highlighter-rouge">_currentMode</code>表示当前运行在的Mode，通过<code class="highlighter-rouge">CFRunLoopCopyCurrentMode(CFRunloopRef runloop)</code>这个API可以看到系统默认预置进来的几种Mode:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- UITrackingRunLoopMode,
+- GSEventReceiveRunLoopMode,
+- kCFRunLoopDefaultMode,
+- UIInitializationRunLoopMode,
+- kCFRunLoopCommonModes
+</code></pre></div></div>
+<p>这些mode和官方文档上给出的并不一致，原因是iOS和MacOS对某些模式的命名不同，这些mode中，需要注意的有三种:<code class="highlighter-rouge">kCFRunLoopDefaultMode, kCFRunLoopCommonModes和UITrackingRunLoopMode</code></p>
+
+<h3 id="kcfrunloopdefaultmode">kCFRunLoopDefaultMode</h3>
+
+<p>在创建<code class="highlighter-rouge">CFRunLoopRef</code>的时候<code class="highlighter-rouge">_commonModes</code>默认填充了一个<code class="highlighter-rouge">kCFRunLoopDefaultMode</code>：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="n">CFRunLoopRef</span> <span class="nf">__CFRunLoopCreate</span><span class="p">(</span><span class="n">pthread_t</span> <span class="n">t</span><span class="p">)</span> <span class="p">{</span>
+
+	<span class="n">CFRunLoopRef</span> <span class="n">loop</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+	<span class="n">CFRunLoopModeRef</span> <span class="n">rlm</span><span class="p">;</span>
+	<span class="p">...</span>
+		
+	<span class="n">loop</span><span class="o">-&gt;</span><span class="n">_commonModes</span> <span class="o">=</span> <span class="n">CFSetCreateMutable</span><span class="p">(</span><span class="n">kCFAllocatorSystemDefault</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">kCFTypeSetCallBacks</span><span class="p">);</span>
+	<span class="n">CFSetAddValue</span><span class="p">(</span><span class="n">loop</span><span class="o">-&gt;</span><span class="n">_commonModes</span><span class="p">,</span> <span class="n">kCFRunLoopDefaultMode</span><span class="p">);</span>
+	<span class="n">loop</span><span class="o">-&gt;</span><span class="n">_commonModeItems</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+	
+	<span class="p">...</span>
+	<span class="k">return</span> <span class="n">loop</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+<p>也就是说Runloop默认运行的mode是<code class="highlighter-rouge">kCFRunLoopDefaultMode</code>,官方文档对<code class="highlighter-rouge">kCFRunLoopDefaultMode</code>的解释是:</p>
+
+<blockquote>
+  <p>The default mode is the one used for most operations. Most of the time, you should use this mode to start your run loop and configure your input sources.</p>
+</blockquote>
+
+<p>在开源的Runloop代码中，并没有找到关于<code class="highlighter-rouge">kCFRunLoopDefaultMode</code>太多的代码，默认情况下它对应的<code class="highlighter-rouge">_commonModeItems</code>为空。</p>
+
+<h3 id="kcfrunloopcommonmodes">kCFRunLoopCommonModes</h3>
+
+<p>除了<code class="highlighter-rouge">kCFRunLoopDefaultMode</code>系统为Runloop还提供了一种mode叫<code class="highlighter-rouge">kCFRunLoopCommonModes</code>,文档对它的解释是:</p>
+
+<blockquote>
+  <p>This is a configurable group of commonly used modes. Associating an input source with this mode also associates it with each of the modes in the group. For Cocoa applications, this set includes the default, modal, and event tracking modes by default. Core Foundation includes just the default mode initially. You can add custom modes to the set using the CFRunLoopAddCommonMode function.</p>
+</blockquote>
+
+<p>这个模式很特别，如果指定了Runloop的mode为<code class="highlighter-rouge">kCFRunLoopCommonModes</code>，系统默认将现在的已经存在的各种<code class="highlighter-rouge">Timers/Input Sources/Observers</code>默认添加到<code class="highlighter-rouge">_commonModeItems</code>这个集合里，也就是说它拥有各个Mode的特性，从源码中也能看出这一点:</p>
+
+<p>以addTimer为例:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kt">void</span> <span class="nf">CFRunLoopAddTimer</span><span class="p">(</span><span class="n">CFRunLoopRef</span> <span class="n">rl</span><span class="p">,</span> <span class="n">CFRunLoopTimerRef</span> <span class="n">rlt</span><span class="p">,</span> <span class="n">CFStringRef</span> <span class="n">modeName</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="p">...</span>
+		
+	<span class="k">if</span> <span class="p">(</span><span class="n">modeName</span> <span class="o">==</span> <span class="n">kCFRunLoopCommonModes</span><span class="p">)</span>
+	<span class="p">{</span>
+		<span class="n">CFSetRef</span> <span class="n">set</span> <span class="o">=</span> <span class="n">rl</span><span class="o">-&gt;</span><span class="n">_commonModes</span> <span class="o">?</span> <span class="n">CFSetCreateCopy</span><span class="p">(</span><span class="n">kCFAllocatorSystemDefault</span><span class="p">,</span> <span class="n">rl</span><span class="o">-&gt;</span><span class="n">_commonModes</span><span class="p">)</span> <span class="o">:</span> <span class="nb">NULL</span><span class="p">;</span>
+		
+		<span class="k">if</span> <span class="p">(</span><span class="nb">NULL</span> <span class="o">==</span> <span class="n">rl</span><span class="o">-&gt;</span><span class="n">_commonModeItems</span><span class="p">)</span> 
+		<span class="p">{</span>
+			<span class="n">rl</span><span class="o">-&gt;</span><span class="n">_commonModeItems</span> <span class="o">=</span> <span class="n">CFSetCreateMutable</span><span class="p">(</span><span class="n">kCFAllocatorSystemDefault</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">kCFTypeSetCallBacks</span><span class="p">);</span>
+		<span class="p">}</span>
+		<span class="n">CFSetAddValue</span><span class="p">(</span><span class="n">rl</span><span class="o">-&gt;</span><span class="n">_commonModeItems</span><span class="p">,</span> <span class="n">rls</span><span class="p">);</span>
+		<span class="k">if</span> <span class="p">(</span><span class="nb">NULL</span> <span class="o">!=</span> <span class="n">set</span><span class="p">)</span> 
+		<span class="p">{</span>
+			<span class="n">CFTypeRef</span> <span class="n">context</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">rl</span><span class="p">,</span> <span class="n">rls</span><span class="p">};</span>
+			<span class="cm">/* add new item to all common-modes */</span>
+			<span class="n">CFSetApplyFunction</span><span class="p">(</span><span class="n">set</span><span class="p">,</span> <span class="p">(</span><span class="n">__CFRunLoopAddItemToCommonModes</span><span class="p">),</span> <span class="p">(</span><span class="kt">void</span> <span class="o">*</span><span class="p">)</span><span class="n">context</span><span class="p">);</span>
+			<span class="n">CFRelease</span><span class="p">(</span><span class="n">set</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="p">...</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>每次有<code class="highlighter-rouge">Timer/Observer/Resource</code>添加到Runloop中的时候，如果Runloop运行在<code class="highlighter-rouge">kCFRunLoopCommonModes</code>模式，都会将<code class="highlighter-rouge">rls</code>添加到<code class="highlighter-rouge">_commonModeItems</code>中。</p>
+
+<p>一个典型的场景就是：当Runloop运行在<code class="highlighter-rouge">kCFRunLoopDefaultModes</code>模式时，向Runloop添加了一个Timer：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">NSTimer</span><span class="o">*</span> <span class="n">timer</span> <span class="o">=</span> <span class="p">[</span><span class="n">NSTimer</span> <span class="n">timerWithTimeInterval</span><span class="o">:</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span><span class="n">f</span> <span class="n">target</span><span class="o">:</span><span class="n">self</span> <span class="n">selector</span><span class="o">:</span><span class="err">@</span><span class="n">selector</span><span class="p">(</span><span class="n">timerFireMethod</span><span class="o">:</span><span class="p">)</span> <span class="n">userInfo</span><span class="o">:</span><span class="n">nil</span> <span class="n">repeats</span><span class="o">:</span><span class="n">YES</span><span class="p">];</span>
+<span class="p">[[</span><span class="n">NSRunLoop</span> <span class="n">mainRunLoop</span><span class="p">]</span> <span class="n">addTimer</span><span class="o">:</span><span class="n">timer</span> <span class="n">forMode</span><span class="o">:</span><span class="n">NSDefaultRunLoopModes</span><span class="p">];</span>
+
+</code></pre></div></div>
+
+<p>如果此时界面上有ScrollView，当ScrollView滑动时，Runloop的模式切换到了<code class="highlighter-rouge">UITrackingRunLoopMode</code>上，由于此时的<code class="highlighter-rouge">_commonModeItems</code>中没有Timer，因此无法收到Timer的回调。解决办法是将timer添加到<code class="highlighter-rouge">NSRunLoopCommonModes</code>中，这样Timer就会被添加到<code class="highlighter-rouge">_commonModeItems</code>中:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    
+<span class="p">[[</span><span class="n">NSRunLoop</span> <span class="n">mainRunLoop</span><span class="p">]</span> <span class="n">addTimer</span><span class="o">:</span><span class="n">timer</span> <span class="n">forMode</span><span class="o">:</span><span class="n">NSRunLoopCommonModes</span><span class="p">];</span>
+
+</code></pre></div></div>
+
+<h2 id="系统对runloop的使用">系统对Runloop的使用</h2>
+
+<p>大部分系统的行为都和Runloop有着直接或间接的关系，尤其是Main Runloop，下面举出了部分</p>
+
+<h3 id="catransaction">CATransaction</h3>
+
+<p>CATransaction注册了两个Runloop的Observer:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>9 : &lt;CFRunLoopObserver 0x7f9f43715c40 [0x1013297b0]&gt;{valid = Yes, activities = 0xa0, repeats = Yes, order = 1999000, callout = _beforeCACommitHandler (0x101704a54), context = &lt;CFRunLoopObserver context 0x7f9f436072a0&gt;}
+
+16 : &lt;CFRunLoopObserver 0x7f9f43715da0 [0x1013297b0]&gt;{valid = Yes, activities = 0xa0, repeats = Yes, order = 2001000, callout = _afterCACommitHandler (0x101704a99), context = &lt;CFRunLoopObserver context 0x7f9f436072a0&gt;}
+
+</code></pre></div></div>
+
+<ul>
+  <li>第一个是<code class="highlighter-rouge">beforeCommit</code>,activity是<code class="highlighter-rouge">kCFRunLoopExit|kCFRunLoopBeforeWaiting</code>,优先级是<code class="highlighter-rouge">1999000</code></li>
+  <li>第二个是<code class="highlighter-rouge">afterCommit</code>,activity是<code class="highlighter-rouge">kCFRunLoopExit|kCFRunLoopBeforeWaiting</code>,优先级是<code class="highlighter-rouge">2001000</code></li>
+</ul>
+
+<p>这里能看出CATransaction是等到Runloop空闲的时候才去做commit，这点非常重要，我们也可以自己写一段demo来验证：</p>
+
+<p>我们定义一个Label，Override <code class="highlighter-rouge">drawTextInRect:</code>：</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="o">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">drawTextInRect</span><span class="o">:</span><span class="p">(</span><span class="n">CGRect</span><span class="p">)</span><span class="n">rect</span>
+<span class="p">{</span>
+    <span class="n">CGContextRef</span> <span class="n">context</span> <span class="o">=</span> <span class="n">UIGraphicsGetCurrentContext</span><span class="p">();</span>
+    <span class="n">UIImage</span><span class="o">*</span> <span class="n">image</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIImage</span> <span class="n">imageNamed</span><span class="o">:</span><span class="err">@</span><span class="s">"sv.jpg"</span><span class="p">];</span>
+    <span class="n">CGContextDrawImage</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="n">image</span><span class="p">.</span><span class="n">CGImage</span><span class="p">);</span>
+    <span class="p">[</span><span class="n">super</span> <span class="n">drawTextInRect</span><span class="o">:</span><span class="n">rect</span><span class="p">];</span>
+<span class="p">}</span>
+
+
+</code></pre></div></div>
+
+<p>可以看到调用堆栈如下:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>frame #1: 0x014b4711 UIKit`-[UILabel drawRect:] + 98
+
+...
+
+frame #13: 0x010b435e QuartzCore`CA::Layer::layout_and_display_if_needed(CA::Transaction*) + 38
+frame #14: 0x010a6e8b QuartzCore`CA::Context::commit_transaction(CA::Transaction*) + 317
+frame #15: 0x010dae03 QuartzCore`CA::Transaction::commit() + 561
+frame #16: 0x010db6c4 QuartzCore`CA::Transaction::observer_callback(__CFRunLoopObserver*, unsigned long, void*) + 92
+frame #17: 0x0093c61e CoreFoundation`__CFRUNLOOP_IS_CALLING_OUT_TO_AN_OBSERVER_CALLBACK_FUNCTION__ + 30
+frame #18: 0x0093c57e CoreFoundation`__CFRunLoopDoObservers + 398
+frame #19: 0x00931728 CoreFoundation`CFRunLoopRunSpecific + 504
+frame #20: 0x0093151b CoreFoundation`CFRunLoopRunInMode + 123
+frame #21: 0x011ef854 UIKit`-[UIApplication _run] + 540
+
+...
+
+</code></pre></div></div>
+
+<h3 id="autoreleasepool">AutoReleasePool</h3>
+
+<p>AutoReleasePool在回收对象的时候，也是依赖Runloop的回调:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>13 : &lt;CFRunLoopObserver 0x7f9f43715f80 [0x1013297b0]&gt;{valid = Yes, activities = 0xa0, repeats = Yes, order = 2147483647, callout = _wrapRunLoopWithAutoreleasePoolHandler (0x1016d1c4e), context = &lt;CFArray 0x7f9f43715d70 [0x1013297b0]&gt;{type = mutable-small, count = 1, values = (
+0 : &lt;0x7f9f44800048&gt;
+)}}
+
+14 : &lt;CFRunLoopObserver 0x7f9f43715ee0 [0x1013297b0]&gt;{valid = Yes, activities = 0x1, repeats = Yes, order = -2147483647, callout = _wrapRunLoopWithAutoreleasePoolHandler (0x1016d1c4e), context = &lt;CFArray 0x7f9f43715d70 [0x1013297b0]&gt;{type = mutable-small, count = 1, values = (
+0 : &lt;0x7f9f44800048&gt;
+
+</code></pre></div></div>
+
+<p>这里可以看到AutoReleasePool注册了两个observer，activities分别为<code class="highlighter-rouge">0xa0</code>和<code class="highlighter-rouge">0x01</code>，翻译过来是<code class="highlighter-rouge">kCFRunLoopEntry|kCFRunLoopBeforeWaiting</code>和<code class="highlighter-rouge">kCFRunLoopExit</code>，优先级也是最高(IntMax)和最低(-IntMax)。推测就是：在Runloop开始的时候，最先进行一次对象回收，在Runloop结束的时候，再进行一次对象的回收。</p>
+
+<h2 id="其它">其它</h2>
+
+<p>除了上面看到的两个Runloop Observer，再列举一下其它的：</p>
+
+<ul>
+  <li><code class="highlighter-rouge">__IOHIDEventSystemClientAvailabilityCallback</code></li>
+  <li><code class="highlighter-rouge">_ZL20notify_port_callbackP12__CFMachPortPvlS1_</code></li>
+  <li><code class="highlighter-rouge">_UIGestureRecognizerUpdateObserver</code></li>
+  <li><code class="highlighter-rouge">PurpleEventCallback</code>
+    <ul>
+      <li><a href="http://stackoverflow.com/questions/12246627/what-is-purpleeventcallback">关于PurpleEventCallback</a></li>
+    </ul>
+  </li>
+  <li><code class="highlighter-rouge">PurpleEventSignalCallback</code></li>
+  <li><code class="highlighter-rouge">__IOMIGMachPortPortCallback</code></li>
+  <li><code class="highlighter-rouge">_UIApplicationHandleEventQueue</code></li>
+  <li><code class="highlighter-rouge">_ZN2CA11Transaction17observer_callbackEP19__CFRunLoopObservermPv</code></li>
+  <li><code class="highlighter-rouge">FBSSerialQueueRunLoopSourceHandler</code></li>
+</ul>
+
+<h2 id="further-reading">Further Reading</h2>
+
+<ul>
+  <li><a href="https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Multithreading/RunLoopManagement/RunLoopManagement.html#//apple_ref/doc/uid/10000057i-CH16-SW3">Apple Runloop Doc</a></li>
+  <li><a href="http://www.opensource.apple.com/source/CF/">Apple Open Source - CoreFoundation</a></li>
+</ul>
+:ET

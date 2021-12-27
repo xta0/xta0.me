@@ -1,0 +1,217 @@
+I"�@<p><img src="/assets/images/2015/07/static-linking.png" /></p>
+
+<p>无论是动态库还是静态库都是为了解决代码重用的问题。静态库可以理解为一系列目标文件的集合，link的时候静态库中的symbol会和目标文件中的symbol一起链接，如上图所示。这种方式的好处是简单粗暴，静态库中的代码和目标工程中的代码一起编译连接，linker可以做全局的symbol级别的optimization，比如strip掉dead code等。使用静态库的劣势在于它会增加binary的大小，更重要的是如果静态库中的代码更新了，整个工程需要重新编译，不够灵活。</p>
+
+<p>在UNIX操作系统中，静态库的表示方法为</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lib + &lt;library name&gt; + .a
+</code></pre></div></div>
+
+<h2 id="静态链接与-dead_strip">静态链接与<code class="highlighter-rouge">-dead_strip</code></h2>
+
+<p>静态链接相对来说比较简单，如上图中展示了一个静态库被链接进一个executable的全过程，对于这种情况，binary中最终只会链接静态库中被用到的symbols，如下图所示</p>
+
+<p><img src="/assets/images/2015/07/static-linking-selectiveness.png" /></p>
+
+<p>上图中，假设我们的binary只需要三角形和菱形两个symbol，这时候如果linker开启了优化模式，即使静态库中有多个symbol，最终被链接进来的也只有这两个。这也是为什么静态库的size很大，但最终的binary的size却很小的原因。为了加深理解，我们可以看下面的代码</p>
+
+<div class="highlight md-flex-h md-margin-bottom-24">
+<div>
+<pre class="highlight language-cpp md-no-padding-v md-height-full">
+<code class="language-cpp">
+//a.cpp
+int __attribute__((noinline)) a_foo() { 
+    int buf[5000]; 
+    return 1; 
+}
+int __attribute__((noinline)) a_bar() { 
+    int buf[5000]; 
+    return 1; 
+}
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight language-cpp md-no-padding-v md-height-full">
+<code class="language-cpp">
+//main.cpp
+extern int a_foo();
+int main(){
+    int x = a_foo();
+    std::cout&lt;&lt;x&lt;&lt;std::endl;
+    return 0;
+}
+</code>
+</pre>
+</div>
+</div>
+
+<p>上面代码中，<code class="highlighter-rouge">a.cpp</code>包含了两个函数，<code class="highlighter-rouge">a_foo</code>和<code class="highlighter-rouge">a_bar</code>，而<code class="highlighter-rouge">main.cpp</code>中只用到了<code class="highlighter-rouge">a_foo</code>，而且<code class="highlighter-rouge">a_foo</code>是被声明的，main函数并不知道去哪里找这个函数。接着我们分别编译这两个文件，得到各自的目标文件</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> clang <span class="nt">-static</span> <span class="nt">-c</span> main.cpp //main.o
+<span class="o">&gt;</span> clang <span class="nt">-static</span> <span class="nt">-c</span> a.cpp //a.o
+</code></pre></div></div>
+<p>此时我们观察两个目标文件中的symbol</p>
+
+<div class="highlight md-flex-h md-margin-bottom-24">
+<div>
+<pre class="highlight language-cpp md-no-padding-v md-height-full">
+<code class="language-cpp">
+&gt;  nm a.o | c++filt
+
+00000050 T a_bar()
+00000000 T a_foo()
+                 U ___stack_chk_fail
+                 U ___stack_chk_guard
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight language-python md-no-padding-v md-height-full">
+<code class="language-python">
+&gt; nm main.o | c++filt
+
+000001e0 short GCC_except_table3
+                 U __Unwind_Resume
+                 U a_foo()
+...
+000000a0 T _main
+
+</code>
+</pre>
+</div>
+</div>
+
+<p>观察目标文件中的symbol，其中<code class="highlighter-rouge">main.o</code>中的<code class="highlighter-rouge">a_foo</code>标记为<code class="highlighter-rouge">U</code>，符合我们的预期。接着我们手动的将这两个目标文件link起来产生最终的binary <code class="highlighter-rouge">a.out</code>，我们在MacOS下使用默认的linker - <code class="highlighter-rouge">ld</code></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ld <span class="nt">-o</span> a.out main.o a.o <span class="nt">-lc</span>++ <span class="nt">-L</span>/usr/local/lib <span class="nt">-lSystem</span>
+</code></pre></div></div>
+<blockquote>
+  <p>也可以直接 <code class="highlighter-rouge">clang++ main.cpp a.cpp</code></p>
+</blockquote>
+
+<p>接着我们查看<code class="highlighter-rouge">a.out</code>中的符号</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> nm a.out | c++filt
+
+100000f68 short GCC_except_table3
+                 ...
+100000e70 T a_bar<span class="o">()</span>
+100000e20 T a_foo<span class="o">()</span>
+...
+100000c40 T _main
+                 U dyld_stub_binder
+
+</code></pre></div></div>
+<p>我们发现，<code class="highlighter-rouge">a.o</code>中没用的<code class="highlighter-rouge">a_bar</code>也被link进来了，这显然是我们不希望看到的，此时我们可以通过<code class="highlighter-rouge">-dead_strip</code>来告诉<code class="highlighter-rouge">ld</code> strip掉无用代码</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ld <span class="nt">-o</span> a.out main.o a.o <span class="nt">-lc</span>++ <span class="nt">-L</span>/usr/local/lib <span class="nt">-lSystem</span> <span class="nt">-dead_strip</span>
+</code></pre></div></div>
+<blockquote>
+  <p>也可以直接 <code class="highlighter-rouge">clang++ main.cpp a.cpp -Wl,-dead_strip</code></p>
+</blockquote>
+
+<p>此时我们再查看<code class="highlighter-rouge">a.out</code>的符号表则会发现<code class="highlighter-rouge">a_bar()</code>已经不在了。</p>
+
+<h3 id="ld64lld"><code class="highlighter-rouge">ld64.lld</code></h3>
+
+<p>自然而然的我们会想否可以将上面的linker优化技术应用到静态库上，即给你一个很大的静态库，是否可以通过linker的帮助来裁剪掉无用的代码。为了回答这个问题我们要想一下<code class="highlighter-rouge">-dead_strip</code>是怎么工作的。显然对于每个executable都有一个<code class="highlighter-rouge">main()</code>函数，这个main函数是整个应用程序的entry point，也就是说我们可以从main函数中用到的symbols出发来trace所有用到的symbol并把他们记录下来，然后strip掉那些没有用的symbol。比如上面例子中main函数中发现了<code class="highlighter-rouge">a_foo</code>，是一个undefined symbol，这时linker再去寻找<code class="highlighter-rouge">a_foo</code>，而<code class="highlighter-rouge">a_foo</code>也是一个函数，它又用了别的symbol，通过这样的不断搜索，便可以找出所有用到的symbol。</p>
+
+<p>回到静态库问题上，通常对于静态库，我们会提供public APIs，这些API即可作为我们的entry point，作为trace的起点。接下来的问题是，我们需要一个linker来帮我们完成trace + dead_code strip。不幸的是，MacOS上默认的<code class="highlighter-rouge">ld</code>不能strip目标文件，<code class="highlighter-rouge">-dead_strip</code>只对executable或者动态库有效。由于静态库只是目标文件的合集，我们需要一种linker可以帮我们strip 目标文件 - <code class="highlighter-rouge">ld64.lld</code>。</p>
+
+<blockquote>
+  <p>需要注意的是ld64.lld目前已经处于不被维护的状态，请慎重使用</p>
+</blockquote>
+
+<p><code class="highlighter-rouge">ld64.lld</code>是LLVM toolchain里的一种linker，使用它我们需要自行编译LLVM</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> git clone https://github.com/llvm/llvm-project.git
+<span class="o">&gt;</span> <span class="nb">mkdir </span>build-release <span class="o">&amp;&amp;</span> <span class="nb">cd </span>build-release
+<span class="o">&gt;</span> cmake <span class="nt">-G</span> Ninja ../llvm <span class="nt">-DCMAKE_BUILD_TYPE</span><span class="o">=</span>Release <span class="nt">-DLLVM_ENABLE_PROJECTS</span><span class="o">=</span><span class="s2">"clang;lld"</span>
+<span class="o">&gt;</span> ninjia
+</code></pre></div></div>
+<p>有了ld64.lld之后，我们需要先为其提供一个<code class="highlighter-rouge">symbol list</code>，里面包含我们要保留的symbol。还是上面的例子，假如我们要保留<code class="highlighter-rouge">a_foo</code>，则我们可以用下面命令</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="nb">echo</span> <span class="s2">"__Z5a_foov"</span> <span class="o">&gt;</span> exported.syms
+<span class="o">&gt;</span> <span class="nv">LD</span><span class="o">=</span>~/LLVM/build-release/bin/ld64.lld
+<span class="o">&gt;</span> <span class="nv">$LD</span> <span class="nt">-dead_strip</span> <span class="nt">-o</span> a_lite.o <span class="nt">-exported_symbols_list</span> ./exported.syms <span class="nt">-r</span> a.o
+</code></pre></div></div>
+<p>此时得到的<code class="highlighter-rouge">a_lite.o</code>只保留了<code class="highlighter-rouge">a_foo</code>。可以看到<code class="highlighter-rouge">ld64.lld</code>和<code class="highlighter-rouge">ld</code>不同的地方在于，它支持<code class="highlighter-rouge">-r</code>，即可以将目标文件作为<code class="highlighter-rouge">-dead_strip</code>的输入，同时输出可以是一个monolithic 目标文件。</p>
+
+<h3 id="vtable的问题">vtable的问题</h3>
+
+<p>虽然<code class="highlighter-rouge">-dead_strip</code>可以帮我们strip掉无用代码，但它却不是万能的，对于虚函数，它貌似无能为力</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//a.cpp</span>
+<span class="cp">#include &lt;iostream&gt;
+</span><span class="k">class</span> <span class="nc">A</span><span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">bark</span><span class="p">(){</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"from A"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">print</span><span class="p">();</span>
+<span class="p">};</span>
+<span class="c1">//main.cpp</span>
+<span class="cp">#include "./a.h"
+</span><span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="n">A</span> <span class="n">b</span><span class="p">;</span>
+    <span class="n">b</span><span class="p">.</span><span class="n">print</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>上述代码中，我们创建了一个<code class="highlighter-rouge">A</code>对象，并调用了它的成员方法<code class="highlighter-rouge">print()</code>。如果我们编译上述代码，并查看<code class="highlighter-rouge">a.out</code>的符号表，我们会发现<code class="highlighter-rouge">A</code>的虚函数<code class="highlighter-rouge">bark()</code>依然存在，其原因是<code class="highlighter-rouge">-dead_strip</code>貌似无法strip掉类的virtual table，进而strip不掉虚方法</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> clang++ main.cpp a.cpp <span class="nt">-Wl</span>,-dead_strip <span class="nt">-o</span> a.out
+<span class="o">&gt;</span> nm a.out | c++filt
+
+...
+0000000100000e40 unsigned short A::bark<span class="o">()</span>
+0000000100001b70 T A::print<span class="o">()</span>
+0000000100000e00 unsigned short A::A<span class="o">()</span>
+0000000100000e20 unsigned short A::A<span class="o">()</span>
+...
+00000001000020e8 short vtable <span class="k">for </span>A
+               U vtable <span class="k">for </span>__cxxabiv1::__class_type_info
+...
+</code></pre></div></div>
+
+<h3 id="the-c-registry-pattern">The C++ Registry Pattern</h3>
+
+<p>C++中有一种很常见的Registry Pattern，即通过定义一个无用的全局变量来执行一段初始化代码，我们还是来看一个具体的例子</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//main.cpp</span>
+<span class="k">class</span> <span class="nc">AA</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="n">AA</span><span class="p">(){}</span>
+    <span class="kt">void</span> <span class="n">foo</span><span class="p">(){}</span>
+<span class="p">};</span>
+<span class="k">class</span> <span class="nc">BB</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="kt">void</span> <span class="n">bar</span><span class="p">(){}</span>
+<span class="p">}</span>
+<span class="k">auto</span> <span class="n">REG_a</span> <span class="o">=</span> <span class="n">AA</span><span class="p">();</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="n">BB</span> <span class="n">b</span> <span class="o">=</span> <span class="n">BB</span><span class="p">();</span>
+    <span class="n">b</span><span class="p">.</span><span class="n">bar</span><span class="p">();</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>上述例子中我们的<code class="highlighter-rouge">main()</code>函数定义了<code class="highlighter-rouge">b</code>并调用了<code class="highlighter-rouge">bar()</code>，按照我们对<code class="highlighter-rouge">-dead_strip</code>的理解，<code class="highlighter-rouge">AA</code>应该会被strip掉，因为除了<code class="highlighter-rouge">auto REG_a = AA()</code>这句之外没有其它的Call Site，而<code class="highlighter-rouge">REG_a</code>也没有在<code class="highlighter-rouge">main</code>函数中出现，因此应该同样被strip掉，我们可以编译一下看看结果是否符合预期</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="n">clang</span><span class="o">++</span> <span class="n">main</span><span class="p">.</span><span class="n">cpp</span> <span class="o">-</span><span class="n">Wl</span><span class="p">,</span><span class="o">-</span><span class="n">dead_strip</span>
+<span class="o">&gt;</span> <span class="n">nm</span> <span class="n">a</span><span class="p">.</span><span class="n">out</span> <span class="o">|</span> <span class="n">c</span><span class="o">++</span><span class="n">filt</span> <span class="o">|</span> <span class="n">grep</span> <span class="n">AA</span>
+
+<span class="mo">0000000100000</span><span class="n">db0</span> <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">AA</span><span class="o">::</span><span class="n">AA</span><span class="p">()</span>
+<span class="mo">0000000100000</span><span class="n">f10</span> <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">AA</span><span class="o">::</span><span class="n">AA</span><span class="p">()</span>
+</code></pre></div></div>
+<p>我们发现<code class="highlighter-rouge">AA</code>和<code class="highlighter-rouge">REG_a</code>并没有被strip掉，也就是说对于这种情况，linker会保留<code class="highlighter-rouge">AA</code>的构造函数，以及构造函数的transitive closure。但是对于<code class="highlighter-rouge">AA::foo()</code>却不会保留。</p>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://www.amazon.com/Linkers-Kaufmann-Software-Engineering-Programming/dp/1558604960">Linkers and Loaders</a></li>
+  <li><a href="https://www.amazon.com/Advanced-C-Compiling-Milan-Stevanovic/dp/1430266678">Advanced C and C++ compiling</a></li>
+</ul>
+:ET

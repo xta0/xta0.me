@@ -1,0 +1,134 @@
+I"�!<p>RTSP和SIP有些类似，只是起到媒体协商的作用，并不关心媒体流的手法，具体来讲，在协商过程中，采用TCP协议进行一系列交互</p>
+
+<h3 id="具体流程">具体流程：</h3>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gd">-------------------------------
+</span><span class="p">C---&gt;S:     DESCRIBE
+S---&gt;C:     DESCRIBE/SDP
+</span>
+C---&gt;S:     SETUP
+<span class="p">S---&gt;C:     SETUP
+</span>
+C---&gt;S:     PLAY
+<span class="p">S---&gt;C:     PLAY
+</span>
+媒体流传输
+
+C---&gt;S:     TEARDOWN
+<span class="gd">-------------------------------
+</span></code></pre></div></div>
+
+<p>研究RTSP协议的最好方法 ：</p>
+
+<ul>
+  <li>先去下载一个live555的开源流媒体服务器，手机端则用videoview控件做客户端</li>
+  <li>用wireshark抓取videoview和live555通信时的包，分析live555 response的格式</li>
+  <li>细节不懂的地方参照协议RFC 2326</li>
+</ul>
+
+<h3 id="describe">DESCRIBE</h3>
+
+<p>具体到程序里是，客户端采用videoview，需要setVideoURI（rtsp://192.168.2.103:1234/path/stream.sdp）;
+这里这个uri是说向192.168.2.103端口为1234的rtsp服务器发送播放流媒体文件请求，流媒体文件路径为path,文件为stream.sdp
+此时videoview会向server发送两个tcp包, 如下：</p>
+
+<p>第一个包用于连接，第二个包发送的是DESCRIBE，内容如下：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>0000   44 45 53 43 52 49 42 45 20 72 74 73 70 3a 2f 2f  DESCRIBE rtsp://
+0010   31 39 32 2e 31 36 38 2e 32 2e 31 30 33 3a 31 32  192.168.2.103:12
+0020   33 34 2f 73 74 72 65 61 6d 2e 73 64 70 20 52 54  34/stream.sdp RT
+0030   53 50 2f 31 2e 30 0d 0a 43 53 65 71 3a 20 31 0d  SP/1.0..CSeq: 1.
+0040   0a 41 63 63 65 70 74 3a 20 61 70 70 6c 69 63 61  .Accept: applica
+0050   74 69 6f 6e 2f 73 64 70 0d 0a 41 63 63 65 70 74  tion/sdp..Accept
+0060   2d 45 6e 63 6f 64 69 6e 67 3a 20 69 64 65 6e 74  <span class="nt">-Encoding</span>: ident
+0070   69 74 79 0d 0a 43 6f 6e 74 65 6e 74 2d 45 6e 63  ity..Content-Enc
+0080   6f 64 69 6e 67 3a 20 69 64 65 6e 74 69 74 79 0d  oding: identity.
+0090   0a 43 6f 6e 74 65 6e 74 2d 4c 61 6e 67 75 61 67  .Content-Languag
+00a0   65 3a 20 65 6e 2d 55 53 0d 0a 42 61 6e 64 77 69  e: en-US..Bandwi
+00b0   64 74 68 3a 20 31 31 30 30 30 30 30 30 0d 0a 55  dth: 11000000..U
+00c0   73 65 72 2d 41 67 65 6e 74 3a 20 48 54 43 20 53  ser-Agent: HTC S
+00d0   74 72 65 61 6d 69 6e 67 20 50 6c 61 79 65 72 20  treaming Player
+00e0   68 74 63 5f 61 73 69 61 5f 77 77 65 20 2f 20 31  htc_asia_wwe / 1
+00f0   2e 30 20 2f 20 68 74 63 5f 73 61 67 61 20 2f 20  .0 / htc_saga /
+0100   32 2e 33 2e 33 0d 0a 78 2d 6e 65 74 77 6f 72 6b  2.3.3..x-network
+0110   2d 74 79 70 65 3a 20 57 49 46 49 0d 0a 78 2d 77  <span class="nt">-type</span>: WIFI..x-w
+0120   61 70 2d 70 72 6f 66 69 6c 65 3a 20 68 74 74 70  ap-profile: http
+0130   3a 2f 2f 77 77 77 2e 68 74 63 6d 6d 73 2e 63 6f  ://www.htcmms.co
+0140   6d 2e 74 77 2f 41 6e 64 72 6f 69 64 2f 43 6f 6d  m.tw/Android/Com
+0150   6d 6f 6e 2f 50 47 38 38 2f 75 61 2d 70 72 6f 66  mon/PG88/ua-prof
+0160   69 6c 65 2e 78 6d 6c 0d 0a 0d 0a                      ile.xml....
+</code></pre></div></div>
+
+<p>按照rfc2326的标准格式：</p>
+
+<p><img src="/assets/images/2011/11/rtsp.jpg" alt="image" /></p>
+
+<p>写response时注意几点：</p>
+
+<ul>
+  <li>RTSP版本号要一致</li>
+  <li><code class="highlighter-rouge">CSeq</code>要一致</li>
+  <li><code class="highlighter-rouge">content-type</code>一般是<code class="highlighter-rouge">sdp</code></li>
+  <li><code class="highlighter-rouge">content-length</code>是<code class="highlighter-rouge">sdp</code>长度</li>
+  <li>一定要把<code class="highlighter-rouge">control</code>这个属性加上，否则videoview解析不出来</li>
+  <li>一定要注意每个消息头部结尾时的<code class="highlighter-rouge">"\r\n\r\n"</code>，不写或写错会导致videoview死循环，后面的消息同理</li>
+</ul>
+
+<p>代码如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">describe_content</span> <span class="o">=</span> <span class="s">"v=0\r\n"</span><span class="o">+</span>
+<span class="s">"o=- 1234567899876543 1 IN IP4 192.168.1.102\r\n"</span><span class="o">+</span>
+<span class="s">"a=range:npt=0-\r\n"</span><span class="o">+</span>
+<span class="s">"m=video 0 RTP/AVP 96\r\n"</span><span class="o">+</span>
+<span class="s">"c=IN IP4 0.0.0.0\r\n"</span><span class="o">+</span>
+<span class="s">"b=AS:500\r\n"</span><span class="o">+</span>
+<span class="s">"a=rtpmap:96 H264/90000\r\n"</span><span class="o">+</span>                                                       
+<span class="s">"a=control:track1"</span><span class="o">;</span>
+                                               
+<span class="nc">String</span> <span class="n">descirbe_header</span> <span class="o">=</span> <span class="s">"RTSP/1.0 200 OK\r\n"</span><span class="o">+</span>
+<span class="s">"CSeq: 1\r\n"</span><span class="o">+</span>
+<span class="s">"Date: Fri,12 Aug 2011 18:43:59 GMT\r\n"</span><span class="o">+</span>
+<span class="s">"Content-Base: rtsp://192.168.1.102:554/newStream264.264\r\n"</span><span class="o">+</span>
+<span class="s">"Content-Type: application/sdp\r\n"</span><span class="o">+</span>
+<span class="s">"Content-Length: "</span><span class="o">+</span><span class="n">describe_content</span><span class="o">.</span><span class="na">length</span><span class="o">()+</span><span class="s">"\r\n\r\n"</span><span class="o">;</span>
+</code></pre></div></div>
+<p>注意几点：</p>
+
+<ol>
+  <li>一定要确保 <code class="highlighter-rouge">"a=control:track1"</code></li>
+  <li>对于三星手机下面参数一定要写，具体含义参见RFC3984,其含义是：指定RTP的传输通道是track1，具体含义参考sdp协议</li>
+</ol>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">a</span><span class="o">=</span>fmtp:96 packetization-mode<span class="o">=</span>1<span class="p">;</span>
+profile-level-id<span class="o">=</span>42000B<span class="p">;</span>
+sprop-parameter-sets<span class="o">=</span>Z0IAC41oLE5A,aM4G8g<span class="o">==</span>
+</code></pre></div></div>
+
+<h3 id="setup">SETUP</h3>
+
+<p>此时videoview会发来SETUP请求，同样要给予应答，代码如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">setup_header</span> <span class="o">=</span> <span class="s">"RTSP/1.0 200 OK\r\n"</span><span class="o">+</span>
+<span class="s">"CSeq: 2\r\n"</span><span class="o">+</span>
+<span class="s">"Date: Fri,12 Aug 2011 18:43:59 GMT\r\n"</span><span class="o">+</span>
+<span class="s">"Transport: RTP/AVP;unicast;mode=play;destination=192.168.1.101;source:192.168.1.102;"</span> <span class="o">+</span>
+<span class="s">"client_port="</span><span class="o">+</span><span class="n">port1</span><span class="o">+</span><span class="s">"-"</span><span class="o">+</span><span class="n">port2</span><span class="o">+</span><span class="s">";server_port=6970-6971\r\n"</span><span class="o">+</span>
+<span class="s">"Session: 00004E61\r\n\r\n"</span><span class="o">;</span>
+</code></pre></div></div>
+
+<p>注意文本格式，尤其是空格的位置需要特别注意</p>
+
+<h3 id="play">PLAY</h3>
+
+<p>vidoview收到SETUP回复后会发送PLAY消息，同样要给予应答，代码如下：</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">String</span> <span class="n">play_header</span> <span class="o">=</span> <span class="s">"RTSP/1.0 200 OK\r\n"</span><span class="o">+</span>
+              <span class="s">"CSeq: 3\r\n"</span><span class="o">+</span>
+              <span class="s">"Date: Fri,12 Aug 2011 18:43:59 GMT\r\n"</span><span class="o">+</span>
+              <span class="s">"Range: npt=0.000-\r\n"</span><span class="o">+</span>
+              <span class="s">"Session: 00004E61\r\n"</span><span class="o">+</span>
+              <span class="s">"RTP-Info: url=rtsp://192.168.1.102/newStream264.264/track1;seq=1000;rtptime=27000\r\n\r\n"</span><span class="o">;</span>                 
+</code></pre></div></div>
+
+<p>其中Session的标识符要与SETUP的一致，seq指定了RTP包的起始值，rtptime指定了时间戳的起始值</p>
+:ET

@@ -1,0 +1,887 @@
+I"�<h2 id="classes">Classes</h2>
+
+<p>In Scala, we do this by defining a <em>class</em> :</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Rational</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span><span class="kt">Int</span><span class="o">){</span>
+	<span class="k">def</span> <span class="nf">numer</span> <span class="k">=</span> <span class="n">x</span><span class="o">;</span>
+	<span class="k">def</span> <span class="nf">denom</span> <span class="k">=</span> <span class="n">y</span>
+
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>This definition introduces two entitiles:</p>
+
+<ul>
+  <li>
+    <p>A new <em>type</em>, name Rational.</p>
+  </li>
+  <li>
+    <p>A <em>constructor</em> Rational to create elements of this type.</p>
+  </li>
+</ul>
+
+<p>Scala keeps the names of types and values in <em>different namespaces</em></p>
+
+<p>So there’s no confict between the two definitions of Rational</p>
+
+<h3 id="objects">Objects</h3>
+
+<p>We call the elements of a class type <em>objects</em>.</p>
+
+<p>We create an object by prefixing an application of the constructor of the class with the operator new.</p>
+
+<ul>
+  <li>Example:</li>
+</ul>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">new</span> <span class="nc">Rational</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="o">)</span>
+
+</code></pre></div></div>
+
+<h3 id="members-of-an-object">Members of an Object</h3>
+
+<p>Objects of the class Rational have two <em>members</em>, numer and denom.</p>
+
+<p>We select the members of an object with the infix operator’.’(like in Java).</p>
+
+<ul>
+  <li>Example</li>
+</ul>
+
+<pre><code class="language-Scala">
+val x = new Rational(1,2)                 //&gt; x  : week3.Rational = week3.Rational@2c641e9a
+x.numer                                         //&gt; res0: Int = 1
+x.denom                                         //&gt; res1: Int = 2
+
+
+</code></pre>
+
+<h3 id="methods">Methods</h3>
+
+<p>One can go further and also package functions operating on a data abstraction in the data abstraction itself.</p>
+
+<p>Such functions are called <em>methods</em>.</p>
+
+<ul>
+  <li>Example</li>
+</ul>
+
+<p>Rational numbers now would have, in addition to the functions <em>numer</em> and <em>denom</em>, the functions <em>add,sub,mul,div,equal,toString</em></p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">Rational</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span><span class="kt">Int</span><span class="o">){</span>
+
+	<span class="k">def</span> <span class="nf">numer</span> <span class="k">=</span> <span class="n">x</span>
+	<span class="k">def</span> <span class="nf">denom</span> <span class="k">=</span> <span class="n">y</span>
+
+	<span class="k">def</span> <span class="nf">add</span><span class="o">(</span><span class="n">that</span><span class="k">:</span><span class="kt">Rational</span><span class="o">)</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Rational</span><span class="o">(</span><span class="n">numer</span><span class="o">*</span><span class="nv">that</span><span class="o">.</span><span class="py">denom</span> <span class="o">+</span> <span class="n">denom</span><span class="o">*</span><span class="nv">that</span><span class="o">.</span><span class="py">numer</span><span class="o">,</span>
+	 <span class="n">denom</span><span class="o">*</span><span class="nv">that</span><span class="o">.</span><span class="py">denom</span><span class="o">)</span>
+	 
+	 <span class="k">def</span> <span class="nf">neg</span><span class="k">:</span><span class="kt">Rational</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Rational</span><span class="o">(-</span><span class="n">numer</span><span class="o">,</span><span class="n">denom</span><span class="o">)</span>
+	 
+	 <span class="k">def</span> <span class="nf">sub</span><span class="o">(</span><span class="n">that</span><span class="k">:</span><span class="kt">Rational</span><span class="o">)</span> <span class="k">=</span> <span class="nf">add</span><span class="o">(</span><span class="nv">that</span><span class="o">.</span><span class="py">neg</span><span class="o">)</span>
+	 
+	 <span class="k">override</span> <span class="k">def</span> <span class="nf">toString</span> <span class="k">=</span> <span class="n">numer</span> <span class="o">+</span> <span class="s">"/"</span> <span class="o">+</span> <span class="n">denom</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<h2 id="2-6-more-fun-with-rationals">2-6: More Fun With Rationals</h2>
+
+<p>###Rationals with Data Abstraction</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">Rational</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span><span class="kt">Int</span><span class="o">){</span>
+
+	<span class="k">def</span> <span class="nf">numer</span> <span class="k">=</span> <span class="n">x</span><span class="o">/</span><span class="n">g</span>
+	<span class="k">def</span> <span class="nf">denom</span> <span class="k">=</span> <span class="n">y</span><span class="o">/</span><span class="n">g</span>
+	
+	<span class="k">private</span> <span class="k">def</span> <span class="nf">gcd</span><span class="o">(</span><span class="n">a</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="nf">if</span> <span class="o">(</span><span class="n">b</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="n">a</span> <span class="k">else</span> <span class="nf">gcd</span><span class="o">(</span><span class="n">b</span><span class="o">,</span><span class="n">a</span><span class="o">%</span><span class="n">b</span><span class="o">)</span>
+	 
+	<span class="k">private</span> <span class="k">val</span> <span class="nv">g</span> <span class="k">=</span> <span class="nf">gcd</span><span class="o">(</span><span class="n">x</span><span class="o">,</span><span class="n">y</span><span class="o">)</span>
+	 
+	<span class="o">...</span>
+	
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>定义私有成员<code class="highlighter-rouge">g</code>和私有函数<code class="highlighter-rouge">gcd</code></p>
+
+<p>It is equally possible to turn number and denom into vals, so that they are computed only once:</p>
+
+<pre><code class="language-Scala">
+class Rational(x:Int, y:Int){
+
+	val numer = x/gcd(x,y)
+	val denom = y/gcd(x,y)
+	
+	...
+}
+
+</code></pre>
+
+<p>这种优化和改动都在这个类的里面，并不影响调用者，这种对数据的封装成为<em>data abstraction</em></p>
+
+<h3 id="self-reference">Self Reference</h3>
+
+<p>On the inside of a class, the name <code class="highlighter-rouge">this</code> represents the object on which the current method is executed.</p>
+
+<ul>
+  <li>Example:</li>
+</ul>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">Rational</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span><span class="kt">Int</span><span class="o">){</span>
+
+<span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">less</span><span class="o">(</span><span class="n">that</span><span class="k">:</span><span class="kt">Rational</span><span class="o">)</span> <span class="k">=</span> <span class="n">numer</span> <span class="o">*</span> <span class="nv">that</span><span class="o">.</span><span class="py">denom</span> <span class="o">&lt;</span> <span class="nv">that</span><span class="o">.</span><span class="py">numer</span> <span class="o">*</span> <span class="n">denom</span>
+
+<span class="k">def</span> <span class="nf">max</span><span class="o">(</span><span class="n">that</span><span class="k">:</span><span class="kt">Rational</span><span class="o">)</span> <span class="k">=</span> <span class="nf">if</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="py">less</span><span class="o">(</span><span class="n">that</span><span class="o">))</span> <span class="n">that</span> <span class="k">else</span> <span class="k">this</span>
+
+<span class="o">...</span>	 
+	 
+<span class="o">}</span>
+	
+
+</code></pre></div></div>
+
+<h3 id="precondition">Precondition</h3>
+
+<p>可以在类中加入对参数的合法性校验:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">Rational</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span><span class="kt">Int</span><span class="o">){</span>
+
+	<span class="nf">require</span><span class="o">(</span><span class="n">y</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">,</span> <span class="s">"denominator can not be 0"</span><span class="o">)</span>
+	
+	<span class="o">...</span>
+
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">require</code> is a predefined function.</p>
+
+<p>It takes a condition and an optional message string.</p>
+
+<p>if the condition is false than <code class="highlighter-rouge">IllegalArgumentException</code> is thrown with the given message string.</p>
+
+<h3 id="assertions">Assertions</h3>
+
+<p>Besides <code class="highlighter-rouge">require</code>, there is also <code class="highlighter-rouge">assert</code></p>
+
+<p>Assert also takes a condition and an optional message:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">val</span> <span class="nv">x</span> <span class="k">=</span> <span class="nf">sqrt</span><span class="o">(</span><span class="n">y</span><span class="o">)</span>
+<span class="nf">assert</span><span class="o">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="o">)</span>
+
+</code></pre></div></div>
+
+<p>和require一样，assert在条件为false的时候也会抛出异常，但是异常类型为<code class="highlighter-rouge">AssertionError</code>。</p>
+
+<p>assert和require的目的不同：</p>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">require</code> is used to enforce a precondition on the caller of a function.</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">assert</code> is used as to check the code of the function itself.</p>
+  </li>
+</ul>
+
+<h3 id="constructor">Constructor</h3>
+
+<p>默认情况下，Scala的类有默认的构造函数，如果想增加构造函数，需要将<code class="highlighter-rouge">this</code>作为函数使用：</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">Rational</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span><span class="kt">Int</span><span class="o">){</span>
+
+	 <span class="nf">require</span><span class="o">(</span><span class="n">y</span> <span class="o">!=</span> <span class="mi">0</span><span class="o">,</span> <span class="s">"denominator can not be 0"</span><span class="o">)</span>
+
+	 <span class="k">def</span> <span class="nf">this</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="nf">this</span> <span class="o">(</span><span class="n">x</span><span class="o">,</span><span class="mi">1</span><span class="o">)</span>
+	 
+	 <span class="o">...</span>
+
+<span class="o">}</span>
+
+<span class="k">val</span> <span class="nv">z</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Rational</span><span class="o">(</span><span class="mi">3</span><span class="o">)</span>
+
+</code></pre></div></div>
+
+<h2 id="2-7-evaluations-and-operations">2-7: Evaluations and Operations</h2>
+
+<h3 id="classes-and-substitutions">Classes and Substitutions</h3>
+
+<p>我们之前可以使用substitution规则去分析函数，这节将这个规则用于class object</p>
+
+<ul>
+  <li>
+    <p><em>Question:</em> How is an instantiation of the class <code class="highlighter-rouge">new C(e1,...,em)</code></p>
+  </li>
+  <li>
+    <p><em>Answer:</em> The expression arguments <code class="highlighter-rouge">e1,...,em</code> 参数和函数函数一样求值，得到：<code class="highlighter-rouge">new C(v1,...,vm)</code></p>
+  </li>
+</ul>
+
+<p>我们现在定义这样一个类:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>class C(x1,...,xm){ ... def f(y1,...,yn) = b ...}
+
+</code></pre></div></div>
+
+<p>where:</p>
+
+<ul>
+  <li>
+    <p>类的构造函数入参为：<code class="highlighter-rouge">x1,...,xn</code></p>
+  </li>
+  <li>
+    <p>类中定义个了一个函数<code class="highlighter-rouge">f</code>,参数为<code class="highlighter-rouge">y1,...,yn</code></p>
+  </li>
+  <li>
+    <p><em>Question:</em> How is the following expression evaluated?</p>
+  </li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>new C(v1,...,vm).f(w1,...,wn)
+
+</code></pre></div></div>
+
+<h3 id="operators">Operators</h3>
+
+<p>上面的例子中，求两个有理数的和，代码为<code class="highlighter-rouge">x.add(y)</code>，这种没有<code class="highlighter-rouge">x + y </code>直观，因此，scala提供一种方式使方法调用变的更直观：</p>
+
+<p>它由两部分syntax构成：</p>
+
+<ul>
+  <li>Step1: Infix Notation:</li>
+</ul>
+
+<p>Any method with a parameter can be used like an infix operator.</p>
+
+<p>it is therefore possible to write:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>r add s  	=&gt; 		r.add(s)
+
+r less s 	=&gt; 		r.less(s)
+
+r max s		=&gt;		r.max(s)
+
+</code></pre></div></div>
+
+<ul>
+  <li>Step2: 定义操作符</li>
+</ul>
+
+<p>Scala可以重载操作符：</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="k">def</span> <span class="nf">&lt;</span> <span class="o">(</span><span class="n">that</span><span class="k">:</span><span class="kt">Rational</span><span class="o">)</span> <span class="k">=</span> <span class="n">numer</span> <span class="o">*</span> <span class="nv">that</span><span class="o">.</span><span class="py">denom</span> <span class="o">&lt;</span> <span class="nv">that</span><span class="o">.</span><span class="py">numer</span> <span class="o">*</span> <span class="n">denom</span>
+ 
+</code></pre></div></div>
+
+<p>调用变为：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x.less(y)  等价于 x &lt; y
+
+</code></pre></div></div>
+
+<h2 id="2-8-class-hierarchies">2-8: Class Hierarchies</h2>
+
+<h3 id="abstract-classes">Abstract Classes</h3>
+
+<p>Consider the task of writing a class for sets of integers with the following operations</p>
+
+<p>定义一个可以表示整数集合的类</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">abstract</span> <span class="k">class</span> <span class="nc">IntSet</span><span class="o">{</span>
+
+	<span class="k">def</span> <span class="nf">incl</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">InSet</span>
+	<span class="k">def</span> <span class="nf">contains</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">Boolean</span>
+
+
+<span class="o">}</span>
+
+
+</code></pre></div></div>
+
+<p>抽象类:</p>
+
+<p>IntSet is an <em>abstract class</em>.</p>
+
+<p>抽象类可以定义接口，但不需要实现。
+抽象类不可以直接用<em>new</em>创建</p>
+
+<h3 id="class-extensions">Class Extensions</h3>
+
+<p>Let’s consider implementing sets as binary trees.</p>
+
+<p>There are two types of possible trees: a tree for the empty set, and a tree consisting of an integer and two sub-trees.</p>
+
+<p>Here are their implementations</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">Empty</span> <span class="k">extends</span> <span class="nc">IntSet</span>
+<span class="o">{</span>
+	<span class="k">def</span> <span class="nf">contains</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">Boolean</span> <span class="o">=</span> <span class="kc">false</span>
+	
+	<span class="k">def</span> <span class="nf">incl</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">IntSet</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">NonEmpty</span><span class="o">(</span><span class="n">x</span><span class="o">,</span><span class="k">new</span> <span class="nc">Empty</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Empty</span><span class="o">)</span>
+
+<span class="o">}</span>
+
+<span class="k">class</span> <span class="nc">NonEmpty</span><span class="o">(</span><span class="n">elem</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">left</span><span class="k">:</span> <span class="kt">IntSet</span><span class="o">,</span> <span class="n">right</span><span class="k">:</span><span class="kt">IntSet</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">IntSet</span>
+<span class="o">{</span>
+	<span class="k">def</span> <span class="nf">contains</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">Boolean</span> <span class="o">=</span> 
+	
+		<span class="nf">if</span> <span class="o">(</span><span class="n">x</span><span class="o">&lt;</span><span class="n">elem</span><span class="o">)</span> <span class="nv">left</span><span class="o">.</span><span class="py">contains</span><span class="o">(</span><span class="n">x</span><span class="o">)</span>
+		<span class="k">else</span> <span class="nf">if</span> <span class="o">(</span><span class="n">x</span><span class="o">&gt;</span><span class="n">elem</span><span class="o">)</span> <span class="nv">right</span><span class="o">.</span><span class="py">contains</span><span class="o">(</span><span class="n">x</span><span class="o">)</span>
+		<span class="k">else</span> <span class="kc">true</span>
+
+	<span class="k">def</span> <span class="nf">incl</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">IntSet</span> <span class="o">=</span> 
+		
+		<span class="nf">if</span><span class="o">(</span><span class="n">x</span><span class="o">&lt;</span><span class="n">elem</span><span class="o">)</span> <span class="k">new</span> <span class="nc">NonEmpty</span><span class="o">(</span><span class="n">elem</span><span class="o">,</span><span class="nv">left</span><span class="o">.</span><span class="py">incl</span><span class="o">(</span><span class="n">x</span><span class="o">),</span> <span class="n">right</span><span class="o">)</span>
+		<span class="k">else</span> <span class="nf">if</span><span class="o">(</span><span class="n">x</span><span class="o">&gt;</span><span class="n">elem</span><span class="o">)</span> <span class="k">new</span> <span class="nc">NonEmpty</span><span class="o">(</span><span class="n">elem</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="nv">right</span><span class="o">.</span><span class="py">incl</span><span class="o">(</span><span class="n">x</span><span class="o">))</span>
+		<span class="k">else</span> <span class="k">this</span>
+
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<p>###Base Classes and SubClasses</p>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">IntSet</code> is called the <em>superclass</em> of Empty and NonEmpty.</p>
+  </li>
+  <li>
+    <p>Empty and NonEmpty are <em>subclasses</em> of <code class="highlighter-rouge">IntSet</code>.</p>
+  </li>
+  <li>
+    <p>In Scala, any user-defined class extends another class.</p>
+  </li>
+  <li>
+    <p>If no superclass is given , the standard class object in the Java package <code class="highlighter-rouge">java.lang</code> is assumed</p>
+  </li>
+  <li>
+    <p>The direct or indirect superclasses of a class C are called <em>baseclasses</em> of C</p>
+  </li>
+  <li>
+    <p>So, the base classes of NonEmpty are IntSet and Object</p>
+  </li>
+</ul>
+
+<h3 id="implementing-and-overriding">Implementing and Overriding</h3>
+
+<p>如果父类中的方法没有implementation，那么子类可直接实现，如果父类方法中有implementation，那么子类需要override：</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">abstract</span> <span class="k">class</span> <span class="nc">Base</span>
+<span class="o">{</span>
+	<span class="k">def</span> <span class="nf">foo</span> <span class="k">=</span> <span class="mi">1</span>
+	
+	<span class="k">def</span> <span class="nf">bar</span><span class="k">:</span><span class="kt">Int</span>
+<span class="o">}</span>
+
+<span class="k">class</span> <span class="nc">Sub</span> <span class="k">extends</span> <span class="nc">Base</span>
+<span class="o">{</span>
+	<span class="k">override</span> <span class="k">def</span> <span class="nf">foo</span> <span class="k">=</span> <span class="mi">2</span>
+	
+	
+	<span class="k">def</span> <span class="nf">bar</span> <span class="k">=</span> <span class="mi">3</span>
+
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<h3 id="object-definitions">Object Definitions</h3>
+
+<p>上面的例子中，Empty类其实没有变化，但是每次都要重新创建，如果把它定义为一个单例，则能省去许多重复创建的instance，在Scala中，使用<code class="highlighter-rouge">object</code>:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">object</span> <span class="nc">class</span> <span class="nc">Empty</span> <span class="k">extends</span> <span class="nc">IntSet</span>
+<span class="o">{</span>
+	<span class="k">def</span> <span class="nf">contains</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">Boolean</span> <span class="o">=</span> <span class="kc">false</span>
+	
+	<span class="k">def</span> <span class="nf">incl</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">IntSet</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">NonEmpty</span><span class="o">(</span><span class="n">x</span><span class="o">,</span><span class="nc">Empty</span><span class="o">,</span><span class="nc">Empty</span><span class="o">)</span>
+	
+	<span class="k">override</span> <span class="k">def</span> <span class="nf">toString</span> <span class="k">=</span> <span class="o">{</span><span class="s">"."</span><span class="o">}</span>
+
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>This defines a <em>singleton object</em> named Empty.</p>
+  </li>
+  <li>
+    <p>No other Empty instances can be created.</p>
+  </li>
+  <li>
+    <p>Singleton objects are valeus , so Empty evaluates to itself</p>
+  </li>
+</ul>
+
+<h3 id="programs">Programs</h3>
+
+<p>之前的代码都是使用REPL或workSheet运行，这一节将会创建一个Scala Object：</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">package</span> <span class="nn">week4</span>
+
+<span class="k">object</span> <span class="nc">week4</span> <span class="o">{</span>
+
+  <span class="k">def</span> <span class="nf">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span><span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="k">=</span> <span class="nf">println</span><span class="o">(</span><span class="s">"hello"</span><span class="o">)</span>
+ 
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<h3 id="dynamic-binding">Dynamic Binding</h3>
+
+<p>Object-oriented languages(including Scala) implement <em>dynmaic method dispatch</em>.</p>
+
+<p>This means that the code invoked by a method call depends on the runtime type of the object that contains the method.</p>
+
+<ul>
+  <li>Example</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Empty contains 1
+
+-&gt; [1/x][Empty/this] false
+
+= false
+
+</code></pre></div></div>
+
+<h3 id="something-to-ponder">Something to Ponder</h3>
+
+<p>Dynamic dispatch of methods is analogous to calls to higher-order functions.</p>
+
+<ul>
+  <li>Question:</li>
+</ul>
+
+<p>Can we implement one concept in terms of the other?</p>
+
+<ul>
+  <li>
+    <p>Objects in terms of higher-order functions?</p>
+  </li>
+  <li>
+    <p>HOF in terms of objects?</p>
+  </li>
+</ul>
+
+<h2 id="how-class-are-organized">How class are organized</h2>
+
+<p>默认import的包：</p>
+
+<ul>
+  <li>
+    <p>All members of package scala</p>
+  </li>
+  <li>
+    <p>All members of package java.lang</p>
+  </li>
+  <li>
+    <p>All members of the singleton object scala.Predef.</p>
+  </li>
+</ul>
+
+<p>Here are the fully qualified names of some types and functions which you have seen so far:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Int 		=&gt; scala.Int
+Boolean		=&gt; scala.Boolean
+Obejct		=&gt; java.lang.Object
+require 	=&gt; scala.predef.require
+assert		=&gt; scala.predef.assert
+
+</code></pre></div></div>
+
+<h3 id="traits">Traits</h3>
+
+<p>In Java, as well as in Scala, a class can only have one superclass.</p>
+
+<p>But what if a class has several natural supertypes to which it conforms or from which it wants to inherit code?</p>
+
+<p>Here, you could use traits.</p>
+
+<p>A trait is declared like an abstract class, just with <code class="highlighter-rouge">trait</code> instead of <code class="highlighter-rouge">abstract</code> class.</p>
+
+<p>Trait类似Java中的interface</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">trait</span> <span class="nc">Planar</span>
+<span class="o">{</span>
+	<span class="k">def</span> <span class="nf">height</span><span class="k">:</span> <span class="kt">Int</span>
+	<span class="k">def</span> <span class="nf">width</span> <span class="k">:</span> <span class="kt">Int</span>
+	<span class="k">def</span> <span class="nf">surface</span> <span class="k">=</span> <span class="n">height</span><span class="o">*</span><span class="n">width</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<p>OBject只能继承一个class，但可以实现多个trait</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">Square</span> <span class="k">extends</span> <span class="nc">Shape</span> <span class="k">with</span> <span class="nc">Plannar</span> <span class="k">with</span> <span class="nc">Movable</span><span class="o">...</span>
+
+</code></pre></div></div>
+<p>Traits resemble interfaces in Java, but are more powerful because they can contains fields and concrete methods.</p>
+
+<p>On the other hand, traits cannot have parameters, only classes can</p>
+
+<p>Trait中不能定义property</p>
+
+<p>###Top Types</p>
+
+<p>Scala有几个基本类型：</p>
+
+<ul>
+  <li>
+    <p>Any : the base type of all types, Method: ‘==’, ‘!=’, ‘equals’, ‘hashCode’, ‘toString’</p>
+  </li>
+  <li>
+    <p>AnyRef : The base type of all reference types; Alias of ‘java.lang.Object’</p>
+  </li>
+  <li>
+    <p>AnyVal : The base type of all primitive types.</p>
+  </li>
+</ul>
+
+<p>###The Nothing Type</p>
+
+<p>Nothing is at the bottom of Scala’s type hierarchy. It is a subtype of every other type.</p>
+
+<p>There is no value of type Nothing.</p>
+
+<p>Why is that useful?</p>
+
+<ul>
+  <li>
+    <p>To signal abnormal termination</p>
+  </li>
+  <li>
+    <p>As an element type of empty collections</p>
+  </li>
+</ul>
+
+<p>###Exceptions</p>
+
+<p>Scala’s exception handling is similar to Java’s</p>
+
+<p>The expression:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">error</span><span class="o">(</span><span class="n">msg</span><span class="k">:</span><span class="kt">String</span><span class="o">)</span> <span class="k">=</span> <span class="k">throw</span> <span class="k">new</span> <span class="nc">Error</span><span class="o">(</span><span class="n">msg</span><span class="o">)</span> 
+
+</code></pre></div></div>
+
+<p>###The Null Type</p>
+
+<p>Every <strong>reference class type</strong> also has null as a value.</p>
+
+<p>The type of <code class="highlighter-rouge">null</code> is <code class="highlighter-rouge">Null</code> .</p>
+
+<p><code class="highlighter-rouge">Null</code> is a subtype of every class that inherits from <code class="highlighter-rouge">Object</code>; it is incompatible with subtypes of <code class="highlighter-rouge">AnyVal</code></p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">val</span> <span class="nv">x</span> <span class="k">=</span> <span class="kc">null</span> <span class="c1">//x:Null = null</span>
+
+<span class="k">val</span> <span class="nv">y</span><span class="k">:</span><span class="kt">String</span> <span class="o">=</span> <span class="kc">null</span> <span class="c1">// y:String = null</span>
+
+<span class="k">val</span> <span class="nv">z</span><span class="k">:</span><span class="kt">Int</span> <span class="o">=</span> <span class="kc">null</span> <span class="c1">//error: type mismatch</span>
+
+
+</code></pre></div></div>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nf">if</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">false</span>                          <span class="c1">//&gt; res0: AnyVal = 1</span>
+
+</code></pre></div></div>
+
+<p>if的第一个分支返回的类型为Int，第二个分支返回的类型为boolean，那么表达式的类型应该是他们共同的类型：AnyVal</p>
+
+<h2 id="polymorphism">Polymorphism</h2>
+
+<p>以构建一个<code class="highlighter-rouge">Con-Lists</code>为例，<code class="highlighter-rouge">Con-List</code>是一个immutable linked list</p>
+
+<p>它可以通过两种方式构建:</p>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">Nil</code> : 构建一个empty列表</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">Cons</code> 一个包含一个element的cell和其余的list部分</p>
+  </li>
+</ul>
+
+<h3 id="cons-lists-in-scala">Cons-Lists in Scala</h3>
+
+<p><code class="highlighter-rouge">Con-List</code>可以通过如下数据结构标示:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">trait</span> <span class="nc">IntList</span>
+<span class="o">{</span>
+  
+<span class="o">}</span>
+
+<span class="k">class</span> <span class="nc">Cons</span><span class="o">(</span><span class="k">val</span> <span class="nv">head</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="k">val</span> <span class="nv">tail</span><span class="k">:</span><span class="kt">IntList</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">IntList</span>
+<span class="o">{</span>
+  
+
+<span class="o">}</span>
+
+<span class="k">class</span> <span class="nc">Nil</span> <span class="k">extends</span> <span class="nc">IntList</span>
+<span class="o">{</span>
+  
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">Cons</code>的构造函数中参数用<code class="highlighter-rouge">val</code>声明了，这种情况相当于自动给成员变量赋值:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">Cons</span><span class="o">(</span><span class="nc">_head</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="nc">_tail</span><span class="k">:</span><span class="kt">IntList</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">IntList</span>
+<span class="o">{</span>
+  	<span class="k">val</span> <span class="nv">heal</span> <span class="k">=</span> <span class="nc">_head</span><span class="o">;</span>
+  	<span class="k">val</span> <span class="nv">tail</span> <span class="k">=</span> <span class="nc">_tail</span><span class="o">;</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<h3 id="type-parameters">Type Parameters</h3>
+
+<p>仅仅定义int类型的list太单一了，希望将其扩展到double，string类型，这时候需要使用泛型:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">trait</span> <span class="nc">List</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+<span class="nc">class</span> <span class="nc">Cons</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="k">val</span> <span class="nv">head</span><span class="k">:</span><span class="kt">T</span><span class="o">,</span> <span class="k">val</span> <span class="nv">tail</span><span class="k">:</span><span class="kt">List</span><span class="o">[</span><span class="kt">T</span><span class="o">])</span> <span class="k">extends</span> <span class="nc">List</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+<span class="k">class</span> <span class="nc">Nil</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="nc">extends</span> <span class="nc">List</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> 
+
+</code></pre></div></div>
+
+<p>定义<code class="highlighter-rouge">trait</code>:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">trait</span> <span class="nc">List</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+<span class="o">{</span>
+  <span class="k">def</span> <span class="nf">isEmpty</span><span class="k">:</span><span class="kt">Boolean</span>
+  
+  <span class="k">def</span> <span class="nf">head</span><span class="k">:</span><span class="kt">T</span>
+  
+  <span class="k">def</span> <span class="nf">tail</span><span class="k">:</span><span class="kt">List</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+  
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<p>定义<code class="highlighter-rouge">Cons</code>,<code class="highlighter-rouge">Nil</code></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+class Cons[T](val head:T, val tail:List[T]) extends List[T]
+{
+  def isEmpty:Boolean = false
+
+}
+
+class Nil[T] extends List[T] 
+{
+	def isEmpty:Boolean = true
+	
+	def head:Nothing = throw new NoSuchElementException("Nil.head")
+	
+	def tail:Nothing = throw new NoSuchElementException("Nil.head")
+}
+
+</code></pre></div></div>
+
+<p>###Generic Functions</p>
+
+<p>和类一样，函数也支持泛型参数[T], 例如下面这个函数创建一个泛型List</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">def</span> <span class="nf">singleton</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">elem</span><span class="k">:</span><span class="kt">T</span><span class="o">)</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Cons</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">elem</span><span class="o">,</span> <span class="k">new</span> <span class="nc">Nil</span><span class="o">[</span><span class="kt">T</span><span class="o">])</span>
+
+<span class="n">singleton</span><span class="o">[</span><span class="kt">Int</span><span class="o">](</span><span class="mi">1</span><span class="o">)</span>
+<span class="n">singleton</span><span class="o">[</span><span class="kt">Boolean</span><span class="o">](</span><span class="kc">true</span><span class="o">)</span>
+
+</code></pre></div></div>
+<p>###Type Inference</p>
+
+<p>事实上，编译器可以对参数类型进行推断,[T]可以省略：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>singleton(1)
+singleton(true)
+
+</code></pre></div></div>
+
+<h3 id="types-and-evaluation">Types and Evaluation</h3>
+
+<p>类型并不影响Scala进行参数替换，根据Substitution规则，参数被代入后，在执行表达式求值前，所有的类型都被remove掉。</p>
+
+<p>这一特性叫做:<code class="highlighter-rouge">type erasure</code></p>
+
+<p>使用这一特性的语言有: Java,Scala,Haskell,ML,OCaml.</p>
+
+<p>有些语言在runtime中仍然带着类型：C++,C#,F#</p>
+
+<h3 id="polymorphism-1">Polymorphism</h3>
+
+<p>这次来自希腊，意思是多种形式，In programming, 它表示:</p>
+
+<ul>
+  <li>
+    <p>函数的参数可以是多种类型的</p>
+  </li>
+  <li>
+    <p>某一种类型可以有很多子类型</p>
+  </li>
+</ul>
+
+<p>我们目前已经看到过这两个特性:</p>
+
+<ul>
+  <li>
+    <p>子类: 可以将一个父类型的指针指向一个子类型</p>
+  </li>
+  <li>
+    <p>泛型: 函数参数和类的参数可以声明成泛型</p>
+  </li>
+</ul>
+
+<p>###excise</p>
+
+<p>已知一个list: List[T]，要求返回第n个元素:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">def</span> <span class="nf">nth</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">n</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span><span class="n">xs</span><span class="k">:</span><span class="kt">List</span><span class="o">[</span><span class="kt">T</span><span class="o">])</span><span class="k">:</span><span class="kt">T</span> <span class="o">=</span> 
+	
+	<span class="nf">if</span> <span class="o">(</span><span class="n">n</span><span class="o">==</span><span class="mi">0</span><span class="o">)</span> <span class="nv">xs</span><span class="o">.</span><span class="py">head</span> 
+	<span class="k">else</span> <span class="nf">nth</span><span class="o">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="o">,</span><span class="nv">xs</span><span class="o">.</span><span class="py">tail</span><span class="o">)</span>
+
+</code></pre></div></div>
+
+<h2 id="2-11-functions-as-objects">2-11 Functions as Objects</h2>
+
+<p>这个section讲object和function之间的关系：</p>
+
+<p>###Functions as Objects</p>
+
+<p>在Scala中，函数被认为是object：</p>
+
+<p>例如<code class="highlighter-rouge">A =&gt; B</code>这种函数类型其实是<code class="highlighter-rouge">scala.Function1[A,B]</code>的缩写，定义为：</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">package</span> <span class="nn">scala</span>
+
+<span class="k">trait</span> <span class="nc">Function1</span><span class="o">[</span><span class="kt">A</span>,<span class="kt">B</span><span class="o">]{</span>
+
+	<span class="k">def</span> <span class="nf">apply</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">A</span><span class="o">)</span><span class="k">:</span><span class="kt">B</span>
+
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<p>所以，函数只是object的<code class="highlighter-rouge">apply</code>方法，同样的，对于多个函数入参的<code class="highlighter-rouge">trait</code>还有<code class="highlighter-rouge">Function2</code>,<code class="highlighter-rouge">Function3</code>,…</p>
+
+<h3 id="expansion-of-function-values">Expansion of Function Values</h3>
+
+<p>匿名函数如下：</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span>
+
+</code></pre></div></div>
+<p>被展开如下:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="o">{</span>
+	<span class="k">class</span> <span class="nc">AnonFun</span> <span class="k">extends</span> <span class="nc">Function1</span><span class="o">[</span><span class="kt">Int</span>,<span class="kt">Int</span><span class="o">]</span>
+	<span class="o">{</span>
+		<span class="k">def</span> <span class="nf">apply</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">Int</span> <span class="o">=</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span>
+	<span class="o">}</span>
+	
+	<span class="k">new</span> <span class="nc">AnonFun</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<p>或者更简单的，使用匿名类：</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">new</span> <span class="nc">Function1</span><span class="o">[</span><span class="kt">Int</span>,<span class="kt">Int</span><span class="o">]</span>
+<span class="o">{</span>
+	<span class="k">def</span> <span class="nf">apply</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+
+<h3 id="expansion-of-function-calls">Expansion of Function Calls</h3>
+
+<p>这样的函数调用<code class="highlighter-rouge">f(a,b)</code>会扩展为：</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nv">f</span><span class="o">.</span><span class="py">apply</span><span class="o">(</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">)</span>
+
+</code></pre></div></div>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">val</span> <span class="nv">f</span> <span class="k">=</span> <span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span>
+
+<span class="nf">f</span><span class="o">(</span><span class="mi">7</span><span class="o">)</span>
+
+</code></pre></div></div>
+
+<p>被扩展为:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">val</span> <span class="nv">f</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Function1</span><span class="o">[</span><span class="kt">Int</span>,<span class="kt">Int</span><span class="o">]{</span> <span class="k">def</span> <span class="nf">apply</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span> <span class="o">}</span>
+<span class="nv">f</span><span class="o">.</span><span class="py">apply</span><span class="o">(</span><span class="mi">7</span><span class="o">)</span>
+
+</code></pre></div></div>
+
+<p>所以：<strong>Functions are just Objects</strong></p>
+
+<h3 id="functions-and-methods">Functions and Methods</h3>
+
+<p>下面的方法：</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">def</span> <span class="nf">f</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">Boolean</span> <span class="o">=</span> <span class="o">...</span>
+
+</code></pre></div></div>
+
+<p>由上一小节可知<code class="highlighter-rouge">f</code>本身并不是函数类型，而是一个对象的<code class="highlighter-rouge">apply</code>方法。</p>
+
+<p>但是如果<code class="highlighter-rouge">f</code>被放到了等号右边，需要成为一个函数类型的时候，会自动转换:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nf">f</span><span class="o">(</span><span class="n">x</span><span class="o">)</span>
+
+</code></pre></div></div>
+
+<p>上面的匿名函数再展开：</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">new</span> <span class="nc">Function1</span><span class="o">[</span><span class="kt">Int</span>,<span class="kt">Boolean</span><span class="o">]</span>
+<span class="o">{</span>
+	<span class="k">def</span> <span class="nf">apply</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="nf">f</span><span class="o">(</span><span class="n">x</span><span class="o">)</span>
+<span class="o">}</span>
+
+</code></pre></div></div>
+<h2 id="objects-everywhere">Objects Everywhere</h2>
+
+<p>到目前，我们</p>
+
+<h3 id="scala-doc">Scala Doc</h3>
+
+<p>www.scala-lang.org/api/current</p>
+:ET

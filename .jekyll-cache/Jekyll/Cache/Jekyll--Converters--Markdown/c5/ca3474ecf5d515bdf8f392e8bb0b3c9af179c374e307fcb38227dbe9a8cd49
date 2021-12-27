@@ -1,0 +1,1832 @@
+I"&�<p><em></em></p>
+
+<blockquote>
+  <p>###Ruby 2.0 简明语法整理</p>
+</blockquote>
+
+<p>##目录</p>
+
+<ul>
+  <li><a href="#var">变量/常量</a></li>
+  <li><a href="#type">类型转换</a></li>
+  <li><a href="#expression">表达式</a></li>
+  <li><a href="#string">字符串</a></li>
+  <li><a href="#control-flow">控制流</a></li>
+  <li><a href="#symbol">符号</a></li>
+  <li><a href="#array">数组</a></li>
+  <li><a href="#hash">Hash</a></li>
+  <li><a href="#itor">迭代器</a></li>
+  <li><a href="#block">Block</a></li>
+  <li><a href="#proc">Proc</a></li>
+  <li><a href="#lambda">Lambda</a></li>
+  <li><a href="#class">类</a></li>
+  <li><a href="#namespace">命名空间</a></li>
+  <li><a href="#module">Module</a></li>
+  <li><a href="#include">Include</a></li>
+  <li><a href="#exception">异常</a></li>
+  <li><a href="#file">文件操作</a></li>
+  <li><a href="#env">ENV</a></li>
+  <li><a href="#kernel">Kernel</a></li>
+  <li><a href="#object">Object</a></li>
+  <li><a href="#date">Date</a></li>
+  <li><a href="#yaml">YAML</a></li>
+  <li><a href="#erb">ERB</a></li>
+</ul>
+
+<h3 id="var">变量/常量</h3>
+
+<ul>
+  <li>全局变量$标识</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">def</span> <span class="nf">basic_method</span>
+  <span class="nb">puts</span> <span class="vg">$x</span>
+<span class="k">end</span>
+
+<span class="vg">$x</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">basic_method</span><span class="p">()</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>全局常量大写开头</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="no">CONST_V</span> <span class="o">=</span> <span class="s2">"abc"</span>
+
+</code></pre></div></div>
+
+<h3 id="type"> 类型 </h3>
+
+<ul>
+  <li>整型，浮点型，字符串</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="nb">print</span> <span class="n">a</span><span class="p">.</span><span class="nf">to_f</span> <span class="c1">#10.0</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="mf">3.3</span>
+<span class="nb">print</span> <span class="n">a</span><span class="p">.</span><span class="nf">to_i</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="nb">print</span> <span class="n">a</span><span class="p">.</span><span class="nf">to_s</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>浮点型</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">d</span> <span class="o">=</span> <span class="mf">7.3</span><span class="o">-</span><span class="mf">7.2</span>
+<span class="nb">puts</span> <span class="n">d</span> 
+<span class="o">=&gt;</span> <span class="mf">0.09999999999999964</span>
+
+<span class="nb">require</span> <span class="s2">"bigdecimal"</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="no">BigDecimal</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"7.3"</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="no">BigDecimal</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"7.2"</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">a</span><span class="o">-</span><span class="n">b</span> 
+
+<span class="o">=&gt;</span> <span class="mf">0.1</span><span class="no">E0</span>
+
+</code></pre></div></div>
+
+<h3 id="expression"> 表达式 </h3>
+
+<ul>
+  <li>!</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span><span class="mi">20</span>
+<span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">if</span> <span class="n">a</span><span class="o">==</span><span class="n">b</span>
+  <span class="n">c</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="k">elsif</span> <span class="n">a</span> <span class="o">!=</span> <span class="n">b</span>
+  <span class="n">c</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> 
+<span class="k">end</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>eql? :检测类型和值</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">c</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="nf">eql?</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">r</span> <span class="c1">#true</span>
+<span class="n">d</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="nf">eql?</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">r</span> <span class="c1">#false</span>
+
+
+</code></pre></div></div>
+
+<ul>
+  <li>&lt;=&gt;：</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x&lt;=&gt;y
+</code></pre></div></div>
+<p>x&gt;y 则返回1 ， x&lt;y则返回-1 ， x=y则返回0</p>
+
+<h3 id="string"> 字符串 </h3>
+
+<ul>
+  <li>拼接:</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="c1">#使用+号</span>
+<span class="n">x</span> <span class="o">=</span> <span class="s2">"a"</span>
+<span class="n">y</span> <span class="o">=</span> <span class="s2">"b"</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span>
+
+ <span class="c1">#使用&lt;&lt;号</span>
+<span class="n">c</span> <span class="o">=</span> <span class="s2">"a"</span><span class="o">&lt;&lt;</span><span class="s2">" "</span><span class="o">&lt;&lt;</span><span class="no">"b"</span><span class="sh">
+
+</span></code></pre></div></div>
+
+<ul>
+  <li>inspect：查看字符串</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">string</span> <span class="o">=</span> <span class="s2">"  Hello world"</span>
+<span class="n">d</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="nf">inspect</span>
+<span class="nb">puts</span> <span class="n">d</span>
+<span class="o">=&gt;</span> <span class="s2">"</span><span class="se">\"</span><span class="s2">  Hello world</span><span class="se">\"</span><span class="s2">"</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>chop:砍掉末尾字符</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">string</span> <span class="o">=</span> <span class="s2">"  Hello world"</span>
+<span class="n">e</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="nf">chop</span>
+<span class="nb">puts</span> <span class="n">e</span>
+<span class="o">=&gt;</span> <span class="s2">"  Hello worl"</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>include? :包含substring</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">b</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="s2">"Hello"</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">b</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>转义符号:</li>
+</ul>
+
+<p>\n, \t：tab , \b : 删除 , \v 换行+tab</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="c1">##字符串中的引号，双引号可被#{}解析</span>
+<span class="nb">puts</span> <span class="s2">"Hello </span><span class="se">\"</span><span class="s2"> world </span><span class="se">\"</span><span class="s2"> "</span> 
+<span class="o">=&gt;</span> <span class="no">Hello</span> <span class="s2">" world "</span> 
+
+ <span class="c1">##使用单引号，不会被#{}解析</span>
+<span class="nb">puts</span> <span class="s1">'Hello "world"'</span>
+<span class="o">=&gt;</span> <span class="no">Hello</span> <span class="s2">"world"</span> 
+
+ <span class="c1">##字符串中的\</span>
+<span class="nb">puts</span> <span class="s2">"Hello </span><span class="se">\\</span><span class="s2"> world"</span>
+<span class="o">=&gt;</span><span class="no">Hello</span> <span class="p">\</span> <span class="n">world</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>使用标记来约定字符串的开始和结束：«ID xxxxx ID</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">x</span> <span class="o">=</span> <span class="o">&lt;&lt;</span><span class="no">JAYSON_</span><span class="sh">
+this is some
+thing
+else,haha
+</span><span class="no">JAYSON_</span>
+
+<span class="nb">puts</span> <span class="n">x</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>重复字符串</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">x</span> <span class="o">=</span> <span class="s2">"b"</span><span class="o">*</span><span class="mi">5</span>
+<span class="nb">puts</span> <span class="n">x</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>格式化：#{}</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="nb">puts</span> <span class="s2">"</span><span class="si">#{</span><span class="n">x</span><span class="si">}</span><span class="s2"> + </span><span class="si">#{</span><span class="n">y</span><span class="si">}</span><span class="s2"> = </span><span class="si">#{</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="si">}</span><span class="s2">"</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>格式化：使用sprintf</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">r</span> <span class="o">=</span> <span class="nb">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="c1">#0-100内的随机数</span>
+<span class="n">str</span> <span class="o">=</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s2">"%.1f"</span><span class="p">,</span><span class="n">r</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">str</span><span class="p">.</span><span class="nf">inspect</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>%q{}不会被#{}解析</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">x</span> <span class="o">=</span> <span class="sx">%q{ this is some
+thing 
+else,haha}</span>
+
+<span class="o">=&gt;</span> <span class="s2">" this is some</span><span class="se">\n</span><span class="s2">thing </span><span class="se">\n</span><span class="s2">else,haha"</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>%{} 会被#{}解析</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nb">name</span> <span class="o">=</span> <span class="sx">%{Jason}</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>%w{}将字符串转换为字符串数组</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">strlist2</span> <span class="o">=</span> <span class="sx">%w{dog monkey pigg cock}</span> <span class="c1">##将元素转换为字符串数组</span>
+<span class="nb">puts</span> <span class="n">strlist2</span><span class="p">.</span><span class="nf">inspect</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>替换substring</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="s2">"foobar"</span>
+
+ <span class="c1">#sub方法只将第一个bar变成boo</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="nf">sub</span><span class="p">(</span><span class="s1">'bar'</span><span class="p">,</span><span class="s1">'boo'</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">y</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="s2">"foobarxoobar,ioo="</span>
+
+ <span class="c1">#gsub方法将所有bar都变成boo</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="nf">gsub</span><span class="p">(</span><span class="s1">'bar'</span><span class="p">,</span><span class="s1">'boo'</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">y</span>  
+ 
+</code></pre></div></div>
+<ul>
+  <li>正则表达式以/xxx/表示</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="c1">#将前两个字符替换成Hello</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="nf">sub</span><span class="p">(</span><span class="sr">/^../</span><span class="p">,</span><span class="s1">'Hello'</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">y</span>
+
+ <span class="c1">#将后两个字符替换为Hello</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="nf">sub</span><span class="p">(</span><span class="sr">/..$/</span><span class="p">,</span><span class="s1">'Hello'</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">y</span>
+
+ <span class="c1">#x.each{|i| puts i} #--wrong!</span>
+ <span class="c1">#需要使用scan</span>
+<span class="n">x</span><span class="p">.</span><span class="nf">scan</span><span class="p">(</span><span class="sr">/./</span><span class="p">){</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">i</span><span class="p">}</span> <span class="c1">#--Right!</span>
+
+ <span class="c1">#scan的参数为正则表达式</span>
+<span class="n">x</span> <span class="o">=</span> <span class="s2">"this is something I will never do"</span>
+<span class="n">x</span><span class="p">.</span><span class="nf">scan</span><span class="p">(</span><span class="sr">/\w\w/</span><span class="p">){</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">i</span><span class="p">}</span>
+
+ <span class="c1">#\w的意思是匹配数字,字母下,划线，对每个字符进行匹配 </span>
+ <span class="c1"># \w\w 是对两个字符进行匹配</span>
+<span class="n">x</span><span class="p">.</span><span class="nf">scan</span><span class="p">(</span><span class="sr">/\w+/</span><span class="p">){</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">i</span><span class="p">}</span>
+
+ <span class="c1">###.scan方法实际上返回的时数组</span>
+<span class="nb">p</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="nf">scan</span><span class="p">(</span><span class="sr">/\w+/</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="s2">"-----"</span>
+<span class="nb">puts</span> <span class="nb">p</span><span class="p">.</span><span class="nf">class</span>  <span class="c1">#array</span>
+<span class="nb">puts</span> <span class="s2">"-----"</span>
+<span class="nb">puts</span> <span class="nb">p</span>
+<span class="nb">puts</span> <span class="s2">"-----"</span>
+ <span class="c1">#\w+ ：+的意思是一直向后匹配，直到遇见非数字，字母，下划线</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="s2">"I spent 100 dollars on this machine which is now 200 dollars"</span>
+<span class="n">x</span><span class="p">.</span><span class="nf">scan</span><span class="p">(</span><span class="sr">/\d+/</span><span class="p">){</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">i</span><span class="p">}</span>
+ <span class="c1">#匹配出数字</span>
+
+ <span class="c1">#匹配字符集[....]匹配[]中的字符集</span>
+<span class="n">x</span> <span class="o">=</span> <span class="s2">"this is a test"</span>
+<span class="n">x</span><span class="p">.</span><span class="nf">scan</span><span class="p">(</span><span class="sr">/[aeiou]/</span><span class="p">)</span> <span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">i</span><span class="p">}</span>
+<span class="n">x</span><span class="p">.</span><span class="nf">scan</span><span class="p">(</span><span class="sr">/[a-m]/</span><span class="p">){</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">i</span><span class="p">}</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>访问char</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">x</span> <span class="o">=</span> <span class="s2">"abc"</span>
+<span class="nb">puts</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>char的index</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">string</span><span class="p">.</span><span class="nf">index</span><span class="p">(</span><span class="s2">"a"</span><span class="p">)</span> <span class="c1">##1</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>字符串匹配</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="c1">#（1）根据正则匹配：</span>
+ <span class="c1">#检测字符串中是否包含某字符: 使用=~</span>
+ <span class="c1">#检测字符串中不包含某字符: 使用!~</span>
+<span class="nb">puts</span> <span class="s2">"get string"</span> <span class="k">if</span> <span class="s2">"jayson loves basketball"</span> <span class="o">=~</span> <span class="sr">/[basketball]/</span>
+<span class="nb">puts</span> <span class="s2">"String contains no digits"</span> <span class="k">unless</span> <span class="s2">"jayson loves basketball"</span> <span class="o">=~</span> <span class="sr">/[0-9]/</span>
+
+
+ <span class="c1">#（2）使用match方法</span>
+<span class="nb">puts</span> <span class="s2">"String has matched"</span> <span class="k">if</span> <span class="s2">"jayson loves basketball"</span><span class="p">.</span><span class="nf">match</span><span class="p">(</span><span class="s2">"loves"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>其它</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="c1">#reverse</span>
+<span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="nf">reverse</span><span class="p">()</span>
+<span class="nb">puts</span> <span class="n">string</span>
+
+ <span class="c1">#upercase</span>
+<span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="nf">upcase</span><span class="p">()</span>
+<span class="nb">puts</span> <span class="n">string</span>
+
+ <span class="c1">#lowercase</span>
+<span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="nf">downcase</span><span class="p">()</span>
+<span class="nb">puts</span> <span class="n">string</span>
+
+ <span class="c1">#swap</span>
+<span class="n">string</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="nf">swapcase</span><span class="p">()</span>
+<span class="nb">puts</span> <span class="n">string</span>
+
+ <span class="c1">#length</span>
+<span class="n">l</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="nf">length</span>
+<span class="nb">puts</span> <span class="n">l</span>
+
+ <span class="c1">#size == length</span>
+<span class="n">s</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="nf">size</span>
+<span class="nb">puts</span> <span class="n">s</span>
+
+ <span class="c1">#split</span>
+<span class="n">string</span> <span class="o">=</span> <span class="s2">"hello world"</span>
+<span class="n">list</span> <span class="o">=</span> <span class="n">string</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="s2">" "</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">list</span><span class="p">.</span><span class="nf">inspect</span>
+
+ <span class="c1">#concat</span>
+<span class="n">string</span><span class="p">.</span><span class="nf">concat</span><span class="p">(</span><span class="s2">"another string"</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">string</span>
+
+</code></pre></div></div>
+
+<h3 id="control-flow">控制流</h3>
+
+<ul>
+  <li>if</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="c1">##单行判断</span>
+<span class="nb">puts</span> <span class="s2">"a&gt;10"</span> <span class="k">if</span> <span class="n">a</span><span class="o">&gt;</span><span class="mi">10</span>
+
+ <span class="c1">#if-elsif-else</span>
+<span class="k">if</span> <span class="n">a</span><span class="o">&lt;</span><span class="mi">10</span>
+  <span class="nb">puts</span> <span class="s2">"a&lt;10"</span>
+<span class="k">elsif</span>
+  <span class="nb">puts</span> <span class="s2">"a=10"</span>
+<span class="k">else</span>
+  <span class="nb">puts</span> <span class="s2">"a&gt;10"</span>
+<span class="k">end</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>unless</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">unless</span> <span class="n">a</span><span class="o">&gt;</span><span class="mi">10</span> 
+  <span class="nb">puts</span> <span class="s2">"a&gt;10"</span>
+<span class="k">end</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>三元操作</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">type</span> <span class="o">=</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="mi">10</span> <span class="p">?</span> <span class="s2">"1"</span> <span class="p">:</span> <span class="s2">"2"</span>
+<span class="nb">puts</span> <span class="n">type</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>case-when</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">fruit</span> <span class="o">=</span> <span class="s2">"orange"</span>
+
+<span class="k">case</span> <span class="n">fruit</span>
+<span class="k">when</span> <span class="s2">"orange"</span>
+  <span class="n">color</span> <span class="o">=</span> <span class="s2">"orange"</span>
+<span class="k">when</span> <span class="s2">"apple"</span>
+  <span class="n">color</span> <span class="o">=</span> <span class="s2">"red"</span>
+<span class="k">when</span> <span class="s2">"banana"</span>
+  <span class="n">color</span> <span class="o">=</span> <span class="s2">"yellow"</span>
+<span class="k">else</span>
+  <span class="n">color</span> <span class="o">=</span> <span class="s2">"unknown"</span>
+<span class="k">end</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>while</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="k">while</span><span class="p">(</span><span class="n">x</span><span class="o">&gt;=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">/</span><span class="mi">2</span>
+  <span class="nb">puts</span> <span class="n">x</span>
+<span class="k">end</span>
+
+ <span class="c1">#单行</span>
+<span class="n">x</span><span class="o">=</span><span class="mi">10</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">/</span><span class="mi">2</span> <span class="k">while</span> <span class="n">x</span> <span class="o">&gt;=</span> <span class="mi">1</span> 
+<span class="nb">puts</span> <span class="n">x</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>until</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+
+<span class="n">x</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="k">until</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">/</span><span class="mi">2</span>
+  <span class="nb">puts</span> <span class="n">x</span>
+<span class="k">end</span>
+
+ <span class="c1">#单行</span>
+<span class="n">x</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">/</span><span class="mi">2</span> <span class="k">until</span> <span class="n">x</span><span class="o">&lt;</span><span class="mi">1</span> 
+<span class="nb">puts</span> <span class="n">x</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>loops</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">array</span> <span class="k">do</span>
+  <span class="nb">puts</span> <span class="s2">"i is </span><span class="si">#{</span><span class="n">i</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+
+<span class="n">strlist1</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"a"</span><span class="p">,</span><span class="s2">"b"</span><span class="p">,</span><span class="s2">"c"</span><span class="p">]</span>
+<span class="nb">puts</span> <span class="n">strlist1</span><span class="p">.</span><span class="nf">inspect</span>
+
+<span class="n">strlist2</span> <span class="o">=</span> <span class="sx">%w{dog monkey pigg cock}</span> <span class="c1">##将元素转换为字符串数组</span>
+<span class="nb">puts</span> <span class="n">strlist2</span><span class="p">.</span><span class="nf">inspect</span>
+
+<span class="k">for</span> <span class="n">animal</span> <span class="k">in</span> <span class="n">strlist2</span> <span class="k">do</span>
+  <span class="k">next</span> <span class="k">if</span> <span class="n">animal</span> <span class="o">==</span> <span class="s2">"monkey"</span> <span class="c1">##continue</span>
+  <span class="nb">puts</span> <span class="s2">"</span><span class="si">#{</span><span class="n">animal</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+
+
+</code></pre></div></div>
+
+<h3 id="symbol">Symbol</h3>
+
+<p>symbol是无值常量，全局唯一，Ruby特性</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">hello</span> <span class="o">=</span> <span class="ss">:key</span>
+<span class="nb">puts</span> <span class="s2">"equal"</span> <span class="k">if</span> <span class="n">hello</span> <span class="o">==</span> <span class="ss">:key</span> <span class="c1">#equal</span>
+<span class="n">a</span> <span class="o">=</span> <span class="p">{</span><span class="ss">:key</span> <span class="o">=&gt;</span> <span class="s2">"hh"</span><span class="p">}</span>
+<span class="nb">puts</span> <span class="n">a</span><span class="p">[</span><span class="ss">:key</span><span class="p">]</span> <span class="c1">## hh</span>
+
+ <span class="c1">#symbol:在内存中只创建一次</span>
+<span class="n">treehouse</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'name'</span><span class="o">=&gt;</span><span class="s1">'Treehouse'</span><span class="p">,</span><span class="s1">'location'</span> <span class="o">=&gt;</span> <span class="s1">'Treehourse Island'</span><span class="p">}</span>
+ 
+ <span class="c1">#如果再创建一个treehouse，那么所有的key都要重新创建一遍</span>
+ <span class="c1">#如果使用symbol，key不会重新创建</span>
+<span class="n">treehouse</span> <span class="o">=</span> <span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s1">'Treehouse'</span><span class="p">,</span> <span class="ss">:location</span> <span class="o">=&gt;</span> <span class="s1">'Treehouse Island'</span><span class="p">}</span>
+
+</code></pre></div></div>
+
+<h3 id="array">Array</h3>
+
+<ul>
+  <li>数组个数</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">a</span> <span class="o">=</span> <span class="nb">p</span><span class="p">.</span><span class="nf">count</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>清空</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">a</span><span class="p">.</span><span class="nf">clear</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>数组索引</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nb">puts</span> <span class="n">x</span><span class="p">.</span><span class="nf">first</span>
+<span class="nb">puts</span> <span class="n">x</span><span class="p">.</span><span class="nf">last</span>
+
+<span class="nb">puts</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="nb">puts</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1">##最后一个</span>
+
+<span class="nb">puts</span> <span class="n">x</span><span class="p">.</span><span class="nf">first</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="c1">##前两个</span>
+<span class="nb">puts</span> <span class="n">x</span><span class="p">.</span><span class="nf">at</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+
+</code></pre></div></div>
+<ul>
+  <li>数组中每个元素的类型可以不同</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="s2">"2"</span><span class="p">,</span><span class="mf">3.0</span><span class="p">]</span>
+</code></pre></div></div>
+<ul>
+  <li>反转</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">x</span><span class="p">.</span><span class="nf">reverse</span><span class="p">()</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>数组遍历</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="c1">#使用do-each</span>
+<span class="n">q</span><span class="p">.</span><span class="nf">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="n">i</span><span class="p">.</span><span class="nf">to_s</span>
+<span class="k">end</span>
+
+<span class="c1">#使用do-each with index</span>
+<span class="n">q</span><span class="p">.</span><span class="nf">each_with_index</span> <span class="k">do</span> <span class="o">|</span><span class="n">item</span><span class="p">,</span> <span class="n">index</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="s2">"current_index: </span><span class="si">#{</span><span class="n">index</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+
+
+ <span class="c1">#使用block</span>
+<span class="n">q</span><span class="p">.</span><span class="nf">each</span> <span class="p">{</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span> 
+  <span class="nb">puts</span> <span class="n">i</span><span class="p">.</span><span class="nf">to_s</span> <span class="o">+</span> <span class="s2">"x"</span>
+<span class="p">}</span>
+
+ <span class="c1">#使用collect</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">].</span><span class="nf">collect</span><span class="p">{</span><span class="o">|</span><span class="n">element</span><span class="o">|</span> <span class="n">element</span><span class="o">*</span><span class="mi">2</span><span class="p">}</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>数组包含某个元素</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="nb">puts</span> <span class="n">x</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="s2">"x"</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">x</span><span class="p">.</span><span class="nf">include?</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>数组的push操作</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span> <span class="o">&lt;&lt;</span> <span class="s2">"wrod"</span>
+<span class="n">x</span><span class="p">.</span><span class="nf">push</span><span class="p">(</span><span class="s2">"word"</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">+=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+
+</code></pre></div></div>
+<ul>
+  <li>数组的pop操作</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">x</span><span class="p">.</span><span class="nf">pop</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>数组的join操作:</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="c1">#如果一个数组全是字符串，可以使用.join方法，将数组中的元素连接起来</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"jj"</span><span class="p">,</span><span class="s2">"ss"</span><span class="p">,</span><span class="s2">"gg"</span><span class="p">]</span>
+<span class="nb">puts</span> <span class="n">x</span><span class="p">.</span><span class="nf">join</span><span class="p">()</span>
+
+<span class="o">=&gt;</span> <span class="n">jjssgg</span>
+
+<span class="nb">puts</span> <span class="n">x</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="s1">', '</span><span class="p">)</span>
+
+<span class="o">=&gt;</span> <span class="n">jj</span><span class="p">,</span> <span class="n">ss</span><span class="p">,</span> <span class="n">gg</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>字符串按符号分割:</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">x</span> <span class="o">=</span> <span class="s2">"short sentence; Another; no more"</span>
+<span class="n">q</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="s1">';'</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">q</span><span class="p">.</span><span class="nf">class</span> 
+<span class="o">=&gt;</span> <span class="n">array</span>
+
+<span class="nb">puts</span> <span class="n">q</span>
+<span class="o">=&gt;</span> <span class="n">short</span> <span class="n">sentence</span> <span class="no">Another</span> <span class="n">no</span> <span class="n">more</span>
+</code></pre></div></div>
+
+<p>使用inspect方法使输出格式更易读，所有对象都有inspect方法:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">x</span> <span class="o">=</span> <span class="s2">"short sentence; Another; no more"</span>
+<span class="nb">p</span> <span class="o">=</span> <span class="n">x</span><span class="p">.</span><span class="nf">split</span><span class="p">(</span><span class="s1">';'</span><span class="p">).</span><span class="nf">inspect</span> 
+
+<span class="nb">puts</span> <span class="nb">p</span>  
+<span class="o">=&gt;</span><span class="p">[</span><span class="s2">"short sentence"</span><span class="p">,</span> <span class="s2">" Another"</span><span class="p">,</span> <span class="s2">" no more"</span><span class="p">]</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>数组相加:</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">p</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">q</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"1"</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s2">"33"</span><span class="p">]</span>  
+<span class="n">z</span> <span class="o">=</span> <span class="nb">p</span><span class="o">+</span><span class="n">q</span>
+<span class="nb">print</span> <span class="n">z</span>
+
+<span class="o">=&gt;</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"1"</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"33"</span><span class="p">]</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>数组相减:</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="c1">#两个数组相减</span>
+<span class="nb">p</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">q</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]</span>
+<span class="n">z</span> <span class="o">=</span> <span class="nb">p</span><span class="o">-</span><span class="n">q</span>
+<span class="nb">print</span> <span class="n">z</span> 
+
+<span class="o">=&gt;</span> <span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>slice: 取数组的某些值，组成一个新数组, 参数为index值，不修改原array</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">list1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">ele</span> <span class="o">=</span> <span class="n">list1</span><span class="p">.</span><span class="nf">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="nb">puts</span> <span class="n">ele</span><span class="p">.</span><span class="nf">inspect</span> <span class="c1">#[2]</span>
+<span class="n">slice</span> <span class="o">=</span> <span class="n">list1</span><span class="p">.</span><span class="nf">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="p">;</span> <span class="nb">puts</span> <span class="n">slice</span><span class="p">.</span><span class="nf">inspect</span> <span class="c1">#[2,3]</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>slice! :取数组的某些值，组成一个新数组, 参数为index值，修改原array</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">slice</span> <span class="o">=</span> <span class="n">list1</span><span class="p">.</span><span class="nf">slice!</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span> <span class="p">;</span> <span class="nb">puts</span> <span class="n">list1</span><span class="p">.</span><span class="nf">inspect</span> <span class="c1">#[1]</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>unshift :在头部插入元素</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+<span class="n">a</span><span class="p">.</span><span class="nf">unshift</span> <span class="mi">2</span>
+
+<span class="o">=&gt;</span>  <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>rindex :返回数组元素的index</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>	
+<span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s2">"a"</span><span class="p">,</span><span class="s2">"s"</span><span class="p">]</span>
+<span class="n">a</span><span class="p">.</span><span class="nf">rindex</span> <span class="s2">"a"</span>
+
+<span class="o">=&gt;</span> <span class="mi">3</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>多维数组</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">array</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="nf">push</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="nb">puts</span> <span class="n">array</span><span class="p">.</span><span class="nf">inspect</span> 
+<span class="o">=&gt;</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]</span>
+
+ <span class="c1">#展成1维数组</span>
+<span class="n">array</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="nf">flatten</span>
+<span class="o">=&gt;</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>sort &amp; compare</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+<span class="n">array1</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="nf">sort</span> <span class="p">;</span> <span class="nb">puts</span> <span class="n">array1</span><span class="p">.</span><span class="nf">inspect</span><span class="p">()</span>
+<span class="n">array1</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="nf">sort</span><span class="p">{</span><span class="o">|</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="o">|</span> <span class="n">a</span><span class="o">&lt;=&gt;</span><span class="n">b</span><span class="p">}</span> <span class="p">;</span> <span class="nb">puts</span> <span class="n">array1</span><span class="p">.</span><span class="nf">inspect</span><span class="p">()</span>
+<span class="n">array1</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="nf">sort</span><span class="p">{</span><span class="o">|</span><span class="n">b</span><span class="p">,</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">&lt;=&gt;</span><span class="n">b</span><span class="p">}.</span><span class="nf">reverse</span> <span class="p">;</span> <span class="nb">puts</span> <span class="n">array1</span><span class="p">.</span><span class="nf">inspect</span><span class="p">()</span>
+<span class="n">array1</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="nf">sort</span><span class="p">{</span><span class="o">|</span><span class="n">b</span><span class="p">,</span><span class="n">a</span><span class="o">|</span> <span class="n">a</span><span class="o">&lt;=&gt;</span><span class="n">b</span><span class="p">}.</span><span class="nf">reverse</span><span class="p">.</span><span class="nf">uniq</span> <span class="p">;</span> <span class="nb">puts</span> <span class="n">array1</span><span class="p">.</span><span class="nf">inspect</span><span class="p">()</span> <span class="c1">##uniq去重</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>any? all?</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="nf">any?</span><span class="p">{</span><span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">e</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">}</span> <span class="p">;</span> <span class="nb">puts</span> <span class="n">ret</span><span class="p">.</span><span class="nf">inspect</span><span class="p">()</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="nf">all?</span><span class="p">{</span><span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">e</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">}</span> <span class="p">;</span> <span class="nb">puts</span> <span class="n">ret</span><span class="p">.</span><span class="nf">inspect</span><span class="p">()</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>select :选出符合条件的元素</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">newArray</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="nf">select</span><span class="p">{</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">e</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">};</span> <span class="nb">puts</span> <span class="n">newArray</span><span class="p">.</span><span class="nf">inspect</span><span class="p">()</span>
+</code></pre></div></div>
+
+<ul>
+  <li>reject :去除符合条件的元素</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">newArray</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="nf">reject</span><span class="p">{</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">e</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">};</span> <span class="nb">puts</span> <span class="n">newArray</span><span class="p">.</span><span class="nf">inspect</span><span class="p">()</span>
+</code></pre></div></div>
+
+<ul>
+  <li>map：</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">newArray</span> <span class="o">=</span> <span class="n">array</span><span class="p">.</span><span class="nf">map</span><span class="p">{</span><span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="n">e</span><span class="o">*</span><span class="mi">2</span> <span class="p">};</span> <span class="nb">puts</span> <span class="n">newArray</span><span class="p">.</span><span class="nf">inspect</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="hash">Hash</h3>
+
+<ul>
+  <li>创建</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">h</span> <span class="o">=</span> <span class="no">Hash</span><span class="p">.</span><span class="nf">new</span><span class="p">()</span> <span class="p">;</span> <span class="nb">puts</span> <span class="n">h</span><span class="p">.</span><span class="nf">inspect</span><span class="p">()</span>
+<span class="n">h</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"hello"</span> <span class="o">=&gt;</span> <span class="s2">"world"</span><span class="p">}</span>
+<span class="n">h</span> <span class="o">=</span> <span class="no">Hash</span><span class="p">.</span><span class="nf">new</span><span class="p">{</span><span class="o">|</span><span class="nb">hash</span><span class="p">,</span><span class="n">key</span><span class="o">|</span> <span class="nb">hash</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Default value for </span><span class="si">#{</span><span class="n">key</span><span class="si">}</span><span class="s2">"</span><span class="p">}</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>清空</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">h</span><span class="p">.</span><span class="nf">clear</span><span class="p">;</span><span class="nb">puts</span> <span class="n">h</span><span class="p">.</span><span class="nf">empty?</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>个数</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">map</span><span class="p">.</span><span class="nf">size</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>访问</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">map</span><span class="p">[</span><span class="s1">'cat'</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'boss'</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>遍历</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">map</span><span class="p">.</span><span class="nf">each</span><span class="p">{</span> <span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span>
+	
+	<span class="nb">puts</span> <span class="s2">"</span><span class="si">#{</span><span class="n">k</span><span class="si">}</span><span class="s2"> =&gt; </span><span class="si">#{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span>
+<span class="p">}</span>
+
+
+<span class="n">h</span><span class="p">.</span><span class="nf">each_pair</span> <span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> 
+	
+	<span class="nb">puts</span> <span class="s2">"the key at </span><span class="si">#{</span><span class="n">k</span><span class="si">}</span><span class="s2"> is </span><span class="si">#{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span>
+	
+<span class="p">}</span>
+
+<span class="n">h</span><span class="p">.</span><span class="nf">each_key</span><span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="o">|</span> 
+	<span class="nb">puts</span> <span class="s2">"the key is </span><span class="si">#{</span><span class="n">k</span><span class="si">}</span><span class="s2">"</span>
+	
+<span class="p">}</span>
+
+<span class="n">h</span><span class="p">.</span><span class="nf">each_value</span><span class="p">{</span><span class="o">|</span><span class="n">v</span><span class="o">|</span> 
+	<span class="nb">puts</span> <span class="s2">"the value is </span><span class="si">#{</span><span class="n">v</span><span class="si">}</span><span class="s2">"</span>
+
+<span class="p">}</span>
+
+<span class="n">h</span><span class="p">.</span><span class="nf">select</span><span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">"501"</span><span class="p">};</span><span class="nb">puts</span> <span class="n">h</span><span class="p">.</span><span class="nf">inspect</span>
+
+<span class="n">h</span><span class="p">.</span><span class="nf">keep_if</span><span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">"502"</span><span class="p">};</span> <span class="nb">puts</span> <span class="n">h</span><span class="p">.</span><span class="nf">inspect</span>
+
+
+</code></pre></div></div>
+
+<ul>
+  <li>删除</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">map</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="s1">'cat'</span><span class="p">)</span>
+<span class="n">map</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">map</span><span class="p">.</span><span class="nf">delete_if</span> <span class="p">{</span><span class="o">|</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="o">|</span> <span class="n">key</span> <span class="o">==</span><span class="s2">"some key"</span><span class="p">}</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>所有keys/values</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">map</span><span class="p">.</span><span class="nf">keys</span>
+<span class="n">map</span><span class="p">.</span><span class="nf">values</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>key/value存在?</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nb">puts</span> <span class="n">h</span><span class="p">.</span><span class="nf">has_key?</span><span class="p">(</span><span class="s2">"candy"</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">h</span><span class="p">.</span><span class="nf">has_value?</span><span class="p">(</span><span class="s2">"candy"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>to array</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">h</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"501"</span> <span class="o">=&gt;</span> <span class="s2">"cctv1"</span><span class="p">,</span> <span class="s2">"502"</span> <span class="o">=&gt;</span> <span class="s2">"cctv2"</span><span class="p">,</span> <span class="s2">"503"</span> <span class="o">=&gt;</span> <span class="s2">"cctv3"</span><span class="p">}</span>
+<span class="nb">puts</span> <span class="n">h</span><span class="p">.</span><span class="nf">to_a</span><span class="p">.</span><span class="nf">inspect</span>
+
+<span class="o">=&gt;</span><span class="p">[[</span><span class="s2">"501"</span><span class="p">,</span> <span class="s2">"cctv1"</span><span class="p">],</span> <span class="p">[</span><span class="s2">"502"</span><span class="p">,</span> <span class="s2">"cctv2"</span><span class="p">],</span> <span class="p">[</span><span class="s2">"503"</span><span class="p">,</span> <span class="s2">"cctv3"</span><span class="p">]]</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>find</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">h</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"501"</span> <span class="o">=&gt;</span> <span class="s2">"cctv1"</span><span class="p">,</span> <span class="s2">"502"</span> <span class="o">=&gt;</span> <span class="s2">"cctv2"</span><span class="p">,</span> <span class="s2">"503"</span> <span class="o">=&gt;</span> <span class="s2">"cctv3"</span><span class="p">}</span>
+<span class="nb">puts</span> <span class="n">h</span><span class="p">.</span><span class="nf">find</span><span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">"503"</span><span class="p">}.</span><span class="nf">inspect</span><span class="p">;</span>  <span class="c1">##["503","cctv3"]返回数组</span>
+<span class="nb">puts</span> <span class="n">h</span><span class="p">.</span><span class="nf">find_all</span><span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">v</span><span class="p">.</span><span class="nf">match</span><span class="p">(</span><span class="s2">"cc"</span><span class="p">)}.</span><span class="nf">inspect</span> 
+<span class="nb">puts</span> <span class="n">h</span><span class="p">.</span><span class="nf">all?</span><span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">v</span><span class="p">.</span><span class="nf">match</span><span class="p">(</span><span class="s2">"cctv1"</span><span class="p">)}</span>
+<span class="nb">puts</span> <span class="n">h</span><span class="p">.</span><span class="nf">any?</span><span class="p">{</span><span class="o">|</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="o">|</span> <span class="n">v</span><span class="p">.</span><span class="nf">match</span><span class="p">(</span><span class="s2">"cctv1"</span><span class="p">)}</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>map</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>puts h.map{|k,v| v += "ss"}.inspect #将value的值映射为#["cctv1ss","cctv2ss","cctv3ss"]
+
+</code></pre></div></div>
+
+<ul>
+  <li>reject</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>h.reject{|k,v| k == "cctv1"}.inspect
+
+</code></pre></div></div>
+
+<h3 id="itor">迭代器</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="c1">#例如upto：从1到5</span>
+<span class="mi">1</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span><span class="nb">puts</span> <span class="s2">"upto"</span><span class="p">}</span>
+
+ <span class="c1">#downto:从10递减到5</span>
+<span class="mi">10</span><span class="p">.</span><span class="nf">downto</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span><span class="nb">puts</span> <span class="s2">"downto"</span><span class="p">}</span>
+
+ <span class="c1">#从0开始，到50，每次步进5</span>
+<span class="mi">0</span><span class="p">.</span><span class="nf">step</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span> <span class="k">do</span>
+  <span class="nb">puts</span> <span class="s2">"step"</span>
+<span class="k">end</span>
+
+ <span class="c1">#如果要打印出循环的index，怎么办？</span>
+
+ <span class="c1">#使用block</span>
+<span class="mi">1</span><span class="p">.</span><span class="nf">upto</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">i</span><span class="p">}</span>
+
+ <span class="c1">#使用do-end</span>
+<span class="mi">10</span><span class="p">.</span><span class="nf">downto</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">i</span><span class="o">|</span>
+  <span class="nb">puts</span> <span class="n">i</span>
+<span class="k">end</span>
+
+</code></pre></div></div>
+
+<h3 id="block">Block</h3>
+
+<ul>
+  <li>block:是匿名函数，可以当参数传递,当参数时需要用&amp;符号声明参数是block类型</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">def</span> <span class="nf">say_hello</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="nb">puts</span> <span class="s2">"Hello world"</span>
+  <span class="k">if</span> <span class="nb">block_given?</span>
+    <span class="n">block</span><span class="p">.</span><span class="nf">call</span>
+  <span class="k">else</span>
+    <span class="nb">puts</span> <span class="s2">"no block given"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">say_hello</span> <span class="p">{</span><span class="nb">puts</span> <span class="s2">"call from block"</span><span class="p">}</span>
+
+<span class="n">say_hello</span> <span class="k">do</span>
+  <span class="nb">puts</span> <span class="s2">"call from block"</span>
+<span class="k">end</span>
+
+ <span class="c1">#block的返回值</span>
+<span class="k">def</span> <span class="nf">say_name</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="nb">name</span> <span class="o">=</span> <span class="n">block</span><span class="p">.</span><span class="nf">call</span>
+  <span class="nb">puts</span> <span class="nb">name</span>
+<span class="k">end</span>
+
+<span class="n">say_name</span><span class="p">{</span><span class="s2">"Jayson"</span><span class="p">}</span>
+
+
+</code></pre></div></div>
+
+<ul>
+  <li>yield</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">def</span> <span class="nf">test_yield</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">..</span><span class="mi">5</span> <span class="k">do</span>
+    <span class="k">yield</span> <span class="n">i</span> <span class="c1">##will call block, pass i‘s copy to the block</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">test_yield</span> <span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="nb">puts</span> <span class="s2">"</span><span class="si">#{</span><span class="n">i</span><span class="o">*</span><span class="mi">2</span><span class="si">}</span><span class="s2">"</span><span class="p">}</span> <span class="c1">#2,4,6,8,10</span>
+
+</code></pre></div></div>
+
+<p>class SimpleBenchmarker</p>
+
+<p>def self.go(times, &amp;block)</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>puts "----------Benchmarking started------------"
+start_time = Time.now
+puts "start time : #{start_time}\n\n"
+times.times do |t|
+  print "."
+  block.call
+end
+print "\n\n"
+end_time = Time.now
+puts "End Time:\t #{end_time}\n"
+puts "----------Benchmarking finished-----------"
+puts "Result :\t\t #{end_time - start_time} seconds"
+</code></pre></div></div>
+
+<p>end
+end</p>
+
+<p>SimpleBenchmarker.go 5  do
+	time = rand(0.1..1.0)<br />
+	sleep time
+end</p>
+
+<h3 id="proc">Proc</h3>
+
+<ul>
+  <li>proc :用来创建匿名函数 - block</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">proc_b</span> <span class="o">=</span> <span class="no">Proc</span><span class="p">.</span><span class="nf">new</span> <span class="p">{</span><span class="nb">puts</span> <span class="s2">"hello b"</span><span class="p">}</span>
+<span class="n">proc_a</span> <span class="o">=</span> <span class="nb">proc</span> <span class="p">{</span><span class="nb">puts</span> <span class="s2">"hello a"</span><span class="p">}</span>
+<span class="n">proc_b</span><span class="p">.</span><span class="nf">call</span>
+<span class="n">proc_a</span><span class="p">.</span><span class="nf">call</span>
+
+</code></pre></div></div>
+
+<h3 id="lambda">Lambda</h3>
+
+<ul>
+  <li>lambda: 一种proc</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">my_lambda_1</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{}</span>
+<span class="n">my_lambda_2</span> <span class="o">=</span> <span class="o">-&gt;</span> <span class="nb">lambda</span> <span class="p">{}</span>
+
+</code></pre></div></div>
+
+<p>proc和lambda的区别是，lambda必须要传入参数</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">my_proc</span> <span class="o">=</span> <span class="nb">proc</span> <span class="p">{</span><span class="o">|</span><span class="nb">name</span><span class="o">|</span> <span class="nb">puts</span> <span class="s2">"hello </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">"</span><span class="p">}</span>
+<span class="n">my_proc</span><span class="p">.</span><span class="nf">call</span> <span class="p">(</span><span class="s2">"jayson"</span><span class="p">)</span>
+
+<span class="n">my_lambda</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="nb">name</span><span class="o">|</span> <span class="nb">puts</span> <span class="s2">"hello </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">"</span><span class="p">}</span>
+<span class="n">my_lambda</span><span class="p">.</span><span class="nf">call</span> <span class="p">(</span><span class="s2">"candy"</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">return_from_proc</span>
+
+  <span class="nb">p</span> <span class="o">=</span> <span class="nb">proc</span> <span class="p">{</span><span class="k">return</span> <span class="s2">"return from proc"</span><span class="p">}</span>
+  <span class="nb">p</span><span class="p">.</span><span class="nf">call</span>
+  <span class="k">return</span> <span class="s2">"return from function"</span>
+  
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="nf">return_from_lambda</span>
+
+  <span class="n">l</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span><span class="k">return</span> <span class="s2">"return from lambda"</span><span class="p">}</span>
+  <span class="n">l</span><span class="p">.</span><span class="nf">call</span>
+  <span class="k">return</span> <span class="s2">"return from function"</span>
+<span class="k">end</span>
+
+<span class="nb">puts</span> <span class="n">return_from_proc</span><span class="p">()</span>
+<span class="nb">puts</span> <span class="n">return_from_lambda</span><span class="p">()</span>
+
+
+</code></pre></div></div>
+
+<h3 id="class">Class</h3>
+
+<ul>
+  <li>成员变量用@定义</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">Square</span>
+  
+  <span class="c1">##默认构造</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">side_length</span><span class="p">)</span>
+    
+    <span class="c1">##定义成员变量用@</span>
+    <span class="vi">@side_length</span> <span class="o">=</span> <span class="n">side_length</span>
+  
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">area</span>
+  
+    <span class="n">priFunc</span><span class="p">()</span> <span class="c1">##调用private方法</span>
+    <span class="nb">self</span><span class="p">.</span><span class="nf">pubFunc</span><span class="p">()</span> <span class="c1">##调用public方法</span>
+    <span class="vi">@side_length</span> <span class="o">*</span> <span class="vi">@side_length</span>
+    
+  <span class="k">end</span>
+  
+<span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">priFunc</span><span class="p">()</span>
+    <span class="nb">puts</span> <span class="s2">"private func called"</span>
+  <span class="k">end</span>
+
+<span class="kp">public</span>
+  <span class="k">def</span> <span class="nf">pubFunc</span><span class="p">()</span>
+    <span class="nb">puts</span> <span class="s2">"public func called"</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+
+</code></pre></div></div>
+
+<ul>
+  <li>继承,类方法,类成员</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">Test</span> <span class="o">&lt;</span> <span class="no">Object</span> <span class="c1">##继承：默认都是从object继承</span>
+
+  <span class="c1">##定义类成员的getter方法</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">clz_counter</span>
+    <span class="vc">@@clz_counter</span> <span class="c1">##计数器</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">initialize</span>
+    
+    <span class="c1">##类成员</span>
+    <span class="k">if</span> <span class="k">defined?</span> <span class="p">(</span><span class="vc">@@clz_counter</span><span class="p">)</span>
+      <span class="vc">@@clz_counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">else</span>
+      <span class="vc">@@clz_counter</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+  <span class="c1">##类方法</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">test_method1</span>
+    <span class="nb">puts</span> <span class="s2">"test self_method1"</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nc">Test</span><span class="o">.</span><span class="nf">test_method2</span>
+    <span class="nb">puts</span> <span class="s2">"test self_method2"</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>override</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">ParentClz</span>
+  
+  <span class="c1">#父类的pFunc方法返回a</span>
+  <span class="k">def</span> <span class="nf">pFunc</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+     <span class="n">a</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">ChildClz</span> <span class="o">&lt;</span><span class="no">ParentClz</span>
+  
+  <span class="c1">##重写p方法，返回ax</span>
+  <span class="k">def</span> <span class="nf">pFunc</span> <span class="p">(</span><span class="n">a</span><span class="p">)</span>
+     <span class="n">a</span><span class="p">.</span><span class="nf">to_s</span> <span class="o">+</span> <span class="s2">"x"</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>修改或增加现有类的方法</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">ChildClz</span>
+  
+  <span class="k">def</span> <span class="nf">pFunc</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">a</span><span class="p">.</span><span class="nf">to_s</span><span class="o">+</span><span class="s2">"x"</span><span class="o">+</span><span class="s2">"x"</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">qFunc</span>
+    <span class="nb">puts</span> <span class="s2">"this method is added"</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+
+
+</code></pre></div></div>
+
+<ul>
+  <li>attr</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">AttrClz</span>
+  
+  <span class="c1">##自动支持.预发的getter和setter</span>
+  <span class="nb">attr_accessor</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:age</span>
+  
+  <span class="c1">##私有方法</span>
+  <span class="kp">private</span>
+  <span class="k">def</span> <span class="nf">private_method</span>
+  <span class="k">end</span>
+  
+  <span class="c1">##共有方法</span>
+  <span class="kp">public</span>
+  <span class="k">def</span> <span class="nf">public_method</span>
+  <span class="k">end</span>
+  
+  <span class="k">def</span> <span class="nf">age</span>
+    <span class="vi">@age</span>
+  <span class="k">end</span>
+  
+  <span class="c1">##protect方法</span>
+  <span class="kp">protected</span> <span class="ss">:age</span>
+  
+<span class="k">end</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>内部类</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">class</span> <span class="nc">InsideClz</span>
+  
+  <span class="k">def</span> <span class="nc">InsideClz</span><span class="o">.</span><span class="nf">giveMeDrawingClz</span>
+    <span class="no">Drawing</span><span class="p">.</span><span class="nf">new</span>
+  <span class="k">end</span>
+  
+  <span class="c1">##内部类</span>
+  <span class="k">class</span> <span class="nc">Drawing</span>
+    <span class="k">def</span> <span class="nf">print</span>
+      <span class="nb">puts</span> <span class="s2">"this is a print method inside Drawing"</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="no">InsideClz</span><span class="p">.</span><span class="nf">new</span>
+<span class="no">InsideClz</span><span class="p">.</span><span class="nf">giveMeDrawingClz</span><span class="p">.</span><span class="nf">print</span>
+
+ <span class="c1">##返回Drawing 对象</span>
+<span class="n">a</span> <span class="o">=</span> <span class="no">InsideClz</span><span class="o">::</span><span class="no">Drawing</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">a</span><span class="p">.</span><span class="nf">print</span>
+
+
+</code></pre></div></div>
+
+<h3 id="namespace">命名空间</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">module</span> <span class="nn">NameSpace1</span>
+
+  <span class="k">def</span> <span class="nc">NameSpace1</span><span class="o">.</span><span class="nf">random</span>
+    <span class="nb">rand</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+
+<span class="k">module</span> <span class="nn">NameSpace2</span>
+  
+  <span class="k">def</span> <span class="nc">NameSpace2</span><span class="o">.</span><span class="nf">random</span>
+    <span class="nb">rand</span> <span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="nb">puts</span> <span class="no">NameSpace1</span><span class="p">.</span><span class="nf">random</span>
+<span class="nb">puts</span> <span class="no">NameSpace2</span><span class="p">.</span><span class="nf">random</span>
+
+</code></pre></div></div>
+
+<h3 id="module">Module</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">module</span> <span class="nn">ToolBox</span>
+  
+  <span class="k">class</span> <span class="nc">Ruler</span>
+    <span class="nb">attr_accessor</span> <span class="ss">:length</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">module</span> <span class="nn">Country</span>
+    
+  <span class="k">class</span> <span class="nc">Ruler</span>
+    <span class="nb">attr_accessor</span> <span class="ss">:name</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="no">ToolBox</span><span class="o">::</span><span class="no">Ruler</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">a</span><span class="p">.</span><span class="nf">length</span> <span class="o">=</span> <span class="mi">50</span>
+
+<span class="n">b</span> <span class="o">=</span> <span class="no">Country</span><span class="o">::</span><span class="no">Ruler</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">b</span><span class="p">.</span><span class="nf">name</span> <span class="o">=</span> <span class="s2">"kate"</span>
+
+<span class="nb">puts</span> <span class="n">a</span><span class="p">,</span><span class="n">b</span>
+
+</code></pre></div></div>
+
+<h3 id="Include">include</h3>
+
+<p>在某个作用域中引入其它namespace中的方法或者类</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">module</span> <span class="nn">UsefulFeatures</span>
+  
+  <span class="k">def</span> <span class="nf">class_name</span>
+    
+    <span class="nb">self</span><span class="p">.</span><span class="nf">class</span><span class="p">.</span><span class="nf">to_s</span>
+    
+  <span class="k">end</span>
+  
+<span class="k">end</span>
+
+
+<span class="k">class</span> <span class="nc">SomeClass</span>
+  
+  <span class="c1">##包含了其它类</span>
+  <span class="kp">include</span> <span class="no">UsefulFeatures</span>
+  
+<span class="k">end</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="no">SomeClass</span><span class="p">.</span><span class="nf">new</span>
+<span class="nb">puts</span> <span class="n">x</span><span class="p">.</span><span class="nf">class_name</span>
+
+
+</code></pre></div></div>
+
+<p>系统对array默认include的两个类：
+Enumerable</p>
+
+<ul>
+  <li>each方法：</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">].</span><span class="nf">each</span><span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">i</span><span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>除了each方法外，还提供了20多个有用的放法:
+collect,detect,find,find_all,include?,max,min,select,sort,to_a</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">list</span> <span class="o">=</span> <span class="sx">%w{this is the longest word check}</span>
+<span class="nb">puts</span> <span class="n">list</span><span class="p">.</span><span class="nf">inspect</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>collect</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">].</span><span class="nf">collect</span><span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">i</span><span class="p">.</span><span class="nf">to_s</span><span class="o">+</span><span class="s2">"x"</span><span class="p">}</span>
+</code></pre></div></div>
+<ul>
+  <li>detect</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">].</span><span class="nf">detect</span><span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">i</span><span class="p">.</span><span class="nf">between?</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)}</span>
+<span class="nb">puts</span> <span class="n">a</span> <span class="c1">#2</span>
+</code></pre></div></div>
+
+<ul>
+  <li>select</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">].</span><span class="nf">select</span><span class="p">{</span><span class="o">|</span><span class="n">i</span><span class="o">|</span> <span class="n">i</span><span class="p">.</span><span class="nf">between?</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)}</span>
+<span class="nb">puts</span> <span class="n">a</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>sort</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">].</span><span class="nf">sort</span> <span class="c1">#[1,2,3,4]</span>
+</code></pre></div></div>
+
+<ul>
+  <li>min/max</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">].</span><span class="nf">max</span> 
+<span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">].</span><span class="nf">min</span>
+</code></pre></div></div>
+
+<h3 id="exception">异常</h3>
+
+<ul>
+  <li>begin-rescue</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">begin</span> 
+  <span class="nb">puts</span> <span class="mi">10</span><span class="o">/</span><span class="mi">0</span>
+<span class="k">rescue</span>
+  <span class="nb">puts</span> <span class="s2">"crash"</span>
+<span class="k">end</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>catch-throw</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kp">catch</span><span class="p">(</span><span class="ss">:finish</span><span class="p">)</span> <span class="k">do</span>
+  <span class="mi">1000</span><span class="p">.</span><span class="nf">times</span> <span class="k">do</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="nb">rand</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+    <span class="kp">throw</span>  <span class="ss">:finish</span> <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">123</span>
+  <span class="k">end</span>
+  
+  <span class="nb">puts</span> <span class="s2">"the random number is 123"</span>
+<span class="k">end</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>rescue-ensure</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="c1">#ensure : 类似finally，保证会执行</span>
+ <span class="c1">#rescue : </span>
+
+<span class="k">def</span> <span class="nf">header</span><span class="p">(</span><span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+  <span class="nb">puts</span> <span class="s2">"this is our header"</span>
+  <span class="n">block</span><span class="p">.</span><span class="nf">call</span>
+  <span class="nb">puts</span> <span class="s2">"this is our footer"</span>
+  
+<span class="k">rescue</span>
+  <span class="nb">puts</span> <span class="s2">"this is where rescue an error"</span>  
+<span class="k">ensure</span>
+  <span class="nb">puts</span> <span class="s2">"this one is ensure to be called"</span>
+<span class="k">end</span>
+
+<span class="n">header</span> <span class="p">{</span><span class="nb">puts</span> <span class="s2">"this block will crash"</span><span class="p">;</span> <span class="k">raise</span> <span class="s2">"this is an error"</span><span class="p">}</span>
+
+</code></pre></div></div>
+
+<h3 id="file">文件操作</h3>
+
+<ul>
+  <li>创建文件</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="c1">##如果用new打开文件，需要调用close</span>
+<span class="n">a</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"./input.json"</span><span class="p">,</span><span class="s2">"r"</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">a</span><span class="p">.</span><span class="nf">class</span> <span class="c1">## File</span>
+
+ <span class="c1">##默认以换行符进行分割</span>
+<span class="n">a</span><span class="p">.</span><span class="nf">each</span><span class="p">{</span><span class="o">|</span><span class="n">line</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">line</span><span class="p">}</span>
+<span class="n">a</span><span class="p">.</span><span class="nf">close</span>
+
+
+<span class="n">a</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"./input.json"</span><span class="p">,</span><span class="s2">"r"</span><span class="p">)</span>
+ <span class="c1">##如果用其他符号分割:</span>
+<span class="n">a</span><span class="p">.</span><span class="nf">each</span><span class="p">(</span><span class="s1">':'</span><span class="p">){</span><span class="o">|</span><span class="n">line</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">line</span><span class="p">}</span>
+<span class="n">a</span><span class="p">.</span><span class="nf">close</span>
+
+
+<span class="n">a</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"./input.json"</span><span class="p">,</span><span class="s2">"r"</span><span class="p">)</span>
+ <span class="c1">##逐个字节读取I/O流</span>
+<span class="n">a</span><span class="p">.</span><span class="nf">each_byte</span><span class="p">{</span><span class="o">|</span><span class="n">byte</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">byte</span><span class="p">}</span>
+<span class="n">a</span><span class="p">.</span><span class="nf">close</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="s2">"./input.json"</span><span class="p">,</span><span class="s2">"r"</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">a</span><span class="p">.</span><span class="nf">readlines</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="s2">"--"</span><span class="p">)</span>
+<span class="n">a</span><span class="p">.</span><span class="nf">close</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>读文件</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="c1">##更简单的读文件的方法,a为字符串</span>
+<span class="n">a</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="s2">"./input.json"</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">a</span><span class="p">.</span><span class="nf">class</span> <span class="c1">##string, not File</span>
+<span class="nb">puts</span> <span class="n">a</span>
+
+ <span class="c1">##文件指针</span>
+<span class="n">f</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="s2">"./input.json"</span><span class="p">)</span>
+<span class="n">f</span><span class="p">.</span><span class="nf">pos</span> <span class="o">=</span> <span class="mi">8</span> <span class="c1">##从第8个字节后开始读取</span>
+<span class="nb">puts</span> <span class="n">f</span><span class="p">.</span><span class="nf">gets</span>
+<span class="nb">puts</span> <span class="n">f</span><span class="p">.</span><span class="nf">pos</span>
+
+
+</code></pre></div></div>
+
+<ul>
+  <li>写文件</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ <span class="c1">##创建文件，“w”为只写，创建新文件</span>
+<span class="no">File</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="s2">"text.txt"</span><span class="p">,</span><span class="s2">"w"</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
+  <span class="n">f</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"This is a test</span><span class="se">\n</span><span class="s2">this is another test"</span>
+<span class="k">end</span>
+
+ <span class="c1">##创建文件，可以持续写入"a",用来输出日志</span>
+<span class="n">f</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="s2">"logFile.txt"</span><span class="p">,</span><span class="s2">"a"</span><span class="p">)</span>
+<span class="n">f</span><span class="p">.</span><span class="nf">puts</span> <span class="no">Time</span><span class="p">.</span><span class="nf">now</span>
+<span class="n">f</span><span class="p">.</span><span class="nf">close</span>
+
+ <span class="c1">##创建文件，可读写"r+"</span>
+<span class="n">f</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="s2">"text.txt"</span><span class="p">,</span><span class="s2">"r+"</span><span class="p">)</span>
+<span class="n">f</span><span class="p">.</span><span class="nf">write</span> <span class="s2">"12345"</span>
+<span class="n">f</span><span class="p">.</span><span class="nf">close</span>
+
+<span class="n">f</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="s2">"text.txt"</span><span class="p">,</span><span class="s2">"r"</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">f</span><span class="p">.</span><span class="nf">gets</span> <span class="c1">##输出一行</span>
+<span class="n">f</span><span class="p">.</span><span class="nf">close</span>
+
+</code></pre></div></div>
+<ul>
+  <li>删除</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="no">File</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="s2">"file1.txt"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>重命名</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="no">File</span><span class="p">.</span><span class="nf">rename</span><span class="p">(</span><span class="s2">"text.txt"</span><span class="p">,</span><span class="s2">"test.txt"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>文件是否存在</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">b</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">exist?</span><span class="p">(</span><span class="s2">"file1.txt"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>文件是否相同</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">b</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">identical?</span><span class="p">(</span><span class="s2">"file1.txt"</span><span class="p">,</span><span class="s2">"file2.txt"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>文件是否读取到末尾</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="n">f</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="s2">"test.txt"</span><span class="p">,</span><span class="s2">"r"</span><span class="p">)</span>
+<span class="n">f</span><span class="p">.</span><span class="nf">each</span><span class="p">{</span> <span class="o">|</span><span class="n">line</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">line</span><span class="p">}</span>
+<span class="nb">puts</span> <span class="s2">"end of file"</span> <span class="k">if</span> <span class="n">f</span><span class="p">.</span><span class="nf">eof?</span>
+<span class="n">f</span><span class="p">.</span><span class="nf">close</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>文件夹路径</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nb">puts</span> <span class="no">Dir</span><span class="p">.</span><span class="nf">exist?</span>
+<span class="nb">puts</span> <span class="no">Dir</span><span class="p">.</span><span class="nf">pwd</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>改变当前目录</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="no">Dir</span><span class="p">.</span><span class="nf">chdir</span><span class="p">(</span><span class="s2">"~/ruby/"</span><span class="p">)</span>
+<span class="no">Dir</span><span class="p">.</span><span class="nf">chdir</span><span class="p">(</span><span class="s2">"~/rails/"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>列出当前路径下的所有文件</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nb">puts</span> <span class="no">Dir</span><span class="p">.</span><span class="nf">entries</span><span class="p">(</span><span class="s2">"~/ruby/"</span><span class="p">).</span><span class="nf">join</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>FileUtil</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nb">require</span> <span class="s1">'fileutils'</span>
+<span class="n">here</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">dirname</span><span class="p">(</span><span class="kp">__FILE__</span><span class="p">)</span> <span class="c1">#__FILE__:built-in ruby value : 表示当前文件所在目录</span>
+<span class="nb">puts</span> <span class="n">here</span>
+<span class="nb">puts</span> <span class="no">File</span><span class="p">.</span><span class="nf">expand_path</span><span class="p">(</span><span class="n">here</span><span class="p">)</span>
+
+<span class="nb">puts</span> <span class="no">Dir</span><span class="p">.</span><span class="nf">entries</span><span class="p">(</span><span class="n">here</span><span class="p">)</span> <span class="c1">#列出here目录下所有文件和文件夹</span>
+
+ <span class="c1">#fileutil创建目录</span>
+<span class="no">FileUtils</span><span class="p">.</span><span class="nf">mkdir_p</span><span class="p">(</span><span class="n">here</span><span class="o">+</span><span class="s1">'/stuff'</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="no">Dir</span><span class="p">.</span><span class="nf">entries</span><span class="p">(</span><span class="n">here</span><span class="p">)</span>
+
+ <span class="c1">#创建文件</span>
+<span class="no">FileUtils</span><span class="p">.</span><span class="nf">touch</span><span class="p">(</span><span class="s1">'file1'</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="no">Dir</span><span class="p">.</span><span class="nf">entries</span><span class="p">(</span><span class="n">here</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<h3 id="env">ENV</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nb">puts</span> <span class="no">RUBY_PLATFORM</span> <span class="c1">##universal.x86_64-darwin13</span>
+
+<span class="no">ENV</span><span class="p">.</span><span class="nf">each</span><span class="p">{</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span> <span class="nb">puts</span> <span class="n">e</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="s1">': '</span><span class="p">)}</span>
+
+<span class="nb">puts</span> <span class="no">ARGV</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="s1">'-'</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<h3 id="kernel">Kernel</h3>
+
+<p>kernel:ruby的kernel是一个公共库，里面定义了一些全局API</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">puts</span> <span class="s2">"hello world"</span>
+</code></pre></div></div>
+<p>等同于:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Kernel</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"Hello world"</span>
+</code></pre></div></div>
+
+<h3 id="object">Object</h3>
+
+<p>Object：所有全局函数都是Object对象的methods</p>
+
+<p>全局函数：</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+  <span class="nb">puts</span> <span class="n">a</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<p>调用全局函数:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>func(10)
+</code></pre></div></div>
+<p>等同于：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Object.func(10)
+</code></pre></div></div>
+
+<h3 id="date"> Date </h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+
+ <span class="c1">#date</span>
+<span class="nb">require</span> <span class="s1">'date'</span>
+<span class="nb">require</span> <span class="s1">'time'</span>
+
+ <span class="c1">#格式化时间：</span>
+<span class="n">date</span> <span class="o">=</span> <span class="no">Date</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="mi">2014</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">date</span><span class="p">.</span><span class="nf">to_s</span>
+<span class="nb">puts</span> <span class="n">date</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%m/%d/%Y"</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">date</span><span class="p">.</span><span class="nf">strftime</span><span class="p">(</span><span class="s2">"%b/%d/%Y"</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">date</span><span class="p">.</span><span class="nf">mday</span>
+<span class="nb">puts</span> <span class="n">date</span><span class="p">.</span><span class="nf">day</span>
+<span class="nb">puts</span> <span class="n">date</span><span class="p">.</span><span class="nf">year</span>
+ 
+ <span class="c1">#date 可以解析</span>
+<span class="n">date2</span> <span class="o">=</span> <span class="no">Date</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="s2">"2014/4/3"</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">date2</span><span class="o">-</span><span class="n">date</span> <span class="c1">#2/1</span>
+<span class="nb">puts</span> <span class="p">(</span><span class="n">date2</span><span class="o">-</span><span class="n">date</span><span class="p">).</span><span class="nf">to_i</span>
+
+ <span class="c1">#time</span>
+<span class="n">time</span> <span class="o">=</span> <span class="no">Time</span><span class="p">.</span><span class="nf">new</span>
+<span class="nb">puts</span> <span class="n">time</span>
+
+</code></pre></div></div>
+
+<h3 id="yaml"> YAML </h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nb">require</span> <span class="s1">'yaml'</span>
+<span class="n">array</span> <span class="o">=</span> <span class="sx">%w(dog cat frog)</span>
+<span class="nb">puts</span> <span class="n">array</span><span class="p">.</span><span class="nf">to_yaml</span>
+<span class="nb">hash</span> <span class="o">=</span> <span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"jayson"</span><span class="p">,</span> <span class="ss">:location</span> <span class="o">=&gt;</span><span class="s2">"TB"</span><span class="p">}</span>
+<span class="nb">puts</span> <span class="nb">hash</span><span class="p">[</span><span class="ss">:name</span><span class="p">]</span>
+<span class="nb">puts</span> <span class="nb">hash</span><span class="p">.</span><span class="nf">to_yaml</span>
+
+ <span class="c1">#yaml用于写配置文件</span>
+<span class="no">File</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="s1">'./config.yml'</span><span class="p">,</span><span class="s1">'w+'</span><span class="p">)</span> <span class="p">{</span><span class="o">|</span><span class="n">f</span><span class="o">|</span>
+  
+  <span class="n">f</span><span class="p">.</span><span class="nf">puts</span> <span class="nb">hash</span><span class="p">.</span><span class="nf">to_yaml</span>
+  
+<span class="p">}</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="no">YAML</span><span class="p">.</span><span class="nf">load</span><span class="p">(</span><span class="no">File</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="s1">'./config.yml'</span><span class="p">))</span>
+<span class="nb">puts</span> <span class="n">config</span><span class="p">.</span><span class="nf">inspect</span>
+
+<span class="k">class</span> <span class="nc">Frog</span>
+  <span class="nb">attr_accessor</span> <span class="ss">:name</span>
+<span class="k">end</span>
+
+<span class="n">frog</span> <span class="o">=</span> <span class="no">Frog</span><span class="p">.</span><span class="nf">new</span>
+<span class="n">frog</span><span class="p">.</span><span class="nf">name</span> <span class="o">=</span> <span class="s2">"jayson"</span>
+<span class="n">yaml</span> <span class="o">=</span> <span class="n">frog</span><span class="p">.</span><span class="nf">to_yaml</span>
+<span class="nb">puts</span> <span class="n">yaml</span><span class="p">.</span><span class="nf">inspect</span>
+
+<span class="n">same_frog</span> <span class="o">=</span> <span class="no">YAML</span><span class="o">::</span><span class="nb">load</span><span class="p">(</span><span class="n">yaml</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">same_frog</span><span class="p">.</span><span class="nf">inspect</span>
+
+
+</code></pre></div></div>
+
+<h3 id="erb"> ERB </h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nb">require</span> <span class="s1">'erb'</span>
+
+<span class="nb">hash</span> <span class="o">=</span> <span class="p">{</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"jayson"</span><span class="p">,</span> <span class="ss">:location</span> <span class="o">=&gt;</span><span class="s2">"TB"</span><span class="p">}</span>
+
+ <span class="c1">#以TEMPLATE开始到TEMPLATE结束之间的这段字符串会被复制到template这个变量中</span>
+ <span class="c1">#ruby代码需要包含在&lt;%= ... %&gt;中执行</span>
+ 
+<span class="n">template</span> <span class="o">=</span> <span class="o">&lt;&lt;-</span><span class="no">TEMPLATE</span><span class="sh">
+
+From the desk of &lt;%= hash[:name] %&gt;
+-----------------------------------
+Welcome to &lt;%= treehouse[:location] %&gt;.
+
+we hope you enjoy stay.
+-----------------------------------
+
+&lt;% hash.keys.each{|k| %&gt;
+  key:&lt;%= k %&gt;
+&lt;% } %&gt;
+
+</span><span class="no">TEMPLATE</span>
+
+<span class="n">erb</span> <span class="o">=</span> <span class="no">ERB</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">template</span><span class="p">)</span>
+<span class="nb">puts</span> <span class="n">erb</span><span class="p">.</span><span class="nf">result</span>
+
+
+</code></pre></div></div>
+:ET

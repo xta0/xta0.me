@@ -1,0 +1,77 @@
+I"x"<h2 id="模板的编译">模板的编译</h2>
+
+<p>当编译器遇到一个模板定义时，并不会立刻进行模板展开，只有当模板被使用时（被实例化出一个特定版本），编译器才会生成相应的代码。<mark>如果一个成员函数没有被调用，那么它将不会被实例化出来</mark>，也就不会进行语法检查，因此对于没有被使用的模板函数，即是它出现模板类型不匹配的情况，也不会被编译器发现，而拥有该成员函数的类模板仍然可以被正常的实例化。如下面例子</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//1. 实例化Blob&lt;string&gt;</span>
+<span class="n">Blob</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">articles</span> <span class="o">=</span> <span class="p">{</span><span class="s">"a"</span><span class="p">,</span><span class="s">"an"</span><span class="p">,</span><span class="s">"the"</span><span class="p">};</span> <span class="c1">//2. 实例化构造函数</span>
+<span class="k">for</span><span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">!=</span> <span class="n">articles</span><span class="p">.</span><span class="n">size</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">){</span>
+	<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">articles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="c1">//3.实例化 Blob&lt;int&gt;::operator[](size_t)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="模板编译期计算">模板编译期计算</h3>
+
+<p>关于模板编译另一个值得注意的是，模板在编译时是turing complete的，也就是说我们可以在编译器利用模板来做运算，比如下面的代码</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="kt">int</span> <span class="n">n</span><span class="o">&gt;</span>
+<span class="k">struct</span> <span class="n">factorial</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">value</span> <span class="o">=</span> <span class="n">n</span><span class="o">*</span><span class="n">factorial</span><span class="o">&lt;</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="o">&gt;::</span><span class="n">value</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="k">template</span> <span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <span class="n">factorial</span><span class="o">&lt;</span><span class="mi">0</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">int</span> <span class="n">value</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">factorial</span><span class="o">&lt;</span><span class="mi">10</span><span class="o">&gt;::</span><span class="n">value</span><span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>上述代码中，main函数调用了<code class="highlighter-rouge">factorial</code>函数模板，此时我们利用了模板参数<code class="highlighter-rouge">n</code>来实例化多个模板</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <span class="n">factorial</span><span class="o">&lt;</span><span class="mi">10</span><span class="o">&gt;</span> <span class="p">{};</span>
+<span class="k">template</span><span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <span class="n">factorial</span><span class="o">&lt;</span><span class="mi">9</span><span class="o">&gt;</span> <span class="p">{};</span>
+<span class="p">...</span>
+<span class="k">template</span><span class="o">&lt;&gt;</span>
+<span class="k">struct</span> <span class="n">factorial</span><span class="o">&lt;</span><span class="mi">2</span><span class="o">&gt;</span> <span class="p">{};</span>
+</code></pre></div></div>
+
+<h3 id="模板的声明">模板的声明</h3>
+
+<p>由于模板在使用时才会进行实例化，相同的实例可能出现在多个对象文件中，当两个或多个文件使用相同的模板并提供了相同的参数时，每个文件就都会需要一个该模板的实例。因此在编译时，同一个模板在不同的compilation unit中会被实例化多次</p>
+
+<blockquote>
+  <p>One annoying thing with using C++ templates is that they get instantiated multiple times if used with the same template arguments in different compilation units. The compiler happily instantiates the template in every compilation unit, only for the the linker to throw away all but one instances later.</p>
+</blockquote>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// t.h</span>
+<span class="cp">#include &lt;iostream&gt;
+</span>
+<span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="n">T</span> <span class="nf">func</span><span class="p">(</span><span class="n">T</span> <span class="n">x</span><span class="p">,</span> <span class="n">T</span> <span class="n">y</span><span class="p">){</span>
+    <span class="k">return</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="c1">// file1.cpp</span>
+<span class="cp">#include "t.h"
+</span><span class="kt">int</span> <span class="nf">func1</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">){</span>
+    <span class="k">return</span> <span class="n">func</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// file2.cpp</span>
+<span class="cp">#include "t.h"
+</span><span class="kt">int</span> <span class="nf">func2</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">){</span>
+    <span class="k">return</span> <span class="n">func</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>上面例子中，<code class="highlighter-rouge">file1</code>和<code class="highlighter-rouge">file2</code>都会实例化<code class="highlighter-rouge">int func&lt;int&gt;(int, int)</code>，并最终由linker来做去重。在C++11的新标准中，引入了<code class="highlighter-rouge">extern</code>关键字来避免重复实例化模板</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// file2.cpp</span>
+
+<span class="cp">#include "t.h"
+</span><span class="k">extern</span> <span class="k">template</span> <span class="kt">int</span> <span class="nf">func</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+<span class="kt">int</span> <span class="nf">func2</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">){</span>
+    <span class="k">return</span> <span class="n">func</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+:ET

@@ -1,0 +1,363 @@
+I"o?<p>每种语言或者框架都有配套的包管理系统，本质上他们的作用都一样：<strong>环境隔离与版本控制</strong>。只是每种生态都爱自己造轮子，所以每次配环境都是一场灾难</p>
+
+<h2 id="homebrew">HomeBrew</h2>
+
+<p><a href="http://brew.sh/">HomeBrew</a>是MAC下的包管理系统。它会将<code class="highlighter-rouge">/usr/local</code>初始化为git环境:</p>
+<ul>
+  <li>bin: 用于存放所安装程序的启动链接（相当于快捷方式）</li>
+  <li>Cellar: 所以brew安装的程序，都将以[程序名/版本号]存放于本目录下</li>
+  <li>etc: brew安装程序的配置文件默认存放路径</li>
+  <li>Library: Homebrew 系统自身文件夹</li>
+</ul>
+
+<h2 id="rvm">RVM</h2>
+
+<p><a href="https://rvm.io/rvm/basics">rvm</a>是Ruby的版本管理工具，项目中可以通过Rvm来创建多套ruby环境。</p>
+
+<ul>
+  <li>rvm路径：<code class="highlighter-rouge">~/.rvm</code></li>
+  <li>管理ruby：</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>//rvm 管理的ruby斑斑
+% rvm list
+//使用系统ruby版本
+% rvm use system
+//使用rvm管理的default版本
+% rvm use default
+</code></pre></div></div>
+
+<ul>
+  <li>管理gemset</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>//创建gemset
+% rvm gemset create xxx
+
+//使用某个gemset
+% rvm gemset use xxx
+
+//查看所有的gemset
+% rvm gemset list
+</code></pre></div></div>
+<ul>
+  <li><a href="https://ruby-china.org/wiki/rvm-guide">More on RVM</a></li>
+</ul>
+
+<h2 id="gem">Gem</h2>
+
+<p>Gem是Ruby的包管理工具，可以通过Gem为Ruby程序提供第三方依赖包。</p>
+
+<ul>
+  <li>项目中需要通过Gemfile来引入第三方包:</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">gem</span> <span class="s1">'rails'</span><span class="p">,</span> <span class="s1">'4.1.0.rc1'</span>
+<span class="n">gem</span> <span class="s1">'sqlite3'</span>
+<span class="n">gem</span> <span class="s1">'mysql2'</span>
+</code></pre></div></div>
+
+<h3 id="gemspec">Gemspec</h3>
+
+<ul>
+  <li>创建Gem包需要提供gemspec, gemspec是一段Ruby代码:</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Gem</span><span class="o">::</span><span class="no">Specification</span><span class="p">.</span><span class="nf">new</span> <span class="k">do</span> <span class="o">|</span><span class="n">s</span><span class="o">|</span>
+  <span class="n">s</span><span class="p">.</span><span class="nf">name</span>        <span class="o">=</span> <span class="s1">'hola'</span>
+  <span class="n">s</span><span class="p">.</span><span class="nf">version</span>     <span class="o">=</span> <span class="s1">'0.0.0'</span>
+  <span class="n">s</span><span class="p">.</span><span class="nf">date</span>        <span class="o">=</span> <span class="s1">'2010-04-28'</span>
+  <span class="n">s</span><span class="p">.</span><span class="nf">summary</span>     <span class="o">=</span> <span class="s2">"Hola!"</span>
+  <span class="n">s</span><span class="p">.</span><span class="nf">description</span> <span class="o">=</span> <span class="s2">"A simple hello world gem"</span>
+  <span class="n">s</span><span class="p">.</span><span class="nf">authors</span>     <span class="o">=</span> <span class="p">[</span><span class="s2">"Nick Quaranto"</span><span class="p">]</span>
+  <span class="n">s</span><span class="p">.</span><span class="nf">email</span>       <span class="o">=</span> <span class="s1">'nick@quaran.to'</span>
+  <span class="n">s</span><span class="p">.</span><span class="nf">files</span>       <span class="o">=</span> <span class="p">[</span><span class="s2">"lib/hola.rb"</span><span class="p">]</span>
+  <span class="n">s</span><span class="p">.</span><span class="nf">homepage</span>    <span class="o">=</span>
+    <span class="s1">'http://rubygems.org/gems/hola'</span>
+  <span class="n">s</span><span class="p">.</span><span class="nf">license</span>       <span class="o">=</span> <span class="s1">'MIT'</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<ul>
+  <li>gem包会安装到<code class="highlighter-rouge">INSTALLATION DIRECTORY</code>下</li>
+  <li>查看gem配置: <code class="highlighter-rouge">%gem environment</code></li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>RubyGems Environment:
+  - RUBYGEMS VERSION: 2.2.2
+  - RUBY VERSION: 2.1.1 (2014-02-24 patchlevel 76) [x86_64-darwin13.0]
+  - INSTALLATION DIRECTORY: /Users/xt/.rvm/gems/ruby-2.1.1
+  - RUBY EXECUTABLE: /Users/xt/.rvm/rubies/ruby-2.1.1/bin/ruby
+  - EXECUTABLE DIRECTORY: /Users/xt/.rvm/gems/ruby-2.1.1/bin
+  - SPEC CACHE DIRECTORY: /Users/xt/.gem/specs
+  - RUBYGEMS PLATFORMS:
+    - ruby
+    - x86_64-darwin-13
+  - GEM PATHS:
+     - /Users/xt/.rvm/gems/ruby-2.1.1
+     - /Users/xt/.rvm/gems/ruby-2.1.1@global
+  - GEM CONFIGURATION:
+     - :update_sources =&gt; true
+     - :verbose =&gt; true
+     - :backtrace =&gt; false
+     - :bulk_threshold =&gt; 1000
+     - :sources =&gt; ["https://rubygems.org/"]
+  - REMOTE SOURCES:
+     - https://rubygems.org/
+  - SHELL PATH:
+     - /Users/xt/.rvm/gems/ruby-2.1.1/bin
+     - /Users/xt/.rvm/gems/ruby-2.1.1@global/bin
+     - /Users/xt/.rvm/rubies/ruby-2.1.1/bin
+     - /Users/xt/.rvm/bin
+     - /usr/local/heroku/bin
+     - /usr/bin
+     - /bin
+     - /usr/sbin
+     - /sbin
+     - /usr/local/bin
+     - /opt/X11/bin
+</code></pre></div></div>
+
+<h3 id="管理gem-sources">管理Gem Sources</h3>
+
+<ul>
+  <li>查看当前的Gem源</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$gem</span> sources <span class="nt">-i</span>
+
+<span class="k">***</span> CURRENT SOURCES <span class="k">***</span>
+
+https://ruby.taobao.org/
+http://gems.alibaba-inc.com/
+</code></pre></div></div>
+<ul>
+  <li>增删Gem源</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#删除</span>
+<span class="nv">$gem</span> sources <span class="nt">-r</span> https://ruby.taobao.org/
+<span class="c">#增加</span>
+<span class="nv">$gem</span> sources <span class="nt">-a</span> https://rubygems.org/
+</code></pre></div></div>
+
+<h3 id="resources">Resources</h3>
+
+<ul>
+  <li><a href="https://www.atlantic.net/cloud-hosting/how-to-adding-ruby-gems-gem-sources/">How to: Adding Ruby Gems and Gem Sources</a></li>
+</ul>
+
+<h2 id="cocoapods">CocoaPods</h2>
+
+<p><a href="http://cocoapods.org/">CocoaPods</a>是iOS的包管理工具,用法和语法和Gem基本一样。</p>
+
+<h3 id="引入podfile">引入Podfile</h3>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pod</span> <span class="s1">'AFNetworking'</span><span class="p">,</span> 
+<span class="n">pod</span> <span class="s1">'Paper'</span>
+</code></pre></div></div>
+
+<h3 id="制作podspec">制作podspec</h3>
+
+<ul>
+  <li>需要MIT LICENSE</li>
+  <li>需要README.md</li>
+  <li>需要项目的Example</li>
+  <li>代码打tag,push到仓库</li>
+  <li>创建podsepcs
+    <ul>
+      <li><code class="highlighter-rouge">pod spec create PROJ_NAME</code></li>
+    </ul>
+  </li>
+</ul>
+
+<blockquote>
+  <p>2014年5月20日之后，cocoaPods不再接受pull Request的提交方式，而转为用<a href="http://blog.cocoapods.org/CocoaPods-Trunk/">trunk</a>。使用trunk需要cocoapods的版本大于0.33。</p>
+</blockquote>
+
+<ul>
+  <li>注册trunk:
+    <ul>
+      <li>命令为: <code class="highlighter-rouge">pod trunk register orta@cocoapods.org 'Orta Therox' --description='macbook air'</code>
+        <ul>
+          <li><code class="highlighter-rouge">pod trunk register JohnDoe@gmail.com 'John' --verbose</code></li>
+        </ul>
+      </li>
+      <li>注册成功后,会返回下面信息:</li>
+    </ul>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[!]</span> Please verify the session by clicking the <span class="nb">link </span><span class="k">in </span>the verification email that has been sent to JohnDoe@gmail.com
+</code></pre></div>    </div>
+  </li>
+  <li>在邮箱激活trunk, 查看注册信息:
+    <ul>
+      <li><code class="highlighter-rouge">pod trunk me</code></li>
+    </ul>
+  </li>
+  <li>提交pod,在podsepc的目录下: :
+    <ul>
+      <li><code class="highlighter-rouge">pod spec lint NAME.podspec --verbose --allow-warnings</code></li>
+      <li><code class="highlighter-rouge">pod trunk push NAME.podspec --verbose --allow-warnings</code></li>
+      <li>成功后回返回podspec的json格式的url</li>
+    </ul>
+  </li>
+  <li>含lib的podspec</li>
+</ul>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pod</span> <span class="n">spec</span> <span class="n">lint</span> <span class="o">--</span><span class="n">verbose</span> <span class="o">--</span><span class="n">use</span><span class="o">-</span><span class="n">libraries</span> <span class="o">--</span><span class="n">skip</span><span class="o">-</span><span class="n">import</span><span class="o">-</span><span class="n">validation</span> <span class="o">--</span><span class="n">allow</span><span class="o">-</span><span class="n">warnings</span>
+<span class="n">pod</span> <span class="n">trunk</span> <span class="n">push</span> <span class="o">--</span><span class="n">verbose</span> <span class="o">--</span><span class="n">use</span><span class="o">-</span><span class="n">libraries</span> <span class="o">--</span><span class="n">skip</span><span class="o">-</span><span class="n">import</span><span class="o">-</span><span class="n">validation</span> <span class="o">--</span><span class="n">allow</span><span class="o">-</span><span class="n">warnings</span>
+</code></pre></div></div>
+
+<h3 id="删除项目中的podfile">删除项目中的Podfile</h3>
+
+<ul>
+  <li>安装两个gem包</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>gem <span class="nb">install </span>cocoapods-deintegrate
+<span class="nv">$ </span><span class="nb">sudo </span>gem <span class="nb">install </span>cocoapods-clean
+</code></pre></div></div>
+
+<ul>
+  <li>删除pod相关依赖</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">cd </span>proj
+<span class="nv">$ </span>pod deintegrate
+<span class="nv">$ </span>pod clean
+</code></pre></div></div>
+
+<h3 id="管理pod-repo">管理Pod Repo</h3>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pod repo list <span class="c">#查看pod源列表</span>
+pod repo add xxx <span class="c">#增加源</span>
+pod repo remote xxx <span class="c">#删除源</span>
+</code></pre></div></div>
+
+<h3 id="resources-1">Resources</h3>
+
+<ul>
+  <li><a href="https://medium.com/@satishios25/uninstalling-podfile-form-the-xcode-project-7e96874ae7f4">Uninstalling PodFile form the Xcode project</a></li>
+</ul>
+
+<h2 id="nvm">NVM</h2>
+
+<p>NVM是node.js的包管理系统</p>
+
+<ul>
+  <li>解决VSCode命令行问题
+    <ul>
+      <li><a href="https://github.com/Microsoft/vscode-docs/blob/master/docs/editor/integrated-terminal.md#why-is-nvm-complaining-about-a-prefix-option-when-the-integrated-terminal-is-launched">The Reason</a></li>
+      <li><a href="https://github.com/creationix/nvm/issues/855">The Fix</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="lua">Lua</h2>
+
+<p><a href="&quot;http://luarocks.org/&quot;">LuaRocks</a>是Lua的包管理系统，对于管理lua的module很方便，类似Ruby的gem。如果是Mac安装的时候可以使用HomeBrew，也可以手动安装。手动安装要费一点劲儿，由于我机器上已经安装了Lua5.2，装LuaRocks时怎么都不成功，原因是不兼容Lua5.2的Module，解决办法是，回退到Lua 5.1版本。</p>
+
+<p>LuaRock的用法和gem相同:</p>
+
+<ul>
+  <li>搜索: <code class="highlighter-rouge">luarocks search json</code></li>
+  <li>安装: <code class="highlighter-rouge">luarocks install json4lua</code></li>
+  <li>查看: <code class="highlighter-rouge">luarocks list</code></li>
+  <li>查看某个包: <code class="highlighter-rouge">luarocks show json4lua</code></li>
+  <li>删除某个包: <code class="highlighter-rouge">luarocks remove json4lua</code></li>
+</ul>
+
+<h2 id="python">Python</h2>
+
+<h3 id="virtualenv">Virtualenv</h3>
+
+<p>用来隔离python开发环境以及包管理，必备良药</p>
+
+<ul>
+  <li>install  &amp; config</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>#install using pip
+pip3 install virtualenv
+#create enviroment
+&gt; virtualen proj
+#create enviroment with python path
+&gt; virutalen proj -p python_path
+#activate &amp; deactive
+&gt; source bin/activate
+&gt; deactivate
+</code></pre></div></div>
+<p>由于改变了python路径，使用vscode可能会导致lint出错，配置新的python路径</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">&lt;!--</span><span class="w"> </span><span class="err">.vscode/settings.json</span><span class="w"> </span><span class="err">--&gt;</span><span class="w">
+</span><span class="p">{</span><span class="w">
+    </span><span class="nl">"python.pythonPath"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${workspace}/bin/python"</span><span class="p">,</span><span class="w">    
+    </span><span class="nl">"python.linting.pylintEnabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"python.linting.enabled"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"python.linting.pylintPath"</span><span class="p">:</span><span class="w"> </span><span class="s2">"${workspace}/lib/python2.7/"</span><span class="w">    
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="anaconda">Anaconda</h3>
+
+<p>Anaconda是另一个Python的包管理软件，基本用法如下</p>
+
+<ul>
+  <li>查看当前所有Python环境
+    <ul>
+      <li><code class="highlighter-rouge">conda info --envs</code></li>
+    </ul>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code># conda environments:
+#
+base                     /home/taox/anaconda3
+py36                  *  /home/taox/anaconda3/envs/py36
+</code></pre></div>    </div>
+  </li>
+  <li>创建一个新的Python环境
+    <ul>
+      <li><code class="highlighter-rouge">conda create --name py36 python=3.6</code></li>
+    </ul>
+  </li>
+  <li>切换/注销Python环境
+    <ul>
+      <li><code class="highlighter-rouge">conda activate py36</code></li>
+      <li><code class="highlighter-rouge">conda deactivate</code></li>
+    </ul>
+  </li>
+  <li>删除一个Python环境
+    <ul>
+      <li><code class="highlighter-rouge">conda remove --name py36</code></li>
+    </ul>
+  </li>
+  <li>查看当前环境已安装的包
+    <ul>
+      <li><code class="highlighter-rouge">conda list</code></li>
+    </ul>
+  </li>
+  <li>安装/删除包
+    <ul>
+      <li><code class="highlighter-rouge">conda install -n py36 numpy</code></li>
+      <li><code class="highlighter-rouge">conda uninstall -n py36 numpy</code></li>
+    </ul>
+  </li>
+  <li>export/import的env
+    <ul>
+      <li><code class="highlighter-rouge">conda env export &gt; env.yaml</code></li>
+      <li><code class="highlighter-rouge">conda env create -f env.yaml</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="pip">Pip</h3>
+
+<ul>
+  <li>Share the list of deps
+    <ul>
+      <li><code class="highlighter-rouge">pip freeze &gt; requirements.txt</code></li>
+      <li><code class="highlighter-rouge">pip install -r requirements.txt</code></li>
+    </ul>
+  </li>
+</ul>
+
+:ET

@@ -1,0 +1,172 @@
+I"FD<p>在C++11以前，只有左值和右值，左值很好理解，右值可以被绑定到一个常量的左值引用，即<code class="highlighter-rouge">const T&amp;</code>，当不能绑定到非常量引用<code class="highlighter-rouge">T&amp;</code>的左值。在C++11之后，出现右值引用的类型<code class="highlighter-rouge">&amp;&amp;</code>和<code class="highlighter-rouge">std::move</code>，此时一个右值可以被绑定到一个具有<code class="highlighter-rouge">T&amp;&amp;</code>的类型的左值，此时这个左值在术语叫做xvalue。它具有像左值一样可以进行取地址的操作，同时也具有右值的特性，即可以被移动。根据这份<a href="https://en.cppreference.com/w/cpp/language/value_category">Value Category</a>的描述，更准确的分类应该是如下图所示</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>              expression
+              /       \
+        glvalue       rvalue
+       /      \      /      \
+lvalue         xvalue        prvalue
+</code></pre></div></div>
+
+<p>其中lvalue和prvalue比较好理解，lvalue是纯左值，它在等号左边，有标识符，能取地址，不能被移动。而纯右值也很好理解，它在等号的右边，没有标识符，不能取地址，但是可以被移动。xvalue比较特殊，它有标识符，可以出现在等号左边，可以被取地址，同时还可以被移动。上面三种类型常见的用法可参考上面的<a href="https://en.cppreference.com/w/cpp/language/value_category">Value Category</a></p>
+
+<h3 id="右值引用">右值引用</h3>
+
+<p>一个右值引用既可能是左值也可能是右值，区分标准在于如果他有标识符，那他就是左值，如果没有，则是右值。可见右值引用是一种xvalue。假设我们有一个Dummy类如下，它重载了拷贝构造函数和移动构造函数</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Dummy</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="n">string</span> <span class="n">x</span> <span class="o">=</span> <span class="s">"100"</span><span class="p">;</span>
+    <span class="n">Dummy</span><span class="p">(</span><span class="n">string</span> <span class="n">i</span><span class="p">)</span><span class="o">:</span><span class="n">x</span><span class="p">(</span><span class="n">i</span><span class="p">){}</span>
+    <span class="n">Dummy</span><span class="p">(</span><span class="k">const</span> <span class="n">Dummy</span><span class="o">&amp;</span> <span class="n">d</span><span class="p">)</span><span class="o">:</span><span class="n">x</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">x</span><span class="p">){}</span>
+    <span class="n">Dummy</span><span class="p">(</span><span class="n">Dummy</span><span class="o">&amp;&amp;</span> <span class="n">d</span><span class="p">)</span><span class="o">:</span><span class="n">x</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">x</span><span class="p">)){}</span>
+    <span class="o">~</span><span class="n">Dummy</span><span class="p">(){</span>
+        <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">__func__</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<p>我们先看右值引用充当左值的情况</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">Dummy</span><span class="o">&amp;&amp;</span> <span class="n">dm</span><span class="p">){</span>
+ <span class="n">Dummy</span> <span class="n">d</span> <span class="o">=</span> <span class="n">dm</span><span class="p">;</span> <span class="c1">// calls the copy constructor</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>此时虽然<code class="highlighter-rouge">dm</code>有标识符，是一个充当右值引用的左值，<code class="highlighter-rouge">d</code>会通过<code class="highlighter-rouge">Dummy</code>的拷贝构造函数创建。原因是<code class="highlighter-rouge">dm</code>在<code class="highlighter-rouge">foo</code>中为左值，生命周期和<code class="highlighter-rouge">foo</code>函数一致，这意味着在后面的代码中可能会被访问到，因此它不可能将自己的内存交给<code class="highlighter-rouge">d</code>，否则如果被后面代码修改，则将会造成错误的结果。</p>
+
+<p>接下来我们看右值引用充当右值的情况</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Dummy</span><span class="o">&amp;&amp;</span> <span class="n">dummy</span><span class="p">(){</span>
+  <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">Dummy</span><span class="p">());</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">bar</span><span class="p">(){</span>
+ <span class="n">Dummy</span> <span class="n">dm</span> <span class="o">=</span> <span class="n">dummy</span><span class="p">();</span> <span class="c1">//calls the move constructor</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>此时在<code class="highlighter-rouge">bar()</code>中，<code class="highlighter-rouge">dm</code>会通过移动构造函数创建。因为<code class="highlighter-rouge">dummy()</code>返回的是一个右值prvalue，通过<code class="highlighter-rouge">std::move(Dummy())</code>将其变成了一个没有标识符的右值引用。</p>
+
+<p>这里需要注意，在<code class="highlighter-rouge">dummy()</code>stack中创建的<code class="highlighter-rouge">Dummy()</code>对象是一个prvalue，它在<code class="highlighter-rouge">dummy()</code>函数执行完成后就被释放了。因此在<code class="highlighter-rouge">bar()</code>中的<code class="highlighter-rouge">dm</code>虽然调用了移动构造，但是由于之前的对象已经释放，这里<code class="highlighter-rouge">dm</code>中的<code class="highlighter-rouge">x</code>将指向一个无效的内存地址。</p>
+
+<blockquote>
+  <p>通常情况下，不建议将右值引用作为返回值</p>
+</blockquote>
+
+<p>我们将上面的例子稍作修改</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Dummy</span><span class="o">&amp;&amp;</span> <span class="n">dummy</span><span class="p">(</span><span class="k">const</span> <span class="n">Dummy</span><span class="o">&amp;</span> <span class="n">dm</span><span class="p">){</span>
+  <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">dm</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>此时<code class="highlighter-rouge">std::move(dm)</code>接受一个左值<code class="highlighter-rouge">dm</code>，将它转化成了一个右值引用，这个过程同样没有拷贝，此时返回的右值引用指向的仍是左值<code class="highlighter-rouge">dm</code>的地址。</p>
+
+<p>另一个用比较常见的用法是子类继承父类的拷贝构造函数</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Base</span><span class="p">(</span><span class="n">Base</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">);</span> <span class="c1">//copy constructor</span>
+<span class="n">Base</span><span class="p">(</span><span class="n">Base</span><span class="o">&amp;&amp;</span> <span class="n">rhs</span><span class="p">);</span> <span class="c1">//move constructor</span>
+
+<span class="n">Derived</span><span class="p">(</span><span class="n">Derived</span> <span class="k">const</span><span class="o">&amp;</span> <span class="n">rhs</span><span class="p">)</span><span class="o">:</span> <span class="n">Base</span><span class="p">(</span><span class="n">rhs</span><span class="p">){</span>
+
+<span class="p">}</span>
+<span class="n">Derived</span><span class="p">(</span><span class="n">Derived</span><span class="o">&amp;&amp;</span> <span class="n">rhs</span><span class="p">)</span> 
+  <span class="o">:</span> <span class="n">Base</span><span class="p">(</span><span class="n">rhs</span><span class="p">)</span> <span class="c1">// wrong: rhs is an lvalue</span>
+<span class="p">{</span>
+  <span class="c1">// Derived-specific stuff</span>
+<span class="p">}</span>
+<span class="n">Derived</span><span class="p">(</span><span class="n">Derived</span><span class="o">&amp;&amp;</span> <span class="n">rhs</span><span class="p">)</span> 
+  <span class="o">:</span> <span class="n">Base</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">rhs</span><span class="p">))</span> <span class="c1">// good, calls Base(Base&amp;&amp; rhs)</span>
+<span class="p">{</span>
+  <span class="c1">// Derived-specific stuff</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>上面<code class="highlighter-rouge">Derived</code>的移动构造如果不使用<code class="highlighter-rouge">std::move()</code>，则会触发基类的拷贝构造而非移动构造，因此此时<code class="highlighter-rouge">rhs</code>是左值。</p>
+
+<h3 id="prvalue的生命周期">prvalue的生命周期</h3>
+
+<p>在生命周期方面，prvalue对象在表达式执行完成后立即释放，xvalue则在作用域结束后释放。如下面代码所示</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Dummy</span> <span class="nf">foo</span><span class="p">(){</span>
+  <span class="k">return</span> <span class="n">Dummy</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+      <span class="n">foo</span><span class="p">();</span> <span class="c1">//prvalue</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">__func__</span><span class="o">&lt;&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>上面<code class="highlighter-rouge">foo()</code>返回了一个prvalue，当<code class="highlighter-rouge">foo()</code>执行完成后，prvalue会立即释放，则我们看到的log顺序为</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~Dummy
+main
+</code></pre></div></div>
+<p>但是如果我们将一个prvalue绑定到一个上面代码修改为</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Dummy</span><span class="o">&amp;&amp;</span> <span class="n">dm</span> <span class="o">=</span> <span class="n">foo</span><span class="p">();</span>
+</code></pre></div></div>
+<p>则我们发现<code class="highlighter-rouge">dm</code>在<code class="highlighter-rouge">main</code>执行完后才被析构。这是因为我们将一个prvalue绑定到了一个右值引用上面，该引用值的生命周期将持续到作用域结束。</p>
+
+<p>注意，这里有一个坑，即一个xvalue是无法被右值引用的</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Dummy</span><span class="o">&amp;&amp;</span> <span class="n">dm</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">foo</span><span class="p">());</span>
+</code></pre></div></div>
+<p>此时在<code class="highlighter-rouge">foo()</code>执行完成后，临时对象<code class="highlighter-rouge">prvalue</code>便会释放，因此<code class="highlighter-rouge">dm</code>将绑定到一个不可用的内存地址，此时<code class="highlighter-rouge">dm</code>的行为将是undefined behavior</p>
+
+<h3 id="stdmove解决什么问题">std::move解决什么问题</h3>
+
+<p>简单的说move解决大对象的拷贝问题，大对象包括容器和一些占内存较大的类对象。我们假设上面的<code class="highlighter-rouge">Dummy</code>类hold一个指向一块较大内存对象的指针，<code class="highlighter-rouge">m_pResource</code>，则下面代码将触发该对象的拷贝</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Dummy</span> <span class="nf">dm</span><span class="p">(</span><span class="s">"dm"</span><span class="p">);</span>
+<span class="n">dm</span> <span class="o">=</span> <span class="n">Dummy</span><span class="p">(</span><span class="s">"dm2"</span><span class="p">);</span>
+</code></pre></div></div>
+<p>考虑上面最后一行代码，它做了三件事</p>
+
+<ul>
+  <li>拷贝临时对象持有的<code class="highlighter-rouge">m_pResource</code></li>
+  <li>释放<code class="highlighter-rouge">dm</code>原来持有的<code class="highlighter-rouge">m_pResource</code></li>
+  <li>释放临时对象持有的<code class="highlighter-rouge">m_pResource</code></li>
+</ul>
+
+<p>如果<code class="highlighter-rouge">m_pResource</code>指向的是一个很大的对象，上述行为这显然效率不高，如果我们能将历史对象的<code class="highlighter-rouge">m_pResource</code>直接transfer给<code class="highlighter-rouge">dm</code>，那么性能将会有极大的提升，这也是<code class="highlighter-rouge">std::move</code>的基本实现原理。因此对于<code class="highlighter-rouge">Dummy</code>的移动构造和移动复制函数，我们需要做的是实现资源的交换</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Dummy</span><span class="o">&amp;</span> <span class="n">Dummy</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">Dummy</span><span class="o">&amp;&amp;</span> <span class="n">rhs</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="c1">// [...]</span>
+  <span class="c1">// swap this-&gt;m_pResource and rhs.m_pResource</span>
+  <span class="c1">// [...]  </span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>可见我们需要用<code class="highlighter-rouge">swap</code>来交换两个对象的resource，这意味着<code class="highlighter-rouge">rhs</code>将拥有<code class="highlighter-rouge">dm</code>的resource。</p>
+
+<h3 id="支持move-semantics">支持move semantics</h3>
+
+<p>要让某个对象支持<code class="highlighter-rouge">std::move</code>需要做下面几件事情</p>
+
+<ul>
+  <li>支持拷贝构造和移动构造函数</li>
+  <li>实现<code class="highlighter-rouge">swap</code>成员函数，支持和另外一个对象快速交换成员</li>
+  <li>实现一个全局的 <code class="highlighter-rouge">swap</code> 函数，调用成员函数 <code class="highlighter-rouge">swap</code> 来实现交换。</li>
+  <li>实现移动赋值 <code class="highlighter-rouge">operator=</code></li>
+  <li>上面各个函数如果不抛异常的话，应当标为<code class="highlighter-rouge">noexcept</code></li>
+</ul>
+
+<h3 id="编译器对函数返回值的优化">编译器对函数返回值的优化</h3>
+
+<p>如果一个函数返回一个对象，编译器可直接将其在调用栈上创建，因此并不会多调用一次拷贝构造，如果强行用<code class="highlighter-rouge">std::move</code>还会破坏这个编译器优化，比如下面代码</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Dummy</span> <span class="nf">dummy</span><span class="p">(){</span>
+  <span class="n">Dummy</span> <span class="n">dm</span><span class="p">;</span>
+  <span class="c1">// do something to dm</span>
+  <span class="k">return</span> <span class="n">dm</span><span class="p">;</span> <span class="c1">//won't call the copy constructor</span>
+  <span class="c1">// return std::move(dm); // making it worse!</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="nf">main</span><span class="p">(){</span>
+  <span class="n">Dummy</span> <span class="n">dm</span> <span class="o">=</span> <span class="n">dummy</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="">C++ Primer</a></li>
+  <li><a href="">Effective Modern C++</a></li>
+  <li><a href="http://thbecker.net/articles/rvalue_references">Rvalue References Explained, by Thomas Becker</a></li>
+</ul>
+:ET

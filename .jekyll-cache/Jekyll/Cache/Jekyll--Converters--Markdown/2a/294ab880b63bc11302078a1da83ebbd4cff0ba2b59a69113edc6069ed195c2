@@ -1,0 +1,1794 @@
+I"�<h1 id="unix-shell-part-3">Unix Shell Part 3</h1>
+
+<h2 id="shell-scripts">Shell Scripts</h2>
+
+<ul>
+  <li><a href="#1">Overview</a></li>
+  <li><a href="#2">变量</a></li>
+  <li><a href="#3">字符串操作</a></li>
+  <li><a href="#4">数学运算</a></li>
+  <li><a href="#5">浮点运算</a></li>
+  <li><a href="#6">条件判断</a></li>
+  <li><a href="#7">循环语句</a></li>
+  <li><a href="#8">函数</a></li>
+  <li><a href="#9">输入输出</a></li>
+  <li><a href="#10">Shell运行控制</a></li>
+  <li><a href="#11">Wildcards</a></li>
+  <li><a href="#12">Log&amp;Debug</a></li>
+  <li><a href="#13">UNIX环境</a></li>
+</ul>
+
+<h2 id="1">OverView</h2>
+
+<h3 id="历史和版本">历史和版本</h3>
+
+<ul>
+  <li>第一个：Thompson shell: Unix shell 1971@Bell Lab</li>
+  <li>标准的Unix Shell: Bourne shell 1978@Bell Lab</li>
+  <li>Linux发行版的默认shell:bash shell(Bourne-Again shell)，其他shell类型：ash,korn,tcsh,zsh,dash</li>
+  <li>查看当前系统使用的Shell:<code class="highlighter-rouge">echo $SHELL</code></li>
+  <li>
+    <p>查看系统支持的shell: <code class="highlighter-rouge">cat /etc/shells </code></p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  /bin/bash
+  /bin/csh
+  /bin/ksh
+  /bin/sh
+  /bin/tcsh
+  /bin/zsh
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="shell分类">Shell分类</h3>
+
+<ul>
+  <li>交互式Shell：在终端上执行，shell等待你的输入，并且立即执行你提交的命令。</li>
+  <li>非交互式Shell：以shell script(非交互)方式执行。在这种模式 下，shell不与你进行交互，而是读取存放在文件中的命令,并且执行它们。当它读到文件的结尾EOF，shell也就终止了</li>
+</ul>
+
+<p>查看是否是交互式shell，可以通过打印<code class="highlighter-rouge">$-</code>变量的值（代表着当前shell的选项标志），查看其中的“i”选项（表示interactive shell）来区分交互式与非交互式shell。</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; echo $-
+569JNRXZghiklms #交互式
+
+&gt; ./test.sh
+echo $-
+hB #非交互式
+</code></pre></div></div>
+
+<p>或者使用环境变量</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if [[ -n $PS1 ]]; then
+    : # These are executed only for interactive shells
+    echo "interactive"
+else
+    : # Only for NON-interactive shells
+fi
+</code></pre></div></div>
+
+<ul>
+  <li>
+    <p>登录Shell: 是需要用户名、密码登录后才能进入的shell（或者通过”–login”选项生成的shell）。通过执行<code class="highlighter-rouge">logout</code>或<code class="highlighter-rouge">exit</code>命令退出shell。bash是 login shell 时，其进程名为<code class="highlighter-rouge">-bash</code> 而不是<code class="highlighter-rouge">bash</code>。 可通过<code class="highlighter-rouge">echo $0</code>查看</p>
+  </li>
+  <li>
+    <p>非登录式Shell: 不需要输入用户名和密码即可打开的Shell，例如：直接命令“bash”就是打开一个新的非登录shell。通过<code class="highlighter-rouge">exit</code>退出shell，bash是非login shell 时，其进程名为<code class="highlighter-rouge">/bin/bash</code> 而不是<code class="highlighter-rouge">-bash</code>。 可通过<code class="highlighter-rouge">echo $0</code>查看</p>
+  </li>
+</ul>
+
+<p>查看是否是login shell，LINUX下可以使用<code class="highlighter-rouge">shopt</code>命令:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>if shopt -q login_shell ; then
+    : # These are executed only when it is a login shell
+    echo "login"
+else
+    : # Only when it is NOT a login shell
+    echo "nonlogin"
+fi
+</code></pre></div></div>
+
+<p>注：<code class="highlighter-rouge">:</code> — 脚本中这个符号没有意义，只为了填充空行而使用</p>
+
+<h3 id="shebang">Shebang</h3>
+<ul>
+  <li><code class="highlighter-rouge"><span class="c">#!/bin/bash</span></code></li>
+  <li>如果不指定<code class="highlighter-rouge">shebang</code>，系统用默认的shell</li>
+</ul>
+
+<h2 id="2">变量</h2>
+
+<ul>
+  <li>用户自定义的变量</li>
+  <li>系统环境变量
+    <ul>
+      <li>局部环境变量</li>
+      <li>全局环境变量</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="自定义变量规则">自定义变量规则</h3>
+
+<ul>
+  <li>合法字符，数字，字母，下划线</li>
+  <li>&lt;= 20个字符</li>
+  <li>大小写敏感</li>
+  <li>声明：变量名=变量值，<strong>注意等号前后没有空格，变量名通常用大写</strong> 如<code class="highlighter-rouge">VAL=2</code></li>
+  <li>访问: <code class="highlighter-rouge">$VAL </code></li>
+  <li>变量使用：
+    <ul>
+      <li>如果变量在单引号内则原封不动的输出</li>
+      <li>如果变量在双引号内，使用<code class="highlighter-rouge">$VAL</code>或<code class="highlighter-rouge">${VAL}</code>，解析出变量的值输出</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; val="bash"
+&gt; echo 'I like the $val shell' -&gt; I like the $val shell
+&gt; echo "I like the $val shell" -&gt; I like the bash shell
+&gt;  echo "I am ${val}ing on my keyboard" -&gt; I am bashing on my keyboard
+</code></pre></div></div>
+<ul>
+  <li>使用反引号或者括号将变量的内容返回</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; date
+2007年 7月12日 星期日 16时48分21秒 CST
+&gt; VAL=date
+&gt; echo $VAL //输出date
+
+//使用反引号: 
+&gt; VAL=`date`
+&gt; echo $val //输出date的内容：2007年 7月12日 星期日 16时49分32秒 CST
+
+//使用括号
+&gt; VAL=$(date)
+&gt; echo $val //输出date的内容：2007年 7月12日 星期日 16时49分32秒 CST
+</code></pre></div></div>
+<ul>
+  <li>格式化字符串:</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;var=`date +%Y%m%d`
+&gt;echo $var //20150712
+</code></pre></div></div>
+
+<ul>
+  <li>接受用户输入作为参数:<code class="highlighter-rouge">read -p "PROMPT" VARIABLE</code></li>
+</ul>
+
+<h2 id="3">字符串操作</h2>
+
+<ul>
+  <li>字符串链接</li>
+  <li>字符串长度</li>
+  <li>查找字符串中的字符位置</li>
+  <li>字符串截断</li>
+  <li>字符串匹配</li>
+</ul>
+
+<h3 id="字符串的连接">字符串的连接</h3>
+
+<ul>
+  <li>将字符串写到一起即可连接字符串</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;str=hello     
+&gt;str1=world    
+&gt;str=$str$str1
+&gt;echo $str  --&gt; helloworld
+
+&gt;str=$str" "$str1
+&gt;echo $str --&gt; helloworld world
+</code></pre></div></div>
+<ul>
+  <li>使用<code class="highlighter-rouge">""</code>做字符串拼接</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>str="Test $str"
+echo $str
+Test hello:
+</code></pre></div></div>
+
+<h3 id="字符串常用操作">字符串常用操作</h3>
+
+<ul>
+  <li>查看字符串长度:<code class="highlighter-rouge">expr lenght "$str"</code></li>
+  <li>查找字符串中字符位置: <code class="highlighter-rouge">expr index $str CHARs</code>
+    <ul>
+      <li><code class="highlighter-rouge">expr index "abcd" 'b'</code>索引从1开始</li>
+    </ul>
+  </li>
+  <li>获取子字符串:<code class="highlighter-rouge">expr substr POS LENGTH</code>
+    <ul>
+      <li><code class="highlighter-rouge">expr substr "$str" 6 10</code></li>
+    </ul>
+  </li>
+  <li>字符串匹配:
+    <ul>
+      <li><code class="highlighter-rouge">expr $str: REGEXP</code></li>
+      <li><code class="highlighter-rouge">expr "$str" : '.*\([0-9]\{5\}\)'</code> 匹配<code class="highlighter-rouge">$str</code>中的数字部分，长度为5。注意<code class="highlighter-rouge">:</code>左右要求有空格，特殊字符要<code class="highlighter-rouge">\</code>转义。</li>
+      <li><code class="highlighter-rouge">expr match $str REGXP</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="4">数学运算</h2>
+
+<h3 id="逻辑运算">逻辑运算</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">&amp; |  &lt; &gt; = != &lt;= &gt;=</code></li>
+</ul>
+
+<h3 id="数值运算">数值运算</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">+ - * / % ()</code> 得到的结果都是整数</li>
+</ul>
+
+<h3 id="运算表达式">运算表达式</h3>
+
+<ul>
+  <li><code class="highlighter-rouge">expr expression</code></li>
+  <li><code class="highlighter-rouge">result=$[expression]</code></li>
+</ul>
+
+<p>主要使用第二种</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; num1=7 
+&gt; num2=13
+&gt; num3=7
+&gt; result=$[num1 &lt; 19]
+&gt; echo $result --&gt; 1
+
+&gt; result=$[num1 == num3] 
+&gt; echo $result --&gt; 1
+</code></pre></div></div>
+
+<h2 id="5">浮点运算</h2>
+
+<ul>
+  <li>内建计算器bc，bc能够识别：
+    <ul>
+      <li>数字（整形，浮点型）</li>
+      <li>变量</li>
+      <li>注释（以<code class="highlighter-rouge">#</code>开始的行）</li>
+      <li>表达式</li>
+      <li>编程语句（如条件判断: <code class="highlighter-rouge">if-then-else</code>）</li>
+      <li>函数</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; bc
+bc 1.06
+Copyright 1991-1994, 1997, 1998, 2000 Free Software Foundation, Inc.
+This is free software with ABSOLUTELY NO WARRANTY.
+For details type `warranty'. 
+12.5 * 0.3
+3.7
+100/3
+33 //默认scale =0，则没有小数点后的余数
+scale=4
+100/3
+33.3333
+
+</code></pre></div></div>
+
+<p>使用变量</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>num=12
+num1=3;num2=4;
+num1/num2
+.7500
+
+</code></pre></div></div>
+
+<h3 id="脚本中使用bc">脚本中使用<code class="highlighter-rouge">bc</code></h3>
+
+<ul>
+  <li>使用管道命令，管道将前一个命令的输出作为后一个命令的输入</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>var <span class="o">=</span> <span class="sb">`</span><span class="nb">echo</span> <span class="s2">"options; expresssion"</span> | bc<span class="sb">`</span>
+</code></pre></div></div>
+<p>上面的例子，将<code class="highlighter-rouge">options;expression</code>作为<code class="highlighter-rouge">bc</code>的输入</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="nv">var</span><span class="o">=</span><span class="sb">`</span><span class="nb">echo</span> <span class="s2">"scale=4;3.44/5"</span> | bc<span class="sb">`</span>
+<span class="o">&gt;</span> <span class="nb">echo</span> <span class="nv">$var</span>
+.6880
+</code></pre></div></div>
+
+<ul>
+  <li>使用管道没法进行复杂的运算，还有一种方式是使用输入重定向:</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">result</span><span class="o">=</span><span class="sb">`</span>bc <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh">
+options
+statements
+expressions
+</span><span class="no">EOF
+</span></code></pre></div></div>
+
+<p>例如：</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span> <span class="nv">result</span><span class="o">=</span><span class="sb">`</span>bc <span class="o">&lt;&lt;</span> <span class="no">EOF</span><span class="sh">
+bquote&gt; scale=4
+bquote&gt; var1=20
+bquote&gt; var2=3
+bquote&gt; var1/var2
+bquote&gt; EOF
+bquote&gt; `
+&gt; echo </span><span class="nv">$result</span><span class="sh">
+6.6666
+</span></code></pre></div></div>
+
+<h2 id="6">条件判断</h2>
+
+<ul>
+  <li>条件</li>
+  <li>循环</li>
+</ul>
+
+<h3 id="if-then语句"><code class="highlighter-rouge">if-then</code>语句</h3>
+
+<ul>
+  <li>单条件:</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if </span><span class="nb">command
+
+</span><span class="k">then 
+	</span>commands
+<span class="k">elif
+	</span>command2
+<span class="k">then
+	</span>commands
+<span class="k">else
+	</span>commands
+<span class="k">fi</span>
+</code></pre></div></div>
+
+<p>当<code class="highlighter-rouge">if</code>后面的<code class="highlighter-rouge">command</code>返回<code class="highlighter-rouge">0</code>时，执行<code class="highlighter-rouge">then</code>后面的语句:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+
+<span class="k">if </span><span class="nb">date
+</span><span class="k">then
+</span><span class="nb">echo</span> <span class="s2">"worked"</span>
+<span class="k">fi</span>
+</code></pre></div></div>
+
+<h3 id="条件判断">条件判断</h3>
+
+<ul>
+  <li>三类条件：
+    <ul>
+      <li>数值比较</li>
+      <li>字符串比较</li>
+      <li>文件比较</li>
+    </ul>
+  </li>
+  <li>使用<code class="highlighter-rouge">test</code>命令</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if </span><span class="nb">test </span>condition
+<span class="k">then
+	</span>commands
+<span class="k">fi</span>
+</code></pre></div></div>
+<ul>
+  <li>使用<code class="highlighter-rouge">[]</code>，注意condition前后有空格</li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="o">[</span> condition1 <span class="o">]</span>
+<span class="k">then
+	</span><span class="nb">command </span>N
+<span class="k">elif</span> <span class="o">[</span> condition2 <span class="o">]</span>
+<span class="k">then
+	</span><span class="nb">command </span>Q
+<span class="k">else
+	</span><span class="nb">command </span>M
+<span class="k">fi</span>
+</code></pre></div></div>
+<h3 id="常见的条件判断">常见的条件判断</h3>
+
+<ul>
+  <li>与或:
+    <ul>
+      <li><code class="highlighter-rouge">[ condition1 ] &amp;&amp;[ condition2 ]</code></li>
+      <li><code class="highlighter-rouge">[ condition1 ] || [ condition2 ]</code></li>
+    </ul>
+  </li>
+  <li>数值比较
+    <ul>
+      <li>相等:<code class="highlighter-rouge">n1 -eq -n2</code></li>
+      <li>大于：<code class="highlighter-rouge">n1 -gt -n2</code></li>
+      <li>小于：<code class="highlighter-rouge">n1 -lt -n2</code></li>
+      <li>大于等于：<code class="highlighter-rouge">n1 -ge n2</code></li>
+      <li>小于等于：<code class="highlighter-rouge">n1 -le n2</code></li>
+      <li>不等于：<code class="highlighter-rouge">n1 -ne n2</code></li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#! /bin/sh</span>
+<span class="nb">echo</span> <span class="s2">"input number: "</span>
+<span class="nb">read </span>p
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$p</span> <span class="nt">-gt</span> 10 <span class="o">]</span>
+<span class="k">then
+ </span><span class="nb">echo</span> <span class="s2">"the number is greater than 10"</span>
+<span class="k">fi
+if</span> <span class="o">[</span> <span class="nv">$p</span> <span class="nt">-lt</span> 10 <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> <span class="nv">$p</span> <span class="nt">-gt</span> 1 <span class="o">]</span>
+<span class="k">then
+ </span><span class="nb">echo</span> <span class="s2">"the number is less than 10 and greater than 1"</span>
+<span class="k">fi</span>
+</code></pre></div></div>
+<ul>
+  <li>字符串比较:
+    <ul>
+      <li>相同:<code class="highlighter-rouge">str1 = str2</code></li>
+      <li>不同：<code class="highlighter-rouge">str1 != str2</code></li>
+      <li>大于：<code class="highlighter-rouge">str1 &gt; str2</code> //比较asc码</li>
+      <li>小于: <code class="highlighter-rouge">str1 &lt; str2</code></li>
+      <li>是否长度非0: <code class="highlighter-rouge">-n str1</code></li>
+      <li>是否长度为0: <code class="highlighter-rouge">-z str1</code></li>
+    </ul>
+  </li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c">#! /bin/sh</span>
+
+<span class="nv">str1</span><span class="o">=</span><span class="s2">"ab"</span>
+<span class="nv">str2</span><span class="o">=</span><span class="s2">"bc"</span>
+
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$str1</span> <span class="se">\&lt;</span> <span class="nv">$str2</span> <span class="o">]</span>//转义字符
+<span class="k">then
+ </span><span class="nb">echo</span> <span class="s2">"str1 is less than str2"</span>
+<span class="k">elif</span> <span class="o">[</span> <span class="nv">$str1</span> <span class="se">\&gt;</span> <span class="nv">$str2</span> <span class="o">]</span>
+<span class="k">then
+ </span><span class="nb">echo</span> <span class="s2">"str1 is greater than str2"</span>
+<span class="k">elif</span> <span class="o">[</span> <span class="nv">$str1</span> <span class="o">=</span> <span class="nv">$str2</span> <span class="o">]</span>
+<span class="k">then
+ </span><span class="nb">echo</span> <span class="s2">"str1 is equal to str2"</span>
+<span class="k">fi</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>文件比较
+    <ul>
+      <li>检查file是否存在，并且在同一个目录: <code class="highlighter-rouge">-d file</code></li>
+      <li>检查file是否存在: <code class="highlighter-rouge">-e file</code></li>
+      <li>检查file是否存在，并且是一个文件: <code class="highlighter-rouge">-f file</code></li>
+      <li>检查file是否存在，并非空: <code class="highlighter-rouge">-s file</code></li>
+      <li>
+        <p>检查file是否存在，是否是可执行文件: <code class="highlighter-rouge">-x file</code></p>
+      </li>
+      <li>检查file1比file2新：<code class="highlighter-rouge">file1 -nt file2</code></li>
+      <li>检查file1比file2旧：<code class="highlighter-rouge">file1 -ot file2</code></li>
+    </ul>
+  </li>
+  <li>
+    <p>高级判断</p>
+
+    <ul>
+      <li><code class="highlighter-rouge">(( expression ))</code> 高级数学表达式</li>
+      <li><code class="highlighter-rouge">[[ expression ]]</code> 高级字符串比较, 正则表达式匹配</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c">#! /bin/sh</span>
+
+<span class="nv">val1</span><span class="o">=</span>10
+
+<span class="k">if</span> <span class="o">((</span> <span class="nv">$val1</span> <span class="k">**</span> 2 <span class="o">&gt;</span> 90 <span class="o">))</span>
+<span class="k">then</span>
+	<span class="o">((</span> val2 <span class="o">=</span> <span class="nv">$val1</span> <span class="k">**</span> 2<span class="o">))</span>
+	<span class="nb">echo</span> <span class="s2">"The square of </span><span class="nv">$val1</span><span class="s2"> is </span><span class="nv">$val2</span><span class="s2">"</span>
+<span class="k">fi</span>
+
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c">#! /bin/sh</span>
+
+<span class="k">if</span> <span class="o">[[</span> <span class="nv">$USER</span> <span class="o">==</span> m<span class="k">*</span> <span class="o">]]</span>
+<span class="k">then
+</span>ehco <span class="s2">"The current use is </span><span class="nv">$USER</span><span class="s2">"</span>
+<span class="k">fi</span>
+
+
+</code></pre></div></div>
+
+<h3 id="case语句">case语句</h3>
+
+<ul>
+  <li>case语法</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+case "$VAR" in 
+	pattern_1)
+		# Commands go here
+		;;
+	pattern_N) 
+		# commands go here
+		;;
+
+	*) # default case
+		# commands go here
+	 	;;
+esac
+
+</code></pre></div></div>
+
+<ul>
+  <li>使用数字</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c">#! /bin/sh</span>
+<span class="nb">echo</span> <span class="s2">"input a number: "</span>
+<span class="nb">read </span>num
+
+<span class="k">case</span> <span class="nv">$num</span> <span class="k">in
+</span>1<span class="p">)</span>
+ <span class="nb">echo</span> <span class="s2">"The month is January"</span><span class="p">;;</span>
+2<span class="p">)</span>
+ <span class="nb">echo</span> <span class="s2">"The month is Feb"</span><span class="p">;;</span>
+<span class="k">*</span><span class="p">)</span>
+ <span class="nb">echo</span> <span class="s2">"The month is unknown"</span><span class="p">;;</span>
+<span class="k">esac</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>使用字符串</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c">#! /bin/sh</span>
+<span class="nb">echo</span> <span class="s2">"input YES|NO: "</span>
+<span class="nb">read </span>var
+
+<span class="k">case</span> <span class="nv">$var</span> <span class="k">in
+
+</span>YES <span class="p">|</span> <span class="nb">yes</span> <span class="p">|</span> y <span class="p">|</span> Y<span class="p">)</span>
+ <span class="nb">echo</span> <span class="s2">"You said YES"</span>
+ <span class="nb">echo</span> <span class="s2">"OK!"</span>
+ <span class="p">;;</span>
+
+NO <span class="p">|</span> n <span class="p">|</span> N <span class="p">|</span> no<span class="p">)</span>
+ <span class="nb">echo</span> <span class="s2">"You said NO"</span><span class="p">;;</span>
+<span class="k">*</span><span class="p">)</span>
+ <span class="nb">echo</span> <span class="s2">"The input is unknown"</span><span class="p">;;</span>
+<span class="k">esac</span>  
+  
+</code></pre></div></div>
+
+<h2 id="7">循环</h2>
+
+<ul>
+  <li><code class="highlighter-rouge">for,while,until,break,continue</code></li>
+</ul>
+
+<h3 id="for循环">for循环</h3>
+
+<ul>
+  <li>语法1：将list中的每一项赋值给val</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+for VARIABLE_NAME in ITEM_1 ITEM_N
+do
+	command 1
+	command 2
+	command N
+done
+
+</code></pre></div></div>
+
+<ul>
+  <li>demo1:</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c">#!/bin/bash</span>
+<span class="k">for </span>COLOR <span class="k">in </span>red green blue
+<span class="k">do
+	</span><span class="nb">echo</span> <span class="s2">"COLOR: </span><span class="nv">$COLOR</span><span class="s2">"</span>
+<span class="k">done</span>
+
+<span class="nt">--------------------</span>
+output:
+
+<span class="o">&gt;</span> COLOR:red
+<span class="o">&gt;</span> COLOR:green
+<span class="o">&gt;</span> COLOR:blue
+
+</code></pre></div></div>
+
+<ul>
+  <li>demo2:重命名当前目录下的图片</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c">#!/bin/bash</span>
+
+<span class="nv">PICTURES</span><span class="o">=</span><span class="si">$(</span><span class="nb">ls</span> <span class="k">*</span>jpeg<span class="si">)</span>
+<span class="nv">DATE</span><span class="o">=</span><span class="si">$(</span><span class="nb">date</span> +%F<span class="si">)</span>
+
+<span class="k">for </span>PICTURE <span class="k">in</span> <span class="nv">$PICTURES</span>
+<span class="k">do
+   </span><span class="nb">echo</span> <span class="s2">"Renaming </span><span class="k">${</span><span class="nv">PICTURE</span><span class="k">}</span><span class="s2"> to </span><span class="k">${</span><span class="nv">DATE</span><span class="k">}</span><span class="s2">-</span><span class="k">${</span><span class="nv">PICTURE</span><span class="k">}</span><span class="s2">"</span>
+   <span class="nb">mv</span> <span class="k">${</span><span class="nv">PICTURE</span><span class="k">}</span> <span class="k">${</span><span class="nv">DATE</span><span class="k">}</span>-<span class="k">${</span><span class="nv">PICTURE</span><span class="k">}</span>
+<span class="k">done</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>语法2：使用<code class="highlighter-rouge">((...))</code></li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+for(( i=1; i&lt;10; i++))
+do 
+	commands
+done
+
+</code></pre></div></div>
+
+<h3 id="list来源">list来源</h3>
+
+<ul>
+  <li>直接创建列表</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+for val in Jan Feb Mar Apr May
+do
+  echo "month name is $val"
+done
+
+</code></pre></div></div>
+<ul>
+  <li>从变量读取</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+list="Jan Feb Mar Apr May"
+for val in $list
+do
+  echo "Month name is $val"
+  done
+
+</code></pre></div></div>
+<ul>
+  <li>从命令读取</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+for val in `cat monthlist`
+do
+  echo "Month name is $val"
+done
+
+</code></pre></div></div>
+<ul>
+  <li>从目录读取</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+#文件通配符
+for val in ~/Documents/Coding/Shell/*
+do
+echo "$val"
+done  
+   
+</code></pre></div></div>
+
+<h3 id="shell中默认的分隔符">shell中默认的分隔符</h3>
+
+<ul>
+  <li>空格</li>
+  <li>制表符</li>
+  <li>换行符</li>
+  <li>
+    <p>修改分隔符</p>
+
+    <ul>
+      <li><code class="highlighter-rouge">IFS=$";"</code> 以分号分割</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="while和until">while和until</h3>
+
+<ul>
+  <li>while语法</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+while [ CONDITION_IS_TRUE ] command
+do
+	command 1
+	command 2
+	command N
+done
+
+</code></pre></div></div>
+
+<ul>
+  <li>example:loop 9 times</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+#loop 9times
+
+val=1
+while [ $val -lt 10 ]
+do
+	echo "$val"
+	val=$[ $val+1 ] # ((val++))
+done
+
+</code></pre></div></div>
+
+<ul>
+  <li>exmpel: read input</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+while [ "$CORRECT" != "y" ]
+do 
+	read -p "Enter your name:"  NAME
+	read -p "Is ${NAME} correct? " CORRECT
+end
+
+</code></pre></div></div>
+
+<ul>
+  <li>example: Reading a file, line by line</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+LINE_NUM=1
+while read LINE
+do
+	echo "${LINE_NUM}: ${LINE}"
+	((LINE_NUM++))
+done &lt; /etc/fstab
+
+FS_NUM=1
+grep xfs /etc/fstab | while read LINE do #读xfs文件中的每一行
+	echo "xfs: ${LINE}"
+end
+
+FS_NUM=1
+grep xfs /etc/fstab | while read FS MP REST #读xfs，第一行放入FS变量，第二行放入MP，其它行放入REST
+do
+	echo "${FS_NUM}: file system: ${FS}"
+	echo "${FS_NUM}: mount point: ${MP}"
+	((FS_NUM++))
+done 
+
+</code></pre></div></div>
+
+<ul>
+  <li>使用continue</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+mysql -Bne 'show databases' | while read DB
+do
+	db-backed-up-recently $DB
+	if [ "$?" -eq "0" ]
+	then
+		continue
+	fi
+		backup $DB
+done
+ 
+</code></pre></div></div>
+
+<ul>
+  <li>until语法</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+until [ CONDITION_IS_TRUE ] command
+do
+	command
+done
+
+</code></pre></div></div>
+
+<ul>
+  <li>example</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+val=1
+util [ $val -eq 10 ]
+do
+echo "$val"
+val=$[ $val+1 ]
+done
+
+</code></pre></div></div>
+
+<h2 id="8">函数</h2>
+
+<h3 id="定义">定义</h3>
+
+<ul>
+  <li>定义1:</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+function name {
+	commands
+}
+
+</code></pre></div></div>
+
+<ul>
+  <li>定义2</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+name() {
+	commands
+}
+
+</code></pre></div></div>
+
+<ul>
+  <li>函数调用</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c">#!/bin/bash</span>
+
+<span class="k">function </span>hello<span class="o">(){</span>
+	<span class="nb">echo</span> <span class="s2">"HELLO!"</span>
+	now <span class="c">#函数调用</span>
+<span class="o">}</span>
+
+<span class="c">#hello #错误，因为now还没被声明</span>
+
+<span class="k">function </span>now<span class="o">(){</span>
+	<span class="nb">echo</span> <span class="s2">"It's </span><span class="si">$(</span><span class="nb">date</span>+%r<span class="si">)</span><span class="s2">"</span>
+<span class="o">}</span>
+
+hello <span class="c">#正确，函数调用，没有括号</span>
+
+</code></pre></div></div>
+<ul>
+  <li>函数参数传递:
+    <ul>
+      <li>引用命令行参数做变量：<code class="highlighter-rouge">&gt; script.sh parm1 param2 param3</code>在脚本里怎么访问
+        <ul>
+          <li>所有参数 <code class="highlighter-rouge">$@</code></li>
+          <li>参数个数 <code class="highlighter-rouge">$#</code></li>
+          <li>第1个参数 <code class="highlighter-rouge">$1</code></li>
+          <li>第2个参数 <code class="highlighter-rouge">$2</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>example1:</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+#! /bash/bin
+
+function hello(){
+	echo "Hello $1"
+}
+
+hello Jason
+
+#Output : Hello Jason
+
+</code></pre></div></div>
+
+<ul>
+  <li>example2:</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c">#!/bin/bash</span>
+
+<span class="nb">echo</span> <span class="s2">"Excuting script: </span><span class="nv">$0</span><span class="s2">"</span>
+<span class="k">for </span>USER <span class="k">in</span> <span class="nv">$@</span> <span class="k">do
+	</span><span class="nb">echo</span> <span class="s2">"Achiving user: </span><span class="nv">$USER</span><span class="s2">"</span>
+	<span class="c">#lock the account</span>
+	passwd <span class="nt">-l</span> <span class="nv">$USER</span>
+	<span class="c">#create an achive of the home dir</span>
+	<span class="nb">tar </span>cf /archives/<span class="k">${</span><span class="nv">USER</span><span class="k">}</span>.tar.gz /home/<span class="k">${</span><span class="nv">USER</span><span class="k">}</span>
+end
+
+</code></pre></div></div>
+
+<ul>
+  <li>函数的变量
+    <ul>
+      <li>全局变量: 默认变量都是全局的</li>
+      <li>局部变量: 只能在函数内访问的变量，变量前加<code class="highlighter-rouge">local</code>，只有函数能使用local variable。</li>
+      <li>定义在函数里的变量，只有当函数被执行后，变量才变成全局的</li>
+    </ul>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>	
+  <span class="c">#!/bin/bash</span>
+	
+  my_function<span class="o">(){</span>
+      <span class="nv">GLOBAL_VAR</span><span class="o">=</span>1
+  <span class="o">}</span>
+  <span class="c">#GLOBAL_VAR not available yet.</span>
+  <span class="nb">echo</span> <span class="nv">$GLOBAL_VAR</span>
+  my_function
+  <span class="c">#GLOBAL_VAR is NOW available. </span>
+  <span class="nb">echo</span> <span class="nv">$GLOBAL_VAR</span>
+	
+</code></pre></div>    </div>
+  </li>
+  <li>行数返回值
+    <ul>
+      <li>显式指定：<code class="highlighter-rouge">return &lt;RETURN CODE&gt;</code>
+        <ul>
+          <li>0：success</li>
+        </ul>
+      </li>
+      <li>默认上一条命令的执行结果</li>
+      <li>example:</li>
+    </ul>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>	
+  function backup_file(){
+      if [ -f $1 ]
+      then
+          local BACK="/tmp/$(basename ${1}).$(date +%F).$$" #$$代表当前running script的PID
+          echo "Backing up $1 to ${BACK}"
+          cp $1 $BACK
+      else
+          return 1
+      fi
+  }
+  backup_file /etc/hosts
+  if [ $? -eq 0 ]
+  then
+      echo "Backup succeeded!"
+  else
+      echo "Backup failed"
+      exit 1
+  fi
+	
+</code></pre></div>    </div>
+  </li>
+  <li>引用其它脚本中的函数
+    <ul>
+      <li><code class="highlighter-rouge">source filepath</code>或者<code class="highlighter-rouge">. filepath</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="9">输入输出</h2>
+
+<h3 id="输入输出重定向">输入输出重定向</h3>
+
+<ul>
+  <li>输出重定向:  将输出重定向到文件中
+    <ul>
+      <li><code class="highlighter-rouge">command &gt; outputfile</code> //会覆盖原数据</li>
+      <li><code class="highlighter-rouge">command &gt;&gt; outputfile</code> //会追加新数据到老数据后面</li>
+    </ul>
+  </li>
+  <li>输入重定向: 将文件内容输入给命令
+    <ul>
+      <li><code class="highlighter-rouge">command &lt; outputfile</code></li>
+    </ul>
+  </li>
+  <li>内联输入重定向</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>command &lt;&lt; marker
+
+data input
+
+marker
+</code></pre></div></div>
+
+<p>例如：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;  Shell  result=`bc &lt;&lt; EOF 
+bquote&gt; var1=3
+bquote&gt; var2=5
+bquote&gt; var3=var1+var2
+bquote&gt; print var3
+bquote&gt; EOF
+bquote&gt; `
+&gt; Shell  echo $result
+8
+</code></pre></div></div>
+
+<h3 id="文件描述符与错误重定向">文件描述符与错误重定向</h3>
+
+<p>每个进程都和三个系统文件 相关联：标准输入stdin，标准输出stdout、标准错误stderr，三个系统文件的文件描述符分别为0，1、2</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>文件描述符</th>
+      <th>缩写</th>
+      <th>描述</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>STDIN</td>
+      <td>标准输入</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>STDOUT</td>
+      <td>标准输出</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>STDERR</td>
+      <td>标准错误</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>将错误保存到log中:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;cat iot 2 &gt; errlog
+
+</code></pre></div></div>
+
+<ul>
+  <li>临时重定向:将shell脚本中的错误输出到文件中:<code class="highlighter-rouge">command &gt;&amp; 文件描述符</code></li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#! /bin/sh</span>
+
+<span class="nb">echo</span> <span class="s2">"Test Error"</span> <span class="o">&gt;</span>&amp; 2
+<span class="nb">echo</span> <span class="s2">"Normal output"</span>
+
+</code></pre></div></div>
+
+<p>执行脚本，错误会打印在命令行中，原因是console是默认的错误输出。如果要将shell中产生的错误输出到文件中，执行shell的时候要追加重定向：</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;  ./iotest 2&gt;&gt; errlog
+
+</code></pre></div></div>
+
+<ul>
+  <li>理解/dev/null</li>
+</ul>
+
+<p>在类Unix系统中，<code class="highlighter-rouge">/dev/null</code>，或称空设备，是一个特殊的设备文件，它丢弃一切写入其中的数据，读取它则会立即得到一个<code class="highlighter-rouge">EOF</code>。 因此<code class="highlighter-rouge">/dev/null</code>也被称为黑洞。shell脚本中一种常见的写法是<code class="highlighter-rouge">command &gt;/dev/null 2&gt;&amp;1</code>，它是一种当将command命令的输出或者错误重定向到黑洞里做法，所以这里2&gt;&amp;1 的意思就是将标准错误也输出到标准输出当中。举个例子：；</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;cat test.sh
+t
+date
+
+&gt; ./test.sh &gt; test1.log
+&gt; ./test.sh: line 1: t: command not found
+
+&gt; cat test1.log
+Wed Jul 10 21:12:02 CST 2007
+</code></pre></div></div>
+
+<p>可以看到，date的执行结果被重定向到log文件中了，而t无法执行的错误则只打印在屏幕上。</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; ./test.sh &gt; test2.log 2&gt;&amp;1
+
+&gt; cat test2.log
+./test.sh: line 1: t: command not found
+Tue Oct 9 20:53:44 CST 2007
+
+</code></pre></div></div>
+
+<p>这次，stderr和stdout的内容都被重定向到log文件中了。</p>
+
+<ul>
+  <li>永久重定向: <code class="highlighter-rouge">exec 文件描述符&gt;文件名</code></li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c">#! /bin/sh</span>
+
+<span class="nb">exec </span>1&gt;output
+<span class="nb">exec </span>2&gt;errlog
+
+<span class="nb">echo</span> <span class="s2">"Test Error"</span> <span class="o">&gt;</span>&amp; 2
+<span class="nb">echo</span> <span class="s2">"Normal output"</span>
+
+</code></pre></div></div>
+
+<p>这样，输入输出都回重定向到文件中</p>
+
+<h3 id="管道">管道</h3>
+
+<p>将一个命令的输出，重定向到另一个命令的输入:<code class="highlighter-rouge">command1 | command2</code></p>
+
+<ul>
+  <li>将当前进程以翻页的形式查看:<code class="highlighter-rouge">ps -ef | less</code></li>
+  <li>查找当前进程中的某个进程:<code class="highlighter-rouge">ps -ef | grep bash</code></li>
+</ul>
+
+<h2 id="10">Shell运行控制</h2>
+
+<h3 id="linux中的信号">Linux中的信号</h3>
+
+<ul>
+  <li>什么是信号
+    <ul>
+      <li>软中断</li>
+      <li>进程间异步通信</li>
+      <li><code class="highlighter-rouge">man signal</code></li>
+    </ul>
+  </li>
+  <li>产生信号
+    <ul>
+      <li>终止进程:<code class="highlighter-rouge">SIGINT</code>: CTRL+C</li>
+      <li>暂停进程:<code class="highlighter-rouge">SIGSTP</code>:CTRL+Z</li>
+      <li><code class="highlighter-rouge">kill</code>/<code class="highlighter-rouge">kill all</code>
+        <ul>
+          <li><code class="highlighter-rouge">kill -9</code>: <code class="highlighter-rouge">9</code>是<code class="highlighter-rouge">SIGKILL</code>，无条件终止进程</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>处理信号
+    <ul>
+      <li>系统默认方式处理</li>
+      <li>忽略信号</li>
+      <li>自定义处理信号的方法
+        <ul>
+          <li>使用<code class="highlighter-rouge">trap</code>捕获SIGINT：<code class="highlighter-rouge">trap "echo 'Signal Trapped SIGINT for ctrl+C'" SIGINT</code></li>
+          <li>移除添加的<code class="highlighter-rouge">trap</code>：<code class="highlighter-rouge">trap - SIGINT</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="后台运行的脚本">后台运行的脚本</h3>
+
+<ul>
+  <li>命令格式:	<code class="highlighter-rouge">SCRIPT &amp;</code>。
+    <ul>
+      <li>例如:<code class="highlighter-rouge">./bgtest &amp;</code>：将脚本在后台运行</li>
+      <li>查看所有运行中的作业:<code class="highlighter-rouge">jobs</code></li>
+      <li>在前台重启停止的作业:<code class="highlighter-rouge">fg 作业号</code>
+        <ul>
+          <li>例如:<code class="highlighter-rouge">fg 1</code></li>
+        </ul>
+      </li>
+      <li>在后台重启停止的作业:<code class="highlighter-rouge">fg 作业号</code>
+        <ul>
+          <li>例如:<code class="highlighter-rouge">bg 1</code></li>
+        </ul>
+      </li>
+      <li>作业优先级: -20(高) ~ +19（低）</li>
+      <li>设定优先级:<code class="highlighter-rouge">nice</code>
+        <ul>
+          <li><code class="highlighter-rouge">nice -n 10 ./bgtest &amp;</code></li>
+        </ul>
+      </li>
+      <li>重新设定优先级:<code class="highlighter-rouge">renice</code>
+        <ul>
+          <li><code class="highlighter-rouge">renice 10 -p pid</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>使用<code class="highlighter-rouge">nohub SCRIPT &amp;</code>：当bash窗口退出时，不终止脚本执行</li>
+</ul>
+
+<h3 id="退出码">退出码</h3>
+
+<ul>
+  <li>退出码:<code class="highlighter-rouge">$?</code>
+    <ul>
+      <li>默认值为上一条命令的返回值</li>
+      <li>查看命令的返回值：<code class="highlighter-rouge">man command</code></li>
+      <li>example: <code class="highlighter-rouge">&gt; ls -al ; echo $?</code></li>
+    </ul>
+  </li>
+  <li>return 返回值
+    <ul>
+      <li>范围：0~255</li>
+      <li>0：成功</li>
+      <li>非0：失败</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+HOST="google.com"
+ping -c 1 $HOST
+if[ "$?" -eq "0" ]
+then
+	echo "$HOST reachabe."
+else
+	echo "$HOST unreachable."
+fi
+
+</code></pre></div></div>
+
+<ul>
+  <li>自定义退出码</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+HOST="google.com"
+ping -c 1 $ HOST
+if[ "$?" -ne "0"]
+then
+	echo "$HOST unreachable"
+	exit 1 #自定义退出码
+fi
+exit0
+
+</code></pre></div></div>
+
+<ul>
+  <li>串联命令
+    <ul>
+      <li>使用<code class="highlighter-rouge">;</code>，不管命令返回值，顺序执行
+        <ul>
+          <li><code class="highlighter-rouge">&gt; cp test.txt /tmp/bak/ ; cp test.txt /tmp</code></li>
+        </ul>
+      </li>
+      <li>使用<code class="highlighter-rouge">&amp;&amp;</code>和<code class="highlighter-rouge">||</code>，后一条指令的执行依赖前一条指令的结果
+        <ul>
+          <li><code class="highlighter-rouge">&amp;&amp;</code>：前一条执行成功后，后面才执行：<code class="highlighter-rouge">&gt; mkdir /tmp/bak &amp;&amp; cp test.txt /tmp/bak/</code></li>
+          <li><code class="highlighter-rouge">||</code>：前一条执行成功后，后面语句不执行: <code class="highlighter-rouge">&gt; ping -c 1 "google.com" || echo "not reachable" </code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="11"> Wildcards </h2>
+
+<ul>
+  <li>A character or string used for pattern matching
+    <ul>
+      <li>Globbing expands the wildcard pattern into a list of files and directories</li>
+      <li>Wildcards can be used with most commands</li>
+      <li>ls,rm,cp</li>
+    </ul>
+  </li>
+  <li>Wildcards
+    <ul>
+      <li><code class="highlighter-rouge">*</code> matches zero or more characters
+        <ul>
+          <li>*.txt //所有txt结尾的</li>
+          <li>a* //a开头的文件</li>
+          <li>a*.txt //a开头的txt文件</li>
+        </ul>
+      </li>
+      <li><code class="highlighter-rouge">?</code> matches exactly one character
+        <ul>
+          <li>?.txt //匹配只有一个字母做文件名的txt</li>
+          <li>a? //</li>
+          <li>a?.txt</li>
+        </ul>
+      </li>
+      <li><code class="highlighter-rouge">[]</code> A character class
+        <ul>
+          <li>匹配括号里的字符，只匹配一个夫妇</li>
+          <li>ca[nt]* 匹配ca开头，第三个字母是n或者t的单词
+            <ul>
+              <li>can</li>
+              <li>cat</li>
+              <li>candy</li>
+              <li>catch</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><code class="highlighter-rouge">[!]</code> 匹配所有不以括号内开头的单词，只匹配一个字符
+        <ul>
+          <li>[!aeiou]* 不以元音开头
+            <ul>
+              <li>basketball</li>
+              <li>cricket</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><code class="highlighter-rouge">[-]</code> 匹配范围，通过中划线标记范围
+        <ul>
+          <li>[a-g]* 匹配所有以a-g开头的文件</li>
+          <li>[3-6]* 匹配所有3-6数字之间开头的文件</li>
+          <li>系统支持的匹配格式：
+            <ul>
+              <li>[[:alpha:]] 匹配所有大小写字母</li>
+              <li>[[:alnum:]] 匹配所有大小写字母+数字</li>
+              <li>[[:digit:]] 匹配数字</li>
+              <li>[[:lower:]] 匹配小写字母</li>
+              <li>[[:space:]] 匹配空格</li>
+              <li>[[:upper:]] 匹配大写字母</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="12"> Logs </h2>
+
+<h3 id="syslog">Syslog</h3>
+
+<ul>
+  <li>The syslog standard uses facilities and serverities to categorize messages
+    <ul>
+      <li>Facilities: kern, user, mail, daemon, auth, local0, local7</li>
+      <li>Serverities: emerg, alert, crit, err, warning, notice, info,debug</li>
+    </ul>
+  </li>
+  <li>Log file locations are configurable
+    <ul>
+      <li>/var/log/messages</li>
+      <li>/var/log/syslog</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="logging-with-logger">Logging with logger</h3>
+<ul>
+  <li>The logger utility</li>
+  <li>By default creates user.notice messages.</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+logger "Message"
+logger -p local10.info "Message"
+logger -t myscript -p local10.info "Message"
+logger -i -t myscript "Message"
+
+</code></pre></div></div>
+
+<ul>
+  <li>example</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+logit(){
+	local LOG_LEVEL=$1
+	shift
+	MSG=$@
+	TIMESTAMP=$(date +"%Y-%m-%d %T")
+	if[ $LOG_LEVEL = 'ERROR' ] || $VERBOSE 
+	then
+		echo "${TIMESTAMP} ${HOST} ${PROGRAM_NAME}[${PID}]: ${LOG_LEVEL} ${MSG}"
+	fi
+ }
+
+&gt; logit INFO "Processing data".
+
+</code></pre></div></div>
+
+<h3 id="debug">Debug</h3>
+
+<ul>
+  <li>Build in Debugging Help
+    <ul>
+      <li><code class="highlighter-rouge">-x</code> Prints commands as they execute</li>
+      <li>After substitutions and expansions</li>
+      <li>Called an x-trace, tracing, or print debugging</li>
+      <li><code class="highlighter-rouge"><span class="c">#!/bin/bash -x</span></code></li>
+      <li><code class="highlighter-rouge">set -x</code>
+        <ul>
+          <li><code class="highlighter-rouge">set +x</code> to stop debugging</li>
+        </ul>
+      </li>
+      <li>使用 <code class="highlighter-rouge">-e</code>，当脚本出错时，自动exit
+        <ul>
+          <li><code class="highlighter-rouge"><span class="c">#!/bin/bash -ex</span></code></li>
+          <li><code class="highlighter-rouge"><span class="c">#!/bin/bash -xe</span></code></li>
+          <li><code class="highlighter-rouge"><span class="c">#!/bin/bash -e -x</span></code></li>
+          <li><code class="highlighter-rouge"><span class="c">#!/bin/bash -x -e</span></code></li>
+        </ul>
+      </li>
+      <li>使用<code class="highlighter-rouge">-v</code> 打印出shell执行的script内容，可以和其它参数一起使用</li>
+    </ul>
+  </li>
+  <li>脚本里使用 <code class="highlighter-rouge">-x</code></li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c">#!/bin/bash -x</span>
+
+<span class="nv">TEST_VAR</span><span class="o">=</span><span class="s2">"test"</span>
+<span class="nb">echo</span> <span class="s2">"</span><span class="nv">$TEST_VAR</span><span class="s2">"</span>
+
+<span class="o">&gt;</span> ./debugging-01.sh <span class="c">#执行test脚本</span>
++ <span class="nv">TEST_VAR</span><span class="o">=</span><span class="nb">test</span> <span class="c">#调试信息</span>
++ <span class="nb">echo test
+test</span>
+
+<span class="nt">-------</span>
+
+<span class="c">#!/bin/bash</span>
+
+<span class="nv">TEST_VAR</span><span class="o">=</span><span class="s2">"test"</span>
+<span class="nb">set</span> <span class="nt">-x</span>
+<span class="nb">echo</span> <span class="nv">$TEST_VAR</span>
+<span class="nb">set</span> +x
+<span class="nb">hostname</span>
+
+<span class="o">&gt;</span>  lessons ./debugging-02.sh   
++ <span class="nb">echo test
+test</span>
++ <span class="nb">set</span> +x
+JaysondeMBP.fios-router.home
+
+</code></pre></div></div>
+
+<ul>
+  <li>脚本里使用<code class="highlighter-rouge">-e</code></li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c">#!/bin/bash -ex</span>
+
+<span class="nv">FILE_NAME</span><span class="o">=</span><span class="s2">"/not/here"</span>
+<span class="nb">ls</span> <span class="nv">$FILE_NAME</span>
+<span class="nb">echo</span> <span class="nv">$FILE_NAME</span>
+
+<span class="o">&gt;</span>  ./debugging-04.sh   
++ <span class="nv">FILE_NAME</span><span class="o">=</span>/not/here
++ <span class="nb">ls</span> /not/here
+<span class="nb">ls</span>: /not/here: No such file or directory
+
+</code></pre></div></div>
+
+<ul>
+  <li>脚本里使用<code class="highlighter-rouge">-v</code></li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c">#!/bin/bash -vx</span>
+<span class="nv">TEST_VAR</span><span class="o">=</span><span class="s2">"test"</span>
+<span class="nb">echo</span> <span class="s2">"</span><span class="nv">$TEST_VAR</span><span class="s2">"</span>
+
+<span class="o">&gt;</span> ./debugging-06.sh   
+<span class="c">#!/bin/bash -vx</span>
+<span class="nv">TEST_VAR</span><span class="o">=</span><span class="s2">"test"</span> <span class="c">#读入指令 -v</span>
++ <span class="nv">TEST_VAR</span><span class="o">=</span><span class="nb">test</span> <span class="c">#进行变量替换后指令 -x</span>
+<span class="nb">echo</span> <span class="s2">"</span><span class="nv">$TEST_VAR</span><span class="s2">"</span> <span class="c">#读入指令 -v</span>
++ <span class="nb">echo test</span> <span class="c">#进行变量替换后指令 -x</span>
+<span class="nb">test</span>
+
+</code></pre></div></div>
+
+<h3 id="manaual-debugging">Manaual Debugging</h3>
+
+<ul>
+  <li>You can create your own debugging code.</li>
+  <li>Use a special variable like DEBUG
+    <ul>
+      <li>DEBUG=true</li>
+      <li>DEBUG=false</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="nv">DEBUG</span><span class="o">=</span><span class="nb">true
+
+</span><span class="k">if</span> <span class="nv">$DEBUG</span>
+<span class="k">then
+  </span><span class="nb">echo</span> <span class="s2">"Debug mode ON."</span>
+<span class="k">else
+  </span><span class="nb">echo</span> <span class="s2">"Debug mode OFF."</span>
+<span class="k">fi</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>几种使用DEBUG的方式</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="nv">DEBUG</span><span class="o">=</span><span class="nb">true</span>
+<span class="nv">$DEBUG</span> <span class="o">||</span> <span class="nb">echo</span> <span class="s2">"Debug mode OFF."</span> <span class="c">#log的方式</span>
+
+<span class="nt">---</span>
+
+<span class="c">#!/bin/bash</span>
+
+<span class="nv">DEBUG</span><span class="o">=</span><span class="s2">"echo"</span>
+<span class="nv">$DEBUG</span> <span class="nb">ls</span> <span class="c">#使用debug做echo</span>
+
+<span class="nt">---</span>
+
+<span class="c">#!/bin/bash</span>
+
+<span class="c">#DEBUG="echo"</span>
+<span class="nv">$DEBUG</span> <span class="nb">ls</span> <span class="c">#使用debug做注释</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>自定义log函数</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c">#!/bin/bash</span>
+
+debug<span class="o">()</span> <span class="o">{</span>
+  <span class="nb">echo</span> <span class="s2">"Executing: </span><span class="nv">$@</span><span class="s2">"</span>
+  <span class="nv">$@</span>
+<span class="o">}</span>
+
+debug <span class="nb">ls</span>
+
+</code></pre></div></div>
+
+<h2 id="13"> UNIX环境 </h2>
+
+<h3 id="shell启动">Shell启动</h3>
+
+<ul>
+  <li>对于Bash，系统从上到下按照以下顺序执行，先A，然后B（B1，B2，B3）,然后C</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Option name</th>
+      <th>Interactive login</th>
+      <th>Interactive non-login</th>
+      <th>Script</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>/etc/profile</td>
+      <td>A</td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>/etc/bash.bashrc</td>
+      <td> </td>
+      <td>A</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>~/.bashrc</td>
+      <td> </td>
+      <td>B</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>~/.bash_profile</td>
+      <td>B1</td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>~/.bash_login</td>
+      <td>B2</td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>~/.profile</td>
+      <td>B3</td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>BASH_ENV</td>
+      <td> </td>
+      <td> </td>
+      <td>A</td>
+    </tr>
+    <tr>
+      <td>~/.bash_logout</td>
+      <td>C</td>
+      <td> </td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>更详细的流程图如下所示：</p>
+
+<p><img src="/assets/images/07/02/shell1.png" alt="" /></p>
+
+<p>对于Bash，最好把自己的配置文件写到<code class="highlighter-rouge">~/.bashrc</code>里，在<code class="highlighter-rouge">~/.bash_profile</code> 里面<code class="highlighter-rouge">source ~/.bashrc</code>。</p>
+
+<ul>
+  <li>对于Zsh(在<code class="highlighter-rouge">~/.zshrc</code>缺失的情况下会读取<code class="highlighter-rouge">~/.profile</code>)</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Option name</th>
+      <th>Interactive login</th>
+      <th>Interactive non-login</th>
+      <th>Script</th>
+      <th> </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>/etc/zshenv</td>
+      <td>A</td>
+      <td>A</td>
+      <td>A</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>~/.zshenv</td>
+      <td>B</td>
+      <td>B</td>
+      <td>B</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>/etc/zprofile</td>
+      <td>C</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>~/.zprofile</td>
+      <td>D</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>/etc/zshrc</td>
+      <td>E</td>
+      <td>C</td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>~/.zshrc</td>
+      <td>F</td>
+      <td>D</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>/etc/zlogin</td>
+      <td>G</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>~/.zlogin</td>
+      <td>H</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>~/.zlogout</td>
+      <td>I</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>/etc/zlogout</td>
+      <td>J</td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>对于 Zsh，把自己的配置写在<code class="highlighter-rouge">~/.zshrc</code>中最保险</p>
+
+<h3 id="unix中的环境变量">UNIX中的环境变量</h3>
+
+<ul>
+  <li>环境变量是用来存储有关shell回话的工作环境信息的变量
+    <ul>
+      <li><code class="highlighter-rouge">env</code> 查看全部环境变量</li>
+      <li><code class="highlighter-rouge">set</code> 查看当前进程中全部的环境变量</li>
+      <li><code class="highlighter-rouge">unset XXX</code> 删除注册的环境变量XXX</li>
+    </ul>
+  </li>
+  <li>创建环境变量
+    <ul>
+      <li><code class="highlighter-rouge">export</code>将局部变量导出为当前进程的全局变量</li>
+    </ul>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  &gt;PATH_SELF=`pwd`
+  &gt;echo $PATH_SELF //局部变量
+  &gt;export PATH_SELF  //当前进程的全局变量
+</code></pre></div>    </div>
+  </li>
+  <li>修改环境变量
+    <ul>
+      <li><code class="highlighter-rouge">$PATH</code>保存了所有shell命令的路径，以<code class="highlighter-rouge">:</code>分割</li>
+      <li>向<code class="highlighter-rouge">PATH</code>中增加路径:<code class="highlighter-rouge">PATH=$PATH:待添加的路径</code>,例如:</li>
+      <li>使用<code class="highlighter-rouge">source</code>重新加载配置文件，使配置生效</li>
+    </ul>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  export PATH="$PATH:$HOME/.z/z.sh"
+  //上面一句包含了三个操作：
+  (1) "$PATH:$HOME/.z/z.sh" 在$PATH的追加上":$HOME/.z/z.sh"字符串
+  (2) PATH = $PATH 更新PATH的值 
+  (3) export PATH 将局部变量导出为当前进程的全局变量
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="ps1ps2ps3ps4">PS1,PS2,PS3,PS4</h3>
+
+<ul>
+  <li>PS4</li>
+</ul>
+
+<p>PS4用来控制在<code class="highlighter-rouge">-x</code>的模式下，每行前面显示的内容，默认是<code class="highlighter-rouge">+</code>号，格式为</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>PS4='+ $BASH_SOURCE : $LINENO ' 
+</code></pre></div></div>
+
+<p>其中<code class="highlighter-rouge">$BASH_SOURCE</code>和<code class="highlighter-rouge">LINENO</code>为注册的环境的变量</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash -x</span>
+	
+<span class="nv">PS4</span><span class="o">=</span><span class="s1">'+ $BASH_SOURCE : $LINENO : '</span>
+	
+<span class="nv">TEST_VAR</span><span class="o">=</span><span class="s2">"test"</span>
+<span class="nb">echo</span> <span class="s2">"</span><span class="nv">$TEST_VAR</span><span class="s2">"</span>
+	
+<span class="o">&gt;</span> ./debugging-14.sh
++ <span class="nv">PS4</span><span class="o">=</span><span class="s1">'+ $BASH_SOURCE : $LINENO : '</span>
++ ./debugging-14.sh : 5 : <span class="nv">TEST_VAR</span><span class="o">=</span><span class="nb">test</span>
++ ./debugging-14.sh : 6 : <span class="nb">echo test
+test</span>	
+</code></pre></div></div>
+
+<h3 id="dos-vs-linux-file-types">DOS vs Linux File Types</h3>
+
+<ul>
+  <li>Windows的DOS和linux的shell之间可能有字符集不兼容的情况，可使用<code class="highlighter-rouge">file script.sh</code>命令查看字符编码:</li>
+</ul>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt; file debugging-15.sh
+debugging-15.sh: Bourne-Again shell script text executable, ASCII text
+
+</code></pre></div></div>
+
+<ul>
+  <li>或者使用插件:<code class="highlighter-rouge">dos2unix script.sh</code>，会自动将windows下一些CRLF去除</li>
+</ul>
+
+<h2 id="reference">Reference</h2>
+
+<ul>
+  <li><a href="http://coolshell.cn/articles/8619.html">你可能不知道的Shell</a></li>
+</ul>
+:ET

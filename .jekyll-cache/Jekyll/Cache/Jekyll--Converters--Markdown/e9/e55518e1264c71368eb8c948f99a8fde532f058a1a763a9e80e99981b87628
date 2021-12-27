@@ -1,0 +1,872 @@
+I">�<p>Software performance engineering was common, because machine resources were limited</p>
+
+<ul>
+  <li>IBM System/360
+    <ul>
+      <li>Launched: 1964</li>
+      <li>Clock rate: 33 KHz</li>
+      <li>Data path: 32 bits</li>
+      <li>Memory: 534 kbytes</li>
+      <li>Cost: $5,000/month</li>
+    </ul>
+  </li>
+  <li>DEC PDP-11
+    <ul>
+      <li>Launched: 1970</li>
+      <li>Clock rate: 1.25 MHz</li>
+      <li>Data path: 16 bits</li>
+      <li>Memory: 56 kbytes</li>
+      <li>Cost: $2,000/month</li>
+    </ul>
+  </li>
+  <li>Apple II
+    <ul>
+      <li>Launched: 1977</li>
+      <li>Clock rate: 1 MHz</li>
+      <li>Data path: 8 bits</li>
+      <li>Memory: 48 kbytes</li>
+      <li>Cost: $1,395/month</li>
+    </ul>
+  </li>
+</ul>
+
+<p>Programs had to be planned around the machine. Many programs wouldn’t fit without intense performance engineering.</p>
+
+<p>The Moore’s law hit a bottle neck in 2004 where the clock speed can no longer scale. To scale the performace, the vendors started investing on parellel processor aka Multicore. Processor manufactures put many processing cores on the microprocessor chip. Each generation of Moore’s Law potentially doubles number of cores.</p>
+
+<p>A modern multicore desktop processor contains parallel-processing cores, vector units, caches, perfetchters, GPU’s, hyperthreading, dynamic requency scaling, etc. How can we write software to utilize modern hardware efficiently？</p>
+
+<h2 id="matrix-multiplication">Matrix Multiplication</h2>
+
+<p>A naive way to do matrix multiplication in python</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">sys</span><span class="p">,</span> <span class="n">random</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">4096</span>
+<span class="c1"># gernerate float matrices
+</span><span class="n">A</span> <span class="o">=</span> <span class="p">[[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+<span class="n">B</span> <span class="o">=</span> <span class="p">[[</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+<span class="n">C</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
+
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">B</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+<span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"</span><span class="si">%.6</span><span class="s">f"</span> <span class="o">%</span><span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">))</span>
+</code></pre></div></div>
+<p>Let’s say we have super powerful machine like this.</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-1-0.png" /></p>
+
+<p>The Python code takes ~6 hours to run on that powerful machine. Let’s break this down.</p>
+
+<p>The algorithm complicity is $2n^3 = 2(2^{12})^3 = 2^{37}$ floating-point-operators. The running time is <code class="highlighter-rouge">21042</code> seconds. If we divide this two number, we get $2^{37} / 21042 \approx 6.25 (MFLOPS)$  per second. The peak of this machine is around <code class="highlighter-rouge">836</code> GFLOPS, so Python gets <code class="highlighter-rouge">0.00075%</code> of peak, which is slow.</p>
+
+<p>If we run the same code in Java, it takes <code class="highlighter-rouge">2738</code> seconds that is about <code class="highlighter-rouge">46</code> minutes. 8.8x faster than Python. In C, it takes <code class="highlighter-rouge">1156</code> seconds, 2x faster than Java and about 18x faster than Python.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>version</th>
+      <th>Implementation</th>
+      <th>Running time (s)</th>
+      <th>Relative Speedup</th>
+      <th>Absolute Speedup</th>
+      <th>GFLOPS</th>
+      <th>Percent of peak</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Python</td>
+      <td>21042</td>
+      <td>1.00</td>
+      <td>1</td>
+      <td>0.007</td>
+      <td>0.001</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Java</td>
+      <td>2738</td>
+      <td>8.81</td>
+      <td>9</td>
+      <td>0.058</td>
+      <td>0.007</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>C</td>
+      <td>1156</td>
+      <td>2.07</td>
+      <td>18</td>
+      <td>0.119</td>
+      <td>0.014</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Why is Python so slow and C so fast</p>
+
+<ul>
+  <li>Python is interpreted.</li>
+  <li>C is compiled directly to machine code.</li>
+  <li>Java is compiled to byte-code, which is then interpreted and JIT compiled to machine code.
+    <ul>
+      <li>JIT compilers can recover some of the perfomance lost by interpretation</li>
+      <li>When code is first executed, it is interpreted</li>
+      <li>The runtiem system keeps track of how often the varous pieces of code are exectued</li>
+      <li>WHenever some piece of code executes sufficicently frequently, it gets compiled to machine code in real time.</li>
+      <li>Future executions of that code use the more-efficent compiled version</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="loop-order">Loop Order</h3>
+
+<p>Another optimization approach is to change the order of the loop. Changing the order of <code class="highlighter-rouge">i,j,k</code> doesn’t affect the correctness of the algorithm, but can give a huge perf boost</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>version</th>
+      <th>Implementation</th>
+      <th>Running time (s)</th>
+      <th>Relative Speedup</th>
+      <th>Absolute Speedup</th>
+      <th>GFLOPS</th>
+      <th>Percent of peak</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Python</td>
+      <td>21042</td>
+      <td>1.00</td>
+      <td>1</td>
+      <td>0.007</td>
+      <td>0.001</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Java</td>
+      <td>2738</td>
+      <td>8.81</td>
+      <td>9</td>
+      <td>0.058</td>
+      <td>0.007</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>C</td>
+      <td>1156</td>
+      <td>2.07</td>
+      <td>18</td>
+      <td>0.119</td>
+      <td>0.014</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Interchange loops</td>
+      <td>177.68</td>
+      <td>6.5</td>
+      <td>118</td>
+      <td>0.774</td>
+      <td>0.093</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>It turns out by just simply changing the order of the loop, the running time is affected by a factor of <code class="highlighter-rouge">18</code>. So what’s going on? 
+Each processor reads and writes main memory in contiguous block, caclled <strong>cache lines</strong>.</p>
+
+<ul>
+  <li>Previously accessed cache lines are stored in a smaller memory, called <strong>cache</strong>, that sits near the processor</li>
+  <li>Cache hits - access to data in cache</li>
+  <li>Cache misses - access to data not in cache</li>
+</ul>
+
+<p>So the general rule is to avoid the cache misses. Once we load a piece of memory into cache, we want to reuse it as much as possible. Now let’s see how we load matrices into memroy.</p>
+
+<p>The matrices are laid out in memory in <strong>row-major order</strong>. What does this layout imply about the performance of different loop orders? Let’s take a look at the original loop order</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-1-1.png" /></p>
+
+<p>As we can see in pic, for C, since we keep updating it, it gets really nice spatial locality (stays in the cache). For A, we go through a linear order, we get a good spatial locality due to the contiguous access. But for B, the access of a each element is distributed far away in memory, not in contiguous postions. So it’s not good for caching.</p>
+
+<p>Let’s take a look at different other ones as shown below</p>
+
+<div class="md-flex-h md-flex-no-wrap">
+<div><img src="/assets/images/2021/07/perf-1-2.png" /></div>
+<div class="md-margin-left-12"><img src="/assets/images/2021/07/perf-1-3.png" /></div>
+</div>
+
+<p>We can just measure the effect of different accesss patterns using the Cachegrind cache simulator</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>valgrind <span class="nt">--tool</span><span class="o">=</span>cachegrind ./mm
+</code></pre></div></div>
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-1-4.png" /></p>
+
+<h3 id="compiler-optimizations">Compiler Optimizations</h3>
+
+<p>Clang provides a collection of optimization switches. You can specify a switch to the compiler to ask it to optimize.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Opt. level</th>
+      <th>Meaning</th>
+      <th>Time (s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>-O0</td>
+      <td>Do not optimize</td>
+      <td>177.54</td>
+    </tr>
+    <tr>
+      <td>-O1</td>
+      <td>Optimize</td>
+      <td>66.24</td>
+    </tr>
+    <tr>
+      <td>-O2</td>
+      <td>Optimize even more</td>
+      <td>54.63</td>
+    </tr>
+    <tr>
+      <td>-O3</td>
+      <td>Optimize yet more</td>
+      <td>55.58</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Clang also supports opitmization levels for special purpose, such as <code class="highlighter-rouge">-Os</code>, which aims to limit code size, and <code class="highlighter-rouge">-Og</code>, for debugging purposes.</p>
+
+<p>With this simple code and compiler technology, we can achieve <code class="highlighter-rouge">0.3%</code> of the peak performance of the machine.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>version</th>
+      <th>Implementation</th>
+      <th>Running time (s)</th>
+      <th>Relative Speedup</th>
+      <th>Absolute Speedup</th>
+      <th>GFLOPS</th>
+      <th>Percent of peak</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Python</td>
+      <td>21042</td>
+      <td>1.00</td>
+      <td>1</td>
+      <td>0.007</td>
+      <td>0.001</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Java</td>
+      <td>2738</td>
+      <td>8.81</td>
+      <td>9</td>
+      <td>0.058</td>
+      <td>0.007</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>C</td>
+      <td>1156</td>
+      <td>2.07</td>
+      <td>18</td>
+      <td>0.119</td>
+      <td>0.014</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>+ Interchange loops</td>
+      <td>177.68</td>
+      <td>6.5</td>
+      <td>118</td>
+      <td>0.774</td>
+      <td>0.093</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>+ compiler falgs</td>
+      <td>54.64</td>
+      <td>3.25</td>
+      <td>385</td>
+      <td>2.526</td>
+      <td>0.301</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="multicore-parallelism">Multicore parallelism</h3>
+
+<p>The <code class="highlighter-rouge">cilk_for</code> loop allows all iterations of the loop to execute in parallel.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cilk_for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">){</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">k</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">k</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">k</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">j</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">j</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span> <span class="o">++</span><span class="n">j</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">+=</span> <span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">B</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Here we paralle the <code class="highlighter-rouge">i</code> loop, which leads to <code class="highlighter-rouge">3.18s</code>. But we can also parallelize the inner loops, such as <code class="highlighter-rouge">j</code> loop and <code class="highlighter-rouge">k</code> loop.</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-1-6.png" /></p>
+
+<p>It turns out the scheduling overhead for parallelizing inner loops will out-weighted the benifit, so it becomes slower than just parallelizing the outer loop. So the “Rule of Thumb” here is always parallelize outer loop rather than inner loops.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>version</th>
+      <th>Implementation</th>
+      <th>Running time (s)</th>
+      <th>Relative Speedup</th>
+      <th>Absolute Speedup</th>
+      <th>GFLOPS</th>
+      <th>Percent of peak</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Python</td>
+      <td>21042</td>
+      <td>1.00</td>
+      <td>1</td>
+      <td>0.007</td>
+      <td>0.001</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Java</td>
+      <td>2738</td>
+      <td>8.81</td>
+      <td>9</td>
+      <td>0.058</td>
+      <td>0.007</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>C</td>
+      <td>1156</td>
+      <td>2.07</td>
+      <td>18</td>
+      <td>0.119</td>
+      <td>0.014</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>+ Interchange loops</td>
+      <td>177.68</td>
+      <td>6.5</td>
+      <td>118</td>
+      <td>0.774</td>
+      <td>0.093</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>+ compiler falgs</td>
+      <td>54.64</td>
+      <td>3.25</td>
+      <td>385</td>
+      <td>2.526</td>
+      <td>0.301</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Parallel loops</td>
+      <td>3.04</td>
+      <td>17.97</td>
+      <td>6921</td>
+      <td>45.211</td>
+      <td>5.408</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Using parallel loops gets us almost 18x speedup on 18 cores (Disclaimer: Not all code is so easy to parallelize effectively).</p>
+
+<h3 id="hardware-caches-revisited">Hardware Caches, Revisited</h3>
+
+<p>IDEA: Restructure the computation to reuse data in the cache as much as possible.</p>
+<ul>
+  <li>Cache misses are slow, and cache hits are fast.</li>
+  <li>Try to make the most of the cache by reusing the data that’s already there.</li>
+</ul>
+
+<p>How many memory accesses must the looping code perform to fully compute 1 row of <code class="highlighter-rouge">C</code>?</p>
+<ul>
+  <li><code class="highlighter-rouge">4096 * 1 = 4096</code> writes to <code class="highlighter-rouge">C</code></li>
+  <li><code class="highlighter-rouge">4096 * 1 = 4096</code> reads to <code class="highlighter-rouge">A</code></li>
+  <li><code class="highlighter-rouge">4096 * 4096 = 16,777,216</code> reads from <code class="highlighter-rouge">B</code></li>
+</ul>
+
+<p>That is <code class="highlighter-rouge">16,785,408</code> memory access in total for just computing a row of <code class="highlighter-rouge">C</code> as shown below</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-1-7.png" /></p>
+
+<p>What if we compute blocks rather than rows in matrics? Would that be faster?</p>
+
+<p>Say we divide C into multiple blocks. For each block, it is 64x64. To compute each block we need</p>
+
+<ul>
+  <li><code class="highlighter-rouge">64 * 64 = 4096</code> writes to <code class="highlighter-rouge">C</code></li>
+  <li><code class="highlighter-rouge">64 * 4096 = 262,144</code> reads from A</li>
+  <li><code class="highlighter-rouge">4096 * 64 = 262,144</code> reads from <code class="highlighter-rouge">B</code></li>
+</ul>
+
+<p>That is <code class="highlighter-rouge">528,384</code> memory accesses in total.</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-1-5.png" /></p>
+
+<p>To implement that, we turn the code above to a <strong>tiled</strong> Matrix Multiplication</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cilk_for</span><span class="p">(</span><span class="kt">int</span> <span class="n">ih</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">ih</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span> <span class="n">ih</span> <span class="o">+=</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">cilk_for</span><span class="p">(</span><span class="kt">int</span> <span class="n">jh</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">jh</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span> <span class="n">jh</span> <span class="o">+=</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">kh</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">kh</span><span class="o">&lt;</span><span class="n">n</span><span class="p">;</span> <span class="n">kh</span> <span class="o">+=</span> <span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">il</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">il</span><span class="o">&lt;</span><span class="n">s</span><span class="p">;</span> <span class="o">++</span><span class="n">il</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">kl</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">kl</span><span class="o">&lt;</span><span class="n">s</span><span class="p">;</span> <span class="o">++</span><span class="n">kl</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">jl</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="n">jl</span><span class="o">&lt;</span><span class="n">s</span><span class="p">;</span> <span class="o">++</span><span class="n">jl</span><span class="p">)</span> <span class="p">{</span>
+                        <span class="n">C</span><span class="p">[</span><span class="n">ih</span><span class="o">+</span><span class="n">il</span><span class="p">][</span><span class="n">jh</span><span class="o">+</span><span class="n">jl</span><span class="p">]</span> <span class="o">+=</span> <span class="n">A</span><span class="p">[</span><span class="n">ih</span><span class="o">+</span><span class="n">il</span><span class="p">][</span><span class="n">kh</span><span class="o">+</span><span class="n">kl</span><span class="p">]</span> <span class="o">*</span> <span class="n">B</span><span class="p">[</span><span class="n">kh</span><span class="o">+</span><span class="n">kl</span><span class="p">][</span><span class="n">jh</span><span class="o">+</span><span class="n">jl</span><span class="p">];</span>
+                    <span class="p">}</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">s</code> is a tuning parameter to control how big is the tile. In this case, <code class="highlighter-rouge">32</code> is the best number.</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-1-8.png" /></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>version</th>
+      <th>Implementation</th>
+      <th>Running time (s)</th>
+      <th>Relative Speedup</th>
+      <th>Absolute Speedup</th>
+      <th>GFLOPS</th>
+      <th>Percent of peak</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Python</td>
+      <td>21042</td>
+      <td>1.00</td>
+      <td>1</td>
+      <td>0.007</td>
+      <td>0.001</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Java</td>
+      <td>2738</td>
+      <td>8.81</td>
+      <td>9</td>
+      <td>0.058</td>
+      <td>0.007</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>C</td>
+      <td>1156</td>
+      <td>2.07</td>
+      <td>18</td>
+      <td>0.119</td>
+      <td>0.014</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>+ Interchange loops</td>
+      <td>177.68</td>
+      <td>6.5</td>
+      <td>118</td>
+      <td>0.774</td>
+      <td>0.093</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>+ compiler falgs</td>
+      <td>54.64</td>
+      <td>3.25</td>
+      <td>385</td>
+      <td>2.526</td>
+      <td>0.301</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Parallel loops</td>
+      <td>3.04</td>
+      <td>17.97</td>
+      <td>6921</td>
+      <td>45.211</td>
+      <td>5.408</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>+tiling</td>
+      <td>1.79</td>
+      <td>1.70</td>
+      <td>11,772</td>
+      <td>76.782</td>
+      <td>9.184</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The tiled implementation performs about <code class="highlighter-rouge">62%</code> fewer cache references and incurs <code class="highlighter-rouge">68%</code> fewer cache misses.</p>
+
+<p>It turns out with the L3 caches, we can do nested tiled loops (a bit compilicated, not going to explain in detail.)</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>version</th>
+      <th>Implementation</th>
+      <th>Running time (s)</th>
+      <th>Relative Speedup</th>
+      <th>Absolute Speedup</th>
+      <th>GFLOPS</th>
+      <th>Percent of peak</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Python</td>
+      <td>21042</td>
+      <td>1.00</td>
+      <td>1</td>
+      <td>0.007</td>
+      <td>0.001</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Java</td>
+      <td>2738</td>
+      <td>8.81</td>
+      <td>9</td>
+      <td>0.058</td>
+      <td>0.007</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>C</td>
+      <td>1156</td>
+      <td>2.07</td>
+      <td>18</td>
+      <td>0.119</td>
+      <td>0.014</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>+ Interchange loops</td>
+      <td>177.68</td>
+      <td>6.5</td>
+      <td>118</td>
+      <td>0.774</td>
+      <td>0.093</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>+ compiler falgs</td>
+      <td>54.64</td>
+      <td>3.25</td>
+      <td>385</td>
+      <td>2.526</td>
+      <td>0.301</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Parallel loops</td>
+      <td>3.04</td>
+      <td>17.97</td>
+      <td>6921</td>
+      <td>45.211</td>
+      <td>5.408</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>+tiling</td>
+      <td>1.79</td>
+      <td>1.70</td>
+      <td>11,772</td>
+      <td>76.782</td>
+      <td>9.184</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Parallel divide-and-conquer</td>
+      <td>1.30</td>
+      <td>1.38</td>
+      <td>16,197</td>
+      <td>105.722</td>
+      <td>12.646</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="vectorization">Vectorization</h3>
+
+<p>Modern microprocessors incorporate vector hardware to process data in a Single-Instruction stream, Multiple-Data stream (SIMD) fashion.</p>
+
+<p><img class="md-img-center" src="/assets/images/2021/07/perf-1-9.png" /></p>
+
+<p>Each vector register holds multiple words of data so CPU can load multiple bytes in one instruction. In the pic above, let’s say 1 word = 32 bits and vector register can hold 4 words which are 128 bits (16 bytes). We know a float number is 4 bytes, then one SIMD instruction can load 4 float numbers.</p>
+
+<p>Clang/LLVM uses vector instructions automatically when compiling at optimization level <code class="highlighter-rouge">-O2</code> or higher. Clang/LLVM can be induced to produce a vectorization report as follows:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>clang <span class="nt">-03</span> <span class="nt">-std</span><span class="o">=</span>c99 mm.c <span class="nt">-o</span> mm <span class="nt">-Rpass</span><span class="o">=</span>vector
+</code></pre></div></div>
+<p>The command tells you which part of your code will be vectorized. Many machines don’t support the newest set of vector instructions, however, so the compiler uses vector instructions conservatively by default. Programmers can direct the compiler to use modern vector instructions using compiler flags such as the following:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">-mavx</code>: Use Intel AVX vector instructions.</li>
+  <li><code class="highlighter-rouge">-mavx2</code>: Use Intel AVX2 vector instructions.</li>
+  <li><code class="highlighter-rouge">-mfma</code>: Use fused multiply-add vector instructions.</li>
+  <li><code class="highlighter-rouge">-march=&lt;string&gt;</code>: Use whatever instructions are available on the specific arch.</li>
+</ul>
+
+<p>Due to restrictions on floating-point arithmetic, additional flags, such as <code class="highlighter-rouge">-ffast-math</code> migth be needed for these vectorization flags to have an effect.</p>
+
+<p>Using the flag <code class="highlighter-rouge">-march=native</code> and <code class="highlighter-rouge">-ffast-math</code> nearly doubles the performance.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>version</th>
+      <th>Implementation</th>
+      <th>Running time (s)</th>
+      <th>Relative Speedup</th>
+      <th>Absolute Speedup</th>
+      <th>GFLOPS</th>
+      <th>Percent of peak</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Python</td>
+      <td>21042</td>
+      <td>1.00</td>
+      <td>1</td>
+      <td>0.007</td>
+      <td>0.001</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Java</td>
+      <td>2738</td>
+      <td>8.81</td>
+      <td>9</td>
+      <td>0.058</td>
+      <td>0.007</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>C</td>
+      <td>1156</td>
+      <td>2.07</td>
+      <td>18</td>
+      <td>0.119</td>
+      <td>0.014</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>+ Interchange loops</td>
+      <td>177.68</td>
+      <td>6.5</td>
+      <td>118</td>
+      <td>0.774</td>
+      <td>0.093</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>+ compiler falgs</td>
+      <td>54.64</td>
+      <td>3.25</td>
+      <td>385</td>
+      <td>2.526</td>
+      <td>0.301</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Parallel loops</td>
+      <td>3.04</td>
+      <td>17.97</td>
+      <td>6921</td>
+      <td>45.211</td>
+      <td>5.408</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>+tiling</td>
+      <td>1.79</td>
+      <td>1.70</td>
+      <td>11,772</td>
+      <td>76.782</td>
+      <td>9.184</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Parallel divide-and-conquer</td>
+      <td>1.30</td>
+      <td>1.38</td>
+      <td>16,197</td>
+      <td>105.722</td>
+      <td>12.646</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>+ compiler vectorization</td>
+      <td>0.7</td>
+      <td>1.87</td>
+      <td>30.272</td>
+      <td>196.341</td>
+      <td>23.468</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="avx-intrinsic-instructions">AVX Intrinsic Instructions</h3>
+
+<p>Instead of letting compiler vectorize your code, you can also use the AVX instructions directly. Intel provies C-style functions, called <strong>instrinic instructions</strong>, that provide direct access to hardware vector operations.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>version</th>
+      <th>Implementation</th>
+      <th>Running time (s)</th>
+      <th>Relative Speedup</th>
+      <th>Absolute Speedup</th>
+      <th>GFLOPS</th>
+      <th>Percent of peak</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>Python</td>
+      <td>21042</td>
+      <td>1.00</td>
+      <td>1</td>
+      <td>0.007</td>
+      <td>0.001</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>Java</td>
+      <td>2738</td>
+      <td>8.81</td>
+      <td>9</td>
+      <td>0.058</td>
+      <td>0.007</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>C</td>
+      <td>1156</td>
+      <td>2.07</td>
+      <td>18</td>
+      <td>0.119</td>
+      <td>0.014</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>+ Interchange loops</td>
+      <td>177.68</td>
+      <td>6.5</td>
+      <td>118</td>
+      <td>0.774</td>
+      <td>0.093</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>+ compiler falgs</td>
+      <td>54.64</td>
+      <td>3.25</td>
+      <td>385</td>
+      <td>2.526</td>
+      <td>0.301</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>Parallel loops</td>
+      <td>3.04</td>
+      <td>17.97</td>
+      <td>6921</td>
+      <td>45.211</td>
+      <td>5.408</td>
+    </tr>
+    <tr>
+      <td>7</td>
+      <td>+tiling</td>
+      <td>1.79</td>
+      <td>1.70</td>
+      <td>11,772</td>
+      <td>76.782</td>
+      <td>9.184</td>
+    </tr>
+    <tr>
+      <td>8</td>
+      <td>Parallel divide-and-conquer</td>
+      <td>1.30</td>
+      <td>1.38</td>
+      <td>16,197</td>
+      <td>105.722</td>
+      <td>12.646</td>
+    </tr>
+    <tr>
+      <td>9</td>
+      <td>+ compiler vectorization</td>
+      <td>0.7</td>
+      <td>1.87</td>
+      <td>30,272</td>
+      <td>196.341</td>
+      <td>23.468</td>
+    </tr>
+    <tr>
+      <td>10</td>
+      <td>+ AVX instrinsics</td>
+      <td>0.39</td>
+      <td>1.76</td>
+      <td>53,292</td>
+      <td>352.408</td>
+      <td>41.677</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>We stop here as it beats the Intel MKL library which contains engineered math kernels for doing matmul (only for the 4096 x 4096 case).</p>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=o7h_sYMk_oc&amp;list=PLUl4u3cNGP63VIBQVWguXxZZi0566y7Wf">MIT 6.172</a></li>
+  <li><a href="https://software.intel.com/sites/landingpage/IntrinsicsGuide/#techs=AVX,AVX2,FMA">Intel Intrinsics Guide</a></li>
+</ul>
+:ET

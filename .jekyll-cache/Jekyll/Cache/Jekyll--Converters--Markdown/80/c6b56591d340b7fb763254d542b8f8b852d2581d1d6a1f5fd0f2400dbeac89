@@ -1,0 +1,342 @@
+I"�n<h2 id="栈">栈</h2>
+
+<h3 id="栈的实现方式">栈的实现方式</h3>
+
+<ul>
+  <li>顺序栈（Array-based Stack）
+    <ul>
+      <li>使用向量实现，本质上是顺序表的简化版</li>
+      <li>向量尾部可作为栈顶</li>
+    </ul>
+  </li>
+  <li>链式栈（Linked Stack）
+    <ul>
+      <li>使用单链表方式存储</li>
+      <li>其中指针的方向是从栈顶向下链接</li>
+    </ul>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="c1">// 入栈操作的链式实现</span>
+  <span class="kt">bool</span> <span class="n">lnksStack</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;::</span> <span class="n">push</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span> <span class="n">item</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">Link</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;*</span> <span class="n">tmp</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Link</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">top</span><span class="p">);</span>
+      <span class="n">top</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">;</span>
+      <span class="n">size</span><span class="o">++</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+  <span class="p">}</span> 
+  <span class="n">Link</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span> <span class="n">info</span><span class="p">,</span> <span class="n">Link</span><span class="o">*</span> <span class="n">nextValue</span><span class="p">)</span> <span class="p">{</span><span class="c1">// 具有两个参数的Link构造函数</span>
+      <span class="n">data</span> <span class="o">=</span> <span class="n">info</span><span class="p">;</span>
+      <span class="n">next</span> <span class="o">=</span> <span class="n">nextValue</span><span class="p">;</span>
+  <span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>顺序栈和链式栈的比较
+    <ul>
+      <li>时间效率
+        <ul>
+          <li>所有操作都只需要常数时间</li>
+          <li>顺序栈和链式栈在时间效率上难分伯仲</li>
+        </ul>
+      </li>
+      <li>空间效率
+        <ul>
+          <li>顺序栈需要一个固定长度</li>
+          <li>链式栈长度可变，但增加结构开销</li>
+        </ul>
+      </li>
+      <li><mark>实际应用中，顺序栈比链式栈用的更广泛</mark>
+        <ul>
+          <li>顺序栈容易根据栈顶位置，进行相对位移，快速定位并读取栈内部的元素</li>
+          <li>顺序栈读取内部元素时间为<code class="highlighter-rouge">O(1)</code>,链式栈需要沿着栈顶指针游走，显然慢些，读取第k个元素需要的时间为<code class="highlighter-rouge">O(k)</code>。</li>
+          <li><mark>一般来说，栈不允许“读取内部元素”，只能在栈顶操作 </mark></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="计算表达式的值">计算表达式的值</h3>
+
+<ul>
+  <li>表达式的递归定义
+    <ul>
+      <li>基本符号集合：<code class="highlighter-rouge">{0，1，2，3，... ，9，+，-，*，/,(,)}</code></li>
+      <li>语法成分集合: <code class="highlighter-rouge">{&lt;表达式&gt;,&lt;项&gt;,&lt;因子&gt;,&lt;常数&gt;,&lt;数字&gt;}</code></li>
+    </ul>
+  </li>
+  <li>中缀表达式 <code class="highlighter-rouge">23+(34*45)/(5+6+7)</code>
+    <ul>
+      <li>运算符在中间，需要括号改变优先级</li>
+      <li>中缀表达式求值： <mark>二叉树的中序遍历</mark></li>
+      <li>语法公式（巴克斯范式）：</li>
+    </ul>
+  </li>
+  <li>后缀表达式 <code class="highlighter-rouge">23 34 45 * 56 + 7 + / +</code>
+    <ul>
+      <li>又称逆波兰表达式</li>
+      <li>运算符在后面，不需要括号</li>
+      <li>后缀表达式求值
+        <ul>
+          <li><mark>二叉树的后序遍历</mark></li>
+          <li>使用栈
+            <ul>
+              <li>当遇到一个操作数，入栈</li>
+              <li>当遇到一个运算符，从栈中两次取出栈顶，按照运算符对这两个操作数进行计算，然后将结果入栈</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="队列">队列</h2>
+
+<ul>
+  <li>先进先出
+    <ul>
+      <li>限制访问点的线性表
+        <ul>
+          <li>按照到达的顺序来释放元素</li>
+          <li>所有的插入在表的一端进行，所有的删除在表的另一端进行</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>主要元素
+    <ul>
+      <li>队头-front</li>
+      <li>队尾-rear</li>
+    </ul>
+  </li>
+  <li>抽象数据类型</li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span> 
+<span class="k">class</span> <span class="nc">Queue</span> <span class="p">{</span>
+<span class="nl">public:</span> <span class="c1">// 队列的运算集</span>
+ 	<span class="kt">void</span> <span class="n">clear</span><span class="p">();</span> <span class="c1">// 变为空队列</span>
+ 	<span class="kt">bool</span> <span class="n">enQueue</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span> <span class="n">item</span><span class="p">);</span><span class="c1">// 将item插入队尾，成功则返回真，否则返回假</span>
+ 	<span class="kt">bool</span> <span class="n">deQueue</span><span class="p">(</span><span class="n">T</span> <span class="o">&amp;</span> <span class="n">item</span><span class="p">)</span> <span class="p">;</span><span class="c1">// 返回队头元素并将其从队列中删除，成功则返回真</span>
+ 	<span class="kt">bool</span> <span class="n">getFront</span><span class="p">(</span><span class="n">T</span> <span class="o">&amp;</span> <span class="n">item</span><span class="p">);</span> <span class="c1">// 返回队头元素，但不删除，成功则返回真</span>
+ 	<span class="kt">bool</span> <span class="n">isEmpty</span><span class="p">();</span> <span class="c1">// 返回真，若队列已空</span>
+ 	<span class="kt">bool</span> <span class="n">isFull</span><span class="p">();</span> <span class="c1">// 返回真，若队列已满</span>
+<span class="p">};</span> 
+</code></pre></div></div>
+
+<h3 id="实现方式">实现方式</h3>
+
+<ul>
+  <li>顺序队列
+    <ul>
+      <li>使用线性表做环形表示，空间提前分配好</li>
+      <li>维护<code class="highlighter-rouge">front</code>和<code class="highlighter-rouge">rear</code>做队头，队尾的游标
+        <ul>
+          <li>空队列<code class="highlighter-rouge">rear</code>在<code class="highlighter-rouge">front</code>前面</li>
+          <li>插入删除时间复杂度为<code class="highlighter-rouge">O(1)</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/2008/07/queue1.png" style="display:block; margin-left:auto; margin-right:auto; width:50%" /></p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span> <span class="o">&lt;</span><span class="k">class</span> <span class="nc">Elem</span><span class="o">&gt;</span> 
+<span class="k">class</span> <span class="nc">Aqueue</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Queue</span><span class="o">&lt;</span><span class="n">Elem</span><span class="o">&gt;</span> <span class="p">{</span>
+	<span class="nl">private:</span>
+ 		<span class="kt">int</span> <span class="n">size</span><span class="p">;</span> <span class="c1">// 队列的最大容量</span>
+ 		<span class="kt">int</span> <span class="n">front</span><span class="p">;</span> <span class="c1">// 队首元素指针</span>
+ 		<span class="kt">int</span> <span class="n">rear</span><span class="p">;</span> <span class="c1">// 队尾元素指针</span>
+ 		<span class="n">Elem</span> <span class="o">*</span><span class="n">listArray</span><span class="p">;</span> <span class="c1">// 存储元素的数组</span>
+	<span class="nl">public:</span>
+ 		<span class="n">AQueue</span><span class="p">(</span><span class="kt">int</span> <span class="n">sz</span><span class="o">=</span><span class="n">DefaultListSize</span><span class="p">)</span> <span class="p">{</span><span class="c1">// 让存储元素的数组多预留一个空位</span>
+ 			<span class="n">size</span> <span class="o">=</span> <span class="n">sz</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="c1">// size数组长，sz队列最大长度</span>
+ 			<span class="n">rear</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">front</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 也可以rear=-1; front=0</span>
+ 			<span class="n">listArray</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Elem</span><span class="p">[</span><span class="n">size</span><span class="p">];</span>
+ 		<span class="p">}</span>
+ 		<span class="o">~</span><span class="n">AQueue</span><span class="p">()</span> <span class="p">{</span> <span class="k">delete</span> <span class="p">[]</span> <span class="n">listArray</span><span class="p">;</span> <span class="p">}</span>
+ 		<span class="kt">void</span> <span class="n">clear</span><span class="p">()</span> <span class="p">{</span> <span class="n">front</span> <span class="o">=</span> <span class="n">rear</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="p">}</span> 
+		<span class="kt">int</span> <span class="n">length</span><span class="p">()</span> <span class="p">{</span> <span class="n">reutrn</span> <span class="p">(</span><span class="n">rear</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span><span class="n">front</span><span class="p">)</span><span class="o">%</span><span class="n">size</span><span class="p">;</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li>入队
+    <ul>
+      <li>在队尾插入，移动<code class="highlighter-rouge">rear</code>指针</li>
+    </ul>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kt">bool</span> <span class="nf">enqueue</span><span class="p">(</span><span class="k">const</span> <span class="n">Elem</span><span class="o">&amp;</span> <span class="n">it</span><span class="p">){</span>
+      <span class="k">if</span><span class="p">(((</span><span class="n">rear</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">%</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="n">front</span><span class="p">){</span>
+          <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+      <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+          <span class="n">rear</span> <span class="o">=</span> <span class="p">(</span><span class="n">rear</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="n">size</span><span class="p">;</span>
+          <span class="n">listArray</span><span class="p">[</span><span class="n">rear</span><span class="p">]</span> <span class="o">=</span> <span class="n">it</span><span class="p">;</span>
+          <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>出队
+    <ul>
+      <li>依靠移动<code class="highlighter-rouge">front</code>指针，不进行delete元素的操作</li>
+    </ul>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="kt">bool</span> <span class="nf">dequeue</span><span class="p">(</span><span class="n">Elem</span><span class="o">&amp;</span> <span class="n">it</span><span class="p">){</span>
+      <span class="k">if</span><span class="p">(</span><span class="n">length</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">){</span>
+          <span class="k">return</span> <span class="nb">false</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="n">it</span> <span class="o">=</span> <span class="n">listArray</span><span class="p">[</span><span class="n">front</span><span class="p">];</span>
+      <span class="n">front</span> <span class="o">=</span> <span class="p">(</span><span class="n">front</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="n">size</span><span class="p">;</span>
+      <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+  <span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>链式队列
+    <ul>
+      <li>用单链表方式存储，队列每个元素对于链表中的一个节点</li>
+      <li>插入时间复杂度为<code class="highlighter-rouge">O(1)</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="顺序队列和链式队列比较">顺序队列和链式队列比较</h3>
+
+<ul>
+  <li>顺序队列
+    <ul>
+      <li>固定存储空间</li>
+    </ul>
+  </li>
+  <li>链式队列
+    <ul>
+      <li>可以满足大小无法估计的情况</li>
+    </ul>
+  </li>
+  <li>
+    <p>都不允许访问队列内部元素</p>
+  </li>
+  <li>环形队列
+    <ul>
+      <li>线性表在部分元素出队后会造成空间的浪费，解决这个问题，引入环形队列，它是一个首尾相连的FIFO的数据结构，采用数组的线性空间,数据组织简单。能很快知道队列是否满为空。</li>
+      <li>插入时间复杂度为<code class="highlighter-rouge">O(1)</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="队列与栈的经典问题">队列与栈的经典问题</h2>
+
+<h3 id="表达式求值">表达式求值</h3>
+
+<p>如前文所述，栈的一个应用是计算表达式的值，这里说的表达式是简单的加减乘除四则运算，其求值过程可分为两步，第一步为将中缀表达式转为后缀表达式，第二步是对后缀表达式进行求值。中缀转后缀的规则如下：</p>
+
+<ol>
+  <li>如果当前是数字，向后遍历直到遇到符号，输出数字</li>
+  <li>如果当前是<code class="highlighter-rouge">(</code>，直接入栈</li>
+  <li>如果当前是<code class="highlighter-rouge">)</code>，弹出栈中所有符号并输出，直到遇到<code class="highlighter-rouge">(</code>，弹出<code class="highlighter-rouge">(</code></li>
+  <li>如果当前是<code class="highlighter-rouge">+,-,*,/</code>，根据优先级入栈
+    <ul>
+      <li>如果当前符号优先级&gt;栈顶元素，直接入栈</li>
+      <li>如果当前符号优先级&lt;=栈顶个元素，弹出栈顶元素，直到遇到<code class="highlighter-rouge">(</code>或者优先级更高的元素</li>
+    </ul>
+  </li>
+</ol>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">infix2postfix</span><span class="p">(</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">postfix</span><span class="p">){</span>
+	<span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">postfix</span><span class="p">;</span>
+	<span class="n">stack</span><span class="o">&lt;</span><span class="kt">char</span><span class="o">&gt;</span> <span class="n">stk</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="n">string</span> <span class="n">num</span> <span class="o">=</span> <span class="s">""</span><span class="p">;</span>
+	<span class="k">while</span><span class="p">(</span><span class="n">i</span><span class="o">&lt;</span><span class="n">postfix</span><span class="p">.</span><span class="n">size</span><span class="p">()){</span>
+		<span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="n">postfix</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+		<span class="k">if</span><span class="p">(</span> <span class="n">isspace</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">){</span>
+			<span class="n">i</span><span class="o">++</span><span class="p">;</span>
+			<span class="k">continue</span><span class="p">;</span>
+		<span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">isdigit</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">){</span>
+			<span class="k">do</span><span class="p">{</span>
+				<span class="n">num</span><span class="o">+=</span><span class="n">c</span><span class="p">;</span>
+				<span class="n">i</span><span class="o">++</span><span class="p">;</span>
+				<span class="n">c</span> <span class="o">=</span> <span class="kt">char</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+			<span class="p">}</span><span class="k">while</span><span class="p">(</span><span class="n">isdigit</span><span class="p">(</span><span class="n">c</span><span class="p">));</span>
+			<span class="n">postfix</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">num</span><span class="p">);</span>
+			<span class="n">num</span> <span class="o">=</span> <span class="s">""</span><span class="p">;</span>
+			<span class="k">continue</span><span class="p">;</span>
+		<span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">c</span> <span class="o">==</span> <span class="sc">'('</span><span class="p">){</span>
+			<span class="n">stk</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+		<span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">c</span><span class="o">==</span> <span class="sc">')'</span> <span class="p">){</span>
+			<span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">stk</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">stk</span><span class="p">.</span><span class="n">top</span><span class="p">()</span><span class="o">!=</span><span class="sc">'('</span><span class="p">){</span>
+				<span class="n">postfix</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">stk</span><span class="p">.</span><span class="n">top</span><span class="p">()));</span>
+				<span class="n">stk</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+			<span class="p">}</span>
+			<span class="c1">//pop ')'</span>
+			<span class="n">stk</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+		<span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="n">isoperator</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="p">){</span>
+			<span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">stk</span><span class="p">.</span><span class="n">empty</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="n">level</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">level</span><span class="p">(</span><span class="n">stk</span><span class="p">.</span><span class="n">top</span><span class="p">())){</span>
+				<span class="n">postfix</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">stk</span><span class="p">.</span><span class="n">top</span><span class="p">()));</span>
+				<span class="n">stk</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+			<span class="p">}</span>
+			<span class="n">stk</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+		<span class="p">}</span>
+		<span class="n">i</span><span class="o">++</span>
+	<span class="p">}</span>
+	<span class="c1">//输出栈中符号</span>
+	<span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">stk</span><span class="p">.</span><span class="n">emtpy</span><span class="p">()){</span>
+		<span class="n">postfix</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">string</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">stk</span><span class="p">.</span><span class="n">top</span><span class="p">()));</span>
+		<span class="n">stk</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">postfix</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>第二步是对后缀表达式进行求值，求值的算法前文已提到，这里不再赘述，代码如下</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">calculate</span><span class="p">(</span><span class="n">string</span><span class="o">&amp;</span> <span class="n">infix</span><span class="p">){</span>
+	<span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">postfix</span> <span class="o">=</span> <span class="n">infix2postfix</span><span class="p">(</span><span class="n">infix</span><span class="p">);</span>
+	<span class="n">stack</span><span class="o">&lt;</span><span class="kt">long</span><span class="o">&gt;</span> <span class="n">stk</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">sum</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+	<span class="k">for</span><span class="p">(</span><span class="k">auto</span> <span class="o">&amp;</span><span class="n">s</span> <span class="o">:</span> <span class="n">postfix</span><span class="p">){</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">isoperator</span><span class="p">(</span><span class="n">s</span><span class="p">)){</span>
+			<span class="kt">long</span> <span class="n">x</span> <span class="o">=</span> <span class="n">stk</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+			<span class="n">stk</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+			<span class="kt">long</span> <span class="n">y</span> <span class="o">=</span> <span class="n">stk</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+			<span class="n">stk</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+			<span class="k">if</span><span class="p">(</span><span class="n">s</span> <span class="o">==</span> <span class="s">"+"</span><span class="p">){</span>
+				<span class="n">stk</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">y</span><span class="p">);</span>
+			<span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">s</span> <span class="o">==</span><span class="s">"-"</span><span class="p">){</span>
+				<span class="n">stk</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">x</span><span class="p">);</span>
+			<span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">s</span> <span class="o">==</span><span class="s">"*"</span><span class="p">){</span>
+				<span class="n">stk</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">);</span>
+			<span class="p">}</span><span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">s</span> <span class="o">==</span> <span class="s">"/"</span><span class="p">){</span>
+				<span class="n">stk</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">y</span><span class="o">/</span><span class="n">x</span><span class="p">);</span>
+			<span class="p">}</span>
+		<span class="p">}</span><span class="k">else</span><span class="p">{</span>
+			<span class="n">stk</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">stol</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
+		<span class="p">}</span>
+	<span class="p">}</span>
+	<span class="kt">int</span> <span class="n">sum</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">stk</span><span class="p">.</span><span class="n">empty</span><span class="p">()){</span>
+		<span class="n">sum</span> <span class="o">+=</span> <span class="n">stk</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+		<span class="n">stk</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="n">sum</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><a href="https://leetcode.com/problems/basic-calculator/">Basic Calculator</a></li>
+  <li><a href="https://leetcode.com/problems/basic-calculator-ii/">Basic Calculator II</a></li>
+  <li><a href="https://leetcode.com/problems/basic-calculator-iii/">Basic Calculator III</a></li>
+</ul>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=NcZ2cu7gc-A&amp;list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk">CS106B-Stanford-YouTube</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome">Algorithms-Stanford-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome">算法与数据结构-1-北大-Cousera</a></li>
+  <li><a href="https://www.coursera.org/learn/gaoji-shuju-jiegou/home/welcome">算法与数据结构-2-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:TsinghuaX+30240184.1x+3T2017/course/">算法与数据结构-1-清华-EDX</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法与数据结构-2-清华-EDX</a></li>
+  <li><a href="https://www.coursera.org/learn/algorithms/home/welcome">算法设计与分析-1-北大-Cousera</a></li>
+  <li><a href="https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/">算法设计与分析-2-北大-EDX</a></li>
+</ul>
+
+:ET

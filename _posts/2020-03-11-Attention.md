@@ -1,5 +1,5 @@
 ---
-list_title: [Deep Learning] Attention
+list_title: Deep Learning | Attention models
 title: Attention
 layout: categories: ["PyTorch", "Machine Learning","Deep Learning"]
 mathjax: true

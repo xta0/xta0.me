@@ -1,0 +1,418 @@
+I"E�<blockquote>
+  <p>持续更新，补充C++新增feature,目录结构遵循《C++ Primer》</p>
+</blockquote>
+
+<p>C++中可以定义五种函数来控制对象的拷贝，分别是</p>
+
+<ol>
+  <li>拷贝构造函数 (copy constructor)</li>
+  <li>拷贝赋值运算符 (copy-assignment operator)</li>
+  <li>移动构造函数 (moveconstructor)</li>
+  <li>移动赋值运算符 move-assignment operator)</li>
+  <li>析构函数 (destructor)</li>
+</ol>
+
+<h3 id="拷贝构造函数">拷贝构造函数</h3>
+
+<p>拷贝构造函数是C++类的一个标配，即使不显式定义，编译器也会提供一个默认的合成拷贝构造函数，其定义如下</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Foo</span><span class="p">{</span>
+	<span class="p">...</span>
+	<span class="n">Foo</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">f</span><span class="p">);</span> <span class="c1">//拷贝构造</span>
+	<span class="p">...</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>默认拷贝函数的行为是浅拷贝，对象成员通过拷贝构造函数拷贝，如果有数组成员则拷贝数组中的元素。</p>
+
+<p>在C++中，拷贝不仅仅在<code class="highlighter-rouge">=</code>时发生，下面三种情况均会发生拷贝</p>
+
+<ol>
+  <li>对象作为实参传递给非引用类型的形参</li>
+  <li>返回一个非引用类型的对象</li>
+  <li>使用<code class="highlighter-rouge">{}</code>初始化数组中的元素，或者初始化聚合类</li>
+</ol>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="n">Foo</span><span class="p">{</span>
+	<span class="n">string</span> <span class="n">s</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="n">Foo</span> <span class="n">f</span> <span class="o">=</span> <span class="p">{</span><span class="s">"foo"</span><span class="p">,</span><span class="mi">100</span><span class="p">}</span> <span class="c1">//copy</span>
+</code></pre></div></div>
+<p>值得注意的是，拷贝构造函数可能会被编译器优化为普通构造函数</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">string</span> <span class="n">null_boook</span> <span class="o">=</span> <span class="s">"9-999-9999-99"</span><span class="p">;</span> <span class="c1">//拷贝构造</span>
+<span class="c1">//编译器优化为普通构造函数</span>
+<span class="n">string</span> <span class="nf">null_book</span><span class="p">(</span><span class="s">"9-999-9999-99"</span><span class="p">);</span> 
+</code></pre></div></div>
+
+<h3 id="拷贝赋值运算">拷贝赋值运算</h3>
+
+<p>拷贝赋值运算依赖类重载<code class="highlighter-rouge">=</code>运算符，如果一个类重载了<code class="highlighter-rouge">=</code>，相当于为自己添加了一个<code class="highlighter-rouge">operator=</code>的函数</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Foo</span><span class="p">{</span>
+	<span class="p">...</span>
+	<span class="n">Foo</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">f</span><span class="p">){</span>
+		
+		<span class="c1">//...</span>
+		
+		<span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<p>如果没有显式定义拷贝赋值运算符，编译器会自动生成一个，其行为和拷贝构造函数一致，如果不想提供拷贝赋值运算，则需要使用<code class="highlighter-rouge">delete</code>关键字进行显式声明</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Foo</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">=</span> <span class="k">delete</span>
+</code></pre></div></div>
+<blockquote>
+  <p>如果一个类需要定义赋值拷贝运算符，那么它一定也需要定义拷贝构造函数，反之亦然</p>
+</blockquote>
+
+<h3 id="析构函数">析构函数</h3>
+
+<p>无论何时，一个对象被销毁就会自动调用其析构函数</p>
+
+<ol>
+  <li>变量在离开作用域时被销毁</li>
+  <li>当一个对象被销毁时，其成员被销毁</li>
+  <li>容器（标准库或数组）被销毁时，其元素被销毁</li>
+  <li>对于动态内存对象，等被delete时，该对象被销毁</li>
+  <li><mark>对于临时对象，当创建它的完整表达式结束时被销毁</mark></li>
+</ol>
+
+<p>在C++中，析构函数通常用来释放内存，delete指针，因此，<mark>如果一个类定需要析构函数来释放资源，那么它同样需要定义拷贝构造函数和赋值拷贝运算符来实现对指针的深拷贝</mark>。</p>
+
+<h3 id="使用default与delete">使用<code class="highlighter-rouge">=default</code>与<code class="highlighter-rouge">=delete</code></h3>
+
+<p>如果想要使用默认的拷贝行为，又想显式的声明这些函数，那么可以使用<code class="highlighter-rouge">=default</code></p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Foo</span><span class="p">{</span>
+	<span class="n">Foo</span><span class="p">()</span> <span class="o">=</span><span class="k">default</span><span class="p">;</span>
+	<span class="n">Foo</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">=</span><span class="k">default</span><span class="p">;</span>
+	<span class="n">Foo</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">f</span><span class="p">);</span>
+	<span class="o">~</span><span class="n">Foo</span><span class="p">()</span><span class="o">=</span><span class="k">default</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="n">Foo</span><span class="o">&amp;</span> <span class="n">Foo</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">=</span><span class="k">default</span><span class="p">;</span>
+</code></pre></div></div>
+<p>如果在类内部声明了<code class="highlighter-rouge">=default</code>则编译器会将默认实现在类内部展开(内联)，如果不想在类内部展开，则可以在类外部声明<code class="highlighter-rouge">=default</code>。需要注意的是，<code class="highlighter-rouge">=default</code>只能用于编译器默认提供的函数，对于一般的成员函数，不能使用。</p>
+
+<p>与<code class="highlighter-rouge">=default</code>相对的是<code class="highlighter-rouge">=delete</code>，<code class="highlighter-rouge">=delete</code>允许类禁用某个函数</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Foo</span><span class="p">{</span>
+	<span class="n">Foo</span><span class="p">()</span> <span class="o">=</span><span class="k">default</span><span class="p">;</span>
+	<span class="n">Foo</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">f</span><span class="p">)</span> <span class="o">=</span><span class="k">delete</span><span class="p">;</span> <span class="c1">//禁止拷贝</span>
+	<span class="n">Foo</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">f</span><span class="p">);</span> <span class="c1">//禁止赋值</span>
+	<span class="o">~</span><span class="n">Foo</span><span class="p">()</span><span class="o">=</span><span class="k">default</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<p>与<code class="highlighter-rouge">=default</code>不同的是， <code class="highlighter-rouge">=delete</code>允许声明除析构函数外的任何函数，这个特点在某些情况下对实现函数重载很有帮助。</p>
+
+<h3 id="深拷贝">深拷贝</h3>
+
+<p>下面给出一个深拷贝的例子</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">HasPtr</span> <span class="p">{</span>
+<span class="nl">public:</span>
+	<span class="c1">//constructor</span>
+ 	<span class="n">HasPtr</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">s</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">())</span><span class="o">:</span> <span class="n">ps</span><span class="p">(</span><span class="k">new</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="n">s</span><span class="p">)),</span> <span class="n">i</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+ 
+	<span class="c1">//copy constructor, deep copy</span>
+ 	<span class="n">HasPtr</span><span class="p">(</span><span class="k">const</span> <span class="n">HasPtr</span> <span class="o">&amp;</span><span class="n">p</span><span class="p">)</span><span class="o">:</span> <span class="n">ps</span><span class="p">(</span><span class="k">new</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">.</span><span class="n">ps</span><span class="p">)),</span> <span class="n">i</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span> 
+
+	 <span class="c1">//copy-assign operator, deep copy</span>
+	<span class="n">HasPtr</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span> <span class="n">HasPtr</span> <span class="o">&amp;</span><span class="p">){</span>
+		<span class="k">auto</span> <span class="n">newp</span> <span class="o">=</span> <span class="k">new</span> <span class="n">string</span><span class="p">(</span><span class="o">*</span><span class="n">rhs</span><span class="p">.</span><span class="n">ps</span><span class="p">);</span> 
+ 		<span class="k">delete</span> <span class="n">ps</span><span class="p">;</span> <span class="c1">// free the old memory</span>
+ 		<span class="n">ps</span> <span class="o">=</span> <span class="n">newp</span><span class="p">;</span> <span class="c1">// copy data from rhs into this object</span>
+ 		<span class="n">i</span> <span class="o">=</span> <span class="n">rhs</span><span class="p">.</span><span class="n">i</span><span class="p">;</span>
+ 		<span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span> <span class="c1">// return this object</span>
+	<span class="p">}</span> 
+	<span class="c1">//destructor</span>
+	<span class="o">~</span><span class="n">HasPtr</span><span class="p">()</span> <span class="p">{</span> <span class="k">delete</span> <span class="n">ps</span><span class="p">;</span> <span class="p">}</span>
+<span class="nl">private:</span>
+ <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">*</span><span class="n">ps</span><span class="p">;</span> <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>在上面深拷贝的例子中，需要特别注意一点的是<code class="highlighter-rouge">operator=</code>中的逻辑，一定是先从待拷贝对象身上new一个新的对象后再delete自己管理的指针。如果先delete掉自己的指针，那么自己给自己赋值时，<code class="highlighter-rouge">this</code>将会被释放，<code class="highlighter-rouge">*rhs.p</code>会报错。</p>
+
+<blockquote>
+  <p>如果不想自己管理指针的释放，则建议使用<code class="highlighter-rouge">shared_ptr</code>，<code class="highlighter-rouge">shared_ptr</code>在被拷贝时会拷贝其所指向的指针（浅拷贝），<code class="highlighter-rouge">shared_ptr</code>类自己维护指针的引用计数，使我们不需要担心拷贝的问题。</p>
+</blockquote>
+
+<h3 id="移动内存">移动内存</h3>
+
+<p>设想下面这个场景，有一个<code class="highlighter-rouge">vector&lt;string&gt;</code>类型的数组，每次push一个对象进入后，<code class="highlighter-rouge">vector</code>内部要check其容量是否已经达到上限，如果已经达到上限，则要进行内存的再分配:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;::</span><span class="n">push_back</span><span class="p">(</span><span class="k">const</span> <span class="n">string</span><span class="o">&amp;</span> <span class="n">s</span><span class="p">){</span>
+    <span class="n">chk_n_alloc</span><span class="p">();</span>
+    <span class="n">alloc</span><span class="p">.</span><span class="n">construct</span><span class="p">(</span><span class="n">first_free</span><span class="o">++</span><span class="p">,</span><span class="n">s</span><span class="p">);</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<p>其中<code class="highlighter-rouge">chk_n_alloc()</code>用来做内存检查，其实现如下：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="n">size</span><span class="p">()</span> <span class="o">==</span> <span class="n">capacity</span><span class="p">()){</span>
+	<span class="n">reallocate</span><span class="p">();</span> <span class="c1">//重新分配内存</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>这时我们可以思考一下，<code class="highlighter-rouge">reallocate()</code>函数应该做什么，不难想到，它应该完成以下三个任务</p>
+
+<ol>
+  <li>为一个新的，更大的<code class="highlighter-rouge">string</code>数组分配内存</li>
+  <li>在内存空间的前一分部拷贝已有的元素进去</li>
+  <li>销毁原内存空间中的元素，并释放这块内存</li>
+</ol>
+
+<p>观察上述步骤可以看出，其后两步存在一些冗余，即要拷贝原对象到新的内存空间，之后还要释放原对象的内存。这在数组数量大的时候开销是很大的，如果我们可以将原来的对象直接移动到新开辟的内存而不是拷贝，那么后两步则可以省略，效率将可以大大提升。在<mark>C++ 11中引入了两种机制</mark>，分别是移动构造函数和<code class="highlighter-rouge">std::move()</code>函数。</p>
+
+<p>包括string在内的所有标准库类都定义了所谓的”移动构造函数”，由于实现细节尚未公开，但是我们够确定的有两点，一是移动构造函数将“资源”移动给了目标对象而不是拷贝，二是移动后的string对象仍然是一个有效的，可被析构的对象。</p>
+
+<p><code class="highlighter-rouge">std::move</code>定义在<code class="highlighter-rouge">utility</code>的头文件中，目前关于<code class="highlighter-rouge">move</code>我们只需要关注两点，一是在<code class="highlighter-rouge">reallocate</code>函数中我们要用<code class="highlighter-rouge">std::move</code>函数告诉<code class="highlighter-rouge">string</code>使用移动构造函数，第二点是在使用<code class="highlighter-rouge">std::move</code>时，我们通常保留命名空间</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">StrVec</span><span class="o">::</span><span class="n">reallocate</span><span class="p">(){</span>
+    <span class="k">auto</span> <span class="n">newsize</span> <span class="o">=</span> <span class="n">size</span><span class="p">()</span><span class="o">?</span> <span class="n">size</span><span class="p">()</span><span class="o">*</span><span class="mi">2</span> <span class="o">:</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="c1">//alloc new space</span>
+    <span class="k">auto</span> <span class="n">newdata</span> <span class="o">=</span> <span class="n">alloc</span><span class="p">.</span><span class="n">allocate</span><span class="p">(</span><span class="n">newsize</span><span class="p">);</span>
+    <span class="k">auto</span> <span class="n">begin_new</span> <span class="o">=</span> <span class="n">newdata</span><span class="p">;</span>
+    <span class="k">auto</span> <span class="n">begin_old</span> <span class="o">=</span> <span class="n">elements</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">size</span><span class="p">();</span><span class="o">++</span><span class="n">i</span><span class="p">){</span>
+        <span class="n">alloc</span><span class="p">.</span><span class="n">construct</span><span class="p">(</span><span class="n">begin_new</span><span class="p">,</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="o">*</span><span class="n">begin_old</span><span class="p">));</span>
+        <span class="n">begin_new</span><span class="o">++</span><span class="p">;</span>
+        <span class="n">begin_old</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+	<span class="n">free</span><span class="p">()</span>
+    <span class="n">elements</span> <span class="o">=</span> <span class="n">newdata</span><span class="p">;</span>
+    <span class="n">first_free</span> <span class="o">=</span> <span class="n">begin_new</span><span class="p">;</span>
+    <span class="n">cap</span> <span class="o">=</span> <span class="n">elements</span> <span class="o">+</span> <span class="n">newsize</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>上面代码中，我们使用<code class="highlighter-rouge">std::move</code>将<code class="highlighter-rouge">begin_old</code>中指向的string对象逐个”移动”到了新的内存区域，随后释放了原先的内存空间，但被移动后string对象内存仍是有效的。</p>
+
+<h3 id="右值引用">右值引用</h3>
+
+<p>为了支持移动操作，<mark>C++11引入了右值引用(rvalue reference)</mark>的概念，语法上用<code class="highlighter-rouge">&amp;&amp;</code>表示，右值引用有一个<strong>重要的性质是它只能绑定到即将销毁的对象上</strong>，因此，我们可以自由的将一个右值资源移动到另一个对象中。</p>
+
+<p>回忆前面的文章可知，等号左右均可使用表达式进行求值，得到的结果分别为左值和右值，其中左值表示一个对象的身份，右值往往是一个<strong>值</strong>，所谓右值引用就是对这个<strong>值的引用</strong>。</p>
+
+<p>所谓左值引用，也就是旧标准中引用，它作用在等号左边，是等号左边表达式的求值结果，左值引用只能和一个确定的值进行绑定（即引用必须初始化），无法和一个表达式进行绑定：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">42</span><span class="p">;</span>
+<span class="kt">int</span> <span class="o">&amp;</span><span class="n">r</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span> <span class="c1">//正确，i是左值</span>
+<span class="kt">int</span> <span class="o">&amp;</span><span class="n">r</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="mi">2</span><span class="p">;</span> <span class="c1">//错误，等号右边是一个表达式，是一个“值“</span>
+</code></pre></div></div>
+
+<p>相反的，右值引用，是指等号右边的表达式求值结果，引用的是一个值，它可以绑定到某个表达式上，但却不能和左值绑定</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">42</span><span class="p">;</span>
+<span class="kt">int</span> <span class="o">&amp;</span><span class="n">t</span> <span class="o">=</span> <span class="n">i</span><span class="p">;</span>
+<span class="kt">int</span> <span class="o">&amp;&amp;</span><span class="n">r</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="mi">2</span><span class="p">;</span> <span class="c1">//正确，r绑定到表达式上</span>
+<span class="kt">int</span> <span class="o">&amp;&amp;</span><span class="n">r</span> <span class="o">=</span> <span class="n">t</span><span class="p">;</span> <span class="c1">//错误，右值不能绑定到左值上</span>
+<span class="n">Test</span> <span class="o">&amp;&amp;</span><span class="n">r</span> <span class="o">=</span> <span class="n">Test</span><span class="p">();</span> <span class="c1">//正确，等号右侧是一个匿名表达式</span>
+</code></pre></div></div>
+
+<p>对于左值和右值的另一个判断方法是左值可以进行取地址操作，右值则不可以。为了加深理解，我们看一个经典的例子:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">p1</span> <span class="o">=</span> <span class="o">&amp;++</span><span class="n">value</span><span class="p">;</span> <span class="c1">//正确</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">p2</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">value</span><span class="o">++</span><span class="p">;</span> <span class="c1">//错误</span>
+</code></pre></div></div>
+<p>这个例子中，<code class="highlighter-rouge">p1</code>绑定的是一个左值，因此可以进行取地址操作，<code class="highlighter-rouge">++value</code>实际上就是对<code class="highlighter-rouge">value</code>自身的值加1，而对于<code class="highlighter-rouge">p2</code>，则会编译出错，编译器给出的错误是<code class="highlighter-rouge">error: cannot take the address of an rvalue of type 'int'</code>，这说明此时<code class="highlighter-rouge">value</code>为右值，实际上，<code class="highlighter-rouge">p2</code>绑定的并不是<code class="highlighter-rouge">value</code>，而是一个临时变量，我们可以将上述代码展开，它等价于</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">value</span><span class="p">;</span> <span class="c1">//1</span>
+<span class="kt">int</span> <span class="o">*</span><span class="n">p2</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">tmp</span><span class="p">;</span>  <span class="c1">//2</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+</code></pre></div></div>
+<p>这里为了理解方便，增加了一个<code class="highlighter-rouge">tmp</code>的变量，而实际编译过程中，1，2步是合在一起的，因此不存在<code class="highlighter-rouge">tmp</code>这个左值，只有一个临时的右值，<code class="highlighter-rouge">p2</code>绑定的是这个临时的右值，因此编译报错。</p>
+
+<p>但是在有一种情况下，左值确实可以绑定到右值上，这种情况下，需要使用<code class="highlighter-rouge">const</code>关键字来修饰左值</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Dummy</span> <span class="nf">func</span><span class="p">(){</span>
+	<span class="k">return</span> <span class="n">Dummy</span><span class="p">();</span> <span class="c1">//返回了一个临时变量作为右值</span>
+<span class="p">}</span>
+<span class="n">Dummy</span> <span class="o">&amp;</span><span class="n">ld</span> <span class="o">=</span> <span class="n">func</span><span class="p">();</span> <span class="c1">//错误，左值引用不能绑定右值</span>
+<span class="k">const</span> <span class="n">Dummy</span> <span class="o">&amp;</span><span class="n">ld</span> <span class="o">=</span> <span class="n">func</span><span class="p">();</span> <span class="c1">//const左值医用可以绑定右值</span>
+</code></pre></div></div>
+
+<p>另一个例子是拷贝构造函数，在本文开始的时候我们曾介绍了拷贝构造函数，结合右值的概念，我们可以重新理解一下</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Foo</span><span class="p">{</span>
+	<span class="n">Foo</span><span class="p">()</span> <span class="o">=</span><span class="k">default</span><span class="p">;</span>
+	<span class="n">Foo</span><span class="p">(</span><span class="k">const</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">f</span><span class="p">);</span> <span class="c1">//拷贝构造</span>
+<span class="p">};</span>
+
+<span class="n">Foo</span> <span class="nf">f2</span><span class="p">(</span><span class="n">Foo</span><span class="p">());</span> <span class="c1">//正确</span>
+</code></pre></div></div>
+<p>这段代码看似很简单，但实际上用到了上面提到的左右值绑定的特性，由于<code class="highlighter-rouge">Foo</code>的拷贝构造函数是一个<code class="highlighter-rouge">const</code>左值引用，因此它可以被绑定到一个右值上，而<code class="highlighter-rouge">Foo()</code>是一个表达式，其求值结果是一个临时变量，因此它是一个右值，可以被绑定到<code class="highlighter-rouge">f</code>上。</p>
+
+<p>对比左值和右值可发现，左值有持久的状态，右值要么是字面常量，要么是表达式求值过程中创建的临时变量。由于右值引用只能绑定到临时对象，因此可知</p>
+
+<ol>
+  <li>右值所引用的对象将要被销毁</li>
+  <li>该对象没有其它使用者</li>
+</ol>
+
+<p>这两个特性意味着，使用右值引用的代码可以自由地接管所引用对象的资源。</p>
+
+<p>上面我们讨论了右值做参数的情况，下面我们讨论下右值作为函数返回值的情况，在 C++11 之前，返回一个本地对象意味着这个对象会被拷贝，除非编译器发现可以做返回值优化（named return value optimization，或 NRVO），能把对象直接构造到调用者的栈上。从 C++11 开始，返回值优化仍可以发生，但在没有返回值优化的情况下，编译器将试图把本地对象移动出去，而不是拷贝出去。注意，这里不需要手工调用 <code class="highlighter-rouge">std::move</code>，使用 <code class="highlighter-rouge">std::move</code> 对于移动行为没有帮助，反而会影响返回值优化。</p>
+
+<h3 id="stdmove与stdforward"><code class="highlighter-rouge">std::move</code>与<code class="highlighter-rouge">std::forward</code></h3>
+
+<p>虽然不能直接的将一个右值引用绑定到一个左值上，但可以使用<code class="highlighter-rouge">std::move</code>显式的将一个左值转化成一个对应的右值引用类型</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">func</span><span class="p">(</span><span class="n">string</span><span class="o">&amp;&amp;</span> <span class="n">msg</span><span class="p">){</span>
+    <span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">msg</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="c1">//abc</span>
+<span class="p">}</span>
+
+<span class="n">string</span> <span class="n">ls</span> <span class="o">=</span> <span class="s">"abc"</span><span class="p">;</span>
+<span class="n">func</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">ls</span><span class="p">));</span>
+<span class="n">cout</span><span class="o">&lt;&lt;</span><span class="n">ls</span><span class="o">&lt;&lt;</span><span class="n">endl</span><span class="p">;</span> <span class="c1">//abc</span>
+</code></pre></div></div>
+<p><code class="highlighter-rouge">move</code>调用告诉编译器，我们有一个左值，但我们希望像处理右值一样处理它。调用<code class="highlighter-rouge">move</code>就意味着，除了对<code class="highlighter-rouge">ls</code><mark>赋值或者销毁之外，我们将不再使用它</mark>。</p>
+
+<p>前面我们已经看到右值有时候可以绑定到<code class="highlighter-rouge">const T&amp;</code>这样的左值上，那么这背后的规则是什么呢？ 对于 <code class="highlighter-rouge">template foo(T&amp;&amp;)</code> 这样的代码，如果传递过去的参数是左值，<code class="highlighter-rouge">T</code>的推导结果是左值引用；如果传递过去的参数是右值，<code class="highlighter-rouge">T</code>的推导结果是参数的类型本身。如果<code class="highlighter-rouge">T</code>是左值引用，那 <code class="highlighter-rouge">T&amp;&amp;</code> 的结果仍然是左值引用——即 <code class="highlighter-rouge">type&amp; &amp;&amp;</code> 坍缩成了 <code class="highlighter-rouge">type&amp;</code>。如果 <code class="highlighter-rouge">T</code> 是一个实际类型，那 <code class="highlighter-rouge">T&amp;&amp;</code> 的结果自然就是一个右值引用。我们称这种特性为<strong>引用坍缩</strong>。我们用下面的代码来验证</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="k">const</span> <span class="n">shape</span><span class="o">&amp;</span><span class="p">){</span>
+  <span class="n">puts</span><span class="p">(</span><span class="s">"foo(const shape&amp;)"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">foo</span><span class="p">(</span><span class="n">shape</span><span class="o">&amp;&amp;</span><span class="p">){</span>
+  <span class="n">puts</span><span class="p">(</span><span class="s">"foo(shape&amp;&amp;)"</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">bar</span><span class="p">(</span><span class="k">const</span> <span class="n">shape</span><span class="o">&amp;</span> <span class="n">s</span><span class="p">){</span>
+  <span class="n">puts</span><span class="p">(</span><span class="s">"bar(const shape&amp;)"</span><span class="p">);</span>
+  <span class="n">foo</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">bar</span><span class="p">(</span><span class="n">shape</span><span class="o">&amp;&amp;</span> <span class="n">s</span><span class="p">){</span>
+  <span class="n">puts</span><span class="p">(</span><span class="s">"bar(shape&amp;&amp;)"</span><span class="p">);</span>
+  <span class="n">foo</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(){</span>
+  <span class="n">bar</span><span class="p">(</span><span class="n">shape</span><span class="p">());</span> 
+<span class="p">}</span>
+<span class="c1">//bar(shape&amp;&amp;)</span>
+<span class="c1">//foo(const shape&amp;)</span>
+</code></pre></div></div>
+<p>上述结果符合我们的预期，如果在<code class="highlighter-rouge">bar</code>中想要调用<code class="highlighter-rouge">foo(shape&amp;&amp;)</code>, 则需要显式的使用<code class="highlighter-rouge">move</code>，即<code class="highlighter-rouge">foo(std::move(s));</code> 可如果两个<code class="highlighter-rouge">bar</code>的重载除了调用<code class="highlighter-rouge">foo</code>的方式不一样，其他都差不多的话，我们为什么要提供两个不同的 bar 呢？事实上，很多标准库里的函数，目标参数的类型可能是左值，也可能是右值，我们需要能够保持参数的值类别：左值的仍然是左值，右值的仍然是右值。这个功能在 C++ 标准库中已经提供了，叫<code class="highlighter-rouge">std::forward</code>。它和 <code class="highlighter-rouge">std::move</code> 一样都是利用引用坍缩机制来实现。此处，我们不介绍其实现细节，而是重点展示其用法。我们可以把我们的两个<code class="highlighter-rouge">bar</code>函数简化成：</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">T</span><span class="o">&gt;</span> 
+<span class="kt">void</span> <span class="nf">bar</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">s</span><span class="p">){</span> 
+	<span class="n">foo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">forward</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">shape</span> <span class="n">temp</span><span class="p">;</span>
+	<span class="n">bar</span><span class="p">(</span><span class="n">temp</span><span class="p">);</span> <span class="c1">//foo(const shape&amp;)</span>
+	<span class="n">bar</span><span class="p">(</span><span class="n">shape</span><span class="p">())</span>  <span class="c1">//foo(shape&amp;&amp;)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>此时当<code class="highlighter-rouge">T</code>是模板参数时，<code class="highlighter-rouge">T&amp;&amp;</code>的作用主要是保持值类别进行转发，它有个名字就叫“转发引用”（forwarding reference）。因为既可以是左值引用，也可以是右值引用，它也曾经被叫做“万能引用”（universal reference）。而<code class="highlighter-rouge">std::forward</code>会保持<code class="highlighter-rouge">s</code>的类型，即<code class="highlighter-rouge">temp</code>是以左值进来的，那么forward给<code class="highlighter-rouge">foo</code>时，它仍然是左值。对应的<code class="highlighter-rouge">shape()</code>是右值进来的，forward后仍是右值</p>
+
+<h3 id="移动构造函数与赋值运算符">移动构造函数与赋值运算符</h3>
+
+<p>和拷贝构造函数一样，移动构造函数的第一个参数是一个右值引用。它除了要完成资源移动，还要负责确保交出资源后的对象处于可销毁状态，使源资源不再指向被移动的资源。</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">HasPtr</span><span class="p">{</span>
+<span class="nl">private:</span>
+    <span class="n">string</span><span class="o">*</span> <span class="n">ptr</span> <span class="o">=</span> <span class="nb">nullptr</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">i</span> <span class="o">=</span><span class="mi">0</span><span class="p">;</span>
+<span class="nl">public:</span>
+	<span class="n">HasPtr</span><span class="p">(</span><span class="n">HasPtr</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span><span class="o">:</span><span class="n">ptr</span><span class="p">(</span><span class="n">other</span><span class="p">.</span><span class="n">ptr</span><span class="p">),</span><span class="n">i</span><span class="p">(</span><span class="n">other</span><span class="p">.</span><span class="n">i</span><span class="p">){</span>
+		<span class="c1">//release temp value</span>
+		<span class="c1">//负责释放源资源</span>
+        <span class="n">other</span><span class="p">.</span><span class="n">ptr</span> <span class="o">=</span> <span class="nb">nullptr</span><span class="p">;</span>
+    <span class="p">}</span>
+	<span class="n">HasPtr</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">HasPtr</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span><span class="p">{</span>
+		<span class="k">if</span><span class="p">(</span><span class="k">this</span> <span class="o">!=</span> <span class="o">&amp;</span><span class="n">other</span><span class="p">){</span>
+			<span class="k">delete</span> <span class="n">ptr</span><span class="p">;</span>
+			<span class="n">ptr</span> <span class="o">=</span> <span class="n">other</span><span class="p">.</span><span class="n">ptr</span><span class="p">;</span>
+			<span class="n">i</span> <span class="o">=</span> <span class="n">other</span><span class="p">.</span><span class="n">i</span><span class="p">;</span>
+			<span class="n">other</span><span class="p">.</span><span class="n">ptr</span> <span class="o">=</span> <span class="nb">nullptr</span><span class="p">;</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="p">};</span>
+<span class="n">HasPtr</span> <span class="nf">get</span><span class="p">(){</span>
+	<span class="k">return</span> <span class="n">HasPtr</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="n">HasPtr</span> <span class="nf">ptr1</span><span class="p">(</span><span class="s">"ptr1"</span><span class="p">);</span> <span class="c1">//普通构造函数</span>
+<span class="n">HasPtr</span> <span class="nf">ptr2</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">ptr1</span><span class="p">));</span> <span class="c1">//移动构造函数</span>
+<span class="n">HasPtr</span> <span class="n">ptr3</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">ptr1</span><span class="p">);</span> <span class="c1">//错误，ptr1已经被释放</span>
+<span class="n">ptr3</span> <span class="o">=</span> <span class="n">get</span><span class="p">();</span> <span class="c1">//正确，移动赋值函数</span>
+</code></pre></div></div>
+
+<p>上面代码可观察到，对于移动构造函数或者赋值运算，通常是不抛出异常，其原因比较复杂，这里不展开讨论。</p>
+
+<p>对于移动构造函数和移动赋值运算符，编译器并不会自动生成，尤其是如果某个类已经实现了拷贝构造函数后，则编译器不会再为其生成默认的移动构造函数。<mark>只有当一个类没有定义任何自己版本的拷贝控制成员，且它所有的数据成员都能移动构造或者移动赋值时，编译器才会为其生成默认的移动构造函数或移动赋值函数。</mark></p>
+
+<p>如果一个类既定义了拷贝构造函数和移动构造函数，则会先匹配移动构造函数，其匹配的核心规则是<code class="highlighter-rouge">const</code>左值可以绑定右值，即<code class="highlighter-rouge">const Foo&amp;</code> 等价于<code class="highlighter-rouge">Foo&amp;&amp;</code>。因此，如果传入的是右值，会先匹配右值控制函数，如果没有再去寻找左值拷贝控制函数。</p>
+
+<h3 id="右值引用和成员函数">右值引用和成员函数</h3>
+
+<p>右值引用不仅仅可以用于构造函数中，对于普通的成员函数也适用，对于成员函数，比较好的做法是同时提供两个版本，一个版本是的参数是左值，一个版本的参数是右值</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">push_back</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="o">&amp;</span> <span class="n">val</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">push_back</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">val</span><span class="p">);</span>
+
+<span class="n">vector</span><span class="o">&lt;</span><span class="n">string</span><span class="o">&gt;</span> <span class="n">vec</span><span class="p">;</span>
+<span class="n">string</span> <span class="n">s</span><span class="o">=</span><span class="s">"123"</span><span class="p">;</span>
+<span class="n">vec</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">s</span><span class="p">);</span> <span class="c1">//左值copy</span>
+<span class="n">vec</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="s">"abc"</span><span class="p">);</span> <span class="c1">//右值移动</span>
+</code></pre></div></div>
+<p>对于copy的版本，参数最好声明为<code class="highlighter-rouge">const</code>，因为我们不想在copy的过程中改变原对象，而对于右值的版本，由于我们需要负责释放源数据，因此不能将其声明为<code class="highlighter-rouge">const</code>。</p>
+
+<p>对于左值和右值，在C++中有时界限不是很明显，比如</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">string</span> <span class="n">s1</span> <span class="o">=</span> <span class="s">"a"</span><span class="p">;</span>
+<span class="n">string</span> <span class="n">s2</span> <span class="o">=</span> <span class="s">"b"</span><span class="p">;</span>
+<span class="k">auto</span> <span class="n">n</span> <span class="o">=</span> <span class="p">(</span><span class="n">s1</span><span class="o">+</span><span class="n">s2</span><span class="p">).</span><span class="n">find</span><span class="p">(</span><span class="sc">'a'</span><span class="p">);</span>
+</code></pre></div></div>
+<p>上述代码中，我们对一个右值<code class="highlighter-rouge">s1+s2</code>进行了函数的调用，有时右值的使用方式也会让人困惑:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">s1</span> <span class="o">+</span> <span class="n">s2</span> <span class="o">=</span> <span class="s">"ab"</span><span class="p">;</span> 
+</code></pre></div></div>
+<p>上述代码可以正常编译，我们对<code class="highlighter-rouge">s1+s2</code>这个右值进行了赋值操作，这显然是不符合我们对右值的理解。这种向右赋值的方式在C++11之前是允许的，为了向后兼容，在新标准中，也保留了这个特性，但这显然不是一个很好的做法，我们希望被赋值的对象是一个左值。C++ 11提供了一种<code class="highlighter-rouge">引用限定符</code>reference qualifier)来标识某个函数是否可被右值调用</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Foo</span><span class="p">{</span>
+<span class="nl">private:</span>
+	<span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
+<span class="nl">public:</span>
+	<span class="n">Foo</span><span class="p">(</span><span class="kt">int</span> <span class="n">d</span><span class="p">)</span><span class="o">:</span><span class="n">x</span><span class="p">(</span><span class="n">d</span><span class="p">){}</span> <span class="c1">//构造函数</span>
+	<span class="n">Foo</span> <span class="n">set</span><span class="p">(</span><span class="kt">int</span> <span class="n">d</span><span class="p">)</span> <span class="o">&amp;&amp;</span><span class="p">;</span> <span class="c1">//该成员函数可被右值调用</span>
+	<span class="n">Foo</span> <span class="n">set</span><span class="p">(</span><span class="kt">int</span> <span class="n">d</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;</span> <span class="c1">//该成员函数只能被左值调用</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="n">Foo</span><span class="o">::</span><span class="n">set</span><span class="p">(</span><span class="kt">int</span> <span class="n">d</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">{</span>
+	<span class="c1">//该方法只会被右值调用，说明没有其他用户使用x，因此可以直接操作x</span>
+	<span class="n">x</span> <span class="o">=</span> <span class="n">d</span><span class="p">;</span>
+	<span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">void</span> <span class="n">Foo</span><span class="o">:</span><span class="n">set</span><span class="p">(</span><span class="kt">int</span> <span class="n">d</span><span class="p">)</span> <span class="k">const</span> <span class="o">&amp;</span><span class="p">{</span>
+	<span class="c1">//该方法有const修饰，不能直接改变x, 返回一个copy</span>
+	<span class="k">return</span> <span class="n">Foo</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="n">Foo</span><span class="o">&amp;</span> <span class="n">retFooRef</span><span class="p">(){</span> <span class="c1">//返回左值</span>
+	<span class="k">static</span> <span class="n">Foo</span> <span class="n">f</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+	<span class="k">return</span> <span class="n">f</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">static</span> <span class="n">Foo</span> <span class="nf">retFooVal</span><span class="p">(){</span> <span class="c1">//返回右值</span>
+	<span class="k">return</span> <span class="n">Foo</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>如果一个成员函数是<code class="highlighter-rouge">const</code>，同时又只能被左值访问，那么<code class="highlighter-rouge">&amp;</code>写在const之后。上面代码中，定义了两个<code class="highlighter-rouge">set</code>函数，一个可以被右值访问，用<code class="highlighter-rouge">&amp;&amp;</code>修饰，另一个只能被左值调用，用<code class="highlighter-rouge">&amp;</code>修饰。编译器会自动根据对象是左值还是右值来匹配调用函数。</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Foo</span><span class="o">::</span><span class="n">retFooRef</span><span class="p">().</span><span class="n">set</span><span class="p">(</span><span class="mi">20</span><span class="p">).</span><span class="n">x</span><span class="p">;</span> <span class="c1">//20, 调用 const &amp;版本</span>
+<span class="n">Foo</span><span class="o">::</span><span class="n">retFooVal</span><span class="p">().</span><span class="n">set</span><span class="p">(</span><span class="mi">10</span><span class="p">).</span><span class="n">x</span><span class="p">;</span> <span class="c1">//10, 调用 &amp;&amp; 版本</span>
+</code></pre></div></div>
+
+<p>最后需要说明一点的是，如果一个类中某一个函数声明了<code class="highlighter-rouge">&amp;</code>或<code class="highlighter-rouge">&amp;&amp;</code>符号，其它和它同名的函数也要声明其引用限定类型。</p>
+
+<h2 id="resources">Resources</h2>
+
+<ul>
+  <li><a href="http://www.charleshouserjr.com/Cplus2.pdf">C++ Primer</a></li>
+</ul>
+:ET

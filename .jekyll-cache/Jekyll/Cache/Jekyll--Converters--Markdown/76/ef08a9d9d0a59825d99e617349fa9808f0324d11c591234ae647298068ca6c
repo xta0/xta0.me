@@ -1,0 +1,285 @@
+I"<1<h2 id="core-animation-architechture">Core Animation Architechture</h2>
+
+<p><img src="/assets/images/2010/10/ca1.png" alt="Alt text" /></p>
+
+<h2 id="uikit-and-core-animation">UIKit and Core Animation</h2>
+
+<ul>
+  <li>尽量使用UIKit</li>
+  <li>Core Animation?
+    <ul>
+      <li>Lightweight</li>
+      <li>Short-lived</li>
+    </ul>
+  </li>
+  <li>Benefits of understanding CoreAnimation
+    <ul>
+      <li>Improve your effectiveness with UIKit animation</li>
+      <li>Improve app’s performance</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="coreanimation-basic">CoreAnimation Basic</h2>
+
+<ul>
+  <li>layer</li>
+  <li>Animatable properties</li>
+  <li>Declarative model</li>
+</ul>
+
+<p><img src="/assets/images/2010/10/ca2.png" alt="Alt text" /></p>
+
+<ul>
+  <li>Creating Layer</li>
+</ul>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#import &lt;QuartzCore/QuartzCore.h&gt;
+</span>
+<span class="n">CALayer</span><span class="o">*</span> <span class="n">layer</span> <span class="o">=</span> <span class="p">[</span><span class="n">CALayer</span> <span class="nf">layer</span><span class="p">];</span>
+<span class="n">layer</span><span class="p">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">w</span><span class="p">,</span><span class="n">h</span><span class="p">);</span>
+<span class="n">layer</span><span class="p">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">CGPointMake</span><span class="p">(</span><span class="mi">30</span><span class="p">.</span><span class="mi">0</span><span class="p">,</span><span class="mi">67</span><span class="p">.</span><span class="mi">0</span><span class="p">);</span>
+<span class="n">layer</span><span class="p">.</span><span class="n">content</span> <span class="o">=</span> <span class="n">calogo</span><span class="p">;</span>
+<span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">layer</span> <span class="nf">addSubLayer</span><span class="p">:</span><span class="n">layer</span><span class="p">];</span> 
+</code></pre></div></div>
+<ul>
+  <li>几何关系
+    <ul>
+      <li>bounds : CGRect</li>
+      <li>position : CGPoint(super layer coordinates)</li>
+      <li>transform : CATransform3D</li>
+      <li>anchorPoint: CGPoint</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/2010/10/ca3.png" alt="Alt text" /></p>
+
+<h2 id="providing-layer-content">Providing Layer Content</h2>
+
+<h3 id="使用coregraphics">使用CoreGraphics</h3>
+
+<ul>
+  <li>使用delegate，实现<code class="highlighter-rouge">drawLayer:InContext:</code></li>
+  <li>继承CALayer，复写<code class="highlighter-rouge">drawInContext</code></li>
+</ul>
+
+<h3 id="implicit-animation">Implicit animation</h3>
+
+<ul>
+  <li>CATransaction:</li>
+  <li>runloop中自动执行CATransaction:<code class="highlighter-rouge">myLayer.position = somePt;</code>这种情况是没有动画的。</li>
+  <li>All animations during next run-loop</li>
+  <li>
+    <p>CATransaction class
+ 	- Duration
+ 	- Timing Function
+ 	- Implicit or explicit</p>
+  </li>
+  <li>Animatable properties:
+    <ul>
+      <li>Position</li>
+      <li>Opacity</li>
+      <li>Shadow</li>
+      <li>Transform</li>
+      <li>Bounds</li>
+      <li>And more</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="explicit-animations">Explicit Animations</h3>
+
+<p><img src="/assets/images/2010/10/ca4.png" alt="Alt text" /></p>
+
+<ul>
+  <li>Which property?
+    <ul>
+      <li>Use keyPath
+        <ul>
+          <li><code class="highlighter-rouge">@"position"</code></li>
+          <li><code class="highlighter-rouge">@"position.y"</code></li>
+          <li><code class="highlighter-rouge">@"position.x"</code></li>
+        </ul>
+      </li>
+      <li>
+        <p><code class="highlighter-rouge">Animation = [CABasicAnimation animationWithKeyPath:@""]</code>;</p>
+      </li>
+      <li>Add to Layer
+        <ul>
+          <li><code class="highlighter-rouge">[layer addAnimation:animation]</code></li>
+        </ul>
+      </li>
+      <li>注意，layer的Model Value（例如layer的position）没有改变,当动画结束后，下一个runloop到来时，layer会回到原来的位置</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="presentation-layer">Presentation Layer</h3>
+
+<ul>
+  <li>Model Layer是不会改变的</li>
+  <li>获取layer实时位置需要通过presentationLayer</li>
+</ul>
+
+<h2 id="drop-shadows">Drop Shadows</h2>
+
+<h3 id="new-apis-for-more-efficient-shadows">New APIs for more efficient shadows</h3>
+
+<ul>
+  <li>高性能的shadow效果API
+    <ul>
+      <li><code class="highlighter-rouge">@property CGPathRef shadowPath</code></li>
+    </ul>
+  </li>
+  <li>定义Layer中透明的部分</li>
+  <li>缓存shadow的bitmap</li>
+</ul>
+
+<div class="language-objc highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">self</span><span class="p">.</span><span class="n">myLayer</span> <span class="o">=</span> <span class="p">[</span><span class="n">CALayer</span> <span class="nf">layer</span><span class="p">];</span>
+<span class="n">self</span><span class="p">.</span><span class="n">myLayer</span><span class="p">.</span><span class="n">backgroundColor</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIColor</span> <span class="nf">redColor</span><span class="p">].</span><span class="n">CGColor</span><span class="p">;</span>
+<span class="n">self</span><span class="p">.</span><span class="n">myLayer</span><span class="p">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">CGRectMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">50</span><span class="p">);</span>
+<span class="n">self</span><span class="p">.</span><span class="n">myLayer</span><span class="p">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">CGPointMake</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">center</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">center</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+<span class="n">self</span><span class="p">.</span><span class="n">myLayer</span><span class="p">.</span><span class="n">shadowOpacity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">.</span><span class="mi">5</span><span class="p">;</span>
+<span class="n">self</span><span class="p">.</span><span class="n">myLayer</span><span class="p">.</span><span class="n">shadowRadius</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+<span class="n">self</span><span class="p">.</span><span class="n">myLayer</span><span class="p">.</span><span class="n">shadowOffset</span> <span class="o">=</span> <span class="n">CGSizeMake</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span>
+    
+<span class="n">CGPathRef</span> <span class="n">shadowPath</span> <span class="o">=</span> <span class="p">[</span><span class="n">UIBezierPath</span> <span class="nf">bezierPathWithRect</span><span class="p">:</span><span class="n">self</span><span class="p">.</span><span class="n">myLayer</span><span class="p">.</span><span class="n">bounds</span><span class="p">].</span><span class="n">CGPath</span><span class="p">;</span>
+<span class="n">self</span><span class="p">.</span><span class="n">myLayer</span><span class="p">.</span><span class="n">shadowPath</span> <span class="o">=</span> <span class="n">shadowPath</span><span class="p">;</span>
+    
+<span class="p">[</span><span class="n">self</span><span class="p">.</span><span class="n">view</span><span class="p">.</span><span class="n">layer</span> <span class="nf">addSublayer</span><span class="p">:</span><span class="n">self</span><span class="p">.</span><span class="n">myLayer</span><span class="p">];</span>
+</code></pre></div></div>
+
+<h2 id="shape-layers">Shape Layers</h2>
+
+<ul>
+  <li>Most layers use bitmaps to provide their content
+    <ul>
+      <li>Doesn’t scale well, doesn’t animate well</li>
+    </ul>
+  </li>
+  <li>
+    <p>Use a CAShapeLayer with path for scalable/animatable content</p>
+  </li>
+  <li>Performance tradeoffs
+    <ul>
+      <li>Uses little memory</li>
+      <li>Uses more CPU to render</li>
+      <li>No cost for transparent areas</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="bitmap-caching">Bitmap Caching</h2>
+
+<ul>
+  <li>Animated UIs on embedded devices can be challenging</li>
+  <li>Can now request that a layer subtree is flattened to bitmap，将layer的subtree变成一张bitmap：<code class="highlighter-rouge">layer.shouldRasterize = YES</code></li>
+  <li>Bitmap version will be reused when possible</li>
+</ul>
+
+<h3 id="bitmap-caching-caveats">Bitmap Caching Caveats</h3>
+
+<ul>
+  <li>消耗内存</li>
+  <li>当bitmap被放大时，会损失精度，图片会模糊</li>
+  <li>如果缓存没命中，会带来更大的开销</li>
+</ul>
+
+<h2 id="how-do-gpus-work">How Do GPUs Work</h2>
+
+<p><img src="/assets/images/2010/10/ca5.png" alt="Alt text" /></p>
+
+<ul>
+  <li>GPU converts triangles to pixels
+    <ul>
+      <li>Each is filled with a color or image</li>
+      <li>Each can “blend” over background</li>
+    </ul>
+  </li>
+  <li>Destination can also be an image</li>
+</ul>
+
+<h3 id="how-do-we-use-the-cpu">How Do We Use the CPU</h3>
+
+<ul>
+  <li>CA translates your layers into triangles</li>
+</ul>
+
+<p><img src="/assets/images/2010/10/ca6.png" alt="Alt text" /></p>
+
+<ul>
+  <li>“backgroundColor” is two colored triangles</li>
+  <li>“contents” is two triangles with an image</li>
+  <li>Cached or masked layers draw offscreen</li>
+</ul>
+
+<h3 id="gpu-performance-model">GPU Performance Model</h3>
+
+<ul>
+  <li>What are teh costs?
+    <ul>
+      <li>How many destination pixels? 一次最多能渲染多少pixels?</li>
+      <li>How many source pixels? 一次最多能读取多少pixels?</li>
+      <li>How many times do we switch buffers? 渲染过程中需要多少次switch buffer？</li>
+    </ul>
+  </li>
+  <li>Too much non-opaque content -&gt; limited by writing bandwidth //半透明，透明的view会影响bandwidth</li>
+  <li>Too many large images -&gt; limited by reading bandwidth</li>
+  <li>Too many masked layers -&gt; limited by rendering passes</li>
+</ul>
+
+<h3 id="write-bandwidth">Write Bandwidth</h3>
+
+<ul>
+  <li>Minimize alpha-blended pixels</li>
+  <li>Ensure opaque CGImageREf’s have no alpha channel
+    <ul>
+      <li>set <code class="highlighter-rouge">layer.opaque=YES</code> for layers that draw opaque content</li>
+    </ul>
+  </li>
+  <li>如果一个layer包含不透明区域，尽量分离出来单独显示</li>
+</ul>
+
+<h3 id="read-bandwidth">Read Bandwidth</h3>
+
+<ul>
+  <li>Uses images that match screen resolution
+    <ul>
+      <li>eg. don’t use 1024x768 image for 200x150 layer</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="rendering-passes">Rendering Passes</h3>
+
+<ul>
+  <li>Ideally one rendering pass per frame</li>
+</ul>
+
+<h3 id="high-dpi">High DPI</h3>
+
+<p>低分的iPhone是320x480，一个点对应一个pixel。在retina屏幕上，当UIWindow创建时，会将1个point变成两个pixel。为了保持UIKit的兼容性，Window还是320x480，layer的<code class="highlighter-rouge">contentScale=1</code>。</p>
+
+<ul>
+  <li>2x scale factor applied to your UIWindow
+    <ul>
+      <li>All your view geometry remains relative to 320x480</li>
+      <li>Use contentScale = 2 for screen-resolution content</li>
+      <li>When rasterizing layer, <code class="highlighter-rouge">layer.rasterizationScale=2</code></li>
+    </ul>
+  </li>
+  <li>To get back to the native 640x960 viewport
+    <ul>
+      <li>Use a <code class="highlighter-rouge">scale = 0.5</code> matrix to cancel the implicit <code class="highlighter-rouge">scale = 2</code> matrix</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="reference">Reference</h3>
+
+<ul>
+  <li><a href="https://developer.apple.com/videos/wwdc/2010/">Core Animation in Practice, part1</a></li>
+  <li><a href="https://developer.apple.com/videos/wwdc/2010/">Core Animation in Practice, part2</a></li>
+</ul>
+:ET

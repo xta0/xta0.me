@@ -1,0 +1,200 @@
+I"�4<h3 id="cppcon-talks">CppCon Talks</h3>
+
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=ZG59Bqo7qX4&amp;t=1421s">Back to Basic: Move Semantics</a></li>
+  <li><a href="https://www.youtube.com/watch?v=TFMKjL38xAI">he Hidden Secret of Move Semantics</a></li>
+</ul>
+
+<h3 id="move-semantics">Move Semantics</h3>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">template</span><span class="o">&lt;</span><span class="k">class</span> <span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">constexpr</span> <span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;&amp;</span> <span class="n">move</span><span class="p">(</span><span class="n">T</span><span class="o">&amp;&amp;</span> <span class="n">t</span><span class="p">)</span> <span class="k">noexcept</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">remove_reference_t</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;&amp;&gt;</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">std::move</code> doesn’t move anything. It converts any expression into an rvalue so it can be bound to an rvalue reference.</p>
+
+<ul>
+  <li>RValue References Guideline:
+    <ul>
+      <li><strong>No rvalue reference to const type</strong>
+        <ul>
+          <li>Use a non-const rvalue reference instead.</li>
+          <li>Most uses of rvalue references modify the object being referenced</li>
+          <li>Most rvalues are not const</li>
+        </ul>
+      </li>
+      <li><strong>No rvalue reference as function return type</strong>
+        <ul>
+          <li>Core Guideline F.45 : Don’t return a <code class="highlighter-rouge">T&amp;&amp;</code></li>
+          <li>Return by value instead.
+            <ul>
+              <li>see <a href="">C++中的右值引用与std::move</a></li>
+            </ul>
+          </li>
+          <li>Rvalue references often bind to temporaries, which don’t outlive the function</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><code class="highlighter-rouge">std::move</code> Guidelines
+    <ul>
+      <li><strong>Next operation after std::move is destruction or assignment</strong>
+        <ul>
+          <li>The object that was moved from shouldn’t be used again</li>
+        </ul>
+      </li>
+      <li><strong>Don’t <code class="highlighter-rouge">std::move</code> the return of a local variable</strong>
+        <ul>
+          <li>Core Guideline F.48: Don’t <code class="highlighter-rouge">return std::move(local)</code></li>
+          <li>C++ Standard has a special rule for this
+            <ul>
+              <li>The return expression is an rvalue if it is a local variable of parameter</li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="nf">func</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">param</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">*</span> <span class="n">ptr</span><span class="p">){</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">local</span> <span class="o">=</span> <span class="s">"Hello"</span><span class="p">;</span>
+      <span class="o">*</span><span class="n">ptr</span> <span class="o">=</span> <span class="n">local</span><span class="p">;</span>
+      <span class="k">if</span><span class="p">(</span><span class="n">some_condition</span><span class="p">()){</span>
+          <span class="k">return</span> <span class="n">local</span><span class="p">;</span> <span class="c1">//rvalue, calls the move constructor</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="o">*</span><span class="n">ptr</span><span class="p">;</span> <span class="c1">//lvalue, calls the copy constructor</span>
+  <span class="p">}</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>Move Constructor
+    <ul>
+      <li>Implicitly declared move constructor if there no user-defined
+        <ul>
+          <li>destructor</li>
+          <li>copy constructor</li>
+          <li>copy assignment operator</li>
+          <li>move assignment operator</li>
+        </ul>
+      </li>
+      <li>Implicitly declared or explicitly use <code class="highlighter-rouge">=default</code> to let compiler generate move constructor for you
+        <ul>
+          <li>Move constructs each base and non-static data member</li>
+          <li>Deleted if any base or non-static data member cannot be move constructed</li>
+        </ul>
+      </li>
+    </ul>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">struct</span> <span class="n">s</span> <span class="p">{</span>
+      <span class="kt">double</span><span class="o">*</span> <span class="n">data</span><span class="p">;</span>
+      <span class="n">s</span><span class="p">(</span> <span class="n">s</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> 
+          <span class="o">:</span> <span class="n">data</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">other</span><span class="p">.</span><span class="n">data</span><span class="p">)){</span>
+          <span class="n">other</span><span class="p">.</span><span class="n">data</span> <span class="o">=</span> <span class="nb">nullptr</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="c1">//a more elegant way is using std::exchange</span>
+      <span class="n">s</span> <span class="p">(</span><span class="n">s</span> <span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span>
+          <span class="o">:</span> <span class="n">data</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">exchange</span><span class="p">(</span><span class="n">other</span><span class="p">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">nullptr</span><span class="p">))</span>
+      <span class="p">{}</span>
+  <span class="p">};</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Move Assignment Operator
+    <ul>
+      <li>Implicitly declared move constructor if there no user-defined
+        <ul>
+          <li>destructor</li>
+          <li>copy constructor</li>
+          <li>copy assignment operator</li>
+          <li>move constructor</li>
+        </ul>
+      </li>
+      <li>Implicitly declared or explicitly use <code class="highlighter-rouge">=default</code> to let compiler generate move assignment operator for you
+        <ul>
+          <li>Move assigns each base and non-static data member</li>
+          <li>Deleted if any base or non-static data member cannot be move assigned</li>
+        </ul>
+      </li>
+    </ul>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">struct</span> <span class="n">s</span> <span class="p">{</span>
+      <span class="kt">double</span><span class="o">*</span> <span class="n">data</span><span class="p">;</span>
+      <span class="n">S</span><span class="o">&amp;</span> <span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">S</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span><span class="p">{</span>
+          <span class="k">if</span><span class="p">(</span><span class="k">this</span> <span class="o">==</span> <span class="o">&amp;</span><span class="n">other</span><span class="p">)</span> <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+          <span class="k">delete</span><span class="p">[]</span> <span class="n">data</span><span class="p">;</span>
+          <span class="n">data</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">exchange</span><span class="p">(</span><span class="n">other</span><span class="p">.</span><span class="n">data</span><span class="p">,</span> <span class="nb">nullptr</span><span class="p">)</span>
+          <span class="k">return</span> <span class="o">*</span><span class="k">this</span><span class="p">;</span>
+      <span class="p">}</span>
+  <span class="p">};</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Move Copy/Assignment Guidelines:
+    <ul>
+      <li><strong>Move constructor/assignment should be explicitly noexcept</strong>
+        <ul>
+          <li>Core Guideline C.66: Make move operators no except</li>
+          <li>Moves are supposed to transfer resources, not allocate or acquire resources. No exceptions should be thrown.</li>
+          <li>Declare it <code class="highlighter-rouge">noexcept</code> even when it is defined as default
+            <ul>
+              <li><code class="highlighter-rouge">foo(foo&amp;&amp;) noexcept = default</code></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><strong>Move-from object must be left in a valid state</strong>
+        <ul>
+          <li>Core Guideline C.64: A move operation should move and leave its source in a valid state</li>
+          <li>Prefer to leave it in the default constructed state
+            <ul>
+              <li>But that is not always practical</li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">struct</span> <span class="n">s</span><span class="p">{</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">str</span><span class="p">;</span>
+      <span class="n">std</span><span class="o">::</span><span class="kt">size_t</span> <span class="n">len</span><span class="p">;</span>
+      <span class="c1">//Invariant: len == str.length()</span>
+      <span class="n">s</span><span class="p">(</span><span class="n">s</span><span class="o">&amp;&amp;</span> <span class="n">other</span><span class="p">)</span> <span class="k">noexcept</span> <span class="o">:</span> <span class="n">str</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">other</span><span class="p">.</span><span class="n">str</span><span class="p">)),</span>
+                              <span class="n">len</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">other</span><span class="p">.</span><span class="n">len</span><span class="p">)){</span>
+          <span class="c1">//reset other to a valid state</span>
+          <span class="n">other</span><span class="p">.</span><span class="n">str</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+          <span class="n">other</span><span class="p">.</span><span class="n">len</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+</code></pre></div>        </div>
+      </li>
+      <li><strong>Use <code class="highlighter-rouge">=default</code> when possible</strong>
+        <ul>
+          <li>Core Guideline C.80: Use <code class="highlighter-rouge">=default</code> if you have to be explicit about using the default semantics</li>
+        </ul>
+      </li>
+      <li><strong>Rule of 5 / Rule of 0</strong>
+        <ul>
+          <li>Core Guideline C.21: If you define or <code class="highlighter-rouge">=delete</code> any copy, move, or destructor function, define or <code class="highlighter-rouge">=delete</code> them all
+            <ul>
+              <li>destructor</li>
+              <li>copy constructor</li>
+              <li>copy assignment operator</li>
+              <li>move constructor</li>
+              <li>move assignment operator</li>
+            </ul>
+          </li>
+          <li>Rule of 0: If default behavior is correct for all five, let compiler do everything</li>
+          <li>Rule of 1: If you must define one of the five, declare all of them explicitly</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="the-hidden-secret-of-move-semantics">The Hidden Secret of Move Semantics</h3>
+
+<h3 id="resources">Resources</h3>
+
+<ul>
+  <li><a href="https://xta0.me/2009/09/20/Cpp-Basics-8.html">模板与泛型(二)</a></li>
+  <li><a href="https://xta0.me/2017/03/10/cpp-rvalue-move.html">C++中的右值引用与std::move</a></li>
+  <li><a href="https://www.youtube.com/watch?v=ZG59Bqo7qX4&amp;t=1421s">Back to Basic: Move Semantics</a></li>
+  <li><a href="https://www.youtube.com/watch?v=TFMKjL38xAI">he Hidden Secret of Move Semantics</a></li>
+</ul>
+:ET

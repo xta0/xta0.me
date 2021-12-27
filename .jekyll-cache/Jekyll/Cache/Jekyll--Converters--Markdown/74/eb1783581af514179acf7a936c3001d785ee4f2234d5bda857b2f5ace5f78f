@@ -1,0 +1,529 @@
+I"-�<h2 id="tail-recursion">Tail Recursion</h2>
+
+<h3 id="evaluating-a-function-application">Evaluating a Function Application</h3>
+
+<p>One simple rule: One evaluates a function application <code class="highlighter-rouge">f(e1,e2,...,en)</code></p>
+
+<ol>
+  <li>对<code class="highlighter-rouge">e1...en</code>进行求值，得到<code class="highlighter-rouge">v1...vn</code></li>
+  <li>把等号右边的函数体展开</li>
+  <li>用<code class="highlighter-rouge">v1,...,vn</code>替换函数内的参数<code class="highlighter-rouge">e1,...,en</code></li>
+</ol>
+
+<h3 id="application-rewriting-rule">Application Rewriting Rule</h3>
+
+<p>This can be formalized as <em>rewriting of the program itself</em></p>
+
+<pre><code class="language-Scala">//定义一个函数f
+def f(x1,...,xn) = B; ...f(v1...vn)
+
+//调用了这个函数
+f(v1,...,vn)
+
+//将f展开
+[v1/x1,...,vn/xn]B
+</code></pre>
+
+<ul>
+  <li>Here, <code class="highlighter-rouge">[v1/x1,...,vn/xn]</code> 意味着:
+    <ul>
+      <li>The expression <code class="highlighter-rouge">B</code> in which all occurrences of <code class="highlighter-rouge">xi</code> have been replaced by <code class="highlighter-rouge">vi</code></li>
+      <li><code class="highlighter-rouge">[v1/x1,...,vn/xn]</code> is called a <em>substitution</em></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="example-1">Example #1</h3>
+
+<pre><code class="language-Scala">
+def gcd(a:Int, b:Int) : Int = 
+	if (b == 0) a else gcd(b,a%b)
+
+</code></pre>
+<p><code class="highlighter-rouge">gcd(14,21)</code> is evaluated as follows:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-&gt; `if(21 == 0) 14 else gcd (21,14%21) `
+-&gt; `if(false) else gcd (21,14%21) `
+-&gt; `gcd (21,14%21)`
+-&gt; `gcd (21,14)`
+-&gt; `if(14) == 0 21 else gcd (14,21%14) `
+-&gt; ...
+-&gt; `gcd (14,7)`
+-&gt; ...
+-&gt; `gcd (7,0)`
+-&gt; `if (0==0) 7 else gcd(0,7%0)`
+-&gt; `7`
+</code></pre></div></div>
+
+<h3 id="example-2">Example #2</h3>
+
+<pre><code class="language-Scala">def factorial(x:Int):Int = 
+	if (x == 0 ) 1 else x*factorial(x-1) 
+
+</code></pre>
+<p>factorial(4) is evaluated as follows:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-&gt; `if (4==0) 1 else 4*factorial(4-1)`
+-&gt; ...
+-&gt; `4*factorial(3)`
+-&gt; `4*3*factorial(2)`
+-&gt; `4*3*2factorial(1)`
+-&gt; `4*3*2*1*factorial(0)`
+-&gt; `4*3*2*1*1`
+-&gt; 24
+</code></pre></div></div>
+
+<h3 id="tail-recursion-1">Tail Recursion</h3>
+
+<p><strong><em>Implementation Consideration</em></strong>: if a function calls itself as its last action, the function’s stack frame can be reused. This is called <em>tail recursion</em></p>
+
+<p>意思是如果一个函数，在最后递归调用自己，则它的stack可以被复用。它的性能变成和使用<code class="highlighter-rouge">for</code>循环相同。</p>
+
+<p>例1中，最后一个<code class="highlighter-rouge">else</code>会递归，由于它后面没有其它指令了，因此他是<em>Tail Recursive</em>的，例2中，<code class="highlighter-rouge">else</code>执行递归后还有一条指令是和<code class="highlighter-rouge">x</code>相乘，因此它不满足<em>Tail Recursive</em></p>
+
+<p>In general, if the last action of a function consists of calling a function（maybe the same, maybe some other functions）, one stack frame would be sufficient for both functions. Such calls are called <code class="highlighter-rouge">tail-calls</code></p>
+
+<p>如果一个函数的最后一条指令是调用另一个函数，那么这种调用叫<code class="highlighter-rouge">tail-calls</code>，这种情况下一个stack frame可以满足两个函数公用。</p>
+
+<p>但是并不是所有的函数都需要使用尾部递归，JVM允许的递归深度为几百，如果超过这个层次就会stack
+ overflow，因此对于递归层次很深的函数，要使用这种技巧。</p>
+
+<p>针对例2，来实现一种满足<em>Tail Recursive</em>的方法。</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">object</span> <span class="nc">exercise</span> <span class="o">{</span>  
+	<span class="k">def</span> <span class="nf">factorial</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">Int</span> <span class="o">=</span> 
+	<span class="o">{</span>
+		<span class="k">def</span> <span class="nf">loop</span><span class="o">(</span><span class="n">acc</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">Int</span> <span class="o">=</span> 
+				
+		<span class="nf">if</span> <span class="o">(</span> <span class="n">x</span><span class="o">==</span> <span class="mi">0</span> <span class="o">)</span> <span class="n">acc</span>
+		<span class="k">else</span>
+			<span class="nf">loop</span><span class="o">(</span><span class="n">acc</span><span class="o">*</span><span class="n">x</span><span class="o">,</span><span class="n">x</span><span class="o">-</span><span class="mi">1</span><span class="o">)</span>
+			
+		<span class="nf">loop</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="n">x</span><span class="o">)</span> 
+	<span class="o">}</span>
+	<span class="nf">factorial</span><span class="o">(</span><span class="mi">4</span><span class="o">)</span> 
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="higher-order-function">Higher Order Function</h2>
+
+<ul>
+  <li>first-class values</li>
+  <li>like any other value, a function can be passed as a parameter and returned as a result</li>
+  <li>This provides a flexible way to compose programs</li>
+  <li>Function takes other functions as parameters or that return functions as results are called <em>HOF</em></li>
+</ul>
+
+<pre><code class="language-Scala">def sum(f: Int=&gt;Int, a:Int, b:Int):Int = 
+	if (a&gt;b) 0
+	else f(a) + sum(f,a+1,b)
+</code></pre>
+<p>We can then write:</p>
+
+<pre><code class="language-Scala">def sumInts(a:Int, b:Int) 		= sum(id,a,b)
+def sumCubes(a:Int, b:Int) 		= sum(cube,a,b)
+def sumFactorials(a:Int,b:Int) = sum(fact,a,b)
+</code></pre>
+
+<p>where:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def id(x:Int):Int = x
+def cube(x:Int):Int = x * x * x
+def fact(x:Int):Int = if(x==0) 1 else fact(x-1)
+</code></pre></div></div>
+
+<h3 id="function-types">Function Types</h3>
+
+<p>The type <code class="highlighter-rouge">A =&gt; B</code> is the type of a <em>function</em> that takes an argument of type A and returns a result of type B</p>
+
+<h3 id="anonymous-functions">Anonymous Functions</h3>
+
+<p>上面的例子中，将函数最为参数的一个副作用是要创建许多子函数。有些时候定义这些子函数有些冗余，这时候可以使用匿名函数</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span>
+</code></pre></div></div>
+<p>Here,<code class="highlighter-rouge">(x:Int) =&gt; x * x * x</code>是匿名函数</p>
+
+<ul>
+  <li>参数的类型可以省略，他可以被编译器推断</li>
+</ul>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">+</span><span class="n">y</span>
+</code></pre></div></div>
+
+<p>所有的匿名函数都可以用def表示:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">(</span><span class="n">x1</span><span class="k">:</span><span class="kt">T1</span><span class="o">,...,</span><span class="n">xn</span><span class="k">:</span><span class="kt">Tn</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">E</span>
+<span class="c1">//等价于</span>
+<span class="o">{</span>
+	<span class="k">def</span> <span class="nf">f</span><span class="o">(</span><span class="n">x1</span><span class="k">:</span><span class="kt">T1</span><span class="o">,...,</span><span class="n">xn</span><span class="k">:</span><span class="kt">Tn</span><span class="o">)</span> <span class="k">=</span> <span class="n">E</span><span class="o">;</span>
+	<span class="n">f</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p>因此匿名函数实际上函数的语法糖 = <code class="highlighter-rouge">{} + def f</code></p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="c1">//return a function using block</span>
+ <span class="k">def</span> <span class="nf">sum</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Int</span><span class="o">)</span> <span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span><span class="kt">Int</span><span class="o">)</span><span class="k">=&gt;</span><span class="nc">Int</span> <span class="k">=</span> 
+  <span class="o">{</span>
+		<span class="k">def</span> <span class="nf">sumF</span><span class="o">(</span><span class="n">a</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">Int</span> <span class="o">=</span>
+		
+			<span class="nf">if</span><span class="o">(</span><span class="n">a</span><span class="o">&gt;</span><span class="n">b</span><span class="o">)</span> <span class="mi">0</span>
+			<span class="k">else</span> <span class="nf">f</span><span class="o">(</span><span class="n">a</span><span class="o">)</span> <span class="o">+</span> <span class="nf">sumF</span><span class="o">(</span><span class="n">a</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span><span class="n">b</span><span class="o">)</span>
+		<span class="n">sumF</span>
+	
+  <span class="o">}</span> 
+</code></pre></div></div>
+
+<p>使用匿名函数</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">sumInt</span><span class="o">(</span><span class="n">a</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="nf">sum</span><span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span>
+<span class="k">def</span> <span class="nf">sumCubes</span><span class="o">(</span><span class="n">a</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span><span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="nf">sum</span><span class="o">(</span><span class="n">x</span><span class="k">=&gt;</span><span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="o">,</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">)</span>
+
+</code></pre></div></div>
+<h2 id="currying">Currying</h2>
+
+<h3 id="motivation">Motivation</h3>
+
+<p>Look again at the summation functions:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">sumInts</span><span class="o">(</span><span class="n">a</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="nf">sum</span><span class="o">(</span><span class="n">x</span><span class="k">=&gt;</span><span class="n">x</span> <span class="o">,</span><span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">)</span>
+
+</code></pre></div></div>
+
+<ul>
+  <li>Question</li>
+</ul>
+
+<p>Note that a and b get passed unchanged from <code class="highlighter-rouge">sumInts</code> and <code class="highlighter-rouge">sumCubes</code> into <code class="highlighter-rouge">sum</code>.
+Can we be even shorter by getting rid of these parameters?</p>
+
+<h3 id="functions-returning-functions">Functions Returning Functions</h3>
+
+<p>Let’s rewrite sum as follows:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">sum</span><span class="o">(</span><span class="n">f</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=&gt;</span> <span class="nc">Int</span><span class="o">)</span> <span class="k">:</span> <span class="o">(</span><span class="kt">Int</span><span class="o">,</span><span class="kt">Int</span><span class="o">)</span><span class="k">=&gt;</span><span class="nc">Int</span> <span class="k">=</span> 
+<span class="o">{</span>
+	<span class="k">def</span> <span class="nf">sumF</span><span class="o">(</span><span class="n">a</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span> <span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">Int</span> <span class="o">=</span> 
+		
+		<span class="nf">if</span><span class="o">(</span><span class="n">a</span><span class="o">&gt;</span><span class="n">b</span><span class="o">)</span> <span class="mi">0</span>
+		<span class="k">else</span> <span class="nf">f</span><span class="o">(</span><span class="n">a</span><span class="o">)</span> <span class="o">+</span> <span class="nf">sumF</span><span class="o">(</span><span class="n">a</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span><span class="n">b</span><span class="o">)</span>
+	<span class="n">sumF</span>
+	
+<span class="o">}</span>
+</code></pre></div></div>
+<p><code class="highlighter-rouge">sum</code> is now a function that returns another function.
+The returned function <code class="highlighter-rouge">sumF</code> applies the given function parameter <code class="highlighter-rouge">f</code> and sums the result</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">sumIncrease</span> <span class="k">=</span> <span class="nf">sum</span><span class="o">(</span> <span class="n">x</span><span class="k">=&gt;</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="o">)</span>
+<span class="k">val</span> <span class="nv">result</span> <span class="k">=</span> <span class="nf">sumIncrease</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span><span class="mi">4</span><span class="o">)</span>
+
+<span class="c1">//也可以直接计算:</span>
+<span class="k">val</span> <span class="nv">result</span> <span class="k">=</span> <span class="nf">sum</span> <span class="o">(</span><span class="n">x</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="o">)(</span><span class="mi">2</span><span class="o">,</span><span class="mi">4</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>Generally,function application associates to the left. 代码中，函数的运算是左结合：</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">sum</span><span class="o">(</span><span class="n">x</span><span class="k">=&gt;</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="o">)(</span><span class="mi">1</span><span class="o">,</span><span class="mi">10</span><span class="o">)</span> <span class="k">=</span> <span class="o">(</span><span class="nf">sum</span><span class="o">(</span><span class="n">x</span><span class="k">=&gt;</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="o">))(</span><span class="mi">1</span><span class="o">,</span><span class="mi">10</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>对于一个返回函数的函数来说，scala提供了一种syntax, 以上面的sum函数为例:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">sum</span><span class="o">(</span><span class="n">f</span><span class="k">:</span><span class="kt">Int</span><span class="o">=&gt;</span><span class="nc">Int</span><span class="o">)(</span><span class="n">a</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span><span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> 
+	<span class="nf">if</span><span class="o">(</span><span class="n">a</span><span class="o">&gt;</span><span class="n">b</span><span class="o">)</span> <span class="mi">0</span> <span class="k">else</span> <span class="nf">f</span><span class="o">(</span><span class="n">a</span><span class="o">)</span> <span class="o">+</span> <span class="nf">sum</span><span class="o">(</span><span class="n">f</span><span class="o">)(</span><span class="n">a</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span><span class="n">b</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>相当于将参数直接代入进来，使<code class="highlighter-rouge">sum (x =&gt; x+1 )(2,4)</code>这种写法更直观</p>
+
+<h3 id="expansion-of-multiple-parameter-lists">Expansion of Multiple Parameter Lists</h3>
+
+<p>In general, a definition of a function with multiple parameter lists</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="c1">//带有参数列表的函数</span>
+<span class="k">def</span> <span class="nf">f</span><span class="o">(</span><span class="n">args1</span><span class="o">)...(</span><span class="n">argsn</span><span class="o">)</span> <span class="k">=</span> <span class="n">E</span>
+
+</code></pre></div></div>
+
+<p>where <code class="highlighter-rouge">n&gt;1</code>, 等价于</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">def</span> <span class="nf">f</span><span class="o">(</span><span class="n">args1</span><span class="o">)...(</span><span class="n">argsn</span><span class="o">-</span><span class="mi">1</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span><span class="k">def</span> <span class="nf">g</span><span class="o">(</span><span class="n">argsn</span><span class="o">)</span><span class="k">=</span><span class="n">E</span><span class="o">;</span> <span class="n">g</span><span class="o">}</span>
+
+</code></pre></div></div>
+
+<p>理解:</p>
+
+<ul>
+  <li>
+    <p>arg1,args2,…,argsn-1实际上都表示匿名函数:</p>
+
+    <ul>
+      <li>
+        <p><code class="highlighter-rouge">def ((f(g)h)z) ... = {def g(x) = E; g}</code></p>
+      </li>
+      <li>
+        <p>其中g(x)是所有这些匿名函数代入后的最终函数</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>whare <code class="highlighter-rouge">g</code> is a fresh identifier. Or for short:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">def</span> <span class="nf">f</span><span class="o">(</span><span class="n">args1</span><span class="o">)...(</span><span class="n">argsn</span><span class="o">-</span><span class="mi">1</span><span class="o">)</span> <span class="k">=</span> <span class="o">(</span><span class="n">argsn</span> <span class="k">=&gt;</span> <span class="n">E</span><span class="o">)</span>
+
+</code></pre></div></div>
+<p>上面这个式子使用匿名函数表达：</p>
+
+<p>等号左边是匿名函数的求解，等号右边是最终的函数：输入为argsn， 输出为E</p>
+
+<p>也可定义为：</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">def</span> <span class="nf">f</span> <span class="k">=</span> <span class="o">(</span><span class="n">args1</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="n">args2</span> <span class="k">=&gt;</span> <span class="o">...</span> <span class="o">(</span><span class="n">argsn</span> <span class="k">=&gt;</span> <span class="n">E</span><span class="o">)...))</span>
+
+</code></pre></div></div>
+
+<p>这种将匿名函数的返回值作为下一个函数的输入，这种风格叫做currying，命名来自Haskell的创使人：Haskell Brooks Curry(1900-1982)</p>
+
+<ul>
+  <li>分析<code class="highlighter-rouge">sum</code></li>
+</ul>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">def</span> <span class="nf">sum</span><span class="o">(</span><span class="n">f</span><span class="k">:</span><span class="kt">Int</span><span class="o">=&gt;</span><span class="nc">Int</span><span class="o">)(</span><span class="n">a</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span><span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span><span class="k">:</span><span class="kt">Int</span> <span class="o">=</span> <span class="n">E</span>
+
+</code></pre></div></div>
+
+<p>what is the type of sum?</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="o">(</span><span class="nc">Int</span> <span class="k">=&gt;</span> <span class="nc">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="nc">Int</span><span class="o">,</span> <span class="nc">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="nc">Int</span>
+
+<span class="o">-</span> <span class="nf">输入是</span><span class="o">(</span><span class="nc">Int</span> <span class="k">=&gt;</span> <span class="nc">Int</span><span class="o">)</span> 
+
+<span class="o">-</span> <span class="nf">输出是</span><span class="o">(</span><span class="nc">Int</span><span class="o">,</span><span class="nc">Int</span><span class="o">)</span><span class="k">=&gt;</span><span class="nc">Int</span>
+
+<span class="o">-</span> <span class="n">因此</span><span class="err">，</span><span class="n">上面的式子等价于</span> <span class="n">`(Int =&gt; Int) =&gt; ((Int, Int) =&gt; Int)`</span>
+
+	<span class="o">-</span> <span class="n">但是函数是右结合的</span><span class="err">，</span><span class="n">因此左后的括号可以免掉</span>
+
+
+<span class="o">##</span><span class="k">#</span><span class="nc">Summation</span> <span class="k">with</span> <span class="nc">Anonymous</span> <span class="nc">Functions</span>
+
+<span class="n">使用匿名函数</span><span class="err">，</span><span class="n">我们能简化`sum`函数</span>
+
+<span class="o">```</span><span class="n">scala</span>
+
+<span class="k">def</span> <span class="nf">sumInts</span><span class="o">(</span><span class="n">a</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span><span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="nf">sum</span><span class="o">(</span><span class="n">x</span><span class="k">=&gt;</span><span class="n">x</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">)</span>
+<span class="k">def</span> <span class="nf">sumCubes</span><span class="o">(</span><span class="n">a</span><span class="k">:</span><span class="kt">Int</span><span class="o">,</span><span class="n">b</span><span class="k">:</span><span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="nf">sum</span><span class="o">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span><span class="n">b</span><span class="o">)</span>
+
+</code></pre></div></div>
+
+<p>###MapReduce</p>
+
+<ul>
+  <li>map,reduce这种函数的基础就是currying</li>
+</ul>
+
+<pre><code class="language-Scala">
+def product(f:Int =&gt; Int)(a:Int, b:Int):Int =
+  
+  		if (a &gt; b) 1
+  		else f(a) * product(f)(a+1,b)     //&gt; product: (f: Int =&gt; Int)(a: Int, b: Int)Int
+  		
+def fact(n:Int) = product(x =&gt; x)(1,n)          //&gt; fact: (n: Int)Int
+  
+fact(3)                                         //&gt; res1: Int = 6
+
+
+def mapReduce(map:Int=&gt;Int, combine:(Int,Int)=&gt;Int,zero:Int)(a:Int, b:Int):Int =
+	
+		if (a&gt;b) zero
+		else combine(map(a), mapReduce(map,combine,zero)(a+1,b))
+                                                  //&gt; mapReduce: (map: Int =&gt; Int, combine: (Int, Int) =&gt; Int, zero: Int)(a: Int, 
+                                                  //| b: Int)Int
+		
+	mapReduce(x=&gt;x,(x,y)=&gt;x*y,1)(2,4)         //&gt; res2: Int = 24
+	
+	
+	def new_product(f:Int=&gt;Int)(a:Int,b:Int) = mapReduce(f,(x,y)=&gt;x*y,1)(a,b)
+                                                  //&gt; new_product: (f: Int =&gt; Int)(a: Int, b: Int)Int
+	def new_fact(n:Int) = new_product(x=&gt;x)(1,n)
+                                                  //&gt; new_fact: (n: Int)Int
+ 	new_fact(4)                               //&gt; res3: Int = 24
+ 	
+
+</code></pre>
+
+<p>##2-3: Finding a fixed point of a function</p>
+
+<p>A number <code class="highlighter-rouge">x</code> is called a <em>fixed point</em> of a function <code class="highlighter-rouge">f</code> if</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x) = x
+
+</code></pre></div></div>
+
+<p>For some functions <code class="highlighter-rouge">f</code> we can locate the fixed points by starting with an initial estimate and then by applying <code class="highlighter-rouge">f</code> in a repetitive way.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>x, f(x), f(f(x)), f(f(f(x))),....
+
+</code></pre></div></div>
+
+<p>until the values does not vary anymore(or the change is sufficiently small).</p>
+
+<p>This leads to the following function for finding a fixed point:</p>
+
+<div class="language-scala highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+ 	<span class="k">val</span> <span class="nv">tolerance</span> <span class="k">=</span> <span class="mf">0.0001</span>                    <span class="c1">//&gt; tolerance  : Double = 1.0E-4</span>
+ 
+ 	<span class="k">def</span> <span class="nf">isCloseEnough</span><span class="o">(</span><span class="n">x</span><span class="k">:</span><span class="kt">Double</span><span class="o">,</span><span class="n">y</span><span class="k">:</span><span class="kt">Double</span><span class="o">)</span> <span class="k">=</span> <span class="nf">abs</span><span class="o">((</span><span class="n">x</span><span class="o">-</span><span class="n">y</span><span class="o">)/</span><span class="n">x</span><span class="o">)/</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">tolerance</span>
+                                                  <span class="c1">//&gt; isCloseEnough: (x: Double, y: Double)Boolean</span>
+ 
+ 	<span class="k">def</span> <span class="nf">fixedPoint</span><span class="o">(</span><span class="n">f</span><span class="k">:</span><span class="kt">Double</span> <span class="o">=&gt;</span> <span class="nc">Double</span><span class="o">)(</span><span class="n">firstGuess</span><span class="k">:</span><span class="kt">Double</span><span class="o">)</span><span class="k">:</span><span class="kt">Double</span> <span class="o">=</span>
+	<span class="o">{</span>
+			<span class="k">def</span> <span class="nf">iterate</span><span class="o">(</span><span class="n">guess</span><span class="k">:</span><span class="kt">Double</span><span class="o">)</span><span class="k">:</span><span class="kt">Double</span> <span class="o">=</span> <span class="o">{</span>
+			
+				<span class="k">val</span> <span class="nv">next</span> <span class="k">=</span> <span class="nf">f</span><span class="o">(</span><span class="n">guess</span><span class="o">)</span>
+				
+				<span class="nf">if</span> <span class="o">(</span><span class="nf">isCloseEnough</span><span class="o">(</span><span class="n">guess</span><span class="o">,</span><span class="n">next</span><span class="o">))</span> <span class="n">next</span>
+				<span class="k">else</span>
+						<span class="nf">iterate</span><span class="o">(</span><span class="n">next</span><span class="o">)</span>
+			<span class="o">}</span>
+			
+		<span class="nf">iterate</span><span class="o">(</span><span class="n">firstGuess</span><span class="o">)</span>
+	
+	<span class="o">}</span> 
+
+
+
+</code></pre></div></div>
+<p>###Summary</p>
+
+<ul>
+  <li>
+    <p>上周我们知道了Function是first-class的</p>
+  </li>
+  <li>
+    <p>这周我们知道HOF可以将function combine起来，可以做入参也可以做返回值</p>
+  </li>
+  <li>
+    <p>As a programmer, one must look for opportunities to abstract and reuse.</p>
+  </li>
+  <li>
+    <p>The highest level of abstraction is not always the best, but it is important to know the techniques, so as to use them properly.</p>
+  </li>
+</ul>
+
+<p>##2-4:Scala syntax summary</p>
+
+<p>We have seen language elements to express types, expressions and definations.</p>
+
+<p>Below, we give their context-free syntax in Extended Backus-Naur form(EBNF), where:</p>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">|</code> denotes an alternative</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">[...]</code> an option(0 or 1)</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">{...}</code> a repetition (0 or more)</p>
+  </li>
+</ul>
+
+<p>###Types</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td>Type         = SimpleType</td>
+      <td>FunctionType</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>FunctionType = SimpleType <code class="highlighter-rouge">=&gt;</code> Type</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>		 | `( [Types] )` `=&gt;` Type
+</code></pre></div></div>
+
+<p>SimpleType 	 = Ident</p>
+
+<p>Types        = Type {‘,’ Type}</p>
+
+<p>A type can be:</p>
+
+<ul>
+  <li>
+    <p>A <em>numeric type</em> : Int, Double, Byte, Short, Char, Long, Float</p>
+  </li>
+  <li>
+    <p><em>Boolean type</em> : true,false</p>
+  </li>
+  <li>
+    <p><em>String type</em></p>
+  </li>
+  <li>
+    <p><em>function type</em>, like <code class="highlighter-rouge">Int =&gt; Int</code>, <code class="highlighter-rouge">(Int,Int) =&gt; Int</code></p>
+  </li>
+</ul>
+
+<p>###Expressions</p>
+
+<p>An expression can be:</p>
+
+<ul>
+  <li>
+    <p>An <em>identifier</em> such as<code class="highlighter-rouge"> x, isGoodEnough</code></p>
+  </li>
+  <li>
+    <p>An <em>literal</em>, like <code class="highlighter-rouge">0,1.0,"abc"</code></p>
+  </li>
+  <li>
+    <p>An <em>function application</em>, like <code class="highlighter-rouge">sqrt(x)</code></p>
+  </li>
+  <li>
+    <p>An <em>operator application</em>, like <code class="highlighter-rouge">-x,y+x</code></p>
+  </li>
+  <li>
+    <p>An <em>selection</em> , like <code class="highlighter-rouge">math.abs</code></p>
+  </li>
+  <li>
+    <p>An <em>conditional expression</em>, like <code class="highlighter-rouge">if(x&lt;0) -x else x</code></p>
+  </li>
+  <li>
+    <p>A <em>block</em> like <code class="highlighter-rouge">{val x= math.abs(y) ; x+2}</code></p>
+  </li>
+  <li>
+    <p>An <em>anonymous function</em>, like <code class="highlighter-rouge">x =&gt; x+1</code></p>
+  </li>
+</ul>
+
+<p>###Definiations:</p>
+
+<p><strong>Definition:</strong></p>
+
+<ul>
+  <li>
+    <p>A <em>function definition</em> like <code class="highlighter-rouge">def sum(x:Int,y:Int) = x+y</code></p>
+  </li>
+  <li>
+    <p>A <em>value definitions</em> like <code class="highlighter-rouge">val y = square(2)</code></p>
+  </li>
+</ul>
+
+<p><strong>Parameter</strong></p>
+
+<ul>
+  <li>
+    <p>A <em>call-by-value param</em>, like<code class="highlighter-rouge">(x:Int)</code></p>
+  </li>
+  <li>
+    <p>A <em>call-by-name para</em> like <code class="highlighter-rouge">(y: =&gt;  Double)</code></p>
+  </li>
+</ul>
+
+:ET
