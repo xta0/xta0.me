@@ -1,5 +1,5 @@
 ---
-list_title: 学一点 PyTorch | Train a Linear Regression Model using PyTorch
+list_title: PyTorch | Train a Linear Regression Model using PyTorch
 title: PyTorch实现线性回归
 layout: post
 mathjax: true
@@ -8,7 +8,7 @@ categories: ["PyTorch", "Machine Learning","Deep Learning"]
 
 ### Motivation
 
-PyTorch是Facebook开源的一套Deep Learning的框架，由于它有基于Python的Frontend API，因此非常容易上手，对Researcher也非常友好。我目前对PyTorch的理解是它是具有自动求导功能的Numpy，当然PyTorch比Numpy肯定要强大的多。
+PyTorch是Facebook开源的一套Deep Learning的框架，它的设计是基于eager execution，因此非常容易上手，对Researcher也非常友好。简单理解，PyTorch是具有自动求导功能的Numpy。
 
 ### Linear Regression
 
