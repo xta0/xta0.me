@@ -19,7 +19,7 @@ categories: ["PyTorch", "Machine Learning","Deep Learning"]
 
 我们还是先从最简单的MNIST dataset开始。我们用GAN来生成手写的数字，整个Architecture如下所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan-1.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan-01.png">
 
 由于MNIST数据量比较小，我们可以使用FC layer作为hidden layer即可。 我们需要使用`leak relu`作为activation函数， 因为leaky relu可以确保gradient可以flow through整个network。这个对于GAN model很重要，因为Generator在train的时候需要Discriminator的gradient信息。Generator的输出通常是用`tanh`。
 
