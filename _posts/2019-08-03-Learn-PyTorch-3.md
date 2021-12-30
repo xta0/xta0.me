@@ -12,7 +12,7 @@ GAN model由两部分构成，Generator和Discriminator。 Generator的输入是
 
 我们还是先从最简单的MNIST dataset开始。我们训练一个GAN model用来生成数字，整个Architecture如下所示
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan-01.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_01.png">
 
 由于MNIST数据量比较小，我们可以使用FC layer作为hidden layer即可。对于GAN model有几个比较特殊的地方
 
@@ -204,11 +204,11 @@ g_optimizer.step()
 
 我们选取optimizer为`Adam`, learning rate为`0.002`, `num_epochs = 100` 两个model的training loss的变化如下图
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan-03.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_03.png">
 
 我们也可以观察在训练中Generator输出的变化情况
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan-04.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_04.png">
 
 
 ## Resources
