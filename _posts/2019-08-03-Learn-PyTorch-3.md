@@ -204,7 +204,7 @@ Discriminator的结构和上面的MNIST model类似，它由若干个conv layer�
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_05.png">
 
-需要注意的是，除了第一个conv layer外，后面的每个conv layer都需要追加BatchNorm操作来帮助training更好的converge。
+需要注意的是，除了第一个conv layer外，后面的每个conv layer都需要追加BatchNorm操作来帮助training更好的converge。conv layer的depth可以从32开始，后面逐层double (64, 128, etc)。
 
 ```python
 # helper conv function
@@ -240,7 +240,6 @@ class Discriminator(nn.Module):
         x = self.fc(x)
         return x
 ```
-conv layer的depth可以从32开始，后面逐层double (64, 128, etc).
 
 ### Generator
 
@@ -287,12 +286,11 @@ class Generator(nn.Module):
 ```
 ### 小结
 
-
-
+上面介绍了GAN基本的工作方式，不论是MNIST GAN还是DC GAN，他们model的结构都不复杂，而且他们的输入都是一个noise vector。实际应用中，这种model并没有特别大用处，想要生成高质量的fake image，仅仅使用random input是不够的，接下来我们来研究一下Cycle GAN。
 
 ## Resources
 
-- [GAN paper]()
+- [Ian Goodfellow's original paper on GANs](https://proceedings.neurips.cc/paper/2014/file/5ca3e9b122f61f8f06494c97b1afccf3-Paper.pdf)
 - [DC GAN paper](https://arxiv.org/pdf/1511.06434.pdf)
 - [BatchNorm Paper](https://arxiv.org/pdf/1502.03167.pdf)
 - [Udacity Deep Learning](https://classroom.udacity.com/nanodegrees/nd101)
