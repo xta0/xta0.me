@@ -204,6 +204,8 @@ g_optimizer.step()
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_04.png">
 
+可见，对于任意一个random tensor，Generator可以生成一个类似手写的数字。当然MNIST是个非常简单的情况，对于复杂一点的图片，我们需要用Convolution layer来代替FC layer。我们后面会继续分析。
+
 
 ## Resources
 
