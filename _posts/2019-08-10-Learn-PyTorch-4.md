@@ -285,6 +285,7 @@ class Generator(nn.Module):
         
         return x
 ```
+## 小结
 
 
 ## Resources

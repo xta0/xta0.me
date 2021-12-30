@@ -134,34 +134,21 @@ def fake_loss(D_out):
 ```
 训练Discriminator，可以follow下面步骤
 
-1. Compute the discriminator loss on real, training images
-2. Generate fake images
-3. Compute the discriminator loss on fake, generated images
-4. Add up real and fake loss
-5. Perform backpropagation + an optimization step to update the discriminator's weights
-
 ```python
 d_optimizer.zero_grad()
-# 1. Train with real images
-
-# Compute the discriminator losses on real images 
-# smooth the real labels
+# 1. Compute the discriminator loss on real, training images
 D_real = D(real_images)
 d_real_loss = real_loss(D_real, smooth=True)
-
-# 2. Train with fake images
-
-# Generate fake images
+# 2. Generate fake images
 z = np.random.uniform(-1, 1, size=(batch_size, z_size))
 z = torch.from_numpy(z).float()
 fake_images = G(z)
-
-# Compute the discriminator losses on fake images        
+# 3. Compute the discriminator losses on fake images        
 D_fake = D(fake_images)
 d_fake_loss = fake_loss(D_fake)
-
-# add up loss and perform backprop
+#4.  add up loss and perform backprop
 d_loss = d_real_loss + d_fake_loss
+#5. back prop + optimization
 d_loss.backward()
 d_optimizer.step()
 ```
@@ -172,25 +159,19 @@ d_optimizer.step()
 
 训练Generator，可以follow下面的步骤
 
-1. Generate fake images
-2. Compute the discriminator loss on fake images, using flipped labels!
-3. Perform backpropagation + an optimization step to update the generator's weights
-
 ```python
 g_optimizer.zero_grad()        
-# 1. Train with fake images and flipped labels
-
-# Generate fake images
+# 1. Generate fake images
 z = np.random.uniform(-1, 1, size=(batch_size, z_size))
 z = torch.from_numpy(z).float()
 fake_images = G(z)
 
-# Compute the discriminator losses on fake images 
+# 2. Compute the discriminator losses on fake images 
 # using flipped labels!
 D_fake = D(fake_images)
 g_loss = real_loss(D_fake) # use real loss to flip labels
 
-# perform backprop
+# 3. perform backprop
 g_loss.backward()
 g_optimizer.step()
 ```
@@ -204,11 +185,116 @@ g_optimizer.step()
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_04.png">
 
-可见，对于任意一个random tensor，Generator可以生成一个类似手写的数字。当然MNIST是个非常简单的情况，对于复杂一点的图片，我们需要用Convolution layer来代替FC layer。我们后面会继续分析。
+可见，对于任意一个random tensor，Generator可以生成一个类似手写的数字。当然MNIST是个非常简单的情况，对于复杂一点的图片，我们需要用Convolution layer来代替FC layer。
+
+## Deep Convolutional GAN
+
+DC GAN和上面的MNIST model工作原理基本相同，不同的是DC GAN使用conv layer作为hidden layer。Paper中还列出了architecture设计的几个关键点
+
+1. Replace any pooling layers with strided convolutions (discriminator) and fractional-strided
+convolutions (generator).
+2. Use batchnorm in both the generator and the discriminator.
+3. Remove fully connected hidden layers for deeper architectures.
+4. Use ReLU activation in generator for all layers except for the output, which uses Tanh.
+5. Use LeakyReLU activation in the discriminator for all layers.
+
+### Discriminator
+
+Discriminator的结构和上面的MNIST model类似，它由若干个conv layer构成。和普通的classification model不同的是，它用stride=2的conv来取代pooling。
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_05.png">
+
+需要注意的是，除了第一个conv layer外，后面的每个conv layer都需要追加BatchNorm操作来帮助training更好的converge。
+
+```python
+# helper conv function
+def conv(in_channels, out_channels, kernel_size, stride=2, padding=1, batch_norm=True):
+    """Creates a convolutional layer, with optional batch normalization.
+    """
+    layers = []
+    conv_layer = nn.Conv2d(in_channels, out_channels, 
+                           kernel_size, stride, padding, bias=False)
+    # append conv layer
+    layers.append(conv_layer)
+    if batch_norm:
+        # append batchnorm layer
+        layers.append(nn.BatchNorm2d(out_channels))
+    # using Sequential container
+    return nn.Sequential(*layers)
+
+class Discriminator(nn.Module):
+    def __init__(self, conv_dim=32):
+        super(Discriminator, self).__init__()
+        self.conv_dim = conv_dim
+        self.conv1 = conv(3, conv_dim, 4)
+        self.conv2 = conv(conv_dim, conv_dim*2, 4)                
+        self.conv3 = conv(conv_dim*2, conv_dim*4, 4)
+        self.fc = (conv_dim*4*4*4, 1)
+        
+    def forward(self, x):
+        # complete forward function
+        x = F.leaky_relu(self.conv1(x), 0.2)
+        x = F.leaky_relu(self.conv2(x), 0.2)
+        x = F.leaky_relu(self.conv3(x), 0.2)
+        x = x.view(-1, self.conv_dim*4 * 4 * 4)
+        x = self.fc(x)
+        return x
+```
+conv layer的depth可以从32开始，后面逐层double (64, 128, etc).
+
+### Generator
+
+Generator的input也是一个noise vector，它使用transpose conv(stride=2)来增加feature map的spatial size。同样的，我们需要使用对conv layer追加BatchNorm
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_05.png">
+
+```python
+# helper deconv function
+def deconv(in_channels, out_channels, kernel_size, stride=2, padding=1, batch_norm=True):
+    """Creates a transposed-convolutional layer, with optional batch normalization.
+    """
+    layers = []
+    transposed_conv_layer = nn.ConvTranspose2d(in_channels, out_channels, 
+                           kernel_size, stride, padding, bias=False)
+    # append conv layer
+    layers.append(transposed_conv_layer)
+    if batch_norm:
+        # append batchnorm layer
+        layers.append(nn.BatchNorm2d(out_channels))
+    # using Sequential container
+    return nn.Sequential(*layers)
+        
+
+class Generator(nn.Module):
+    def __init__(self, z_size, conv_dim=32):
+        super(Generator, self).__init__()
+        self.conv_dim = conv_dim
+        # complete init function
+        self.fc = nn.Linear(z_size, conv_dim*4*4*4)
+        self.deconv1 = deconv(conv_dim*4, conv_dim*2, 4)
+        self.deconv2 = deconv(conv_dim*2, conv_dim, 4)
+        self.deconv3 = deconv(conv_dim*4, 3, 4, batch_norm = False)
+        
+    def forward(self, x):
+        x = self.fc(x)
+        x = x.view(-1, self.conv_dim*4, 4, 4)
+        x = F.relu(self.deconv1(x), 0.2)
+        x = F.relu(self.deconv2(x), 0.2)
+        x = F.relu(self.deconv3(x), 0.2)
+        x = F.tanh(x)
+        
+        return x
+```
+### 小结
+
+
 
 
 ## Resources
 
-[Udacity Deep Learning](https://classroom.udacity.com/nanodegrees/nd101)
+- [GAN paper]()
+- [DC GAN paper](https://arxiv.org/pdf/1511.06434.pdf)
+- [BatchNorm Paper](https://arxiv.org/pdf/1502.03167.pdf)
+- [Udacity Deep Learning](https://classroom.udacity.com/nanodegrees/nd101)
 
 
