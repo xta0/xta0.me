@@ -16,10 +16,10 @@ GAN model由两部分构成，Generator和Discriminator。 Generator的输入是
 
 由于MNIST数据量比较小，我们可以使用FC layer作为hidden layer即可。对于GAN model有几个比较特殊的地方
 
-- 我们需要使用`leak relu`作为activation函数。因为leaky relu可以确保gradient可以flow through整个network。这个对于GAN model很重要，因为Generator在train的时候需要Discriminator的gradient信息。
+- 我们需要使用`Leaky ReLU`作为activation函数。因为`Leaky ReLU`可以确保gradient可以flow through整个network。这个对于GAN model很重要，因为Generator在train的时候需要Discriminator的gradient信息。
 - Generator的输出通常是用`tanh`，将tensor限制在`(-1, 1)`，这是由于Generator的output通常是Discriminator的input。对于Discriminator，它输入的MNIST图片也需要映射到`(-1, 1)`
 
-Generator和Discriminator的model定义如下
+综上，Generator和Discriminator的model结构并不复杂，定义如下
 
 ```python
 class Discriminator(nn.Module):
@@ -47,20 +47,7 @@ class Discriminator(nn.Module):
         # final layer
         out = self.fc4(x)
         return out
-```
-Discriminator的HyperParameter定义如下
 
-```
-Discriminator(
-  (fc1): Linear(in_features=784, out_features=128, bias=True)
-  (fc2): Linear(in_features=128, out_features=64, bias=True)
-  (fc3): Linear(in_features=64, out_features=32, bias=True)
-  (fc4): Linear(in_features=32, out_features=1, bias=True)
-  (dropout): Dropout(p=0.3, inplace=False)
-)
-```
-
-```python
 class Generator(nn.Module):
 
     def __init__(self, input_size, hidden_dim, output_size):
@@ -87,10 +74,17 @@ class Generator(nn.Module):
         out = F.tanh(self.fc4(x))
         return out
 ```
-
-Discriminator的HyperParameter定义如下
+Discriminator和Generator的HyperParameter定义如下
 
 ```
+Discriminator(
+  (fc1): Linear(in_features=784, out_features=128, bias=True)
+  (fc2): Linear(in_features=128, out_features=64, bias=True)
+  (fc3): Linear(in_features=64, out_features=32, bias=True)
+  (fc4): Linear(in_features=32, out_features=1, bias=True)
+  (dropout): Dropout(p=0.3, inplace=False)
+)
+
 Generator(
   (fc1): Linear(in_features=100, out_features=32, bias=True)
   (fc2): Linear(in_features=32, out_features=64, bias=True)
@@ -206,7 +200,7 @@ g_optimizer.step()
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_03.png">
 
-我们也可以观察在训练中Generator输出的变化情况
+我们也可以观察在训练中Generator输出的变化情况。我们可以在每个epoch之后输出一张Generator的图片
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_04.png">
 
