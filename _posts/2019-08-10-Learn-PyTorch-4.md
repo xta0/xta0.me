@@ -6,15 +6,15 @@ mathjax: true
 categories: ["PyTorch", "Machine Learning","Deep Learning"]
 ---
 
-## Cycle GAN from High level
+### Cycle GAN from High level
 
 在了解Cycle GAN之前，我们先要了解下Pix2Pix GAN。Pix2Pix GAN解决的问题是image mapping，即Generator将一张图片`x`映射成另一张图片`y`。这就需要我们的training data是一个组pair images。其中，$x_i$是Generator的输入，$y_i$是ground true。我们的目标是训练Generator，使$G(x_i) = y_i$。
 
-Paper使用Unet作为Generator的architecture。Input先经过一个encoder变成小的feature maps，再经过decoder将尺寸复原，最后通过Discriminator进行classification。
+Paper使用Unet作为Generator的architecture。Input先经过一个encoder变成小的feature maps，再经过decoder将尺寸复原。
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_09.png">
 
-Discriminator的结构和前一篇文章中的DC GAN类似
+decoder输出的图片再通过Discriminator进行classification。Discriminator的结构和前一篇文章中的DC GAN类似
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_10.png">
 
@@ -45,9 +45,34 @@ $$
 L_Y + L_X + \lambda L_{cyc}
 $$
 
-## 实现Cycle GAN
+### Discriminator
 
-gan
+Cycle GAN需要两个Discriminator和Generator。Discriminator的结构前文DC GAN相似，区别在于Input不需要经过Fully Connected Layer。我们另input的size为`[1, 3, 128, 128]`
+
+```python
+class Discriminator(nn.Module):
+    def __init__(self, conv_dim=64):
+        super(Discriminator, self).__init__()
+        # Define all convolutional layers
+        # Should accept an RGB image as input and output a single value
+        self.conv_dim = conv_dim
+        self.conv1 = conv(3, conv_dim, 4, batch_norm=False) #(64, 64, 64)
+        self.conv2 = conv(conv_dim, conv_dim * 2, 4) # (32, 32, 128)
+        self.conv3 = conv(conv_dim * 2, conv_dim * 4, 4) # (16, 16, 256)
+        self.conv4 = conv(conv_dim * 4, conv_dim * 8, 4) # (8, 8, 512)
+        self.conv5 = conv(conv_dim * 8, 1, 4, stride=1, batch_norm=False)
+
+    def forward(self, x):
+        # define feedforward behavior
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
+        x = F.relu(self.conv4(x))
+        x = self.conv5(x)
+        return x
+```
+
+### Generator
 
 
 ## Resources
