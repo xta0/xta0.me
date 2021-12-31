@@ -14,14 +14,18 @@ Paper使用Unet作为Generator的architecture。Input先经过一个encoder变�
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_09.png">
 
-上面的结构有一个问题是，Discriminator如何判断Generator的输出是否是fake。举例来说，理想情况下，$G(x_1)=y_1$，但是如果出现$G(x_1)=y_2$的情况，由于$y_2$是real image，Discriminator也会将其判定为true。因此，Discriminator的输入应该是一对pair，它的outputs是这对pair是否是match。如下图所示
+Discriminator的结构和前一篇文章中的DC GAN类似
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_10.png">
+
+上面Generator结构有一个问题是，Discriminator如何判断Generator的输出是否是fake。举例来说，理想情况下，$G(x_1)=y_1$，但是如果出现$G(x_1)=y_2$的情况，由于$y_2$是real image，Discriminator也会将其判定为true。因此，Discriminator的输入应该是一对pair，它的outputs是这对pair是否是match。如下图所示
 
 <div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2019/08/gan_11.png"></div>
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2019/08/gan_12.png" ></div>
 </div>
 
-实际应用中，这种一对一的pair data是很难得到的。比较容易得到的是两组image set - $X$和$Y$，比如一组马的图片和一组斑马的图片。此时我们需要找到一个映射使 $G(X) = Y$，即对于$X$中的每个image，都有$G(x) = y$。此时不是一对一的映射，而是多对多的映射，如下图所示
+实际应用中，这种一对一的pair data是很难得到的。比较容易得到的是两组image set - $X$和$Y$，比如一组马的图片和一组斑马的图片。此时我们需要找到一个映射使 $G(X) = Y$，即对于$X$中的每个image，都有$G(x) = y$。此时不是一对一的映射，而是多对多的映射，是**unsupervised learning**，如下图所示
 
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2019/08/gan_13.png" ></div>
 
@@ -38,11 +42,13 @@ $$
 Cycle Consistency Loss同样也有两组，分别为forward consistency loss 和 backward consistency loss，分别对应$x$和$y$。Cycle GAN的总的loss为
 
 $$
-L_Y + L_X + \lambdaL_{cyc}
+L_Y + L_X + \lambda L_{cyc}
 $$
 
-
 ## 实现Cycle GAN
+
+gan
+
 
 ## Resources
 
