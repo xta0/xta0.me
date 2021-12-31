@@ -18,7 +18,7 @@ Paper使用Unet作为Generator的architecture。Input先经过一个encoder变�
 
 上面的结构有一个问题是，Discriminator如何判断Generator的输出是否是fake。举例来说，理想情况下，$G(x_1)=y_1$，但是如果出现$G(x_2)=y_1$的情况，Discriminator也会将其判定为true。因此，Discriminator的inputs是一对pair，它的outputs是这对pair是否是match。如下图所示
 
-<div class="md-flex-h">
+<div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2019/08/gan_11.png"></div>
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2019/08/gan_12.png" ></div>
 </div>
