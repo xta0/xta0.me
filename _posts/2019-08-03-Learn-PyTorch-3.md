@@ -226,7 +226,7 @@ class Discriminator(nn.Module):
     def __init__(self, conv_dim=32):
         super(Discriminator, self).__init__()
         self.conv_dim = conv_dim
-        self.conv1 = conv(3, conv_dim, 4)
+        self.conv1 = conv(3, conv_dim, 4, batch_norm=False)
         self.conv2 = conv(conv_dim, conv_dim*2, 4)                
         self.conv3 = conv(conv_dim*2, conv_dim*4, 4)
         self.fc = (conv_dim*4*4*4, 1)
@@ -245,7 +245,7 @@ class Discriminator(nn.Module):
 
 Generator的input也是一个noise vector，它使用transpose conv(stride=2)来增加feature map的spatial size。同样的，我们需要使用对conv layer追加BatchNorm
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_05.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_06.png">
 
 ```python
 # helper deconv function
@@ -272,18 +272,29 @@ class Generator(nn.Module):
         self.fc = nn.Linear(z_size, conv_dim*4*4*4)
         self.deconv1 = deconv(conv_dim*4, conv_dim*2, 4)
         self.deconv2 = deconv(conv_dim*2, conv_dim, 4)
-        self.deconv3 = deconv(conv_dim*4, 3, 4, batch_norm = False)
+        self.deconv3 = deconv(conv_dim, 3, 4, batch_norm = False)
         
     def forward(self, x):
         x = self.fc(x)
-        x = x.view(-1, self.conv_dim*4, 4, 4)
-        x = F.relu(self.deconv1(x), 0.2)
-        x = F.relu(self.deconv2(x), 0.2)
-        x = F.relu(self.deconv3(x), 0.2)
+        x = x.view(-1, self.conv_dim*4, 4, 4) # (1, 128, 4, 4)
+        x = F.relu(self.deconv1(x), 0.2) # (1, 64, 8, 8)
+        x = F.relu(self.deconv2(x), 0.2) # (1, 32, 16, 16)
+        x = self.deconv3(x) #(32, 32)
         x = F.tanh(x)
         
         return x
 ```
+
+### Generate Faces
+
+我们可以用上面的model来尝试生成人脸，[CelebFaces](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html)提供了大量的图片，为了节省训练时间，我们将图片resize成`(32,32)`，Sample如下图所示
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_16.png">
+
+生成图片如下图所示
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/08/gan_18.png">
+
 ### 小结
 
 上面介绍了GAN基本的工作方式，不论是MNIST GAN还是DC GAN，他们model的结构都不复杂，而且他们的输入都是一个noise vector。实际应用中，这种model并没有特别大用处，想要生成高质量的fake image，仅仅使用random input是不够的，接下来我们来研究一下Cycle GAN。

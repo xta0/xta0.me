@@ -8,7 +8,7 @@ categories: ["PyTorch", "Machine Learning","Deep Learning"]
 
 ### Cycle GAN
 
-在了解Cycle GAN之前，我们先要了解下Pix2Pix GAN。Pix2Pix GAN解决的问题是image mapping，即Generator将一张图片`x`映射成另一张图片`y`。这就需要我们的training data是一个组pair images。其中，$x_i$是Generator的输入，$y_i$是ground true。我们的目标是训练Generator，使$G(x_i) = y_i$。
+在了解Cycle GAN之前，我们先要了解下Pix2Pix GAN。Pix2Pix GAN解决的问题是image mapping，即Generator将一张图片`x`映射成另一张图片`y`。这就需要我们的training data是pair images。其中，$x_i$是Generator的输入，$y_i$是ground true。我们的目标是训练Generator，使$G(x_i) = y_i$。
 
 Paper使用Unet作为Generator的architecture。Input先经过一个encoder变成小的feature maps，再经过decoder将尺寸复原。
 
@@ -42,7 +42,7 @@ $$
 Cycle Consistency Loss同样也有两组，分别为forward consistency loss 和 backward consistency loss，分别对应$x$和$y$。
 
 $$
-total_loss = L_Y + L_X + \lambda L_{cyc}
+total loss = L_Y + L_X + \lambda L_{cyc}
 $$
 
 ### Discriminator
@@ -128,7 +128,7 @@ class CycleGenerator(nn.Module):
 ```
 ## Discriminator and Generator Losses
 
-前文提到，Cycle GAN的loss由两部分组成，一部分是Adversarial loss，前面文章已经讨论过，但是Cycle GAN的Discriminator不能使用Cross Entropy loss，原因paper中提到会有梯度消失的问题，因此，这里需要使用mean square loss. Cycle GAN loss的另一分部分是Cycle Consistency loss.这个loss比较简单，只是比较生成的图片和原图片每个像素点的差异。
+前面提到，Cycle GAN的loss由两部分组成，一部分是Adversarial loss，前面文章已经讨论过，但是Cycle GAN的Discriminator不能使用Cross Entropy loss，原因paper中提到会有梯度消失的问题，因此，这里需要使用mean square loss. Cycle GAN loss的另一分部分是Cycle Consistency loss，这个loss比较简单，只是比较生成的图片和原图片每个像素点的差异即可。各种loss计算如下
 
 ```python
 def real_mse_loss(D_out):
@@ -147,7 +147,47 @@ def cycle_consistency_loss(real_im, reconstructed_im, lambda_weight):
     return lambda_weight*reconstr_loss   
 ```
 
-## Training
+## 训练Discriminator
+
+训练Discriminator的步骤和前文的DC GAN基本类似，不同的是Cycle GAN要train两个Discriminator用来判断X和Y。可以follow下面步骤
+
+```python
+##   First: D_X, real and fake loss components   ##
+# Train with real images
+d_x_optimizer.zero_grad()
+# 1. Compute the discriminator losses on real images
+out_x = D_X(images_X)
+D_X_real_loss = real_mse_loss(out_x)
+# Train with fake images
+# 2. Generate fake images that look like domain X based on real images in domain Y
+fake_X = G_YtoX(images_Y)
+# 3. Compute the fake loss for D_X
+out_x = D_X(fake_X)
+D_X_fake_loss = fake_mse_loss(out_x)
+# 4. Compute the total loss and perform backprop
+d_x_loss = D_X_real_loss + D_X_fake_loss
+d_x_loss.backward()
+d_x_optimizer.step()
+
+##   Second: D_Y, real and fake loss components   ##
+# Train with real images
+d_y_optimizer.zero_grad()
+# 1. Compute the discriminator losses on real images
+out_y = D_Y(images_Y)
+D_Y_real_loss = real_mse_loss(out_y)
+# Train with fake images
+# 2. Generate fake images that look like domain Y based on real images in domain X
+fake_Y = G_XtoY(images_X)
+# 3. Compute the fake loss for D_Y
+out_y = D_Y(fake_Y)
+D_Y_fake_loss = fake_mse_loss(out_y)
+# 4. Compute the total loss and perform backprop
+d_y_loss = D_Y_real_loss + D_Y_fake_loss
+d_y_loss.backward()
+d_y_optimizer.step()
+```
+
+
 
 
 
