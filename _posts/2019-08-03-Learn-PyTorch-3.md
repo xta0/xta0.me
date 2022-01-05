@@ -6,7 +6,7 @@ mathjax: true
 categories: ["PyTorch", "Machine Learning","Deep Learning"]
 ---
 
-GAN model由两部分构成，Generator和Discriminator。 Generator的输入是一个random的tensor，它通过training不断校正自己的输出，直到输出的图片接近于真实的图片。Discriminattor是一个普通的image classifier，用来判断输入的图片是真的还是假的。整个GAN model训练的过程可以理解为一个competition，Generator不断训练自己生成接近真实的图片，Discriminator不断训练自己检测假的图片，直到迫使Generator生成出接近真实的图片。这个过程很类似于博弈论中寻找的纳什均衡点。
+GAN model由两部分构成，Generator和Discriminator。 Generator的输入是一个random的tensor，它通过training不断校正自己的输出，直到输出的图片接近于真实的图片。Discriminattor是一个image classifier，用来判断输入的图片是真的还是假的。整个GAN model训练的过程可以理解为一个competition，Generator不断训练自己生成接近真实的图片，Discriminator不断训练自己检测假的图片，直到迫使Generator生成出接近真实的图片。这个过程很类似于博弈论中寻找的纳什均衡点。
 
 ### The MNIST GAN Model
 
