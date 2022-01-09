@@ -195,9 +195,33 @@ __OBJC_CLASS_RO_$_SomeClass:
 .long	3                               ; 0x3
 .long	8                               ; 0x8
 ```
-对应objc-runtime-new.h中的`struct ivar_t`。最后一段表明`struct class_ro_t`中的`ivars`指向上面提到的`ivar_list_t`。注意，这里保存`ivars`的是`class_ro_t`而不是`struct objc_class`。猜想这可能和`struct swift_class_t`有关，这里不做更多展开。
+对应objc-runtime-new.h中的`struct ivar_t`。最后一段表明`struct class_ro_t`中的`ivars`指向上面提到的`ivar_list_t`。注意，这里保存`ivars`的是`class_ro_t`而不是`struct objc_class`。猜想这可能和`struct swift_class_t`有关，这里不做更多展开。另外，如果我们有一个C++的`ivar`，并且它是template的，那么这个ivar的名字将会非常长，很不利与debug。下面例子是一个`std::vector<int> _vec`的ivar的名字
 
+```
+l_OBJC_METH_VAR_TYPE_.4:                ; @OBJC_METH_VAR_TYPE_.4
+	.asciz	"{vector<int, std::allocator<int> >=\"__begin_\"^i\"__end_\"^i\"__end_cap_\"{__compressed_pair<int *, std::allocator<int> >=\"__value_\"^i}}"
+```
 
+#### Methods
+
+如果在类中加一个method
+
+```objc
+@implementation SomeClass
+- (void)doSomething {}
+@end
+```
+它所产生的的代码和`ivar`非常类似。编译器产生了一段代码用来保存method，对应`struct method_list_t`
+
+```shell
+__OBJC_$_INSTANCE_METHODS_SomeClass:
+	.long	24                              ; 0x18
+	.long	1                               ; 0x1
+	.quad	l_OBJC_METH_VAR_NAME_
+	.quad	l_OBJC_METH_VAR_TYPE_
+	.quad	"-[SomeClass doSomething]"
+```
+前两个`.long`是8 bytes的overhead，后面则是`struct method_t`的代码。同样，`__OBJC_$_INSTANCE_METHODS_SomeClass`保存在`struct class_ro_t`中，而不是`struct class_objc`中。
 
 
 
