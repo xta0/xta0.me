@@ -124,6 +124,9 @@ _OBJC_CLASS_$_SomeClass:
 l_OBJC_LABEL_CLASS_$:
 	.quad	_OBJC_CLASS_$_SomeClass
 ```
-在64bit的ARM系统中，根据[ARM手册](https://developer.arm.com/documentation/100067/0612/armclang-Integrated-Assembler/Data-definition-directives)，一个`.quad`占`8`字节，一个`.long`占`4`字节。算下来，一个空的类有25个`.quad`和6个`long`，因此共占`200+24=224`字节。
+在64bit的ARM系统中，根据[ARM手册](https://developer.arm.com/documentation/100067/0612/armclang-Integrated-Assembler/Data-definition-directives)，一个`.quad`占`8`字节，一个`.long`占`4`字节。每一个`@implemention`至少有25个`.quad`和6个`long`，因此共占`200+24=224`字节。
 
 #### ivars
+
+如果在类中增加一个ivar
+
