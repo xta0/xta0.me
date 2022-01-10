@@ -1,5 +1,5 @@
 ---
-list_title: 从汇编层面看Objective-C
+list_title: Objective-C implementation details | 从汇编层面看Objective-C的实现
 title: 从汇编层面看Objective-C
 layout: post
 categories: ["C++", "Objective-C", "C", "Assembly"]
@@ -14,7 +14,7 @@ categories: ["C++", "Objective-C", "C", "Assembly"]
 xcrun --sdk iphoneos clang -arch arm64 -S -Os $@
 ```
 
-### Class Metadata
+### `@interface`
 
 Objective-C的类通常包含下面两部分`@interface`和`@implementation`。编译器对`@interface`本身并不产生有意义的汇编代码，如下面例子
 
@@ -42,7 +42,7 @@ L_OBJC_IMAGE_INFO:
 .subsections_via_symbols
 ```
 
-#### Class artifacts
+### `@implementation`
 
 `@implementation`会产生具体的汇编代码，我们先看一个Empty class
 
@@ -126,7 +126,7 @@ l_OBJC_LABEL_CLASS_$:
 ```
 在64bit的ARM系统中，根据[ARM手册](https://developer.arm.com/documentation/100067/0612/armclang-Integrated-Assembler/Data-definition-directives)，一个`.quad`占`8`字节，一个`.long`占`4`字节。每一个`@implemention`至少有25个`.quad`和6个`long`，因此共占`200+24=224`字节。
 
-#### ivars
+### ivars
 
 如果在类中增加一个ivar
 
@@ -202,7 +202,7 @@ l_OBJC_METH_VAR_TYPE_.4:                ; @OBJC_METH_VAR_TYPE_.4
 	.asciz	"{vector<int, std::allocator<int> >=\"__begin_\"^i\"__end_\"^i\"__end_cap_\"{__compressed_pair<int *, std::allocator<int> >=\"__value_\"^i}}"
 ```
 
-#### Methods
+### Methods
 
 如果在类中加一个method
 
@@ -211,7 +211,7 @@ l_OBJC_METH_VAR_TYPE_.4:                ; @OBJC_METH_VAR_TYPE_.4
 - (void)doSomething {}
 @end
 ```
-它所产生的的代码和`ivar`非常类似。编译器产生了一段代码用来保存method，对应`struct method_list_t`
+它所产生的的代码和`ivar`非常类似。编译器产生了一段代码用来保存method，对应objc-runtime-new.h中的`struct method_list_t`
 
 ```shell
 __OBJC_$_INSTANCE_METHODS_SomeClass:
@@ -221,7 +221,75 @@ __OBJC_$_INSTANCE_METHODS_SomeClass:
 	.quad	l_OBJC_METH_VAR_TYPE_
 	.quad	"-[SomeClass doSomething]"
 ```
-前两个`.long`是8 bytes的overhead，后面则是`struct method_t`的代码。同样，`__OBJC_$_INSTANCE_METHODS_SomeClass`保存在`struct class_ro_t`中，而不是`struct class_objc`中。
+前两个`.long`是8 bytes的overhead，后面则是`struct method_t`对象。同样，`__OBJC_$_INSTANCE_METHODS_SomeClass`保存在`struct class_ro_t`中，而不是`struct class_objc`中。
 
+### Properties
 
+接下来我们看property
 
+```objc
+#import <Foundation/Foundation.h>
+
+@interface SomeClass : NSObject
+@property(nonatomic, strong) NSString* aString;
+@end
+
+@implementation SomeClass
+@end
+```
+编译器为property生成的代码较多，首先会为其自动生成getter和setter，并放到上面提到的`method_list_t`中
+
+```shell
+__OBJC_$_INSTANCE_METHODS_SomeClass:
+	.long	24                              ; 0x18
+	.long	2                               ; 0x2
+	.quad	l_OBJC_METH_VAR_NAME_
+	.quad	l_OBJC_METH_VAR_TYPE_
+	.quad	"-[SomeClass aString]"
+	.quad	l_OBJC_METH_VAR_NAME_.1
+	.quad	l_OBJC_METH_VAR_TYPE_.2
+	.quad	"-[SomeClass setAString:]"
+```
+其次，由于property是ivar的封装，上面提到`ivar_list_t`中会保存其对应的ivar
+
+```shell
+__OBJC_$_INSTANCE_VARIABLES_SomeClass:
+	.long	32                              ; 0x20
+	.long	1                               ; 0x1
+	.quad	_OBJC_IVAR_$_SomeClass._aString
+	.quad	l_OBJC_METH_VAR_NAME_.3
+	.quad	l_OBJC_METH_VAR_TYPE_.4
+	.long	3                               ; 0x3
+	.long	8                               ; 0x8
+```
+
+同时，Objective-C的每个类也有一个`property_list_t`中，同样的，它也被保存在`struct class_ro_t`中
+
+```shell
+__OBJC_$_PROP_LIST_SomeClass:
+	.long	16                              ; 0x10
+	.long	1                               ; 0x1
+	.quad	l_OBJC_PROP_NAME_ATTR_
+	.quad	l_OBJC_PROP_NAME_ATTR_.5
+__OBJC_CLASS_RO_$_SomeClass:
+	.long	0                               ; 0x0
+	.long	8                               ; 0x8
+	.long	16                              ; 0x10
+	.space	4
+	.quad	0
+	.quad	l_OBJC_CLASS_NAME_
+	.quad	__OBJC_$_INSTANCE_METHODS_SomeClass
+	.quad	0
+	.quad	__OBJC_$_INSTANCE_VARIABLES_SomeClass
+	.quad	0
+	.quad	__OBJC_$_PROP_LIST_SomeClass
+```
+每个`property_list_t`保存的是一个`struct property_t`的object，其定义可参考objc-runtime-new.h。其中，property的name和attribute在汇编中均为C string
+
+```shell
+l_OBJC_PROP_NAME_ATTR_:                 ; @OBJC_PROP_NAME_ATTR_
+	.asciz	"aString"
+
+l_OBJC_PROP_NAME_ATTR_.5:               ; @OBJC_PROP_NAME_ATTR_.5
+	.asciz	"T@\"NSString\",&,N,V_aString"
+```
