@@ -445,18 +445,18 @@ void callDummy(){
 __Z9callDummyv:
 ; %bb.0:
 Lloh0:
-	adrp	x8, _OBJC_CLASSLIST_REFERENCES_$_@PAGE
+  adrp	x8, _OBJC_CLASSLIST_REFERENCES_$_@PAGE
 Lloh1:
-	ldr	x0, [x8, _OBJC_CLASSLIST_REFERENCES_$_@PAGEOFF]
+  ldr	x0, [x8, _OBJC_CLASSLIST_REFERENCES_$_@PAGEOFF]
 Lloh2:
-	adrp	x8, _OBJC_SELECTOR_REFERENCES_@PAGE
+  adrp	x8, _OBJC_SELECTOR_REFERENCES_@PAGE
 Lloh3:
-	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_@PAGEOFF]
-	b	_objc_msgSend
-	.loh AdrpLdr	Lloh2, Lloh3
-	.loh AdrpAdrp	Lloh0, Lloh2
-	.loh AdrpLdr	Lloh0, Lloh1
-	.cfi_endproc
+  ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_@PAGEOFF]
+  b	_objc_msgSend
+  .loh AdrpLdr	Lloh2, Lloh3
+  .loh AdrpAdrp	Lloh0, Lloh2
+  .loh AdrpLdr	Lloh0, Lloh1
+  .cfi_endproc
 </code>
 </pre>
 </div>
