@@ -1,6 +1,6 @@
 ---
 list_title: Objective-C implementation details | 从汇编层面看Objective-C的实现
-title: 从汇编层面看Objective-C
+title: 从汇编层面看Objective-C的实现
 layout: post
 categories: ["C++", "Objective-C", "C", "Assembly"]
 ---
@@ -411,7 +411,95 @@ Lloh1:
 ```cpp
 objc_msgSend(obj, @selector(message));
 ```
-对应上面的汇编,`x0`保存了`o`的地址，`x1`保存了selector的地址。具体来说，`_OBJC_SELECTOR_REFERENCES`是一个非常大的数组，里面保存每个selector的pointer。`[x8, _OBJC_SELECTOR_REFERENCES_@PAGEOFF]`类似`OBJC_SELECTOR_REFERENCES[DO_STUFF_OFFSET]`，用来寻址具体的selector。关于`objc_msgSend`的实现这里就不具体展开了，推荐阅读Resouce中Mike Ash的这篇文章
+对应上面的汇编,`x0`保存了`o`的地址，`x1`保存了selector的地址。具体来说，`_OBJC_SELECTOR_REFERENCES`是一个非常大的数组，里面保存每个selector的pointer。`[x8, _OBJC_SELECTOR_REFERENCES_@PAGEOFF]`类似`OBJC_SELECTOR_REFERENCES[DO_STUFF_OFFSET]`，用来寻址具体的selector。
+
+关于`objc_msgSend`的实现这里就不具体展开了，推荐阅读Resouce中Mike Ash的这篇文章。但是这里可以明显的看到OC的这种"call by name"的设计是有比较大的overhead的，虽然每个Object上面有method的cache，但是cache需要一个warm up的过程，比起C++这种纯静态的调用，还是会慢很多。而且也会带来更大的code size。
+
+### Class Methods
+
+C++中的静态类方法效率很高，基本上就是一个C function call，而Objective-C中的类方法的调用和成员方法类似，但确有更大的overhead，相比于成员函的调用，它多了一步fetch global class pointer - ` _OBJC_CLASSLIST_REFERENCES[DUMMY_CLASS_OFFSET]`
+
+<div class="md-flex-h md-margin-bottom-24">
+<div>
+<pre class="highlight language-python md-no-padding-v md-height-full">
+<code class="language-cpp">
+#import <Foundation/Foundation.h>
+
+@interface Dummy:NSObject
++ (void)dummy;
+@end
+
+@implementation Dummy
++ (void)dummy {
+
+}
+@end
+
+void callDummy(){
+    [Dummy dummy];
+}
+</code>
+</pre>
+</div>
+<div class="md-margin-left-0">
+<pre class="highlight md-no-padding-v md-height-full">
+<code class="language-python">
+__Z9callDummyv:
+; %bb.0:
+Lloh0:
+	adrp	x8, _OBJC_CLASSLIST_REFERENCES_$_@PAGE
+Lloh1:
+	ldr	x0, [x8, _OBJC_CLASSLIST_REFERENCES_$_@PAGEOFF]
+Lloh2:
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_@PAGE
+Lloh3:
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_@PAGEOFF]
+	b	_objc_msgSend
+	.loh AdrpLdr	Lloh2, Lloh3
+	.loh AdrpAdrp	Lloh0, Lloh2
+	.loh AdrpLdr	Lloh0, Lloh1
+	.cfi_endproc
+</code>
+</pre>
+</div>
+</div>
+
+## Literals
+
+Objective-C有很方便的literal syntax用来创建NSString, NSNumber, NSArray以及NSDictionary。其中大部分都是syntax sugar，会简介调用这些类的构造函数，但是这里有一个例外是NSString
+
+<div class="md-flex-h md-margin-bottom-24">
+<div>
+<pre class="highlight language-python md-no-padding-v md-height-full">
+<code class="language-cpp">
+#import <Foundation/Foundation.h>
+
+NSString *getLiteral()
+{
+  return @"Hello";
+}
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight md-no-padding-v md-height-full">
+<code class="language-python">
+	.section	__TEXT,__cstring,cstring_literals
+l_.str:                                 ; @.str
+	.asciz	"Hello"
+	.section	__DATA,__cfstring
+l__unnamed_cfstring_:
+	.quad	___CFConstantStringClassReference
+	.long	1992
+	.space	4
+	.quad	l_.str
+	.quad	5
+</code>
+</pre>
+</div>
+</div>
+
+`@"Hello"`被保存在了一个具有4个element的struct中，`___CFConstantStringClassReference`看着像`isa` pointer，第三个参数指向一个C string，第四个参数是字符串的长度。这说明`@"Hello"并没有调用`[NSString alloc]`，而是用了更加efficient的一种方式。
 
 
 ## Resources
