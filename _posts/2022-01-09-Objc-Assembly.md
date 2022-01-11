@@ -472,8 +472,6 @@ Objective-C有很方便的literal syntax用来创建NSString, NSNumber, NSArray�
 <div>
 <pre class="highlight language-python md-no-padding-v md-height-full">
 <code class="language-cpp">
-#import <Foundation/Foundation.h>
-
 NSString *getLiteral()
 {
   return @"Hello";
