@@ -389,7 +389,7 @@ void callIndirect(id o){
 </code>
 </pre>
 </div>
-<div class="md-margin-left-12">
+<div class="md-margin-left-0">
 <pre class="highlight md-no-padding-v md-height-full">
 <code class="language-python">
 "-[SomeClass callIndirect:]":
