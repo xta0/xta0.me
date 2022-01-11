@@ -1,5 +1,5 @@
 ---
-list_title: ARM | 从汇编层面看Objective-C的实现
+list_title: Objective-C implementation details in Assembly | 从汇编层面看Objective-C的实现
 title: 从汇编层面看Objective-C的实现
 layout: post
 categories: ["C++", "Objective-C", "C", "Assembly"]
