@@ -423,8 +423,6 @@ C++中的静态类方法效率很高，基本上就是一个C function call，�
 <div>
 <pre class="highlight language-python md-no-padding-v md-height-full">
 <code class="language-cpp">
-#import <Foundation/Foundation.h>
-
 @interface Dummy:NSObject
 + (void)dummy;
 @end
