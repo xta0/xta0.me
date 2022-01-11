@@ -14,6 +14,10 @@ categories: ["C++", "Objective-C", "C", "Assembly"]
 xcrun --sdk iphoneos clang -arch arm64 -S -Os $@
 ```
 
+## Class Metadata
+
+Objective-C中的class包含两部分`@interface`和`@implementation`
+
 ### `@interface`
 
 Objective-C的类通常包含下面两部分`@interface`和`@implementation`。编译器对`@interface`本身并不产生有意义的汇编代码，如下面例子
@@ -293,3 +297,81 @@ l_OBJC_PROP_NAME_ATTR_:                 ; @OBJC_PROP_NAME_ATTR_
 l_OBJC_PROP_NAME_ATTR_.5:               ; @OBJC_PROP_NAME_ATTR_.5
 	.asciz	"T@\"NSString\",&,N,V_aString"
 ```
+## Ivar Access
+
+OC对ivar的访问和C/C++类似，都是使用offset。为了展示方便，我们先来看下C是如何访问ivar的
+
+<div class="md-flex-h md-margin-bottom-24">
+<div>
+<pre class="highlight language-python md-no-padding-v md-height-full">
+<code class="language-cpp">
+struct SomeStruct {
+  // giving x a nonzero offset.
+  double dbl;             
+  int x;
+  int y;
+};
+
+int accessMember(struct SomeStruct *o){
+  return o->x + o->y;
+}
+
+int accessArray(int o[4]) {
+  return o[2] + o[3];
+}
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight md-no-padding-v md-height-full">
+<code class="language-python">
+_accessMember:
+; %bb.0:
+	ldp	w8, w9, [x0, #8]
+	add	w0, w9, w8
+	ret
+_accessArray:                     ; @_Z11accessArrayPi
+	.cfi_startproc
+; %bb.0:
+	ldp	w8, w9, [x0, #8]
+	add	w0, w9, w8
+	ret
+</code>
+</pre>
+</div>
+</div>
+
+左边是一个简单的C struct，其中`accessMember`函数会访问`x`和`y`两个`ivar`。`accessArray`是用来做参照，通过对比汇编代码可以发现，struct对ivar的访问是用offset。具体来说，`x0`保存了`SomeStruct*`的地址，offset为8字节，因此`[x0, #8]`是找到`x`在内存中位置，`ldp`是load pair的意思，它可以一次load两个int。可以看到，这和数组访问的汇编代码相同。我们再来看看Objective-C的ivar access
+
+<div class="md-flex-h md-margin-bottom-24">
+<div>
+<pre class="highlight language-python md-no-padding-v md-height-full">
+<code class="language-cpp">
+@implementation SomeClass{
+int x;
+  int y;
+}
+- (int)accessIvar
+{
+  return x + y;
+}
+@end
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight md-no-padding-v md-height-full">
+<code class="language-python">
+"-[SomeClass accessIvar]":
+; %bb.0:
+	ldp	w8, w9, [x0, #8]
+	add	w0, w9, w8
+</code>
+</pre>
+</div>
+</div>
+
+生成的汇编和C/C++基本一一致
+
+
+
