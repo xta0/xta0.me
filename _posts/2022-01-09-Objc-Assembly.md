@@ -401,6 +401,7 @@ Lloh0:
 Lloh1:
 	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_@PAGEOFF]
 	b	_objc_msgSend
+</code>
 </pre>
 </div>
 </div>
@@ -410,7 +411,7 @@ Lloh1:
 ```cpp
 objc_msgSend(obj, @selector(message));
 ```
-对应上面的汇编,`x0`保存了`o`的地址，`x1`保存了selector的地址。具体来说，`_OBJC_SELECTOR_REFERENCES`是一个非常大的数组，里面保存每个selector的pointer。`[x8, _OBJC_SELECTOR_REFERENCES_@PAGEOFF]`类似`OBJC_SELECTOR_REFERENCES[DO_STUFF_OFFSET]`，用来寻址具体的selector。
+对应上面的汇编,`x0`保存了`o`的地址，`x1`保存了selector的地址。具体来说，`_OBJC_SELECTOR_REFERENCES`是一个非常大的数组，里面保存每个selector的pointer。`[x8, _OBJC_SELECTOR_REFERENCES_@PAGEOFF]`类似`OBJC_SELECTOR_REFERENCES[DO_STUFF_OFFSET]`，用来寻址具体的selector。关于`objc_msgSend`的实现这里就不具体展开了，推荐阅读Resouce中Mike Ash的这篇文章
 
 
 ## Resources
