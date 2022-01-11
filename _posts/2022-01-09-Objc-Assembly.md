@@ -499,7 +499,7 @@ l__unnamed_cfstring_:
 </div>
 </div>
 
-`@"Hello"`被保存在了一个具有4个element的struct中，`___CFConstantStringClassReference`看着像`isa` pointer，第三个参数指向一个C string，第四个参数是字符串的长度。这说明`@"Hello"并没有调用`[NSString alloc]`，而是用了更加efficient的一种方式。
+`@"Hello"`被保存在了一个具有4个element的struct中，`___CFConstantStringClassReference`看着像`isa` pointer，第三个参数指向一个C string，第四个参数是字符串的长度。这说明`@"Hello"`并没有调用`[NSString alloc]`，而是用了更加efficient的一种方式。
 
 
 ## Resources
