@@ -330,7 +330,7 @@ _accessMember:
 	ldp	w8, w9, [x0, #8]
 	add	w0, w9, w8
 	ret
-_accessArray:                     ; @_Z11accessArrayPi
+_accessArray:
 	.cfi_startproc
 ; %bb.0:
 	ldp	w8, w9, [x0, #8]
@@ -371,7 +371,54 @@ int x;
 </div>
 </div>
 
-生成的汇编和C/C++基本一一致
+生成的汇编和上面C/C++产生的汇编基本一致。
+
+## Functions and Methods
+
+这个可能是被误解最多的一块内容，大部分C++的程序员认为Objective-C的动态性来自于和C++类似的virtual table，但实际上这是不正确的，Objective-C的动态性来自"call by name"的设计，结合它的[runtime库](https://developer.apple.com/documentation/objectivec/objective-c_runtime?preferredLanguage=occ)，相比virtual table更加灵活，但却有更高的overhead。
+
+C++中的一个virtual function call用的是virtual table，例如`o->doStuff()`会被编译成`o->vtbl->doStuffFunctionPointer()`，对应到汇编代码，基本上是一个load加上一个jump。下面我们OC中一个简单的function call和它的汇编代码如下所示
+
+<div class="md-flex-h md-margin-bottom-24">
+<div>
+<pre class="highlight language-python md-no-padding-v md-height-full">
+<code class="language-cpp">
+void callIndirect(id o){
+    [o doSomeStuff];
+}
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight md-no-padding-v md-height-full">
+<code class="language-python">
+"-[SomeClass callIndirect:]":
+	.cfi_startproc
+; %bb.0:
+	mov	x0, x2
+Lloh0:
+	adrp	x8, _OBJC_SELECTOR_REFERENCES_@PAGE
+Lloh1:
+	ldr	x1, [x8, _OBJC_SELECTOR_REFERENCES_@PAGEOFF]
+	b	_objc_msgSend
+</pre>
+</div>
+</div>
+
+基本上也是一个load加jump，`_objc_msgSend`定义在动态库中，其函数原型如下
+
+```cpp
+objc_msgSend(obj, @selector(message));
+```
+对应上面的汇编,`x0`保存了`o`的地址，`x1`保存了selector的地址。具体来说，`_OBJC_SELECTOR_REFERENCES`是一个非常大的数组，里面保存每个selector的pointer。`[x8, _OBJC_SELECTOR_REFERENCES_@PAGEOFF]`类似`OBJC_SELECTOR_REFERENCES[DO_STUFF_OFFSET]`，用来寻址具体的selector。
+
+
+## Resources
+
+- [Objective-C runtime](https://developer.apple.com/documentation/objectivec/objective-c_runtime?preferredLanguage=occ) 
+- [Objective-C Implementation and Performance Details for C and C++ Programmers](https://swolchok.github.io/objcperf/)
+- [Non-fragile ivars](http://www.sealiesoftware.com/blog/archive/2009/01/27/objc_explain_Non-fragile_ivars.html)
+- [objc_msgsend](https://www.mikeash.com/pyblog/friday-qa-2012-11-16-lets-build-objc_msgsend.html)
 
 
 
