@@ -51,7 +51,7 @@ test.o [arm64, 0.006064 seconds]:
 <div class="md-flex-h md-margin-bottom-24">
 <div>
 <pre class="highlight language-python md-no-padding-v md-height-full">
-<code class="language-cpp">
+<code class="language-shell">
 useIndex:
 ; %bb.0:
 	ldr	x8, [x0]
@@ -62,14 +62,9 @@ useIndex:
 </div>
 <div class="md-margin-left-12">
 <pre class="highlight md-no-padding-v md-height-full">
-<code class="language-python">
+<code class="language-shell">
 useAt:
-; %bb.0:
-	mov	w1, #1
-	bl	std::vector<int>::at
-	ldr	w0, [x0]
-	ldp	x29, x30, [sp], #16
-	ret
+
 </code>
 </pre>
 </div>
