@@ -40,8 +40,13 @@ test.o [arm64, 0.006064 seconds]:
             0x0000000000000050 (     0x8) __DATA __objc_imageinfo
             0x0000000000000058 (    0x60) __LD __compact_unwind
 ```
-可以看到 `useIndex`的大小为`0xc`(12字节)，而`useAt`的大小为`0x1c`(28字节)。在来对比一下汇编代码
+可以看到 
 
+- `useIndex`的大小为`0xc`(12字节)
+- `useAt`的大小为`0x1c`(28字节)
+- `vector::at`的大小为`0x28` (40字节)
+
+相加正好是80字节(0x50)，和`__TEXT`段大小一致，再来对比一下汇编代码
 
 <div class="md-flex-h md-margin-bottom-24">
 <div>
