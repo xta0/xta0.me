@@ -5,7 +5,7 @@ layout: post
 mathjax: true
 ---
 
-> This is a summary of this great paper [paper link](https://research.fb.com/wp-content/uploads/2018/12/Machine-Learning-at-Facebook-Understanding-Inference-at-the-Edge.pdf)
+> This is a summary of this great paper [paper link](https://research.fb.com/wp-content/uploads/2018/12/Machine-Learning-at-Facebook-Understanding-Inference-at-the-Edge.pdf). And here is the [video](https://www.youtube.com/watch?v=T13qcqpyyRA) on Youtube.
 
 ## Introduction
 
