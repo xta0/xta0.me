@@ -64,7 +64,12 @@ useIndex:
 <pre class="highlight md-no-padding-v md-height-full">
 <code class="language-shell">
 useAt:
-
+; %bb.0:
+	mov	w1, #1
+	bl	std::vector::at
+	ldr	w0, [x0]
+	ldp	x29, x30, [sp], #16
+	ret
 </code>
 </pre>
 </div>
