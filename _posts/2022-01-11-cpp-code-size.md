@@ -60,9 +60,6 @@ useIndex:
 <code class="language-python">
 useAt:
 ; %bb.0:
-	stp	x29, x30, [sp, #-16]!
-	mov	x29, sp
-
 	mov	w1, #1
 	bl	std::vector<int>::at
 	ldr	w0, [x0]
