@@ -7,12 +7,12 @@ categories: ["C++", "C", "Assembly"]
 
 几年前写过[一篇关于ARM的汇编的文章](https://xta0.me/2013/06/15/ARM-Assembly.html)，那时候的iPhone还是32bit的，一转眼10年过去，现在的ARM基本早已经是64bit了，所对应的汇编指令也发生了一些变化。这篇文章并不会重复之前关于汇编的基本内容，而是会通过一些汇编知识来观察不同代码对code size的影响。
 
-### Basics
+### Register Basics
 
 1. 所有ARM64的指令都是基于对寄存器的操作，其中每个寄存器大小为8 bytes，在ARM64的设备上，我们可以操作大约32个寄存器。
 2. 显然，数据是无法都存在寄存器的，为了从内存中读写数据，需要用到所谓的[load和store指令](https://en.wikipedia.org/wiki/Load%E2%80%93store_architecture)，其中`ldr`指令将内存中的数据读入寄存器，`str`将寄存器中的数据写入内存，详细[参考这里](https://developer.arm.com/documentation/dui0552/a/the-cortex-m3-instruction-set/memory-access-instructions/ldr-and-str--register-offset#:~:text=LDR%20instructions%20load%20a%20register,to%203%20bits%20using%20LSL%20.)。
 
-### Example #1
+### A Simple Exercise
 
 下面这两个函数很简单，做的事情也相同，但第二个函数会产生较多的代码
 
@@ -75,7 +75,7 @@ useAt:
 </div>
 </div>
 
-`useIndex`的汇编代码比较简洁，这里编译器应该是inline了某些代码，因为`[i]`是一个C++函数，这里应该直接inline了。在C++中，传引用和传指针的相同，因此`[x0]`保存了`v`的地址。注意`w0`相当于`x0`的lower 4 bytes，`#4`是offse表示skip 4 bytes
+`useIndex`的汇编代码比较简洁，这里编译器应该是inline了某些代码，因为`v[i]`是一个C++函数，这里应该直接inline了。inline之后`[x0]`保存了`v.data()`的地址。注意`w0`相当于`x0`的lower 4 bytes，`#4`是offse表示skip 4 bytes。`ret`返回的结果通常保存在寄存器`x[0]`中
 
 - `ldr x8, [x0]` 相当于`*x0 -> x8`或者 `v.begin -> x8`
 - `ldr w0, [x8, #4]` 相当于`*(x8+4) -> w0`
@@ -91,20 +91,30 @@ std::__1::vector<int, std::__1::allocator<int> >::at(unsigned long) const
 	b.hs	LBB2_2
 ; %bb.1:
 	add	x0, x8, x1, lsl #2
-	ldp	x29, x30, [sp], #16
 	ret
 LBB2_2:
-	bl	__ZNKSt3__120__vector_base_commonILb1EE20__throw_out_of_rangeEv
+	bl	std::__1::__vector_base_common<true>::__throw_out_of_range() const
 	.cfi_endproc
 ```
-`vector::at`的代码比较多，但也不难理解，我们逐条理解
+`vector::at`的代码比较多，但也不难理解，我们逐条分析
 
-- `ldp	x8, x9, [x0]` 这里用到`ldp`，表示load pair，它会一次load两个连续的值到寄存器中。
+- `ldp	x8, x9, [x0]` 这里用到`ldp`，表示load pair，它会一次load两个连续的值到寄存器中。注意此时`[x0]`中保存的是`this`而不是`v.data()`，因此`x8`是`v.begin()`，`x9`是`v.end()`
+- `sub	x9, x9, x8` 是计算size,单位是bytes，相当于`x9 <- v.size()*sizeof(int)`
+- `cmp	x1, x9, asr #2`，这里`x1`保存参数index，`x9 asr #2`是右移操作，相当于除法，除数为`2^2 = 4`，也就是说`x9 <- v.size()*sizeof(int) / sizeof(int)`。接下来的`cmp`操作用来检测index是否越界
+- `b.hs`是conditional jump，如果越界，则jump到`LBB2_2`，进而throw exception
+- `add	x0, x8, x1, lsl #2` 上面提到`x8`保存的是`v.begin`，`lsl`是左移，因此这里计算的是 `x0 <- x8 + x1<<2`，左移相当于乘法，继续展开相当于 `x0 <- v.begin() + index*sizeof(int)`实际上就是`this->beign[index]`
 
+由此，我们可以推测`vector`的实现大概为
 
-
-
-
+```cpp
+template<typename T>
+const T& std::vector<T>::at(unsigned long index) const {
+    if(index >= size()) {
+        std::__1::__vector_base_common<true>::__throw_out_of_range();
+    }
+    return this->beign[index];
+}
+```
 
 ## Resources
 
