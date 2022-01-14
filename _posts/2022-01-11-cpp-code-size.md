@@ -1,6 +1,6 @@
 ---
-list_title: Code size matters | Reading the assembly
-title: Reading the assembly
+list_title: Look at code size at assembly level
+title: Look at code size at assembly level
 layout: post
 categories: ["C++", "C", "Assembly"]
 ---
