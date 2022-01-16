@@ -74,7 +74,7 @@ useAt:
 </div>
 </div>
 
-`useIndex`的汇编代码比较简洁，这里编译器应该是inline了某些代码，因为`v[i]`是一个C++函数，这里应该直接inline了。inline之后`[x0]`保存了`v.data()`的地址。注意`w0`相当于`x0`的lower 4 bytes，`#4`是offse表示skip 4 bytes。`ret`返回的结果通常保存在寄存器`x[0]`中
+`useIndex`的汇编代码比较简洁，这里编译器应该是inline了某些代码，因为`v[i]`是一个C++函数，这里应该直接inline了。注意`w0`相当于`x0`的lower 4 bytes，`#4`是offse表示skip 4 bytes。`ret`返回的结果通常保存在寄存器`x[0]`中
 
 - `ldr x8, [x0]` 相当于`*x0 -> x8`或者 `v.begin -> x8`
 - `ldr w0, [x8, #4]` 相当于`*(x8+4) -> w0`
@@ -97,7 +97,7 @@ LBB2_2:
 ```
 `vector::at`的代码比较多，我们逐条分析
 
-- `ldp	x8, x9, [x0]` 这里用到`ldp`，表示load pair，它会一次load两个连续的值到寄存器中。注意此时`[x0]`中保存的是`this`而不是`v.data()`，因此`x8`是`v.begin()`，`x9`是`v.end()`
+- `ldp	x8, x9, [x0]` 这里用到`ldp`，表示load pair，它会一次load两个连续的值到寄存器中。`[x0]`中保存的是`v`的地址，因此`x8`是`v.begin()`，`x9`是`v.end()`
 - `sub	x9, x9, x8` 是计算size,单位是bytes，相当于`x9 <- v.size()*sizeof(int)`
 - `cmp	x1, x9, asr #2`，这里`x1`保存参数index，`x9 asr #2`是右移操作，相当于除法，除数为`2^2 = 4`，也就是说`x9 <- v.size()*sizeof(int) / sizeof(int)`。接下来的`cmp`操作用来检测index是否越界
 - `b.hs`是conditional jump，如果越界，则jump到`LBB2_2`，进而throw exception
