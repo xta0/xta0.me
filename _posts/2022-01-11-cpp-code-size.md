@@ -1,5 +1,5 @@
 ---
-list_title: Look at code size at assembly level
+list_title:  Code Size Matters | Look at code size at assembly level
 title: Look at code size at assembly level
 layout: post
 categories: ["C++", "C", "Assembly"]
@@ -68,7 +68,6 @@ useAt:
 	mov	w1, #1
 	bl	std::vector::at
 	ldr	w0, [x0]
-	ldp	x29, x30, [sp], #16
 	ret
 </code>
 </pre>
@@ -80,7 +79,7 @@ useAt:
 - `ldr x8, [x0]` 相当于`*x0 -> x8`或者 `v.begin -> x8`
 - `ldr w0, [x8, #4]` 相当于`*(x8+4) -> w0`
 
-我们接着分析`useAt`的代码，并不难理解。`v.at(1)`会被编译为`at(v, 1)`，因此`w1`中保存index=1。接着`bl`到`vector::at`。
+我们接着分析`useAt`的代码。`v.at(1)`会被编译为`at(v, 1)`，因此`w1`中保存index=1。接着`bl`到`vector::at`。
 
 ```shell
 std::__1::vector<int, std::__1::allocator<int> >::at(unsigned long) const
@@ -96,7 +95,7 @@ LBB2_2:
 	bl	std::__1::__vector_base_common<true>::__throw_out_of_range() const
 	.cfi_endproc
 ```
-`vector::at`的代码比较多，但也不难理解，我们逐条分析
+`vector::at`的代码比较多，我们逐条分析
 
 - `ldp	x8, x9, [x0]` 这里用到`ldp`，表示load pair，它会一次load两个连续的值到寄存器中。注意此时`[x0]`中保存的是`this`而不是`v.data()`，因此`x8`是`v.begin()`，`x9`是`v.end()`
 - `sub	x9, x9, x8` 是计算size,单位是bytes，相当于`x9 <- v.size()*sizeof(int)`
