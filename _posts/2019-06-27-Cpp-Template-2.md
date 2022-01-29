@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: C++ | Templates & Generic Programming | 模板与泛型（四）
-title: 模板与泛型（四）
+list_title: C++ Template | MISC
+title: MISC
 categories: [C++]
 ---
 
@@ -35,7 +35,9 @@ void f() {
 ```
  上面的例子可以很直观的看出这一点，当编译器在编译 `typename Obj<T>::type var;`时，会将`Obj<T>::type`认为是某种类型。如果不加`typaname`，编译器则会将`Obj<T>::type var`理解为访问`Obj<T>`的静态成员，从而报错。
 
- ### "Dot Template"
+ ### Dot Template
+
+
 
  
 

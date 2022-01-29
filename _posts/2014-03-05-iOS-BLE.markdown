@@ -21,6 +21,7 @@ categories: [iOS]
 <div><img src="{{site.baseurl}}/assets/images/2014/03/ble-2.png"></div>
 </div>
 
+
 Session703还列出了BLE的几种使用场景：医疗，运动，安全，自动化家居，娱乐，玩具，支付，多人通信。这几种场景在未来都有足够的想象力，目前来看市场上针对这几种场景都有对应的产品，我研究BLE的初衷是玩具，我的目的是通过iPhone控制玩具。这也是BLE的另一个好处，它让iOS设备摆脱了MFi的限制，同时又能和Android设备互联，这点我认为意义更大。在2013年的WWDC上，Apple展示了一种看似很神奇的iBeacon技术，它本质上就是一个特定工作模式的BLE设备，后面我们会来详细讨论iBeacon。
 
 接下来我们来介绍一些BLE的术语：

@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: C++ | Templates & Generic Programming | 模板与泛型（三）
-title: 模板与泛型（三）
+list_title: C++ Template | Compile Time Programming
+title: Compile Time Programming
 categories: [C++]
 ---
 
