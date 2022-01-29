@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: C++ | STL Algorithms | STL 算法
+list_title: C++ Primer | STL Algorithms | STL 算法
 title: STL算法
 categories: [C++]
 ---
