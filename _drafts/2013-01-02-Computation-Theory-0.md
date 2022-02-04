@@ -13,7 +13,7 @@ mathjax: true
 有限状态机可以用来描述变量之间的状态转移，它包含：
 
 1. Information represented by its **state**. 
-2. State changes in response to **inputs*.
+2. State changes in response to **inputs**.
 3. Rules that tell how the state changes in response to inputs are called **transitions**.
 
 举一个网球比赛的例子，假设有一场五局三胜制的网球比赛，每局有六盘，每盘至少得4分才能赢，平分的情况下，一方连续得两份才能赢，我们希望用一种语言来记录每盘比赛比分的过程，改怎么做呢？由于每盘比赛可以产生的比分状态数量是有限的，因此我们可以设计一个有限状态机来描述一场网球比赛比分的所有过程。如下图

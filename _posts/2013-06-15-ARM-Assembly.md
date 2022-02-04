@@ -1,24 +1,27 @@
 ---
-list_title: ARM的汇编基础 | Assembly on ARM
-title: ARM的汇编基础
+list_title: ARM32汇编基础 | Assembly on ARM32
+title: ARM32的汇编基础
 layout: post
 categories: [iOS, Assembly]
 ---
 
 ### ARM基础
 
-- 寄存器功能：
-```
-r0 - r3 ：存放函数的传参
-r4 - r11 ：存放局部变量
-r7  : FP : frame pointer。通常用来保存之前的sp和lr 
+ARM的寄存器
+
+```shell
+r0 - r3 : 存放函数的传参
+r4 - r11 : 存放局部变量
+r7 (FP)  : frame pointer，通常用来保存之前的sp和lr 
 r12 : 通用寄存器
-r13 : SP : stack pointer ，栈底指针，很重要
-r14 ： LR : link register ，保存下一条指令地址
-r15 ： PC : program counter，存放当前指令的地址，当指令执行完后，会自增加
+r13 (SP) : stack pointer ，栈底指针，很重要
+r14 (LR) : link register ，保存下一条指令地址
+r15 (PC) : program counter，存放当前指令的地址，当指令执行完后，会自增加
 ```
-- 常用的汇编指令：
-```
+
+常用的汇编指令
+
+```shell
 mov r0, r1   => r0 = r1
 mov r0, #10  => r0 = 10
 ldr r0, [sp] => r0 = *sp
@@ -31,22 +34,26 @@ b _label =>pc = _label
 bl _label =>lr = pc + 4; pc = _label
 ```
 
-### 栈帧 StackFrame
+### Stack frame
 
-函数调用是基于stack的，stack是从高到低生长的，假如函数A内部要调用B，首先要将A的sp存起来，然后在stack上开辟一块控件，执行B，执行万后在将sp取出来继续执行。整个过程如下图：
+函数调用是基于stack的，stack是从高到低生长的，假如函数A内部要调用B，首先要将A的sp存起来，然后在stack上开辟一块空间，执行B，B执行完后在将sp取出来继续执行。整个过程如下图：
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2012/11/stack.png">
 
-<strong>parameter area：</strong>存放了B（callee）函数需要的参数，这一块空间需要由A来分配(caller),这个过程叫做Prologs：
+- Parameter area
 
-(1)将LR,R7入栈
-(2)将SP赋给R7
-(3)保存当前寄存器的值
-(4)分配空间给B函数
-<strong>linkage area ：</strong> 存放了A在调用完B后下一条指令的地址
-<strong>saved frame pointer ：</strong>存放了A调用B前的SP地址
-<strong>local storage area：</strong>存放函数B需要的参数
+存放了B（callee）函数需要的参数，这一块空间需要由A来分配(caller)，这个过程叫做[prologue](https://en.wikipedia.org/wiki/Function_prologue_and_epilogue)。prologue通常做下面几件事
 
+1. 将staci pointer和frame pointer入栈，对应图中的LR,R7
+2. 将SP赋给R7
+3. 保存当前寄存器的值
+4. 分配空间给B函数
+
+- linkage area 用来存放A在调用完B后下一条指令的地址
+- saved frame pointer 用来存放了A调用B前的SP地址
+- local storage area 用来存放函数B需要的参数
+
+通常来说，prologue不属于汇编本身，它的代码相对固定，不同的平台有不同的convention，因此产生prologue的代码也不同。
 
 ### Assembly指令分析
 
@@ -63,7 +70,7 @@ void fooFunction() {
     printf("add = %i", add);
 }
 ```
-fooFunction中调用了addFunction，我们按照前面讨论的步骤先来看fooFunction的汇编：
+其汇编指令为
  
 ```c
 	.globl	_fooFunction
@@ -105,7 +112,9 @@ Lfunc_end1:
 	.cfi_endproc
 ```
 
-我们先来看头信息，所谓的头信息也叫<a href="http://www.sourceware.org/binutils/docs-2.12/as.info/ARM-Directives.html">ARM Machine Directives</a>：
+### 头信息
+
+我们先来看头信息，所谓的头信息也叫[ARM Machine Directives](http://www.sourceware.org/binutils/docs-2.12/as.info/ARM-Directives.html):
 
 ```c
 .globl	_fooFunction
@@ -121,9 +130,9 @@ _fooFunction:
 3. `.code 16`意思是下面的汇编指令集是Thumb的不是ARM的（32）。现代的ARM处理器有两种模式：ARM和Thumb，ARM是32bit宽，Thumb是16bit宽，Thumb的指令很少，使用Thumb模式，通常会使代码量更小，和更有效的CPU缓存
 4. .thumb_func 意思是告诉后面的_fooFunction中的指令是用Thumb编码的
 
-接下来就是_fooFunction的内容了，在汇编中：
+### labels
 
-以冒号为结尾的行，如`_fooFunction:  ，Lfunc_begin1:  ，Ltmp3：，Ltmp4：，Lfunc_end1` 称为`Labels`
+接下来就是_fooFunction的内容，在汇编中，以冒号为结尾的行，如`_fooFunction:  ，Lfunc_begin1:  ，Ltmp3：，Ltmp4：，Lfunc_end1` 称为`Labels`
 用来标识一段汇编代码的名字，为某段代码的入口地址，例如:_fooFunction:是函数的入口位置。
 程序中可以call 这些label，来执行函数。
 用_开头的是函数入口的label，用L开头的是函数中的内部跳转位置，包含在函数内部。

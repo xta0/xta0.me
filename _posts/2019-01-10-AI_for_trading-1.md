@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 计算投资 | Machine Learning For Trading | Motivation 
+list_title: Machine Learning For Trading | Motivation 
 title:  Machine Learning for Trading
 categories: [Machine Learning, Trading]
 mathjax: true

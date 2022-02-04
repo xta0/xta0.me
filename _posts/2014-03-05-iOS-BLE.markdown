@@ -16,48 +16,22 @@ categories: [iOS]
 - 它采用的是adaptive frequency hopping，这种自适应跳频模式和传统蓝牙相比更省电。
 - 只在工作的时候被唤醒。根据WWDC2012中给出的数据来看，BLE会比传统蓝牙节省约8倍的电量，但是它同时也牺牲了一定的性能，传输速率和高速蓝牙相比大大降低（右图），这意味着我们用BLE传大量的数据：
 
-<!-- <div style=" content:''; display: table; clear:both; height=0">
-	<div style="width:50%; float:left; margin-right:10px">
-		
-	</div>
-	<div style="width:50%; float:left">
-		
-	</div>
-</div> -->
-<div style:"display:flex; justify-content:space-between;">
-    <img src="{{site.baseurl}}/assets/images/2014/03/ble-1.png" width="100%" height="150">
-    <img src="{{site.baseurl}}/assets/images/2014/03/ble-2.png" width="100%" height="150">
+<div class="md-flex-h md-flex-no-wrap">
+<div><img src="{{site.baseurl}}/assets/images/2014/03/ble-1.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2014/03/ble-2.png"></div>
 </div>
 
-<!--<div style="overflow: hidden; width: 100%;">
-
-<div style="display: block; width: 48%;">
-<a style="float: left;"href="/assets/images/2014/03/ble-1.png"><img src="{{site.baseurl}}/assets/images/2014/03/ble-1.png" alt="ble-1" width="400" height="150" class="alignnone size-full wp-image-1047"/></a>
-</div>
-
-<div style="float: left; display: block; width: 48%;">
-<a style="margin-left: 4%; href="/assets/images/2014/03/ble-2.png"><img src="{{site.baseurl}}/assets/images/2014/03/ble-2.png" alt="ble-2" width="400" height="150" class="alignnone size-full wp-image-1050"/></a>
-</div>
-
-</div>-->
 
 Session703还列出了BLE的几种使用场景：医疗，运动，安全，自动化家居，娱乐，玩具，支付，多人通信。这几种场景在未来都有足够的想象力，目前来看市场上针对这几种场景都有对应的产品，我研究BLE的初衷是玩具，我的目的是通过iPhone控制玩具。这也是BLE的另一个好处，它让iOS设备摆脱了MFi的限制，同时又能和Android设备互联，这点我认为意义更大。在2013年的WWDC上，Apple展示了一种看似很神奇的iBeacon技术，它本质上就是一个特定工作模式的BLE设备，后面我们会来详细讨论iBeacon。
 
 接下来我们来介绍一些BLE的术语：
 
 - Central/Master：可以理解为client，也可以扫描周围的BLE设备同时可以连接这些设备。
-
 - Peripheral/Slave：可以理解为server，一般是不断的广播自己，可以被Central连接，通过UUID来标识自己。
-
 - Service：Peripheral设备提供的服务，一个Peripheral可以提供多种自定义服务和标准化的服务：比如设备信息（UUID：0x180A），电池信息（UUID:0X180F）,时间信息（UUID:0X1805等）等。service通过UUID来标识自己。
-
 - Characteristic：service中支持的数据传输方式，比如，你是想读service中的内容，或者向service中写数据，还是希望service向你push数据等。一个service可以支持多种数据传输方式（characteristic），通过UUID来区分，其中一些UUID是<a href="https://developer.bluetooth.org/gatt/characteristics/Pages/CharacteristicsHome.aspx">不能被占用的。</a>在数据传输方式上，BLE规定了几种标准的数据传输模式，常用的有4种：
-
 - Read/write：central和peripheral之间的数据交换。
-
 - Notify/indicate：由central开启，但是由peripheral发起数据传输，notify允许peripheral向client push数据，indicate是双向的。
-
-
 
 ## Packet Format
 
@@ -65,28 +39,24 @@ Session703还列出了BLE的几种使用场景：医疗，运动，安全，自�
 
 <a href="/assets/images/2014/03/ble-3.png"><img src="{{site.baseurl}}/assets/images/2014/03/ble-3.png" alt="ble-3" width="340" height="146" class="alignnone size-full wp-image-1086" /></a>
 
-包含8bit前缀
-32bit的跳频信道地址，对于广播包，这个值永远是0x8E89BED
-然后是2-39字节的PDU
-最后是24bit的循环校验码。
+- 包含8bit前缀
+- 32bit的跳频信道地址，对于广播包，这个值永远是0x8E89BED
+- 然后是2-39字节的PDU
+- 最后是24bit的循环校验码。
 
 这中间我们关心的是PDU，因为里面包含了我们要传输的数据。一个PDU首先是2字节的头标识payload的大小和类型（Event_Type，对应第四节的四种广播包类型），然后是6个字节的MAC地址，最后是31字节可用的payload。
 
 ## iBeacon
 
-根据上面我们了解的术语，我们先来定义一下iBeacon：
+根据上面我们了解的术语，我们先来定义一下iBeacon。iBeacon是一个不断广播，不提供service，不能被connection的peripheral设备。它发送的packet的payload如下
 
-iBeacon是一个不断广播，不提供service，不能被connection的peripheral设备。
-
-它发送的packet的payload如下
-
-```c 
+```shell
 02 01 06 1A FF 4C 00 02 15 B9 40 7F 30 F5 F8 46 6E AF F9 25 55 6B 57 FE 6D 00 49 00 0A C5
 ```
 
-这一共有30字节，也就是payload中的内容，没有PDU的头和MAC地址。这实际上就是iBeacon的包格式：
+这一共有30字节，也就是payload中的内容，没有PDU的头和MAC地址。这实际上就是iBeacon的包格式
 
-```c
+```shell
 02 01 06 1A FF 4C 00 02 15: iBeacon prefix (fixed)
 B9 40 7F 30 F5 F8 46 6E AF F9 25 55 6B 57 FE 6D: proximity UUID (here: Estimote’s fixed UUID)
 00 49: major
@@ -94,18 +64,15 @@ B9 40 7F 30 F5 F8 46 6E AF F9 25 55 6B 57 FE 6D: proximity UUID (here: Estimote�
 C5: 2’s complement of measured TX power
 ``` 
 
-也就是说对于31字节的payload，从第6字节开始后的四字节是：4C 00 02 15的advertising packet都属于Apple的iBeacon设备。并且iBeacon不提供service也就不支持peripheral的connection，下面是iBeacon的包格式：
+也就是说对于31字节的payload，从第6字节开始后的四字节是：`4C 00 02 15`的advertising packet都属于Apple的iBeacon设备。并且iBeacon不提供service也就不支持peripheral的connection，下面是iBeacon的包格式：
 
 <a href="/assets/images/2014/03/ble-4.png"><img src="{{site.baseurl}}/assets/images/2014/03/ble-4.png" alt="ble-4" width="322" height="169" class="alignnone size-full wp-image-1093" /></a>
 
 由于iBeacon设计的场景就是室内购物，因此它规定了一些字段来应对这种场景：
 
 - UUID:用来区分不同的iBeacon设备，比如有一个连锁店，所有分店内的iBeacon都应该具有相同的UUID。
-
 - major:2字节，用来归纳一组iBeacon设备，比如同一家店，部署了多个iBeacon，那么他们的major值应该相同。
-
 - minor:2字节，用来区分每一个iBeacon，同一店中的每个iBeacon的minor值应该不同。
-
 - TX：这个值直接对应BLE的RSSI，换算方法为RSSI = - (256 - TX)db。以上面的payload为例：RSSI = -(256-197) = -59db。如果是学通信的对这个单位应该并不陌生，蓝牙信号本质上也是电磁波，是电磁波就会有功率，db就是描述功率的幅值，也可以理解为能量的强弱。我们可以通过这个值来计算iBeacon和client的距离，但是这种计算并不精确，因为蓝牙这种电磁波本身就很弱，很难穿墙，对于室内复杂的环境，这个值并不准确。
 
 后面会对iBeacon做代码上的分析，如果你已经了解了基本的BLE工作方式，也可以略过下一节，直接阅读More on iBeacon一节。
@@ -123,11 +90,8 @@ BLE工作在2.4GHZ-2.4835GHZ频段范围内，一共有40信道用来跳频通�
 在广播阶段，BLE设备可以广播四种格式的packet：
 
 - Non-connection Advertising : BLE设备会一直处于Advertising状态，设备不可链接，一般Beacon设备都是广播这种packet。
-
 - Discoverable Advertising : 和第一种类似，但是client可以在不和BLE设备建立链接的情况下发送一个request来获得更多的信息。这种通常不常用。
-
 - General Advertising:这种就是通用的模式，client可以和BLE设备建立链接并传输数据。
-
 - Directed Advertising:这种包用来让client快速重连BLE设备，这种模式目前iOS7还不支持。
 
 ### Connection
@@ -149,7 +113,6 @@ BLE工作在2.4GHZ-2.4835GHZ频段范围内，一共有40信道用来跳频通�
 拓扑图，什么意思呢？很简单：
 
 - 对于可连接的BLE设备，它自己可以是central也可以是peripheral：一个central可以链接多个peripheral，但是一个peripheral只能被一个central连接。
-
 - 对于不可连接的BLE设备，如iBeacon，它只能是peripheral，只能广播数据。
 
 ## Test and Debug
