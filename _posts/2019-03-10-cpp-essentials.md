@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: C++中的右值引用与std::move
+list_title: C++ Essentials | Move Semantics
 title: C++中的右值引用与std::move
 categories: [C++]
 ---
