@@ -61,7 +61,7 @@ and more mature system stack support. 95% of the iOS devices support Metal. <mar
 
 ## MACHINE LEARNING AT FACEBOOK
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/02/3/.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/02/3.png">
 
 ### 3.3 Important Design Aspects for Mobile Inference and Potential Approaches
 
@@ -72,7 +72,7 @@ Code size is a unique design point for mobile inference. <mark>First option</mar
 
  For edge inference, to improve computational performance while maximizing efficiency, techniques, such as quantization, k-means clustering, execution engine selection, are employed to create mobilespecific models
 
- ## 4. HORIZONTAL INTEGRATION: MAKING INFERENCE ON SMARTPHONES
+ ## 4.HORIZONTAL INTEGRATION: MAKING INFERENCE ON SMARTPHONES
 
 **NNPACK (Neural Networks PACKage)** performs computations in 32-bit floating-point precision and NCHW layout, and targets high-intensity convolutional neural networks, which use convolutional operators with large kernels, such as 3x3 or 5x5. NNPACK implements asymptotically fast convolution algorithms, based on either Winograd transform or Fast Fourier transform, which employ algorithmic optimization to lower computational complexity of convolutions with large kernels by several times. With algorithmic advantage and low-level microarchitecture-specific optimizations, NNPACK often delivers higher performance for direct convolution implementation.
 
