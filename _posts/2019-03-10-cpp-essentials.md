@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: C++ Essentials | Move Semantics
+list_title: C++ Essentials | RValue and Move Semantics
 title: C++中的右值引用与std::move
 categories: [C++]
 ---
@@ -17,7 +17,7 @@ lvalue         xvalue        prvalue
 
 其中lvalue和prvalue比较好理解，lvalue是纯左值，它在等号左边，有标识符，能取地址，不能被移动。而纯右值也很好理解，它在等号的右边，没有标识符，不能取地址，但是可以被移动。xvalue比较特殊，它有标识符，可以出现在等号左边，可以被取地址，同时还可以被移动。上面三种类型常见的用法可参考上面的[Value Category](https://en.cppreference.com/w/cpp/language/value_category)
 
-### 右值引用
+## 右值引用
 
 一个右值引用既可能是左值也可能是右值，区分标准在于如果他有标识符，那他就是左值，如果没有，则是右值。可见右值引用是一种xvalue。假设我们有一个Dummy类如下，它重载了拷贝构造函数和移动构造函数
 
@@ -27,7 +27,7 @@ public:
     string x = "100";
     Dummy(string i):x(i){}
     Dummy(const Dummy& d):x(d.x){}
-    Dummy(Dummy&& d):x(std::move(d.x)){}
+    Dummy(Dummy&& d):x(std::move(d.x)) noexcept{}
     ~Dummy(){
         std::cout<<__func__<<std::endl;
     }
@@ -124,43 +124,20 @@ Dummy&& dm = std::move(foo());
 ```
 此时在`foo()`执行完成后，临时对象`prvalue`便会释放，因此`dm`将绑定到一个不可用的内存地址，此时`dm`的行为将是undefined behavior
 
+### `&&`修饰成员函数
 
-### std::move解决什么问题
-
-简单的说move解决大对象的拷贝问题，大对象包括容器和一些占内存较大的类对象。我们假设上面的`Dummy`类hold一个指向一块较大内存对象的指针，`m_pResource`，则下面代码将触发该对象的拷贝
-
-```cpp
-Dummy dm("dm");
-dm = Dummy("dm2");
-```
-考虑上面最后一行代码，它做了三件事
-
-- 拷贝临时对象持有的`m_pResource`
-- 释放`dm`原来持有的`m_pResource`
-- 释放临时对象持有的`m_pResource`
-
-如果`m_pResource`指向的是一个很大的对象，上述行为这显然效率不高，如果我们能将历史对象的`m_pResource`直接transfer给`dm`，那么性能将会有极大的提升，这也是`std::move`的基本实现原理。因此对于`Dummy`的移动构造和移动复制函数，我们需要做的是实现资源的交换
+我们可以将某个成员函数标记为`&&`，则表示该成员函数只能被一个右值对象调用
 
 ```cpp
-Dummy& Dummy::operator=(Dummy&& rhs)
-{
-  // [...]
-  // swap this->m_pResource and rhs.m_pResource
-  // [...]  
-}
+struct Foo {
+  auto func() && {}
+};
+
+auto a = Foo{};
+a.func(); //error, a is lvalue
+std::move(a).func(); // compiles
+Foo{}.func(); // compile
 ```
-可见我们需要用`swap`来交换两个对象的resource，这意味着`rhs`将拥有`dm`的resource。
-
-
-### 支持move semantics
-
-要让某个对象支持`std::move`需要做下面几件事情
-
-- 支持拷贝构造和移动构造函数
-- 实现`swap`成员函数，支持和另外一个对象快速交换成员
-- 实现一个全局的 `swap` 函数，调用成员函数 `swap` 来实现交换。
-- 实现移动赋值 `operator=`
-- 上面各个函数如果不抛异常的话，应当标为`noexcept`
 
 ###  编译器对函数返回值的优化
 
@@ -175,6 +152,83 @@ Dummy dummy(){
 }
 void main(){
   Dummy dm = dummy();
+}
+```
+
+## `std::move`解决什么问题
+
+简单的说move解决内存拷贝问题，通常情况下如果一个对象hold了一块比较大的，并且是heap-allocated的资源，使用`std::move`比copy效率更高。
+
+```cpp
+Dummy dm(a_big_vector);
+Dummy dm2(std::move(dm))
+```
+上面代码中如果将`dm`直接copy给`dm2`则cost会很高，如果用`std::move`则将`dm2`中vetor的指针直接指向`dm`中的vector，效率很高
+
+### Rule of Zero/Five
+
+如果要完整的支持move，一个类需要实现下面五个函数
+
+- copy constructor
+- copy assignment operator
+- move constructor
+- move assignment operator
+- destructor
+
+默认情况下，编译器会为每个类自动生成上面五个函数，但是我们如果override了其中一个，则compiler将不会自动生成其它的四个。此时，由于move构造没有被生成，所有该类的对象将支持copy。
+
+### A common pitfall - moving non-resources
+
+使用系统默认的构造函数，如果类中有foundamental type的成员(`int`, `float`, `bool`)，则这些成员不会被move，而是被copy。这回带来一些异常的情况
+
+```cpp
+struct S4 {
+    std::vector<float> _data;
+    int _index{-1};
+    S4 (const std::vector<float>& data):_data(data){}
+    void set_index(int index) {
+      _index = index;
+    }
+    float select_item() const {
+      return _data[_index];
+    }
+};
+
+int main() {
+  std::vector<float> data{1.0, 1.1, 1.2};
+  S4 s4(data);
+  s4.set_index(2);
+  S4 s44(std::move(s4));
+  auto x1 = s44.select_item(); //OK, 1.2
+  auto x2 = s4.select_item(); //UB: undefined behavior. The underlying data has gone
+}
+```
+上面代码中，对于`s44`来说，`_index`被copy到自己的`_index`中，`_data`被move到自己的`_data`中，因此`s44`没有任何问题。但是对于`s4`来说，move后`_data`已经不存在了，但是`_index`由于是copy，因此还保存着原来的值`2`，此时`_data[_index]`将会crash。解决办法是重载move constructor和move operator
+
+```cpp
+S4(const S4&& other) noexcept{
+  std::swap(_data, other.data);
+  std::swap(_index, other._index);
+}
+
+auto& oeprator=(S4&& other) noexcept{
+  std::swap(_data, other.data);
+  std::swap(_index, other._index);
+}
+```
+
+需要注意的是我们需要将move constructor和move assignment operator标记成`noexcept`。如果不加这个mark，一些静态库仍会使用copy构造
+
+### move构造函数的参数
+
+对于移动构造函数的传参，我们可以使用**pass-by-value-then-move**的pattern。这会减少一次对参数的copy
+
+```cpp
+class Widget {
+  std::vector<int> data_;
+public:
+  Widget(std::vector<int> x) : data_{std::move(x)}{}
+  // ...
 }
 ```
 
