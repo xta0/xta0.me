@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 深搜与回溯（二）- 剪枝
+title: 深搜与回溯（二）
 list_title: Basic Algorithms | 深搜与回溯（二） | DFS & Backtracking Part 2
 categories: [Algorithms]
 mathjax: true
@@ -234,7 +234,7 @@ bool sudokuSolve( const vector<vector<char>>& input ) {
   //深搜
   return dfs(0,blanks,board);
 }
-
+```
 
 ## Resources
 
