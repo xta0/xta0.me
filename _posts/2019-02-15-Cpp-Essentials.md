@@ -11,13 +11,13 @@ categories: [C++]
 
 当物理内存不够时，系统需要清理一些memory page，如果当前page是dirty的(有过写操作)，则系统会将其swap到disk上，如果是clean的page，则系统会直接将其清理，这个过程也叫**paging**。实际上并不是每个操作系统都会swap内存，iOS上如果发生内存紧张，系统会首先kill掉一些进程来释放内存，dirty page是不会被swap到disk上的。
 
-下图展示了连个进程的虚拟内存情况，假设进程1要执行`0x1000`中的代码，则会触发page fault，系统会从disk加载数据到一片空的物理内存中
+下图展示了两个进程的虚拟内存使用情况，假设进程1要执行`0x1000`中的代码，则会触发page fault，系统会从disk加载数据到一片空的物理内存中
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2019/02/vm.png">
 
 如果系统处于一个low memory的状态，内存置换会非常频繁，这种情况叫做**Thrashing**。
 
-### Stack Memory
+### Stack and Heap
 
 Stack Memory有下面一些特点
 
@@ -26,3 +26,12 @@ Stack Memory有下面一些特点
 - Stack Memory永远不会产生内存碎片
 - 从Stack上分类内存速度快，基本不会发生Page fault
 - 每个线程都有自己的stack，stack的内存分配不用考虑并发的问题
+
+Heap和stack相比有两个比较大的不同
+
+- Heap上的内存分配需要考虑多线程的并发问题
+- 由于Heap上的内存是非连续的，因此会产生内存碎片
+
+### Memory Alignment
+
+CPU从内存中读数据到寄存器一般以word为单位，如果是64位的CPU，则一个word的大小为64bit，如果是32位的CPU，则一个word是32bit.
