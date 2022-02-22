@@ -248,6 +248,40 @@ args -> exp ',' args
 args -> exp
 ```
 
+### Grammar in Python
+
+上面提到的这些Grammar Rule该如何用代码表示呢，我们以Python为例，还是上面提到的语法规则
+
+```shell
+exp -> exp + exp
+exp -> exp - exp
+exp -> (exp)
+exp -> num
+```
+我们可以用下面规则来实现语法规则
+
+```shell
+A -> B C
+#python tupe
+("A", ["B", "C"])
+```
+则对应的Python代码为
+
+```python
+grammar = [
+  ("exp", ["exp", "+", "exp"]),
+  ("exp", ["exp", "-", "exp"]),
+  ("exp", ["(", "exp", ")"]),
+  ("exp", ["num"]),
+]
+```
+
+现在假设我们有一个token list - `['print', exp, ;]`，我们需要将`exp`替换为其中一条Grammar Rule，假设我们用第一条 `exp -> exp + exp`，则替换后的结果为
+
+```python
+['print', 'exp', '+', 'exp', ';']
+```
+我们可以将`exp`不断的进行递归替换，直到数组中每个元素都是terminator为止
 
 ## Resources
 
