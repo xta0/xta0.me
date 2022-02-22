@@ -19,7 +19,7 @@ Subject -> 'Students'
 Verb -> 'Write'
 Verb -> 'Think'
 ```
-其中带引号的单词为terminals，则我们可以将任意句子按照上面规则进行替换，直到句子中全部都是termninals，我们看一个简单的例子
+其中带引号的单词为terminals，则我们可以将任意句子按照上面规则进行替换，直到句子中全部都是terminals，我们看一个简单的例子
 
 ```shell
 Sentence -> Subject Verb -> 'Students' Verb -> 'Students' 'Write'
@@ -101,6 +101,96 @@ r'a*' = g ->  ϵ
 r'a|b' = g -> 'a'
          g -> 'b'
 ```
+
+实际上，有些场景我们是不能使用regular expression做parser的，比如前文提到的解析HTML文本。这是由于正则式无法检测到括号mismatch的情况，比如
+
+```shell
+<p>abc<b>def</b>gh</p>
+<p>abc<b>def</p>gh</b>
+```
+显然HTML的parser必须要能检测出括号的闭合，因此对于第二种情况是需要报错的，但是正则式无法做到这一点。
+
+### Parser Tree
+
+我们可以将任何一组Grammar Rules变成一个Parse Tree，例如还是前面的Grammar Rule
+
+```shell
+exp -> exp + exp
+exp -> exp - exp
+exp -> num
+```
+表达式为`1+2-3`，此时Parser Tree可以表示为
+
+```shell
+          exp
+        /  |  \ 
+      exp  -   exp
+     / | \       \
+  exp  +  exp    num
+   /       |      |
+ num      num     3
+  |        |
+  1        2
+```
+所有的叶子节点为terminal node，非叶子节点为non-terminal node。
+
+实际上，上述的Parser Tree还有另外一种形式
+
+```shell
+          exp
+        /  |  \ 
+      exp  +   exp
+     /        / | \
+   num     exp  -  exp
+    |       |       |
+    1      num     num
+            |       |
+            2       3
+```
+此时，表达式计算的是`1+2-3`，和我们希望的不符，这说明我们的表达式具有**Ambiguity**，即一个表达式会产生不止一个Parse Tree。实际上我们的Parser并不知道四则运算的从左到右的运算规则，此时我们可以给Grammar加一个括号的rule
+
+```shell
+exp -> (exp)
+```
+
+### HTML Grammars
+
+正如前面小节提到的，使用这则表达式不能帮助我们解析HTML文本，因此我们需要定义一个grammar rule
+
+```shell
+html -> element html
+html -> ϵ
+element -> 'word'
+element -> tag_open html tag-close
+tag-open -> '<word>'
+tag-close -> '</word>'
+```
+假设有一段HTML文本为 `<p>welcome to <b>xta0</b> site</p>`，生成的Parse Tree为
+
+```shell
+                                 html
+                               /       \ 
+                             ele       html
+                       /      |     \    |
+                      to    html     tc  ϵ
+                    /    /       \    \    
+                '<p>'  ele       html '</p>'     
+                        |      /      \   
+                    'welcome' ele     html
+                               |      /   \
+                              'to'   ele   ϵ
+                                /     |     \
+                               to    html    tc 
+                                |     / \     |
+                              '<b>'  ele html '</b>'     
+                                      |    |
+                                    'xta0' ϵ
+```
+这种recursive的结构看起来复杂，实际上对于计算机是很简单的算法，我们后面会提到如何用代码生成Parse Tree
+
+### Javascript Grammar
+
+
 
 ## Resources
 
