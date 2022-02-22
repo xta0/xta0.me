@@ -112,14 +112,14 @@ r'a|b' = g -> 'a'
 
 ### Parser Tree
 
-我们可以将任何一组Grammar Rules变成一个Parse Tree，例如还是前面的Grammar Rule
+我们可以将任何一组Grammar Rules变成一个Parse Tree(或者AST)，例如还是前面的Grammar Rule
 
 ```shell
 exp -> exp + exp
 exp -> exp - exp
 exp -> num
 ```
-表达式为`1+2-3`，此时Parser Tree可以表示为
+假设我们的表达式为`1+2-3`，对应的token list为`[1, + , 2, -, 3]`。此时，符合该token list的一个Parser Tree可以表示为
 
 ```shell
           exp
@@ -132,9 +132,8 @@ exp -> num
   |        |
   1        2
 ```
-所有的叶子节点为terminal node，非叶子节点为non-terminal node。
+所有的叶子节点组成了我们的token list。但是同样的token顺序，我们根据上面的语法规则还可以生成另外一个合法的Parse Tree
 
-实际上，上述的Parser Tree还有另外一种形式
 
 ```shell
           exp
@@ -147,7 +146,7 @@ exp -> num
             |       |
             2       3
 ```
-此时，表达式计算的是`1+2-3`，和我们希望的不符，这说明我们的表达式具有**Ambiguity**，即一个表达式会产生不止一个Parse Tree。实际上我们的Parser并不知道四则运算的从左到右的运算规则，此时我们可以给Grammar加一个括号的rule
+此时，表达式计算的是`1+(2-3)`，显然，这和我们希望的结果不符。这说明我们的语法规则式具有**Ambiguity**，即一个表达式会产生不止一个Parse Tree。实际上我们的Parser并不知道四则运算的从左到右的运算规则。一种解决办法是可以给我们的语法规则加一个括号的rule
 
 ```shell
 exp -> (exp)
@@ -155,8 +154,7 @@ exp -> (exp)
 
 ### HTML Grammars
 
-正如前面小节提到的，使用这则表达式不能帮助我们解析HTML文本，因此我们可以为HTML定义一个Grammar Rule
-
+正如前面小节提到的，使用这则表达式不能帮助我们解析HTML文本，因此我们可以为HTML定义一个语法规则
 ```shell
 html -> element html
 html -> ϵ
@@ -281,7 +279,30 @@ grammar = [
 ```python
 ['print', 'exp', '+', 'exp', ';']
 ```
-我们可以将`exp`不断的进行递归替换，直到数组中每个元素都是terminator为止
+我们可以将`exp`不断的进行递归替换，直到数组中每个元素都是叶子节点为止
+
+### Parse Trees
+
+回到最开始的问题，给定一组token和一系列Grammar Rules，我们如何知道这组token是否符合语法规则。比如，一组token如下
+
+```shell
+['(', ')',')']
+```
+而我们的语法是要求括号具有完成的匹配
+
+```shell
+exp -> (exp)
+exp -> ϵ
+```
+为了知道上述token是否满足这个语法，一个简单的做法是Brute Force，即枚举所语法规则所产生的的所有可能性，看是否匹配输入和token。例如
+
+```shell
+()
+(())
+((()))
+...
+```
+前文规则可知，由于递归的存在，context-free grammar所产生的出的规则是无限的，因此这种方式显然是错误的
 
 ## Resources
 
