@@ -10,7 +10,7 @@ categories: [Parser,Compiler]
 
 上一篇文章中我们使用正则表达式可以将句子(代码)变成一个token list，但是我们如何能确定这个token list是否符合有效的语法规则呢？这就是Syntatical Analysis (Parsing) 需要解决的问题。
 
-Noam Chomsky在1955年提出了一个Syntatic Structure的概念，即utterances have rules(formal grammars)。Formal Grmmar将token分成non-terminals和terminals。比如下面例子
+Noam Chomsky在1955年提出了一个Syntatic Structure的概念，即utterances have rules(Formal Grammars)。Formal Grmmar将token分成non-terminals和terminals。比如下面例子
 
 ```shell
 Sentence -> Subject Verb
@@ -38,9 +38,9 @@ Sentence -> Subject Verb -> Subject 'and' Subject Verb ->
 'Students' 'and' Subject Verb -> 'Students' 'and' Subject 'Think' ->
 'Students' 'and' 'Teachers' 'Think'
 ```
-可见上述的替换过程是一个recursive的过程，我们指定的替换规则则叫做recursive grammar rule。可见通过有限的grammar rule以及递归关系的存在，我们可以产生无限的utterances(tokens)。
+可见上述的替换过程是一个recursive的过程，我们指定的替换规则则叫做Recursive Grammar Rule。可见通过有限的Grammar rule以及递归关系的存在，我们可以产生无限的utterances(tokens)。
 
-我们再来看一个实际的例子，假设我们有下面的grammar rule
+我们再来看一个实际的例子，假设我们有下面的Grammar Rule
 
 ```shell
 stmt -> 'identifier' = exp
@@ -60,7 +60,7 @@ z = z+1
 ```shell
 y = exp -> exp '-' exp -> 2500 '-'
 ```
-因此`y`是valid的表达式，而`z+1`不满足任意一条grammar rule，因此`z`不是一个valid的表达式。
+因此`y`是valid的表达式，而`z+1`不满足任意一条Grammar rule，因此`z`不是一个valid的表达式。
 
 另外，Grammar Rules比正则表达式更强大。比如解析数字，正则式为`[0-9]+`，如果用Grammar rule来表示，则为
 
@@ -70,7 +70,7 @@ more_digits -> 'digit' more_digits
 more_digits -> ϵ
 ```
 
-如果用grammar rule来解析数字42，则推导过程为
+如果用Grammar rule来解析数字42，则推导过程为
 
 ```shell
 number -> 'digit' more_digits -> 'digit' digit more_digits
@@ -155,7 +155,7 @@ exp -> (exp)
 
 ### HTML Grammars
 
-正如前面小节提到的，使用这则表达式不能帮助我们解析HTML文本，因此我们需要定义一个grammar rule
+正如前面小节提到的，使用这则表达式不能帮助我们解析HTML文本，因此我们可以为HTML定义一个Grammar Rule
 
 ```shell
 html -> element html
@@ -179,17 +179,74 @@ tag-close -> '</word>'
                     'welcome' ele     html
                                |      /   \
                               'to'   ele   ϵ
-                                /     |     \
-                               to    html    tc 
-                                |     / \     |
-                              '<b>'  ele html '</b>'     
+                                   /   |     \
+                                 to    html   tc 
+                                 |     / \     |
+                               '<b>'  ele html '</b>'     
                                       |    |
                                     'xta0' ϵ
 ```
-这种recursive的结构看起来复杂，实际上对于计算机是很简单的算法，我们后面会提到如何用代码生成Parse Tree
+这种Tree structure看起来复杂，但对于计算机来说确实很有效的数据结构，我们后面会提到如何用代码生成Parse Tree。
 
 ### Javascript Grammar
 
+接下来我们来顶一个JavaScript的Grammar，我们先focus在一个简单函数
+
+```javascript
+function up_to_ten(x){
+        if(x < 10){
+           return x;
+        } else {
+           return 10;
+        }
+}
+```
+如果要支持parse上面的语法，我们先来定义如下的Grammar Rules
+
+```shell
+exp -> 'identifier'
+exp -> 'number'
+exp -> 'string'
+exp -> 'TRUE'
+exp -> 'FALSE'
+exp -> exp '+' exp
+exp -> exp '-' exp
+exp -> exp '*' exp
+exp -> exp '/' exp
+exp -> exp '==' exp
+exp -> exp '<' exp
+exp -> exp '&&' exp
+
+stmt -> 'identifier' = exp
+stmt -> 'return' exp
+stmt -> 'if' exp compound_stmt
+stmt -> 'if' exp compound_stmt 'else' compound_stmt
+compound_stmt -> '{' stmts '}'
+stmts -> stmt ';' stmts
+stmts -> ϵ
+```
+有了这些规则，我们可以顺利的解析一些expression，但是对于像JavaScript或者Python这类高级语言，除了expression之外，还有function，因此我们需要顶一个关于解析函数的Grammar Rule
+
+```shell
+js -> element js
+js -> ϵ
+
+# function definination
+element -> 'function identifier(' opt_params ')' compound_stmt
+element -> stmt;
+opt_params -> params
+opt_params -> ϵ
+params -> 'identifier', params
+params -> 'identifier'
+
+# function call
+exp -> ...
+exp -> 'identifier(' opt_args) ')'
+opt_args -> args
+opt_args -> ϵ
+args -> exp ',' args
+args -> exp
+```
 
 
 ## Resources
