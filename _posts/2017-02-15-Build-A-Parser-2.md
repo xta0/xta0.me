@@ -174,13 +174,13 @@ tag-close -> '</word>'
                     /    /       \    \    
                 '<p>'  ele       html '</p>'     
                         |      /      \   
-                    'welcome' ele     html
-                               |      /   \
-                              'to'   ele   ϵ
-                                   /   |     \
+                    'welcome' ele       html
+                               |         /   \
+                              'to'     ele     ϵ
+                                   /    |    \
                                  to    html   tc 
                                  |     / \     |
-                               '<b>'  ele html '</b>'     
+                               '<b>'  ele html'</b>'     
                                       |    |
                                     'xta0' ϵ
 ```
@@ -281,14 +281,14 @@ grammar = [
 ```
 我们可以将`exp`不断的进行递归替换，直到数组中每个元素都是叶子节点为止
 
-### Parse Trees
+### Earley Parser (Shift-Reduce Parser)
 
 回到最开始的问题，给定一组token和一系列Grammar Rules，我们如何知道这组token是否符合语法规则。比如，一组token如下
 
 ```shell
 ['(', ')',')']
 ```
-而我们的语法是要求括号具有完成的匹配
+而我们的语法是要求括号具有完整的匹配
 
 ```shell
 exp -> (exp)
@@ -302,8 +302,131 @@ exp -> ϵ
 ((()))
 ...
 ```
-前文规则可知，由于递归的存在，context-free grammar所产生的出的规则是无限的，因此这种方式显然是错误的
+前文规则可知，由于递归的存在，context-free grammar所产生的出的规则是无限的，因此这种方式显然是不正确的。
+
+接下来，我们来介绍一种基于`chart`的parsing technique - Earley Parser
+
+我们需要定义一个`chart`字典，其中的元素是一个数组用来保存条parsing state，数组中不允许有重复的state，因此它是一个ordered set。
+
+```python
+
+# chart[index] returns a list that contains state exactly
+# once. The chart is a Python dictionary and index is a number. addtochart
+# should return True if something was actually added, False otherwise. You may
+# assume that chart[index] is a list.
+
+def addtochart(chart, index, state):
+    if state not in chart[index]:
+        chart[index] = [state] + chart[index]
+        return True
+    else:
+        return False
+```
+
+我们python的tuple来代码来表示一条state
+
+```python
+# x -> ab . cd from j
+
+state = ("x", ["a", "b"], ["c", "d"], j)
+```
+
+### Closure
+
+我们可以对token list进行从左向右遍历，每遇到一个token，我们来检查它是否是non-terminal，如果是，则进行语法规则替换，这个过程称为computing the closure或者叫predicting。我们来看一个例子
+
+假设当前的Grammar如下，它包含下面几条rewrite rules
+
+```shell
+E -> E - E
+E -> E + E
+E -> (E)
+E -> 'num'
+T -> 'I like t'
+T -> ϵ
+```
+假设输入的token为 `['a','b','c','d']`，当我们paser到 `ab`时，下一个token为`c`，此时我们需要看`c`是否满足某条规则，如果是，则将其按照rewrite rule进行替换
+
+```python
+
+# We are currently looking at chart[i] and we see x => ab . cd from j
+
+# Write the Python procedure, closure, that takes five parameters:
+
+#   grammar: the grammar using the previously described structure
+#   i: a number representing the chart state that we are currently looking at
+#   x: a single nonterminal
+#   ab and cd: lists of many things
+
+# The closure function should return all the new parsing states that we want to
+# add to chart position i
+grammar = [ 
+    ("exp", ["exp", "+", "exp"]),
+    ("exp", ["exp", "-", "exp"]),
+    ("exp", ["(", "exp", ")"]),
+    ("exp", ["num"]),
+    ("t",["I","like","t"]),
+    ("t",[""])
+    ]
+
+def closure (grammar, i, x, ab, cd):
+    next_states = [
+        (rule[0], [], rule[1], i)
+        for rule in grammar 
+        if len(cd) > 0 and rule[0] == cd[0]
+    ]
+
+next_states = closure(grammar, i, x, ab, cd)
+for next_state in next_states:
+    any_changes = addtochart(chart, i, next_state)
+```
+
+### Shift 
+
+所谓shift是指当前token如果是一个terminate token，则skip该token，继续向右parse
+
+```python
+# Writing Shift
+
+# We are currently looking at chart[i] and we see x => ab . cd from j. The input is tokens.
+
+# The procedure, shift, should either return None, at which point there is
+# nothing to do or will return a single new parsing state that presumably
+# involved shifting over the c if c matches the ith token.
+
+def shift (tokens, i, x, ab, cd, j):
+    if len(cd) == 0 and tokens[i] == cd[0]:
+        return (x, ab + [cd[0]], cd[1:], j)
+    else:
+        return None
+
+next_state = shift(tokens, i, x, ab, cd, j)
+if len(next_state) > 0:
+    any_changes = addtochart(chart, i+1, next_state)
+```
+
+### Reduction
+
+Reduction是将已经存在的
+
+```python
+
+# Writing Reductions
+
+# We are looking at chart[i] and we see x => ab . cd from j.
+# you only want to do reductions if cd == []
+
+def reductions(chart, i, x, ab, cd, j):
+
+next_states = reductions(chart, i, x, ab, cd, j)
+for next_state in next_states:
+    any_changes = addtochart(chart, i, next_state)
+```
+
+
+
 
 ## Resources
 
+- [Earley parser](https://en.wikipedia.org/wiki/Earley_parser)
 - [Programming Language](https://classroom.udacity.com/courses/)
