@@ -7,7 +7,7 @@ categories: [C++]
 
 在C++11以前，只有左值和右值，左值很好理解，右值可以被绑定到一个常量的左值引用，即`const T&`，当不能绑定到非常量引用`T&`的左值。在C++11之后，出现右值引用的类型`&&`和`std::move`，此时一个右值可以被绑定到一个具有`T&&`的类型的左值，此时这个左值在术语叫做xvalue。它具有像左值一样可以进行取地址的操作，同时也具有右值的特性，即可以被移动。根据这份[Value Category](https://en.cppreference.com/w/cpp/language/value_category)的描述，更准确的分类应该是如下图所示
 
-```
+```shell
               expression
               /       \
         glvalue       rvalue
@@ -16,7 +16,7 @@ lvalue         xvalue        prvalue
 ```
 
 其中lvalue和prvalue比较好理解，lvalue是纯左值，它在等号左边，有标识符，能取地址，不能被移动。而纯右值也很好理解，它在等号的右边，没有标识符，不能取地址，但是可以被移动。xvalue比较特殊，它有标识符，可以出现在等号左边，可以被取地址，同时还可以被移动。上面三种类型常见的用法可参考上面的[Value Category](https://en.cppreference.com/w/cpp/language/value_category)
-
+、 。    
 ### 右值引用
 
 一个右值引用既可能是左值也可能是右值，区分标准在于如果他有标识符，那他就是左值，如果没有，则是右值。可见右值引用是一种xvalue。假设我们有一个Dummy类如下，它重载了拷贝构造函数和移动构造函数
