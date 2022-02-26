@@ -427,4 +427,5 @@ for next_state in next_states:
 ## Resources
 
 - [Earley parser](https://en.wikipedia.org/wiki/Earley_parser)
+- [Parsing absolutely anything in JavaScript using Earley algorithm](https://gajus.medium.com/parsing-absolutely-anything-in-javascript-using-earley-algorithm-886edcc31e5e)
 - [Programming Language](https://classroom.udacity.com/courses/)
