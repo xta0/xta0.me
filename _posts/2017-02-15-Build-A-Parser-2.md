@@ -6,9 +6,14 @@ mathjax: true
 categories: [Parser,Compiler]
 ---
 
-### Syntatical Analysis
+上一篇文章中我们使用正则表达式可以将句子(代码)变成一个token list，但是我们如何能确定这个token list是否符合有效的语法规则呢？这就是Syntatical Analysis (Parsing) 需要解决的问题。我们先来看一个经典的例子，比如我们有下面一组token
 
-上一篇文章中我们使用正则表达式可以将句子(代码)变成一个token list，但是我们如何能确定这个token list是否符合有效的语法规则呢？这就是Syntatical Analysis (Parsing) 需要解决的问题。
+```shell
+['(', ')',')']
+```
+我们的要求是括号必须成对出现，即括号必须是闭合的才满足正确的语法条件。此时，我们该如何验证这组token是否符合条件呢？可能最先想到的方法是用正则表达式，但实际上正则表达式无法判断括号是否闭合。正确的方法是对token进行语法分析。
+
+### Syntatical Analysis
 
 Noam Chomsky在1955年提出了一个Syntatic Structure的概念，即utterances have rules(Formal Grammars)。Formal Grmmar将token分成non-terminals和terminals。比如下面例子
 
@@ -108,9 +113,15 @@ r'a|b' = g -> 'a'
 <p>abc<b>def</b>gh</p>
 <p>abc<b>def</p>gh</b>
 ```
-显然HTML的parser必须要能检测出括号的闭合，因此对于第二种情况是需要报错的，但是正则式无法做到这一点。
+显然HTML的parser必须要能检测出括号的闭合，因此对于第二种情况是需要报错的，但是正则式无法做到这一点。再比如回到文章开头括号匹配的例子，我们可以定义下面的语法
 
-### Parser Tree
+```shell
+exp -> (exp)
+exp -> ϵ
+```
+由于递归的存在，我们可以用上面两条语法来检测括号是否匹配。
+
+### Parse Tree
 
 我们可以将任何一组Grammar Rules变成一个Parse Tree(或者AST)，例如还是前面的Grammar Rule
 
@@ -132,7 +143,11 @@ exp -> num
   |        |
   1        2
 ```
-所有的叶子节点组成了我们的token list。但是同样的token顺序，我们根据上面的语法规则还可以生成另外一个合法的Parse Tree
+我们可以将token list中的元素从左到右依次填入到叶子节点，得到完整的parse tree
+
+
+
+但是同样的token顺序，我们根据上面的语法规则还可以生成另外一个合法的Parse Tree
 
 
 ```shell
@@ -151,6 +166,8 @@ exp -> num
 ```shell
 exp -> (exp)
 ```
+
+
 
 ### HTML Grammars
 
@@ -283,26 +300,7 @@ grammar = [
 
 ### Earley Parser (Shift-Reduce Parser)
 
-回到最开始的问题，给定一组token和一系列Grammar Rules，我们如何知道这组token是否符合语法规则。比如，一组token如下
 
-```shell
-['(', ')',')']
-```
-而我们的语法是要求括号具有完整的匹配
-
-```shell
-exp -> (exp)
-exp -> ϵ
-```
-为了知道上述token是否满足这个语法，一个简单的做法是Brute Force，即枚举所语法规则所产生的的所有可能性，看是否匹配输入和token。例如
-
-```shell
-()
-(())
-((()))
-...
-```
-前文规则可知，由于递归的存在，context-free grammar所产生的出的规则是无限的，因此这种方式显然是不正确的。
 
 接下来，我们来介绍一种基于`chart`的parsing technique - Earley Parser
 
