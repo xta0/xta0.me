@@ -6,16 +6,16 @@ mathjax: true
 categories: [Parser,Compiler]
 ---
 
-上一篇文章中我们使用正则表达式可以将句子(代码)变成一个token list，但是我们如何能确定这个token list是否符合有效的语法规则呢？这就是Syntatical Analysis (Parsing) 需要解决的问题。我们先来看一个经典的例子，比如我们有下面一组token
+上一篇文章中我们使用正则表达式可以将一段文本(代码)变成一个token list，但是我们如何能确定这个token list是否符合有效的语法规则呢？这就是Syntatical Analysis (Parsing) 需要解决的问题。我们先来看一个经典的例子，比如我们有下面一组token
 
 ```shell
 ['(', ')',')']
 ```
-我们的要求是括号必须成对出现，即括号必须是闭合的才满足正确的语法条件。此时，我们该如何验证这组token是否符合条件呢？可能最先想到的方法是用正则表达式，但实际上正则表达式无法判断括号是否闭合。正确的方法是对token进行语法分析。
+我们的语法要求是括号必须成对出现，即括号必须是闭合的。此时，我们该如何验证这组token是否符合条件呢？可能最先想到的方法是用正则表达式，但实际上正则表达式无法判断括号是否闭合。正确的方法是对token进行语法分析。
 
 ### Syntatical Analysis
 
-Noam Chomsky在1955年提出了一个Syntatic Structure的概念，即utterances have rules(Formal Grammars)。Formal Grmmar将token分成non-terminals和terminals。比如下面例子
+Noam Chomsky在1955年提出了一个Syntatic Structure的概念，即utterances have rules(Formal Grammars)。Formal Grmmar将token分成**non-terminals**和**terminals**。比如下面例子
 
 ```shell
 Sentence -> Subject Verb
@@ -43,7 +43,7 @@ Sentence -> Subject Verb -> Subject 'and' Subject Verb ->
 'Students' 'and' Subject Verb -> 'Students' 'and' Subject 'Think' ->
 'Students' 'and' 'Teachers' 'Think'
 ```
-可见上述的替换过程是一个recursive的过程，我们指定的替换规则则叫做Recursive Grammar Rule。可见通过有限的Grammar rule以及递归关系的存在，我们可以产生无限的utterances(tokens)。
+可见上述的替换过程是一个recursive的过程，我们指定的替换规则则叫做Recursive Grammar Rule。可见通过有限的Grammar rule以及递归产生无限的Derivation。
 
 我们再来看一个实际的例子，假设我们有下面的Grammar Rule
 
@@ -63,7 +63,9 @@ z = z+1
 我们来看一下`y`和`z`的推导过程
 
 ```shell
-y = exp -> exp '-' exp -> 2500 '-'
+y = exp -> 
+y = exp '-' exp -> 
+y = 2500 '-' 1
 ```
 因此`y`是valid的表达式，而`z+1`不满足任意一条Grammar rule，因此`z`不是一个valid的表达式。
 
@@ -78,7 +80,7 @@ more_digits -> ϵ
 如果用Grammar rule来解析数字42，则推导过程为
 
 ```shell
-number -> 'digit' more_digits -> 'digit' digit more_digits
+number -> 'digit' more_digits -> 'digit' 'digit' more_digits
 -> 'digit' 'digit' ϵ -> 'digit' 2 -> 42
 ```
 
