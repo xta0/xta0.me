@@ -152,9 +152,9 @@ dict : the python session dictionary
 ### Clang
 
 - `clang -c test.c`
-	- `-E` #preprocess,but done compile
-	- `-S` #Compile, but don't assemble
-	- `-c` #Asseble, but don't link
+	- `-E` Preprocess,but don't compile
+	- `-S` Compile, but don't assemble
+	- `-c` Asseble, but don't link
 
 - `clang -o test test.c` 编译`test.c`，生成`test`
 - `clang -o test test.m -framework foundation` 带上link的framework
@@ -169,6 +169,8 @@ dict : the python session dictionary
 otool用来查看Mach-O文件格式
 - `otool -h`:查看头部信息
 - `otool -l`:查看LOAD CMD
+- `otool -t`:Dump binary information
+- `otool -t -V`: Disassmble the binary
 
 ### dSYM & DWARF
 

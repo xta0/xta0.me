@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 计算投资 | Machine Learning For Trading | Market Mechanics
+list_title: Machine Learning For Trading | Market Mechanics
 title: 资产组合与市场机制
 sub_title: 
 mathjax: true

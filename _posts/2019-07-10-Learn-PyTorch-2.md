@@ -1,5 +1,5 @@
 ---
-list_title: 学一点 PyTorch | Implement Neural Networks Using PyTorch
+list_title: PyTorch | Implement Neural Networks Using PyTorch
 title: PyTorch实现神经网络
 layout: post
 mathjax: true
