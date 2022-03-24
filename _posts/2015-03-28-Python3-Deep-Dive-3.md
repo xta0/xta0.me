@@ -1,6 +1,6 @@
 ---
-title: Python中的函数（一）
-list_title: 深入理解Python | Python Deep Dive | 函数（一) | Function Part 1
+title: Function Part 1
+list_title: Python Deep Dive | Function Part 1
 layout: post
 categories: [Python]
 ---
