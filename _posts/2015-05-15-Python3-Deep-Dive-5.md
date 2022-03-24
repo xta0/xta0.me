@@ -1,13 +1,13 @@
 ---
-title: Python中的Module
+title: Scopes, Closures and Decorators
 list_title: Python Deep Dive | Scopes, Closures and Decorators
 layout: post
 categories: [Python]
 ---
 
-### Global Scope
+### Scope
 
-首先，Python中有一个built-in Scope，它包含了最基本的的数据结构，定义在这个namespace中的类型对所有的module可见。而所谓的Global Scope都是相对于module的，它的作用域局限于单个文件。如下图所示
+首先，Python中有一个built-in Scope，它包含了最基本的的数据结构，定义在这个namespace中的类型对所有的module可见。而所谓的**Global Scope**都是相对于module的，它的作用域局限于单个文件。如下图所示
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/04/pl-05-01.png">
 
@@ -20,9 +20,7 @@ Python首先会在当前module的namespace中寻找`print`和`True`，如果没�
 
 > built-in namespace中的符号可以被module中的符号override
 
-### Local Scope
-
-函数中创建的variable被保存到所谓的local scope中。只有当函数被调用时，local scope才会被创建出来。举个例子
+函数中创建的variable被保存到所谓的**local scope**中。只有当函数被调用时，local scope才会被创建出来。举个例子
 
 ```python
 def my_func(a, b):
@@ -50,9 +48,7 @@ def func4():
     a = 100 # at compile time, a is local
 ```
 
-### Non-local Scope
-
-Python中可以定义nested function，这就会带来nested local scope的问题，比如下面代码
+Python同样可以定义nested function，这就会带来nested local scope的问题，比如下面代码
 
 ```python
 def outer():
