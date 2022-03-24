@@ -95,7 +95,7 @@ fn.__code__.co_freevars # （‘x’）
 fn.__closure__ # (<cell at 0xA500: str object at 0xFF100>)
 ```
 
-closure是在运行时创建的，包括free variable 也是运行时创建的，因此两个closure对象中的cell object是不同的。
+closure是在运行时创建的，但并不会evaluate，只有当closure被调用时，才会创建所用到的free variable，因此两个closure对象中的cell object是在各自extended scope中的。
 
 ```python
 def outer():
@@ -111,7 +111,7 @@ f1() # 0
 f1() # 1
 f2() # 0
 ```
-上面`f1`和`f2`是两个独立的closure，他们指向的`cnt` cell object也是不同的。因此`f1()`并不会改变`f2`中`cnt`的值。如果我们像让两个closure share `cnt`，则可以在同一个local scope中定义两个closure
+上面`f1`和`f2`是两个独立的closure，他们指向的`cnt` cell object也是不同的。因此`f1()`并不会改变`f2`中`cnt`的值。如果我们像让两个closure share `cnt`，则可以让两个closure share同一个extended scope
 
 ```python
 
@@ -130,5 +130,33 @@ def outer():
     return inc
 
     return inc1, inc2
+
+f1, f2 = outer()
+f1() # 1
+f2() # 2
 ```
+
 此时，`inc1`和`inc2`指向同一个cell对象，因此share同一个`cnt`。
+
+Closure在Python中有很多应用，在介绍decorator前，我们先来看一个例子，假设我们要记录一个函数被调用了多少次，我们可以写这样一个closure
+
+```python
+def count(fn):
+    cnt = 0
+    def inner(*args, **kwargs):
+        nonlocal cnt
+        cnt += 1
+        print("{0} has been called {1} times.".format(fn.__name__, cnt))
+        return fn(args, kwargs)
+    return inner
+
+def add(a, b):
+    return a + b
+
+counter_add = counter(add)
+counter_add.__closure__
+# <cell at 0x001234: int object at 0x5678>
+# <cell at 0x00abcd: function object at 0xff33>
+counter_add(10, 20)
+```
+这里`counter_add`是一个closure，它包含两个free var，一个是`fn`，一个是`cnt`
