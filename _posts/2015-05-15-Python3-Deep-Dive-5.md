@@ -61,5 +61,15 @@ def outer():
 
 ## Closure
 
-Closure允许inner function来capture函数外的变量(nonlocal)，
+Closure允许inner function来capture函数外的变量(nonlocal)，如下面例子中被虚线圈
+
+```python
+def outer():
+   |-----------------------------------|
+   |x = 'hello'                        |
+   |def inner():                       |
+   |    print( "{0} rocks!".format(x)) |
+   |-----------------------------------|
+   return inner
+```
 
