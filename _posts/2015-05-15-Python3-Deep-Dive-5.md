@@ -159,4 +159,10 @@ counter_add.__closure__
 # <cell at 0x00abcd: function object at 0xff33>
 counter_add(10, 20)
 ```
-这里`counter_add`是一个closure，它包含两个free var，一个是`fn`，一个是`cnt`
+这里`counter_add`是一个closure，它包含两个free var，一个是`fn`，一个是`cnt`。
+
+不难发现，我们用`count`封装了一个closure，这个closure除了会调用我们想要调用的函数之外，还可以做一些其它事情，这就是所谓的decorator。
+
+## Decorator
+
+
