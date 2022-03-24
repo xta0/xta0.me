@@ -1,7 +1,7 @@
 ---
 updated: "2016-08-06"
-title: Python中的变量与内存模型（一）
-list_title: 深入理解Python | Python Deep Dive | 变量与内存(一) | Variables and Memory Part 1
+title: Variables and Memory Part 1
+list_title: Python Deep Dive | Variables and Memory Part 1
 layout: post
 categories: [Python]
 ---
