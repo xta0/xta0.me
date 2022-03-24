@@ -61,5 +61,5 @@ def outer():
 
 ## Closure
 
-
+Closure允许inner function来capture函数外的变量(nonlocal)，
 
