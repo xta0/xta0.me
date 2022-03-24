@@ -1,5 +1,5 @@
 ---
-list_title: 写一个解释器 | Build a Parser By Hand | 词法分析| Lexical Analysis
+list_title: Build a Parser By Hand | 词法分析| Lexical Analysis
 title: 词法分析
 layout: post
 mathjax: true
@@ -23,7 +23,7 @@ categories: [Parser,Compiler]
     - Regular Expression
 
 
-## 正则表达式
+## DFA
 
 我们先从正则表达式开始说，正则表达式的理论基础为有限状态机，具体来说是DFA和NFA，参考之前编译原理的文章，一个DFA至少要包含下面五部分
 
@@ -188,7 +188,7 @@ print "Test case 5 passed: " + str(nfsmsim("", 1, edges, accepting) == False)
 
 左边的NFA是对上述正则表达式的一种很直观的实现，右边是与其等价的DFA，它将所有通过`epsilon`所到达的状态进行了合并，解决了上述两个问题。
 
-- **小结**
+### 小结
 
 1. string是一组字符的合集
 2. 每个Regular Expression对应一个DFA，反之亦然
@@ -277,6 +277,10 @@ LexToken(WORD,'webpage!',2,36)
 </pre>
 </div>
 </div>
+
+### Build a parser by hand
+
+
 
 ## Resources
 

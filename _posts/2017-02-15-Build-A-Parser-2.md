@@ -1,5 +1,5 @@
 ---
-list_title: 写一个解释器 | Build a Parser By Hand | 语法分析 | Parsing
+list_title: Build a Parser By Hand | 语法分析 | Parsing
 title: 语法分析
 layout: post
 mathjax: true
