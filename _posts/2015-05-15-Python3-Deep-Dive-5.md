@@ -141,7 +141,7 @@ f2() # 2
 Closure在Python中有很多应用，在介绍decorator前，我们先来看一个例子，假设我们要记录一个函数被调用了多少次，我们可以写这样一个closure
 
 ```python
-def count(fn):
+def counter(fn):
     cnt = 0
     def inner(*args, **kwargs):
         nonlocal cnt
@@ -153,16 +153,214 @@ def count(fn):
 def add(a, b):
     return a + b
 
-counter_add = counter(add)
-counter_add.__closure__
+add = counter(add)
+add.__closure__
 # <cell at 0x001234: int object at 0x5678>
 # <cell at 0x00abcd: function object at 0xff33>
-counter_add(10, 20)
+add(10, 20)
 ```
-这里`counter_add`是一个closure，它包含两个free var，一个是`fn`，一个是`cnt`。
+这里`add`是一个closure，它包含两个free var，一个是`fn`，一个是`cnt`。
 
-不难发现，我们用`count`封装了一个closure，这个closure除了会调用我们想要调用的函数之外，还可以做一些其它事情，这就是所谓的decorator。
+不难发现，我们用`count`封装了一个closure，这个closure除了会调用我们想要调用的函数之外，还可以做一些其它事情，此时`counter`就是所谓的decorator。当我们再次调用`add`时，我们调用的实际上是一个closure，是一个“加强版”的`add`。
+
+由于此时的`add`已经不再是我们定义的`add`，而我们还是希望在debug时，`add`能返回正确的信息，因此，我们加上下面代码
+
+```python
+def counter(fn):
+    cnt = 0
+    def inner(*args, **kwargs):
+        nonlocal cnt
+        cnt += 1
+        print("{0} has been called {1} times.".format(fn.__name__, cnt))
+        return fn(args, kwargs)
+    inner.__name__ = fn.__name__
+    inner.__doc__ = fn.__doc__
+    return inner
+```
+
+Python中提供了更简洁的方法来保持原函数的metadata
+
+```python
+from functools import wraps
+
+def counter(fn):
+    cnt = 0
+    def inner(*args, **kwargs):
+        nonlocal cnt
+        cnt += 1
+        print(count)
+        return fn(args, kwargs)
+    inner = wraps(fn)(inner)
+    return inner
+
+```
 
 ## Decorator
+
+一个Decorator主要有以下几个特点
+
+1. Decorator接受一个函数作为参数
+2. 返回一个closure
+3. closure通常接受任意可变参数
+4. inner函数通常会执行一些其它代码
+5. 调用传入的函数
+6. 返回传入函数的调用结果
+
+### The `@` symbol
+
+上面提到如果我们想用`counter`来decorate `add`，即`add = couter(add)`，Python提供了一个方便的syntax sugar - `@`
+
+```python
+@counter
+def add(a, b):
+    return a + b
+
+# same as writing
+def add(a, b):
+    return a + b
+add = counter(add)
+```
+decorator可以被stack，一个函数可以被多个decorator修饰
+
+```python
+def dec1(fn):
+    def inner():
+        print("dec1 is called")
+        return fn()
+    return inner
+def dec2(fn):
+    def inner():
+        print("dec2 is called")
+        return fn()
+    return inner()
+
+@dec1
+@dec2
+def my_func():
+    print("my func is called")
+```
+
+此时需要注意decorator的执行顺序，此时会先执行`dec2`再执行`dec1`，最后执行`my_func`。
+
+### Decorator Prameters
+
+Python的标准库中提供了一些很好用的decorator，比如 `@wrap(fn)`,`@lru_cache(maxsize=256)`，这些decorator支持参数传递，这是如何做到的呢？
+
+我们还是先来看一个例子，假设我们有下面函数
+
+```python
+def timed(fn, reps):
+    from time import perf_counter
+    from functools import wraps
+
+    @wraps(fn)
+    def inner(*args, **kwargs):
+        total_elapsed = 0
+        for i in range(reps):
+            start = perf_counter()
+            result = fn(*args, *kwargs)
+            end = perf_counter()
+            total_elapsed += (end - start)
+        avg_eplapsed = total_elapsed / reps
+        print(avg_eplapsed)
+        return result
+    return inner
+```
+我们为closure引入了一个新的free var - `reps`，用来控制循环次数，`timed`包含一个参数。一个比较直观的想法是像下面这样，给decorator加一个参数
+
+```python
+@timed(10)
+def my_func():
+    pass
+```
+但实际上，上面代码将无法编译。如果想让上面代码工作，则`@timed(10)`需要返回一个`@time`的decorator，因为我们知道`@timed`是可以正常工作的
+
+```python
+dec = timed(10) #returns a decorator
+@dec
+def my_func()
+    pass
+```
+显然，`timed(10)`是一个函数，他需要返回一个decorator，也叫做decorator factory，于是我们可以试着定义下面的函数
+
+```python
+def timed(reps):
+    def dec(fn):
+        from time import perf_counter
+        from functools import wraps
+        @wraps(fn)
+        def inner(*args, **kwargs):
+            total_elapsed = 0
+            for i in range(reps):
+                start = perf_counter()
+                result = fn(*args, *kwargs)
+                end = perf_counter()
+                total_elapsed += (end - start)
+            avg_eplapsed = total_elapsed / reps
+            print(avg_eplapsed)
+            return result
+        return inner
+    return dec
+```
+现在如果调用`timed(10)`将返回一个decorator/closure，然后再通过它来调用`my_func`就能实现上面的效果
+
+```python
+my_func = timed(10)(my_func)
+
+# equals to
+@timed(10)
+def my_func():
+    pass
+```
+
+### Decorator Class
+
+Python中的class也可以实现类似于C++的`operator()`函数，在Python中叫做`__call__`，比如下面代码
+
+```python
+class MyClass:
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+    def __call__(self):
+        print("called a ={0}, b={1}".format(self.a, self.b))
+
+obj = MyClass(10,20)
+obj.__call__()
+obj()
+```
+实际上我们可以将`__call__`变成一个decorator
+
+```python
+def __call__(self, fn):
+    def inner(*args, **kwargs):
+        print("called a ={0}, b={1}".format(self.a, self.b))
+        return fn(*args, **kwargs)
+    return inner
+```
+此时我们可以用`@MyClass(a,b)`来decorate函数，此时`MyClass(a, b)`返回一个Callable，例如
+
+```python
+@MyClass(10, 20)
+def my_func(s):
+    print("Hello {0}".format(s))
+
+my_func('world')
+```
+上面代码等价于
+
+```python
+obj = MyClass(10, 20)
+my_func = obj(my_func)
+my_func('world')
+```
+
+
+
+
+
+
+
+
 
 

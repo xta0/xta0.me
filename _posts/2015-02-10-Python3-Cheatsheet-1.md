@@ -374,6 +374,44 @@ t.count('a') #2
 t.index('a') #0
 t[0]='NEW' #TypeError
 ```
+在Python中，Tuple的定义是被`,`分割的value而不是`()`，`()`的作用是为了让Tuple看起来更容易理解
+
+```shell
+Python 3.7.0 (default, Mar 15 2017, 12:20:11)
+Type "help", "copyright", "credits" or "license" for more information.
+>>> 1,2,3  #declaure a tuple
+(1, 2, 3)
+```
+比如我们想定义一个Tuple，该Tuple只有一个元素`1`，我们可能最先想到的写法是`(1)`，但实际上这并不是Tuple（这是一个`int`值），根据上面的介绍可知，定义Tuple需要使用`,`，因此正确的定义方式是`1,`：
+
+```shell
+>>> a = (1)
+>>> type(a)
+<class 'int'>
+>>> b = 1,
+>>> type(b)
+<class 'tuple'>
+>>> b
+(1,)
+```
+如果想要定义一个空的Tuple，可以使用`x=()`，此时编译器理解`()`，或者使用类定义，`x=tuple()`
+
+和Tuple比较相似的是数组，区别是数组是mutable的，因此在创建时占用更大的空间
+
+```python
+l = [1, 2, 3]
+l.__sizeof__() #64
+t = (1, 2, 3)
+t.__sizeof__() #48
+```
+数组占用空间大的原因是为了后面追加元素时节省开销，而Tuple是immutable的，创建后不能修改，因此不需要额外的空间。由于数组的开销更大，因此在性能上Tuple的创建也较为快些
+
+```shell
+python3 -m timeit 'x=(1,2,3,4,5,6)'
+#20000000 loops, best of 5: 11.6 nsec per loop
+python3 -m timeit 'x=[1,2,3,4,5,6]'
+#5000000 loops, best of 5: 46.7 nsec per loop
+```
 
 ### 字典(dict)
 

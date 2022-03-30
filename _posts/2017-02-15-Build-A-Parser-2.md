@@ -6,16 +6,11 @@ mathjax: true
 categories: [Parser,Compiler]
 ---
 
-上一篇文章中我们使用正则表达式可以将一段文本(代码)变成一个token list，但是我们如何能确定这个token list是否符合有效的语法规则呢？这就是Syntatical Analysis (Parsing) 需要解决的问题。我们先来看一个经典的例子，比如我们有下面一组token
-
-```shell
-['(', ')',')']
-```
-我们的语法要求是括号必须成对出现，即括号必须是闭合的。此时，我们该如何验证这组token是否符合条件呢？可能最先想到的方法是用正则表达式，但实际上正则表达式无法判断括号是否闭合。正确的方法是对token进行语法分析。
+上一篇文章中我们使用正则表达式可以将一段文本(代码)变成一个token list，但是我们如何能确定这个token list是否符合有效的语法规则呢？这就是语法分析所要解决的问题。
 
 ### Syntatical Analysis
 
-Noam Chomsky在1955年提出了一个Syntatic Structure的概念，即utterances have rules(Formal Grammars)。Formal Grmmar将token分成**non-terminals**和**terminals**。比如下面例子
+Noam Chomsky在1955年提出了一个Syntatic Structure的概念，即utterances have rules(Formal Grammars)。Formal Grmmar将token分成**non-terminals**和**terminals**。所谓terminal是指不能被继续替换的token，而non-termninal则可以被某种语法继续分解，比如下面例子
 
 ```shell
 Sentence -> Subject Verb
