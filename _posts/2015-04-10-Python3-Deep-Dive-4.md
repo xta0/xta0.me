@@ -66,9 +66,23 @@ def func():
     print('2')
     yield "2nd yield"
 
-x = func() # --- (1)
+x = func() # --- (1) x is a generator 
+y1 = next(x) # --- (2) 
+y2 = next(x) # --- (3)
+y3 = next(x) # --- (4)
 ```
-当执行到`(1)`时，Python会检查
+1. 当执行到`(1)`时，Python发现`func()`中存在`yied`而不会求值，此时函数处于pause状态。实际上，返回值`x`是一个generator对象
+2. 当执行到`(2)`时，根据上面的步骤`yield`会先产生一个值，其内容为`yield`后面的部分。然后让`func`继续执行，因此，`y1`的值为`1st yied`。同时执行`print`操作输出`1`
+3. 第`(3)`步和前一步同理
+4. 当执行到`(4)`时，`func`返回，此时会抛一个`StopIteration`异常
+
+在Python中，如果一个函数包含了`yied`关键字，则这个函数为Generator Factory，它用来生成Generator对象。而Generator实现了itorator的protocol，因此我们可以用`next()`来通过Generator取值。
+
+### Generator Function
+
+## Coroutine
 
 
-## Context Managers
+
+
+
