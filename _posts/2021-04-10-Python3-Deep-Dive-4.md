@@ -5,7 +5,7 @@ layout: post
 categories: [Python]
 ---
 
-在介绍Generator之前，我们先来回顾下Python中的iterator和iterable。所谓iterable是指可以被遍历的对象，显然Python中所有可遍历的集合类型都是iterable。
+在介绍Generator之前，我们先来回顾下Python中的iterator和iterable。所谓iterable是指可以被遍历的对象，显然Python中的集合类型都是iterable。
 而iterator则是用来获取iterable中元素的接口。比如我们可以用下面方式来获取list中的元素
 
 ```python

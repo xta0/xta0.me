@@ -15,7 +15,7 @@ categories: [C,C++]
 lib + <library name> + .a
 ```
 
-## 静态链接与`-dead_strip`
+## 静态链接
 
 静态链接相对来说比较简单，如上图中展示了一个静态库被链接进一个executable的全过程，对于这种情况，binary中最终只会链接静态库中被用到的symbols，如下图所示
 
@@ -91,7 +91,11 @@ int main(){
 </div>
 </div>
 
-观察目标文件中的symbol，其中`main.o`中的`a_foo`标记为`U`，符合我们的预期。接着我们手动的将这两个目标文件link起来产生最终的binary `a.out`，我们在MacOS下使用默认的linker - `ld`
+观察目标文件中的symbol，其中`main.o`中的`a_foo`标记为`U`，符合我们的预期。
+
+### Static Linker - `ld`
+
+接着我们手动的将这两个目标文件link起来产生最终的binary `a.out`，我们在MacOS下使用static linker - `ld`。它用来将目标文件链接成binary，与之对应的是所谓的dynamic linker - `dyld`，它的作用是用来加载动态库到内存中。
 
 ```shell
 ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem
@@ -146,8 +150,22 @@ ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem -dead_strip
 ```
 此时得到的`a_lite.o`只保留了`a_foo`。可以看到`ld64.lld`和`ld`不同的地方在于，它支持`-r`，即可以将目标文件作为`-dead_strip`的输入，同时输出可以是一个monolithic 目标文件。
 
+### Rules of Linking Static Libraries
 
-### vtable的问题
+1. 
+2. linker会对
+
+
+
+## Resources
+
+- [Linkers and Loaders](https://www.amazon.com/Linkers-Kaufmann-Software-Engineering-Programming/dp/1558604960)
+- [Advanced C and C++ compiling](https://www.amazon.com/Advanced-C-Compiling-Milan-Stevanovic/dp/1430266678)
+- [A ToC of the 20 part linker essay](https://lwn.net/Articles/276782/)
+
+## Appendix
+
+### vtable与`-dead_strip`
 
 虽然`-dead_strip`可以帮我们strip掉无用代码，但它却不是万能的，对于虚函数，它貌似无能为力
 
@@ -220,8 +238,3 @@ int main(){
 0000000100000f10 unsigned short AA::AA()
 ```
 我们发现`AA`和`REG_a`并没有被strip掉，也就是说对于这种情况，linker会保留`AA`的构造函数，以及构造函数的transitive closure。但是对于`AA::foo()`却不会保留。
-
-## Resources
-
-- [Linkers and Loaders](https://www.amazon.com/Linkers-Kaufmann-Software-Engineering-Programming/dp/1558604960)
-- [Advanced C and C++ compiling](https://www.amazon.com/Advanced-C-Compiling-Milan-Stevanovic/dp/1430266678)
