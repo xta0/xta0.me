@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: Python | Tips & Tricks | Functions
-title: Python Tips & Tricks
+list_title: Python Tips | Functions
+title: Python Functions
 categories: [Python]
 ---
 

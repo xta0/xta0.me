@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: Python | Tips & Tricks | Lists and Tuples
-title: Python Tips & Tricks
+list_title: Python Tips  | Lists and Tuples
+title: Python Lists and Tuples
 categories: [Python]
 ---
 
@@ -10,8 +10,6 @@ categories: [Python]
 在Python中，Tuple的定义是被`,`分割的value而不是`()`，`()`的作用是为了让Tuple看起来更容易理解
 
 ```shell
-Python 3.7.0 (default, Mar 15 2017, 12:20:11)
-Type "help", "copyright", "credits" or "license" for more information.
 >>> 1,2,3  #declaure a tuple
 (1, 2, 3)
 ```
