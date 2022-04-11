@@ -5,7 +5,7 @@ title: Python Functions
 categories: [Python]
 ---
 
-### Functions Arguments
+### Function Arguments
 
 如果一个函数的positional arg定义了default value，那么它后面的参数都需要定义default value
 
