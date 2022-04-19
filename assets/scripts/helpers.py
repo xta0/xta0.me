@@ -2,7 +2,7 @@ import os
 import string
 import argparse
 
-def change_year(path, keyword, old_year, new_year):
+def change_year(path, keyword, old_year, new_year) -> None:
     for file in os.listdir(path):
         results = []
         if keyword in file:

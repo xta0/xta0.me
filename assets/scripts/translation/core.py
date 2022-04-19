@@ -45,7 +45,7 @@ def unescape(text):
     return (parser.unescape(text))
 
 
-def translate(to_translate, to_language="en", from_language="zh-CN"):
+def translate(to_translate: str, to_language: str="en", from_language: str="zh-CN"):
     """Returns the translation using google translate
     you must shortcut the language you define
     (French = fr, English = en, Spanish = es, etc...)

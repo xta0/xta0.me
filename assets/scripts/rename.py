@@ -4,7 +4,7 @@ import argparse
 
 
 
-def rename(path,old_keyword,new_keyword):
+def rename(path,old_keyword,new_keyword) -> None:
     for file in os.listdir(path):
         tmp = file
         if old_keyword in tmp:

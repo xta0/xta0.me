@@ -2,16 +2,17 @@ import sys
 import argparse
 import os
 from core import translate
+from typing import Optional
 
 USAGE = '''todo
     
 '''
 
-def write_in_chunks(f,pos,data):
+def write_in_chunks(f,pos,data) -> None:
     f.seek(pos)
     f.write(data)
 
-def read_in_chunks(f, chunk_size=1024):
+def read_in_chunks(f, chunk_size: int=1024):
     """Lazy function (generator) to read a file piece by piece.
     Default chunk size: 1k."""
     while True:
@@ -20,7 +21,7 @@ def read_in_chunks(f, chunk_size=1024):
             break
         yield data
 
-def translate_all(src_dir,dst_dir):
+def translate_all(src_dir,dst_dir) -> None:
     #loop through files in this directory, looking for .md files
     for file in os.listdir(src_dir ):
         name = file.split('.')[0]
@@ -59,7 +60,7 @@ def translate_all(src_dir,dst_dir):
             fread.close()
             fwrite.close()
 
-def main():
+def main() -> Optional[int]:
     if(len(sys.argv) < 2):
         print(USAGE)
         return 1
