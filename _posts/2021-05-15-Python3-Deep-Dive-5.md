@@ -242,6 +242,8 @@ def my_func():
 
 此时需要注意decorator的执行顺序，此时会先执行`dec2`再执行`dec1`，最后执行`my_func`。
 
+项目中我们可以用decorator做很多操作，比如logging，cache以及timing，
+
 ### Decorator Prameters
 
 Python的标准库中提供了一些很好用的decorator，比如 `@wrap(fn)`,`@lru_cache(maxsize=256)`，这些decorator支持参数传递，这是如何做到的呢？
