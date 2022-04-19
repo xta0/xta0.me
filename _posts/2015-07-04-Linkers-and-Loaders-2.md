@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 链接与加载 | Linkers and Loaders | 静态链接与静态库 | Static Library 
+list_title: 链接与加载 | Linkers and Loaders | 静态链接与静态库 | Static Library
 title: 静态链接与静态库
 categories: [C,C++]
 ---
@@ -28,13 +28,13 @@ lib + <library name> + .a
 <pre class="highlight language-cpp md-no-padding-v md-height-full">
 <code class="language-cpp">
 //a.cpp
-int __attribute__((noinline)) a_foo() { 
-    int buf[5000]; 
-    return 1; 
+int __attribute__((noinline)) a_foo() {
+    int buf[5000];
+    return 1;
 }
-int __attribute__((noinline)) a_bar() { 
-    int buf[5000]; 
-    return 1; 
+int __attribute__((noinline)) a_bar() {
+    int buf[5000];
+    return 1;
 }
 </code>
 </pre>
@@ -95,7 +95,7 @@ int main(){
 
 ### Static Linker - `ld`
 
-接着我们手动的将这两个目标文件link起来产生最终的binary `a.out`，我们在MacOS下使用static linker - `ld`。它用来将目标文件链接成binary，与之对应的是所谓的dynamic linker - `dyld`，它的作用是用来加载动态库到内存中。
+接着我们手动的将这两个目标文件link起来产生最终的binary `a.out`，我们在MacOS下使用static linker - `ld`。它用来将目标文件链接成binary，与之对应的是所谓的dynamic linker - `dyld`，它的作用是用来加载动态库到内存中，我们后面会详细介绍`dyld`。
 
 ```shell
 ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem
@@ -150,12 +150,6 @@ ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem -dead_strip
 ```
 此时得到的`a_lite.o`只保留了`a_foo`。可以看到`ld64.lld`和`ld`不同的地方在于，它支持`-r`，即可以将目标文件作为`-dead_strip`的输入，同时输出可以是一个monolithic 目标文件。
 
-### Rules of Linking Static Libraries
-
-1. 
-2. linker会对
-
-
 
 ## Resources
 
@@ -163,7 +157,7 @@ ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem -dead_strip
 - [Advanced C and C++ compiling](https://www.amazon.com/Advanced-C-Compiling-Milan-Stevanovic/dp/1430266678)
 - [A ToC of the 20 part linker essay](https://lwn.net/Articles/276782/)
 
-## Appendix
+## Appendix #1
 
 ### vtable与`-dead_strip`
 
@@ -204,6 +198,8 @@ int main(){
                U vtable for __cxxabiv1::__class_type_info
 ...
 ```
+
+## Appendix #2
 
 ### The C++ Registry Pattern
 
