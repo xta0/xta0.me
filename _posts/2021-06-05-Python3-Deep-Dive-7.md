@@ -141,10 +141,10 @@ def language(self):
 language = language.setter(set_language)
 
 @language.setter
- def set_language(self, value):
+ def language(self, value):
     self._language = value
 ```
-有了property，虽然我们不能彻底的hide attribute，但是可以像objective-c的property一样，可以有readonly的属性以及lazy evaludation
+有了property，虽然我们不能彻底的hide attribute，但是可以像objective-c的property一样，可以有readonly的属性以及执行lazy evaludation
 
 ```python
 class Circle:
@@ -169,4 +169,23 @@ class Circle:
             self._area = math.pi * (self._r ** 2)
         return self._area
 ```
-上面代码中，我们没有为`area`指定setter，这从一定程度上可以保护`area`不被外部修改。此外，getter中我们实现了caching，不需要每次都进行计算`area`
+上面代码中，我们没有为`area`指定setter，这从一定程度上可以保护`area`不被外部修改。此外，getter中我们实现了caching，不需要每次都进行计算`area`。
+
+### Class Body Scope
+
+Python中的`class`有自己的scope，所有定义在class中的attributes都属于这个scope，他们都会出现在`MyClass.__dict__`中，但是成员函数需要注意，它们的代码在class中，但实际的scope却是和所在module是一致的
+
+```python
+class MyClass:
+    name: 'myclass'
+    def func(self):
+        print(name) # wrong, the outter scope doesn't have a name object
+```
+
+## Polymorphsim
+
+Python是一门非常动态的语言，它里面的类型都是duck type，比如`iter()`返回的是一个实现了iterable protocol的对象，它可以是任何类型。
+
+## Inheritance
+
+Python 内置的`instance()`函数可以检查一个object是否是某个类型及其父类的类型，注意它会检查其父类，而`type`只返回其本身类型。
