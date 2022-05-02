@@ -1,6 +1,6 @@
 ---
-title: Module
-list_title: Python Deep Dive | Module
+title: Modules and Packages
+list_title: Python Deep Dive | Modules and Packages
 layout: post
 categories: [Python]
 ---
@@ -57,19 +57,86 @@ f = math.__dict__['sqrt']
 ```python
 import sys
 print(sys.path)
-# ['', '/Users/taox/anaconda/lib/python38.zip', 
-# '/Users/taox/anaconda/lib/python3.8', 
-# '/Users/taox/anaconda/lib/python3.8/lib-dynload', 
+# ['', '/Users/taox/anaconda/lib/python38.zip',
+# '/Users/taox/anaconda/lib/python3.8',
+# '/Users/taox/anaconda/lib/python3.8/lib-dynload',
 # '/Users/taox/anaconda/lib/python3.8/site-packages']
 ```
-在`import`的时候，module会被创建出来，，同时，module中的代码会被执行。当module被import之后，它会被注册到`sys.path`中，并缓存到cache里，此时，如果我们再次`import`这个module，系统会从cache中直接load，而并不会再执行module中的代码
+我们可以扩展这个`sys.path`从而让Python可从我们指定的地方import module
+
+```python
+sys.path.append('path_to_module')
+```
+
+在`import`的时候，module会被创建出来，同时，module中的代码会被执行。当module被import之后，它会被注册到`sys.path`中，并缓存到cache里(`sys.modules`)，此时，如果我们再次`import`这个module，系统会从cache中直接load，而并不会再执行module中的代码
 
 ```python
 # main.py
 import module1.py
 
 print(globals())
-# 'module1': <module 'module1' from ...>} 
+# 'module1': <module 'module1' from ...>}
 ```
-上述代码中，我们假设在`main.py`中import了一个module，此时`module1`将出现在main.py的namespace中。
+上述代码中，我们假设在`main.py`中import了一个module，此时`module1`将出现在main.py的namespace中。当我们运行一个module的时候，module的名字会被改成`__main__`。
 
+小结一下，当`import math`时，Python会做下面两件事情
+
+1. Check `sys.modules()`. If not there, load it and insert it.
+2. Add `math` to the global namespace (`globals()`) of the module which imports it.
+
+
+
+默认情况下，一个python文件是一个module。但是我们也可以在运行时动态创建module，比如下面代码中，我们可以自定义一个`importer`，它从`module1_src.py`中读入代码，并动态创建一个module
+
+```python
+# importer.py
+
+import os.path
+import types
+import sys
+
+
+def import_(module_name, module_file, module_path);
+    if module_name in sys.modules:
+            return sys.modules[module_name]
+
+    module_rel_file_path = os.path.join(module_path, module_file)
+    module_abs_file_path = os.path.abspath(module_rel_file_path)
+
+    # read code from file
+    with open(module_rel_file_path, 'r') as code:
+        source_code = code.read()
+
+    # create a module object
+    mod = types.ModuleType(module_name)
+    mod.__file__ = module_abs_file_path
+
+    # set a ref in sys modules
+    sys.modules[module_name] = mod
+
+    # compile source code
+    code = compile(source_code, filename=module_abs_file_path, mode='exec')
+
+    # execute compiled source code
+    exec(code, mod.__dict__)
+
+    return sys.modules[module_name]
+
+# main.py
+
+import sys
+import importer
+
+impoter.import_('module1', 'module1_src.py', '.')
+# module1 has been registered to sys.modules
+
+import module1 # now module1 is avaiable for `import`
+```
+
+Python中的每个module都有`__spec__`方法，它包含module的位置和它的loader信息
+
+```shell
+>>> import fractions
+>>> fractions.__spec__
+ModuleSpec(name='fractions', loader=<_frozen_importlib_external.SourceFileLoader object at 0x7fa3c817b880>, origin='/Users/taox/anaconda/lib/python3.7/fractions.py')
+```
