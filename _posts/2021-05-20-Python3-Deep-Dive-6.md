@@ -84,8 +84,6 @@ print(globals())
 1. Check `sys.modules()`. If not there, load it and insert it.
 2. Add `math` to the global namespace (`globals()`) of the module which imports it.
 
-
-
 默认情况下，一个python文件是一个module。但是我们也可以在运行时动态创建module，比如下面代码中，我们可以自定义一个`importer`，它从`module1_src.py`中读入代码，并动态创建一个module
 
 ```python
@@ -140,3 +138,13 @@ Python中的每个module都有`__spec__`方法，它包含module的位置和它�
 >>> fractions.__spec__
 ModuleSpec(name='fractions', loader=<_frozen_importlib_external.SourceFileLoader object at 0x7fa3c817b880>, origin='/Users/taox/anaconda/lib/python3.7/fractions.py')
 ```
+## Packages
+
+Package在python中也是一种module，但是不是所有的module都是package。当我们`import`一个module时，可以查看其`__path__`的值，如果存在则表示它是一个package，否则是一个module。Package的import规则为
+
+```python
+import pack1.pack1_1.module1
+```
+此时，Python会先执行`import pack1`，然后`import pack1.pack1_1`，最后`import pack1.pack1_1.module1`。因此，他们均会出现在`sys.module()`里面。
+
+多数情况下Python中的package是基于文件结构，directory名即是package的名字，同时，我们需要创建一个`__init__.py`在该direcotry下面。此时，Python会知道当前directory是一个package。如果我们不创建`__init__.py`，Python会创建一个implicit的namespace package
