@@ -62,7 +62,7 @@ print(sys.path)
 # '/Users/taox/anaconda/lib/python3.8/lib-dynload', 
 # '/Users/taox/anaconda/lib/python3.8/site-packages']
 ```
-在`import`的时候，module会被创建出来，，同时，module中的代码会被执行。当module被import之后，它会被注册到`sys.path`中，并缓存到cache里，此时，如果我们再次`import`这个module，系统会从cache中直接load，而并不会再执行module中的代码
+在`import`的时候，module会被创建出来，同时，module中的代码会被执行。当module被import之后，它会被注册到`sys.path`中，并缓存到cache里，此时，如果我们再次`import`这个module，系统会从cache中直接load，而并不会再执行module中的代码
 
 ```python
 # main.py

@@ -7,7 +7,7 @@ categories: [C,C++]
 
 ### 动态库
 
-动态库概念的出现要远远晚于静态库，它是在现代多任务操作系统成熟只后才出现的。多任务的操作系统带来了资源的共享，比如PC上的键盘鼠标驱动程序，你的应用只需要调用这些内置驱动程序的API接口即可，而不需要将驱动程序也一并打入到你的二进制中。再比如很多移动操作系统中UIKit，提供了一套UI编程的框架供第三方App使用。这些被共享的代码都是以动态库的形式存在，并且随着操作系统的升级可以进行动态新。对比前面的静态库，这种方式显然更加的灵活。
+动态库概念的出现要远远晚于静态库，它是在现代多任务操作系统成熟只后才出现的。多任务的操作系统带来了资源的共享，比如PC上的键盘鼠标驱动程序，你的应用只需要调用这些内置驱动程序的API接口即可，而不需要将驱动程序也一并打入到你的二进制中。此外，使用动态库可以减少link的时间，相比于静态库每次修改都需要都需重新编译来建立地址绑定，动态库可以做到只编译自己，从而减少链接时间。
 
 我们可以将动态库简单的理解为一个没有main函数的binary。这说明动态库并不是像静态库那种目标文件的集合，构建一个动态库也同样需要完整的编译和链接过程
 
@@ -16,17 +16,101 @@ categories: [C,C++]
 > clang++ main.cpp -b.cpp -Wl,a.so
 ```
 
-上面的第一条命令用来将`a.cpp`编译为一个动态库，在linux系统中，一般以`.so`结尾，第二条指令则用来链接该动态库到一个可执行文件中。
+上面的第一条命令用来将`a.cpp`编译为一个动态库，在linux系统中，一般以`.so`结尾，第二条指令则用来链接该动态库到一个可执行文件中。这里面最重要的参数是`-fPIC`，它可以让编译器生成地址无关的代码，这是动态库可以被多个应用程序共享的前提。我们后面会详细介绍其工作原理。
 
-### 动态库的加载
+### Load-Time Relocation
 
-，这种方式也叫做Loader-Time Relocation (LTR)。显然，这需要loader根据目标进程来修改动态库中`.text`段指令的地址。这种方式的问题在于，由于动态库中指令地址被修改了，因此只能被用于第一个加载它的进程，如果有其它进程想要使用，则需要再拷贝一份，并让loader再修改一遍指令地址以适应当前的目标进程。显然，这种方式效率很低，而且没有达到被各进程共享的目的。因此我们需要一种更灵活的方式，即现fPIC，但是在介绍它之前，我们有必要了解一下动态库加载过程中的地址解析问题。
+动态链接要解决的问题是如何让代码在进程间共享。为了达到这个目的，我们需要将动态库中的内容加载到目标进程中去。这就涉及到对动态中代码地址进行重定位的问题。实际上在`fPIC`被发明之前，早期的动态库加载用的是所谓的Loader-Time Relocation (LTR)。这种方法需要loader根据目标进程来修改动态库中`.text`段指令的地址。显然，由于动态库中指令地址被修改了，因此，它只能被用于第一个加载它的进程，如果有其它进程想要使用，则需要再拷贝一份，并让loader再修改一遍指令地址以适应当前的目标进程。显然，这种方式效率很低，而且没有达到被各进程共享的目的。
+
+> 如果要验证LTR，需要使用32bit的linux，64bit机器上生成的动态库默认是fpic格式
+
+### `-fPIC`
+
+在具体详细介绍`-fPIC`是如何工作的之前，我们先来想想如何让动态库的代码被多个process共用，显然，虚拟内存能帮我们做到这一点。我们可以将动态库加载到物理内存中，然后通过虚拟内存将其映射到不同的process中。注意，我们可以映射的只是text段，而对于data段，由于它是read-write的，我们需要为每个进程copy一份。如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2015/07/dynamic-linking-1.png">
+
+由于text段可以被映射到不同进程的不动位置，因此，它里面的代码必须是地址无关的。接下来我们需要思考的问题是动态库中的符号是如何被引用的。这又包含两部分
+
+1. 动态库中的外部symbol如何被调用
+2. 动态库中的内部symbol如何被调用
+
+第二个问题其实很好回答，内部的函数调用可以直接使用offset来定位，调用者不需要知道其在虚拟内存中绝对的地址。而回答第一个问题则比较复杂
+
+当text段被映射到进程中不同位置时，动态库中符号的地址也是动态的，
+
+接下来我们看`fPIC`到底做了什么，我们用下面的例子
+
+<div class="md-flex-h md-margin-bottom-24">
+<div>
+<pre class="highlight language-python md-no-padding-v md-height-full">
+<code class="language-cpp">
+// mylib.c
+
+unsigned long mylib_int;
+unsigned long dummy_var;
+
+void set_mylib_int(unsigned long x){
+    mylib_int = x;
+}
+
+unsigned long get_mylib_int() {
+    return mylib_int;
+}
+</code>
+</pre>
+</div>
+<div class="md-margin-left-12">
+<pre class="highlight md-no-padding-v md-height-full">
+<code class="language-cpp">
+// main.c
+
+#include <stdio.h>
+
+extern void set_mylib_int(unsigned long x);
+extern long get_mylib_int();
+
+unsigned long glob = 5555;
+
+int main() {
+    set_mylib_int(100);
+    printf("value set in mylib is %ld\n", get_mylib_int());
+    printf("value set in glob is %ld\n", glob);
+
+}
+</code>
+</pre>
+</div>
+</div>
+
+我们先把`mylib.c`编译成动态库，并用`objdump -d`来看它反汇编的代码
+
+```shell
+...
+0000000000000609 <set_mylib_int>:
+ 609:	55                   	push   %rbp
+ 60a:	48 89 e5             	mov    %rsp,%rbp
+ 60d:	48 89 7d f8          	mov    %rdi,-0x8(%rbp)
+ 611:	48 8b 05 c8 09 20 00 	mov    0x2009c8(%rip),%rax        # 200fe0 <mylib_int@@Base-0x48>
+ 618:	48 8b 55 f8          	mov    -0x8(%rbp),%rdx
+ 61c:	48 89 10             	mov    %rdx,(%rax)
+ 61f:	90                   	nop
+ 620:	5d                   	pop    %rbp
+ 621:	c3                   	retq
+
+0000000000000622 <get_mylib_int>:
+ 622:	55                   	push   %rbp
+ 623:	48 89 e5             	mov    %rsp,%rbp
+ 626:	48 8b 05 b3 09 20 00 	mov    0x2009b3(%rip),%rax        # 200fe0 <mylib_int@@Base-0x48>
+ 62d:	48 8b 00             	mov    (%rax),%rax
+ 630:	5d                   	pop    %rbp
+ 631:	c3                   	retq
+ ...
+ ```
 
 ### 地址解析问题
 
-动态链接要解决的问题是如何让代码在进程间共享。为了达到这个目的，我们需要将动态库中的内容加载到目标进程中去。这就涉及到对动态中代码地址进行重定位的问题。
-
-具体来说，当一个动态库在编译完成后，linker实际上已经对其内部的符号建立好了地址绑定，我们可以将每条指令的地址理解为相对于基地址的偏移。当某个进程加载动态库时，loader需要将动态库中的代码嵌入到该进程中，这样该进程才能访问库中的symbol，例如目标进程要改变动态库中某个变量的值
+当一个动态库在编译完成后，linker实际上已经对其内部的符号建立好了地址绑定，我们可以将每条指令的地址理解为相对于基地址的偏移。当某个进程加载动态库时，loader需要将动态库中的代码嵌入到该进程中，这样该进程才能访问库中的symbol，例如目标进程要改变动态库中某个变量的值
 
 ```shell
 mov eax, ds:0xBFD10000 ;load the variable from address 0xBFD10000 to register eax
