@@ -35,7 +35,12 @@ categories: [C,C++]
 1. 动态库中的外部symbol的调用
 2. 动态库中的内部symbol的调用
 
-第二个问题其实很好回答，内部的函数调用可以直接使用offset来定位，调用者不需要知道其在虚拟内存中绝对的地址。而回答第一个问题则比较复杂。
+第二个问题其实很好回答，内部的函数调用可以直接使用offset来定位，调用者不需要知道其在虚拟内存中绝对的地址。而回答第一个问题则比较复杂, 我们还是用一个例子说明，假设我们有两动态库`libx.so`和`liby.so`，其中`libx.so`的`foo`函数调用了`liby.so`中的`bar`函数。如下图所示
+
+<img src="{{site.baseurl}}/assets/images/2015/07/dynamic-linking-2.png">
+
+
+
 
 
 
@@ -68,9 +73,7 @@ unsigned long get_mylib_int() {
 
 extern 
 void set_mylib_int(unsigned long x);
-
 extern long get_mylib_int();
-
 unsigned long glob = 5555;
 
 int main() {
