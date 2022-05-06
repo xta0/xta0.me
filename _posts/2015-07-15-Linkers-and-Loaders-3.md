@@ -18,13 +18,32 @@ categories: [C,C++]
 
 上面的第一条命令用来将`a.cpp`编译为一个动态库，在linux系统中，一般以`.so`结尾，第二条指令则用来链接该动态库到一个可执行文件中。这里面最重要的参数是`-fPIC`，它可以让编译器生成地址无关的代码，这是动态库可以被多个应用程序共享的前提。我们后面会详细介绍其工作原理。
 
+### Naming Convention
+
+在基于UNIX的系统中，动态库**文件**的表示方法为
+
+```shell
+lib + <library name> + .so + <library version information>
+```
+注意以**lib**开头的表示动态库文件，而不是动态库的名字，上面提到的版本信息可以表示为
+
+```shell
+<M>.<m>.<p>
+```
+其中`M`表示大版本，`m`表示小版本，`p`表示小改动。如果是**soname**表示，则格式为
+
+```shell
+lib + <libraray name> + .so + <Major Version>
+```
+例如libz.so.1.2.3.4的**soname**为**libz.so.1**。 在编译链接的时候，如果使用gcc或者clang，也需要准寻某些特定的convention，比如用`-L`表示库所在的路径，`-l`表示该路径下的动态库名称。如果将编译和链接的命令写在一起，则需要使用`-Wl,`告诉编译器后面的flag是linker的flag。一个好的习惯是同时使用`-L`和`-l`，尽量避免直接使用`-l`加绝对路径的方式
+
 ### Load-Time Relocation
 
 动态链接要解决的问题是如何让代码在进程间共享。为了达到这个目的，我们需要将动态库中的内容加载到目标进程中去。这就涉及到对动态中代码地址进行重定位的问题。实际上在`fPIC`被发明之前，早期的动态库加载用的是所谓的Loader-Time Relocation (LTR)。这种方法需要loader根据目标进程来修改动态库中`.text`段指令的地址。显然，由于动态库中指令地址被修改了，因此，它只能被用于第一个加载它的进程，如果有其它进程想要使用，则需要再拷贝一份，并让loader再修改一遍指令地址以适应当前的目标进程。显然，这种方式效率很低，而且没有达到被各进程共享的目的。
 
 > 如果要验证LTR，需要使用32bit的linux，64bit机器上生成的动态库默认是fpic格式
 
-### `-fPIC`
+### Position Independent Code
 
 在具体详细介绍`-fPIC`是如何工作的之前，我们先来想想如何让动态库的代码被多个process共用，显然，虚拟内存能帮我们做到这一点。我们可以将动态库加载到物理内存中，然后通过虚拟内存将其映射到不同的process中。注意，我们映射的只是text段，而对于data段，由于它是read-write的，我们需要为每个进程copy一份。如下图所示
 
@@ -39,6 +58,21 @@ categories: [C,C++]
 
 <img src="{{site.baseurl}}/assets/images/2015/07/dynamic-linking-2.png">
 
+此时，对于进程#1来说，`libx.so`的`foo`函数被映射到`0x5000`的位置，`liby.so`的`bar`函数被映射到`0x3000`的位置，此时，如果让编译器生成`foo`函数的汇编指令，则是
+
+```shell
+call -0x2000(%rip) #bar
+```
+而对于进程#2来说，`libx.so`的`foo`函数被映射到`0x8000`的位置，`liby.so`的`bar`函数被映射到`0x1000`的位置，此时，如果让编译生成`foo`的汇编指令，则是
+
+```shell
+call -0x7000(%rip) #bar
+```
+显然，编译器是无法对`foo`生成不同汇编代码的，换一个角度说，这相当于让编译器生成地址相关的代码，这违背了fPIC的设计初衷。
+
+如果想让编译器生成地址无关的代码，那么对于`bar`的调用应该是和具体地址无关的，也就是说基于`(%rip)`的偏移必须是一个固定值，这样编译器产生的`foo`的汇编指定才是确定的。推而广之，对于动态库中外部符号的引用必须是地址无关的。那么如何做到这一点呢？我们可以引入一个中间层，让动态库内对外部符号的调用都指向这个中间层，再由这个中间层来查找真实的符号地址，而动态库和这个中间层的offset是固定的，这就确保了编译器可以为符号调用生成确定的代码。这个中间层叫做Global Offset Table，简称**GOT**。我们接着看上面的例子
+
+<img src="{{site.baseurl}}/assets/images/2015/07/dynamic-linking-3.png">
 
 
 
@@ -137,26 +171,7 @@ call 0x0A120034 ;calling function whose entry point is 0x0A120034
 
 
 
-### Naming Convention
 
-在基于UNIX的系统中，动态库**文件**的表示方法为
-
-```shell
-lib + <library name> + .so + <library version information>
-```
-注意以**lib**开头的表示动态库文件，而不是动态库的名字，上面提到的版本信息可以表示为
-
-```shell
-<M>.<m>.<p>
-```
-其中`M`表示大版本，`m`表示小版本，`p`表示小改动。如果是**soname**表示，则格式为
-
-```shell
-lib + <libraray name> + .so + <Major Version>
-```
-例如libz.so.1.2.3.4的**soname**为**libz.so.1**。
-
-说完了命名规则，在编译链接的时候，如果使用gcc或者clang，也需要准寻某些特定的convention，比如用`-L`表示库所在的路径，`-l`表示该路径下的动态库名称。如果将编译和链接的命令写在一起，则需要使用`-Wl,`告诉编译器后面的flag是linker的flag。一个好的习惯是同时使用`-L`和`-l`，尽量避免直接使用`-l`加绝对路径的方式
 
 ## Resources
 
