@@ -66,16 +66,15 @@ unsigned long get_mylib_int() {
 <code class="language-cpp">
 // main.c
 
-extern void set_mylib_int(unsigned long x);
+extern 
+void set_mylib_int(unsigned long x);
+
 extern long get_mylib_int();
 
 unsigned long glob = 5555;
 
 int main() {
     set_mylib_int(100);
-    printf("mylib is %ld", get_mylib_int());
-    printf("glob is %ld", glob);
-
 }
 </code>
 </pre>
