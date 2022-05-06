@@ -81,10 +81,9 @@ call -0x1000(%rip) #bar
 ```
 然后，进程#1 通过访问自己的GOT表，查到`bar`函数的地址是`0x3000`，它就能真正地调用到`bar`函数了。进程#2访问自己的GOT表，查到`bar`函数的地址是`0x1000`，它也能顺利地调用`bar`函数。这样我们就通过引入了 GOT 这个间接层，解决了 call 指令和 `bar` 函数定义之间的偏移不固定的问题。
 
-了解GOT之后，我们回顾一下动态库的编译链接过程，为了生成地址无关代码，linker会为外部的符号建立基于GOT的间接跳转。到这一步linker的工作就完成了，当动态库被加载到进程空间时，loade需要根据offset的值来创建GOT符号表，然后对client binary中符号进行修正，使他们全部指向GOT，从client的角度看，进程的内存空间如下所示
+了解GOT之后，我们回顾一下动态库的编译链接过程，为了生成地址无关代码，linker会为外部的符号建立基于GOT的间接跳转。到这一步linker的工作就完成了，当动态库被加载到进程空间时，loade需要根据offset的值来创建GOT符号表，然后对client binary中符号进行修正，使他们全部指向GOT中的符号。从client的角度看，进程的内存空间如下所示
 
 <img src="{{site.baseurl}}/assets/images/2015/07/dynamic-linking-4.png">
-
 
 ### Demonstration of PIC Code
 
@@ -97,7 +96,6 @@ call -0x1000(%rip) #bar
 // mylib.c
 
 unsigned long mylib_int;
-unsigned long dummy_var;
 static int y = 3;
 void set_mylib_int(unsigned long x){
     mylib_int = x+y;
@@ -129,9 +127,7 @@ int main() {
 
 我们先把`mylib.c`编译成动态库，并用`objdump -S`来看它反汇编的代码
 
-
 ```shell
-
 > gcc mylib.c -fPIC -shared -fno-plt -o mylib.so
 > objdump -S mylib.so
 
@@ -140,11 +136,11 @@ int main() {
  609:	55                   	push   %rbp
  60a:	48 89 e5             	mov    %rsp,%rbp
  60d:	48 89 7d f8          	mov    %rdi,-0x8(%rbp)
- 611:	8b 05 09 0a 20 00    	mov    0x200a09(%rip),%eax        # 201020 <y>
+ 611:	8b 05 09 0a 20 00    	mov    0x200a09(%rip),%eax
  617:	48 63 d0             	movslq %eax,%rdx
  61a:	48 8b 45 f8          	mov    -0x8(%rbp),%rax
  61e:	48 01 c2             	add    %rax,%rdx
- 621:	48 8b 05 b8 09 20 00 	mov    0x2009b8(%rip),%rax        # 200fe0 <mylib_int@@Base-0x50>
+ 621:	48 8b 05 b8 09 20 00 	mov    0x2009b8(%rip),%rax
  628:	48 89 10             	mov    %rdx,(%rax)
  62b:	90                   	nop
  62c:	5d                   	pop    %rbp
@@ -153,15 +149,56 @@ int main() {
 000000000000062e \<get_mylib_int\>:
  62e:	55                   	push   %rbp
  62f:	48 89 e5             	mov    %rsp,%rbp
- 632:	48 8b 05 a7 09 20 00 	mov    0x2009a7(%rip),%rax        # 200fe0 <mylib_int@@Base-0x50>
+ 632:	48 8b 05 a7 09 20 00 	mov    0x2009a7(%rip),%rax
  639:	48 8b 00             	mov    (%rax),%rax
  63c:	5d                   	pop    %rbp
  63d:	c3                   	retq
  ...
  ```
 
- 分析汇编代码之前，我们先来看下`mylib.c`都有哪些符号
+ 分析汇编代码之前，我们先来看下`mylib.c`都有哪些符号。首先，他有一个external符号`mylib_int`和一个内部符号`y`。他们在符号表中的位置为
+ 
+ ```shell
+0000000000201030 B mylib_int
+...
+0000000000201020 d y
+```
+ 
+我们知道对于内部符号寻址，只需要用内部的offset即可，因此对于`y`来说，它的寻址很简单
 
+ ```shell
+611:	8b 05 09 0a 20 00    	mov    0x200a09(%rip),%eax 
+617:	48 63 d0             	movslq %eax,%rdx
+ ```
+上面代码的意思是将`y`放到`%eax`里，按照便宜，我们可以计算`y`在动态库中的实际位置为
+
+```shell
+0x200a09 + 0x617 = 0x201020
+```
+和符号表中的位置一致，因此`y`可以做到于地址无关。我们再来看`mylib_int`，它的访问对应下面两行汇编
+
+```shell
+ 621:	48 8b 05 b8 09 20 00 	mov    0x2009b8(%rip),%rax
+ 628:	48 89 10             	mov    %rdx,(%rax)
+```
+由于`mylib_int`是一个外部符号，因此对它的寻址需要借助GOT，而`0x2009b8`则是相对于GOT的offset，我们计算`mylib_int`在GOT中地址如下
+
+```shell
+0x0x2009b8 + 0x628 = 0x200fe0
+```
+我们再来查看GOT表的位置
+
+```shell
+> objdump -D mylib.so
+
+...
+Disassembly of section .got:
+
+0000000000200fd8 \<.got\>:
+	...
+```
+
+### GDB
 
 
 
