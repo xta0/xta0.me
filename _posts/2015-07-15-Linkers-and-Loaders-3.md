@@ -26,7 +26,7 @@ categories: [C,C++]
 
 ### `-fPIC`
 
-在具体详细介绍`-fPIC`是如何工作的之前，我们先来想想如何让动态库的代码被多个process共用，显然，虚拟内存能帮我们做到这一点。我们可以将动态库加载到物理内存中，然后通过虚拟内存将其映射到不同的process中。注意，我们可以映射的只是text段，而对于data段，由于它是read-write的，我们需要为每个进程copy一份。如下图所示
+在具体详细介绍`-fPIC`是如何工作的之前，我们先来想想如何让动态库的代码被多个process共用，显然，虚拟内存能帮我们做到这一点。我们可以将动态库加载到物理内存中，然后通过虚拟内存将其映射到不同的process中。注意，我们映射的只是text段，而对于data段，由于它是read-write的，我们需要为每个进程copy一份。如下图所示
 
 <img src="{{site.baseurl}}/assets/images/2015/07/dynamic-linking-1.png">
 
@@ -35,7 +35,7 @@ categories: [C,C++]
 1. 动态库中的外部symbol如何被调用
 2. 动态库中的内部symbol如何被调用
 
-第二个问题其实很好回答，内部的函数调用可以直接使用offset来定位，调用者不需要知道其在虚拟内存中绝对的地址。而回答第一个问题则比较复杂
+第二个问题其实很好回答，内部的函数调用可以直接使用offset来定位，调用者不需要知道其在虚拟内存中绝对的地址。而回答第一个问题则比较复杂。既然是地址无关代码，编译器在编译时，需要确定符号的位置，但是此时动态库还并没有被加载到内存中，
 
 当text段被映射到进程中不同位置时，动态库中符号的地址也是动态的，
 
@@ -74,8 +74,8 @@ unsigned long glob = 5555;
 
 int main() {
     set_mylib_int(100);
-    printf("value set in mylib is %ld\n", get_mylib_int());
-    printf("value set in glob is %ld\n", glob);
+    printf("value set in mylib is %ld", get_mylib_int());
+    printf("value set in glob is %ld", glob);
 
 }
 </code>
