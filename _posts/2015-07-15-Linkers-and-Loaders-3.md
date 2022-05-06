@@ -170,12 +170,12 @@ int main() {
 611:	8b 05 09 0a 20 00    	mov    0x200a09(%rip),%eax 
 617:	48 63 d0             	movslq %eax,%rdx
  ```
-上面代码的意思是将`y`放到`%eax`里，按照便宜，我们可以计算`y`在动态库中的实际位置为
+上面代码的意思是将`y`放到`%eax`里，根据偏移量，我们可以计算`y`在动态库中的实际位置为
 
 ```shell
 0x200a09 + 0x617 = 0x201020
 ```
-和符号表中的位置一致，因此`y`可以做到于地址无关。我们再来看`mylib_int`，它的访问对应下面两行汇编
+和符号表中的位置一致，因此`y`可以做到于地址无关。我们再来看`mylib_int`，对它的访问对应下面两行汇编代码
 
 ```shell
  621:	48 8b 05 b8 09 20 00 	mov    0x2009b8(%rip),%rax
@@ -198,9 +198,54 @@ Disassembly of section .got:
 	...
 ```
 
-### GDB
+### Runtime Behavior
 
+上面的静态分析我们看到了动态库是如何寻址符号的，这一小节，我们可以通过GDB来观察进程运行时的frame，我们首先编译可执行文件，然后用GDB运行，并在`set_mylib_int`处添加断点
 
+```shell
+> export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+> gcc main.c -Wl,mylib.so -o a.out
+> gdb a.out
+
+(gdb)b set_mylib_int
+(gdb)r
+```
+当断点触发时，我们来看`set_mylib_int`的汇编代码
+
+```shell
+(gdb) disassemble
+Dump of assembler code for function set_mylib_int:
+   0x00007ffff7bcd609 <+0>:	push   %rbp
+   0x00007ffff7bcd60a <+1>:	mov    %rsp,%rbp
+=> 0x00007ffff7bcd60d <+4>:	mov    %rdi,-0x8(%rbp)
+   0x00007ffff7bcd611 <+8>:	mov    0x200a09(%rip),%eax
+   0x00007ffff7bcd617 <+14>:	movslq %eax,%rdx
+   0x00007ffff7bcd61a <+17>:	mov    -0x8(%rbp),%rax
+   0x00007ffff7bcd61e <+21>:	add    %rax,%rdx
+   0x00007ffff7bcd621 <+24>:	mov    0x2009b8(%rip),%rax
+   0x00007ffff7bcd628 <+31>:	mov    %rdx,(%rax)
+   0x00007ffff7bcd62b <+34>:	nop
+   0x00007ffff7bcd62c <+35>:	pop    %rbp
+   0x00007ffff7bcd62d <+36>:	retq
+End of assembler dump.
+```
+我们可以看到汇编代码没有变，这说明loader并没有改变动态库中的.text段，但是这些指令在进程中的位置发生了变了，我们还是来计算一下`mylib_init`在GOT中的位置
+
+```shell
+0x2009b8 + 0x00007ffff7bcd628 =  0x7ffff7dcdfe0
+```
+我们再来看下`0x7ffff7dcdfe0`指向哪里
+
+```shell
+(gdb) x/x 0x7ffff7dcdfe0
+0x7ffff7dcdfe0:	0xf7dce030
+```
+理论上，`0xf7dce030`就应该是`mylib_init`的真实位置，我们再来查看其地址
+
+```shell
+(gdb) p/x &mylib_int
+$3 = 0xf7dce030
+```
 
 
 
