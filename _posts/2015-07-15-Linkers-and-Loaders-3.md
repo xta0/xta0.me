@@ -70,16 +70,25 @@ call -0x7000(%rip) #bar
 ```
 显然，编译器是无法对`foo`生成不同汇编代码的，换一个角度说，这相当于让编译器生成地址相关的代码，这违背了fPIC的设计初衷。
 
-如果想让编译器生成地址无关的代码，那么对于`bar`的调用应该是和具体地址无关的，也就是说基于`(%rip)`的偏移必须是一个固定值，这样编译器产生的`foo`的汇编指定才是确定的。推而广之，对于动态库中外部符号的引用必须是地址无关的。那么如何做到这一点呢？我们可以引入一个中间层，让动态库内对外部符号的调用都指向这个中间层，再由这个中间层来查找真实的符号地址，而动态库和这个中间层的offset是固定的，这就确保了编译器可以为符号调用生成确定的代码。这个中间层叫做Global Offset Table，简称**GOT**。我们接着看上面的例子
+如果想让编译器生成地址无关的代码，那么对于`bar`的调用应该是和具体地址无关的，也就是说基于`(%rip)`的偏移必须是一个固定值，这样编译器产生的`foo`的汇编指定才是确定的。推而广之，对于动态库中外部符号的引用必须是地址无关的。那么如何做到这一点呢？我们可以引入一个中间层，让动态库内对外部符号的调用都指向这个中间层，再由这个中间层来查找真实的符号地址，而动态库和这个中间层的offset是固定的，这就确保了编译器可以为符号调用生成确定的代码。这个中间层叫做**Global Offset Table**，简称**GOT**。我们接着看上面的例子
 
 <img src="{{site.baseurl}}/assets/images/2015/07/dynamic-linking-3.png">
 
+上图中，两个进程的地址空间都有各自的GOT表，此时，对于`libx.so`中对于`bar`的调用转成了对GOT中`bar`的寻址。而由于在linking期间，`libx.so`和`liby.so`相对于GOT的offset是可以被确定的（具体来说，对于进程#1和进程#2，相对于GOT中`bar`符号的offset为`-0x1000`），因此，编译器可以为`foo`生成确定的汇编代码。
+
+```shell
+call -0x1000(%rip) #bar
+```
+然后，进程#1 通过访问自己的GOT表，查到`bar`函数的地址是`0x3000`，它就能真正地调用到`bar`函数了。进程#2访问自己的GOT表，查到`bar`函数的地址是`0x1000`，它也能顺利地调用`bar`函数。这样我们就通过引入了 GOT 这个间接层，解决了 call 指令和 `bar` 函数定义之间的偏移不固定的问题。
+
+了解GOT之后，我们回顾一下动态库的编译链接过程，为了生成地址无关代码，linker会为外部的符号建立基于GOT的间接跳转。到这一步linker的工作就完成了，当动态库被加载到进程空间时，loade需要根据offset的值来创建GOT符号表，然后对client binary中符号进行修正，使他们全部指向GOT，从client的角度看，进程的内存空间如下所示
+
+<img src="{{site.baseurl}}/assets/images/2015/07/dynamic-linking-4.png">
 
 
+### Demonstration of PIC Code
 
-
-
-接下来我们看`fPIC`到底做了什么，我们用下面的例子
+如果上面的描述太过抽象的话，接下来我们看通过实际的程序来演示`-fPIC`是如何工作的，我们用下面的例子
 
 <div class="md-flex-h md-margin-bottom-24">
 <div>
@@ -89,9 +98,9 @@ call -0x7000(%rip) #bar
 
 unsigned long mylib_int;
 unsigned long dummy_var;
-
+static int y = 3;
 void set_mylib_int(unsigned long x){
-    mylib_int = x;
+    mylib_int = x+y;
 }
 
 unsigned long get_mylib_int() {
@@ -118,55 +127,40 @@ int main() {
 </div>
 </div>
 
-我们先把`mylib.c`编译成动态库，并用`objdump -d`来看它反汇编的代码
+我们先把`mylib.c`编译成动态库，并用`objdump -S`来看它反汇编的代码
+
 
 ```shell
+
+> gcc mylib.c -fPIC -shared -fno-plt -o mylib.so
+> objdump -S mylib.so
+
 ...
-0000000000000609 set_mylib_int:
+0000000000000609 \<set_mylib_int\>:
  609:	55                   	push   %rbp
  60a:	48 89 e5             	mov    %rsp,%rbp
  60d:	48 89 7d f8          	mov    %rdi,-0x8(%rbp)
- 611:	48 8b 05 c8 09 20 00 	mov    0x2009c8(%rip),%rax        # 200fe0 <mylib_int@@Base-0x48>
- 618:	48 8b 55 f8          	mov    -0x8(%rbp),%rdx
- 61c:	48 89 10             	mov    %rdx,(%rax)
- 61f:	90                   	nop
- 620:	5d                   	pop    %rbp
- 621:	c3                   	retq
+ 611:	8b 05 09 0a 20 00    	mov    0x200a09(%rip),%eax        # 201020 <y>
+ 617:	48 63 d0             	movslq %eax,%rdx
+ 61a:	48 8b 45 f8          	mov    -0x8(%rbp),%rax
+ 61e:	48 01 c2             	add    %rax,%rdx
+ 621:	48 8b 05 b8 09 20 00 	mov    0x2009b8(%rip),%rax        # 200fe0 <mylib_int@@Base-0x50>
+ 628:	48 89 10             	mov    %rdx,(%rax)
+ 62b:	90                   	nop
+ 62c:	5d                   	pop    %rbp
+ 62d:	c3                   	retq
 
-0000000000000622 get_mylib_int:
- 622:	55                   	push   %rbp
- 623:	48 89 e5             	mov    %rsp,%rbp
- 626:	48 8b 05 b3 09 20 00 	mov    0x2009b3(%rip),%rax        # 200fe0 <mylib_int@@Base-0x48>
- 62d:	48 8b 00             	mov    (%rax),%rax
- 630:	5d                   	pop    %rbp
- 631:	c3                   	retq
+000000000000062e \<get_mylib_int\>:
+ 62e:	55                   	push   %rbp
+ 62f:	48 89 e5             	mov    %rsp,%rbp
+ 632:	48 8b 05 a7 09 20 00 	mov    0x2009a7(%rip),%rax        # 200fe0 <mylib_int@@Base-0x50>
+ 639:	48 8b 00             	mov    (%rax),%rax
+ 63c:	5d                   	pop    %rbp
+ 63d:	c3                   	retq
  ...
  ```
 
-### 地址解析问题
-
-当一个动态库在编译完成后，linker实际上已经对其内部的符号建立好了地址绑定，我们可以将每条指令的地址理解为相对于基地址的偏移。当某个进程加载动态库时，loader需要将动态库中的代码嵌入到该进程中，这样该进程才能访问库中的symbol，例如目标进程要改变动态库中某个变量的值
-
-```shell
-mov eax, ds:0xBFD10000 ;load the variable from address 0xBFD10000 to register eax
-add eax, 1             ;increment the load value
-mov ds:0xBFD10000, eax ;store the result back to the address 0xBFD10000
-```
-此时我们需要知道该变量在内存中的绝对地址，而不是它在库中的相对地址。再比如跳转指令
-
-```shell
-call 0x0A120034 ;calling function whose entry point is 0x0A120034
-```
-如果该地址位于动态库中，则我们需要在动态库加载时确定好这个地址在内存中的位置。
-
-实际上我们并不需要对动态库中所有的指令或者symbol进行地址修改，对于库中内部的函数或者`static`定义的变量我们可以使用相对offset进行寻址。我们只需要对于export出来的接口或者变量进行地址解析即可。
-
-但此时问题来了，我们该如何计算修改地址？正如前面所说，无论是动态库还是使用它的binary，在编译时，linker已经完成了对各自符号地址的计算，因此依靠linker是不可能了。此时我们需要借助loader来帮我们完成任务，这种特殊的loader也叫做**dynamic loader**。
-
-### `.rel.dyn`
-
-实际上在我们编译bianry时，如果linker发现某些symbol需要在load的时候确定，linker会给这些symbol的地址填充一个临时值(通常是0）
-
+ 分析汇编代码之前，我们先来看下`mylib.c`都有哪些符号
 
 
 
@@ -177,3 +171,4 @@ call 0x0A120034 ;calling function whose entry point is 0x0A120034
 
 - [Linkers and Loaders](https://www.amazon.com/Linkers-Kaufmann-Software-Engineering-Programming/dp/1558604960)
 - [Advanced C and C++ Compiling](https://www.amazon.com/Advanced-C-Compiling-Milan-Stevanovic/dp/1430266678)
+- [THE INSIDE STORY ON SHARED LIBRARIES AND DYNAMIC LOADING](https://cseweb.ucsd.edu/~gbournou/CSE131/the_inside_story_on_shared_libraries_and_dynamic_loading.pdf)
