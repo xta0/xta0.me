@@ -32,12 +32,13 @@ categories: [C,C++]
 
 由于text段可以被映射到不同进程的不动位置，因此，它里面的代码必须是地址无关的。接下来我们需要思考的问题是动态库中的符号是如何被引用的。这又包含两部分
 
-1. 动态库中的外部symbol如何被调用
-2. 动态库中的内部symbol如何被调用
+1. 动态库中的外部symbol的调用
+2. 动态库中的内部symbol的调用
 
-第二个问题其实很好回答，内部的函数调用可以直接使用offset来定位，调用者不需要知道其在虚拟内存中绝对的地址。而回答第一个问题则比较复杂。既然是地址无关代码，编译器在编译时，需要确定符号的位置，但是此时动态库还并没有被加载到内存中，
+第二个问题其实很好回答，内部的函数调用可以直接使用offset来定位，调用者不需要知道其在虚拟内存中绝对的地址。而回答第一个问题则比较复杂。
 
-当text段被映射到进程中不同位置时，动态库中符号的地址也是动态的，
+
+
 
 接下来我们看`fPIC`到底做了什么，我们用下面的例子
 
@@ -65,8 +66,6 @@ unsigned long get_mylib_int() {
 <code class="language-cpp">
 // main.c
 
-#include <stdio.h>
-
 extern void set_mylib_int(unsigned long x);
 extern long get_mylib_int();
 
@@ -87,7 +86,7 @@ int main() {
 
 ```shell
 ...
-0000000000000609 <set_mylib_int>:
+0000000000000609 set_mylib_int:
  609:	55                   	push   %rbp
  60a:	48 89 e5             	mov    %rsp,%rbp
  60d:	48 89 7d f8          	mov    %rdi,-0x8(%rbp)
@@ -98,7 +97,7 @@ int main() {
  620:	5d                   	pop    %rbp
  621:	c3                   	retq
 
-0000000000000622 <get_mylib_int>:
+0000000000000622 get_mylib_int:
  622:	55                   	push   %rbp
  623:	48 89 e5             	mov    %rsp,%rbp
  626:	48 8b 05 b3 09 20 00 	mov    0x2009b3(%rip),%rax        # 200fe0 <mylib_int@@Base-0x48>
