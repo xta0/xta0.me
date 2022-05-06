@@ -73,8 +73,8 @@ unsigned long glob = 5555;
 
 int main() {
     set_mylib_int(100);
-    printf("value set in mylib is %ld", get_mylib_int());
-    printf("value set in glob is %ld", glob);
+    printf("mylib is %ld", get_mylib_int());
+    printf("glob is %ld", glob);
 
 }
 </code>
