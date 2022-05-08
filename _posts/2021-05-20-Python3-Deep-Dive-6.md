@@ -53,7 +53,7 @@ f = math.__dict__['sqrt']
 ## How does Python `import` Modules
 
 当import一个module的时候，Python会从`sys.path`中获取module的path，因此我们确保被import的module在这个`path`中
-
+\
 ```python
 import sys
 print(sys.path)

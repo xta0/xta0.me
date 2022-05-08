@@ -61,7 +61,7 @@ print(n)
 
 ## Generator
 
-Generator用来解决下面的场景
+Python中的Generator实现了Iterator的protocol，因此它是一个iterator。它被设计用来解决下面的场景
 
 ```python
 def func(arg)
@@ -98,7 +98,11 @@ y3 = next(x) # --- (4)
 
 在Python中，如果一个函数包含了`yied`关键字，则这个函数为Generator Factory，它用来生成Generator对象。而Generator实现了itorator的protocol，因此我们可以用`next()`来通过Generator取值。
 
-### Generator Expression
+## Context Manager
+
+
+
+
 
 ## Coroutine
 
@@ -107,7 +111,7 @@ y3 = next(x) # --- (4)
 1. 通过 `yield`
 2. 通过 `async / await`
 
-这里不会介绍`asyncio`和`async/wait`，而是会探讨`coroutine`实现的基本原理
+这里不会介绍`asyncio`和`async/wait`，而是会探讨`coroutine`实现的基本原理。Coroutine通常有两个参与者，一个是shegn'chan
 
 
 
