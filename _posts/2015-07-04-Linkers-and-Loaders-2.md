@@ -18,7 +18,9 @@ lib + <library name> + .a
 
 ### 静态链接
 
-### `--dead_strip`
+
+
+### --dead_strip
 
 对于这种情况，binary中最终只会链接静态库中被用到的symbols，如下图所示
 
@@ -103,7 +105,7 @@ int main(){
 ```shell
 ld -o a.out main.o a.o -lc++ -L/usr/local/lib -lSystem
 ```
-> 也可以直接 `clang++ main.cpp a.cpp`
+>  Updated on macOS 11 and above, you need to pass -L/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/lib as well so that it locates the -lSystem library correctly. You can use -L$(xcode-select -p)/SDKs/MacOSX.sdk/usr/lib to evaluate the right path dynamically if required.
 
 接着我们查看`a.out`中的符号
 
