@@ -105,7 +105,7 @@ Python中的`class`有自己的scope，所有定义在class中的attributes都�
 
 ```python
 class MyClass:
-    name: 'myclass'
+    name = 'myclass'
     def func(self):
         print(name) # wrong, the outter scope doesn't have a name object
 ```
