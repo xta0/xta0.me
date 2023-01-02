@@ -147,4 +147,26 @@ import pack1.pack1_1.module1
 ```
 此时，Python会先执行`import pack1`，然后`import pack1.pack1_1`，最后`import pack1.pack1_1.module1`。因此，他们均会出现在`sys.module()`里面。
 
-多数情况下Python中的package是基于文件结构，directory名即是package的名字，同时，我们需要创建一个`__init__.py`在该direcotry下面。此时，Python会知道当前directory是一个package。如果我们不创建`__init__.py`，Python会创建一个implicit的namespace package
+多数情况下Python中的package是基于文件结构，directory名即是package的名字，同时，我们需要创建一个`__init__.py`在该direcotry下面。此时，Python会知道当前directory是一个package。如果我们不创建`__init__.py`，Python会创建一个implicit的namespace package。我们来看几个具体的例子，假设我们有下面的目录结构
+
+```shell
+├── mylib
+│   ├── __init__.py
+│   ├── submod1.py
+│   ├── submod2.py
+│   └── subpack1
+│       ├── __init__.py
+│       ├── pack1mod1.py
+│       └── pack1mod2.py
+```
+`__init__.py`的一个作用是帮我们简化import的代码，比如我们想要加载`mylib`中内部的函数，我们可以在`__init__.py`中写
+
+```python
+from mylib.submod1 import my_func
+from mylib.subpack1.pack1mod2 import myClass
+```
+这样，调用方只需要使用下面代码即可，简化了import路径
+
+```python
+from mylib import my_func, MyClass
+```
