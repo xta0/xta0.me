@@ -5,6 +5,7 @@ layout: post
 categories: ["Programing Language"]
 ---
 
+### Interpreter
 
 - Interpreted Languages
     - Implement semantics **themselves**
@@ -52,7 +53,7 @@ This AST result is handled to a AST interpreter.
 
 ### Bytecode interpreter
 
-Bytecode interpreter is also knowns virtual machine. It has one more step for generating bytecode instructions compared to the AST interpreter
+Bytecode interpreter is also knowns virtual machine. It has one more step for generating bytecode instructions compared to the AST interpreter.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2022/02/inter-2.png">
 
@@ -80,7 +81,7 @@ add
 push $5
 sub
 ```
-For stack-based machines, there are two important pointers - stack pointer(sp) and instruction pointer(ip).
+stack pointer(sp) and instruction pointer(ip) are the two most important pointers for any stack-based virtual machines.
 
 ### A toy language
 
@@ -219,7 +220,7 @@ It turns out that once we have the activation environment, if we don't need to t
 
 ### Syntactic sugar
 
-- switch
+- `switch`
 
 The switch expression can be a syntax suger of nested if-else expressions.
 
@@ -251,7 +252,7 @@ The switch expression can be a syntax suger of nested if-else expressions.
 )
 ```
 
-- for
+- `for`
 
 For loop is a syntax suger of the while loop
 
