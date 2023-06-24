@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 链接与加载 | Linkers and Loaders | 动态链接与动态库 | Dynamic Library 
+list_title: Linkers and Loaders | 动态链接与动态库（一） | Dynamic Library part 1 
 title: 动态链接与动态库
 categories: [C,C++]
 ---
@@ -246,8 +246,6 @@ End of assembler dump.
 (gdb) p/x &mylib_int
 $3 = 0xf7dce030
 ```
-
-
 
 ## Resources
 
