@@ -83,7 +83,7 @@ sub
 ```
 stack pointer(sp) and instruction pointer(ip) are the two most important pointers for any stack-based virtual machines.
 
-### A toy language
+### S-Expressions
 
 We will build a small toy language called Eva whose lauguage rule can be outlined as follows:
 
