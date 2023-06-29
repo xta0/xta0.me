@@ -1,5 +1,5 @@
 ---
-list_title: Swift module | Part 1
+list_title: Understand Swift module | Part 1
 title: Swift module 101
 layout: post
 categories: ["Swift", "Compiler", "iOS", "Apple"]
@@ -7,7 +7,7 @@ categories: ["Swift", "Compiler", "iOS", "Apple"]
 
 ## Modules in Objective-C
 
-If you’ve been doing iOS development long enough, the term module probably sounds familiar to you even before Swift came out. The idea of Objective-C modules(Clang modules) was introduced to LLVM in WWDC 2013 (session 404). Basically, it allows developers to use a new syntax to import frameworks, for instance,  @import UIKit, which is equivalent to `#import <UIKit/UIKit.h>`. The main selling point of using modules is that it can significantly reduce the compilation time, especially for large applications. This is because it saves the time for compiler to parse and preprocess headers (textural inclusion).
+If you’ve been doing iOS development long enough, the term module probably sounds familiar to you even before Swift came out. The idea of Objective-C modules(Clang modules) was introduced to LLVM in [WWDC 2013 (session 404)](https://devstreaming-cdn.apple.com/videos/wwdc/2013/404xbx2xvp1eaaqonr8zokm/404/404.pdf). Basically, it allows developers to use a new syntax to import frameworks, for instance,  `@import UIKit`, which is equivalent to `#import <UIKit/UIKit.h>`. The main selling point of using modules is that it can significantly reduce the compilation time, especially for large applications. This is because it saves the time for compiler to parse and preprocess headers (textural inclusion).
 
 Since then, modules have crept their way into the Xcode developer ecosystem, becoming even more prevalent with the introduction of Swift. There is a fantastic document on the [rationale behind modules](https://clang.llvm.org/docs/Modules.html#introduction) in the Clang documentation — give that a read if you are interested in learning more.
 
@@ -15,8 +15,8 @@ Since then, modules have crept their way into the Xcode developer ecosystem, bec
 
 In Swift, you can only import  modules. A Swift program is composed of a number of modules. Each module is a binary representation that is imported by the source files. There are four types of modules that can be imported:
 
-- **A binary `.swiftmodule` file**: binary `.swiftmodule` files are created by the Swift compiler. It provides the interface by which other Swift modules can access. Binary .swiftmodule files are tied to a specific compiler version.
-- **A binary `.pcm` file**: this is created by the Swift compiler's embedded Clang compiler when it builds an Objective-C/C module. It provides the interface by which Swift modules can access to. Binary .pcm files are tied to a specific compiler version.
+- **A binary `.swiftmodule` file**: binary `.swiftmodule` files are created by the Swift compiler. It provides the interface by which other Swift modules can access. Binary `.swiftmodule` files are <mark>tied to a specific compiler version</mark>.
+- **A binary `.pcm` file**: this is created by the Swift compiler's embedded Clang compiler when it builds an Objective-C/C module. It provides the interface by which Swift modules can access to the binary. `.pcm` files are <mark>tied to a specific compiler version</mark>.
 - **A textual `.swiftinterface` file**: textual `.swiftinterface` files are a superset of Swift source code that can be distributed along with binary libraries. They are compatible with multiple versions of the Swift compiler.
 - **Objective-C modules (Clang module)**: a set of Objective-C headers, described by a module map that can be imported into Swift.
 
@@ -26,9 +26,9 @@ Explicit module importing passes no search paths, instead, it passes the paths o
 
 ## Implicit Module
 
-- When the Swift compiler sees a module import such as import MyModule, it looks through the module search path to find a module with the corresponding name.
-- When the compiler finds a binary .swiftmodule or .pcm file, it loads it directly. However, when it finds a .swiftinterface file or an Objective-C module (Clang module), the Swift compiler will implicitly spawn a thread with another compiler instance to compile each textual module into binary. Once complete, the Swift compiler thread will load it into its thread.
-- The compiled module binaries can be reused during the compilation. They are cached in the module cache.  The module cache is a shared directory on the system (within DerivedData in Xcode), which can be overridden via the -module-cache-path command line parameter.
+- When the Swift compiler sees a module import such as import `MyModule`, it looks through the module search path to find a module with the corresponding name.
+- When the compiler finds a binary `.swiftmodule` or `.pcm` file, it loads it directly. However, when it finds a `.swiftinterface` file or an Objective-C module (Clang module), the Swift compiler will implicitly spawn a thread with another compiler instance to compile each textual module into binary. Once complete, the Swift compiler thread will load it into its thread.
+- The compiled module binaries can be reused during the compilation. They are cached in the module cache.  The module cache is a shared directory on the system (within DerivedData in Xcode), which can be overridden via the `-module-cache-path` command line parameter.
 - The Swift compiler will look for an up-to-date binary module in the module cache before initiating the compilation of a textual module; when it does compile the textual module into a binary module, it will be recorded in the cache for other Swift compiler instances to bind. Multiple Swift compiler instances will access the module cache at the same time, so the compiler put locks on reading/writing to the cache.
 - Using shared module cache can lead to performance issues:
     - During compilation, there are likely to be many Swift compiler instances sharing the same module cache, and those instances could compete for accessing the same binary modules. The concurrent situation could cause threads to be suspended and waiting for locks to be released.
@@ -39,8 +39,8 @@ Explicit module importing passes no search paths, instead, it passes the paths o
 
 ### Build Speed
 
-- While swiftmodule files are now cacheable by Buck, Clang module compilation works differently. When using implicit modules, you do not directly import a pcm file. Instead, you import a modulemap file, which describes the headers that form the module. Clang will then search a global module cache folder to see if there exists a precompiled module(pcm) for this modulemap and the set of flags being used, if not, it compiles one and writes to the module cache
-- It is impossible to cache the implicit module output as it is built as a side effect and untracked by Buck. The produced modules are also not relocatable or deterministic
+- While `.swiftmodule` files are cacheable by build system, Clang module compilation works differently. When using implicit modules, you do not directly import a `pcm` file. Instead, you import a <mark>modulemap</mark> file, which describes the headers that form the module. Clang will then search a global module cache folder to see if there exists a precompiled module(pcm) for this modulemap and the set of flags being used, if not, it compiles one and writes to the module cache.
+- It is impossible to cache the implicit module output as it is built as a side effect and untracked by build system. The produced modules are also not relocatable or deterministic
 - This means for every build some amount of Clang modules needs to be recompiled, depending on the local state of the module cache on the users’s machine.
 
 ### Debugging
@@ -48,16 +48,16 @@ Explicit module importing passes no search paths, instead, it passes the paths o
 - This is the status quo for building, which has a few implications. One of the victims of implicit module compilation is debugging.
 - When debugging Swift, LLDB needs the PCM files used during compilation to be able to create an expression context for Swift
 - When building in Xcode, this works by embedding PCM paths in the object files DWARF, which allows the debugger to fairly quickly find and load them at attach time.
-- When building with Buck and remotely built output, however, the referenced PCM paths do not exist as they are in some other machines’ module cache. This means the path embedding has to be disabled and LLDB has to recompile the modules itself.
+- When building remotely, the built output, however, the referenced PCM paths do not exist as they are in some other machines’ module cache. This means the path embedding has to be disabled and LLDB has to recompile the modules itself.
 - This can take a substantial amount of time, on the order of 2 min for Stella.
 
 ### Remote Execution
 
-- Another significant issue is remote execution, which affects Buck2 in particular, as all actions are remotely executed by default.
+- Another significant issue is remote execution, as all actions are remotely executed by default.
 - As each action is isolated and transient, they cannot rely on a shared module cahce. This would cause build errors as the cached modules would refer to inputs no longer present
 - This means every remotely executed Swift compilation has to compile its entire set of dependent Clang modules every time, including the SDK modules.
 - Google saw a 60 - 80% reduction in build time when migrating their remote builds to use explicit modules by avoiding this step.
-- So until we have this in place, Swift can only be efficiently built locally with Buck2.
+- So until we have this in place, Swift can only be efficiently built locally.
 
 ## Explicit Module
 
@@ -76,7 +76,7 @@ Explicit module importing passes no search paths, instead, it passes the paths o
 
 ### First Party Swift Modules
 
-- First party Swift code is the simplest case. Every target already specifies its deps in its BUCK file.
+- First party Swift code is the simplest case. Every target already specifies its deps in its BUCK/Bazel file.
 - For each compile action then we traverse the deps collecting all the SwiftCompile rules and collecting the paths to their output.
 - These paths are collected in JSON file which is passed to the compiler using `-explicit-swift-module-map-file`
 - We need the transitive dependencies at each step as each Swift module embeds references to its own dependencies.
@@ -123,5 +123,5 @@ Explicit module importing passes no search paths, instead, it passes the paths o
     - After some massaging to relativize paths we output this JSON into fbsource. Its connected to a new build attribute on swift_toolchain called sdk_dependencies_path.
 - Build SDK dependencies
     - Given a JSON file describing the dependencies of the SDK modules, we added a slightly unconventional class to parse this, create a graph and to build SDK modules on demand.
-    - By creating flavours for each module, with a hash of the flags used for Clang modules, it is possible to leverage Buck to handle the caching and recursion for us.
+    - By creating flavours for each module, with a hash of the flags used for Clang modules, it is possible to leverage build system to handle the caching and recursion for us.
     - So finally we have everything in place to build all the dependent modules required for each Swift compilation action
