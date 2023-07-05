@@ -5,7 +5,7 @@ layout: post
 categories: ["Swift", "Compiler", "iOS", "Apple"]
 ---
 
-### Static Libraries
+## Swift only static Libraries
 
 Let's start off by creating a Swift static library without using Xcode:
 
@@ -86,7 +86,7 @@ Target: arm64-apple-macosx13.0
 
 The solution to this problem is to use XCFramework which contains Swift interface files as discussed in the previous artical. We will talk more about how to build a XCFramework in the next article. In the meantime, let's continue to explore some other scenarios where a Swift module imports an Objective-C module and vice versa.
 
-### Import Objective-C modules into Swift
+## Import Objective-C modules into Swift
 
 Let's first modify our `MyLogger.swift` to import an Objective-C module
 
