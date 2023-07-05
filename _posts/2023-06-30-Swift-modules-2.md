@@ -1,5 +1,5 @@
 ---
-list_title: Understand Swift module | Part 2
+list_title: Understand Swift module | Part 2 | Static libraries
 title: Use Swift module as static libraries
 layout: post
 categories: ["Swift", "Compiler", "iOS", "Apple"]
@@ -69,7 +69,7 @@ swift-driver version: 1.75.2 Apple Swift version 5.8.1 (swiftlang-5.8.0.124.5 cl
 Target: arm64-apple-macosx13.0
 ```
 
-Why does this matter? Suppose we distribute this precompiled Swift module to other developers, their Swift compiler version may differ. To illustrate this, let's install Xcode 15 beta and execute our code. We should see the following error:
+Why does this matter? Suppose we distribute this precompiled Swift module to other developers, their Swift compiler version may differ. To illustrate this, let's install Xcode 15 and execute our code. We should see the following error:
 
 ```shell
 Compiled module was created by a different version of the compiler '5.8.0.124.5'; rebuild 'MyLogger' and try again
@@ -86,7 +86,7 @@ Target: arm64-apple-macosx13.0
 
 The solution to this problem is to use XCFramework which contains Swift interface files as discussed in the previous artical. We will talk more about how to build a XCFramework in the next article. In the meantime, let's continue to explore some other scenarios where a Swift module imports an Objective-C module and vice versa.
 
-### Import Objective-C modules implicitly
+### Import Objective-C modules into Swift
 
 Let's first modify our `MyLogger.swift` to import an Objective-C module
 
@@ -136,7 +136,8 @@ Lastly, let's swap out the old files and incorporate the new ones in Xcode. We s
 ```shell
 Missing required module 'MyLoggerInternal'
 ```
-This happens when Xcoee `import` the `MyLogger` module, as `MyLogger` imports another moduel that Xcode does not know about. A naive solution would be define a module map for `MyLogger` that contains the `MyLoggerInternal`.
+
+This happens when Xcoee `import` the `MyLogger` module, as `MyLogger` imports another moduel as dependencies. A naive solution would be to define a module map for `MyLogger` that contains the `MyLoggerInternal`.
 
 ```shell
 module MyLogger{
@@ -148,8 +149,45 @@ module MyLoggerInternal {
 }
 ```
 
-Now the error has gone. When we compile the app, we will hit a linker error
+This makes the error go away. However, when we compile the app, we will hit a linker error
 
 ```shell
 Undefined symbol: _OBJC_CLASS_$_MyLoggerInternal
 ```
+
+The issue here is that the static library doesn't contain any symbols from the `MyLoggerInternal` module. We will resolve this error shortly. Now let's revisit our module map definition. As the name suggests, `MyLoggerInternal` is module private to `MyLogger`. It is implementation details that shouldn't be exposed externally. Therefore, this module shouldn't be revealed in the module map.
+
+To workaround this, we can use a undocumented feature called [`@implementation_detail`](https://forums.swift.org/t/update-on-implementation-only-imports/26996). Essentially, we just need to add this keyword before the import directive:
+
+```swift
+@_implementationOnly import MyLoggerInternal
+```
+
+Now we can safely delete the `module MyLoggerInternal` from the module map and regenerate the module file. Xcode will no longer complain the `Missing required module` error.
+
+### Resolve the linking error
+
+Finally, let resolve the linking error. When we created the static library, it only contained the symbols from the `MyLogger` module. What we need to do is to generate the object file for `MyLoggerInternal` and combine it with the `MyLogger.o`
+
+```shell
+// emit MyLoggerInternal.o
+ clang -c  ../MyLoggerInternal/MyLoggerInternal.mm -I ../MyLoggerInternal -target arm64-apple-ios16.4-simulator
+
+ // emit MyLogger.o
+ xcrun swiftc
+-emit-library
+-emit-object MyLogger.swift
+-target arm64-apple-ios16.4-simulator
+-sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk
+
+// create libMyLogger.a
+libtool -static -arch_only arm64 ./MyLogger.o ./MyLoggerInternal.o -o libMyLogger.a
+```
+
+Now replacing the old `libMyLogger.a` with the new one. Everything should now work seamlessly! To recap, when distributing a static library without using a framework format, we need
+
+1. A swift module file
+2. A static library file
+3. A moduel.modulemap file (this may for may not be needed, depending on what we intend to expose to the outside)
+
+### XCFramework
