@@ -137,7 +137,7 @@ Lastly, let's swap out the old files and incorporate the new ones in Xcode. We s
 Missing required module 'MyLoggerInternal'
 ```
 
-This happens when Xcoee `import` the `MyLogger` module, as `MyLogger` imports another moduel as dependencies. A naive solution would be to define a module map for `MyLogger` that contains the `MyLoggerInternal`.
+This happens when Xcode `import`ing the `MyLogger` module, as `MyLogger` imports another moduel as dependencies. A naive solution would be to define a module map for `MyLogger` that contains the `MyLoggerInternal`.
 
 ```shell
 module MyLogger{
@@ -155,9 +155,9 @@ This makes the error go away. However, when we compile the app, we will hit a li
 Undefined symbol: _OBJC_CLASS_$_MyLoggerInternal
 ```
 
-The issue here is that the static library doesn't contain any symbols from the `MyLoggerInternal` module. We will resolve this error shortly. Now let's revisit our module map definition. As the name suggests, `MyLoggerInternal` is module private to `MyLogger`. It is implementation details that shouldn't be exposed externally. Therefore, this module shouldn't be revealed in the module map.
+The issue here is that the static library doesn't contain any symbols from the `MyLoggerInternal` module. We will resolve this error shortly. Now let's revisit our module map definition. As the name suggests, `MyLoggerInternal` is a module private to `MyLogger`. It is implementation details that shouldn't be exposed externally. Therefore, this module shouldn't be revealed in the module map.
 
-To workaround this, we can use a undocumented feature called [`@implementation_detail`](https://forums.swift.org/t/update-on-implementation-only-imports/26996). Essentially, we just need to add this keyword before the import directive:
+To workaround this, we can use [a undocumented feature](https://forums.swift.org/t/update-on-implementation-only-imports/26996) called `@implementation_detail`. Essentially, we just need to add this keyword before the import directive:
 
 ```swift
 @_implementationOnly import MyLoggerInternal

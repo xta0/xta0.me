@@ -1,5 +1,5 @@
 ---
-list_title: Understand Swift module | Part 1
+list_title: Understand Swift module | Part 1 | Concepts
 title: Swift module 101
 layout: post
 categories: ["Swift", "Compiler", "iOS", "Apple"]
