@@ -190,4 +190,4 @@ Now replacing the old `libMyLogger.a` with the new one. Everything should now wo
 2. A static library file
 3. A moduel.modulemap file (this may for may not be needed, depending on what we intend to expose to the outside)
 
-### XCFramework
+In the next section, we will explore how to use XCFramework to bundle the static libraries, which is the Apple recommended way of distruting prebuilt binaries.
