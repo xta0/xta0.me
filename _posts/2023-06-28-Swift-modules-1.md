@@ -112,7 +112,7 @@ Explicit module importing passes no search paths, instead, it passes the paths o
 
 ### SDK Dependencies
 
-- So now we have our list of SDK frameworks we depend on for each target, are we ready yet? Of course not, there’s at least 10 more slides
+- So now we have our list of SDK frameworks we depend on for each target, are we ready yet? Of course not
 - What we are missing are the exported dependencies of each module. Both Swift and Clang modules can export dependent modules, either explicitly or implicitly.
 - This can happen through the swiftinterface files, the modulemap or simply via transitively importing a header that belongs to another modulemap.
 - We need a way to scan the SDK modules to determine what their dependencies are

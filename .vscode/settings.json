@@ -6,5 +6,12 @@
         "**/.settings": true,
         "**/.factorypath": true
     },
-    "python.pythonPath": "/Users/taox/anaconda/bin/python"
+    "python.pythonPath": "/Users/taox/anaconda/bin/python",
+    "grammarly.selectors": [
+        {
+            "language": "markdown",
+            "scheme": "file",
+            "pattern": "_posts/2023-06-30-Swift-modules-2.md"
+        }
+    ]
 }

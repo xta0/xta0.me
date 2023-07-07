@@ -84,7 +84,7 @@ swift-driver version: 1.82.2 Apple Swift version 5.9 (swiftlang-5.9.0.114.10 cla
 Target: arm64-apple-macosx13.0
 ```
 
-The solution to this problem is to use XCFramework which contains Swift interface files as discussed in the previous artical. We will talk more about how to build a XCFramework in the next article. In the meantime, let's continue to explore some other scenarios where a Swift module imports an Objective-C module and vice versa.
+The solution to this problem is to use XCFramework which contains Swift interface files as discussed in the previous artical. We will talk more about how to build a XCFramework in the later section. In the meantime, let's continue to explore some other scenarios where a Swift module imports an Objective-C module and vice versa.
 
 ## Import Objective-C modules into Swift
 
@@ -100,6 +100,7 @@ private var objc_logger = MyLoggerInternal()
     self.objc_logger.log(messasge);
 }
 ```
+
 Given that we're `import`ing a Clang module, the Swift compiler will seek the module definition of MyLoggerInternal. Let's go ahead and create a module map for this Objective-C module:
 
 ```shell
@@ -124,7 +125,7 @@ swiftc
 ../MyLogger.swift
 ```
 
-In the above command, we use `-Xcc -fmodule-map-file` explicitly to direct the Swift-embedded Clang compiler to the module map file location. Alternatively, we can just use `-I` to point to the directory containing `MyLoggerInternal.h`. This is because, by default, `MyLoggerInternal` is an implicit import, and the Swift compiler will look for `module.modulemap` in the same directory as `MyLoggerInternal.h`.
+In the above command, we use `-Xcc -fmodule-map-file` explicitly to direct the Swift-embedded Clang compiler to the module map file location. Alternatively, we can just use `-I` to point to the directory containing `MyLoggerInternal.h`. This is because, by default, `MyLoggerInternal` is an implicit import, and the Swift compiler will look for `module.modulemap` in the same directory as `MyLoggerInternal.h`, as mentioned in the previous article.
 
 
 ```shell
@@ -137,7 +138,7 @@ Lastly, let's swap out the old files and incorporate the new ones in Xcode. We s
 Missing required module 'MyLoggerInternal'
 ```
 
-This happens when Xcode `import`ing the `MyLogger` module, as `MyLogger` imports another moduel as dependencies. A naive solution would be to define a module map for `MyLogger` that contains the `MyLoggerInternal`.
+This happens because `MyLogger` depends on another module. It turns out any client code that imports your module must also be able to import all the modules you imported, since they might be used in your public API. A naive solution would be to define a module map for `MyLogger` that contains the `MyLoggerInternal`.
 
 ```shell
 module MyLogger{
@@ -157,7 +158,9 @@ Undefined symbol: _OBJC_CLASS_$_MyLoggerInternal
 
 The issue here is that the static library doesn't contain any symbols from the `MyLoggerInternal` module. We will resolve this error shortly. Now let's revisit our module map definition. As the name suggests, `MyLoggerInternal` is a module private to `MyLogger`. It is implementation details that shouldn't be exposed externally. Therefore, this module shouldn't be revealed in the module map.
 
-To workaround this, we can use [a undocumented feature](https://forums.swift.org/t/update-on-implementation-only-imports/26996) called `@implementation_detail`. Essentially, we just need to add this keyword before the import directive:
+
+To workaround this, we can use [an undocumented feature](https://forums.swift.org/t/update-on-implementation-only-imports/26996) called `@_implementationOnly`. This means we are ensuring that the imported module can only be used for the implementation of our module, not as part of the module's API.
+
 
 ```swift
 @_implementationOnly import MyLoggerInternal
@@ -167,7 +170,7 @@ Now we can safely delete the `module MyLoggerInternal` from the module map and r
 
 ### Resolve the linking error
 
-Finally, let resolve the linking error. When we created the static library, it only contained the symbols from the `MyLogger` module. What we need to do is to generate the object file for `MyLoggerInternal` and combine it with the `MyLogger.o`
+Finally, let's resolve the linking error. When we created the static library, it only contained the symbols from the `MyLogger` module. What we need to do is to generate the object file for `MyLoggerInternal` and combine it with `MyLogger.o`
 
 ```shell
 // emit MyLoggerInternal.o
@@ -188,6 +191,72 @@ Now replacing the old `libMyLogger.a` with the new one. Everything should now wo
 
 1. A swift module file
 2. A static library file
-3. A moduel.modulemap file (this may for may not be needed, depending on what we intend to expose to the outside)
+3. A moduel.modulemap file (this may or may not be needed, depending on what we intend to expose to the outside)
 
-In the next section, we will explore how to use XCFramework to bundle the static libraries, which is the Apple recommended way of distruting prebuilt binaries.
+As you can see, this process is not quite elegant and error-prone, as users have to manually create those files and put them in the right location. The additional steps needed to configure the Xcode project are also quite complicated. In the next section, we will explore how to use XCFramework to bundle the static libraries, which is the Apple recommended way of distributing prebuilt binaries.
+
+## Binary frameworks (XCFramework)
+
+Before we start building `MyLogger.framework`, it is useful to go over Apple's guidelines first
+
+- [WWDC 2019 Session 417: Binary Frameworks in Swift](https://developer.apple.com/videos/play/wwdc2019/416/)
+- [WWDC 2020 Session 10147: Distribute binary frameworks as Swift packages](https://developer.apple.com/videos/play/wwdc2020/10147/)
+
+To get started, we need to create an Xcode project and choose the framework template. Then follow the [document](https://developer.apple.com/documentation/xcode/creating-a-multi-platform-binary-framework-bundle) here. Basically, we need to create static libraries for different platforms that we want to support. And then package them together into a `.xcframework`.
+
+> Once we have figured out the framework structure, we can replicate the process without using Xcode. For now, let's just follow Apple's guidelines
+
+```shell
+#!/usr/bin/env bash
+
+xcodebuild archive \
+-project MyDummyLogger.xcodeproj \
+-scheme MyDummyLogger \
+-destination "generic/platform=iOS Simulator" \
+-archivePath "archives-sim/MyDummyLogger-sim"
+
+sleep 1
+
+xcodebuild archive \
+-project MyDummyLogger.xcodeproj \
+-scheme MyDummyLogger \
+-destination "generic/platform=iOS" \
+-archivePath "archives-arm64/MyDummyLogger-arm64"
+
+sleep 1
+
+xcodebuild \
+-create-xcframework \
+-archive archives-sim/MyDummyLogger-sim.xcarchive \
+-framework MyDummyLogger.framework \
+-archive archives-arm64/MyDummyLogger-arm64.xcarchive \
+-framework MyDummyLogger.framework \
+-output xcframework-static/MyDummyLogger.xcframework
+```
+
+Now let's take a look at the structure of generated `.xcframework`
+
+```shell
+└── MyDummyLogger.xcframework
+    ├── Info.plist
+    ├── ios-arm64
+    │   └── MyDummyLogger.framework
+    │       ├── Headers
+    │       ├── Info.plist
+    │       ├── Modules
+    │       ├── MyDummyLogger
+    │       └── _CodeSignature
+    └── ios-arm64_x86_64-simulator
+        └── MyDummyLogger.framework
+            ├── Headers
+            ├── Info.plist
+            ├── Modules
+            ├── MyDummyLogger
+            └── _CodeSignature
+```
+
+By default, Xcode produces static libraries. The `MyDummyLogger` under the simulator directory is a FAT binary
+
+```shell
+Architectures in the fat file: MyDummyLogger are: arm64 x86_64
+```
