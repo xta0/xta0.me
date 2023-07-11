@@ -234,7 +234,7 @@ xcodebuild \
 -output xcframework-static/MyDummyLogger.xcframework
 ```
 
-Now let's take a look at the structure of generated `.xcframework`
+The script creates two static libraries for different architectures, then zip them into a `.xcframeworkk` file. Now let's take a look at the structure of generated `.xcframework`
 
 ```shell
 └── MyDummyLogger.xcframework
@@ -259,4 +259,13 @@ By default, Xcode produces static libraries. The `MyDummyLogger` under the simul
 
 ```shell
 Architectures in the fat file: MyDummyLogger are: arm64 x86_64
+```
+
+As mentioned in the previous section, XCFrameworks solves the problem of shipping precompiled Swift modules. If we take a look at the `Modules` folder, we will see a bunch of `.swiftinterface` files
+
+```shell
+// MyDummyLogger.swiftmodule
+
+arm64-apple-ios.abi.json                arm64-apple-ios.swiftdoc
+arm64-apple-ios.private.swiftinterface  arm64-apple-ios.swiftinterface
 ```
