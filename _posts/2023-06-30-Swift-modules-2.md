@@ -64,7 +64,7 @@ The Xcode builds and runs perfectly!
 As previously discussed, a Swift module file is tied to a specific version of the Swift compiler. In our case, we are using Xcode 14.3.1, the Swift compiler version is
 
 ```shell
-xcrun swiftc --version                                                    ─╯
+xcrun swiftc --version
 swift-driver version: 1.75.2 Apple Swift version 5.8.1 (swiftlang-5.8.0.124.5 clang-1403.0.22.11.100)
 Target: arm64-apple-macosx13.0
 ```
@@ -191,7 +191,7 @@ Now replacing the old `libMyLogger.a` with the new one. Everything should now wo
 
 1. A swift module file
 2. A static library file
-3. A moduel.modulemap file (this may or may not be needed, depending on what we intend to expose to the outside)
+3. A `moduel.modulemap` file (this may or may not be needed, depending on what we intend to expose to the outside)
 
 As you can see, this process is not quite elegant and error-prone, as users have to manually create those files and put them in the right location. The additional steps needed to configure the Xcode project are also quite complicated. In the next section, we will explore how to use XCFramework to bundle the static libraries, which is the Apple recommended way of distributing prebuilt binaries.
 
@@ -268,4 +268,24 @@ As mentioned in the previous section, XCFrameworks solves the problem of shippin
 
 arm64-apple-ios.abi.json                arm64-apple-ios.swiftdoc
 arm64-apple-ios.private.swiftinterface  arm64-apple-ios.swiftinterface
+
+// arm64-apple-ios.swiftinterface
+
+// swift-interface-format-version: 1.0
+// swift-compiler-version: Apple Swift version 5.8.1 (swiftlang-5.8.0.124.5 clang-1403.0.22.11.100)
+// swift-module-flags: -target arm64-apple-ios16.4-simulator -enable-objc-interop -enable-library-evolution -swift-version 5 -enforce-exclusivity=checked -O -module-name MyDummyLogger
+// swift-module-flags-ignorable: -enable-bare-slash-regex
+import Foundation
+@_exported import MyDummyLogger
+import Swift
+import _Concurrency
+import _StringProcessing
+public class MyDummyLogger {
+  public init(prefix: Swift.String)
+  public func log<T>(object: T)
+  @objc public func objc_log(object: Swift.String)
+  @objc deinit
+}
 ```
+
+It is also worth noting that `.xcframework` seems to be the only supported format when it comes to release precompiled Swift code.
