@@ -1,6 +1,6 @@
 ---
-list_title: Understand Swift module | Part 2 | Static libraries
-title: Use Swift module as static libraries
+list_title: Swift binaries
+title: Swift binaries
 layout: post
 categories: ["Swift", "Compiler", "iOS", "Apple"]
 ---
