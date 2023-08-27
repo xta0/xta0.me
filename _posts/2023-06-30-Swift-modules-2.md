@@ -1,5 +1,5 @@
 ---
-list_title: Swift binaries
+list_title: Swift | Swift binaries
 title: Swift binaries
 layout: post
 categories: ["Swift", "Compiler", "iOS", "Apple"]
