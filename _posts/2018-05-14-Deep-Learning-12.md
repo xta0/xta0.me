@@ -82,7 +82,7 @@ a_i = a[:,:,t]
 
 Numpy的实现如下
 
-```
+```python
 def rnn_cell_forward(xt, a_prev, parameters):
     """
     Arguments:
@@ -328,7 +328,7 @@ $$
 
 LSTM的numpy实现
 
-```
+```python
 def lstm_cell_forward(xt, a_prev, c_prev, parameters):
     """
     Arguments:
