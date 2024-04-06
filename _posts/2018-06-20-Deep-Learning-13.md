@@ -23,7 +23,7 @@ I want a glass of apple ____
 
 我们可以给字典里的每个word关联一些feature，比如
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/06/dl-npl-w2-1.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/06/dl-nlp-w2-1.png">
 
 图中我们为每个word关联了300个feature，因此每个word可以用一个`[300, 1]`的vector表示，对于单词`Man`所对应的vector，我们用 $e_{5391}$ 来表示。这样两个相似的word，他们的feature vector也是相似的，比如`Apple`和`Orange`。
 
@@ -39,4 +39,5 @@ y = [1, 1, 0, 0, 0, 0]
 
 假设我们的字典有10,000个单词，每个单词的feature vector是`[300, 1]`，那么整个embedding matrix为`[300, 10,000]`，我们的目标就是train我们的network来找到这个embedding matrix
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/06/dl-npl-w2-2.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/06/dl-nlp-w2-2.png">
+
