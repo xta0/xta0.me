@@ -37,7 +37,72 @@ y = [1, 1, 0, 0, 0, 0]
 
 ## Embedding Matrix
 
-假设我们的字典有10,000个单词，每个单词的feature vector是`[300, 1]`，那么整个embedding matrix为`[300, 10,000]`，我们的目标就是train我们的network来找到这个embedding matrix
+假设我们的字典有10,000个单词，每个单词的feature vector是`[300, 1]`，那么整个embedding matrix为`[10,000， 300]`，我们的目标就是train我们的network来找到这个embedding matrix
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/06/dl-nlp-w2-2.png">
 
+## Word2Vec
+
+Word2Vec是一种相对比较高效的learn word emedding的一种算法。它的大概意思，选取一个context word，比如"orange" 和一个 target word比如 "juice"，我们通过构建neural network找到将context word映射成target word的embedding matrix。通常来说，这个target word是context word附近的一个word，可以是context word向前或者向后skip若干个random word之后得到的word。
+
+如果从model的角度来来说，它的input是一个word，output是它周围的一个context word。
+
+还是假定我们的字典大小为`10,000`，每个feature vector的dim是`300`，那么embedding的matrix大小为`[10,000, 300]`，我们的输入用word的1-hot vector表示，即是一个`[1000, 1]`的稀疏向量，则我们model定义如下
+
+```
+# for each input word, predict its context words surrounding it
+class SkipGram(nn.Module):
+    def __init__(self, n_vocab, n_embed):
+        super().__init__()
+        
+        # complete this SkipGram model
+        self.embedding = nn.Embedding(n_vocab, n_embed)
+        self.fc = nn.Linear(n_embed, n_vocab)
+        self.softmax = nn.LogSoftmax(dim=1)
+    
+    def forward(self, x):
+        x = self.embedding(x)
+        x = self.fc(x)
+        x = self.softmax(x)
+        return x
+```
+
+> [nn.Embedding](https://pytorch.org/docs/stable/generated/torch.nn.Embedding.html)
+
+## Negtive Sampling
+
+上面的`SkipGram`有一个性能问题是如果字典数量过大会导致softmax方法非常耗时。这里介绍另一种相对高效的network，叫做Negtive Sampling。它的大概意思是，给一组context word和target word，判断他们是否是符合语义，比如
+
+```
+x1: (orange, juice), y1:1
+x2: (orange, king), y2:0
+```
+选取这个pair的方式和上面一样，sample一下context word，然后随机选取某一个context word周围一个word(window可以是左右10个word以内)作为target word。
+
+因此，我们model变成了一个logistic regression model，它的input是一个pair，output是`0`或`1`用来表示这个pair是否正确。
+
+``` python
+context_embed = nn.Embedding(n_vocab, n_embed)
+target_embed = nn.Embedding(n_vocab, n_embed)
+
+P(y=1 | c,t) = sigmoid(target_embed.t() * target_embed)
+```
+
+当我们train这个model的时候，我们的traning dataset需要有negtive example，比如
+
+```shell
+context |  word | target?
+--------------------------
+orange  | juice | 1 
+range   | king  | 0
+orange  | book  | 0
+orange  | the   | 0
+orange  | of    | 0
+```
+但实际上我们train的时候，`y`不需要包含10,000个结果，而只需要`K`个，其中`K-1`个为negative example，`K`可以为4
+
+## GloVe (global vectors for word representation)
+
+TBD
+
+## Sentiment Classification

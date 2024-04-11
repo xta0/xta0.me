@@ -1,7 +1,7 @@
 ---
 layout: post
 updated: "2019-06-20"
-list_title:  iOS App的签名机制 | App Signing in iOS Part
+list_title:  iOS App的签名机制 | iOS Signing under the hood
 title: iOS App的签名机制
 categories: [iOS]
 ---
