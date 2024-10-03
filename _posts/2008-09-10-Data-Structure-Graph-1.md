@@ -20,15 +20,15 @@ categories: [DataStructure]
 
 - 路径
 
-**路径**为一系列的顶点按照依次邻接的关系组成的序列，*$\pi = <v_0,v_1...,v_k>$，长度$\|\pi\|=k$。如上图中$V$到$Z$的一条路径为${b,h}$或${V,X,Z}$。路径的**长度**为顶点的个数或者边的个数。如果再一条通路中不含重复节点，我们称之为 **简单路径** ($v_i = v_j$除非$i=j$)。
+**路径**为一系列的顶点按照依次邻接的关系组成的序列，\*$\pi = <v_0,v_1...,v_k>$，长度$\|\pi\|=k$。如上图中$V$到$Z$的一条路径为${b,h}$或${V,X,Z}$。路径的**长度**为顶点的个数或者边的个数。如果再一条通路中不含重复节点，我们称之为 **简单路径** ($v_i = v_j$除非$i=j$)。
 
 - 连通图
 
-若图中任意两点都是连通的，那么该图称为**连通图**。对于有向图 $G (V,E)$，如果两个顶点 $v_i,v_j$ 间有一条从$v_i$ 到 $v_j$ 的有向路径，责成同时还有一条从 $v_j$ 到 $v_i$ 的有向路径，则称两个顶点**强连通**,称$G为**强连通图**。强连通图只有一个连通分量，即其自身。
+若图中任意两点都是连通的，那么该图称为**连通图**。对于有向图 $G (V,E)$，如果两个顶点 $v_i,v_j$ 间有一条从$v_i$ 到 $v_j$ 的有向路径，责成同时还有一条从 $v_j$ 到 $v_i$ 的有向路径，则称两个顶点**强连通**,称$G 为**强连通图**。强连通图只有一个连通分量，即其自身。
 
 - 环路
 
-当路径的起点和终点重合时，称之为**环路**($v_0=v_k$)。如果再有向图中不包含任何环路，则称之为**有向无环图**(DAG,Directed Acyclic Graph)，树和森林是DAG图的一种特例。 对于只有两个顶点的图，如果是无向图，则不认为是环路；如果是有向图，且两个顶点之间有两条边，则认为是环路，例如$<v_0,v_1>$和$<v_1,v_0>$构成环
+当路径的起点和终点重合时，称之为**环路**($v_0=v_k$)。如果再有向图中不包含任何环路，则称之为**有向无环图**(DAG,Directed Acyclic Graph)，树和森林是 DAG 图的一种特例。 对于只有两个顶点的图，如果是无向图，则不认为是环路；如果是有向图，且两个顶点之间有两条边，则认为是环路，例如$<v_0,v_1>$和$<v_1,v_0>$构成环
 
 - 无向图/有向图
 
@@ -36,7 +36,7 @@ categories: [DataStructure]
 
 <img src="{{site.baseurl}}/assets/images/2008/08/graph-5.png" style="margin-left:auto; margin-right:auto;display:block">
 
-之前介绍的数据结构都可以看成是图的一种表现形式，比如二叉树是一种无权的有向无环图，节点的入度为1，出度最大为2，顶点之间只有一条路径。而单项链表也可以看成是一种无权的DAG，每个节点的入度出度都为1
+之前介绍的数据结构都可以看成是图的一种表现形式，比如二叉树是一种无权的有向无环图，节点的入度为 1，出度最大为 2，顶点之间只有一条路径。而单项链表也可以看成是一种无权的 DAG，每个节点的入度出度都为 1
 
 ## 图的表示
 
@@ -62,7 +62,7 @@ edge_list = [ [1,2],[1,4],[1,7],...,[6,7]]
 
 所谓邻接矩阵就是描述顶点之间链接关系的矩阵。设$G=<V,E>$是一个有$n$个顶点图，则邻接矩阵是一个$n \times n$的方阵，用二维数组`A[n,n]`表示，它的定义如下:
 
-$$ 
+$$
 A[i,j]=
 \begin{cases}\
 1, \qquad  若(v_i, v_j)∈ E 或<v_i, v_j> ∉ E \\
@@ -74,11 +74,11 @@ $$
 
 <img src="{{site.baseurl}}/assets/images/2008/08/graph-2.png" style="margin-left:auto; margin-right:auto;display:block">
 
-可见，对于一个$n$个顶点的图，邻接矩阵是一个对称阵（默认不考虑自环的情况，因此对角线的元素值为0)，空间代价为$O(n^2)$。
+可见，对于一个$n$个顶点的图，邻接矩阵是一个对称阵（默认不考虑自环的情况，因此对角线的元素值为 0)，空间代价为$O(n^2)$。
 
 基于邻接矩阵的图结构，可以用二维数组来表达：
 
-``` cpp
+```cpp
 class Graph{
 private:
     vector<Vertex* > V; //顶点
@@ -87,19 +87,21 @@ private:
     //map<Vertex* , set<Edge* >> matrix; //也可以使用map
 };
 ```
+
 使用邻接矩阵的优点是：
-    
+
 1. 直观，易于理解和实现
 2. 适用范围广，包括有向图，无向图，带权图，自环图等等，尤其适用于稠密图
 3. 判断两点之间是否存在联边: $O(1)$
 4. 获取顶点的出度入度: $O(1)$
-    - 添加删除边后更新度: $O(1)$
+   - 添加删除边后更新度: $O(1)$
 5. 扩展性强
 
 缺点为：
+
 1. 空间复杂度为$\Theta(n^2)$，与边数无关
 
-以左边无向图的邻接矩阵为例，Python表示如下：
+以左边无向图的邻接矩阵为例，Python 表示如下：
 
 ```python
 adjacency_matrix = [
@@ -132,10 +134,9 @@ $$
 2. 顶点$v_i$下一条边的指针
 3. 权重值(可选)
 
-
 <img src="{{site.baseurl}}/assets/images/2008/08/graph-3.png" style="margin-left:auto; margin-right:auto;display:block">
 
-上图分别为无向图，带权图和有向图的邻接表，对于有向图，有出度和入度两种邻接表，这里只给出了出度的邻接表，对于入度的情况类似。由上图的结构可以看出使用邻接表，对每个节点的相邻节点的访问是非常高效的，另外，邻接表的空间利用率也相对较高。以左边无向图的邻接表为例，Python表示如下：
+上图分别为无向图，带权图和有向图的邻接表，对于有向图，有出度和入度两种邻接表，这里只给出了出度的邻接表，对于入度的情况类似。由上图的结构可以看出使用邻接表，对每个节点的相邻节点的访问是非常高效的，另外，邻接表的空间利用率也相对较高。以左边无向图的邻接表为例，Python 表示如下：
 
 ```python
 #使用list
@@ -153,7 +154,8 @@ adjacency_map = {
     3: [1,1]
 }
 ```
-基于邻接表的无向图的C++代码表示如下:
+
+基于邻接表的无向图的 C++代码表示如下:
 
 ```cpp
 class Graph {
@@ -182,18 +184,16 @@ public:
 |添加边| $1$ |$1$ |$1$ |
 |删除边| $E$ | $degree(v)$ | 1|
 
-
-
 ## 图的搜索与遍历
 
-在图中搜索两点间的路径有很多种方式，常用的有DFS，BFS，Dijkstra，A*等，对于图的遍历，和树类似我们也可以使用DFS和BFS两种方式，但是图有两个树没有的问题：
+在图中搜索两点间的路径有很多种方式，常用的有 DFS，BFS，Dijkstra，A\*等，对于图的遍历，和树类似我们也可以使用 DFS 和 BFS 两种方式，但是图有两个树没有的问题：
 
 1. 连通的问题，从一个点出发不一定能够到达所有点，比如非连通图
 2. 可能存在回路，因此遍历可能进入死循环
 
 解决这两个问题，需要给顶点加一个状态位，标识该节点是否已经被访问过。另外，对图的遍历，可将其按照一定规则转化为对树的遍历
 
-``` cpp
+```cpp
 void graph_traverse(){
     // 对图所有顶点的标志位进行初始化
     for(int i=0; i<VerticesNum(); i++)
@@ -206,15 +206,14 @@ void graph_traverse(){
 
 ### DFS
 
-图的DFS遍历过程和之前介绍的树的DFS遍历过程类似，都是从一个节点开始，不断的递归+回溯，最终走完全部路径。其基本步骤为
+图的 DFS 遍历过程和之前介绍的树的 DFS 遍历过程类似，都是从一个节点开始，不断的递归+回溯，最终走完全部路径。其基本步骤为
 
 1. 选取一个未访问的点$v_0$作为源点,访问顶点$v_0$
 2. 若$v_0$有未被访问的邻居，任选其中一个顶点$u_0$，进行递归地深搜遍历；否则，返回
 3. 顶点$u_0$，重复上述过程
 4. 不断递归+回溯，直至所有节点都被访问
 
-
-``` cpp
+```cpp
 //dfs遍历伪码
 void dfs(Vertex v) { // 深度优先搜索的递归实现
     status(v) = VISITED;  // 把标记位设置为 VISITED
@@ -224,13 +223,13 @@ void dfs(Vertex v) { // 深度优先搜索的递归实现
         if (status(u) == UNVISITED){
             dfs(u);
         }
-    } 
+    }
 }
 ```
 
 <img src="{{site.baseurl}}/assets/images/2008/08/graph-4.png" style="margin-left:auto; margin-right:auto;display:block">
 
-例如上图DFS的遍历次序为：`a b c f d e g`。这里有一点要注意，由于第二步对相邻节的未访问的节点选取规则不唯一（下图例子使用的是字母顺序），因此对全图进行遍历得到结果序列是不唯一的。类似的，如果使用DFS进行搜索，寻找两点间路径，得到的结果不一定是最短路径。dfs的搜索代码如下
+例如上图 DFS 的遍历次序为：`a b c f d e g`。这里有一点要注意，由于第二步对相邻节的未访问的节点选取规则不唯一（下图例子使用的是字母顺序），因此对全图进行遍历得到结果序列是不唯一的。类似的，如果使用 DFS 进行搜索，寻找两点间路径，得到的结果不一定是最短路径。dfs 的搜索代码如下
 
 ```cpp
 void dfs(int s, int t){
@@ -281,10 +280,10 @@ void print_path(vector<int>& prev, int s, int t){
 3. 依次访问这些邻接顶点的邻接顶点，如此反复
 4. 直到所有点都被访问过
 
-``` cpp
+```cpp
 //bfs遍历伪码
 void BFS(Vertex v) {
-    status(v) = VISITED; 
+    status(v) = VISITED;
     queue<Vertex> Q; // 使用STL中的队列
     Q.push(v); // 标记,并入队列
     while (!Q.empty()) { // 如果队列非空
@@ -294,7 +293,7 @@ void BFS(Vertex v) {
         //遍历v的每一个未被访问的相邻节点
         for(auto u : getNbrs(v)){
             if (status(u) == UNVISITED){
-                status(u) = VISITED; 
+                status(u) = VISITED;
                 u.previous = v;//设置前驱节点
                 Q.push(u);
             }
@@ -313,7 +312,7 @@ void BFS(Vertex v) {
 4. 同理，`c`出队，`b`入队，以此类推
 5. 直至节点全部被访问
 
-对于无权图来说，BFS相比DFS可以用来寻找两点间（例如上图中的a和b）的最短路径（最少边），但却不容易保存到达b点的路径，解决这个问题，可以给每个节点加一个指向前驱节点的指针，或者使用一个数组存储中间节点，代码如下：
+对于无权图来说，BFS 相比 DFS 可以用来寻找两点间（例如上图中的 a 和 b）的最短路径（最少边），但却不容易保存到达 b 点的路径，解决这个问题，可以给每个节点加一个指向前驱节点的指针，或者使用一个数组存储中间节点，代码如下：
 
 ```cpp
 //起点s，终点t，顶点个数n
@@ -357,8 +356,48 @@ void bfs_search(int s, int t){
 
 广度优先搜索和深度优先搜索是图上的两种最常用、最基本的搜索算法，比起其他高级的搜索算法，比如 A*、IDA* 等，要简单粗暴，没有什么优化，所以，也被叫作暴力搜索算法。所以，这两种搜索算法仅适用于状态空间不大，也就是说图不大的搜索。在下一篇文章中，我们会继续介绍几种带权图的搜索方法以及图相关的其它内容
 
-### Resources 
+## LeetCode Problems
 
+接下来我们来看下 Leetcode 中的一些经典 Graph 的问题
+
+### Clone Graph
+
+这个题目的意思是给一个 Graph Node，让我们完成对这个 Graph 的 deep copy。这里 Graph 是一个有无环图，因此我们需要递归的拷贝每个 neighbor 节点，由于每个节点可能被访问多次，因此，为了避免重复拷贝，我们需要用一个 hashmap 记录已经拷贝的节点: `map<oldNode: newNode>`
+
+```python
+"""
+# Definition for a Node.
+class Node:
+    def __init__(self, val = 0, neighbors = None):
+        self.val = val
+        self.neighbors = neighbors if neighbors is not None else []
+"""
+
+from typing import Optional
+
+# the trick is to use a hashmap to store the nodes that have already been cloned
+# key: old node, value: new node
+class Solution:
+    def recursiveColone(self, node: Optional['Node'], cache) -> Optional['Node']:
+        if node is None:
+            return None
+        # if node is in the cache
+        if node in cache:
+            return cache[node]
+
+        newNode = Node(node.val, [])
+        cache[node] = newNode
+        for node in node.neighbors:
+            newNode.neighbors.append(self.recursiveColone(node, cache))
+        return newNode
+
+    def cloneGraph(self, node: Optional['Node']) -> Optional['Node']:
+        cache = {}
+        return self.recursiveColone(node, cache)
+
+```
+
+### Resources
 
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
 - [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)

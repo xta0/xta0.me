@@ -11,23 +11,23 @@ categories: [DataStructure]
 
 - 字符串，特殊的<mark>线性表</mark>，即元素为字符的线性表
 - `n(≥0)` 个字符的有限序列`n≥1`时，一般记作`S: "c0c1c2...cn-1"`
-    - S 是串名字
-    - `"c0c1c2...cn-1"`是串值
-    - `ci`是串中的字符
-        - `N` 是串长（串的长度）：一个字符串所包含的字符个数
-        - 空串：长度为零的串，它不包含任何字符内容
+  - S 是串名字
+  - `"c0c1c2...cn-1"`是串值
+  - `ci`是串中的字符
+    - `N` 是串长（串的长度）：一个字符串所包含的字符个数
+    - 空串：长度为零的串，它不包含任何字符内容
 - 子串
-    - 假设`s1,s2` 是两个串：`s1 = a0a1a2…an-1`,`s2 = b0b1b2…bm-1`,其中 `0 ≤ m ≤ n`, 若存整数`i (0 ≤ i ≤n-m)`，使得 `b(j) = a(i+j), j =0,1,…,m-1`同时成立，则称串`s2`是串`s1`的子串,`s1`为串`s2`的主串，或称`s1`包含串`s2`
-    - 特殊子串
-        – 空串是任意串的子串
-        – 任意串`S`都是`S`本身的子串
-        – 真子串：非空且不为自身的子串
-- String类
-    - 内部封装了C字符串API
+  - 假设`s1,s2` 是两个串：`s1 = a0a1a2…an-1`,`s2 = b0b1b2…bm-1`,其中 `0 ≤ m ≤ n`, 若存整数`i (0 ≤ i ≤n-m)`，使得 `b(j) = a(i+j), j =0,1,…,m-1`同时成立，则称串`s2`是串`s1`的子串,`s1`为串`s2`的主串，或称`s1`包含串`s2`
+  - 特殊子串
+    – 空串是任意串的子串
+    – 任意串`S`都是`S`本身的子串
+    – 真子串：非空且不为自身的子串
+- String 类
+  - 内部封装了 C 字符串 API
 
 ### 字符串的特征向量
 
-设模式`p`由`m`个字符组成，记为 `p=p(0)p(1)...p(m-1)`，令特征向量`N`用来表示模式`P`的字符分布特征，简称`N`向量由`m`个特征数`n(0)...n(m-1)`整数组成，记为 `N=n(0)n(1)...n(m-1)`,`N`也称为next数组，每个`n(j)`对应next数组中的元素`next[j]`
+设模式`p`由`m`个字符组成，记为 `p=p(0)p(1)...p(m-1)`，令特征向量`N`用来表示模式`P`的字符分布特征，简称`N`向量由`m`个特征数`n(0)...n(m-1)`整数组成，记为 `N=n(0)n(1)...n(m-1)`,`N`也称为 next 数组，每个`n(j)`对应 next 数组中的元素`next[j]`
 
 - 字符串的特征向量的构造方法
 
@@ -53,16 +53,18 @@ N = -1 0  1  2  x  0  1  2  3  4
 ## 模式匹配
 
 - 模式匹配（pattern matching）
-    - 目标对象T（字符串）
-    - 模式P（字符串）
 
-- 给定模式P，在目标字符串T中搜索与P模式匹配的子串，并返回第一个匹配串首字符的位置
+  - 目标对象 T（字符串）
+  - 模式 P（字符串）
+
+- 给定模式 P，在目标字符串 T 中搜索与 P 模式匹配的子串，并返回第一个匹配串首字符的位置
 
 ```
 T t(0) t(1) ... t(i) t(i+1)... t(i+m-2) t(i+m-1) ... t(n-1)
                  ||  ||            ||     ||
 P               p(0) p(1) ...... p(m-2)  p(m-1)
 ```
+
 为使模式`P`与目标`T`匹配，必须满足: `p(0)p(1)p(2)...p(m-1) = t(i)t(i+1)t(i+2)...t(i+m-1)`
 
 ### 朴素算法
@@ -83,29 +85,29 @@ int FintPat(string S, string P, int startIndex){
     return -1;
 }
 ```
+
 - 假定目标`T`的长度为`n`，模式`P`，长度为`m(m<=n)`
 - 最坏的情况
-    - 每一次循环都不成功，则一共要进行比较`(n-m+1)`次
+  - 每一次循环都不成功，则一共要进行比较`(n-m+1)`次
     – 每一次“相同匹配”比较所耗费的时间，是`P`和`T`逐个字符比较的时间，最坏情况下共`m`次
     – 整个算法的最坏时间开销估计为`O(m*n)`
 - 最好情况
-    - 在目标的前`m`个位置上找到模式
-        - 总比较次数：`m`
-        - 时间复杂度：`O(m)`
+  - 在目标的前`m`个位置上找到模式
+    - 总比较次数：`m`
+    - 时间复杂度：`O(m)`
 
 在实际的软件开发中，大部分情况下模式串和主串都不会太长，而且匹配的时候当遇到不相等的字符时，比较就停止了，并不需要把`m`个字符全都看一遍。所以尽管理论意义上时间复杂度为`O(n*m)`，但实际上大部分情况下算法效率要比这个好的多。
 
+### KMP 算法
 
-
-### KMP算法
-
-所谓KMP算法，是指在不回溯的前提下，通过某种算法来减少不必要的比较，从而最大限度的减少比较次数。在上面朴素法匹配的过程中，不难发现有很多的重复比对，比如下图所示，有目标`T`和模式`P`两个串，他们在某`j`个长度上匹配成功，即`t(i)t(i+1)...t(i+j-1) = p(0)p(1)...p(j-1)`，
+所谓 KMP 算法，是指在不回溯的前提下，通过某种算法来减少不必要的比较，从而最大限度的减少比较次数。在上面朴素法匹配的过程中，不难发现有很多的重复比对，比如下图所示，有目标`T`和模式`P`两个串，他们在某`j`个长度上匹配成功，即`t(i)t(i+1)...t(i+j-1) = p(0)p(1)...p(j-1)`，
 
 ```
 T t(0) t(1) ... t(i) t(i+1) ... t(i+j-2) t(i+j-1) t(i+j)... t(n-1)
                  |   |          |        |        X
 P               p(0) p(1)   ... p(j-2)   p(j-1)   p(j)
 ```
+
 但是第`j+1`个位置出现了不匹配，即`p(j) != t(i+j)`，如果按照上面朴素算法，下一步比较应该是将`p(0)`向右移动一位，使其指向`t(i+1)`，即：
 
 ```
@@ -126,19 +128,19 @@ P               p(0) p(1)   ... p(j-2)   p(j-1)   p(j)
 
 ```
 T |.... R   E   G   R   E   T....
-        |   |   |   |   X               
-P |     R   E   G   R   O   
+        |   |   |   |   X
+P |     R   E   G   R   O
                     |
-P |                 R   E   G   R   O 
+P |                 R   E   G   R   O
 ```
 
 当`T`和`P`串在`E`和`O`位置出现了不等，此时我们可以将`P`串直接向后移动到`R`的位置，为什么是`R`的位置，这个规律是什么呢？ 仔细观察可发现，<mark>对模式串`P`来说，如果在出现不等位置有尾串和首串相等，则可以直接将`P`向后移动到尾串的起始位置。</mark>接下来的问题就是，我们怎么知道在出现不匹配字符时，它前面的子串是否存在首尾相同的子串，以及这个子串的长度是多少呢？
 
-这就要用到前面一节提到的字符串的`next[]`数组，当模式串`P(j)`出现失配后，检查`next[j]`的值，若`next[j]`的值不为`-1`或`0`，说明则前面子串存在相同的首尾字符串，可以将新的对其位置更新为`P(j)`。而KMP算法的核心就在于得到`next[]`数组，到这里我们可以大致写出KMP算法的雏形：
+这就要用到前面一节提到的字符串的`next[]`数组，当模式串`P(j)`出现失配后，检查`next[j]`的值，若`next[j]`的值不为`-1`或`0`，说明则前面子串存在相同的首尾字符串，可以将新的对其位置更新为`P(j)`。而 KMP 算法的核心就在于得到`next[]`数组，到这里我们可以大致写出 KMP 算法的雏形：
 
 ```cpp
 int kmp(String T, string P, int start){
-    vector<int> next = buildNext(P); 
+    vector<int> next = buildNext(P);
     int tLen = T.length();
     int pLen = P.length();
     if(tLen - start < pLen){
@@ -161,7 +163,6 @@ int kmp(String T, string P, int start){
 }
 ```
 
-
 接下来我们看一个具体例子，假设有串`P`和目标串`T`如下，其中`N`为模式串`P`的特征向量，如下：
 
 ```
@@ -172,6 +173,7 @@ T = a b a b a b a b a b a b a b b
     | | | | | | x
 P = a b a b a b b (i=6,j=6,N[j]=4)
 ```
+
 可以看到当比较到`i=6, j=6`时，`T`和`P`不相等，此时`P[6]`的特征向量，`N[6]=4`，因此下一轮需要用`P[4]`继续和`T[6]`比较，说明首串最大长度为`4`，相当于将`P`右移`j-k`位,即`6-4=2`位，得到：
 
 ```
@@ -179,6 +181,7 @@ T = a b a b a b a b a b a b a b b
         | | | | | | x
 P =     a b a b a b b (i=8,j=6,N[j]=4)
 ```
+
 重复上面步骤，发现在第`i=8,j=6`时，出现了失配，继续查表得到`next[6]=4`，令`P[4]`继续和`T[8]`进行比较，因此需要将`P移动`j-k`位，即`6-4=2`位
 
 ```
@@ -186,18 +189,20 @@ T = a b a b a b a b a b a b a b b
             | | | | | | x
 P =         a b a b a b b (i=10,j=6,N[j]=4)
 ```
+
 不断重复上述步骤，直到:
+
 ```
 T = a b a b a b a b a b a b a b b
                     | | | | | | |
-P =                 a b a b a b b 
+P =                 a b a b a b b
 ```
 
 上述代码并没有特征向量`next[]`是怎么来的，因此接下来的问题是如何得到`next[]`数组，假设有子串`P`如下，我们先观察一下`next[k]`数组的一般规律。
 
 ```
 A B Y ... A B X P(j)
-    |         | 
+    |         |
 ```
 
 假设现在要求`j`位置的`next[j]`的值，那么，如果`X`和`Y`相同，那么`next[j] = next[j-1] + 1`，如果不相同则考虑`X`是否和`P[0]`相同，即`X`是否等于`A`，如果相同，则`P[j]=1`，不相同则`P[j]=0`。
@@ -227,46 +232,47 @@ vector<int> buildNext(string P){
     return next;
 }
 ```
-KMP算法复杂度分析：
+
+KMP 算法复杂度分析：
 
 1. 循环体中`j = N[j];` 语句的执行次数不能超过`n`次。否则
-    - 由于`j = N[];` 每一行必然使得`j`减少
-    - 而使得`j`增加的操作只有`j++`
-    - 那么，如果`j = N[j];`的执行次数超过`n`次，最终的结果必然使得`j`为比`-1`小很多的负数。这是不可能的(`j`有时为`-1`,但是很快`+1`回到`0`)。
-2. 同理可以分析出求N数组的时间为`O(m)`，<mark>KMP算法的时间为Ｏ(n+m)</mark>
+   - 由于`j = N[];` 每一行必然使得`j`减少
+   - 而使得`j`增加的操作只有`j++`
+   - 那么，如果`j = N[j];`的执行次数超过`n`次，最终的结果必然使得`j`为比`-1`小很多的负数。这是不可能的(`j`有时为`-1`,但是很快`+1`回到`0`)。
+2. 同理可以分析出求 N 数组的时间为`O(m)`，<mark>KMP 算法的时间为Ｏ(n+m)</mark>
 
-
-## 字符串常见问题
+## LeetCode Problems
 
 ### 去重问题
 
-字符串去重问题是一个很常见的问题，解法也有很多种，有些语言的库函数可以直接提供high-level的API进行去重。这里提供一个非常巧妙的解法，利用双指针+`set`进行一遍扫描即可。题目如下:
+字符串去重问题是一个很常见的问题，解法也有很多种，有些语言的库函数可以直接提供 high-level 的 API 进行去重。这里提供一个非常巧妙的解法，利用双指针+`set`进行一遍扫描即可。题目如下:
 
 > Given a string that contains duplicate occurrences of characters, remove these duplicate occurrences. For example, if the input string is "abbabcddbabcdeedebc", after removing duplicates it should become "abcde".
 
 算法思路如下：
 
-1. 用一个set保存所有不重复的字母
-2. 定义两个游标，一个read负责读字符，一个write负责写字符
-3. 从字符串头部开始移动read
-    - 如果read到集合里已经有的字符，则read++，继续向后搜索
-    - 如果read到set里没有的字符，则向set中添加字符，同时write在当前位置写入该字符, write++, read++
+1. 用一个 set 保存所有不重复的字母
+2. 定义两个游标，一个 read 负责读字符，一个 write 负责写字符
+3. 从字符串头部开始移动 read
+   - 如果 read 到集合里已经有的字符，则 read++，继续向后搜索
+   - 如果 read 到 set 里没有的字符，则向 set 中添加字符，同时 write 在当前位置写入该字符, write++, read++
 4. 算法伪码如下：
 
-    ```python
-    read_pos = 0
-    write_post = 0;
-    while(read_pos < str.len){
-        c = str[read_pos]
-        if(c not in set){
-            set.add(c)
-            str[write_pos] = str[read_pos]
-            write_pos += 1;
-        }
-        read_pos += 1
-    }
-    ```
-6. 该算法的时间复杂度为`O(n)`，空间复杂度也为`O(n)`
+   ```python
+   read_pos = 0
+   write_post = 0;
+   while(read_pos < str.len){
+       c = str[read_pos]
+       if(c not in set){
+           set.add(c)
+           str[write_pos] = str[read_pos]
+           write_pos += 1;
+       }
+       read_pos += 1
+   }
+   ```
+
+5. 该算法的时间复杂度为`O(n)`，空间复杂度也为`O(n)`
 
 如果我们要求不使用额外的空间，这道题该怎么解呢？显然我们需要找到另一种方式可以代替`set`对字符进行判重，思考前面的算法可以发现，`write`游标左边的字符肯定是没有重复的，因此每当`read`读取一个新字符时，我们都需要在`[0,write)`这个范围内查找一下，看看是否存在，如果存在，说明是重复字符，`read`继续向后搜索，`write`不动。如果不存在，则按照原来的逻辑`write`进行写入，同时更新`write`和`read`的位置。此时算法的时间复杂度变为了`O(n^2)`，空间复杂度为`O(1)`。
 
@@ -284,7 +290,7 @@ while(read_pos < str.len){
 }
 ```
 
-### 分割word问题
+### 分割 word 问题
 
 另一个字符串常见的问题是给定一个字符串和一个词典，判断是否可以将该字符串切割成一个或多个字典中的单词。 如下图所示
 
@@ -292,27 +298,28 @@ while(read_pos < str.len){
 
 这个题的解法很多，这里使用一种记忆化递归的方式，算法思路如下：
 
-1. 从左向右扫描字符，通过index分割字符为左右两部分：`str1= substr(0,i)`,`str2=substr(i+1,n-1)`;
-2. 判断`str1`是否在字典中，如果不在，继续另`i++`向右扫描，如果在字典中，这时看`str2`:
-    - 如果`str2`也在字典中，或者`str2`的长度为0，则返回true
+1.  从左向右扫描字符，通过 index 分割字符为左右两部分：`str1= substr(0,i)`,`str2=substr(i+1,n-1)`;
+2.  判断`str1`是否在字典中，如果不在，继续另`i++`向右扫描，如果在字典中，这时看`str2`:
+    - 如果`str2`也在字典中，或者`str2`的长度为 0，则返回 true
     - 如果`str2`不在字典中，则对`str2`进行递归，重复第一步
-3. 算法伪码如下
+3.  算法伪码如下
 
-    ```
-    n = length of input string
-    for i = 0 to n-1
-        firstword = substring (input string from index [0 , i] )
-        secondword = substring (input string from index [i+1 , n-1] )
-        if dictionary has firstword
-            if secondword is in dictionary OR second word is of zero length, then return true
-            recursively call this method with secondword as input and return true if it can be segmented
-    ```
-我们可以模拟一个具体例子，假如输入字符串为`hellonow`，字典为`[hello, hell, on, now]`，按照上面逻辑，当i走到第2个`l`时，`hell`被分割出来如下：
+        ```
+        n = length of input string
+        for i = 0 to n-1
+            firstword = substring (input string from index [0 , i] )
+            secondword = substring (input string from index [i+1 , n-1] )
+            if dictionary has firstword
+                if secondword is in dictionary OR second word is of zero length, then return true
+                recursively call this method with secondword as input and return true if it can be segmented
+        ```
+
+    我们可以模拟一个具体例子，假如输入字符串为`hellonow`，字典为`[hello, hell, on, now]`，按照上面逻辑，当 i 走到第 2 个`l`时，`hell`被分割出来如下：
 
 ```
 hell
     onow
-        on 
+        on
             ow
             ow
         ono
@@ -325,7 +332,7 @@ hello
 
 我们可以来分析一下上述代码的时间复杂度和空间复杂度，上述过程是一个递归深搜的过程，因此时间复杂度为`O(2^n)`，由于每次搜索需要创建`str1,str2`，因此空间复杂度为`O(n^2)`。
 
-上面这个例子比较简单，待分割的字符也比较短，但是极端情况我们可能会遇到分割字符非常长，且字典中的单词非常短的情况，此时会产生大量的重复计算，进而产生大量的不必要的递归导致的栈开销过高。举一个简单的例子，假如待分割的字符为`aaab`，字典为`[a,aa]`。显然，该字符是不能被正确切割的，但是计算机并不知道，我们可以分析一下可能产生的重复计算。从上面的伪码可知，递归产生于当`str1`满足条件后对`str2`的判断，因此我们只需要分析`str2`是否会有重复的情况即可，针对这个例子，当`str1=a`时，产生的`str2`有`[aab,ab,b]`会有3次递归，当`str1=aa`时，产生的`str2`有`[ab,b]`产生2次递归，此时我们可以看到，`ab`和`b`被重复计算了。
+上面这个例子比较简单，待分割的字符也比较短，但是极端情况我们可能会遇到分割字符非常长，且字典中的单词非常短的情况，此时会产生大量的重复计算，进而产生大量的不必要的递归导致的栈开销过高。举一个简单的例子，假如待分割的字符为`aaab`，字典为`[a,aa]`。显然，该字符是不能被正确切割的，但是计算机并不知道，我们可以分析一下可能产生的重复计算。从上面的伪码可知，递归产生于当`str1`满足条件后对`str2`的判断，因此我们只需要分析`str2`是否会有重复的情况即可，针对这个例子，当`str1=a`时，产生的`str2`有`[aab,ab,b]`会有 3 次递归，当`str1=aa`时，产生的`str2`有`[ab,b]`产生 2 次递归，此时我们可以看到，`ab`和`b`被重复计算了。
 
 解决这个问题，我们需要记录曾经被计算过的，不满足条件的`str2`，然后在递归前先对`str2`进行判断，可以修改上述伪码为:
 
@@ -339,7 +346,7 @@ for i = 0 to n-1
 
         if secondword in solved_set
             continue
-        
+
         add secondword to solved_set
         recursively call this method with secondword as input and return true if it can be segmented
 ```
@@ -353,8 +360,8 @@ for i = 0 to n-1
 
 1. 从左边开始遍历字符串
 2. 每访问一个字符，要考虑两种情况：
-    - 中心为奇数字符情况，则以该字符为中心，向两边扩散，进行回文判定
-    - 中心为偶数字符情况，则以该字符+下一个字符为中心，向两边扩散
+   - 中心为奇数字符情况，则以该字符为中心，向两边扩散，进行回文判定
+   - 中心为偶数字符情况，则以该字符+下一个字符为中心，向两边扩散
 3. 算法的时间复杂度为`O(n)`，空间复杂度为`O(1)`
 
 我们看一个[具体例子](https://leetcode.com/problems/palindromic-substrings/description/)，题目要求：
@@ -364,8 +371,9 @@ for i = 0 to n-1
 ```
 Input: "aaa"
 Output: 6
-Explanation: Six palindromic strings: "a", "a", "a", "aa", "aa", "aaa". 
+Explanation: Six palindromic strings: "a", "a", "a", "aa", "aa", "aaa".
 ```
+
 使用中心扩散法的代码如下
 
 ```cpp
@@ -403,24 +411,24 @@ public:
 
 ### 正则表达式匹配
 
-此类问题的一般描述为，给你一个字符串，一个模式串，问该模式串是否可以匹配给定的字符串。通常在模式串中，存在某些通配符，例如`.`和`*`。假设给定字符串`s="fabbbc"`，给定的模式串`p=".ab*c"`。我们从第一个字符开始匹配，由于`.`可以匹配任何字符，因此第一个字符match，接下来我们需要继续比较`s=abbbc`和`p=ab*c`，显然`s[0]`和`p[0]`匹配，接下来我们继续匹配`s=bbbc`和`p=b*c`。可以看出上述匹配过程是一个递归的过程，每当我们完成一次匹配后，用剩余的字符继续匹配。
+此类问题的一般描述为，给你一个字符串，一个模式串，问该模式串是否可以匹配给定的字符串。通常在模式串中，存在某些通配符，例如`.`和`*`。假设给定字符串`s="fabbbc"`，给定的模式串`p=".ab*c"`。我们从第一个字符开始匹配，由于`.`可以匹配任何字符，因此第一个字符 match，接下来我们需要继续比较`s=abbbc`和`p=ab*c`，显然`s[0]`和`p[0]`匹配，接下来我们继续匹配`s=bbbc`和`p=b*c`。可以看出上述匹配过程是一个递归的过程，每当我们完成一次匹配后，用剩余的字符继续匹配。
 
 接下来我们可以总结一下匹配规则：
 
-1. 当`s`和`p`的长度都为0时，说明匹配完成，此时返回true
-2. 当`s`和`p`的长度都为1时，判断`p[0] = '.' || p[0] == s[0]`
-3. 当`p`的长度大于1时，check `p[1]=='*'`
-    - 如果`p[1] != '*'`，判断`p[0] = '.' || p[0] == s[0]`，如果match，则递归比较`p.substr(1)`和`s.substr(1)`。如果不match则返回false
-    - 如果`p[1] == '*'`，此时情况比较复杂，我们可以枚举一些情况
-        1. `s="", p="b*"` 
-        2. `s="a", p="b*"`
-        3. `s="a", p="b*a"`
-        4. `s="bb", p="b*"`
-        5. `s="bba", p="b*a"`
-        6. `s="a", p="a*a"`
-        
+1. 当`s`和`p`的长度都为 0 时，说明匹配完成，此时返回 true
+2. 当`s`和`p`的长度都为 1 时，判断`p[0] = '.' || p[0] == s[0]`
+3. 当`p`的长度大于 1 时，check `p[1]=='*'`
 
-    上面的前三种情况可以归结为一种情况，即比较`p.substr(2)`和`s`，由于`*`代表0个或者多个，如果将`b*`从`p`中去掉仍然可以匹配，那么`s`和`p`就是匹配的。而对于后面两种情况，我们则不能简单的将`b*`去掉，比如在第4个例子中，如果去掉`b*`，则`s="bb"`和`p=""`，显然是不匹配的，而实际上`s="bb"`是满足`p="b*"`的。因此这种情况下，我们需要不断的改变s，以第5个例子为例，当发现`s[0] == p[0] || p[0]=='.'`后，令`s=s.substr(1)`继续比较，直到`s="a"`,`p="b*a"`，此时再进行一次递归即可回到上面前三条的逻辑。但是这里我们又遗漏了一个场景，即上面第6条，按照之前的逻辑，我们最终会走到`s="",p="a"`的判断，显然结果是不正确的。出现这个问题的原因在于，我们不知道`b*`后面是否还有其它字符，因此正确的做法是，没当更新一次s时，都需要先进行一次递归比较。
+   - 如果`p[1] != '*'`，判断`p[0] = '.' || p[0] == s[0]`，如果 match，则递归比较`p.substr(1)`和`s.substr(1)`。如果不 match 则返回 false
+   - 如果`p[1] == '*'`，此时情况比较复杂，我们可以枚举一些情况
+     1. `s="", p="b*"`
+     2. `s="a", p="b*"`
+     3. `s="a", p="b*a"`
+     4. `s="bb", p="b*"`
+     5. `s="bba", p="b*a"`
+     6. `s="a", p="a*a"`
+
+   上面的前三种情况可以归结为一种情况，即比较`p.substr(2)`和`s`，由于`*`代表 0 个或者多个，如果将`b*`从`p`中去掉仍然可以匹配，那么`s`和`p`就是匹配的。而对于后面两种情况，我们则不能简单的将`b*`去掉，比如在第 4 个例子中，如果去掉`b*`，则`s="bb"`和`p=""`，显然是不匹配的，而实际上`s="bb"`是满足`p="b*"`的。因此这种情况下，我们需要不断的改变 s，以第 5 个例子为例，当发现`s[0] == p[0] || p[0]=='.'`后，令`s=s.substr(1)`继续比较，直到`s="a"`,`p="b*a"`，此时再进行一次递归即可回到上面前三条的逻辑。但是这里我们又遗漏了一个场景，即上面第 6 条，按照之前的逻辑，我们最终会走到`s="",p="a"`的判断，显然结果是不正确的。出现这个问题的原因在于，我们不知道`b*`后面是否还有其它字符，因此正确的做法是，没当更新一次 s 时，都需要先进行一次递归比较。
 
 4. 综上，上述三条规则可以涵盖所有的场景
 
@@ -456,12 +464,12 @@ bool isMatch(string s, string p){
         s="a", p="b*a"
         s="x", p="b*"
     */
-    return isMatch(s,p.substr(2));    
+    return isMatch(s,p.substr(2));
 }
 ```
+
 - [10. Regular Expression Matching](https://leetcode.com/problems/regular-expression-matching/description/)
 - [44. Wildcard Matching](https://leetcode.com/problems/wildcard-matching/description/)
-
 
 ### 滑动窗口问题
 
@@ -493,14 +501,14 @@ T slidingWindow(string str, string p){
                 counter -=1;
             }
         }
-        
+
         //todo: check point #2
         //check if counter is zero
         while(counter == 0){
-            //todo: check point #3 
+            //todo: check point #3
             //calculate len,
             int length = right -left +1;
-            
+
             //move left boundary
             char c = str[left];
             if(um.count(c) > 0){
@@ -527,7 +535,7 @@ T slidingWindow(string str, string p){
 ## Resources
 
 - [Pattern Matching Pointer](http://www.cs.ucr.edu/~stelo/pattern.html)
-- [字符串匹配算法的描述、复杂度分析和C源代码](http://www-igm.univ-mlv.fr/~lecroq/string/)
+- [字符串匹配算法的描述、复杂度分析和 C 源代码](http://www-igm.univ-mlv.fr/~lecroq/string/)
 - [CS106B-Stanford-YouTube](https://www.youtube.com/watch?v=NcZ2cu7gc-A&list=PLnfg8b9vdpLn9exZweTJx44CII1bYczuk)
 - [Algorithms-Stanford-Cousera](https://www.coursera.org/learn/algorithms-divide-conquer/home/welcome)
 - [算法与数据结构-1-北大-Cousera](https://www.coursera.org/learn/shuju-jiegou-suanfa/home/welcome)
@@ -536,5 +544,3 @@ T slidingWindow(string str, string p){
 - [算法与数据结构-2-清华-EDX](https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/)
 - [算法设计与分析-1-北大-Cousera](https://www.coursera.org/learn/algorithms/home/welcome)
 - [算法设计与分析-2-北大-EDX](https://courses.edx.org/courses/course-v1:PekingX+04833050X+1T2016/course/)
-
-
