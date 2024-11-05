@@ -1,20 +1,20 @@
 {% if page.mathjax %}
 <script>
-    window.MathJax = {
-      options: {
-        enableMenu: false,
-        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre','code','a'],
-        ignoreHtmlClass: "comment-content",
-        processHtmlClass: 'tex2jax_process'
-      },
-      chtml: {
-        mathmlSpacing: true
-      },
-      tex: {
-        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-        displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
-      }
-    };
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" id="MathJax-script"></script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [
+        ["$", "$"],
+        ["\\(", "\\)"],
+      ],
+      displayMath: [
+        ["$$", "$$"],
+        ["\\[", "\\]"],
+      ],
+    },
+  };
+</script>
+<script
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"
+  id="MathJax-script"
+></script>
 {% endif %}

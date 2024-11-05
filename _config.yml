@@ -31,6 +31,9 @@ sass:
   style: :compressed
 
 # markdown
+markdown: kramdown
+kramdown:
+  math_engine: mathjax
 highlighter: rouge
 highlight:
   line_number: true
