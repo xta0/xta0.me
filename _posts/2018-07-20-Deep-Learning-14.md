@@ -25,5 +25,8 @@ Jane visite l'Afrique en septembre
 
 我们的任务是为每个单词计算出它们对应的 $A^{\langle i \rangle}$
 
+Test!
 
-Test!!!!
+$$
+A^{\langle i \rangle}
+$$
