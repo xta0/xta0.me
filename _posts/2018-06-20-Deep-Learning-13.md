@@ -44,9 +44,11 @@ y = [1, 1, 0, 0, 0, 0]
 
 假设我们的字典有`10,000`个单词，每个单词的feature vector是`[300, 1]`，那么整个embedding matrix为`[300, 10,000]`，每一个列向量代表一个词所有的feature，我们的目标就是train我们的network来找到这个embedding matrix
 
+如果我们用这个embedding matrix `E` (300, 10,000) 去和一个one-hot vertor `O`(10,000, 1)相乘，结果是一个(300, 1)的vector `e`
+
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/06/dl-nlp-w2-2.png">
 
-如果我们用这个embedding matrix去和一个one-hot vertor相乘
+
 
 ## Word2Vec
 
