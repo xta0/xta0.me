@@ -1,7 +1,7 @@
 ---
-updated: "2018-08-30"
+updated: "2018-12-12"
 layout: post
-list_title: Localization Part 2 | The Kalman Filter Approach
+list_title: Self Driving Cars | Localization Part 2 | The Kalman Filter Approach
 title: The Kalman Filter Approach for Robot Localization
 categories: [AI,Autonomous-Driving]
 mathjax: true

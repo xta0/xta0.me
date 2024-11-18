@@ -1,5 +1,5 @@
 ---
-list_title: 笔记 | 深度学习 | NLP and Word Embeddings
+list_title: 笔记 | 深度学习 | Word Embeddings
 title: NLP and Word Embeddings
 layout: post
 mathjax: true
@@ -33,13 +33,20 @@ I want a glass of apple ____
 x = ["Sally", "Johnson", "is", "an", "orange", "farmer"]
 y = [1, 1, 0, 0, 0, 0]
 ```
-之前每个word使用1 hot vector来表示，现在则可以用word embedding来表示。那么word embedding从哪里来呢？我们需要自己训练model来得到每个word的embedding，当然也可以下载已经训练好的。实际上，对于每个word来说，我们可以想象将其encode成一个vector，即embedding。
+之前每个word使用1 hot vector来表示，现在则可以用word embedding来表示。那么word embedding从哪里来呢？我们需要自己训练model来得到每个word的embedding，当然也可以下载已经训练好的。实际上，对于每个word来说，我们可以想象将其encode成一个vector，即embedding。我们可以用一个很大的unlabled text数据集来train我们的embedding model，然后在transfer learning到一个small dataset上面:
+
+1. learn word embeddings from a large text corpus (1-100B words)
+    - (Or download pre-trained embedding online)
+2. Transfer embedding to new task with smaller training set (say, 100k words)
+3. Optional: Continue to finetune the word embeddings with new data.
 
 ## Embedding Matrix
 
-假设我们的字典有10,000个单词，每个单词的feature vector是`[300, 1]`，那么整个embedding matrix为`[10,000， 300]`，我们的目标就是train我们的network来找到这个embedding matrix
+假设我们的字典有`10,000`个单词，每个单词的feature vector是`[300, 1]`，那么整个embedding matrix为`[300, 10,000]`，每一个列向量代表一个词所有的feature，我们的目标就是train我们的network来找到这个embedding matrix
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/06/dl-nlp-w2-2.png">
+
+如果我们用这个embedding matrix去和一个one-hot vertor相乘
 
 ## Word2Vec
 

@@ -1,7 +1,7 @@
 ---
 updated: "2018-08-10"
 layout: post
-list_title: Localization Part 1 | The Histogram Filter Approach
+list_title: Self Driving Cars | Localization Part 1 | The Histogram Filter Approach
 title: The Histogram Filter Approach for Robot Localization
 categories: [AI,Autonomous-Driving]
 mathjax: true
