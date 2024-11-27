@@ -29,16 +29,16 @@ Jane visite l'Afrique en septembre
 
 Our goal will be computing an attention-based representation for each word $A^{\langle i \rangle}$. For example, one way to represent `l'Afrique` would be to just look up the word embedding for `l'Afrique`. But depending on the context, are we thinking of `l'Afrique` or Africa as a site of historical interests or as a holiday destination, or as the world's second-largest continent. Depending on how you're thinking of `l'Afrique`, you may choose to represent it differently, and that's what this representation $A^{\langle 3 \rangle}$ will do.
 
-<mark>Self-Attention will look at the surrounding words to try to figure out what does `l'Afrique` really mean in this sentence, and find the most appropriate representation for this.
+<mark>Self-Attention will look at the surrounding words to try to figure out what does l'Afrique really mean in this sentence, and find the most appropriate representation for this</mark>.
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-1.png">
-
-In the formula, we have $q^{\langle 3 \rangle}$, $k^{\langle 3 \rangle}$ and $v^{\langle 3 \rangle}$, representing, query, key and value. These vectors are the key inputs to computing the attention value for each word.
+We use the following softmax function to calculate the attention representation for each word:
 
 $$
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{Q K^\top}{\sqrt{d_k}}\right) V = \sum_i \frac{\exp(q \cdot k^{\langle i \rangle})}{\sum_j \exp(q \cdot k^{\langle j \rangle})} v^{\langle i \rangle}
 $$
 
-```
-A(q, K, V) = attention-based vector representation of a word
-```
+In the formula, `A(q, K, V)` is the attention-based vector representation of a word. We have $q^{\langle 3 \rangle}$, $k^{\langle 3 \rangle}$ and $v^{\langle 3 \rangle}$, representing `query`, `key` and `value`. These vectors are the key inputs to computing the attention value for each word.
+
+The computation process can be described in the following diagram:
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/10/trans-2.png">
