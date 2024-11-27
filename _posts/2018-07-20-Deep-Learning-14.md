@@ -41,7 +41,7 @@ In the formula, `A(q, K, V)` is the attention-based vector representation of a w
 
 The computation process of the word $A^{\langle 3 \rangle}$(`l'Afrique`) can be described in the following diagram:
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-2.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-3.png">
 
 First, we're going to associate each of the words with three values called the query key and value pairs. If $X^{\langle 3 \rangle}$ is the <mark>word embedding</mark> for `l'Afrique`, the way `q`, `k`, `v` are computed as follows:
 
@@ -53,8 +53,29 @@ v^{\langle 3 \rangle} &= W^{V} \cdot x^{\langle 3 \rangle}
 \end{aligned}
 $$
 
-These matrices, $W^{Q}$, $W^{K}$ and $W^{V}$ are parameters of this learning algorithm, and they allow you to calculate these query, key, and value vectors for each word
+These matrices, $W^{Q}$, $W^{K}$ and $W^{V}$ are parameters of this learning algorithm, and they allow you to calculate these query, key, and value vectors for each word.
 
 So what are these query key and value vectors supposed to do? They were named using a loose analogy to a concept in databases where you can have queries and also key-value pairs.
 
-$q^{\langle 3 \rangle}$ is a question that you get to ask about `l'Afrique`. $q^{\langle 3 \rangle}$ may represent a question like, what's happening there?
+- $q^{\langle 3 \rangle}$ is a question that you get to ask about `l'Afrique`. $q^{\langle 3 \rangle}$ may represent a question like, "what's happening there?"
+- Then we compute the inner product between $q^{\langle 3 \rangle}$ and $k^{\langle 2 \rangle}$ and this is intended to tell us how good is `visite` an answer to the question and so on for the other words in the sequence. The goal of this operation is to pull up the most information that's needed to help us compute the most useful representation $A^{\langle 3 \rangle}$ up here
+- Next, we are going to compute the Softmax value for each inner product pairs.
+- Finally, we're going to take these Softmax values and multiply them with $v^{\langle i \rangle}$
+
+<mark>The key advantage of this representation is the word of `l'Afrique` isn't some fixed word embedding. Instead, it lets the self-attention mechanism realize that `l'Afrique` is the destination of other words, and thus compute a richer, more useful representation for this word</mark>.
+
+To recap, associated with each of the five words you end up with a query, a key, and a value. The query lets you ask a question about that word, such as what's happening in Africa. The key looks at all of the other words, and by the similarity to the query, helps you figure out which words gives the most relevant answer to that question. In this case, `visite` is what's happening in Africa. Then finally, the value allows the representation to plug in how `visite` should be represented within A^3, within the representation of Africa.
+
+## Multi-Head Attention
+
+$$
+\text{MultiHead}(Q, K, V) = \text{concat}(\text{head}_1, \text{head}_2, \dots, \text{head}_n) W^O
+$$
+
+$$
+\text{head}_i = \text{Attention}(W_i^Q Q, W_i^K K, W_i^V V)
+$$
+
+## The transformer architecture
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-4.png">
