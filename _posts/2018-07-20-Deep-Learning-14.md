@@ -39,6 +39,6 @@ $$
 
 In the formula, `A(q, K, V)` is the attention-based vector representation of a word. We have $q^{\langle 3 \rangle}$, $k^{\langle 3 \rangle}$ and $v^{\langle 3 \rangle}$, representing `query`, `key` and `value`. These vectors are the key inputs to computing the attention value for each word.
 
-The computation process can be described in the following diagram:
+The computation process of the word `l'Afrique` can be described in the following diagram:
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/10/trans-2.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-2.png">
