@@ -37,8 +37,18 @@ $$
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{Q K^\top}{\sqrt{d_k}}\right) V = \sum_i \frac{\exp(q \cdot k^{\langle i \rangle})}{\sum_j \exp(q \cdot k^{\langle j \rangle})} v^{\langle i \rangle}
 $$
 
-In the formula, `A(q, K, V)` is the attention-based vector representation of a word. We have $q^{\langle 3 \rangle}$, $k^{\langle 3 \rangle}$ and $v^{\langle 3 \rangle}$, representing `query`, `key` and `value`. These vectors are the key inputs to computing the attention value for each word.
+In the formula, `A(q, K, V)` is the attention-based vector representation of a word. We have $q^{\langle i \rangle}$, $k^{\langle i \rangle}$ and $v^{\langle i \rangle}$, representing `query`, `key` and `value`. These vectors are the key inputs to computing the attention value for each word.
 
-The computation process of the word `l'Afrique` can be described in the following diagram:
+The computation process of the word $A^{\langle 3 \rangle}$(`l'Afrique`) can be described in the following diagram:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-2.png">
+
+First, we're going to associate each of the words with three values called the query key and value pairs. If $X^{\langle 3 \rangle}$ is the <mark>word embedding</mark> for `l'Afrique`, the way `q`, `k`, `v` are computed as follows:
+
+$$
+q^{\langle 3 \rangle}$ = W^{Q} . x^{\langle 3 \rangle}
+k^{\langle 3 \rangle}$ = W^{K} . x^{\langle 3 \rangle}
+v^{\langle 3 \rangle}$ = W^{V} . x^{\langle 3 \rangle}
+$$
+
+These matrices, $W^{Q}$, $W^{K}$ and $W^{V}$ are parameters of this learning algorithm, and they allow you to calculate these query, key, and value vectors for each word
