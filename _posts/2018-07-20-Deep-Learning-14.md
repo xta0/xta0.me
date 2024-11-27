@@ -46,11 +46,15 @@ The computation process of the word $A^{\langle 3 \rangle}$(`l'Afrique`) can be 
 First, we're going to associate each of the words with three values called the query key and value pairs. If $X^{\langle 3 \rangle}$ is the <mark>word embedding</mark> for `l'Afrique`, the way `q`, `k`, `v` are computed as follows:
 
 $$
-q^{\langle 3 \rangle} = W^{Q} . x^{\langle 3 \rangle} \\
-k^{\langle 3 \rangle} = W^{K} . x^{\langle 3 \rangle} \\
-v^{\langle 3 \rangle} = W^{V} . x^{\langle 3 \rangle}
+\begin{aligned}
+q^{\langle 3 \rangle} &= W^{Q} \cdot x^{\langle 3 \rangle} \\
+k^{\langle 3 \rangle} &= W^{K} \cdot x^{\langle 3 \rangle} \\
+v^{\langle 3 \rangle} &= W^{V} \cdot x^{\langle 3 \rangle}
+\end{aligned}
 $$
 
 These matrices, $W^{Q}$, $W^{K}$ and $W^{V}$ are parameters of this learning algorithm, and they allow you to calculate these query, key, and value vectors for each word
 
-So what are these query key and value vectors supposed to do? They were named using a loose analogy to a concept in databases where you can have queries and also key-value pairs
+So what are these query key and value vectors supposed to do? They were named using a loose analogy to a concept in databases where you can have queries and also key-value pairs.
+
+$q^{\langle 3 \rangle}$ is a question that you get to ask about `l'Afrique`. $q^{\langle 3 \rangle}$ may represent a question like, what's happening there?
