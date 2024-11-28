@@ -79,3 +79,17 @@ $$
 ## The transformer architecture
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-4.png">
+
+## Positional Encoding
+
+To develop some intuition about positional encodings, you can think of them broadly as a feature that contains the information about the relative positions of words.
+
+$$
+PE_{(pos, 2i)}= sin\left(\frac{pos}{{10000}^{\frac{2i}{d}}}\right)
+\tag{1}
+$$
+
+$$
+PE_{(pos, 2i+1)}= cos\left(\frac{pos}{{10000}^{\frac{2i}{d}}}\right)
+\tag{2}
+$$
