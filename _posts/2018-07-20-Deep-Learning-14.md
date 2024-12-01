@@ -83,13 +83,3 @@ $$
 ## Positional Encoding
 
 To develop some intuition about positional encodings, you can think of them broadly as a feature that contains the information about the relative positions of words.
-
-$$
-PE_{(pos, 2i)}= sin\left(\frac{pos}{{10000}^{\frac{2i}{d}}}\right)
-\tag{1}
-$$
-
-$$
-PE_{(pos, 2i+1)}= cos\left(\frac{pos}{{10000}^{\frac{2i}{d}}}\right)
-\tag{2}
-$$
