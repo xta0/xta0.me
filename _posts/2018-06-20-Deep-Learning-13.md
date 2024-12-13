@@ -53,13 +53,13 @@ y = [1, 1, 0, 0, 0, 0]
 
 ## Word2Vec
 
-Word2Vec 是一种相对比较高效的 learn word emedding 的一种算法。它的大概意思，选取一个 context word，比如"orange" 和一个 target word 比如 "juice"，我们通过构建 neural network 找到将 context word 映射成 target word 的 embedding matrix。通常来说，这个 target word 是 context word 附近的一个 word，可以是 context word 向前或者向后 skip 若干个 random word 之后得到的 word。
+Word2Vec 是一种相对比较高效的 learn word embedding 的一种算法。它的大概意思，选取一个 context word，比如"orange" 和一个 target word 比如 "juice"，我们通过构建 neural network 找到将 context word 映射成 target word 的 embedding matrix。通常来说，这个 target word 是 context word 附近的一个 word，可以是 context word 向前或者向后 skip 若干个 random word 之后得到的 word。
 
 如果从 model 的角度来来说，它的 input 是一个 word，output 是它周围的一个 context word。
 
-还是假定我们的字典大小为`10,000`，每个 feature vector 的 dim 是`300`，那么 embedding 的 matrix 大小为`[10,000, 300]`，我们的输入用 word 的 1-hot vector 表示，即是一个`[1000, 1]`的稀疏向量，则我们 model 定义如下
+还是假定我们的字典大小为`10,000`，每个 feature vector 的 dim 是`300`，那么 embedding 的 matrix 大小为`[10,000, 300]`，我们的输入用 word 的 1-hot vector 表示，即是一个`[10,000, 1]`的稀疏向量，则我们 model 定义如下
 
-```
+```python
 # for each input word, predict its context words surrounding it
 class SkipGram(nn.Module):
     def __init__(self, n_vocab, n_embed):
@@ -79,7 +79,7 @@ class SkipGram(nn.Module):
 
 > [nn.Embedding](https://pytorch.org/docs/stable/generated/torch.nn.Embedding.html)
 
-## Negtive Sampling
+## Negative Sampling
 
 上面的`SkipGram`有一个性能问题是如果字典数量过大会导致 softmax 方法非常耗时。这里介绍另一种相对高效的 network，叫做 Negtive Sampling。它的大概意思是，给一组 context word 和 target word，判断他们是否是符合语义，比如
 
@@ -96,10 +96,10 @@ x2: (orange, king), y2:0
 context_embed = nn.Embedding(n_vocab, n_embed)
 target_embed = nn.Embedding(n_vocab, n_embed)
 
-P(y=1 | c,t) = sigmoid(target_embed.t() * target_embed)
+P(y=1 | c,t) = sigmoid(target_embed.t() * context_embed)
 ```
 
-当我们 train 这个 model 的时候，我们的 traning dataset 需要有 negtive example，比如
+当我们 train 这个 model 的时候，我们的 training dataset 需要有 negative examples:
 
 ```shell
 context |  word | target?
