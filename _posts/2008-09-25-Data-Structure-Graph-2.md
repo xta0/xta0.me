@@ -243,9 +243,9 @@ void TopsortbyQueue(Graph& G) {
         for (Edge e = G.FirstEdge(v); G.IsEdge(e); e = G.NextEdge(e)) {
             Vertex<int> v = G.toVertex(e);
             v.indegree--; // 相邻的顶点入度减1    
-        if (v.indegree == 0){ // 顶点入度减为0则入队
-            Q.push(v);
-        } 
+            if (v.indegree == 0){ // 顶点入度减为0则入队
+                Q.push(v);
+            } 
     }
     for (i = 0; i < G.VerticesNum(); i++){ // 判断图中是否有环
         if (G.status(V[i]) == UNVISITED) {
