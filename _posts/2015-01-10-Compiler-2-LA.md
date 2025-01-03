@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Compilers | Lexical Analysis & Finate Automata
+list_title: CS143 Compilers | Lexical Analysis & Finate Automata
 title: Lexical Analysis & Finate Automata
 mathjax: true
 categories: [Compiler]

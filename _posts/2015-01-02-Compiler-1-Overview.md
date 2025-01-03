@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Compilers | Overviwe
+list_title: CS143 Compilers | Overviwe
 title: Overview
 mathjax: true
 categories: [Compiler]
