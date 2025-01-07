@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: CS 162  | Operating and System Programming | Synchronization
+list_title: CS 162  | Operating System and System Programming | Synchronization
 title: Synchronization
 categories: [System Programming, Operating System]
 ---
