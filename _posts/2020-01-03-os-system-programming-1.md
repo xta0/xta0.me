@@ -150,9 +150,41 @@ memory
 - Address spaces encapsulate protection: “Passive” part
     – Keeps buggy program from trashing the system
 - Why have multiple threads per address space?
-    - Parallelism: take advantage of acutal hardware parallelism
+    - Parallelism: take advantage of acutal hardware parallelism (e.g. multicore)
+    - Concurrency: ease of handling I/O and other simultaneous events
+
+### Protection and Isolation
+
+- Why do need processes?
+    - Reliability: Bugs can only overwrite memory of process they are in
+    - Security and privacy: malicious or compromised process can't read or write other process' data
+- Mechanisms:
+    - Address translation: address space only contains its own data
+
+## Dual Mode Operation
+
+- Hardware provides at least two modes
+    - Kernel mode (or "supervisor" mode)
+    - User mode
+- Certain operations are prohibited when running in user mode
+    - Changing the page table pointer, disabling interrupts, interacting directly w/ hardware, writing to kernel memory
+- What is needed in the hardware to support “dual mode” operation?
+    – A bit of state (user/system mode bit)
+– Certain operations / actions only permitted in system/kernel mode
+    - » In user mode they fail or trap
+– User Kernel transition sets system mode AND saves the user PC
+» Operating system code carefully puts aside user state then performs
+the necessary operations
+– Kernel  User transition clears system mode AND restores
+appropriate user PC
+» return-from-interrupt
+
+<div class="md-flex-h md-flex-no-wrap">
+<div><img src="{{site.baseurl}}/assets/images/2020/01/os-02-06.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2020/01/os-02-07.png"></div>
+</div>
 
 
 ## Resources
 
-- [Berkeley CS162: Operating Systems and System Programming]()
+- [Berkeley CS162: Operating Systems and System Programming](https://www.youtube.com/watch?v=4FpG1DcvHzc&list=PLF2K2xZjNEf97A_uBCwEl61sdxWVP7VWC)
