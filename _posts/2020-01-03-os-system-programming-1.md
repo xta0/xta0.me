@@ -168,16 +168,9 @@ memory
     - User mode
 - Certain operations are prohibited when running in user mode
     - Changing the page table pointer, disabling interrupts, interacting directly w/ hardware, writing to kernel memory
-- What is needed in the hardware to support “dual mode” operation?
-    – A bit of state (user/system mode bit)
-– Certain operations / actions only permitted in system/kernel mode
-    - » In user mode they fail or trap
-– User Kernel transition sets system mode AND saves the user PC
-» Operating system code carefully puts aside user state then performs
-the necessary operations
-– Kernel  User transition clears system mode AND restores
-appropriate user PC
-» return-from-interrupt
+– User to Kernel transition sets system mode AND saves the user's PC (program counter)
+
+– Kernel to User transition clears system mode AND restores appropriate user PC
 
 <div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2020/01/os-02-06.png"></div>
