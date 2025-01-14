@@ -9,7 +9,6 @@ categories: [System Programming, Operating System]
 
 - Provide consistent abstractions to applications, even on different hardware
 - Manage sharing of resources amoung multiple applications
-
 - The key building blocks:
     - Processes
     - Threads, Concurrency, Scheduling, Coordination
@@ -24,12 +23,32 @@ categories: [System Programming, Operating System]
         - Infinite memory, dedicated machine
         - Higher level objects: files, users, messages
         - Masking limitations, virtualization
+- Referee
+    – Manage sharing of resources, Protection, Isolation
+        - Resource allocation, isolation, communication
 
 ### Virtualizing the Machine
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-00-01.png">
 
+- ISA
+    - Application's "machine" is the process abstraction provided by the OS
+    - Each running programing runs in its own process
+    - Processes provide nicer interfaces than raw hardware
+- Process
+    - Address Space
+    - One or more threads of control executing in that address space
+    - Additional system state associated with it
+        - Open files
+        - Open sockets (network connection)
+        - ...
+- Threads
+    – locus of control (PC)
+    – Its registers (processor state when running)
+    – And its “stack” (SP)
+        - As required by programming language runtime
 
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-00-02.png">
 
 
 
