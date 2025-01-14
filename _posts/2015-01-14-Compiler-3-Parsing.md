@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: CS143 Compilers | Parser
+list_title: CS143 Compilers | Parsing & Top-Down Parsing
 title: Parser
 mathjax: true
 categories: [Compiler]

@@ -1,16 +1,12 @@
 ---
 layout: post
-list_title: CS 162  | Operating System and System Programming | Synchronization
-title: Synchronization
+list_title: CS 162  | Operating and System Programming | IPC, Pipes and Sockets
+title: IPC, Pipes and Sockets
 categories: [System Programming, Operating System]
 ---
 
 ### Agenda
 
-- How does the OS provide concurrency through threads
-    - Brief dicussion of process/thread states and scheduling
-    - High-level discussion of how stacks contribute to concurrency
-- Introduce needs for synchronization
-- Discussion of Locks and Semaphores
-
-
+- Communication between processes and across the world looks like File I/O
+- Introduce Pipes and Sockets
+- Introduce TCP/IP Connection setup for Webserver

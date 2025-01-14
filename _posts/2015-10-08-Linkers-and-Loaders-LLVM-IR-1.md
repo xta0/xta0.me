@@ -1,6 +1,6 @@
 ---
 update: "2019-11-28"
-list_title: 链接与加载 | Linkers and Loaders | LLVM与IR (1) | LLVM IR Part 1
+list_title: Linkers and Loaders | LLVM与IR (1) | LLVM IR Part 1
 title: LLVM IR (1)
 layout: post
 mathjax: true
