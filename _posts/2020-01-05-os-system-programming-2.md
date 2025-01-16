@@ -42,7 +42,7 @@ categories: [System Programming, Operating System]
     - On the real(physical) core or
     - Saved in chunk of memory - called the <mark>Thread Control Block (TCB)</mark>
 
-### Memory Address Translation through Page Table
+### Recap: Memory Address Translation through Page Table
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-01.png">
 
