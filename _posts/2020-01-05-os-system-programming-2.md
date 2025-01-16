@@ -162,7 +162,7 @@ It's worth noting that the system call can take thousands of cycles. The OS has 
     - What happens if threads violate this?
     - How might you catch violations?
 
-### Thread Execution
+### Thread Execution and Race Condition
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-09.png">
 
@@ -170,7 +170,103 @@ It's worth noting that the system call can take thousands of cycles. The OS has 
 - Reality: Threads execute with variable "speed"
     - Programs must be designed to work with any schedule
 
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-10.png">
 
+- Non-determinism:
+    - Scheduler can run threads in <mark>any order</mark>
+    - Scheduler can switch threads <mark>at any time</mark>
+    - This can make testing very difficult
+- Independent threads
+    - No state shared with other threads
+    - Deterministic, reproducible conditions
+
+- Synchronization:
+    - Coordination among threads, usually regarding shared data
+- Mutual Exclusion:
+    - Ensuring only one thread does a particular thing at a time (one thread excludes the others)
+    - A type of synchronization
+- Critical Section: 
+    - Code exactly one thread can execute at once
+    - Result of mutual exclusion
+- Lock
+    - An object only one thread can hold at a time
+    - Provides mutual exclusion
+
+- Locks provide two <mark>atomic</mark> operations
+    - `lock.lock()` - wait until lock is free; then mark it as busy. If the lock is being hold by other threads, the current thread that tries to acquire it will be put to `sleep`.
+    - `lock.unlock()` - mark lock as free
+        - should only be called by a thread that currently holds the lock
+- Semaphore:
+    - A kind of <mark>generalized lock</mark>
+    - First defined by Dijkstra in late 60s
+    - Main synchronization primitive used in original UNIX
+    - A Semaphore has a non-negative integer value and supports the following two operations:
+        - `P() or down()`: atomic operation that waits for semaphore to become positive, then decrements it by 1
+        - `V() or up()`: an atomic operation that increments the semaphore by 1, waiting up a waiting `P`, if any
+
+
+## Processes
+
+- How to manage process state?
+    - How to create a process?
+    - How to exit from a process?
+
+- If processes are created by other processes, how does the first process start?
+    - First process is started by the kernel
+        - Often configured as an argument to the kernel before the kernel boots
+        - Often called the `"init"` process
+    - After this, all processes on the system are created by other processes
+
+### POSIX Signals
+
+Every process react to a bunch of signals
+
+- `exit` - terminate a process
+    - The `exist(0)` function
+- `fork` - copy the current process
+     - State of the original process duplicated in the child process
+        - Address Space (memory), File descriptors, etc,...
+- `exec` - change the program being run by the current process
+- `wait` - wait for a process to finish
+- `kill` - send a signal (interrupt-like notification) to another process
+- `sigactions` - set handlers for signals
+
+### Fork
+
+- `pid_t fork()` - copy the current process
+    - new process has different pid
+    - new process contains a single thread
+- Return value from `fork()`
+    - when `>0`:
+        - running in parent process
+        - return value is pid of new child process
+    - when `=0`:
+         - running in new <mark>child process</mark>
+    - when `<0`:
+        - Error, must handle
+        - Running in the original process
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-11.png">
+
+After `fork()` is called. The code after that will be executed by two processes at the same time - parent and child. This is because child inherits all the information from the parent, including the executing context of the current thread that is calling the `fork()`. Depending on the return value (`cpid`), we know if the current process is parent or child. 
+
+If we want the child process to execute something different, we can use the `exec`function
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-12.png">
+
+In this case, the child process will immediately execute `ls -al` once it's created.
+
+### Process Management
+
+## Summary
+
+- Threads are the OS unit concurrency
+     - Abstraction of a virtual CPU core
+     - Can use `pthread_create`, etc, to manage threads within a process
+     - They share data -> needs synchronization to avoid data races
+- Processes consist of one or more threads in an address space
+    - Abstraction of the machine: execution environment for a program
+    - Can use `fork, exec`, etc to manage threads within a process
 
 
 ## Resources
