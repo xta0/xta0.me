@@ -117,13 +117,23 @@ int pthread_join(pthread_t thread, void **value_ptr);
 
 What happens when `pthread_create(...)` is called in a process?
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-04.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-05.png">
 
 `pthread_create` is just a C function that has special assembly code in it. The assembly code helps set up the registers in a way the kernel is going to recognize. And then it executes a special `trap` instruction, which is a way to jump into the kernel (think of it as an error). This will let us transition out of user mode into kernel mode due to the exception (`trap`).
 
 Once we jump into the kernel, the kernel knows that this is the system call for creating a thread. It then gets the arguments, does the creation of the thread and returns the pointer (there is a special register to store return value).
 
 Now we are back to the user mode. We grab the return value from the registers and do the rest of the work. This `pthread_create` function is not a normal function. It wraps the system call internally, but from users perspective, it just looks like a library C function.
+
+It's worth noting that the system call can take thousands of cycles. The OS has to store a bunch of registers when going to the kernel and come out again. The translation from user mode to kernel mode is not cheap.
+
+### fork join
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-06.png">
+
+- Main thread creates(forks) collection of sub-threads passing them args to work on
+- ... and then joins with them, collection results
+
 
 
 ## Resources
