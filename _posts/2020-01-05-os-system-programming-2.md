@@ -77,9 +77,53 @@ A thread is in one of the following three states:
 - `READY` - eligible to run, but not currently running
 - `BLOCKED` - ineligible to run
 
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-02.png">
+
 If a thread is waiting for an I/O to finish, the OS marks it as `BLOCKED`. Once the I/O finally finishes, the OS marks it as `READY`.
 
+The OS(scheduler) maintains a ready queue for context switching. If there are no threads perform I/O, threads are put into the ready queue for execution:
 
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-03.png">
+
+If there is a thread performing a blocking I/O operation, the schedule will put that thread into a wait queue associated with I/O, once it finishes, the scheduler will move it back to the wait queue.
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-04.png">
+
+The blue thread in the above picture runs without interruption because the pink thread is doing the I/O operation and is removed from the READY queue, so there is no context switching during that time.
+
+### `pthreads`
+
+```c
+int pthread_create(
+    pthread_t* tidp,
+    const pthread_attr_t* attr,
+    void *(*start_routine)(void *), 
+    void * arg);
+```
+- thread is created executing `start_routine` with `arg` as its sole argument
+- return is implicit call to `pthread_exit`
+
+```c
+void pthread_exit(void *value_ptr);
+```
+- terminates the thread and makes `value_ptr` available to any successful join
+
+```c
+int pthread_join(pthread_t thread, void **value_ptr);
+```
+- Suspends execution of the calling thread until the target `thread` terminates
+- On return with a non-NULL `value_ptr` the value passed to `pthread_exist()` by the terminating thread is made available in the location referenced by `value_ptr`.
+
+
+What happens when `pthread_create(...)` is called in a process?
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-04.png">
+
+`pthread_create` is just a C function that has special assembly code in it. The assembly code helps set up the registers in a way the kernel is going to recognize. And then it executes a special `trap` instruction, which is a way to jump into the kernel (think of it as an error). This will let us transition out of user mode into kernel mode due to the exception (`trap`).
+
+Once we jump into the kernel, the kernel knows that this is the system call for creating a thread. It then gets the arguments, does the creation of the thread and returns the pointer (there is a special register to store return value).
+
+Now we are back to the user mode. We grab the return value from the registers and do the rest of the work. This `pthread_create` function is not a normal function. It wraps the system call internally, but from users perspective, it just looks like a library C function.
 
 
 ## Resources
