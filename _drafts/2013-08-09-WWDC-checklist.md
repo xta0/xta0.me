@@ -8,7 +8,7 @@ tag: WWDC
 
 ## 2010
 
-| Session  | Title  | Viewed | Notes |
+| Session  | Title  | Viewed | 
 |:---------|:------:| ------:| -----:|
 | 424 | Core Animation in practice part1 | YES | 
 | 425 | Core Animation in practice part2 | YES | 

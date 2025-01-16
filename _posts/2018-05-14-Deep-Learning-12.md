@@ -1,5 +1,5 @@
 ---
-list_title: Notes |  Deep Learning | Recurrent Neural Network
+list_title:   Deep Learning | Recurrent Neural Network
 title: Recurrent Neural Network
 layout: post
 mathjax: true

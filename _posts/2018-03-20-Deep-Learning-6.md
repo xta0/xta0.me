@@ -1,5 +1,5 @@
 ---
-list_title: Notes |  Deep Learning | Convolutional Neural Networks
+list_title:   Deep Learning | Convolutional Neural Networks
 title: Convolutional Neural Networks
 layout: post
 mathjax: true

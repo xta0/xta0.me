@@ -1,5 +1,5 @@
 ---
-list_title: Notes |  Deep Learning | Word Embeddings
+list_title:   Deep Learning | Word Embeddings
 title: NLP and Word Embeddings
 layout: post
 mathjax: true

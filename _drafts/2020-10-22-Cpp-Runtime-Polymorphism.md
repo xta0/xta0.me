@@ -1,5 +1,5 @@
 ---
-list_title: Notes | C++ Runtime Polymorphism
+list_title:  C++ Runtime Polymorphism
 title: C++ Runtime Polymorphism
 layout: post
 categories: ["C++"]

@@ -1,5 +1,5 @@
 ---
-list_title: Notes |  Deep Learning | Optimization Algorithms
+list_title:   Deep Learning | Optimization Algorithms
 title: Optimization Algorithms
 layout: post
 mathjax: true

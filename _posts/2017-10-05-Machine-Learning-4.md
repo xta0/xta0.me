@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 机器学习 | Machine Learning | 神经网络 | Neural Networks
+list_title:  Machine Learning | 神经网络 | Neural Networks
 title: 神经网络
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter4
 categories: [Machine Learning,AI]

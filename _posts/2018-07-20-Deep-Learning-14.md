@@ -1,5 +1,5 @@
 ---
-list_title: Notes |  Deep Learning | The Transformer Architecture
+list_title:   Deep Learning | The Transformer Architecture
 title: The Transformer Architecture
 layout: post
 mathjax: true

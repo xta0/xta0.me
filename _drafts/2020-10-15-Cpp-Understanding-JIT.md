@@ -1,5 +1,5 @@
 ---
-list_title: Notes | CppCon 2020 | JIT compilation
+list_title:  CppCon 2020 | JIT compilation
 title: JIT compilation
 layout: post
 categories: ["C++"]

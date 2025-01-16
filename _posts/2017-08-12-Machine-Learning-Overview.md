@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 机器学习 | Machine Learning | 概述 | Overview
+list_title:  Machine Learning | 概述 | Overview
 title: Machine Learning Overview
 categories: [Machine Learning,AI]
 mathjax: true

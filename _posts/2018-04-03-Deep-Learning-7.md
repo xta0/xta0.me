@@ -1,5 +1,5 @@
 ---
-list_title: Notes |  Deep Learning | Classic CNN Models
+list_title:   Deep Learning | Classic CNN Models
 title: 几种常见的CNN模型
 layout: post
 mathjax: true

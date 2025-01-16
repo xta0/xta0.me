@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 机器学习 | Machine Learning | 非监督学习 | Unsupervised Learning
+list_title:  Machine Learning | 非监督学习 | Unsupervised Learning
 title: 非监督学习 
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter7
 categories: [Machine Learning,AI]

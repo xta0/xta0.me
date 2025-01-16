@@ -48,7 +48,14 @@ categories: [System Programming, Operating System]
 
 Note that the translation map guarantees that each process maps their address spaces to different locations in the physical memory, preventing one process accessing the memory from the other process.
 
-## Threads
+### Motivation for Threads
+
+- Operating System must handle multiple things at once (`MTAO`)
+ - Processes, interrupts, background system maintenance
+- Networked servers must handle MTAO
+    - Multiple connections handled simultaneously
+- Parallel programs must handle MTAO
+    - To achieve better performance
 
 
 

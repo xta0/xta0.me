@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 机器学习 | Machine Learning | Python工具 | Python Stack For ML
+list_title:  Machine Learning | Python工具 | Python Stack For ML
 title: Python Stack For ML
 categories: [Python, Machine Learning]
 mathjax: true

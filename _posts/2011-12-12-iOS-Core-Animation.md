@@ -1,5 +1,5 @@
 ---
-list_title: iOS Core Animation Note | From WWDC 2010
+list_title: iOS Core Animation  From WWDC 2010
 title: iOS Core Animation | From WWDC 2010
 categories: [iOS]
 layout: post

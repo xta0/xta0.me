@@ -1,5 +1,5 @@
 ---
-list_title: Paper Notes | Machine Learning at Facebook - Understanding Inference at the Edge
+list_title: Paper  Machine Learning at Facebook - Understanding Inference at the Edge
 title: Machine Learning at Facebook - Understanding Inference at the Edge
 layout: post
 mathjax: true

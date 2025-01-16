@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 机器学习 | Machine Learning | 大数据学习 | Learning With Large Datasets
+list_title:  Machine Learning | 大数据学习 | Learning With Large Datasets
 title: Learning With Large Datasets
 meta: Coursera Stanford Machine Learning Cousre Note, Chapter9
 categories: [Machine Learning,AI]

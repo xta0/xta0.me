@@ -1,5 +1,5 @@
 ---
-list_title: Notes |  Deep Learning | Neural Style Transfer
+list_title:   Deep Learning | Neural Style Transfer
 title: Neural Style Transfer
 layout: post
 mathjax: true
