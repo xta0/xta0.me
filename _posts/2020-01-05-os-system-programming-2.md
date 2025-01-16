@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: CS162 | Operating System and System Programming | Thread and Processes
+list_title: CS162 | Operating System | Thread and Processes
 title: Thread and Processes
 categories: [System Programming, Operating System]
 ---
@@ -56,6 +56,29 @@ Note that the translation map guarantees that each process maps their address sp
     - Multiple connections handled simultaneously
 - Parallel programs must handle MTAO
     - To achieve better performance
+- Programs with user interface often must handle MTAO
+    - To achieve user responsiveness while doing computation
+- Network and disk bound programs must handle MTAO
+    - To hide network/disk latency
+    - Sequence steps in access or communication
+
+### Concurrency is not Parallelism
+
+- Concurrency is about handling multiple things at once
+- Parallelism is about doing multiple things simultaneously (usually with multiple CPU cores)
+- Two threads on a single-core system
+    - execute concurrently, but not in parallel
+
+### Threads Mask I/O Latency
+
+A thread is in one of the following three states:
+
+- `RUNNING`
+- `READY` - eligible to run, but not currently running
+- `BLOCKED` - ineligible to run
+
+If a thread is waiting for an I/O to finish, the OS marks it as `BLOCKED`. Once the I/O finally finishes, the OS marks it as `READY`.
+
 
 
 

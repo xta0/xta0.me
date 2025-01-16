@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: CS162 | Operating and System Programming | Synchronization
+list_title: CS162 | Operating System | Synchronization
 title: Synchronization
 categories: [System Programming, Operating System]
 ---

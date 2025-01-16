@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: CS 162  | Operating and System Programming | Introduction
+list_title: CS162 | Operating System | Introduction
 title: Introduction
 categories: [System Programming, Operating System]
 ---

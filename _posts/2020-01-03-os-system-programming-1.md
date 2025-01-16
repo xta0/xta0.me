@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: CS162 | Operating System and System Programming | Four Fundamental OS Concepts
+list_title: CS162 | Operating System | Four Fundamental OS Concepts
 title: Four Fundamental OS Concepts
 categories: [System Programming, Operating System]
 ---
