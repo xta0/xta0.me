@@ -7,7 +7,7 @@ categories: ["Swift", "Compiler", "iOS", "Apple"]
 
 ## Swift only static Libraries
 
-Let's start off by creating a Swift static library without using Xcode:
+Let's start off by compiling a simple Swift module without using Xcode:
 
 ```shell
 xcrun swiftc
@@ -41,7 +41,7 @@ In addition to producing the Swift module file, the `-emit-module` flag also gen
 ├── MyLogger.swiftsourceinfo
 ```
 
-Now we have the static library file and the swiftmodule file at our disposal, it's time to add those files to our Xcode project and test our library. However, before running the test, there's an additional step we need to do to make Xcode locate the library and our Swift module file:
+Now we have the static library file and the swiftmodule file at our disposal, it's time to add those files to our Xcode project and test our library. However, before running our tests, there's an additional step we need to do to let Xcode locate the static library as well as our Swift module files:
 
 1. Making sure the **Library Search Paths** contain the path to `MyLogger.a`
 2. Adding the `MyLogger.swiftmodule` path to the **Import Paths** under **Swift Compiler - Search Paths** settings
@@ -84,7 +84,7 @@ swift-driver version: 1.82.2 Apple Swift version 5.9 (swiftlang-5.9.0.114.10 cla
 Target: arm64-apple-macosx13.0
 ```
 
-The solution to this problem is to use XCFramework which contains Swift module interface files as discussed in the previous article. We will talk more about how to build a XCFramework in the last section. For now, let's continue to explore some other scenarios where a Swift module imports an Objective-C module and vice versa.
+The solution to this problem is to use `XCFramework` which contains Swift module interface files as discussed in the previous article. We will discuss more about `XCFramework` in the last section. For now, let's continue to explore some other scenarios where a Swift module imports an Objective-C module and vice versa.
 
 ## Import Objective-C modules into Swift
 
@@ -159,7 +159,7 @@ Undefined symbol: _OBJC_CLASS_$_MyLoggerInternal
 The issue here is that the static library doesn't contain any symbols from the `MyLoggerInternal` module. We will resolve this error later. Now let's revisit our module map definition. As the name suggests, `MyLoggerInternal` is a module private to `MyLogger`. It is implementation details that shouldn't be exposed externally. Therefore, this module shouldn't show up in the module map.
 
 
-To workaround this, we can use [an undocumented feature](https://forums.swift.org/t/update-on-implementation-only-imports/26996) called `@_implementationOnly`. This means we are ensuring that the imported module can only be used for the implementation of our module, not as part of the module's API.
+To workaround this, we can use [an undocumented feature](https://forums.swift.org/t/update-on-implementation-only-imports/26996) called `@_implementationOnly`. This means we are ensuring that the imported module can only be used for the implementation of our module, not as part of the module's public APIs.
 
 
 ```swift
@@ -187,7 +187,7 @@ Finally, let's resolve the linking error. When we created the static library, it
 libtool -static -arch_only arm64 ./MyLogger.o ./MyLoggerInternal.o -o libMyLogger.a
 ```
 
-Now replacing the old `libMyLogger.a` with the new one. Everything should now work seamlessly! To recap, when distributing a static library without using a `.xcframework`` format, we need
+Now replacing the old `libMyLogger.a` with the new one. Everything should now work seamlessly! To recap, when distributing a static library without using XCFramework, we need
 
 1. A swift module file
 2. A static library file

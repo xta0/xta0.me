@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: CS 162  | Operating System and System Programming | Four Fundamental OS Concepts
+list_title: CS162 | Operating System and System Programming | Four Fundamental OS Concepts
 title: Four Fundamental OS Concepts
 categories: [System Programming, Operating System]
 ---
@@ -12,7 +12,7 @@ categories: [System Programming, Operating System]
     - Program Counter, Registers, Execution Flags, Stack
 - Address space (with or w/o translation)
     - Set of memory addresses accessible to program(for read or write)
-    - May be distince from memory sapce of the physical machine (in which case programs operate in a virtual address space)
+    - May be distance from memory space of the physical machine (in which case programs operate in a virtual address space)
 - Process: an instance of a running program
     - Protected Address Space + One or more threads
 - Dual mode operation / protection
@@ -23,18 +23,17 @@ categories: [System Programming, Operating System]
 
 - Thread: A single unique execution context
     - Program Counter, Registers, Execution Flags, Stack, Memory State
-- A thread is <mark>exexcuting</mark> on a processor(core) when it is <mark>resident in the processor registers
+- A thread is <mark>executing</mark> on a processor(core) when it is <mark>resident in the processor registers
 - Resident means: Registers hold the root state (context) of the thread:
     - Including program counter (PC), register & currently executing instruction
         - PC points at the next instruction in the memory
-        - instructures are stored in the memory
+        - instructions are stored in the memory
     - Including intermediate values for ongoing computations
-        - Can include acutal values or pointers to values <mark>in memory</mark>
+        - Can include actual values or pointers to values <mark>in memory</mark>
     - Stack pointer holds the address of the top of stack (which is in memory)
     - The rest is in memory
-- A thread is <mark>suspended</mark>(not running) when its state <mark>is not</mark> loaded into the processor
-    - Processor state pointing at some other thread
-    - Program counter register is not pointing at the next instructure from this thread
+- A thread is <mark>suspended</mark>(not running) when its state <mark>is not</mark> loaded into the processor state pointing at some other thread
+    - Program counter register is not pointing at the next instruction from this thread
     - Often: a copy of the last value for each register stored in memory
 
 ### What happens during program execution
@@ -45,7 +44,7 @@ Execution sequence:
 – Fetch Instruction at PC
 – Decode
 – Execute (possibly using registers)
-– Write results to registers/mem
+– Write results to registers/memory
 – PC = Next Instruction(PC)
 – Repeat
 
@@ -84,7 +83,7 @@ The order of a few microseconds. If the switching time is too long or too freque
 
 - There is a centralized cache (TCB) per core to store the thread context. The cache itself is typically in a physical space.
 - Thread Control Block (TCB)
-    - Holds contents of regiters when thread not running
+    - Holds contents of registers when thread not running
 - Where are TCBs stored?
     - For now, in the kernel
     
@@ -92,13 +91,13 @@ The order of a few microseconds. If the switching time is too long or too freque
 
 The set of accessible addresses + state associated with them
 
-- For 32-bit processor: 2^32 = 4 billion addresses
-- For 64-bit processor: 2^64 quardrillion addresses
+- For 32-bit processor: `2^32 = 4 billion` addresses
+- For 64-bit processor: `2^64 quadrillion` addresses
 
 What happens when you read or write to an address?
 - Perhaps acts like regular memory
 - Perhaps ignores writes
-- Perhaps causes I/O opertion (memory-mapped I/O)
+- Perhaps causes I/O operation (memory-mapped I/O)
 - Perhaps causes exception (fault)
 - Communicates with another program
 - ...
@@ -139,7 +138,7 @@ memory
     - Protected applications from each other
     - OS protected from them
     - Processes provides memory protection
-- Fundamental tradeoff between protection and efficiency
+- Fundamental trade off between protection and efficiency
     - Communication easier within a process
     - Communication harder between processes
 
@@ -150,7 +149,7 @@ memory
 - Address spaces encapsulate protection: “Passive” part
     – Keeps buggy program from trashing the system
 - Why have multiple threads per address space?
-    - Parallelism: take advantage of acutal hardware parallelism (e.g. multicore)
+    - Parallelism: take advantage of actual hardware parallelism (e.g. multicore)
     - Concurrency: ease of handling I/O and other simultaneous events
 
 ### Protection and Isolation
@@ -163,21 +162,30 @@ memory
 
 ## Dual Mode Operation
 
-- Hardware provides at least two modes
-    - Kernel mode (or "supervisor" mode)
-    - User mode
-- Certain operations are prohibited when running in user mode
-    - Changing the page table pointer, disabling interrupts, interacting directly w/ hardware, writing to kernel memory
-– User to Kernel transition sets system mode AND saves the user's PC (program counter)
-
-– Kernel to User transition clears system mode AND restores appropriate user PC
-
 <div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2020/01/os-02-06.png"></div>
 <div><img src="{{site.baseurl}}/assets/images/2020/01/os-02-07.png"></div>
 </div>
 
+- Hardware provides at least two modes
+    - Kernel mode (or "supervisor" mode)
+    - User mode
+- Processes execute in <mark>user mode</mark>
+    - To perform privileged actions, processes request services from the OS kernel
+    - Carefully controlled transition from user to kernel mode
+- Kernel executes in <mark>kernel mode</mark>
+    - Performs privileged actions to support running processes
+    - ...and configures hardware to properly protect them (e.g., address translation)
+- Certain operations are prohibited when running in user mode
+    - Changing the page table pointer, disabling interrupts, interacting directly w/ hardware, writing to kernel memory
+- Carefully controlled transitions between user mode and kernel mode
+    - System calls, interrupts, exceptions
+    - User to Kernel transition sets system mode AND saves the user's PC (program counter)
+    - Kernel to User transition clears system mode AND restores appropriate user PC
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-02-08.png">
 
 ## Resources
 
 - [Berkeley CS162: Operating Systems and System Programming](https://www.youtube.com/watch?v=4FpG1DcvHzc&list=PLF2K2xZjNEf97A_uBCwEl61sdxWVP7VWC)
+- [slides](https://sharif.edu/~kharrazi/courses/40424-012/)
