@@ -48,6 +48,8 @@ categories: [System Programming, Operating System]
 
 Note that the translation map guarantees that each process maps their address spaces to different locations in the physical memory, preventing one process accessing the memory from the other process.
 
+## Threads
+
 ### Motivation for Threads
 
 - Operating System must handle multiple things at once (`MTAO`)
@@ -133,6 +135,41 @@ It's worth noting that the system call can take thousands of cycles. The OS has 
 
 - Main thread creates(forks) collection of sub-threads passing them args to work on
 - ... and then joins with them, collection results
+
+## Thread states
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-07.png">
+
+- State shared by all threads in process/address space
+    - Content of memory (global variables, heap)
+    - I/O state(file descriptors, network connections, etc)
+- State "private" to each thread
+    - Kept in TCB (Thread Control Block)
+    - CPU registers(including, program counter)
+    - Execution stack
+        - Parameters, temporary vars
+        - Return PCs are kept while called procedures are executing
+
+### Execution Stacks
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-08.png">
+
+- Two sets of CPU registers
+- Two sets of stacks
+- Issues:
+    - How do we position stacks relative to each other?
+    - What maximum size should we choose for the stacks?
+    - What happens if threads violate this?
+    - How might you catch violations?
+
+### Thread Execution
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-09.png">
+
+- Illusion: Infinite number of processors
+- Reality: Threads execute with variable "speed"
+    - Programs must be designed to work with any schedule
+
 
 
 
