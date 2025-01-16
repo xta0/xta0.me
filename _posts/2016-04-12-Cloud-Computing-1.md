@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 笔记 | 云计算 | Clouds Computing | Concepts Part 1 | 
+list_title: Notes |  云计算 | Clouds Computing | Concepts Part 1 | 
 title: 云计算概述
 categories: [Notes, Cloud Compute]
 ---

@@ -1,5 +1,5 @@
 ---
-list_title: 笔记 | 深度学习 | Regularization
+list_title: Notes |  Deep Learning | Regularization
 title: Hperparameters | Regularization
 layout: post
 mathjax: true

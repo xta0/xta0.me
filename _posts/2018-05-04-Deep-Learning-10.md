@@ -1,5 +1,5 @@
 ---
-list_title: 笔记 | 深度学习 | Semantic Segmentation
+list_title: Notes |  Deep Learning | Semantic Segmentation
 title: Semantic Segmentation
 layout: post
 mathjax: true

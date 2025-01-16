@@ -1,5 +1,5 @@
 ---
-list_title: 笔记 | 深度学习 | Object Detection - Mask R-CNN 
+list_title: Notes |  Deep Learning | Object Detection - Mask R-CNN 
 title: Object Detection - Mask R-CNN 
 layout: post
 mathjax: true

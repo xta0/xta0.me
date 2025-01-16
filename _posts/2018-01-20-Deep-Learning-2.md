@@ -1,5 +1,5 @@
 ---
-list_title: 笔记 | 深度学习 | Shallow Neural Networks
+list_title: Notes |  Deep Learning | Shallow Neural Networks
 title: Shallow Neural Networks
 layout: post
 mathjax: true

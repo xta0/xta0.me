@@ -1,5 +1,5 @@
 ---
-list_title: 笔记 | 深度学习 | Neural Style Transfer
+list_title: Notes |  Deep Learning | Neural Style Transfer
 title: Neural Style Transfer
 layout: post
 mathjax: true

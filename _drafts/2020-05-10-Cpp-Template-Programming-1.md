@@ -1,5 +1,5 @@
 ---
-list_title: 笔记 | C++ Template Programming Part 1
+list_title: Notes |  C++ Template Programming Part 1
 title: C++ Template Programming
 layout: post
 mathjax: true

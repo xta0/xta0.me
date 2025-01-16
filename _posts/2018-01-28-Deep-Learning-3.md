@@ -1,5 +1,5 @@
 ---
-list_title: 笔记 | 深度学习 | Deep Neural Networks
+list_title: Notes |  Deep Learning | Deep Neural Networks
 title: Deep Neural Networks
 layout: post
 mathjax: true

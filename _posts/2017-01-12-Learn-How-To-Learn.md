@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: 笔记 | 如何高效学习 | Learn How to Learn
+list_title: Notes |  如何高效学习 | Learn How to Learn
 title: 如何高效学习[笔记]
 categories: [Learning, Note]
 ---

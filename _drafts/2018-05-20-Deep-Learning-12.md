@@ -1,5 +1,5 @@
 ---
-list_title: 深度学习 | RNN | Sequence Model
+list_title: Deep Learning | RNN | Sequence Model
 title: RNN and Sequence Model
 layout: post
 mathjax: true

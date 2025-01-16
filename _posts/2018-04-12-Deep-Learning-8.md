@@ -1,5 +1,5 @@
 ---
-list_title: 笔记 | 深度学习 | Object Detection - YOLO
+list_title: Notes |  Deep Learning | Object Detection - YOLO
 title: Object Detection - YOLO
 layout: post
 mathjax: true

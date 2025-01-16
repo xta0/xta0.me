@@ -1,5 +1,5 @@
 ---
-list_title: 笔记 | 深度学习 | Logistic Regression as a Neural Network 
+list_title: Notes |  Deep Learning | Logistic Regression as a Neural Network 
 title: Logistic Regression as a Neural Network
 layout: post
 mathjax: true
