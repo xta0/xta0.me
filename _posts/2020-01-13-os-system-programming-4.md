@@ -13,6 +13,13 @@ categories: [System Programming, Operating System]
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-05-01.png">
 
+### A web server
+
+We are going to use a web server as an example to illustrate the communication between processes
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-05-02.png">
+
+
 
 ## Resources
 
