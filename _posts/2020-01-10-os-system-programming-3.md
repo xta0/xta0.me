@@ -312,7 +312,6 @@ An internal Data Structure describing everything about the file, such as
 - How to access it
 
 The two most important things are
-
 - where to find the file data on disk
 - The current position within the file
 
@@ -325,15 +324,17 @@ The two most important things are
 - Next, after we open the file, we execute `read(3, buf, 100)` and the return value is `100`. The `position` in the screenshot above will become `100`. 
 - Finally, after `close(3)`. The file descriptor(`3`) is removed from the table.
 
+### `fork()`
+
 What if we don't call `close(3)`, and instead, we call `fork()`
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-04-12.png">
 
-We have forked a child process (`#2`). Now the File Descriptors table got duplicated. Both parent and the child processes point to the same open file description, meaning either of them can read the file.
+- We have forked a child process (`#2`). Now the File Descriptors table got duplicated. Both parent and the child processes point to the same open file description, meaning either of them can read the file.
+- Next, if the parent process read `100` bytes, the `position` in the open file description will become `200`. Now, if the child process read `100` bytes, since the open file description is shared, the `position` will become `300`.
+- Finally, if the parent process execute `close(0)`, it'll remove itself from the table, but the child process still holds a reference to the open file description, so the file won't be closed.
 
-If the parent process read `100` bytes, the `position` in the open file description will become `200`. Now, if the child process read `100` bytes, since the open file description is shared, the `position` will become `300`.
-
-Now, if the parent process execute `close(0)`, it'll remove itself from the table, but the child process still holds a reference to the open file description, so the file won't be closed.
+### `dup and dup2`
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-04-13.png">
 
