@@ -275,7 +275,7 @@ This outputs "Beginning of line" 10 seconds earlier than `and end of line`. Ther
 
 ###  Why Buffering in Userspace?
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-04-07.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-04-08.png">
 
 - Avoid <mark>system call overhead</mark>
     - Time to copy registers, transition to kernel mode, jump to system call handler, etc.
@@ -292,3 +292,54 @@ This outputs "Beginning of line" 10 seconds earlier than `and end of line`. Ther
     - Example: No "read until new line" operation
         - Solution: Make a big read syscall, find first new line in userspace
 
+## State Maintained by the kernel
+
+When `open()` is successfully called, a file descriptor is created in the kernel. For each process, <mark>the kernel maintains a mapping from file descriptor to open file description.</mark>
+
+On future system calls (e.g., `read()`), kernel looks up the <mark>open file description</mark> using the <mark>file descriptor</mark> and uses it to service the system call
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-04-09.png">
+
+So what does an Open File Description look like?
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-04-10.png">
+
+An internal Data Structure describing everything about the file, such as 
+
+- where it resides
+- its status
+- file descriptor number
+- How to access it
+
+The two most important things are
+
+- where to find the file data on disk
+- The current position within the file
+
+## Abstract Representation of a Process
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-04-11.png">
+
+- Suppose that we are executing `open("foo.txt")`, and the return value is `3`.
+    - In the kernel space, we have this file descriptor table that maps a file descriptor (`3` in this example) to an open file description.
+- Next, after we open the file, we execute `read(3, buf, 100)` and the return value is `100`. The `position` in the screenshot above will become `100`. 
+- Finally, after `close(3)`. The file descriptor(`3`) is removed from the table.
+
+What if we don't call `close(3)`, and instead, we call `fork()`
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-04-12.png">
+
+We have forked a child process (`#2`). Now the File Descriptors table got duplicated. Both parent and the child processes point to the same open file description, meaning either of them can read the file.
+
+If the parent process read `100` bytes, the `position` in the open file description will become `200`. Now, if the child process read `100` bytes, since the open file description is shared, the `position` will become `300`.
+
+Now, if the parent process execute `close(0)`, it'll remove itself from the table, but the child process still holds a reference to the open file description, so the file won't be closed.
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-04-13.png">
+
+The `dup` and `dup2` functions let you duplicated file descriptors. For example, `dup(3)` will create a new file descriptor `4` from `3` that points to the same open file description. `dup2(3, 162)`let you specific a file descriptor(`162`) when duplicating the original file descriptor(`3`).
+
+## Resources
+
+- [Berkeley CS162: Operating Systems and System Programming](https://www.youtube.com/watch?v=4FpG1DcvHzc&list=PLF2K2xZjNEf97A_uBCwEl61sdxWVP7VWC)
+- [slides](https://sharif.edu/~kharrazi/courses/40424-012/)

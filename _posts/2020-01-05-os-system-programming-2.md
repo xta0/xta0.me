@@ -278,13 +278,18 @@ Every process react to a bunch of signals
 
 After `fork()` is called. The code after that will be executed by two processes at the same time - parent and child. This is because child inherits all the information from the parent, including the executing context of the current thread that is calling the `fork()`. Depending on the return value (`cpid`), we know if the current process is parent or child. In the above example, the red arrow points to the parent process. The green arrow points to the child process.
 
+Don't call `fork()` in a multithreaded process. The other threads(the ones that didn't call `fork()`) just vanish.
+- What if one of these threads was holding a lock
+- What if one of these threads was in the middle of modifying a data structure
+- No cleanup happens!
+
 ### `exec`
 
 If we want the child process to execute something different, we can use the `exec`function
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-12.png">
 
-In this case, the child process will immediately execute `ls -al` once it's created.
+In this case, the child process will immediately execute `ls -al` once it's created. It is safe to call `exec()` in the child process. It just replaces the entire address space.
 
 ### `wait`
 
