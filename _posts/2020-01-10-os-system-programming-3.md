@@ -74,4 +74,43 @@ The `STDIN / STDOUT` enables composition in UNIX. All can be redirected, for ins
 cat hello.txt | grep "World"
 ```
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-04-04.png">
+- A file copy example:
+
+```c
+#include <stdio.h>
+
+#define BUFFER_SIZE = 1024
+
+int main(void) {
+    FILE* input = fopen("input.txt", "r");
+    FILE* output = fopen("output.txt", "w");
+    char buffer[BUFFER_SIZE];
+    size_t length;
+    // read the whole file and store the length
+    length = fread(buffer, BUFFER_SIZE, sizeof(char), input);
+    while(length > 0) {
+        fwrite(buffer, length, sizeof(char), output);
+        // update the length, util reaching the end of the file
+        length = fread(buffer, BUFFER_SIZE, sizeof(char), intput);
+    }
+    fclose(input);
+    fclose(output);
+    return 0;
+}
+```
+
+- C API for positioning the file pointer:
+
+```c
+int fseek(FILE* stream, long int offset, int whence);
+long int ftell(FILE* stream);
+void rewind(FILE* stream);
+```
+
+For `fseek()` the offset is interpreted based on the `whence` argument:
+
+- `SEEK_SET`: Then `offset` interpreted from beginning (position 0)
+- `SEEK_END`: Then `offset` interpreted backwards from end of file 
+- `SEEK_CUR`: Then `offset` interpreted from the current position
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-04-05.png">
