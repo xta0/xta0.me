@@ -46,7 +46,7 @@ categories: [System Programming, Operating System]
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-01.png">
 
-Note that the translation map guarantees that each process maps their address spaces to different locations in the physical memory, preventing one process accessing the memory from the other process.
+Note that the translation map guarantees that each process maps their address spaces to different locations in the physical memory, <mark>preventing one process accessing the memory from the other process</mark>.
 
 ## Threads
 
@@ -204,6 +204,36 @@ It's worth noting that the system call can take thousands of cycles. The OS has 
         - `P() or down()`: atomic operation that waits for semaphore to become positive, then decrements it by 1
         - `V() or up()`: an atomic operation that increments the semaphore by 1, waiting up a waiting `P`, if any
 
+### Two patterns of using Semaphores
+
+ - mutual exclusion(like lock), also called a "binary semaphore" or "mutex"
+
+ ```c    
+    // the initial value of semaphore = 1;
+
+    // all the subsequence threads that try to access the code (decrement the semaphore)
+    // will be put at `sleep()`
+    semaphore.down();
+    // critical section goes here
+    semaphore.up();
+```
+
+- Signaling other threads, e.g. ThreadJoin
+
+```c
+    // the initial value of semaphore = 0;
+
+    // in the main thread
+    ThreadJoin {
+        semaphore.down(); // <----
+    }                     //      |
+                          //      |  
+    // in another thread  //      |
+    ThreadFinish {        //      |
+        semaphore.up();   //-------
+    }
+```
+
 
 ## Processes
 
@@ -217,7 +247,7 @@ It's worth noting that the system call can take thousands of cycles. The OS has 
         - Often called the `"init"` process
     - After this, all processes on the system are created by other processes
 
-### POSIX Signals
+### Kernel APIs
 
 Every process react to a bunch of signals
 
@@ -228,10 +258,8 @@ Every process react to a bunch of signals
         - Address Space (memory), File descriptors, etc,...
 - `exec` - change the program being run by the current process
 - `wait` - wait for a process to finish
-- `kill` - send a signal (interrupt-like notification) to another process
-- `sigactions` - set handlers for signals
 
-### Fork
+### `fork`
 
 - `pid_t fork()` - copy the current process
     - new process has different pid
@@ -248,7 +276,9 @@ Every process react to a bunch of signals
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-11.png">
 
-After `fork()` is called. The code after that will be executed by two processes at the same time - parent and child. This is because child inherits all the information from the parent, including the executing context of the current thread that is calling the `fork()`. Depending on the return value (`cpid`), we know if the current process is parent or child. 
+After `fork()` is called. The code after that will be executed by two processes at the same time - parent and child. This is because child inherits all the information from the parent, including the executing context of the current thread that is calling the `fork()`. Depending on the return value (`cpid`), we know if the current process is parent or child. In the above example, the red arrow points to the parent process. The green arrow points to the child process.
+
+### `exec`
 
 If we want the child process to execute something different, we can use the `exec`function
 
@@ -256,7 +286,29 @@ If we want the child process to execute something different, we can use the `exe
 
 In this case, the child process will immediately execute `ls -al` once it's created.
 
-### Process Management
+### `wait`
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-13.png">
+
+The `wait` function waits for the child process to finish. In the above example, once the child process exits with the status code `42`, the parent process will continue to get the pid from the process and continue the execution.
+
+### POSIX Signals
+
+- `kill` - send a signal (interrupt-like notification) to another process
+- `sigaction` - set handlers for signals
+
+The `sigaction` function allows you to add a handler in the user level space to capture signals thrown from the OS level. For each signal, there is a default handler defined by the system.
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-03-14.png">
+
+In the code above, we have an infinite `while` loop. The process won't exit until receives a `SIGINT` signal. The `SIGINT` can be triggered using `ctrl-c` from keyboard, which is going to terminate the process.
+
+- Common POSIX Signals
+    - SIGINT: ctrl-c
+    - SIGTERM: default for the `kill` shell command
+    - SIGSTP: ctr-z (default action: stop process)
+    - SIGKILL/SIGSTOP: – terminate/stop process
+        - Can't be changed or disabled with `sigaction`
 
 ## Summary
 
