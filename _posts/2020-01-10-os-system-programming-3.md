@@ -59,18 +59,19 @@ Operate on “streams” - sequence of bytes, whether text or data, with a posit
 
 The `fopen` function returns a pointer to a `FILE` data structure. A null pointer will be returned if there is an error.
 
-### Standard Streams 
+### Standard Streams and C APIs
 
-<makr>Three predefined streams are opened implicitly when a program/process is executed </mark>
+Three <mark>predefined streams are opened</mark> implicitly when a program/process is executed 
 
 - `FILE *stdin`: normal source of input, can be redirected
 - `FILE *stdout`: normal source of output, can be redirected
 - `FILE *stderr`: diagnostics and errors, can be redirected
 
-`STDIN / STDOUT` enables composition in UNIX
+The `STDIN / STDOUT` enables composition in UNIX. All can be redirected, for instance, using pipe symbol: `|`:
 
-- All can be redirected (for instance, using pipe symbol: `|`):
-    – `cat hello.txt | grep "World"`
-        - `cat`'s `stdout` goes to `grep`'s `stdin`
+```shell
+# `cat`'s `stdout` goes to `grep`'s `stdin`
+cat hello.txt | grep "World"
+```
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-04-04.png">
