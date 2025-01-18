@@ -1,5 +1,5 @@
 ---
-list_title: Swift | Swift modules
+list_title: Swift In Depth | Swift modules
 title: Swift module 101
 layout: post
 categories: ["Swift", "Compiler", "iOS", "Apple"]

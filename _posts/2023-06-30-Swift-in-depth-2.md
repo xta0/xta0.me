@@ -1,5 +1,5 @@
 ---
-list_title: Swift | Swift binaries
+list_title: Swift In Depth | Swift binaries and XCFramework
 title: Swift binaries
 layout: post
 categories: ["Swift", "Compiler", "iOS", "Apple"]
