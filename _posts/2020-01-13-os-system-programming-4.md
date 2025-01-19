@@ -385,6 +385,8 @@ Although we've achieved concurrency, forking processes is quite expensive. A lig
     - More efficient to create new threads than processes
     - More efficient to switch between threads
 
+### Thread Pool
+
 However, when there are too many incoming requests, we will spawn too many threads, which will likely to crash the kernels. Thus, we need a thread pool to manage the creation of threads.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-05-12.png">
@@ -414,6 +416,6 @@ The idea is that we create a bunch of threads in the beginning, but it's a fixed
 
 ## Appendix: A web server
 
-Processes communication sequences across user space and kernel space when dealing with networking request in a web server.
+Processes communication sequences across user and kernel space when dealing with networking request in a web server.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-05-02.png">
