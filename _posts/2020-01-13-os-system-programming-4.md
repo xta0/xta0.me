@@ -213,10 +213,182 @@ What assumptions are we making here?
 - Sockets provide a <mark>two-way communication between processes on same or different machines</mark>
     - Two queues (one in each direction)
     - Processes can be on separate machines
-- Possibly worlds away
 
+### Namespaces for communication over IP
 
-### A web server
+- Hostname
+    - `www.eecs.berkeley.edu`
+- IP address
+    - `128.32.244.172` (IPv4, 32bit integer)
+    - `2067:f140:0:81::f`(IPv6, 128bit integer)
+- Port Number
+    - `0-1023` are "well known" or "system" ports
+    - Superuser privileges to bind to one
+- `1024 - 49151` are "registered" ports (registry)
+    - Assigned by IANA for specific services
+- `49152-65535` (`2^15`+`2^14` to `2^16-1`) are "dynamic" or "private"
+    - Automatically allocated as "ephemeral Ports"
+
+### Connection Setup over TCP/IP
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-05-09.png">
+
+ - Special kind of socket: <strong>server socket</strong>
+    - Listens for new connections
+    - Produces new sockets for each unique connection
+    - 3-way handshake to establish new connection (TCP/IP)
+- Two operations:
+    - `listen()`: Start allowing clients to connect
+    - `accept()`: Create a new socket for a particular client connection
+- Things to remember
+    - <makr>5 Tuple identifies each connection</mark>
+        - source IP address (Client Addr) 
+        - source Port number(Client Port)
+        - destination IP Address (Server Addr)
+        - destination port number(Server Port)
+        - Protocol (always TCP here)
+    - Often, Client Port is "randomly" assigned
+        - Done by OS during client socket setup
+    - Server Port often "well known"
+        - `80` (web), `443` (secure web), `25` (sendmail), etc
+        - Well-known ports from `0—1023`
+
+### Sockets in concept
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-05-10.png">
+
+- client protocol
+
+```c
+char *host_name, port_name;
+// Create a socket
+struct addrinfo *server = lookup_host(host_name, port_name);
+int sock_fd = socket(server‐>ai_family, server‐>ai_socktype, server‐>ai_protocol);
+// Connect to specified host and port
+connect(sock_fd, server‐>ai_addr, server‐>ai_addrlen);
+// Carry out Client‐Server protocol
+run_client(sock_fd);
+/* Clean up on termination */
+close(sock_fd);
+
+// getting the server addresss
+struct addrinfo *lookup_host(char *host_name, char *port) {
+    struct addrinfo *server;
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    int rv = getaddrinfo(host_name, port_name, &hints, &server);
+    if (rv != 0) {
+        printf("getaddrinfo failed: %s\n", gai_strerror(rv));
+        return NULL;
+    }
+    return server
+}
+```
+
+- server protocol (v1)
+
+```c
+// Create socket to listen for client connections
+char *port_name;
+struct addrinfo *server = setup_address(port_name);
+int server_socket = socket(server‐>ai_family,
+server‐>ai_socktype, server‐>ai_protocol);
+// Bind socket to specific port
+bind(server_socket, server‐>ai_addr, server‐>ai_addrlen);
+// Start listening for new client connections
+listen(server_socket, MAX_QUEUE);
+while (1) {
+    // Accept a new client connection, obtaining a new socket
+    int conn_socket = accept(server_socket, NULL, NULL);
+    serve_client(conn_socket);
+    close(conn_socket);
+}
+close(server_socket);
+
+// server addresss - itself
+struct addrinfo *setup_address(char *port) {
+    struct addrinfo *server;
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_PASSIVE;
+    getaddrinfo(NULL, port, &hints, &server);
+    return server;
+}
+```
+
+The v1 implementation can only handle one connection at a time. It `close` the socket after accepting/processing the client-side request.
+
+- server protocol (v2)
+
+```c
+// Start listening for new client connections
+listen(server_socket, MAX_QUEUE);
+while (1) {
+    // Accept a new client connection, obtaining a new socket
+    int conn_socket = accept(server_socket, NULL, NULL);
+    pid_t pid = fork(); // New process for connection
+    if (pid == 0) { // Child process
+        close(server_socket); // Doesn’t need server_socket
+        serve_client(conn_socket); // Serve up content to client
+        close(conn_socket); // Done with client!
+        exit(EXIT_SUCCESS);
+    } else { // Parent process
+        close(conn_socket); // Don’t need client socket
+        wait(NULL);  // Wait for our (one) child
+    }
+}
+close(server_socket);
+```
+
+In the v2 implementation, once we receive the client-side request, we fork a child process to process the request. Since the child process is just a duplicate of the parent process, it has both sockets. However, the child process only cares about the `connect_socket`, so it just close the `server_socket`. Likewise, the parent process does not care how the request is being processed, so once a connection is established, it just discards the `conn_socket` and <mark>wait</mark> for the child process to finish.
+
+### Concurrent Server
+
+So far, in the server:
+- Listen will queue requests
+- Buffering present elsewhere
+- But <mark>server waits for each connection to terminate before initiating the next</mark>
+
+A concurrent server can handle and service a new connection before the previous client disconnects. We don't need to wait for the previous connection to finish.
+
+```c
+// Start listening for new client connections
+listen(server_socket, MAX_QUEUE);
+signal(SIGCHLD,SIG_IGN); // Prevent zombie children
+while (1) {
+    // Accept a new client connection, obtaining a new socket
+    int conn_socket = accept(server_socket, NULL, NULL);
+    pid_t pid = fork(); // New process for connection
+    if (pid == 0) { // Child process
+        close(server_socket); // Doesn’t need server_socket
+        serve_client(conn_socket); // Serve up content to client
+        close(conn_socket); // Done with client!
+        exit(EXIT_SUCCESS);
+    } else {  // Parent process
+        close(conn_socket);  // Don’t need client socket
+        // wait(NULL); // Don’t wait (SIGCHLD ignored, above)
+    }
+}
+close(server_socket);
+```
+
+The only difference from the v2 implementation is `wait(NULL)` has been commented out. The parent process is only doing the listening work. The child process is responsible for communicating with the client. So the parent keeps accepting new connections, each child gets a different socket connection. Every loop gets a new child process for a new request.
+
+Although we've achieved concurrency, forking processes is quite expensive. A lighter-weight approach is to use threads
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-05-11.png">
+
+- Here we spawn a new thread to handle each connection. 
+- The main thread initiates new client connections without waiting for previously spawned threads to finish
+- Why give up the protection of separate processes (aka `fork`)?
+    - More efficient to create new threads than processes
+    - More efficient to switch between threads
+
+## A web server
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-05-02.png">
 
