@@ -348,10 +348,7 @@ In the v2 implementation, once we receive the client-side request, we fork a chi
 
 ### Concurrent Server
 
-So far, in the server:
-- Listen will queue requests
-- Buffering present elsewhere
-- But <mark>server waits for each connection to terminate before initiating the next</mark>
+So far, our server implementation listens and queues requests, and <mark>it waits for each connection to terminate before initiating the next</mark>.
 
 A concurrent server can handle and service a new connection before the previous client disconnects. We don't need to wait for the previous connection to finish.
 
@@ -388,11 +385,34 @@ Although we've achieved concurrency, forking processes is quite expensive. A lig
     - More efficient to create new threads than processes
     - More efficient to switch between threads
 
-## A web server
+However, when there are too many incoming requests, we will spawn too many threads, which will likely to crash the kernels. Thus, we need a thread pool to manage the creation of threads.
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-05-02.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-05-12.png">
+
+The idea is that we create a bunch of threads in the beginning, but it's a fixed number. And every time an incoming request comes in we put the connection on an incoming queue (`enqueue`), and when a thread becomes free, it just dequeues the next connection and handles it.
+
+## Summary
+
+- Interprocess Communication(IPC)
+    - Communication facility between protected environments(i.e. processes)
+- Pipes are an abstraction of a single queue
+    - One end write-only, another and read-only
+    - Used for communication between multiple processes on one machine
+    - File descriptors obtained via inheritance
+- Sockets are an abstraction of two queues, one in each direction
+    - Can read and write to either end
+    - Used for communication between multiple processes on different machines
+    - File descriptors obtained via socket/bind/connect/listen/accept
+    - Inheritance of file descriptors on fork() facilities
+- Both support `read/write` system calls, just like File I/O
 
 ## Resources
 
 - [Berkeley CS162: Operating Systems and System Programming](https://www.youtube.com/watch?v=4FpG1DcvHzc&list=PLF2K2xZjNEf97A_uBCwEl61sdxWVP7VWC)
 - [slides](https://sharif.edu/~kharrazi/courses/40424-012/)
+
+## Appendix: A web server
+
+Processes communication sequences across user space and kernel space when dealing with networking request in a web server.
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-05-02.png">

@@ -5,7 +5,7 @@ title: Synchronization
 categories: [System Programming, Operating System]
 ---
 
-### Agenda
+## Agenda
 
 - How does the OS provide concurrency through threads
     - Brief discussion of process/thread states and scheduling
