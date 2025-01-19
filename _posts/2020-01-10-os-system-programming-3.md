@@ -330,7 +330,7 @@ What if we don't call `close(3)`, and instead, we call `fork()`
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-04-12.png">
 
-- We have forked a child process (`#2`). Now the File Descriptors table got duplicated. Both parent and the child processes point to the same open file description, meaning either of them can read the file.
+- We have forked a child process (`#2`). Now the File Descriptors table got duplicated. Both parent and the child processes point to the <mark>same open file description(shared)</mark>, meaning either of them can read the file.
 - Next, if the parent process read `100` bytes, the `position` in the open file description will become `200`. Now, if the child process read `100` bytes, since the open file description is shared, the `position` will become `300`.
 - Finally, if the parent process execute `close(0)`, it'll remove itself from the table, but the child process still holds a reference to the open file description, so the file won't be closed.
 
