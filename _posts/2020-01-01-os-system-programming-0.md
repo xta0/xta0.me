@@ -73,8 +73,8 @@ Here we have two compiled programs running at the same time. They are isolated t
 
 Each process has its own process descriptor in memory, and the OS will protect the memory. The CPU core will switch between these two processes by loading their process descriptors into the registers. Since the switching happens so quickly, it gives the delusion that multiple processes are running at the same time.
 
-
-
 ## Resources
 
 - [Berkeley CS162: Operating Systems and System Programming](https://www.youtube.com/watch?v=4FpG1DcvHzc&list=PLF2K2xZjNEf97A_uBCwEl61sdxWVP7VWC)
+- [slides-1](https://sharif.edu/~kharrazi/courses/40424-012/)
+- [slides-2](https://github.com/Leo-Adventure/Berkeley-CS162-Operating-System/tree/main/Lecture/Slides)

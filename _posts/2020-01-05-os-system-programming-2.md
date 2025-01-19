@@ -329,4 +329,5 @@ In the code above, we have an infinite `while` loop. The process won't exit unti
 ## Resources
 
 - [Berkeley CS162: Operating Systems and System Programming](https://www.youtube.com/watch?v=4FpG1DcvHzc&list=PLF2K2xZjNEf97A_uBCwEl61sdxWVP7VWC)
-- [slides](https://sharif.edu/~kharrazi/courses/40424-012/)
+- [slides-1](https://sharif.edu/~kharrazi/courses/40424-012/)
+- [slides-2](https://github.com/Leo-Adventure/Berkeley-CS162-Operating-System/tree/main/Lecture/Slides)
