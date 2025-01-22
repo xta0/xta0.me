@@ -87,7 +87,7 @@ One thing to note is that both OS (which is managing threads) and the threads th
     - Internal events: thread returns control voluntarily
     - External events: thread gets preempted
 
-### Internal Events
+## Internal Events
 
 Internal events are times when every thread is cooperating and voluntarily gives up its CPU. 
 
@@ -113,21 +113,97 @@ computePI() {
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-06-06.png">
 
-In the diagram above, when we call `yield`, we transition from user space to the kernel space. We also enter a kernel-level stack (the red ones). For every user-level thread(stack), there is a corresponding kernel-level stack.
+In the diagram above, when we call `yield`, we transition from user space to the kernel space. We also enter a kernel-level stack (the red ones). For every user-level thread(stack), there is a corresponding kernel-level stack, which remembers the address of `yield`, so when the kernel-level stack exists, it knows where to find the `yield`.
 
 - How do we `run_new_thread`?
 
 ```c
 run_new_thread() {
-    newThread = PickNewThread();
-    switch(curThread, newThread);
+    nextThread = PickNextThread();
+    switch(curThread, nextThread);
     ThreadHouseKeeping(); /* Do any cleanup */
 }
 ```
 
 - How does dispatcher switch to a new thread?
-    - Save anything next thread may trash: PC, regs, stack pointer
+    - Save anything next thread may trash: PC, regs, stack pointer (the blue areas)
     - Maintain isolation for each thread
+
+Consider the following code blocks:
+
+```c
+proc A() {
+    B();
+}
+
+proc B() {
+    while(TRUE) {
+        yield();
+    }
+}
+```
+
+Suppose we have 2 threads: Threads `S` and `T`, and they are both running the same code above:
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-06-07.png">
+
+In this particular example, where there's only two threads in the system, and they both running the same code. What's going to happen is:
+
+1. We are going down the stack for thread `S`
+2. When hitting `yield`, we switch to `T`
+3. We then go down the stack for `T` and come back for `S`
+
+### Saving/Restoring state (often called “Context Switch)
+
+The `switch` routine is quite simple. We just save all the registers states of the current thread to a TCB, and load the register states from TCB for the next thread.
+
+```c
+Switch(tCur,tNew) {
+    /* Unload old thread */
+    TCB[tCur].regs.r7 = CPU.r7;
+    …
+    TCB[tCur].regs.r0 = CPU.r0;
+    TCB[tCur].regs.sp = CPU.sp; // sve the stack pointer
+    TCB[tCur].regs.retpc = CPU.retpc; /*return addr*/
+    /* Load and execute new thread */
+    CPU.r7 = TCB[tNew].regs.r7;
+    …
+    CPU.r0 = TCB[tNew].regs.r0;
+    CPU.sp = TCB[tNew].regs.sp; // load the stack pointer
+    CPU.retpc = TCB[tNew].regs.retpc;
+    return; /* Return to CPU.retpc */
+}
+```
+Now with this in mind, let breakdown the above diagram and figure out the context switch in detail:
+
+1. Let's say the CPU is running thread `S`. In the `switch` function, we update the CPU registers with the thread `T`'s state, meaning <mark>before we hit `return` in the current `switch` function(Thread `S`), we are already in thread `T`'s stack</mark>.
+2. Now in thread `T`'s stack, the CPU reads the <mark>stack pointer, which points to `return` </mark>at the bottom of the `switch` function. Since we are already in thread `T`'s stack. So the `return` will exit the `switch` function, and we will pop up the stack for `switch` and `run_new_thread`.
+3. Now we are transitioning back to the user-level stack(still in thread `T`'s stack). We pop up `yield` and hit `B(while)` again.
+4. Next, thread `T` hits `yield` again due to the while loop, we then enter the kernel space and call `run_new_thread` and then `switch`. We are back to step #1
+
+### More on `switch`
+
+- TCB + stacks(user/kernel) contains complete restartable state of a thread. We can put it on any queue for later revival!
+- Switching threads is much cheaper than switching processes
+    - No need to change address space
+- Some numbers from Linux:
+    - Frequency of context switch: `10-100ms`
+    - Switching between processes: `3-4 micro sec`.
+    - Switching between threads: `100 ns`
+
+### What happens when thread blocks on I/O
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-06-08.png">
+
+- What happens when a thread requests a block of data from the file system?
+    - User code invokes a system call
+    - Read operation is initiated
+    - Run new thread/switch
+- Thread communication similar
+    - Wait for Signal/Join
+    - Networking
+
+## External Events
 
 
 ## Resources
