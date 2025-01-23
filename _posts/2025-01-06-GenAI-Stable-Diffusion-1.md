@@ -10,9 +10,10 @@ categories: ["GenAI", "Stable Diffusion"]
 
 In previous [articles](https://xta0.me/2019/08/03/Learn-PyTorch-3.html), we have explored an image generation technique using the GAN network. In the world of generative models, utilizing text prompts to generate images has become a new trend. In Jan 2020, a paper titled "Denoising Diffusion Probabilities Models" introduced a diffusion-based probability model for image generation. <mark>This idea of diffusion inspired machine learning researchers to apply it to denoising and sampling process</mark>. In other words, <mark>we can start with a noisy image and gradually transforms an image with high-levels of noise into a clear version of the original image</mark>. Therefore, this generative model, is referred to as a denoising diffusion probability model.
 
-The idea behind this approach is ingenious, For any given image, a limited number of normally distributed noise images are added to the original image, effectively transforming it into a fully noisy image. What if we train a model that can reverse this diffusion process? In this article, we're going to explore this process by building a small UNet based model that can generate small avatar images.
+The idea behind this approach is ingenious, For any given image, a limited number of normally distributed noise images are added to the original image, effectively transforming it into a fully noisy image. What if we train a model that can reverse this diffusion process? In this article, we're going walk through this process by building a small UNet based model that can generate small avatar images.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-02.png">
 
 Essentially, Stable Diffusion is a set of models that includes the following:
 
