@@ -304,15 +304,15 @@ while(read_pos < str.len){
     - 如果`str2`不在字典中，则对`str2`进行递归，重复第一步
 3.  算法伪码如下
 
-        ```
-        n = length of input string
-        for i = 0 to n-1
-            firstword = substring (input string from index [0 , i] )
-            secondword = substring (input string from index [i+1 , n-1] )
-            if dictionary has firstword
-                if secondword is in dictionary OR second word is of zero length, then return true
-                recursively call this method with secondword as input and return true if it can be segmented
-        ```
+    ```
+    n = length of input string
+    for i = 0 to n-1
+        firstword = substring (input string from index [0 , i] )
+        secondword = substring (input string from index [i+1 , n-1] )
+        if dictionary has firstword
+            if secondword is in dictionary OR second word is of zero length, then return true
+            recursively call this method with secondword as input and return true if it can be segmented
+    ```
 
     我们可以模拟一个具体例子，假如输入字符串为`hellonow`，字典为`[hello, hell, on, now]`，按照上面逻辑，当 i 走到第 2 个`l`时，`hell`被分割出来如下：
 
