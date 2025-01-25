@@ -14,6 +14,14 @@ categories: [System Programming, Operating System]
 - Introduce needs for synchronization
 - Discussion of Locks and Semaphores
 
+## Definitions
+
+- Synchronization: Using atomic operations to ensure cooperation between threads
+- Mutual Exclusion: Ensuring that only one thread does a particular thing at a time
+- Critical Section: A piece of code that only one thread can execute at once. Only one thread at a time will get into this section of code
+    - Critical section is the result of mutual exclusion
+    - Critical section and mutual exclusion are two ways of describing the same thing
+
 ## Processes Multiplexing
 
 ### The Process Control Block(PCB)
@@ -51,9 +59,9 @@ We have a lot of queues in the system. For each queue, it is structured as a lin
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-06-04.png">
 
-### Scheduler
+## The core of Concurrency: the Dispatch Loop
 
-The scheduler is a simple loop
+The <mark>scheduler</mark> is a simple loop
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-06-05.png">
 
@@ -61,7 +69,6 @@ The scheduler is a simple loop
 - Lots of different scheduling policies provide
     – Fairness or Real-time guarantees or Latency optimization or...
 
-## The core of Concurrency: the Dispatch Loop
 
 Conceptually, the scheduling loop of the operating system looks as follows
 
@@ -274,7 +281,7 @@ ThreadRoot(fcnPTR,fcnArgPtr) {
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-06-12.png">
 
 
-## Correctness with Concurrent Threads
+### Correctness with Concurrent Threads
 
 - Non-determinism:
     - Scheduler can run threads in any order
@@ -285,6 +292,35 @@ ThreadRoot(fcnPTR,fcnArgPtr) {
     - Deterministic, reproducible conditions
 - <mark>Cooperating Threads</mark>
     - <mark>Shared state between multiple threads</mark>
+
+### Atomic Operations
+
+- To understand a concurrent program, we need to know what the underlying indivisible operations are!
+- <mark>Atomic Operation</mark>: an operation that always runs to completion or not at all
+    - It is indivisible: it cannot be stopped in the middle and state cannot be modified by someone else in the middle
+    - Fundamental building block, if no atomic operations, then have no way for threads to work together
+- On most machines, <mark>memory references and assignments (i.e. loads and stores) of words are atomic </mark>
+- Many instructions are not atomic
+    - Double-precision floating point store often not atomic
+    - VAX and IBM 360 had an instruction to copy a whole array
+
+### Locks
+
+- Lock: prevents someone from doing something
+    - Lock before entering critical section and before accessing shared data
+    - Unlock when leaving, after accessing shared data
+    - Wait if locked
+        - <mark>Important idea: all synchronization involves waiting</mark>
+- Locks need to be allocated and initialized:
+    - `structure Lock mylock` or `pthread_mutex_t mylock;`
+    - `lock_init(&mylock)` or `mylock = PTHREAD_MUTEX_INITIALIZER;`
+- Locks provide two atomic operations:
+    - `acquire(&mylock)` wait until lock is free; then mark it as busy
+        - After this returns, we say the calling thread holds the lock
+    - `release(&mylock)` – mark lock as free
+        - Should only be called by a thread that currently holds the lock
+        - After this returns, the calling thread no longer holds the lock
+
 
 ## Resources
 
