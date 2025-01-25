@@ -153,7 +153,7 @@ In this particular example, where there's only two threads in the system, and th
 2. When hitting `yield`, we switch to `T`
 3. We then go down the stack for `T` and come back for `S`
 
-### Saving/Restoring state (often called “Context Switch)
+### Saving/Restoring state (often called `Context Switch`)
 
 The `switch` routine is quite simple. We just save all the registers states of the current thread to a TCB, and load the register states from TCB for the next thread.
 
@@ -205,6 +205,86 @@ Now with this in mind, let breakdown the above diagram and figure out the contex
 
 ## External Events
 
+What happens if thread never does any I/O, never waits and never yield control? We must find a way to let the dispatcher regain the control. We can utilize external events
+
+- Interrupts: signals from hardware or software that stop the running code and jump to kernel
+- Timer: like an alarm clock that goes off every some milliseconds
+
+If we make sure that external events occur frequently enough, the dispatcher can regain the control of CPU.
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-06-09.png">
+
+A typical operating system has a bunch of hardwares that are all connected to via interrupt lines to the interrupt controller, and the interrupt controller goes through an interrupt mask (which lets us disable interrupt), and then goes through an interrupt decoder and tells CPU to stop what's doing to handle an interrupt.
+
+- Interrupts invoked with interrupt lines from devices
+- Interrupt controller chooses interrupt request to honor
+    - Interrupt identity specified with ID line
+    - Mask enables/disables interrupts
+    - Priority encoder picks highest enabled interrupt
+    - Software Interrupt Set/Cleared by Software
+- CPU can disable all interrupts with internal flag
+- Non-Maskable Interrupt line (NMI) can’t be disabled
+
+### Example: Network Interrupt
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-06-10.png">
+
+The CPU is running some code here and a network interrupt kicks in. The pipeline gets flushed first, and the current PC gets saved. Then we enter the kernel mode (red code). In kernel, we save the interrupt states, then call the network handler to process the networking data (green code). After we finish processing logic, we go back to the kernel mode and restore the previously saved interrupt states. Next, we continue to execute the code that got previously interrupted (the second part of the assembly code). 
+
+Note that An interrupt is a hardware-invoked <mark>context switch</mark>. There is no separate step to choose what to run next. The kernel always run the interrupt handler immediately.
+
+### How do we make a new thread?
+
+- Initialize Register fields of TCB
+    - Stack pointer made to point at stack
+    - PC return address -> OS (asm) routine `ThreadRoot()`
+    - Two arg registers (`a0` and `a1`) initialized to `fcnPtr` and `fcnArgPtr` respectively
+- Initialize stack data?
+    - Minimal initialization -> setup return to go to beginning of `ThreadRoot()`
+        - Important part of stack frame is in registers for RISC-V (ra)
+        - X86: need to push a return address on stack
+    - Think of stack frame as just before body of `ThreadRoot()` really gets started
+
+- How do we make a new thread?
+    - Setup TCB/kernel thread to point at new user stack and ThreadRoot code
+    - Put pointers to start function and args in registers or top of stack
+    - This depends heavily on the <mark>calling convention</mark> (i.e. RISC-V vs x86)
+- Eventually, run_new_thread() will select this TCB and return into beginning of `ThreadRoot()`
+    - This really starts the new thread
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-06-11.png">
+
+- `ThreadRoot()` is the root for the thread routine:
+
+```c
+ThreadRoot(fcnPTR,fcnArgPtr) {
+    DoStartupHousekeeping();
+    UserModeSwitch(); /* enter user mode */
+    Call fcnPtr(fcnArgPtr);
+    ThreadFinish();
+}
+```
+- Startup Housekeeping
+    - Includes things like recording start time of thread
+    - Other statistics
+
+- Final return from thread returns into `ThreadRoot()` which calls `ThreadFinish()`
+    - `ThreadFinish()` wake up sleeping threads
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-06-12.png">
+
+
+## Correctness with Concurrent Threads
+
+- Non-determinism:
+    - Scheduler can run threads in any order
+    - Scheduler can switch threads at any time
+    - This can make testing very difficult
+- Independent Threads
+    - No state shared with other threads
+    - Deterministic, reproducible conditions
+- <mark>Cooperating Threads</mark>
+    - <mark>Shared state between multiple threads</mark>
 
 ## Resources
 
