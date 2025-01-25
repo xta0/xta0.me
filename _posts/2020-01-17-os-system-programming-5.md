@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: CS162 | Operating System | Concurrency and Mutual Exclusion | Part 1
-title:  Concurrency and Mutual Exclusion (Part 1)
+list_title: CS162 | Operating System | Concurrency and Mutual Exclusion
+title:  Concurrency and Mutual Exclusion
 categories: [System Programming, Operating System]
 ---
 
@@ -280,6 +280,7 @@ ThreadRoot(fcnPTR,fcnArgPtr) {
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-06-12.png">
 
+## Synchronization
 
 ### Correctness with Concurrent Threads
 
@@ -321,6 +322,71 @@ ThreadRoot(fcnPTR,fcnArgPtr) {
         - Should only be called by a thread that currently holds the lock
         - After this returns, the calling thread no longer holds the lock
 
+### Producer-Consumer with a Bounded Buffer
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-06-13.png">
+
+- Problem Definition
+    - Producer(s) put things into a shared buffer
+    - Consumer(s) take them out
+    - Need synchronization to coordinate producer/consumer
+- Don’t want producer and consumer to have to work in lockstep, so put a fixed-size buffer between them
+    - Need to synchronize access to this buffer
+    - Producer needs to wait if buffer is full
+    - Consumer needs to wait if buffer is empty
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-06-14.png">
+
+- Circular Buffer
+
+```c
+typedef struct buf {
+    int write_index;
+    int read_index;
+    void *entries[BUFSIZE];
+} buf_t;
+```
+- How to tell if the queue is empty
+    - If the read pointer hits the write pointer
+- How to tell if the queue is full
+    - If the write pointer hits the read pointer
+
+```c
+// synchronization using locks
+mutex buf_lock = <initially unlocked>
+
+Producer(item) {
+    acquire(&buf_lock);
+    while (buffer full) {
+        release(&buf_lock);  // give consumer a chance to aquire the lock
+        acquire(&buf_lock);
+    }
+    enqueue(item);
+    release(&buf_lock);
+}
+
+Consumer() {
+    acquire(&buf_lock);
+    while (buffer empty) {
+        release(&buf_lock); // give producer a chance to aquire the lock
+        acquire(&buf_lock);
+    }
+    item = dequeue();
+    release(&buf_lock);
+    return item
+}
+```
+
+This works, but waste a LOT of CPU cycles by frequently releasing and acquiring the lock! So <mark>locks is not the best choice for this consumer producer problem</mark>.
+
+### Higher-level Primitives than Locks
+
+- What is right abstraction for synchronizing threads that share memory?
+    - Want as high a level primitive as possible
+- Good primitives and practices important!
+    - Since execution is not entirely sequential, really hard to find bugs, since they rarely happen
+    - UNIX is pretty stable now, but up until about mid-80s (10 years after started), systems running UNIX would crash every week or so - concurrency bugs
+- Synchronization is a way of coordinating multiple concurrent activities that are using shared state
 
 ## Resources
 
