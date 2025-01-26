@@ -51,6 +51,7 @@ categories: [System Programming, Operating System]
             semaV(&mysem); // signal
         }
         ```
+
 ### Revisit Bounded Buffer: Correctness constraints for solution
 
 - Correctness Constraints:
@@ -65,8 +66,11 @@ categories: [System Programming, Operating System]
     - Semaphore emptyBuffers;// producer’s constraint
     - Semaphore mutex; // mutual exclusion
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-06-14.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2020/01/os-07-02.png">
 
+- Why asymmetry?
+    - Producer does: `semaP(&emptyBuffer)`, `semaV(&fullBuffer)`
+    -  Consumer does: `semaP(&fullBuffer)`, `semaV(&emptyBuffer)`
 
 
 ## Resources
