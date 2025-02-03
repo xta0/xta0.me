@@ -24,6 +24,13 @@ Essentially, Stable Diffusion is a set of models that includes the following:
 
 ## The image to noise process
 
+Before we dive deep into the model architecture, let's first take a look at the noising and denoising process. The following code adds a Gaussian noise to an image and then visualizes the progression over a number of iterations. It performs a simulation of a forward diffusion process:
+
+```python
+
+```
+
+
 ## The Sampling Process
 
 Before we dive deep into how to train the network, let's first discuss the sampling process, or what we do with the network after it's trained at inference time.
