@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: Python Tips | Functions
+list_title: Python Deep Dive | Functions
 title: Python Functions
 categories: [Python]
 ---

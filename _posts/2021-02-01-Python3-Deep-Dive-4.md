@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: Python Tips  | Lists and Tuples
-title: Python Lists and Tuples
+list_title: Python Deep Dive | Sequences
+title: Python Sequences
 categories: [Python]
 ---
 
