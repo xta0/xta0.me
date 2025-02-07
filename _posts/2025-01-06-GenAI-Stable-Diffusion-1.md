@@ -136,7 +136,7 @@ For simplicity, we perform 16 iterations and select 8 images for display:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-05.png">
 
-## The noise-to-image training process
+## The noise-to-image process
 
 We have shown the approach to add noise to the image, which is known as forward diffusion. To recover the image from the noise, we need to find the way to recover $x_0$ from $x_t$. However, this revert process is uncomputable without additional information.
 
@@ -169,12 +169,15 @@ Here, we can train a neural network model that takes the image at time step $x_t
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-06.png">
 
+Why take timestamp $t$ as input? Because all the denoising process share the same neural network weights, the input $t$ will help train a UNet with a time step in mind.
+
 Once we have this neural network, we can input a noisy image $x_t$ to obtain the noise $\epsilon$，Using this noise, we can determine the probability distribution of the image at the previous time step. By performing random sampling from this probability distribution, we can generate the image $x_{t-1}$ for the previous time step. Then, we can feed the image at the previous time step into the model again and repeat this process iteratively until we eventually obtain $x_0$
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-07.png">
 
 The very first input to the model (initial $x_t$) can be obtained by simply sampling noise from a Gaussian distribution.
 
+## The training process
 
 
 ## Resources
