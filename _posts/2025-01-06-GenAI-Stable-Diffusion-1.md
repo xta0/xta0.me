@@ -12,12 +12,9 @@ In previous [articles](https://xta0.me/2019/08/03/Learn-PyTorch-3.html), we have
 
 This idea of diffusion inspired machine learning researchers to apply it to <mark>denoising and sampling process</mark>. In other words, <mark>we can start with a noisy image and gradually transforms an image with high-levels of noise into a clear version of the original image</mark>. Therefore, this generative model, is referred to as a denoising diffusion probability model.
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01.png">
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-02.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-03.png">
 
-The idea behind this approach is ingenious, For any given image, a limited number of normally distributed noise images are added to the original image, effectively transforming it into a fully noisy image. What if we train a model that can reverse this diffusion process? 
-
-Essentially, Stable Diffusion is a set of models that includes the following:
+Essentially, <mark>Stable Diffusion is a set of models</mark> that includes the following:
 
 - <strong>Tokenizer</strong>: This tokenizes a text prompt into a sequence of tokens
 - <strong>Text Encoder</strong>: A special Transformer Language model - specifically, the text encoder of a CLIP model.
@@ -28,15 +25,16 @@ In this post, we're going walk through this process by building a small UNet bas
 
 ## The image to noise process
 
-- First, we need to normalize the pixels in the image so that their values are within the range `[0,1]`.
-- Next, we need to generate a noise image of the same size as the original image. Note that the noise should follow a Gaussian distribution (standard normal distribution).
-- Then we mix the noise image and the original image channel by channel (R, G, B) using the following formula:
+First, we need to normalize the pixels in the image so that their values are within the range `[0,1]`.
+Next, we need to generate a noise image of the same size as the original image. Note that the noise should follow a Gaussian distribution (standard normal distribution).Then we mix the noise image and the original image channel by channel (R, G, B) using the following formula:
 
 $$
 \sqrt{\beta} \times \epsilon + \sqrt{1 - \beta} \times x
 $$
 
-Note that in the formula above, $\epsilon$ represents Gaussian noise, $x$ represents the pixel values of the image, and $\beta$ is a float number between [0,1]. The squares of $\sqrt{\beta}$ and $\sqrt{1 - \beta}$ sum to 1, satisfying the Pythagorean theorem. This means that as $\beta$ changes, the proportion of noise in the original image will also change. As $\beta$ increases, the proportion of the original image gradually decreases.
+Note that in the formula above, $\epsilon$ represents Gaussian noise, $x$ represents the pixel values of the image, and $\beta$ is a float number between [0,1]. The squares of $\sqrt{\beta}$ and $\sqrt{1 - \beta}$ sum to 1, satisfying the Pythagorean theorem. This means that as $\beta$ changes, the proportion of noise in the original image will also change. 
+
+For example, as $\beta$ increases, the proportion of the original image gradually decreases:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-04.png">
 
@@ -67,7 +65,7 @@ $$
 Then the above formula can be rewritten as:
 
 $$
-x_t = \sqrt{1-\alpha_t} \times \epsilon_t + \sqrt{alpha_t} \times x_{t-1}
+x_t = \sqrt{1-\alpha_t} \times \epsilon_t + \sqrt{\alpha_t} \times x_{t-1}
 $$
 
 Next, we can consider whether it is possible to directly derive $x_t$ from $x_0$, which would eliminate the need for intermediate iterative steps (from $x_1$ to $x_{t-1}$). 
@@ -81,47 +79,16 @@ $$
 Here, $a_t a_{t-1} a_{t-2} a_{t-3} \cdots a_2 a_1$ is quite long, so we represent it as $\bar{\alpha}_t$. The equation above can then be further simplified as:
 
 $$
-x_t = \sqrt{1 - \bar{\alpha}_t} \times \epsilon + \sqrt{\bar{\alpha}_t} \times x_0
+x_t = \sqrt{1 - \bar{\alpha}_t} \times \epsilon + \sqrt{\bar{\alpha}_t} \times x_0 \\
+
+\bar{\alpha}_t = a_t a_{t-1} a_{t-2} a_{t-3} \cdots a_2 a_1
 $$
 
-
-## The Sampling Process
-
-Before we dive deep into how to train the network, let's first discuss the sampling process, or what we do with the network after it's trained at inference time.
-
-You first have a noise sample image, and you put it through the network. The model outputs a noise image. Then we subtract the predicted noise image with the input noise sample image To get something more like a sprite image.
-
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-03.png">
-
-We do this over and over again until we get a high quality output (500 iterations in the above example).
-The above process can be implemented using the following code
-
+The following code simulates the above process
 
 ```python
-# sample using standard algorithm
-@torch.no_grad()
-def sample_ddpm(n_sample, save_rate=20):
-    # x_T ~ N(0, 1), sample initial noise
-    samples = torch.randn(n_sample, 3, height, height).to(device)  
 
-    # array to keep track of generated steps for plotting
-    intermediate = [] 
-    for i in range(timesteps, 0, -1):
-        print(f'sampling timestep {i:3d}', end='\r')
-
-        # reshape time tensor
-        t = torch.tensor([i / timesteps])[:, None, None, None].to(device)
-
-        # sample some random noise to inject back in. For i = 1, don't add back in noise
-        z = torch.randn_like(samples) if i > 1 else 0
-        # predict noise 
-        eps = nn_model(samples, t)    e_(x_t,t)
-        samples = denoise_add_noise(samples, i, eps, z)
-
-    return samples
 ```
-
-
 
 ## Resources
 
