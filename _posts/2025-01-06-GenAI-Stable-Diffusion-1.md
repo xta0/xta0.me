@@ -140,13 +140,13 @@ For simplicity, we perform 16 iterations and select 8 images for display:
 
 We have shown the approach to add noise to the image, which is known as forward diffusion. To recover the image from the noise, we need to find the way to recover $x_0$ from $x_t$. However, this revert process is uncomputable without additional information.
 
-From the perspective of probability theory, we aim to compute the conditional probability $p(x_{t-1} | x_t)$. This conditional probability can be described using Bayes' theorem:
+From the perspective of probability theory, we aim to compute the conditional probability $p(x_{t-1}|x_t)$. This conditional probability can be described using Bayes' theorem:
 
 $$
 P(A|B) = \frac{P(B|A)P(A)}{P(B)}
 $$
 
-从$x_t$到$x_{t-1}$是一个随机过程，我们将其带入上面的贝叶斯公式得到
+The transition from $x_t$ to $x_{t-1}$ ​is a stochastic process. Substituting it into the Bayes' formula, we get:
 
 $$
 P(x_{t-1}|x_t) = \frac{P(x_t|x_{t-1})P(x_{t-1})}{P(x_t)}
@@ -178,6 +178,8 @@ Once we have this neural network, we can input a noisy image $x_t$ to obtain the
 The very first input to the model (initial $x_t$) can be obtained by simply sampling noise from a Gaussian distribution.
 
 ## The training process
+
+
 
 
 ## Resources
