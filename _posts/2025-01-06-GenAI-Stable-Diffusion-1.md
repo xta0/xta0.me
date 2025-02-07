@@ -162,7 +162,7 @@ P(x_{t-1} | x_t, x_0) \sim N \left(
 $$
 
 
-In the previous section, we learned that an image at any time step$x_t$can be considered as being directly derived from adding noise to an original image$x_0$. As long as we know the noise `ϵ` added from $x_0$ to $x_t$, we can determine the probability distribution of the previous time step $x_{t-1}$. Therefore, how to obtain `ϵ` becomes the focus of our discussion.
+In the previous section, we learned that an image at any time step $x_t$ can be considered as being directly derived from adding noise to an original image $x_0$. As long as we know the noise `ϵ` added from $x_0$ to $x_t$, we can determine the probability distribution of the previous time step $x_{t-1}$. Therefore, how to obtain `ϵ` becomes the focus of our discussion.
 
 Here, we can train a neural network model that takes the image at time step $x_t$ as input and predicts the noise `ϵ` added to this image relative to the original image $x_0$. In other words, the neural network's output is the noise `ϵ`:
 
@@ -170,15 +170,66 @@ Here, we can train a neural network model that takes the image at time step $x_t
 
 Why take timestamp $t$ as input? Because all the denoising process share the same neural network weights, the input $t$ will help train a UNet with a time step in mind.
 
+
+Now, let's discuss how to train the model. In the previous section, we learned that the output of the model is a noise `ϵ`, which follows the Gaussian distribution. For any normal probability distribution, there are two key parameters: the mean `µ` and the variance `θ`. In the original DDRM paper, the model uses a fixed variance, and the mean `µ` is the only parameter that needs to be learned through a neural network.
+
+In PyTorch, the training loop can be calculated like this:
+
+```python
+for ep in range(n_epoch):
+    # code for setup setup learning rate, etc...
+    
+    # noise is the ϵ ~ N(0,1) with the shape of x_t
+    noise = torch.randn_like(x_t)
+    # x_t is the nosed image at step "t"
+    pred_noise = nn_model(x_t, t)
+    # 
+    loss = F.mse_loss(pred_noise, noise)
+    loss.backward()
+```
+## The sampling process
+
 Once we have this neural network, we can input a noisy image $x_t$ to obtain the noise $\epsilon$，Using this noise, we can determine the probability distribution of the image at the previous time step. By performing random sampling from this probability distribution, we can generate the image $x_{t-1}$ for the previous time step. Then, we can feed the image at the previous time step into the model again and repeat this process iteratively until we eventually obtain $x_0$
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-07.png">
 
-The very first input to the model (initial $x_t$) can be obtained by simply sampling noise from a Gaussian distribution.
+The very first input to the model (initial $x_T$) can be obtained by simply sampling noise from a Gaussian distribution.
 
-## The training process
+To summarize, here is the step for this reverse diffusion process:
 
-Now, let's discuss how to train the model. In the previous section, we learned that the output of the model is a noise `ϵ`, which follows the Gaussian distribution. For any normal probability distribution, there are two key parameters: the mean `µ` and the variance `θ`. In the original DDRM paper, the model uses a fixed variance, and the mean `µ` is the only parameter that needs to be learned through a neural network.
+- Generate a complete Gaussian noise with a mean of 0 and a variance of 1. We will use this noise as the starting image:
+
+$$
+x_{T} ~ N(0, 1)
+$$
+
+- Loop through `t=T` to `t=1`. In each step, if `t>1`, then generate another noisy image `z` (same processing in the image-to-noise section). `z` also follows the Gaussian distribution:
+
+$$
+z ~ N(0, 1) \\
+z = 0 if t == 1
+$$
+
+- Then, generate a noise from the UNet model, and remove the generated noise from the input noisy image $x_t$:
+
+$$
+x_{t-1} = \frac{1}{\sqrt{a_t}}\left(x_t - \frac{1-a_t}{\sqrt{1-\bar{\alpha_t}}\epsilon_{\theta}\left(x_t, t \right) \right) + \sqrt{1-\alpha_t}z
+$$
+
+If we take a look at the previous discussion, all those $\alpha_t$ and $\bar{\alpha_t}$ are known numbers sourced from $\beta$. The only thing we need from the UNet is the $\epsilon_\theta(x_t,t)$, which is the noise produced by the UNet, as shown in the following:
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ## Resources
