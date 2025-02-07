@@ -200,23 +200,24 @@ To summarize, here is the step for this reverse diffusion process:
 - Generate a complete Gaussian noise with a mean of 0 and a variance of 1. We will use this noise as the starting image:
 
 $$
-x_{T} ~ N(0, 1)
+x_{T} \sim N(0, 1)
 $$
 
 - Loop through `t=T` to `t=1`. In each step, if `t>1`, then generate another noisy image `z` (same processing in the image-to-noise section). `z` also follows the Gaussian distribution:
 
 $$
-z ~ N(0, 1) \\
-z = 0 if t == 1
+z \sim N(0, 1), \quad z = 0 \text{ if } t = 1
 $$
 
 - Then, generate a noise from the UNet model, and remove the generated noise from the input noisy image $x_t$:
 
 $$
-x_{t-1} = \frac{1}{\sqrt{a_t}}\left(x_t - \frac{1-a_t}{\sqrt{1-\bar{\alpha_t}}\epsilon_{\theta}\left(x_t, t \right) \right) + \sqrt{1-\alpha_t}z
+x_{t-1} = \frac{1}{\sqrt{a_t}} \left( x_t - \frac{1 - a_t}{\sqrt{1 - \bar{\alpha}_t}} \epsilon_{\theta}\left(x_t, t \right) \right) + \sqrt{1 - \alpha_t} z
 $$
 
 If we take a look at the previous discussion, all those $\alpha_t$ and $\bar{\alpha_t}$ are known numbers sourced from $\beta$. The only thing we need from the UNet is the $\epsilon_\theta(x_t,t)$, which is the noise produced by the UNet, as shown in the following:
+
+
 
 
 
