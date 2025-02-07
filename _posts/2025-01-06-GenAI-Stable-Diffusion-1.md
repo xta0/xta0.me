@@ -79,16 +79,50 @@ $$
 Here, $a_t a_{t-1} a_{t-2} a_{t-3} \cdots a_2 a_1$ is quite long, so we represent it as $\bar{\alpha}_t$. The equation above can then be further simplified as:
 
 $$
-x_t = \sqrt{1 - \bar{\alpha}_t} \times \epsilon + \sqrt{\bar{\alpha}_t} \times x_0 \\
+x_t = \sqrt{1 - \bar{\alpha}_t} \times \epsilon + \sqrt{\bar{\alpha}_t} \times x_0
+$$
 
+$$
 \bar{\alpha}_t = a_t a_{t-1} a_{t-2} a_{t-3} \cdots a_2 a_1
 $$
 
 The following code simulates the above process
 
 ```python
+img = plt.imread(img_path)
 
+# normalze the image
+img = img.astype(np.float32) / 255.0
+img = img*2 -1 # [0, 1] -> [-1, 1]
+
+# parameters
+num_iteration = 16
+beta = 0.05
+betas = [0.05] * num_iteration
+
+alpha_list= [1 - beta for beta in betas ]
+# at a given time t,  = a_t * a_{t-1}* ... * a_1
+alpha_bar_list = list(accumulate(alpha_list, lambda x, y: x * y))
+
+
+target_index = 6
+
+x_target = (
+    np.sqrt(1-alpha_bar_list[target_index]) * np.random.normal(0, 1, img.shape) +
+    np.sqrt(alpha_bar_list[target_index]) * img
+)
+
+# restore the image to be [0,1]
+x_target = (x_target+1) / 2
+x_target = (x_target*255).astype('uint8')
+
+plt.imshow(x_target)
+plt.title("x_target")
+plt.axis('off')
+plt.show()
 ```
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-05.png">
 
 ## Resources
 
