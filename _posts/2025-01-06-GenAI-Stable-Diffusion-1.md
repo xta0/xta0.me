@@ -101,7 +101,7 @@ beta = 0.05
 betas = [0.05] * num_iteration
 
 alpha_list= [1 - beta for beta in betas ]
-# at a given time t,  = a_t * a_{t-1}* ... * a_1
+# at a given time t,  a_bar = a_t * a_{t-1}* ... * a_1
 alpha_bar_list = list(accumulate(alpha_list, lambda x, y: x * y))
 
 
