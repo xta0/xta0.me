@@ -138,7 +138,7 @@ For simplicity, we perform 16 iterations and select 8 images for display:
 
 We have shown the approach to add noise to the image, which is known as forward diffusion. To recover the image from the noise, we need to find the way to recover $x_0$ from $x_t$. However, this revert process is uncomputable without additional information.
 
-From the perspective of probability theory, we aim to compute the conditional probability $p(x_{t-1}|x_t)$. This conditional probability can be described using Bayes' theorem:
+From the perspective of probability theory, we aim to compute the conditional probability $p(x_{t-1}\|x_t)$. This conditional probability can be described using Bayes' theorem:
 
 $$
 P(A|B) = \frac{P(B|A)P(A)}{P(B)}
@@ -150,16 +150,22 @@ $$
 P(x_{t-1}|x_t) = \frac{P(x_t|x_{t-1})P(x_{t-1})}{P(x_t)}
 $$
 
-For simplicity, we omit the mathematical derivation. Ultimately, we can describe $p(x_{t-1} | x_t)$ using the following formula:
+For simplicity, we omit the mathematical derivation. Ultimately, we can describe $p(x_{t-1}\|x_t)$ using the following formula:
 
 $$
 P(x_{t-1} | x_t, x_0) \sim N \left( 
-    \frac{\sqrt{a_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t} x_t 
-    + \frac{\sqrt{\bar{\alpha}_{t-1}}(1 - a_t)}{1 - \bar{\alpha}_t} 
-    \times \left( x_t - \frac{\sqrt{1 - \bar{\alpha}_t} \times \epsilon}{\sqrt{\bar{\alpha}_t}} \right),
-    \left( \sqrt{\frac{\beta_t(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t}} \right)^2
+    \begin{aligned}
+        & \frac{\sqrt{a_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t} x_t \\
+        & + \frac{\sqrt{\bar{\alpha}_{t-1}}(1 - a_t)}{1 - \bar{\alpha}_t} 
+        \times \left( x_t - \frac{\sqrt{1 - \bar{\alpha}_t} \times \epsilon}{\sqrt{\bar{\alpha}_t}} \right),
+    \end{aligned}
+    \quad
+    \begin{aligned}
+        \left( \sqrt{\frac{\beta_t(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t}} \right)^2
+    \end{aligned}
 \right)
 $$
+
 
 In the previous section, we learned that an image at any time step$x_t$can be considered as being directly derived from adding noise to an original image$x_0$. As long as we know the noise `ϵ` added from $x_0$ to $x_t$, we can determine the probability distribution of the previous time step $x_{t-1}$. Therefore, how to obtain `ϵ` becomes the focus of our discussion.
 
