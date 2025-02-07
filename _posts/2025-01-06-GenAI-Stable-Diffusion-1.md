@@ -24,12 +24,22 @@ Essentially, Stable Diffusion is a set of models that includes the following:
 
 ## The image to noise process
 
-Before we dive deep into the model architecture, let's first take a look at the noising and denoising process. The following code adds a Gaussian noise to an image and then visualizes the progression over a number of iterations. It performs a simulation of a forward diffusion process:
+Before we dive deep into the model architecture, let's first take a look at the noising and denoising process. 
+
+- First, we need to normalize the pixels in the image so that their values are within the range `[0,1]`.
+- Next, we need to generate a noise image of the same size as the original image. Note that the noise should follow a Gaussian distribution (standard normal distribution).
+- Mix the noise image and the original image channel by channel (R, G, B) using the following formula:
+
+$$
+\sqrt{\beta} \times \epsilon + \sqrt{1 - \beta} \times x
+$$
+
+
+The following code adds a Gaussian noise to an image and then visualizes the progression over a number of iterations. It performs a simulation of a forward diffusion process:
 
 ```python
 
 ```
-
 
 ## The Sampling Process
 
