@@ -153,14 +153,12 @@ $$
 For simplicity, we omit the mathematical derivation. Ultimately, we can describe $p(x_{t-1}\|x_t)$ using the following formula:
 
 $$
-\[
 P(x_{t-1} | x_t, x_0) \sim N \left( 
     \frac{\sqrt{a_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t} x_t 
     + \frac{\sqrt{\bar{\alpha}_{t-1}}(1 - a_t)}{1 - \bar{\alpha}_t} 
     \left( x_t - \frac{\sqrt{1 - \bar{\alpha}_t} \, \epsilon}{\sqrt{\bar{\alpha}_t}} \right),
     \left( \sqrt{\frac{\beta_t (1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t}} \right)^2
 \right)
-\]
 $$
 
 
@@ -180,7 +178,7 @@ The very first input to the model (initial $x_t$) can be obtained by simply samp
 
 ## The training process
 
-Now, how do we train the model. In the last section, we've already known that the output of the model is a noise `ϵ`, which follows the Gaussian distribution. For any normal probability distribution, we have a mean `µ` and a variance `θ`. In the original DDRM paper, the model uses a fixed variance and sets the `µ` as the only parameter that needs to be learned through a neural network.
+Now, let's discuss how to train the model. In the previous section, we learned that the output of the model is a noise `ϵ`, which follows the Gaussian distribution. For any normal probability distribution, there are two key parameters: the mean `µ` and the variance `θ`. In the original DDRM paper, the model uses a fixed variance, and the mean `µ` is the only parameter that needs to be learned through a neural network.
 
 
 ## Resources
