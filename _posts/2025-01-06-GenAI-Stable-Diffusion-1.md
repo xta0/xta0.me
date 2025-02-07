@@ -6,7 +6,7 @@ mathjax: true
 categories: ["GenAI", "Stable Diffusion"]
 ---
 
-### Introduction
+## Introduction
 
 In previous [articles](https://xta0.me/2019/08/03/Learn-PyTorch-3.html), we have explored an image generation technique using the GAN network. However, in the world of generative models, utilizing text prompts to generate images has become a new trend. In Jan 2020, a paper titled "Denoising Diffusion Probabilities Models" introduced a diffusion-based probability model for image generation. The term <strong>diffusion</strong> is borrowed from thermodynamics. The original meaning is the movement of particles from a region of high concentration to a region of low concentration.
 
@@ -23,7 +23,7 @@ Essentially, <mark>Stable Diffusion is a set of models</mark> that includes the 
 
 In this post, we're going walk through this process by building a small UNet based model that can generate pixel images. But before we dive deep into the model architecture, let's first take a look at the noising and denoising process. 
 
-## The image to noise process
+## The image-to-noise process
 
 First, we need to normalize the pixels in the image so that their values are within the range `[0,1]`.
 Next, we need to generate a noise image of the same size as the original image. Note that the noise should follow a Gaussian distribution (standard normal distribution).Then we mix the noise image and the original image channel by channel (R, G, B) using the following formula:
@@ -135,6 +135,12 @@ plt.show()
 For simplicity, we perform 16 iterations and select 8 images for display:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-05.png">
+
+## The noise-to-image training process
+
+We have shown the approach to add noise to the image, which is known as forward diffusion. To recover the image from the noise, we need to find the way to implement the recover $x_0$ from $x_t$. However, this revert process is uncomputable without additional information.
+
+The idea is to use a neural network to provide the mean and variance of a noise image and then remove the generated noise from the previous image data.
 
 ## Resources
 
