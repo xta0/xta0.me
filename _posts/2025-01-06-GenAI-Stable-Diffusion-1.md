@@ -40,12 +40,50 @@ Note that in the formula above, $\epsilon$ represents Gaussian noise, $x$ repres
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-04.png">
 
-上图中，我们
-The following code adds a Gaussian noise to an image and then visualizes the progression over a number of iterations. It performs a simulation of a forward diffusion process:
+It is important to note that each step above relies on the result of the previous calculation. In other words, the noise-adding process is an iterative process, expressed as:
 
-```python
+$$
+x_t = \sqrt{\beta_t} \times \epsilon_t + \sqrt{1 - \beta_t} \times x_t
+$$
 
-```
+where $\epsilon_t$ follows a standard normal distribution:
+
+$$
+\epsilon_t ~ N(0,1)
+$$
+
+Additionally, the value of $\beta_t$ keeps increasing at each step:
+
+$$
+0 < \beta_1 < \beta_2 < \beta_3 < \beta_{t-1} < \beta_t < 1 
+$$
+
+Let us define:
+
+$$
+\alpha_t = 1 - \beta_t
+$$
+
+Then the above formula can be rewritten as:
+
+$$
+x_t = \sqrt{1-\alpha_t} \times \epsilon_t + \sqrt{alpha_t} \times x_{t-1}
+$$
+
+Next, we can consider whether it is possible to directly derive $x_t$ from $x_0$, which would eliminate the need for intermediate iterative steps (from $x_1$ to $x_{t-1}$). 
+
+It turns out that we can achieve this using the **reparameterization** trick. By applying mathematical induction (the detailed derivation is omitted here), we can have the following equation:
+
+$$
+x_t = \sqrt{1 - a_t a_{t-1} a_{t-2} a_{t-3} \cdots a_2 a_1} \times \epsilon + \sqrt{a_t a_{t-1} a_{t-2} a_{t-3} \cdots a_2 a_1} \times x_0
+$$
+
+Here, $a_t a_{t-1} a_{t-2} a_{t-3} \cdots a_2 a_1$ is quite long, so we represent it as $\bar{\alpha}_t$. The equation above can then be further simplified as:
+
+$$
+x_t = \sqrt{1 - \bar{\alpha}_t} \times \epsilon + \sqrt{\bar{\alpha}_t} \times x_0
+$$
+
 
 ## The Sampling Process
 
