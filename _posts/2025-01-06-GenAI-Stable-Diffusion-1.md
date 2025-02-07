@@ -32,7 +32,7 @@ $$
 \sqrt{\beta} \times \epsilon + \sqrt{1 - \beta} \times x
 $$
 
-Note that in the formula above, $\epsilon$ represents Gaussian noise, $x$ represents the pixel values of the image, and $\beta$ is a float number between [0,1]. The squares of $\sqrt{\beta}$ and $\sqrt{1 - \beta}$ sum to 1, satisfying the Pythagorean theorem. This means that as $\beta$ changes, the proportion of noise in the original image will also change. 
+ where $\epsilon$ represents Gaussian noise, $x$ represents the pixel values of the image, and $\beta$ is a float number between [0,1]. The squares of $\sqrt{\beta}$ and $\sqrt{1 - \beta}$ sum to 1, satisfying the Pythagorean theorem. This means that as $\beta$ changes, the proportion of noise in the original image will also change. 
 
 For example, as $\beta$ increases, the proportion of the original image gradually decreases:
 
@@ -115,7 +115,7 @@ for t in selected_indices:
     x_t = (np.sqrt(1 - alpha_bar_list[t]) * np.random.normal(0, 1, img.shape) +
                 np.sqrt(alpha_bar_list[t]) * img)
     
-    # Restore x_target from [-1,1] back to [0,1]
+    # Restore x_t from [-1,1] back to [0,1]
     x_t = (x_t + 1) / 2
     # Convert to uint8 ([0,255]) for display
     x_t = (x_t * 255).astype('uint8')
@@ -138,9 +138,44 @@ For simplicity, we perform 16 iterations and select 8 images for display:
 
 ## The noise-to-image training process
 
-We have shown the approach to add noise to the image, which is known as forward diffusion. To recover the image from the noise, we need to find the way to implement the recover $x_0$ from $x_t$. However, this revert process is uncomputable without additional information.
+We have shown the approach to add noise to the image, which is known as forward diffusion. To recover the image from the noise, we need to find the way to recover $x_0$ from $x_t$. However, this revert process is uncomputable without additional information.
 
-The idea is to use a neural network to provide the mean and variance of a noise image and then remove the generated noise from the previous image data.
+From the perspective of probability theory, we aim to compute the conditional probability $p(x_{t-1} | x_t)$. This conditional probability can be described using Bayes' theorem:
+
+$$
+P(A|B) = \frac{P(B|A)P(A)}{P(B)}
+$$
+
+从$x_t$到$x_{t-1}$是一个随机过程，我们将其带入上面的贝叶斯公式得到
+
+$$
+P(x_{t-1}|x_t) = \frac{P(x_t|x_{t-1})P(x_{t-1})}{P(x_t)}
+$$
+
+For simplicity, we omit the mathematical derivation. Ultimately, we can describe $p(x_{t-1} | x_t)$ using the following formula:
+
+$$
+P(x_{t-1} | x_t, x_0) \sim N \left( 
+    \frac{\sqrt{a_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t} x_t 
+    + \frac{\sqrt{\bar{\alpha}_{t-1}}(1 - a_t)}{1 - \bar{\alpha}_t} 
+    \times \left( x_t - \frac{\sqrt{1 - \bar{\alpha}_t} \times \epsilon}{\sqrt{\bar{\alpha}_t}} \right),
+    \left( \sqrt{\frac{\beta_t(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t}} \right)^2
+\right)
+$$
+
+In the previous section, we learned that an image at any time step$x_t$can be considered as being directly derived from adding noise to an original image$x_0$. As long as we know the noise `ϵ` added from $x_0$ to $x_t$, we can determine the probability distribution of the previous time step $x_{t-1}$. Therefore, how to obtain `ϵ` becomes the focus of our discussion.
+
+Here, we can train a neural network model that takes the image at time step $x_t$ as input and predicts the noise `ϵ` added to this image relative to the original image $x_0$. In other words, the neural network's output is the noise `ϵ`:
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-06.png">
+
+Once we have this neural network, we can input a noisy image $x_t$ to obtain the noise $\epsilon$，Using this noise, we can determine the probability distribution of the image at the previous time step. By performing random sampling from this probability distribution, we can generate the image $x_{t-1}$ for the previous time step. Then, we can feed the image at the previous time step into the model again and repeat this process iteratively until we eventually obtain $x_0$
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-07.png">
+
+The very first input to the model (initial $x_t$) can be obtained by simply sampling noise from a Gaussian distribution.
+
+
 
 ## Resources
 
