@@ -1,6 +1,6 @@
 ---
-list_title: GenAI | How Diffusion Model Works
-title: How Diffusion Model Works
+list_title: GenAI | Theory Behind the Diffusion Models
+title: Theory Behind the Diffusion Models
 layout: post
 mathjax: true
 categories: ["GenAI", "Stable Diffusion"]
@@ -14,14 +14,13 @@ This idea of diffusion inspired machine learning researchers to apply it to <mar
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-09.gif">
 
-Essentially, <mark>Stable Diffusion is a set of models</mark> that includes the following:
+In this post, we explored the theory behind diffusion models. We'll now dive deeper into three key processes:
 
-- <strong>Tokenizer</strong>: This tokenizes a text prompt into a sequence of tokens
-- <strong>Text Encoder</strong>: A special Transformer Language model - specifically, the text encoder of a CLIP model.
-- <strong>Variational Autoencoder(VAE)</strong>: This encodes images into latent space and decodes them back into images
-- <strong>UNet</strong>: This is where the denoising process happens. The UNet architecture is employed to comprehend the steps involved in the nosing/denoising cycle. It accepts certain elements such as noise, time step data, and a conditional signal (for instance, a representation of a text description), and forecasts noise residuals that can be utilized in the denoising process.
+- The forward process: transforming an image into noise
+- The training process: learning to reverse noise back into an image
+- The sampling process: generating images from noise
 
-In this post, we're going walk through this process by building a small UNet based model that can generate pixel images. But before we dive deep into the model architecture, let's first take a look at the noising and denoising process. 
+These concepts will help us build a strong foundation for understanding diffusion models, which will later be applied to learning stable diffusion models.
 
 ## The image-to-noise process
 
