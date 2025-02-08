@@ -1,6 +1,6 @@
 ---
-list_title: GenAI | Generate images with Stable Diffusion model
-title: Generate images with Stable Diffusion model
+list_title: GenAI | How Diffusion Model Works
+title: How Diffusion Model Works
 layout: post
 mathjax: true
 categories: ["GenAI", "Stable Diffusion"]
@@ -259,24 +259,9 @@ def sample_ddpm(n_sample, save_rate=20):
     return samples, intermediate
 ```
 
-## Text Embedding
-
-So far, we have trained a neural network that will take a random Gaussian 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Resources
 
 - [Denoising Diffusion Probabilities Models](https://arxiv.org/abs/2006.11239)
 - [CLIP](https://arxiv.org/pdf/2103.00020)
+- [Using Stable Diffusion with Python](https://www.amazon.com/Using-Stable-Diffusion-Python-Generation/dp/1835086373/)
+- [How Diffusion Models Work](https://www.coursera.org/projects/how-diffusion-models-work-project)
