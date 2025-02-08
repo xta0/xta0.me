@@ -8,7 +8,7 @@ categories: ["GenAI", "Stable Diffusion"]
 
 ## Introduction
 
-In previous [articles](https://xta0.me/2019/08/03/Learn-PyTorch-3.html), we have explored an image generation technique using the GAN network. However, in the world of generative models, utilizing text prompts to generate images has become a new trend. In Jan 2020, a paper titled "Denoising Diffusion Probabilities Models" introduced a diffusion-based probability model for image generation. The term <strong>diffusion</strong> is borrowed from thermodynamics. The original meaning is the movement of particles from a region of high concentration to a region of low concentration.
+In previous [articles](https://xta0.me/2019/08/03/Learn-PyTorch-3.html), we have explored an image generation technique using the GAN network. However, in the world of generative models, utilizing diffusion models to generate images has now become a new trend. In Jan 2020, a paper titled [Denoising Diffusion Probabilities Models](https://arxiv.org/abs/2006.11239) introduced a diffusion-based probability model for image generation. The term <strong>diffusion</strong> is borrowed from thermodynamics. The original meaning is the movement of particles from a region of high concentration to a region of low concentration.
 
 This idea of diffusion inspired machine learning researchers to apply it to <mark>denoising and sampling process</mark>. In other words, <mark>we can start with a noisy image and gradually transforms an image with high-levels of noise into a clear version of the original image</mark>. Therefore, this generative model, is referred to as a denoising diffusion probability model.
 
@@ -16,22 +16,27 @@ This idea of diffusion inspired machine learning researchers to apply it to <mar
 
 In this post, we explored the theory behind diffusion models. We'll now dive deeper into three key processes:
 
-- The forward process: transforming an image into noise
-- The training process: learning to reverse noise back into an image
-- The sampling process: generating images from noise
+- <strong>The forward process</mark>: transforming an image into noise
+- <strong>The training process</mark>: learning to reverse noise back into an image
+- <strong>The sampling process</mark>: generating images from noise
 
 These concepts will help us build a strong foundation for understanding diffusion models, which will later be applied to learning stable diffusion models.
 
 ## The image-to-noise process
 
-First, we need to normalize the pixels in the image so that their values are within the range `[0,1]`.
-Next, we need to generate a noise image of the same size as the original image. Note that the noise should follow a Gaussian distribution (standard normal distribution).Then we mix the noise image and the original image channel by channel (R, G, B) using the following formula:
+At a high-level, the image to noise process is quite straightforward: 
+
+1. First we need to do is to normalize the pixels in the image so that their values are within the range `[0,1]`. 
+2. Next, we need to generate a noise image of the same size as the original image. Note that the noise should follow a Gaussian distribution (standard normal distribution).
+3. Finally, we mix the noise image and the original image channel by channel (R, G, B) using the following formula:
 
 $$
 \sqrt{\beta} \times \epsilon + \sqrt{1 - \beta} \times x
 $$
 
- where $\epsilon$ represents Gaussian noise, $x$ represents the pixel values of the image, and $\beta$ is a float number between [0,1]. The squares of $\sqrt{\beta}$ and $\sqrt{1 - \beta}$ sum to 1, satisfying the Pythagorean theorem. This means that as $\beta$ changes, the proportion of noise in the original image will also change. 
+ where $\epsilon$ represents Gaussian noise, $x$ represents the pixel values of the image, and $\beta$ is a float number between [0,1]. 
+ 
+ The squares of $\sqrt{\beta}$ and $\sqrt{1 - \beta}$ sum to 1, satisfying the Pythagorean theorem. This means that as $\beta$ changes, the proportion of noise in the original image will also change. 
 
 For example, as $\beta$ increases, the proportion of the original image gradually decreases:
 
