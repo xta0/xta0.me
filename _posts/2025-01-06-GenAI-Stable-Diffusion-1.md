@@ -14,11 +14,11 @@ This idea of diffusion inspired machine learning researchers to apply it to <mar
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-09.gif">
 
-In this post, we explored the theory behind diffusion models. We'll now dive deeper into three key processes:
+In this post, we will explore the theory behind diffusion models and dive deeper into three key processes:
 
-- <strong>The forward process</mark>: transforming an image into noise
-- <strong>The training process</mark>: learning to reverse noise back into an image
-- <strong>The sampling process</mark>: generating images from noise
+- <strong>The forward process</strong>: transforming an image into noise
+- <strong>The training process</strong>: learning to reverse noise back into an image
+- <strong>The sampling process</strong>: generating images from noise
 
 These concepts will help us build a strong foundation for understanding diffusion models, which will later be applied to learning stable diffusion models.
 
