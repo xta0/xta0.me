@@ -134,7 +134,7 @@ For simplicity, we perform 16 iterations and select 8 images for display:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-05.png">
 
-## The noise-to-image process
+## The noise-to-image training process
 
 We have shown the approach to add noise to the image, which is known as forward diffusion. To recover the image from the noise, we need to find the way to recover $x_0$ from $x_t$. However, this revert process is uncomputable without additional information.
 
@@ -187,7 +187,7 @@ for ep in range(n_epoch):
     loss = F.mse_loss(pred_noise, noise)
     loss.backward()
 ```
-## The sampling process
+## The noise-to-image sampling process
 
 Once we have this neural network, we can input a noisy image $x_t$ to obtain the noise $\epsilon$，Using this noise, we can determine the probability distribution of the image at the previous time step. By performing random sampling from this probability distribution, we can generate the image $x_{t-1}$ for the previous time step. Then, we can feed the image at the previous time step into the model again and repeat this process iteratively until we eventually obtain $x_0$
 
@@ -217,9 +217,47 @@ $$
 
 If we take a look at the previous discussion, all those $\alpha_t$ and $\bar{\alpha_t}$ are known numbers sourced from $\beta$. The only thing we need from the UNet is the $\epsilon_\theta(x_t,t)$, which is the noise produced by the UNet, as shown in the following:
 
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-08.png">
 
+The added $\sqrt{1 - \alpha_t} z$ is found to be useful by searchers that will significantly improve the generated image quality.
 
+- Loop end, return the final generated image $x_0$
 
+In PyTorch, this process can be implemented as follows:
+
+```python
+def denoise_add_noise(x, t, pred_noise, z=None):
+    if z is None:
+        z = torch.randn_like(x)
+    noise = b_t.sqrt()[t] * z
+    mean = (x - pred_noise * ((1 - a_t[t]) / (1 - ab_t[t]).sqrt())) / a_t[t].sqrt()
+    return mean + noise
+
+def sample_ddpm(n_sample, save_rate=20):
+    # x_T ~ N(0, 1), sample initial noise - [N, C, H, W]
+    samples = torch.randn(n_sample, 3, height, height).to(device)  
+
+    # array to keep track of generated steps for plotting
+    intermediate = [] 
+    for i in range(timesteps, 0, -1):
+        print(f'sampling timestep {i:3d}', end='\r')
+
+        # reshape time tensor - [N, C, H, W]
+        t = torch.tensor([i / timesteps])[:, None, None, None].to(device)
+
+        # sample some random noise to inject back in. For i = 1, don't add back in noise
+        z = torch.randn_like(samples) if i > 1 else 0
+
+        eps = nn_model(samples, t)    # predict noise e_(x_t,t)
+        samples = denoise_add_noise(samples, i, eps, z)
+        if i % save_rate ==0 or i==timesteps or i<8:
+            intermediate.append(samples.detach().cpu().numpy())
+
+    intermediate = np.stack(intermediate)
+    return samples, intermediate
+```
+
+## Text Embedding
 
 
 
