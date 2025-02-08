@@ -5,6 +5,10 @@ title: Python Sequences
 categories: [Python]
 ---
 
+### Sequence Types
+
+Python中的sequence type有两类，mutable和immutable
+
 ### Lists vs Tuples
 
 在Python中，Tuple的定义是被`,`分割的value而不是`()`，`()`的作用是为了让Tuple看起来更容易理解
@@ -111,7 +115,7 @@ t1 = (1, 2, 3)
 t2 = tuple(t1)
 id(t1) == id(t2)
 ```
-Shallow copy的一个问题是，如果mutate原来的list中存在mutable的object，则同样会一向copy后list中的元素
+<mark>Shallow copy的一个问题是，如果mutate原来的list中存在mutable的object，则同样会一向copy后list中的元素</mark>
 
 ```python
 s1 = [[10, 20], 3, 4]
@@ -119,13 +123,15 @@ s2 = s1.copy()
 s1[0][0] = 100 # s1 = [[100, 20], 3, 4]
 # s2[0][0] will also be mutated
 ```
-此时我们需要使用deep copy，但是实现deep copy是一件不容易的事情，比如一个list中有sublist，sublist中又有sublist，因此deep copy需要考虑递归的情况。对于标准库存中的sequence，Python提供`.deepcopy()`的API来实现deep copy
+由于`[10 ,20]`是一个mutable object，因此当`s1`修改它的之后，`s2`也会收到影响。此时我们需要使用deep copy，但是实现deep copy是一件不容易的事情，比如一个list中有sublist，sublist中又有sublist，因此deep copy需要考虑递归的情况。对于标准库存中的sequence，Python提供`.deepcopy()`的API来实现deep copy
 
 ```python
 import copy
 x = [1, 2, 3]
 y = copy.deepcopy(x)
 ```
+
+Custom classes可以override `__copy__`和`__deepcopy__`来支持shallow copy和deep copy
 
 ### Mutable objects in lists
 
@@ -139,6 +145,8 @@ x[0] = [-1, -1]
 # y -> [[-1, -1], [-1, -1]] 
 ```
 此时，我们虽然只修改了`x`中的元素，但由于该元素为mutable的list，因此，`y`也发生了变化。
+
+## Custom Sequences
 
 ## Resources
 
