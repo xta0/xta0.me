@@ -12,7 +12,7 @@ In previous [articles](https://xta0.me/2019/08/03/Learn-PyTorch-3.html), we have
 
 This idea of diffusion inspired machine learning researchers to apply it to <mark>denoising and sampling process</mark>. In other words, <mark>we can start with a noisy image and gradually transforms an image with high-levels of noise into a clear version of the original image</mark>. Therefore, this generative model, is referred to as a denoising diffusion probability model.
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-09.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-09.gif">
 
 Essentially, <mark>Stable Diffusion is a set of models</mark> that includes the following:
 
