@@ -20,22 +20,17 @@ This combination of components allows Stable Diffusion to efficiently generate h
 
 ### Latent Space
 
-Stable Diffusion is a type of latent diffusion model, which means that instead of operating directly in pixel space, it works in a lower-dimensional, compressed representation called the latent space. Why Does Stable Diffusion Operate in the Latent Space?
+Stable Diffusion is a type of latent diffusion model, which means that instead of operating directly in pixel space, it works in a lower-dimensional, compressed representation called the latent space. But why does Stable Diffusion operate in the latent space?
 
-- Computational Efficiency
+- **Computational Efficiency**
 
     - **Reduced Dimensions**: Images in pixel space can be very high-dimensional (e.g., a 512×512 RGB image has 512 × 512 × 3 pixels). Operating in a latent space often reduces the dimensionality by a large factor (e.g., down to 64×64 or 32×32 with several channels), which means fewer computations are required.
     - **Faster Sampling**: The diffusion process, which involves many iterative steps, becomes much faster when each step is operating on a compressed representation.
     - **Memory Efficiency**: Lower-dimensional representations use significantly less memory. This allows for training and sampling on devices with more limited memory (like GPUs) and enables the model to work with larger batch sizes.
 
-- Preserving Semantics:
+- **Preserving Semantics**:
     - The latent space is designed to capture the high-level, semantic features of an image (like shapes, object positions, and overall style) rather than every fine-grained pixel detail. This focus on semantics allows the diffusion process to operate on the essential content of the image.
     - When the model denoises or generates images in this space, it can later decode the latent representations into detailed images via the decoder, which restores the high-resolution details.
-
-- Improved Quality and Robustness:
-
-Working in latent space can sometimes make the denoising process more stable. The model learns to generate images in a space where the structure of the data is easier to model, and then the decoder is tasked with converting that structure back into the pixel space.
-This separation of concerns can lead to better visual quality in the final images.
 
 Both training and sampling processes happen in the latent space, as shown below
 
@@ -46,15 +41,76 @@ An autoencoder (VAE) is typically used to learn this latent representation. The 
 - Encoder: Compresses the high-dimensional image into a lower-dimensional latent code.
 - Decoder: Reconstructs the original image from the latent code.
 
-### Inference
+### The Inference Process
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-02-02.png">
 
 Note that the Stable Diffusion models not only support generating images via prompts, they also support image-guided generation. In the previous article, we start the inference process using a noise image that follows the Gaussian distribution. Here, if text is the only input to the model, we can directly create a noise tensor (e.g., `[1, 4, 64, 64]`) as the input latent vector.
 
 - Stable Diffusion uses CLIP to generate an embedding vector, which will be fed into UNet, using the attention mechanism
-- If the input contains an image as a guiding signal, we need to first encode the image to a latent vector and then `concat` it with the randomly generated noise tensor that has the same size as the image.
+- If the input contains an image as a guiding signal. The image needs to be first encode to a latent vector and then `concat` with the randomly generated noise tensor.
 
 The inference process is similar to the training process. After a number of denoting steps, the latent decoder (VAE) converts the image from latent space to the pixel space.
 
-### The Stable Diffusion XL model pipeline
+## The Stable Diffusion XL (SDXL) model pipeline
+
+SDXL is a latent diffusion model that has the same overall architecture used in Stable Diffusion v1.5. The UNet backbone is three times larger, there are two text encoders in the SDXL base model, and a separate diffusion-based refinement model is included. The overall architecture is shown as follows:
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-02-02.png">
+
+Note that the refiner module is optional. Now let's break down the components one by one.
+
+### The VAE of the SDXL
+
+The VAE used in SDKL is a retrained one, using the same autoencoder architecture but with an increased batch size (256 vs 9). Additionally, it tracks the weights with an exponential moving average. The new VAE outperforms the original model in all evaluated metrics. Here is the code for encoding and decoding an image using VAE:
+
+```python
+# encode the image from pixel space to latent space
+vae_model = AutoencoderKL.from_pretrained(
+    "stabilityai/stable-diffusion-xl-base-1.0",
+    subfolder = "vae",
+    torch_dtype=torch.float32 # for mps, the fp16 does not work
+).to("mps")
+
+image_path = './mona.jpg' 
+image = load_image(image_path)
+
+image_processor = VaeImageProcessor()
+
+"""
+Converts the image to a normailzed torch tensor in range: [-1, 1]
+"""
+prep_image = image_processor.preprocess(image)
+prep_image = prep_image.to("mps", dtype=torch.float32)
+print(prep_image.shape) #[1, 3, 296, 296]
+with torch.no_grad():
+    image_latent = vae_model.encode(prep_image).latent_dist.sample()
+
+print(image_latent.shape) #[1, 4, 37, 37]
+
+# decode the latent
+with torch.no_grad():
+    decoded_image = vae_model.decode(image_latent, return_dict = False)[0]
+    decoded_image = decoded_image.to("cpu")
+   
+pil_img = image_processor.postprocess(image = decoded_image, output_type="pil")
+pil_img = pil_img[0]
+plt.imshow(pil_img)
+plt.title("")
+plt.axis('off')
+plt.show()
+```
+Note that a `[1, 3, 296, 296]` image is encoded into a smaller `[1, 4, 37, 37]` vector. Additionally, the `preprocess` will resize the image, such that `H/8` and `W/8` becomes an integer (296 / 8 = 37).
+
+### The UNet of SDXL
+
+UNet is the backbone of SDXL. The UNet backbone in SDXL is almost three times larger, which 2.6G billion trained parameters, while the SD v1.5 has only 860 million parameters. For SDXL, the minimum 15GB of VRAM is the commonly required; otherwise, we'll need to reduce the image resolution. 
+
+Additionally, the SDXL integrates Transformer block within the UNet architecture, making it more expressive and capable of understanding complex text-image relationships. The U-Net still has CNNs, but each downsampled feature map passes through a Transformer-based attention module before being processed further.
+
+### Text Encoders
+
+One of the most significant changes in SDXL
+
+
+
