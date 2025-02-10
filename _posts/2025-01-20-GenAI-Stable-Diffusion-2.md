@@ -56,7 +56,7 @@ The inference process is similar to the training process. After a number of deno
 
 SDXL is a latent diffusion model that has the same overall architecture used in Stable Diffusion v1.5. The UNet backbone is three times larger, there are two text encoders in the SDXL base model, and a separate diffusion-based refinement model is included. The overall architecture is shown as follows:
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-02-02.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-02-03.png">
 
 Note that the refiner module is optional. Now let's break down the components one by one.
 
@@ -110,7 +110,7 @@ Additionally, the SDXL integrates Transformer block within the UNet architecture
 
 ### Text Encoders
 
-One of the most significant changes in SDXL
+One of the most significant changes in SDXL is the text encoder. SDXL uses two
 
 
 
