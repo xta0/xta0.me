@@ -58,11 +58,11 @@ SDXL is a latent diffusion model that has the same overall architecture used in 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-02-03.png">
 
-Note that the refiner module is optional. Now let's break down the components one by one.
+Note that the refiner module is optional. Now let's break down the components in detail.
 
 ### The VAE of the SDXL
 
-The VAE used in SDKL is a retrained one, using the same autoencoder architecture but with an increased batch size (256 vs 9). Additionally, it tracks the weights with an exponential moving average. The new VAE outperforms the original model in all evaluated metrics. Here is the code for encoding and decoding an image using VAE:
+The VAE used in SDXL is a retrained one, using the same autoencoder architecture but with an increased batch size (256 vs 9). Additionally, it tracks the weights with an exponential moving average. The new VAE outperforms the original model in all evaluated metrics. Here is the code for encoding and decoding an image using VAE:
 
 ```python
 # encode the image from pixel space to latent space
@@ -108,9 +108,80 @@ UNet is the backbone of SDXL. The UNet backbone in SDXL is almost three times la
 
 Additionally, the SDXL integrates Transformer block within the UNet architecture, making it more expressive and capable of understanding complex text-image relationships. The U-Net still has CNNs, but each downsampled feature map passes through a Transformer-based attention module before being processed further.
 
+> Check out [this gist](https://gist.github.com/xta0/70a8dcf4b0848ca12b2bda05ed47436a) to view the SDXL's unet architecture
+
 ### Text Encoders
 
-One of the most significant changes in SDXL is the text encoder. SDXL uses two
+One of the most significant changes in SDXL is the text encoder. SDXL uses two text encoders together, CLIP ViT-L and OpenCLIP Vit-bigG(aka openCLIP G/14). 
+
+The OpenCLIP ViT-bigG model is the largest and the best OpenClip model trained on the LAION-2B dataset, a 100 TB dataset containing 2 billion images. While the OpenAI CLIP model generates a 768 dimensional embedding vector, OpenClip G14 outputs a 1,280-dimensional embedding. By concatenating the two embeddings(of the same length), a 2048-dimension embedding is output. This is much larger than previous 768-dimensional embedding from Stable Diffusion v1.5.
+
+```python
+import torch
+from transformers import CLIPTokenizer, CLIPTextModel
+
+prmpt = "a running dog"
+
+clip_tokenizer = CLIPTokenizer.from_pretrained(
+    "stabilityai/stable-diffusion-xl-base-1.0",
+    subfolder = "tokenizer",
+    dtype = torch.float16
+)
+
+input_tokens = clip_tokenizer_1(
+    prmpt,
+    return_tensors = "pt"
+)["input_ids"]
+
+print(input_tokens_1) # [49406, 320, 2761, 7251, 49407]
+```
+
+We extract the token_ids from our prompt, resulting in a `[1, 5]` tensor. Note that `49406` and `49407` represent the beginning and ending symbols, respectively.
+
+```python
+clip_text_encoder = CLIPTextModel.from_pretrained(
+    "stabilityai/stable-diffusion-xl-base-1.0",
+    subfolder = "text_encoder",
+).to("mps")
+
+# encode token ids to embeddings
+with torch.no_grad():
+    prompt_embed = clip_text_encode(
+        input_tokens_1.to("mps")
+    )[0]
+print(prompt_embed.shape) #[1, 5, 768]
+```
+The code above produces an embedding vector with the shape `[1, 5, 768]`, which is expected because it transforms one-dimensional token IDs into 768-dimensional vectors. If we switch to the OpenCLIP ViT-bigG encoder, the resulting embedding vector will have the shape `[1, 5, 1280]`.
+
+In real world, SDXL uses something called **pooled embeddings** from OpenCLIP ViT-bigG. Embedding pooling is the process of converting a sequence of tokens into one embedding vector. In other words, pooling embedding is a lossy compression of information.
+
+Unlike the embedding in the above python example, which encodes each token into an embedding vector, a pooled embedding is one vector that represents the whole input text.
+
+```python
+
+# pooled embedding
+clip_text_encoder_3 = CLIPTextModelWithProjection.from_pretrained(
+    "stabilityai/stable-diffusion-xl-base-1.0",
+    subfolder = "text_encoder_2",
+    torch_dtype = torch.float16
+).to("mps")
+
+# encode token ids to embeddings
+with torch.no_grad():
+    prompt_embed_3 = clip_text_encoder_3(
+        input_tokens_1.to("mps")
+    )[0]
+print(prompt_embed_3.shape)
+```
+The encoder will produce a `[1, 1280]` embedding tensor, as <mark>the maximum token size for a pooled embedding is 77</mark>. In SDXL, the pooled embedding is provided to the UNet together with the token-level embedding from both CLIP and OpenCLIP encoders.
+
+### The two-stage design
+
+ The refiner model is just another image-to-image model used to enhance an image by quality adding more details, especially during the last 10 steps. It may not be necessary if the base model can produce high quality images.
 
 
 
+## Resource
+
+- [SDXL: Improving Latent Diffusion Models for High-Resolution Image Synthesis](https://arxiv.org/abs/2307.01952)
+- [Using Stable Diffusion with Python](https://www.amazon.com/Using-Stable-Diffusion-Python-Generation/dp/1835086373/)
