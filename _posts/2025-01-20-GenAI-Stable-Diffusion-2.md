@@ -177,7 +177,7 @@ The encoder will produce a `[1, 1280]` embedding tensor, as <mark>the maximum to
 
 ### The two-stage design
 
-The refiner model is just another image-to-image model used to enhance an image by quality adding more details, especially during the last 10 steps. It may not be necessary if the base model can produce high quality images.
+The refiner model is just another image-to-image model used to enhance an image by quality adding more details, especially during the last 10 steps. <mark>It may not be necessary if the base model can already produce high quality images</mark>.
 
 <div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2025/01/sd-02-base.png"></div>
