@@ -114,7 +114,7 @@ Additionally, the SDXL integrates Transformer block within the UNet architecture
 
 One of the most significant changes in SDXL is the text encoder. SDXL uses two text encoders together, CLIP ViT-L and OpenCLIP Vit-bigG(aka openCLIP G/14). 
 
-The OpenCLIP ViT-bigG model is the largest and the best OpenClip model trained on the LAION-2B dataset, a 100 TB dataset containing 2 billion images. While the OpenAI CLIP model generates a 768 dimensional embedding vector, OpenClip G14 outputs a 1,280-dimensional embedding. By concatenating the two embeddings(of the same length), a 2048-dimension embedding is output. This is much larger than previous 768-dimensional embedding from Stable Diffusion v1.5.
+The OpenCLIP ViT-bigG model is the largest and the best OpenClip model trained on the LAION-2B dataset, a 100 TB dataset containing 2 billion images. While the OpenAI CLIP model generates a 768 dimensional embedding vector, OpenClip G14 outputs a 1,280-dimensional embedding. By concatenating the two embeddings(of the same prompt length), a 2048-dimension embedding is output concat. This is much larger than previous 768-dimensional embedding from Stable Diffusion v1.5.
 
 ```python
 import torch
@@ -139,19 +139,31 @@ print(input_tokens_1) # [49406, 320, 2761, 7251, 49407]
 We extract the token_ids from our prompt, resulting in a `[1, 5]` tensor. Note that `49406` and `49407` represent the beginning and ending symbols, respectively.
 
 ```python
-clip_text_encoder = CLIPTextModel.from_pretrained(
+clip_text_encoder_1 = CLIPTextModel.from_pretrained(
     "stabilityai/stable-diffusion-xl-base-1.0",
     subfolder = "text_encoder",
 ).to("mps")
 
+# OpenCLIP ViT-bigG
+clip_text_encoder_2 = CLIPTextModel.from_pretrained(
+    "stabilityai/stable-diffusion-xl-base-1.0",
+    subfolder = "text_encoder_2",
+).to("mps")
+
 # encode token ids to embeddings
 with torch.no_grad():
-    prompt_embed = clip_text_encode(
+    prompt_embed_1 = clip_text_encode_1(
         input_tokens_1.to("mps")
     )[0]
-print(prompt_embed.shape) #[1, 5, 768]
+    print(prompt_embed_1.shape) #[1, 5, 768]
+    prompt_embed_2 = clip_text_encoder_2(
+        input_tokens_2.to("mps")
+    )[0]
+    print(prompt_embed_1.shape) #[1, 5, 1280]
+
+prompt_embedding = torch.cat((prompt_embed_1, prompt_embed_2), dim = 2) ##[1, 5, 2048]
 ```
-The code above produces an embedding vector with the shape `[1, 5, 768]`, which is expected because it transforms one-dimensional token IDs into 768-dimensional vectors. If we switch to the OpenCLIP ViT-bigG encoder, the resulting embedding vector will have the shape `[1, 5, 1280]`.
+The code above produces an embedding vector with the shape `[1, 5, 768]`, which is expected because it transforms one-dimensional token IDs into 768-dimensional vectors. We then switch to the OpenCLIP ViT-bigG encoder to encode the same input tokens, resulting a `[1, 5, 1280]` embedding tenor. Finally, we concatenate these two tensors as the final embedding.
 
 In real world, SDXL uses something called **pooled embeddings** from OpenCLIP ViT-bigG. Embedding pooling is the process of converting a sequence of tokens into one embedding vector. In other words, pooling embedding is a lossy compression of information.
 
@@ -185,6 +197,68 @@ The refiner model is just another image-to-image model used to enhance an image 
 </div>
 
 The photo on the left was created using the SDXL base model, while the one on the right was enhanced by a refined model based on the original. At first glance, the differences may be subtle, upon a closer look, you will notice more details (the cat's hair) were added by the refine model to make the image appear more realistic.
+
+## Use Stable Diffusion
+
+### Generation Seed
+
+A seed is a random number that is used to control the image generation. It is utilized to generate a noise tensor, which the diffusion model then employs to create an image. When the same seed is used with identical prompts and settings, it typically results in the same image being produced.
+
+- Reproducibility: Utilizing the same seed ensures that you can reliably generate the same image when using identical settings and prompts.
+
+- Exploration: By changing the seed number, you can explore a wide range of image variations, often leading to the discovery of unique and fascinating results.
+
+If no seed is provided, the Diffuser package will automatically generate a random number for each image generation process.
+
+```python
+seed = 1234
+generator = torch.Generator("mps").manual_seed(seed)
+prompt = "a flying cat"
+image = sd_pipe(
+    prompt = prompt,
+    generator = generator
+)
+```
+
+### Sampling Scheduler
+
+In the previous post, the sampling (denoise) process usually requires 1,000 steps to finish. To shorten the process, the scheduler allows us to generate images in as few as 20 to 50 steps
+
+```python
+from diffusers import EulerDiscreteScheduler
+
+sd_pipe.scheduer = EulerDiscreteScheduler.from_config(
+    sd_pipe.sheduler.config
+)
+generator = torch.Generator("mps").manual_seed(1234)
+prompt = "a flying cat"
+image = sd_pipe(
+    prompt = prompt,
+    generator = generator,
+    num_inference_steps = 20
+).images[0]
+```
+The diffusers package provides multiple scheduler to choose. Each scheduler has advantages and disadvantages. You may need to try out the schedulers to find out which one fits the best.
+
+### Guidance scale
+
+Guidance scale or **Classifier-Free Guidance(CFG)** is a parameter that controls the adherence of the generate image to the text prompt. A higher guidance scale will force the image to be more aligned with the prompt, while a lower guidance scale will give more space for the model to decide what to put into the image.
+
+```python
+image = sd_pipe(
+    prompt = prompt,
+    generator = generator,
+    num_inference_steps = 20,
+    guidance_scale = 7.5
+).images[0]
+```
+In practice, besides prompt adherence, a high guidance scale also has the following effects:
+
+- Increases the color saturation
+- Increases the contrast
+- May lead to a blurred image if set too high
+
+The `guidance_scale` parameter is typically set between `7` and `8.5`. A value of `7.5` is good default value.
 
 ## Resource
 
