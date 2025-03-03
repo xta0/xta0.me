@@ -43,7 +43,7 @@ So, the overall idea of merging LoRA weights to the checkpoint model works like 
 
 ### LoRA in practice
 
-To use LoRA, we can just leverage the `load_lora_weights` method from `StableDiffusionPipeline`. The example below adds two LoRA filters. The `adapter_weights` controls how much "style" we want to borrow from the LoRA model.
+To utilize LoRA, we can leverage the `load_lora_weights` method from `StableDiffusionPipeline`. The example below demonstrates how to apply two LoRA filters. The `adapter_weights` parameter determines the extent to which the LoRA model's "style" influences the output.
 
 ```python
 # LoRA fine tuning
@@ -69,13 +69,13 @@ pipeline.set_adapters(
     adapter_weights = [0.5, 1.0]
 )
 ```
+The images below showcase a Chinese painting generated using the Stable Diffusion 1.5 model. The middle image enhances realism, making it look like an authentic Chinese painting. Meanwhile, the second LoRA model introduces more vibrant colors, transforming it into a different artistic style.
 
 <div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2025/01/sd-lora-base.png"></div>
-<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-lora-1.png"></div>
-<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-lora-2.png"></div>
+<div class="md-margin-left-8"><img src="{{site.baseurl}}/assets/images/2025/01/sd-lora-1.png"></div>
+<div class="md-margin-left-8"><img src="{{site.baseurl}}/assets/images/2025/01/sd-lora-2.png"></div>
 </div>
-
 
 
 ## Textual Inversion
