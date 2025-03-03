@@ -45,7 +45,7 @@ For example, as $\beta$ increases, the proportion of the original image graduall
 It is important to note that each step above relies on the result of the previous calculation. In other words, the noise-adding process is an iterative process, expressed as:
 
 $$
-x_t = \sqrt{\beta_t} \times \epsilon_t + \sqrt{1 - \beta_t} \times x_t
+x_t = \sqrt{\beta_t} \times \epsilon_{t-1} + \sqrt{1 - \beta_t} \times x_{t-1}
 $$
 
 where $\epsilon_t$ follows a standard normal distribution:
@@ -69,7 +69,7 @@ $$
 Then the above formula can be rewritten as:
 
 $$
-x_t = \sqrt{1-\alpha_t} \times \epsilon_t + \sqrt{\alpha_t} \times x_{t-1}
+x_t = \sqrt{1-\alpha_t} \times \epsilon_{t-1} + \sqrt{\alpha_t} \times x_{t-1}
 $$
 
 Next, we can consider whether it is possible to directly derive $x_t$ from $x_0$, which would eliminate the need for intermediate iterative steps (from $x_1$ to $x_{t-1}$). 
