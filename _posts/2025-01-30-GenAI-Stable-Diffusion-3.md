@@ -73,8 +73,8 @@ The images below showcase a Chinese painting generated using the Stable Diffusio
 
 <div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2025/01/sd-lora-base.png"></div>
-<div class="md-margin-left-8"><img src="{{site.baseurl}}/assets/images/2025/01/sd-lora-1.png"></div>
-<div class="md-margin-left-8"><img src="{{site.baseurl}}/assets/images/2025/01/sd-lora-2.png"></div>
+<div class="md-margin-left-6"><img src="{{site.baseurl}}/assets/images/2025/01/sd-lora-1.png"></div>
+<div class="md-margin-left-6"><img src="{{site.baseurl}}/assets/images/2025/01/sd-lora-2.png"></div>
 </div>
 
 
