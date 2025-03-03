@@ -80,13 +80,28 @@ The images below showcase a Chinese painting generated using the Stable Diffusio
 
 ## Textual Inversion
 
-Textual Inversion(TI) is another way to fine tune the pretrained model. Unlike LoRA, <mark>TI is a technique to add new embedding space based on the trained data</mark>. To train a TI model, you only need a minimal set of three to five images, resulting in a compact `pt` or `bin` file, typically just a few kilobytes in size. This makes TI a highly efficient method for incorporating new elements or styles into the image. 
+Textual Inversion(TI) is another way to fine tune the pretrained model. Unlike LoRA, <mark>TI is a technique to add new embedding space based on the trained data</mark>. Simply put, TI is a text embedding that matches the target image the best, such as its style, object, or face. The key is to find the new embedding that does not exist in the current text encoder.
 
 ### How does TI works
 
-Simply put, TI is a text embedding that matches the target image the best, such as its style, object, or face. The key is to find the new embedding that does not exist in the current text encoder.
+To train a TI model, you only need a minimal set of three to five images, resulting in a compact `pt` or `bin` file, typically just a few kilobytes in size. This makes TI a highly efficient method for incorporating new elements or styles into the image. 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-03-01.png">
+
+The goal of training is to find a new embedding represented by $v_*$. We use $S_*$ as the token string placeholder to represent the new concepts we wish to learn. We aim to find a single word embedding, such that sentences of the form "A photo of S*" will lead to the reconstruction of images from our small training set. This embedding is found through an optimization process shown in the above figure, which we refer to as <mark>"Textual Inversion"</mark>. 
+
+Let's recall the loss function we use to train the stable diffusion model:
+
+$$
+L_{LDM} := \mathbb{E}_{z \sim \mathcal{E}(x), y, \epsilon \sim \mathcal{N}(0,1), t} 
+\left[ \left\| \epsilon - \epsilon_{\theta}(z_t, t, c_{\theta}(y)) \right\|_2^2 \right],
+$$
+
+
+Once the new corresponding embedding vector is found, the training is done. The output of the training is usually a vector with 768 numbers. That is why TI file is tiny.
+
+
+
 
 ## Resources
 
