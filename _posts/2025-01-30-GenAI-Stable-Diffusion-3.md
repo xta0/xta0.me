@@ -241,7 +241,14 @@ cn_tile_upscale_img = pipeline(
 ```
 Here we use the raw resized image to both the initial diffusion image and the ControlNet start image (`control_image`). The strength controls the influence of ControlNet on the denoising process.
 
-The ControlNet produces remarkable results as shown in the following results:
+Let's use this prompt to compare the results between the generated raw image and the refined the image:
+
+"""
+A stunningly realistic photo of a 25yo women with long, flowing brown hair and a beautiful smile. 
+upper body, detailed eyes, detailed face, realistic skin texture, set against a blue sky, with a few fluffy clouds in the background.
+"""
+
+As you can see in the photos below, The ControlNet produces remarkable results
 
 <div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2025/01/sd-upscale-cn-base.png"></div>
@@ -249,6 +256,10 @@ The ControlNet produces remarkable results as shown in the following results:
 </div>
 
 In practice, the image-to-image approach would require multiple steps to achieve a desirable outcome. In contrast, the ControlNet Tile accomplish the same outcome with a single round of upscaling. Addiontally, ControlNet Tile consumes relatively lower VRAM usage compared to the image-to-image solution.
+
+### Summary
+
+If your goal is to preserve as many aspects of the original image as possible during the upscaling, the image-to-image approach would be a better option. Conversely, if you prefer an AI-driven, or a creative approach that generates new rich details, ControlNet Tile is a more preferable option.
 
 
 ## Resources
