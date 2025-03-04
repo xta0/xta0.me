@@ -198,7 +198,7 @@ The refiner model is just another image-to-image model used to enhance an image 
 
 The photo on the left was created using the SDXL base model, while the one on the right was enhanced by a refined model based on the original. At first glance, the differences may be subtle, upon a closer look, you will notice more details (the cat's hair) were added by the refine model to make the image appear more realistic.
 
-## Use Stable Diffusion
+## Use Stable Diffusion Pipelines
 
 ### Generation Seed
 
@@ -259,6 +259,10 @@ In practice, besides prompt adherence, a high guidance scale also has the follow
 - May lead to a blurred image if set too high
 
 The `guidance_scale` parameter is typically set between `7` and `8.5`. A value of `7.5` is good default value.
+
+## Overcoming the 77 Token Limitations
+
+The 77-token limit in the CLIP model extends to Hugging Face Diffusers, restricting the maximum input prompt to 77 tokens
 
 ## Resource
 

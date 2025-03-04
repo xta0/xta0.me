@@ -257,9 +257,18 @@ As you can see in the photos below, The ControlNet produces remarkable results
 
 In practice, the image-to-image approach would require multiple steps to achieve a desirable outcome. In contrast, the ControlNet Tile accomplish the same outcome with a single round of upscaling. Addiontally, ControlNet Tile consumes relatively lower VRAM usage compared to the image-to-image solution.
 
-### Summary
 
 If your goal is to preserve as many aspects of the original image as possible during the upscaling, the image-to-image approach would be a better option. Conversely, if you prefer an AI-driven, or a creative approach that generates new rich details, ControlNet Tile is a more preferable option.
+
+## Summary
+
+| Control Method  | Functioning Stage | Usage Scenario
+| --------------- | ----------------- | --------------
+| Textual Embedding  | Text encoder   | Add a new style, a new concept or a new face|
+| LoRA | Merge LoRA weights to the UNet model (and the CLIP text encoder, optional)   | Add a set of styles, concepts, and generate content
+| Image to Image |   Provide the initial latent image | Fix images, or add styles and concepts to images |
+| ControlNet | Participant denoising together with a checkpoint model UNet | Control shape, pose, content detail |
+
 
 
 ## Resources
