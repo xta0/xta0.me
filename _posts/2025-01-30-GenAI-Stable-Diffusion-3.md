@@ -84,22 +84,65 @@ Textual Inversion(TI) is another way to fine tune the pretrained model. Unlike L
 
 ### How does TI works
 
-To train a TI model, you only need a minimal set of three to five images, resulting in a compact `pt` or `bin` file, typically just a few kilobytes in size. This makes TI a highly efficient method for incorporating new elements or styles into the image. 
+A latent diffusion model can use images as guidance during training. For training a TI model, we will follow the same pipeline from the previous article, using a minimal set of three to five images, though larger datasets often yield better results.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-03-01.png">
 
 The goal of training is to find a new embedding represented by $v_*$. We use $S_*$ as the token string placeholder to represent the new concepts we wish to learn. We aim to find a single word embedding, such that sentences of the form "A photo of S*" will lead to the reconstruction of images from our small training set. This embedding is found through an optimization process shown in the above figure, which we refer to as <mark>"Textual Inversion"</mark>. 
 
-Let's recall the loss function we use to train the stable diffusion model:
+For example, let's say we have 5-7 images of a new object, like a custom teddy bear. We want the model to learn what this plush toy looks like. Instead of describing the object in words (e.g., "a teddy bear"), we use `S*` in the prompt:
+
+- "A photo of S* in a forest"
+- "S* sitting on a table"
+- "A close-up of S* with soft fur"
+
+Here, `S*` starts as a meaningless embedding, but during training, it gradually learns the visual characteristics of the teddy bear. After training `S*` now represents the teddy bear in latent space. You can use it in new prompts:
+
+- ✅ "S* in a futuristic city"
+- ✅ "A cartoon drawing of S*"
+- ✅ "S* as a superhero"
+
+Now, let talk about the `v*`. First, recall that the loss function we use to train a latent diffusion model:
 
 $$
 L_{LDM} := \mathbb{E}_{z \sim \mathcal{E}(x), y, \epsilon \sim \mathcal{N}(0,1), t} 
 \left[ \left\| \epsilon - \epsilon_{\theta}(z_t, t, c_{\theta}(y)) \right\|_2^2 \right],
 $$
 
+The right-hand side is an optimization objective, meaning we are minimizing a loss function, where
 
-Once the new corresponding embedding vector is found, the training is done. The output of the training is usually a vector with 768 numbers. That is why TI file is tiny.
+- $\epsilon$: The actual noise that was added to the latent representation.
+- $\epsilon_{\theta}(z_t, t, c_{\theta}(y))$: The model’s predicted noise at time $t$.
 
+The loss term measures the difference between two noise:
+
+$$
+\left[ \left\| \epsilon - \epsilon_{\theta}(z_t, t, c_{\theta}(y)) \right\|_2^2 \right]
+$$
+
+So, the right-hand side ensures the model learns to predict the noise accurately, which is key in a diffusion model.
+
+TI reuses the same training scheme as the original LDM model, while keeping both $c_{\theta}$ and $e_{\theta}$ fixed. Our optimization objective is to find the optimal $v_{*}$ that minimizes the loss above.
+
+$$
+v_* = \arg\min_v \mathbb{E}_{z \sim \mathcal{E}(x), y, \epsilon \sim \mathcal{N}(0,1), t} \left[ \left\| \epsilon - \epsilon_{\theta}(z_t, t, c_{\theta}(y)) \right\|_2^2 \right]
+$$
+
+> The equation above does not say the embedding equals the loss. Instead, we say `v∗` is the embedding that, when used, results in the smallest possible noise prediction loss.
+
+Once the new corresponding embedding vector is found, the training is done. The output of the training is usually a vector with `768` numbers in the format of `pt` or `bin` file. The files are typically just a few kilobytes in size. This makes TI a highly efficient method for incorporating new elements or styles into the image. 
+
+For example, the code below loads a TI model(a `bin` file) from the Hugging Face concepts library. The `bin` structure is just a key-value pair:
+
+```python
+import torch
+loaded_leared_embeds = torch.load('/Volumes/ai-1t/ti/midjourney_style.bin', map_location='cpu')
+keys = list(loaded_leared_embeds.keys())
+for key in keys:
+    print(key, ": ", loaded_leared_embeds[key].shape) # <midjourney-style> :  torch.Size([768])
+```
+
+### TI in practice
 
 
 
