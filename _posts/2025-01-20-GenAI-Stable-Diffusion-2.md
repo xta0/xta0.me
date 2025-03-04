@@ -192,8 +192,8 @@ The encoder will produce a `[1, 1280]` embedding tensor, as <mark>the maximum to
 The refiner model is just another image-to-image model used to enhance an image by quality adding more details, especially during the last 10 steps. <mark>It may not be necessary if the base model can already produce high quality images</mark>.
 
 <div class="md-flex-h md-flex-no-wrap">
-<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-02-base.png"></div>
-<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-02-refined.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-02-base.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-02-refined.png"></div>
 </div>
 
 The photo on the left was created using the SDXL base model, while the one on the right was enhanced by a refined model based on the original. At first glance, the differences may be subtle, upon a closer look, you will notice more details (the cat's hair) were added by the refine model to make the image appear more realistic.

@@ -98,9 +98,9 @@ For example, let's say we have 5-7 images of a new object, like a custom teddy b
 
 Here, `S*` starts as a meaningless embedding, but during training, it gradually learns the visual characteristics of the teddy bear. After training `S*` now represents the teddy bear in latent space. You can use it in new prompts:
 
-- ✅ "S* in a futuristic city"
-- ✅ "A cartoon drawing of S*"
-- ✅ "S* as a superhero"
+- "S* in a futuristic city"
+- "A cartoon drawing of S*"
+- "S* as a superhero"
 
 Now, let talk about the `v*`. First, recall that the loss function we use to train a latent diffusion model:
 
@@ -124,11 +124,19 @@ So, the right-hand side ensures the model learns to predict the noise accurately
 
 TI reuses the same training scheme as the original LDM model, while keeping both $c_{\theta}$ and $e_{\theta}$ fixed. Our optimization objective is to find the optimal $v_{*}$ that minimizes the loss above.
 
+Since we are learning a new embedding $𝑣_{∗}$, we do not have a predefined text embedding, that's why the loss function for TI looks like this:
+
 $$
 v_* = \arg\min_v \mathbb{E}_{z \sim \mathcal{E}(x), y, \epsilon \sim \mathcal{N}(0,1), t} \left[ \left\| \epsilon - \epsilon_{\theta}(z_t, t, c_{\theta}(y)) \right\|_2^2 \right]
 $$
 
 > The equation above does not say the embedding equals the loss. Instead, we say `v∗` is the embedding that, when used, results in the smallest possible noise prediction loss.
+
+What This Means is that 
+
+- Instead of using a fixed text embedding, we introduce $v$, which is a trainable vector.
+- We find the best embedding $v_{*}$ that minimizes the LDM loss by optimizing $v$ over multiple training images.
+- The `argmin` notation means we are searching for the best $v$ that minimizes the noise prediction error.
 
 Once the new corresponding embedding vector is found, the training is done. The output of the training is usually a vector with `768` numbers in the format of `pt` or `bin` file. The files are typically just a few kilobytes in size. This makes TI a highly efficient method for incorporating new elements or styles into the image. 
 
@@ -144,6 +152,29 @@ for key in keys:
 
 ### TI in practice
 
+To use TI models, we could just leverage the `load_textual_inversion` method from the `StableDiffusionPipeline`
+
+```python
+pipe.load_textual_inversion(
+    "sd-concepts-library/midjourney-style",
+    token = "midjourney-style",
+)
+```
+This method does two things:
+
+- Registers a New Learnable Token
+    - `midjourney-style` is now a special token in the text encoder.
+    - Instead of being processed as a normal word, it is mapped to a learnable embedding vector.
+- Replaces `midjourney-style` in the Text Encoding Step
+    - Whenever `midjourney-style` appears in a prompt, it is replaced with the trained embedding vector (which is equivalent to `S*` in our previous discussions).
+    - The Stable Diffusion model does not process `midjourney-style` as normal text anymore. It uses the learned latent representation instead.
+
+Now, we can compare the results with and w/o using TI:
+
+<div class="md-flex-h md-flex-no-wrap">
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-ti-base.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-ti-midjourney.png"></div>
+</div>
 
 
 ## Resources
