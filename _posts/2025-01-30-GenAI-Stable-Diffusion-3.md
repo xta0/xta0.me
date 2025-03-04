@@ -172,7 +172,7 @@ This method does two things:
 Now, we can compare the results with and w/o using TI:
 
 <div class="md-flex-h md-flex-no-wrap">
-<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-ti-base.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-ti-base.png"></div>
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-ti-midjourney.png"></div>
 </div>
 
@@ -186,39 +186,18 @@ Another effective technique for fine-tuning a model is enhancing the resolution 
 As previously discussed, Stable Diffusion models do not rely solely on text for initial guidance; they can also use an image as a starting point. The idea here involves leveraging the text-to-image pipeline to generate a small image (e.g., 256x256) and then applying an image-to-image model to upscale it, achieving a higher resolution.
 
 ```python
-text2img_pipe = StableDiffusionPipeline.from_pretrained(
-    "stablediffusionapi/deliberate-v2",
-    torch_dtype = torch.float32,
-    cache_dir = "/Volumes/ai-1t/diffuser"
-).to("mps")
-
-prompt = """
-a realistic photo of beautiful young women face
-"""
-neg_prompt = """
-NSFW, bad anatomy
-"""
-
-## generate a low-resolution image
-raw_image = text2img_pipe(
-    prompt = prompt,
-    negative_prompt = neg_prompt,
-    height = 256, 
-    width = 256,
-    generator = torch.Generator("mps").manual_seed(10)
-).images[0]
-
-# upscale the image to 768 x 768
+# img2img pipeline
 img2img_pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
     "stablediffusionapi/deliberate-v2",
     torch_dtype = torch.float32,
     cache_dir = "/Volumes/ai-1t/diffuser"
 ).to("mps")
 
+# upscale the image to 768 x 768
 img2image_3x = img2img_pipe(
     prompt = prompt,
     negative_prompt = neg_prompt,
-    image = resized_raw_image, # this is a PIL image
+    image = resized_raw_image, # the original low-res image
     strength = 0.3,
     number_of_inference_steps = 80,
     guidance_scale = 8,
@@ -226,14 +205,54 @@ img2image_3x = img2img_pipe(
 ).images[0]
 ```
 
-Below is a comparison between the raw image and the enhanced image. The image quality becomes a bit higher.
+Below is a comparison between the raw image and the enhanced image. The model nearly enhanced every aspect of the image - from the eyebrows and eyelashes to the pupils and the mouth.
 
 <div class="md-flex-h md-flex-no-wrap">
-<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-upscale-base.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-upscale-base.png"></div>
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-upscale-img2img.png"></div>
 </div>
+
+### ControlNet
+
+ControlNet is a neural network architecture designed to enhance diffusion models through the incorporation of additional conditions. It employs one or more supplementary UNet models that work alongside the Stable Diffusion model. These UNet models process both input prompt and the image concurrently, with results being merged back in each step of the UNet up-stage.
+
+Compared with the img2img approach, ControlNet yields better outcomes. Among the ControlNet models, the ControlNet Tile stands out for its ability to upscale images by introducing substantial detail information to the original image.
+
+```python
+# load the ControlNet model
+controlnet = ControlNetModel.from_pretrained(
+    "takuma104/control_v11",
+    subfolder=  'control_v11f1e_sd15_tile',
+    torch_dtype = torch.float32,
+    cache_dir = "/Volumes/ai-1t/diffuser"
+)
+
+# upscale the image
+cn_tile_upscale_img = pipeline(
+    image = resized_raw_image,
+    control_image = resized_raw_image,
+    prompt = f"{sr_prompt}{prompt}",
+    negative_prompt = neg_prompt,
+    strength = 0.8,
+    guidence_scale = 7,
+    generator = torch.Generator("mps"),
+    num_inference_steps = 50
+).images[0]
+```
+Here we use the raw resized image to both the initial diffusion image and the ControlNet start image (`control_image`). The strength controls the influence of ControlNet on the denoising process.
+
+The ControlNet produces remarkable results as shown in the following results:
+
+<div class="md-flex-h md-flex-no-wrap">
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-upscale-cn-base.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-upscale-cn-tile.png"></div>
+</div>
+
+In practice, the image-to-image approach would require multiple steps to achieve a desirable outcome. In contrast, the ControlNet Tile accomplish the same outcome with a single round of upscaling. Addiontally, ControlNet Tile consumes relatively lower VRAM usage compared to the image-to-image solution.
+
 
 ## Resources
 
 - [An Image is Worth One Word: Personalizing Text-to-Image Generation using Textual Inversion](https://arxiv.org/abs/2208.01618)
+- [Adding Conditional Control to Text-to-Image Diffusion Models](https://arxiv.org/abs/2302.05543)
 - [Using Stable Diffusion with Python](https://www.amazon.com/Using-Stable-Diffusion-Python-Generation/dp/1835086373/)
