@@ -290,6 +290,17 @@ image = pipe(
 ```
 Here, we duplicated our prompt `20` times to create a `[1, 166, 768]` embedding tensor. Since the number of tokens is `166`, exceeding the `77` token limit, thus the prompt cannot be used directly in the pipeline. As previously mentioned, we need to manually compute the embeddings for our long prompts and feed the embedding tensors directly into the pipeline. Note that we set the prompt to None, preventing the encoder from processing our prompts. As a result, the UNet model utilizes our precomputed embeddings to generate images.
 
+### Long prompts with weighting
+
+A weighted prompt refers to the practice of assigning different levels of important to specific words or phrases within a text prompt used for generating images. By adjusting these weights, we can control the degree to which certain concepts influence the generated output.
+
+The core of adding weight to the prompt is simply vector multiplication:
+
+$$
+weighted_embeddings = [embedding1,embedding2,...,embedding768] \times weight
+$$
+
+
 ## Resource
 
 - [SDXL: Improving Latent Diffusion Models for High-Resolution Image Synthesis](https://arxiv.org/abs/2307.01952)
