@@ -297,9 +297,33 @@ A weighted prompt refers to the practice of assigning different levels of import
 The core of adding weight to the prompt is simply vector multiplication:
 
 $$
-weighted_embeddings = [embedding1,embedding2,...,embedding768] \times weight
+\text{weighted_embeddings} = [embedding1,embedding2,...,embedding768] \times{weight}
 $$
 
+For example, one of the popular prompt formats used in the Automatic111 SD looks like this
+
+```
+a (white) cat
+```
+
+When parsing, we will get a list of string tokens associated with weight numbers:
+
+```python
+[['a', 1.0], ['white', 1.1], ['cat', 1.0]]
+```
+
+We can also implement a custom prompt parser to support weighting. As discussed in the previous section, we can directly feed the pipeline with precomputed embedding tensors. This approach allows for greater flexibility in customizing prompts, enabling us to modify and manipulate them as needed. For example, we can support the following weighting format:
+
+```
+a (word) - increase the attention to word by a factor of 1.1
+a ((word)) - increase the attention to word by a factor of 1.1^2 = 1.21
+a [word] - decrease the attention to word by a factor of 1.1
+a (word: 1.5) - increase the attention to word by a factor of 1.5
+a (word: 0.25) - decrease the attention to word by a factor of 4 (1/0.25)
+a \(word\) - ignore the attention, use literal () in the prompt
+```
+
+Once we have our own parser implemented, similar as what we did above, we simply pass the precomputed embedding tensors directly to the pipeline:
 
 ## Resource
 
