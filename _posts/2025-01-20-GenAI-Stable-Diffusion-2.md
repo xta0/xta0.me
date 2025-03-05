@@ -198,7 +198,7 @@ The refiner model is just another image-to-image model used to enhance an image 
 
 The photo on the left was created using the SDXL base model, while the one on the right was enhanced by a refined model based on the original. At first glance, the differences may be subtle, upon a closer look, you will notice more details (the cat's hair) were added by the refine model to make the image appear more realistic.
 
-## Use Stable Diffusion Pipelines
+## Use The Stable Diffusion Model Pipelines
 
 ### Generation Seed
 
@@ -260,9 +260,35 @@ In practice, besides prompt adherence, a high guidance scale also has the follow
 
 The `guidance_scale` parameter is typically set between `7` and `8.5`. A value of `7.5` is good default value.
 
-## Overcoming the 77 Token Limitations
+### Overcoming the 77 Token Limitations
 
-The 77-token limit in the CLIP model extends to Hugging Face Diffusers, restricting the maximum input prompt to 77 tokens
+The 77-token limit in the CLIP model extends to Hugging Face Diffusers, restricting the maximum input prompt to 77 tokens. However, the UNet model does not have the 77 token limitation. It simply accepts embeddings. If we could manually assemble the embedding tensor and feed it directly to UNet, we should be able to bypass this limitation. Here's an overview of the process:
+
+1. Extract the tokenizer and text encoder from the Stable Diffusion Pipeline
+2. Tokenize the input prompt, regardless of its size
+3. Eliminate the added beginning and end tokens
+4. Pop out the first 77 tokens and encode them into embeddings
+5. Stack the embeddings into a tensor of size `[1, x, 768]`
+
+```python
+prompt = "photo, cute dog running on the road" * 20
+neg_prompt = "low resolution, bad anatomy"
+prompt_embeds, prompt_neg_embeds = long_prompt_encoding(
+    pipe,
+    prompt, 
+    neg_prompt,
+)
+
+print(prompt_embeds) #  torch.Size([1, 166, 768])
+
+image = pipe(
+    prompt = None,
+    prompt_embeds = prompt_embeds,
+    negative_prompt_embeds = prompt_neg_embeds,
+    generator = torch.Generator("mps").manual_seed(1)
+).images[0]
+```
+Here, we duplicated our prompt `20` times to create a `[1, 166, 768]` embedding tensor. Since the number of tokens is `166`, exceeding the `77` token limit, thus the prompt cannot be used directly in the pipeline. As previously mentioned, we need to manually compute the embeddings for our long prompts and feed the embedding tensors directly into the pipeline. Note that we set the prompt to None, preventing the encoder from processing our prompts. As a result, the UNet model utilizes our precomputed embeddings to generate images.
 
 ## Resource
 
