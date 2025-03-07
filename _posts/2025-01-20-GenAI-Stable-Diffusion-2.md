@@ -360,6 +360,22 @@ As shown in the above example, we created a long prompt with the emphasis on the
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-weighted_prompt.png"></div>
 </div>
 
+### Using community pipelines
+
+So far we have demonstrated how to implement a custom prompt parser to support long prompts and weighting. This process can be challenging if we build everything from scratch. Alternatively, we could leverage the pipelines built by open source community for SD v1.5 and SDXL. For example
+
+```python
+model_id = "stabilityai/stable-diffusion-xl-base-1.0"
+pipe = DiffusionPipeline.from_pretrained(
+    model_id, 
+    torch_dtype = torch.float32, 
+    cache_dir = "/Volumes/ai-1t/diffuser",
+    custom_pipeline = "lpw_stable_diffusion_xl" # a custom pipeline name
+)
+pipe.to("mps")
+
+```
+
 
 ## Resource
 
