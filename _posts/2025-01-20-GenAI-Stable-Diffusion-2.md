@@ -192,7 +192,7 @@ The encoder will produce a `[1, 1280]` embedding tensor, as <mark>the maximum to
 The refiner model is just another image-to-image model used to enhance an image by quality adding more details, especially during the last 10 steps. <mark>It may not be necessary if the base model can already produce high quality images</mark>.
 
 <div class="md-flex-h md-flex-no-wrap">
-<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-02-base.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-02-base.png"></div>
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-02-refined.png"></div>
 </div>
 
@@ -312,7 +312,7 @@ When parsing, we will get a list of string tokens associated with weight numbers
 [['a', 1.0], ['white', 1.1], ['cat', 1.0]]
 ```
 
-We can also implement a custom prompt parser to support weighting. As discussed in the previous section, we can directly feed the pipeline with precomputed embedding tensors. This approach allows for greater flexibility in customizing prompts, enabling us to modify and manipulate them as needed. For example, we can support the following weighting format:
+To support weighting, we can implement a custom prompt parser. As mentioned in the previous section, this parser can generate custom embeddings that contain the weight information, and can be applied directly to the pipeline. A commonly used weighting format looks like this
 
 ```
 a (word) - increase the attention to word by a factor of 1.1
@@ -323,7 +323,43 @@ a (word: 0.25) - decrease the attention to word by a factor of 4 (1/0.25)
 a \(word\) - ignore the attention, use literal () in the prompt
 ```
 
-Once we have our own parser implemented, similar as what we did above, we simply pass the precomputed embedding tensors directly to the pipeline:
+The core concept here is to apply weight adjustments to tokens with a weight decoration by multiplying their embedding tensor with the corresponding weight tensor.
+
+```python
+for j in range(len(prompt_weights)):
+    weight_tensor = prompt_weights[j]
+    prompt_embedding[j] *= weight_tensor
+```
+
+Once we have our own parser implemented, similar to how we enabled long prompts, above, we simply pass the precomputed embedding tensors directly to the pipeline:
+
+```python
+prompt = "photo, a cute dog running in the yard" * 10
+prompt += "pure, (white: 1.5) dog" * 10
+neg_prompt = "low resolution, bad anatomy"
+prompt_embeds, prompt_neg_embeds = get_weighted_text_embeddings(
+    pipe,
+    prompt, 
+    neg_prompt,
+)
+
+print(prompt_embeds.shape) # torch.Size([1, 176, 768])
+
+image = pipe(
+    prompt = None,
+    prompt_embeds = prompt_embeds,
+    negative_prompt_embeds = prompt_neg_embeds,
+    generator = torch.Generator("mps").manual_seed(1)
+).images[0]
+```
+
+As shown in the above example, we created a long prompt with the emphasis on the "white" token. Now let's compare the generated images with and without the weight number:
+
+<div class="md-flex-h md-flex-no-wrap">
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-weighted_base.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-weighted_prompt.png"></div>
+</div>
+
 
 ## Resource
 

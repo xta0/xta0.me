@@ -243,10 +243,10 @@ Here we use the raw resized image to both the initial diffusion image and the Co
 
 Let's use this prompt to compare the results between the generated raw image and the refined the image:
 
-"""
+```
 A stunningly realistic photo of a 25yo women with long, flowing brown hair and a beautiful smile. 
 upper body, detailed eyes, detailed face, realistic skin texture, set against a blue sky, with a few fluffy clouds in the background.
-"""
+```
 
 As you can see in the photos below, The ControlNet produces remarkable results
 
