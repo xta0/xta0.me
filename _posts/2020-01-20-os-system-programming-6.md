@@ -70,7 +70,7 @@ categories: [System Programming, Operating System]
 
 - Why asymmetry?
     - Producer does: `semaP(&emptyBuffer)`, `semaV(&fullBuffer)`
-    -  Consumer does: `semaP(&fullBuffer)`, `semaV(&emptyBuffer)`
+    - Consumer does: `semaP(&fullBuffer)`, `semaV(&emptyBuffer)`
 
 
 ## Resources

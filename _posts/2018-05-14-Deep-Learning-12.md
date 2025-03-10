@@ -326,7 +326,8 @@ $$
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-9.png">
 
-LSTM的numpy实现
+
+## Appendix: LSTM的numpy实现
 
 ```python
 def lstm_cell_forward(xt, a_prev, c_prev, parameters):
