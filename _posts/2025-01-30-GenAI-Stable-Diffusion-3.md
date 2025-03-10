@@ -259,7 +259,7 @@ In the above example, the image-to-image approach would require multiple steps t
 
 ### More on ControlNet
 
-It turns out that ControlNet is even more powerful than it initially appears. In addition to enhance the images at almost all aspects, it provides finer control over the fine-tuning process, allowing for precise adjustments. For example, it is possible for ControlNet generate an image that replicates a specific pose from another image that the out-of-the-box Stable Diffusion model cannot achieve:
+It turns out that ControlNet is even more powerful than it initially appears. In addition to enhance the images at almost all aspects, it provides finer control for precise adjustments. For example, it is possible for ControlNet generate an image that replicates a specific pose from another image that the out-of-the-box Stable Diffusion model cannot achieve:
 
 
 <div class="md-flex-h md-flex-no-wrap">
