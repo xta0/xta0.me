@@ -6,3 +6,4 @@ denoising
 autoencoder
 UNet
 LoRA
+ControlNet

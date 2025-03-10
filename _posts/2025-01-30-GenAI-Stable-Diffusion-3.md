@@ -255,8 +255,25 @@ As you can see in the photos below, The ControlNet produces remarkable results
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-upscale-cn-tile.png"></div>
 </div>
 
-In practice, the image-to-image approach would require multiple steps to achieve a desirable outcome. In contrast, the ControlNet Tile accomplish the same outcome with a single round of upscaling. Addiontally, ControlNet Tile consumes relatively lower VRAM usage compared to the image-to-image solution.
+In the above example, the image-to-image approach would require multiple steps to achieve a desirable outcome. In contrast, the ControlNet Tile accomplish the same outcome with a single round of upscaling. Addiontally, ControlNet Tile consumes relatively lower VRAM usage compared to the image-to-image solution.
 
+### More on ControlNet
+
+It turns out that ControlNet is even more powerful than it initially appears. In addition to enhance the images at almost all aspects, it provides finer control over the fine-tuning process, allowing for precise adjustments. For example, it is possible for ControlNet generate an image that replicates a specific pose from another image that the out-of-the-box Stable Diffusion model cannot achieve:
+
+
+<div class="md-flex-h md-flex-no-wrap">
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-edge-base.png"></div>
+<div class="md-margin-left-6"><img src="{{site.baseurl}}/assets/images/2025/01/sd-edge-canny.png"></div>
+<div class="md-margin-left-6"><img src="{{site.baseurl}}/assets/images/2025/01/sd-edge-controlnet.png"></div>
+</div>
+
+In the example above, we extracted edge information from the original photo and used it as a control image in the ControlNet pipeline. This allowed the generated image to replace the dog with a cat while preserving the dog's original pose, thanks to the edge guidance.
+
+### How does ControlNet work
+
+
+### ControlNet vs Img2Img
 
 If your goal is to preserve as many aspects of the original image as possible during the upscaling, the image-to-image approach would be a better option. Conversely, if you prefer an AI-driven, or a creative approach that generates new rich details, ControlNet Tile is a more preferable option.
 
