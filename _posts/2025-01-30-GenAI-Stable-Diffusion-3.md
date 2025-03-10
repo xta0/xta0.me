@@ -260,7 +260,7 @@ In the above example, the image-to-image approach would require multiple steps t
 If your goal is to preserve as many aspects of the original image as possible during the upscaling, the image-to-image approach would be a better option. Conversely, if you prefer an AI-driven, or a creative approach that generates new rich details, ControlNet Tile is a more preferable option.
 
 
-### More on ControlNet
+## More on ControlNet
 
 It turns out that ControlNet is even more powerful than it initially appears. In addition to enhance the images at almost all aspects, it provides finer control for precise adjustments. For example, it is possible for ControlNet generate an image that replicates a specific pose from another image that the out-of-the-box Stable Diffusion model cannot achieve:
 
@@ -285,6 +285,8 @@ Note that the ControlNet models will only work with models using the same base m
 
 ### How does ControlNet work
 
+TBD
+
 ## Summary
 
 | Control Method  | Functioning Stage | Usage Scenario
@@ -293,7 +295,6 @@ Note that the ControlNet models will only work with models using the same base m
 | LoRA | Merge LoRA weights to the UNet model (and the CLIP text encoder, optional)   | Add a set of styles, concepts, and generate content
 | Image to Image |   Provide the initial latent image | Fix images, or add styles and concepts to images |
 | ControlNet | Participant denoising together with a checkpoint model UNet | Control shape, pose, content detail |
-
 
 
 ## Resources
