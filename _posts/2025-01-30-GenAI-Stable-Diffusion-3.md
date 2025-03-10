@@ -270,6 +270,16 @@ It turns out that ControlNet is even more powerful than it initially appears. In
 
 In the example above, we extracted edge information from the original photo and used it as a control image in the ControlNet pipeline. This allowed the generated image to replace the dog with a cat while preserving the dog's original pose, thanks to the edge guidance.
 
+Similarly, with the recent advancements in SDXL, we can extract pose information from a human body and transfer it to another person.
+
+<div class="md-flex-h md-flex-no-wrap">
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-pose-base.png"></div>
+<div class="md-margin-left-6"><img src="{{site.baseurl}}/assets/images/2025/01/sd-pose-stick.png"></div>
+<div class="md-margin-left-6"><img src="{{site.baseurl}}/assets/images/2025/01/sd-pose-controlnet.png"></div>
+</div>
+
+Note that the ControlNet models will only work with models using the same base model. A SD v1.5 ControlNet model works with all other SD v1.5 models. For SDXL models, we will need a ControlNet that is trained with SDXL. This is because SDXL models use a different architecture, a larger UNet than the SD v1.5.
+
 ### How does ControlNet work
 
 
