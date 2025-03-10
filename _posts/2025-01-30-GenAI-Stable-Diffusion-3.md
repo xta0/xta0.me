@@ -255,7 +255,10 @@ As you can see in the photos below, The ControlNet produces remarkable results
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-upscale-cn-tile.png"></div>
 </div>
 
-In the above example, the image-to-image approach would require multiple steps to achieve a desirable outcome. In contrast, the ControlNet Tile accomplish the same outcome with a single round of upscaling. Addiontally, ControlNet Tile consumes relatively lower VRAM usage compared to the image-to-image solution.
+In the above example, the image-to-image approach would require multiple steps to achieve a desirable outcome. In contrast, the ControlNet Tile accomplish the same outcome with a single round of upscaling. Additionally, ControlNet Tile consumes relatively lower VRAM usage compared to the image-to-image solution.
+
+If your goal is to preserve as many aspects of the original image as possible during the upscaling, the image-to-image approach would be a better option. Conversely, if you prefer an AI-driven, or a creative approach that generates new rich details, ControlNet Tile is a more preferable option.
+
 
 ### More on ControlNet
 
@@ -281,11 +284,6 @@ Similarly, with the recent advancements in SDXL, we can extract pose information
 Note that the ControlNet models will only work with models using the same base model. A SD v1.5 ControlNet model works with all other SD v1.5 models. For SDXL models, we will need a ControlNet that is trained with SDXL. This is because SDXL models use a different architecture, a larger UNet than the SD v1.5.
 
 ### How does ControlNet work
-
-
-### ControlNet vs Img2Img
-
-If your goal is to preserve as many aspects of the original image as possible during the upscaling, the image-to-image approach would be a better option. Conversely, if you prefer an AI-driven, or a creative approach that generates new rich details, ControlNet Tile is a more preferable option.
 
 ## Summary
 
