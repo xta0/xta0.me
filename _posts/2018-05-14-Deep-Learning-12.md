@@ -327,6 +327,14 @@ $$
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-lstm-9.png">
 
 
+## Resources
+
+- [The Unreasonable Effectiveness of Recurrent Neural Networks](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)
+- [Deep Learning Specialization Course on Coursera](https://www.coursera.org/specializations/deep-learning)
+- [Deep Learning with PyTorch](https://livebook.manning.com/book/deep-learning-with-pytorch/welcome/v-10/)
+- [http://colah.github.io/posts/2015-08-Understanding-LSTMs/](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
+- [Exploring LSTMs](http://blog.echen.me/2017/05/30/exploring-lstms/)
+
 ## Appendix: LSTM的numpy实现
 
 ```python
@@ -457,16 +465,3 @@ def lstm_forward(x, a0, parameters):
 
     return a, y, c, caches
 ```
-
-## Resources
-
-- [The Unreasonable Effectiveness of Recurrent Neural Networks](http://karpathy.github.io/2015/05/21/rnn-effectiveness/)
-- [Deep Learning Specialization Course on Coursera](https://www.coursera.org/specializations/deep-learning)
-- [Deep Learning with PyTorch](https://livebook.manning.com/book/deep-learning-with-pytorch/welcome/v-10/)
-- [http://colah.github.io/posts/2015-08-Understanding-LSTMs/](http://colah.github.io/posts/2015-08-Understanding-LSTMs/)
-- [Exploring LSTMs](http://blog.echen.me/2017/05/30/exploring-lstms/)
-
-
-
-
-

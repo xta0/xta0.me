@@ -5,5 +5,4 @@ kernel-vel
 denoising
 autoencoder
 UNet
-LoRA
-ControlNet
+vector，vector中的每个值代表一个dimenson。我们可以用一个很大的
