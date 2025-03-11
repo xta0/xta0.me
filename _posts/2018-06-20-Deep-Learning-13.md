@@ -8,13 +8,13 @@ categories: ["AI", "Machine Learning", "Deep Learning"]
 
 ## Word Embeddings
 
-之前我们将输入文本用一个 1 hot vector 来表示，它是建立在一个 dictionary 的基础上，比如单词`man`的表示方式为
+之前我们将输入文本用一个 1 hot vector 来表示，它是建立在一个 dictionary 的基础上，比如单词`cat`的表示方式为
 
 ```
 [0, 0, 0, ..., 1, ..., 0, 0]
 ```
 
-`1`表示其在 dictionary 中的 index，我们用$O_{index}$表示。上面例子中，`man`在字典中的 index 为 5791，则对应的表示为${O_{5791}}$。
+`1`表示其在 dictionary 中的 index，我们用$O_{index}$表示。上面例子中，`cat`在字典中的 index 为 5791，则对应的表示为${O_{5791}}$。
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/06/dl-nlp-w2-3.png">
 
@@ -40,7 +40,7 @@ x = ["Sally", "Johnson", "is", "an", "orange", "farmer"]
 y = [1, 1, 0, 0, 0, 0]
 ```
 
-之前每个 word 使用 1 hot vector 来表示，现在则可以用 word embedding 来表示。那么 word embedding 从哪里来呢？我们需要自己训练 model 来得到每个 word 的 embedding。另一种方式是下载已经训练好的embedding model。对于每个 word 来说，我们可以想象将其 encode 成一个 vector，vector中的每个值代表一个dimenson。embedding就是这些vector的集合。
+之前每个 word 使用 1 hot vector 来表示，现在则可以用 word embedding 来表示。那么 word embedding 从哪里来呢？我们需要自己训练 model 来得到每个 word 的 embedding。另一种方式是下载已经训练好的embedding model。对于每个 word 来说，我们可以想象将其 encode 成一个 vector，vector中的每个值代表一个描述这个词的feature或者一个单独的dimenson。embedding就是这些vector的集合。
 
 在实际应用中，我们可以用一个很大的 unlabeled text 数据集来 train 我们的 embedding model，然后在 transfer learning 到一个 small dataset 上面:
 
@@ -48,15 +48,19 @@ y = [1, 1, 0, 0, 0, 0]
 2. Transfer embedding to new task with smaller training set (say, 100k words)
 3. Optional: Continue to fine tune the word embeddings with new data.
 
-回到前面说的相关性问题，我们如何来描述各个embedding vector之间的相关性呢？一种方法是使用 Cosine Similarity，即给定两个vector $u$和$v$，计算下面式子
+回到前面说的相关性问题，当我们将word映射成embedding vector之后，我们如何来描述各个vector之间的相关性呢？一种方法是使用 Cosine Similarity，即给定两个vector $u$和$v$，计算下面式子
 
 $$
-\text{CosineSimilarity(u, v)} = \frac {u \cdot v} {||u||_2 ||v||_2} = cos(\theta) \tag{1}
+\text{CosineSimilarity(u, v)} = \frac {u \cdot v} {||u||_2 ||v||_2} = cos(\theta)
 $$
 
 Cosine Similarity 的值取决于$u$, $v$之间的夹角。如果$u$, $v$相似度越高，那么它们之间的夹角越趋向于0(cosine值趋向于1)，反之，则夹角趋向于90甚至180度
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/06/dl-nlp-w2-4.png">
+
+> Appendix #1 展示了如何用Python计算两个vector的相似度
+
+除了使用余弦相似度以外，也可以使用L2范数(欧几里得距离)，这里不展开讨论
 
 ## Embedding Matrix
 
@@ -65,6 +69,8 @@ Cosine Similarity 的值取决于$u$, $v$之间的夹角。如果$u$, $v$相似�
 如果我们用这个 embedding matrix `E` (300, 10,000) 去和一个 one-hot vector `O`(10,000, 1)相乘，结果是一个`(300, 1)`的 vector `e`
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/06/dl-nlp-w2-2.png">
+
+
 
 ## Word2Vec
 
@@ -135,7 +141,7 @@ orange  | of    | 0
 - [Deep Learning Specialization Course on Coursera](https://www.coursera.org/specializations/deep-learning)
 - [Deep Learning with PyTorch](https://livebook.manning.com/book/deep-learning-with-pytorch/welcome/v-10/)
 
-## Appendix 1: cosine_similarity
+## Appendix #1: cosine_similarity
 
 ```python
 def cosine_similarity(u, v):
