@@ -75,4 +75,4 @@ For step 3, we simply repeat the same process above. The three words are `"in se
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-5.png">
 
-
+And the final outcome of this process will be that adding one word at a time that Beam search will decide that `"Jane visits Africa in September. <EOS>"` will be terminated by the end of sentence symbol.
