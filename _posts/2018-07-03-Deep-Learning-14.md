@@ -90,8 +90,38 @@ $$
 
 Note that these probabilities are all numbers less than one, and multiplying a lot of these numbers result in a tiny number, which can result in numerical under-floor, meaning that is too small for the floating point of representation in your computer to store accurately.
 
-In practice, instead of maximizing this product, we will take logs 
+In practice, instead of maximizing this product, we will take logs:
 
 $$
-\arg\max_y \sum_{t=1}^{T_y} \frac{\log P(y^{<t} \mid x, y^{<1}, \dots, y^{<t-1})}{t}
+\arg\max_y \sum_{t=1}^{T_y} \log P(y^{<t} \mid x, y^{<1}, \dots, y^{<t-1})
 $$
+
+Then a log of a product becomes a sum of log, and maximizing this sum of log probabilities should give you the same results in terms of selecting the most likely sentence. We can further improve the formula to be more computing efficient
+
+$$
+\frac{1}{T_y^{\alpha}} \sum_{t=1}^{T_y} \log P(y^{<t>} \mid x, y^{<1>}, \dots, y^{<t-1>})
+$$
+
+Instead of calculating the argmax of the log product, we normalize the value by $T_y^{\alpha}$. Alpha now becomes another parameter hyperparameter you can tune to try to get the best results.
+
+### Error analysis on Beam Search
+
+As you can see, Beam Search is an approximate search algorithm or a heuristic search algorithm. And so it doesn't always output the most likely sentence. It's only keeping track of `3` or `10` or `100` top possibilities. So what if Beam Search makes a mistake? We need some error analysis that can help us figure out whether it is the Beam Search algorithm that's causing problems or whether it might be our RNN model that is causing problems.
+
+Let reuse our running example from above:
+
+```
+Jane visite l’Afrique en septembre.
+
+-> Human: Jane visits Africa in September.
+-> Algorithm: Jane visited Africa last September.
+```
+
+We use $P(y^{*} \mid x)$ to denote the human translation as the ground truth, and use $P(\hat{y} \mid x)$ to denote the model translation. We look at outputs of the `softmax` layer from our RNN model, and find the value of $P(\hat{y} \mid x)$ and $P(y^{*} \mid x)$. Then we can compare these two values:
+
+- Case 1: $P(y^{*} \mid x)$ > $P(\hat{y} \mid x)$
+    - Beam Search chose $\hat{y}$. But $y^{*}$ attains higher $P(y \mid x)$
+    - Conclusion: Beam Search is at fault
+- Case 2: $P(y^{*} \mid x)$ <= $P(\hat{y} \mid x)$
+    - $y^{*}$ is a better translation than $\hat{y}$, but RNN predicted $P(y^{*} \mid x)$ < $P(\hat{y} \mid x)$
+    - Conclusion: RNN model is at fault
