@@ -82,11 +82,16 @@ And the final outcome of this process will be that adding one word at a time tha
 Notice that the formula we use to determine the most likely words is the product of a sequence of probability numbers
 
 $$
-\begin{align}
-\arg\max_{y} \prod_{t=1}^{T_y} P(y^{<t>} \mid x, y^{<1>}, \dots, y^{<t-1>}) &= \\
+\begin{multline}
+\arg\max_{y} \prod_{t=1}^{T_y} P(y^{<t>} \mid x, y^{<1>}, \dots, y^{<t-1>}) = \\
 P(y^{<1>} | x) P(y^{<2>} | x, y^{<1>}) \dots P(y^{<T_y>} | x, y^{<1>}, \dots, y^{<T_y - 1>})
-\end{align}
+\end{multline}
 $$
 
-In practice, these probabilities are all numbers less than one, and multiplying a lot of these numbers result in a tiny number, which can result in numerical under-floor, meaning that is too small for the floating point of representation in your computer to store accurately.
+Note that these probabilities are all numbers less than one, and multiplying a lot of these numbers result in a tiny number, which can result in numerical under-floor, meaning that is too small for the floating point of representation in your computer to store accurately.
 
+In practice, instead of maximizing this product, we will take logs 
+
+$$
+\arg\max_y \sum_{t=1}^{T_y} \frac{\log P(y^{<t} \mid x, y^{<1}, \dots, y^{<t-1})}{t}
+$$
