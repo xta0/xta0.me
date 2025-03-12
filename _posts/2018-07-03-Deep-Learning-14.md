@@ -49,6 +49,6 @@ $$
 
 ### Beam Search
 
-Let's explain the Beam Search algorithm using our running example above. Once our decoder outputs the probability of $P(y^{<1>} \mid x)$ (output of a softmax layer that contains the possibility over 1000 words), unlike greedy search, Beam will consider multiple candidates. The number of candidates is set by `beam width`. If `beam_width = 3`, then Beam will look at three candidates at a time.
+Let's explain the Beam Search algorithm using our running example above. Once our decoder outputs the probability of $P(y^{<1>} \mid x)$ (output of a `softmax` layer that contains the possibility over 1000 words), unlike greedy search, Beam will consider multiple candidates. The number of candidates is set by `beam width`. If `beam_width = 3`, then Beam will look at three candidates at a time.
 
 Let's say when evaluating the first words, it finds that the choices `in`, `Jane` and `September` are the most likely three possibilities for English outputs. Then Beam search will save the words in memory that it wants to try all three of these words, 
