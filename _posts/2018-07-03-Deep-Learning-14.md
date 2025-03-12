@@ -31,7 +31,7 @@ Since the decoder in a machine translation model is an RNN, it generates text pr
 -> Her African friend welcomed Jane in September.
 ```
 
-Clearly, the first translation is the most accurate, while the others are suboptimal. But how can we control this generation process? We can frame it as a conditional probability problem: given an input $x$, we aim to compute the probability of a sequence $y^{<T_y>}$:
+However, we don't want to output a random English translation, we want to output the best and the most likely English translation. Clearly, the first translation is the most accurate, while the others are suboptimal. But how can we control this generation process? We can frame it as a conditional probability problem: given an input $x$, we aim to compute the probability of a sequence $y^{<T_y>}$:
 
  $$
  P(y^{<1>}, \dots, y^{<T_y>} \mid x)
