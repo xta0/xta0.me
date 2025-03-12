@@ -67,7 +67,7 @@ $$
 
 We repeat the same from process to calculate the most likely second words for `"jane"` and `"september"`. Let's say we have `10,000` words in the dictionary. In step 2, with the `beam width` equals to `3`, we will need to evaluate `3 x 10000` options (10000 for each word). We then pick the top 3 most likely words based on the evaluation result from the above formula (the one with the highest conditional probability wins). 
 
-For example, in step 2, the `"september"` is most likely to picked after `"in"`. And for `"jane"`, the model picks `"is"` and `"visits"`. Note that since `beam_width = 3`, and we already picked three words, that means `"september"` will be skipped. So in step 3, the three words are `"september"`, `"is"` and `"visits"`.
+For example, in step 2, the `"september"` is most likely to picked after `"in"`. And for `"jane"`, the model picks `"is"` and `"visits"`. Note that since `beam_width = 3`, and we already picked three words, that means `"september"` will be skipped.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-4.png">
 
@@ -76,3 +76,17 @@ For step 3, we simply repeat the same process above. The three words are `"in se
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-5.png">
 
 And the final outcome of this process will be that adding one word at a time that Beam search will decide that `"Jane visits Africa in September. <EOS>"` will be terminated by the end of sentence symbol.
+
+### Refinements to Beam Search
+
+Notice that the formula we use to determine the most likely words is the product of a sequence of probability numbers
+
+$$
+\begin{align}
+\arg\max_{y} \prod_{t=1}^{T_y} P(y^{<t>} \mid x, y^{<1>}, \dots, y^{<t-1>}) &= \\
+P(y^{<1>} | x) P(y^{<2>} | x, y^{<1>}) \dots P(y^{<T_y>} | x, y^{<1>}, \dots, y^{<T_y - 1>})
+\end{align}
+$$
+
+In practice, these probabilities are all numbers less than one, and multiplying a lot of these numbers result in a tiny number, which can result in numerical under-floor, meaning that is too small for the floating point of representation in your computer to store accurately.
+
