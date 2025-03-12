@@ -31,13 +31,17 @@ Since the decoder in a machine translation model is an RNN, it generates text pr
 -> Her African friend welcomed Jane in September.
 ```
 
-However, we don't want to output a random English translation, we want to output the best and the most likely English translation. Clearly, the first translation is the most accurate, while the others are suboptimal. But how can we control this generation process? We can frame it as a conditional probability problem: given an input $x$, we aim to compute the probability of a sequence $y^{<T_y>}$:
+However, we don't want to output a random English translation, we want to output the best and the most likely English translation. In the example above, clearly, the first translation is the most accurate, while the others are suboptimal. 
+
+But how can we control this generation process? We can frame it as a conditional probability problem: given an input $x$, we aim to compute the probability of a sequence $y^{t}$:
 
  $$
  P(y^{<1>}, \dots, y^{<T_y>} \mid x)
  $$
 
-A naive approach is greedy search, where at each step, we select the word $y^{<t>}$ with the highest probability. However, this strategy often fails to produce the best overall translation because it optimizes for immediate word probabilities at each step rather than considering the global sequence structure. In this case, the probability of choosing `Jane is going to` is higher than `Jane is visiting`, as `going` is a more commonly seen word in English. So what we need to do is to find a search algorithm that can satisfy:
+A naive approach is greedy search, where at each step, we select the word $y^{t}$ with the highest probability. However, this strategy often fails to produce the best overall translation because it optimizes for immediate word probabilities at each step rather than considering the global sequence structure. In this case, the probability of choosing `Jane is going to` is higher than `Jane is visiting`, as `going` is a more commonly seen word in English.
+
+Instead, what we need to do, is to find a search algorithm that can find the following value for us:
 
 $$
 \arg\max_{y^{<1>}, \dots, y^{<T_y>}} P(y^{<1>}, \dots, y^{<T_y>} \mid x)
