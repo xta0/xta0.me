@@ -108,7 +108,7 @@ Instead of calculating the argmax of the log product, we normalize the value by 
 
 As you can see, Beam Search is an approximate search algorithm or a heuristic search algorithm. And so it doesn't always output the most likely sentence. It's only keeping track of `3` or `10` or `100` top possibilities. So what if Beam Search makes a mistake? We need some error analysis that can help us figure out whether it is the Beam Search algorithm that's causing problems or whether it might be our RNN model that is causing problems.
 
-Let reuse our running example from above:
+Let reuse our running example from above. We use $P(y^{*} \mid x)$ to denote the human translation as the ground truth, and use $P(\hat{y} \mid x)$ to denote the model translation. 
 
 ```
 Jane visite l’Afrique en septembre.
@@ -117,11 +117,11 @@ Jane visite l’Afrique en septembre.
 -> Algorithm: Jane visited Africa last September.
 ```
 
-We use $P(y^{*} \mid x)$ to denote the human translation as the ground truth, and use $P(\hat{y} \mid x)$ to denote the model translation. We look at outputs of the `softmax` layer from our RNN model, and find the value of $P(\hat{y} \mid x)$ and $P(y^{*} \mid x)$. Then we can compare these two values:
+We look at outputs of the `softmax` layer from our RNN model, and find the value of $P(\hat{y} \mid x)$ and $P(y^{*} \mid x)$. Then we can compare these two values:
 
 - Case 1: $P(y^{*} \mid x)$ > $P(\hat{y} \mid x)$
-    - Beam Search chose $\hat{y}$. But $y^{*}$ attains higher $P(y \mid x)$
+    - Beam Search chose $\hat{y}$, but $y^{*}$ attains higher $P(y \mid x)$
     - Conclusion: Beam Search is at fault
 - Case 2: $P(y^{*} \mid x)$ <= $P(\hat{y} \mid x)$
-    - $y^{*}$ is a better translation than $\hat{y}$, but RNN predicted $P(y^{*} \mid x)$ < $P(\hat{y} \mid x)$
+    - RNN predicted $P(y^{*} \mid x)$ < $P(\hat{y} \mid x)$
     - Conclusion: RNN model is at fault
