@@ -10,15 +10,15 @@ categories: ["AI", "Machine Learning", "Deep Learning"]
 
  Let's say you want to input a French sentence like `Jane visite I'Afrique Septembre`, and you want to translate it to the English sentence, `Jane is visiting Africa in September`. How can you train a neural network to input the sequence `x` and output the sequence `y`?
 
- First, let's build a LSTM as an <mark>encoder</mark> network. We feed the network with one word a time from the original french sentence. After ingesting the input sequence the RNN then outputs a vector that represents the input sentence. After that, we can build a decoder network that takes the input from the encoder and outputs the translated English words.
+ First, let's build a LSTM as an <mark>encoder</mark> network. We feed the network with one word a time from the original french sentence. After ingesting the input sequence the RNN then outputs a vector that represents the input sentence. After that, we can build a <mark>decoder</mark> network that takes the input from the encoder and outputs the translated English words.
 
  <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-1.png">
 
- Similarly, we can use the same encoder and decoder architecture for image captioning. Our encoder will be a CNN (say AlexNet), and we replace the last layer (softmax) with an RNN decoder. This model works quite well especially for generating text that are not so long.
+ Similarly, we can use the same encoder and decoder architecture for image captioning. Our encoder will be a CNN model (e.g., AlexNet), and we replace the last layer (softmax) with an RNN decoder. This model works quite well especially for generating text that are not so long.
 
  <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-2.png">
 
- ## Machine translation as building a conditional language model
+## Machine translation as building a conditional language model
 
 Since the decoder in a machine translation model is an RNN, it generates text probabilistically, meaning it can produce multiple translations for the same English sentence:
 
