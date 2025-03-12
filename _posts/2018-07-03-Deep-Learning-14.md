@@ -48,3 +48,5 @@ $$
 $$
 
 ### Beam Search
+
+Let's explain the Beam Search algorithm using our running example above.
