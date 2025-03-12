@@ -49,6 +49,12 @@ $$
 
 ### Beam Search
 
-Let's explain the Beam Search algorithm using our running example above. Once our decoder outputs the probability of $P(y^{<1>} \mid x)$ (output of a `softmax` layer that contains the possibility over 1000 words), unlike greedy search, Beam will consider multiple candidates. The number of candidates is set by `beam width`. If `beam_width = 3`, then Beam will look at three candidates at a time.
+Let's explain the Beam Search algorithm using our running example above. Once our decoder outputs the probability of the first English word (the outputs are from a `softmax` layer that contains the possibility over 1000 words), represented as $P(y^{<1>} \mid x)$, unlike greedy search, Beam will consider multiple candidates. The number of candidates is set by `beam width`. If `beam_width = 3`, then Beam will look at three candidates at a time.
 
-Let's say when evaluating the first words, it finds that the choices `in`, `Jane` and `September` are the most likely three possibilities for English outputs. Then Beam search will save the words in memory that it wants to try all three of these words, 
+Let's say when evaluating the first words, it finds that the choices `in`, `Jane` and `September` are the most likely three possibilities for English outputs. Then Beam search will save the words in memory that it wants to try all three of these words.
+
+For each of these three choices consider what should be the second word, so after `in`, maybe a second word is `a`,`aaron` or `september` or `zulu`. To evaluate the probability of second word $y^{<2>}$, we will use our decoder network fragments where the input from the previous block is $y^{<1>}$ (`"in"`).
+
+ By hard-wiring $y^{<1>}$ one, we evaluate the probability of the second word given the first words of the translation has been the word "in" - $P(y^{<2>} \mid x, \text {"in"})$
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-3.png">
