@@ -1,6 +1,6 @@
 ---
 list_title:   Deep Learning | Word Embeddings
-title: NLP and Word Embeddings
+title: Word Embeddings
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning", "Deep Learning"]
@@ -58,9 +58,7 @@ Cosine Similarity 的值取决于$u$, $v$之间的夹角。如果$u$, $v$相似�
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/06/dl-nlp-w2-4.png">
 
-> Appendix #1 展示了如何用Python计算两个vector的相似度
-
-除了使用余弦相似度以外，也可以使用L2范数(欧几里得距离)，这里不展开讨论
+> Appendix #1 展示了如何用Python计算两个vector的相似度。除了使用余弦相似度以外，也可以使用L2范数(欧几里得距离)，这里不展开讨论
 
 ## Embedding Matrix
 
