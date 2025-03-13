@@ -170,10 +170,8 @@ end
 
 Idea: Make sure features are on a similar scale, e.g.,
 
-```
-x1 = size(0-200 feet)
-x2=number of bedrooms(1-5)
-```
+- `x1 = size(0-200 feet)`
+- `x2=number of bedrooms(1-5)`
 
 这种情况 contour 图是一个瘦长的椭圆, 在不优化的情况下，这类梯度下降速度很慢。如果我们将`x1`和`x2`做如下调整：
 
@@ -195,12 +193,7 @@ Replace $x_i$ with $x_i - \mu_i$ to make features have approximately zero mean.
 - `x1=(size-1000)/2000`
 - `x2=(#bedrooms-2)/5`
 
-则有
-
-$$
--0.5 \leq x_1 \leq 0.5, \quad -0.5 \leq x_2 \leq 0.5
-$$
-
+则有 $-0.5 \leq x_1 \leq 0.5, \quad -0.5 \leq x_2 \leq 0.5$
 
 - $\mu_i$ 是所有 $x_i$
 - $\mu_i$ 是 `x_i` 的区间范围，即 $(\max - \min)$
@@ -275,173 +268,99 @@ $$
 
 对于 cost 函数：
 
-<math display="block">
-  <mi>J</mi>
-  <mo stretchy="false">(</mo>
-  <mi>θ</mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <mstyle>
-      <mfrac>
-        <mn>1</mn>
-        <mrow>
-          <mn>2</mn>
-          <mi>m</mi>
-        </mrow>
-      </mfrac>
-    </mstyle>
-    <mstyle>
-      <munderover>
-        <mo>∑</mo>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi>i</mi>
-          <mo>=</mo>
-          <mn>1</mn>
-        </mrow>
-        <mi>m</mi>
-      </munderover>
-      <msup>
-        <mfenced open="(" close=")">
-          <mrow>
-            <msub>
-              <mi>h</mi>
-              <mi>θ</mi>
-            </msub>
-            <mo stretchy="false">(</mo>
-            <msub>
-              <mi>x</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mi>i</mi>
-              </mrow>
-            </msub>
-            <mo stretchy="false">)</mo>
-            <mo>−</mo>
-            <msub>
-              <mi>y</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mi>i</mi>
-              </mrow>
-            </msub>
-          </mrow>
-        </mfenced>
-        <mn>2</mn>
-      </msup>
-  </mstyle>
-</math>
+$$
+J(\theta) =
+\frac{1}{2m} \sum_{i=1}^{m} \left( h_{\theta}(x_i) - y_i \right)^2
+$$
 
-前面提到的求`J(θ)`最小值的思路是使用梯度下降法，对<math><msub><mi>θ</mi><mi>j</mi></msub></math>求偏导得到各个 θ 值:
 
-<math display="block">
-<mfrac><mi mathvariant="normal">∂</mi><mrow><mi mathvariant="normal">∂</mi><msub><mi>θ</mi><mi>j</mi></msub></mrow></mfrac><mi>J</mi><mo stretchy="false">(</mo><mi>θ</mi><mo stretchy="false">)</mo>
-<mo>=</mo>
-<mn>0</mn>
-<mspace width="1em"></mspace>
-<mi>(for every j)</mi>
-</math>
+前面提到的求 `J(θ)` 最小值的思路是使用梯度下降法，对 $ \theta_j $ 求偏导得到各个 θ 值:
 
-出了梯度下降法之外，还有一种方法叫做**Normal Equation**，这种方式不需要迭代，可以直接计算出 θ 值 。
+$$
+\frac{\partial J(\theta)}{\partial \theta_j} = 0 \quad (\text{for every } j)
+$$
 
-假设我们有 m 个样本。特征向量的维度为 n。因此，可知样本为 <math><mo>{</mo><mo>(</mo><msup><mi>x</mi><mi>(1)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(1)</mi></msup><mo>)</mo><mo>,</mo><mo>(</mo><msup><mi>x</mi><mi>(2)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(2)</mi></msup><mo>)</mo><mo>,</mo><mo>...</mo><mo>(</mo><msup><mi>x</mi><mi>(m)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(m)</mi></msup><mo>)</mo><mo>}</mo></math>，其中对于每一个样本中的<math><msup><mi>x</mi><mi>(i)</mi></msup></math>，都有 <math><msup><mi>x</mi><mi>(i)</mi></msup><mo>=</mo><mo>{</mo><msubsup><mi>x</mi><mi>1</mi><mi>(i)</mi></msubsup><msubsup><mi>x</mi><mi>2</mi><mi>(i)</mi></msubsup><mo>,</mo><mo>...</mo><msubsup><mi>x</mi><mi>n</mi><mi>(i)</mi></msubsup><mo>}</mo></math>，令线性回归函数 <math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>θ</mi><mn>0</mn></msub><mo>+</mo><msub><mi>θ</mi><mn>1</mn></msub><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>θ</mi><mn>2</mn></msub><msub><mi>x</mi><mn>2</mn></msub><mo>+</mo><msub><mi>θ</mi><mn>3</mn></msub><msub><mi>x</mi><mn>3</mn></msub><mo>+</mo><mo>⋯</mo><mo>+</mo><msub><mi>θ</mi><mi>n</mi></msub><msub><mi>x</mi><mi>n</mi></msub></math>，则有：
 
-<math display="block">
-<mi>X</mi>
-<mo>=</mo>
-<mfenced open="[" close="]">
-<mtable>
-	<mtr>
-		<mtd><mn>1</mn></mtd>
-		<mtd><msubsup><mi>x</mi><mi>1</mi><mi>(1)</mi></msubsup></mtd>
-		<mtd><msubsup><mi>x</mi><mi>2</mi><mi>(1)</mi></msubsup></mtd>
-		<mtd><mo>...</mo></mtd>
-		<mtd><msubsup><mi>x</mi><mi>n</mi><mi>(1)</mi></msubsup></mtd>
-	</mtr>
-	<mtr>
-		<mtd><mn>1</mn></mtd>
-		<mtd><msubsup><mi>x</mi><mi>1</mi><mi>(2)</mi></msubsup></mtd>
-		<mtd><msubsup><mi>x</mi><mi>2</mi><mi>(2)</mi></msubsup></mtd>
-		<mtd><mo>...</mo></mtd>
-		<mtd><msubsup><mi>x</mi><mi>n</mi><mi>(2)</mi></msubsup></mtd>
-	</mtr>
-	<mtr>
-		<mtd><mn>1</mn></mtd>
-		<mtd><mo>...</mo></mtd>
-		<mtd><mo>...</mo></mtd>
-		<mtd><mo>...</mo></mtd>
-		<mtd><mo>...</mo></mtd>
-	</mtr>
-	<mtr>
-		<mtd><mn>1</mn></mtd>
-		<mtd><msubsup><mi>x</mi><mi>1</mi><mi>(m)</mi></msubsup></mtd>
-		<mtd><msubsup><mi>x</mi><mi>2</mi><mi>(m)</mi></msubsup></mtd>
-		<mtd><mo>...</mo></mtd>
-		<mtd><msubsup><mi>x</mi><mi>n</mi><mi>(m)</mi></msubsup></mtd>
-	</mtr>
-</mtable>
-</mfenced>
-<mo>,</mo>
-<mspace width="1em"></mspace>
-<mi>θ</mi>
-<mo>=</mo>
-<mfenced open="[" close="]">
-<mtable>
-	<mtr>
-		<msub><mi>θ</mi><mi>1</mi></msub>
-	</mtr>
-	<mtr>
-		<msub><mi>θ</mi><mi>2</mi></msub>
-	</mtr>
-	<mtr>
-		<mtd><mo>...</mo></mtd>
-	</mtr>
-	<mtr>
-		<msub><mi>θ</mi><mi>n</mi></msub>
-	</mtr>
-</mtable>
-</mfenced>
-<mo>,</mo>
-<mspace width="1em"></mspace>
-<mi>Y</mi>
-<mo>=</mo>
-<mfenced open="[" close="]">
-<mtable>
-	<mtr>
-		<msub><mi>y</mi><mi>1</mi></msub>
-	</mtr>
-	<mtr>
-		<msub><mi>y</mi><mi>2</mi></msub>
-	</mtr>
-	<mtr>
-		<mtd><mo>...</mo></mtd>
-	</mtr>
-	<mtr>
-		<msub><mi>y</mi><mi>m</mi></msub>
-	</mtr>
-</mtable>
-</mfenced>
-</math>
+出了梯度下降法之外，还有一种方法叫做**Normal Equation**，这种方式不需要迭代，可以直接计算出θ值
 
-其中：
+假设我们有 $m$ 个样本。特征向量的维度为 $n$。因此，可知样本为 
 
-* <math><mi>X</mi></math> 是 <math><mi>m</mi><mo>\*</mo><mi>(n+1)</mi></math>的矩阵
-* <math><mi>θ</mi></math> 是 <math><mi>(n+1)</mi><mo>\*</mo><mn>1</mn></math>的矩阵
-* <math><mi>Y</mi></math> 是 <math><mi>m</mi><mo>\*</mo><mn>1</mn></math>的矩阵
+$$
+\{(x^{(1)}, y^{(1)}), (x^{(2)}, y^{(2)}), \dots, (x^{(m)}, y^{(m)})\}
+$$
+其中对于每一个样本中的 $x^{(i)}$，都有 
+$$
+x^{(i)} = \{ x_1^{(i)}, x_2^{(i)}, \dots, x_n^{(i)} \}
+$$
+
+令线性回归函数：
+
+$$
+h_{\theta}(x) = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \theta_3 x_3 + \dots + \theta_n x_n
+$$
+
+则有：
+
+$$
+X =
+\begin{bmatrix}
+1 & x_1^{(1)} & x_2^{(1)} & \dots & x_n^{(1)} \\
+1 & x_1^{(2)} & x_2^{(2)} & \dots & x_n^{(2)} \\
+1 & \dots & \dots & \dots & \dots \\
+1 & x_1^{(m)} & x_2^{(m)} & \dots & x_n^{(m)}
+\end{bmatrix}
+\quad
+\theta =
+\begin{bmatrix}
+\theta_1 \\
+\theta_2 \\
+\vdots \\
+\theta_n
+\end{bmatrix}
+\quad
+Y =
+\begin{bmatrix}
+y_1 \\
+y_2 \\
+\vdots \\
+y_m
+\end{bmatrix}
+$$
+
+- $X$ 是 $m \times (n+1)$ 的矩阵  
+- $\theta$ 是 $(n+1) \times 1$ 的矩阵  
+- $Y$ 是 $m \times 1$ 的矩阵  
 
 看个例子：
 
 ![](/assets/images/2017/09/ml-4-5.png)
 
-若希望<math><msub><mi>h</mi><mi>(θ)</mi></msub><mo>=</mo><mi>y</mi></math>，则有<math><mi>X</mi><mo>·</mo><mi>θ</mi><mo>=</mo><mi>Y</mi></math>，回想**单位矩阵** 和 **矩阵的逆**的性质：
+若希望 $h_{(\theta)} = y$，则有 $X \cdot \theta = Y$，回想 **单位矩阵** 和 **矩阵的逆** 的性质：
 
-* 单位矩阵 E，<math><mi>AE</mi><mo>=</mo><mi>EA</mi><mo>=</mo><mi>A</mi></math>
-* 矩阵的逆<math><msup><mi>A</mi><mi>-1</mi></msup></math>，A 必须为方阵，<math><mi>A</mi><msup><mi>A</mi><mi>-1</mi></msup><mo>=</mo><msup><mi>A</mi><mi>-1</mi></msup><mi>A</mi><mo>=</mo><mi>E</mi></math>
+- **单位矩阵** $E$，$AE = EA = A$
+- **矩阵的逆** $A^{-1}$，$A$ 必须为方阵，$A A^{-1} = A^{-1} A = E$
 
-再来看看式子 <math><mi>X</mi><mo>·</mo><mi>θ</mi><mo>=</mo><mi>Y</mi></math> 若想求出 θ，那么我们需要做一些转换：
+再来看看式子 $X \cdot \theta = Y$，若想求出 $\theta$，那么我们需要做一些转换：
 
-1. 先把 θ 左边的矩阵变成一个方阵。通过乘以<math><msup><mi>X</mi><mi>T</mi></msup></math>可以实现，则有 <math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><mo>·</mo><mi>θ</mi><mo>=</mo><msup><mi>X</mi><mi>T</mi></msup><mi>Y</mi></math>
+1. 先把 $\theta$ 左边的矩阵变成一个方阵。通过乘以 $X^T$ 可以实现，则有：
+   
+   $$
+   X^T X \cdot \theta = X^T Y
+   $$
 
-2. 把 θ 左边的部分变成一个单位矩阵，这样左边就只剩下 θ，<math><mo>(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><msup><mo>)</mo><mn>-1</mn></msup><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><mo>·</mo><mi>θ</mi><mo>=</mo><mo>(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><msup><mo>)</mo><mn>-1</mn></msup><msup><mi>X</mi><mi>T</mi></msup><mi>Y</mi></math>
+2. 把 $\theta$ 左边的部分变成一个单位矩阵，这样左边就只剩下 $\theta$：
+   
+   $$
+   (X^T X)^{-1} X^T X \cdot \theta = (X^T X)^{-1} X^T Y
+   $$
 
-3. 由于<math><mo>(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><msup><mo>)</mo><mn>-1</mn></msup><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><mo>=</mo><mi>E</mi></math>，因此式子变为<math><mi>θ</mi><mo>=</mo><mo>(</mo><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><msup><mo>)</mo><mn>-1</mn></msup><msup><mi>X</mi><mi>T</mi></msup><mi>Y</mi></math>，这就**Normal Equation**的表达式。
+3. 由于 $(X^T X)^{-1} X^T X = E$，因此式子变为：
+   
+   $$
+   \theta = (X^T X)^{-1} X^T Y
+   $$
+   这就是 **Normal Equation** 的表达式。
+
 
 如果用 Octave 表示，命令为：`pinv(X'*X)*X'*Y`
 
@@ -454,14 +373,14 @@ $$
 | <math><mi>O</mi><mo>(</mo><mi>k</mi><msup><mi>n</mi><mn>2</mn></msup><mo>)</mo></math> | <math><mi>O</mi><mo> (</mo><msup><mi>n</mi><mn>3</mn></msup><mo>)</mo></math> need to calculate inverse of <math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi></math> |
 | Works well when n is large                                                             | Slow if n is very large                                                                                                                                             |
 
-当样本数量 n>=1000 时使用梯度下降，小于这个数量使用 normal equation 更方便，当 n 太大时，计算 <math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi></math> 会非常慢
+当样本数量 $n \geq 1000$ 时，使用梯度下降，小于这个数量时，使用 Normal Equation 更方便。当 $n$ 太大时，计算 $X^T X$ 会非常慢。
 
-When implementing the normal equation in octave we want to use the `pinv` function rather than `inv`. The `pinv` function will give you a value of θ even if<math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi></math> is not invertible(不可逆).
+When implementing the normal equation in Octave, we want to use the `pinv` function rather than `inv`. The `pinv` function will give you a value of $\theta$ even if $X^T X$ is not invertible (不可逆).
 
-If <math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi></math> is noninvertible, the common causes might be having :
+If $X^T X$ is noninvertible, the common causes might be:
 
-* Redundant features, where two features are very closely related (i.e. they are linearly dependent)
-* Too many features (e.g. m ≤ n). In this case, delete some features or use "regularization" (to be explained in a later lesson).
+- Redundant features, where two features are very closely related (i.e. they are linearly dependent)
+- Too many features (e.g. m ≤ n). In this case, delete some features or use "regularization" (to be explained in a later lesson).
 
 Solutions to the above problems include deleting a feature that is linearly dependent with another or deleting one or more features when there are too many features.
 

@@ -17,7 +17,15 @@ mathjax: true
 
 我们可以通过构建对feature的多项式$g_\theta$来确定预测函数，但这中方法适用于feature较少的情况，比如上图中，只有两个feature: $x_1$和$x_2$。
 
-当feature多的时候，产生多项式就会变得很麻烦，还是预测房价的例子，可能的feature有很多，比如：`x1=size`,`x2=#bedrooms`,`x3=#floors`,`x4=age`,...`x100=#schools`等等，假设`n=100`，有几种做法：
+当feature多的时候，产生多项式就会变得很麻烦，还是预测房价的例子，可能的feature有很多，比如：
+- `x1=size`
+- `x2=#bedrooms`
+- `x3=#floors`
+- `x4=age`
+- ...
+- `x100=#schools`
+
+等等，假设`n=100`，有几种做法：
 
 - 构建二阶多项式
 	- 如$x_1^{2}$,$2x_1$,$3x_1$,...,$x_2^{2}$,$3x_2$...有约为5000项(n^2/2)，计算的代价非常高。
@@ -112,10 +120,12 @@ $$
 对第二层每个activation节点的计算公式如下：
 
 $$
+\begin{aligned}
 a_1^{(2)} = g(\theta_{10}^{(1)}x_0 + \theta_{11}^{(1)}x_1 + \theta_{12}^{(1)}x_2 + \theta_{13}^{(1)}x_3 ) \\
 a_2^{(2)} = g(\theta_{20}^{(1)}x_0 + \theta_{21}^{(1)}x_1 + \theta_{22}^{(1)}x_2 + \theta_{23}^{(1)}x_3 ) \\
 a_3^{(2)} = g(\theta_{30}^{(1)}x_0 + \theta_{31}^{(1)}x_1 + \theta_{32}^{(1)}x_2 + \theta_{33}^{(1)}x_3 ) \\
 h_\theta(x) = a_1^{(3)} = g(\theta_{10}^{(2)}a_0^{2}+\theta_{11}^{(2)}a_1^{2}+\theta_{12}^{(2)}a_2^{2}+\theta_{13}^{(2)}a_3^{2})
+\end{aligned}
 $$
 
 上面可以看到第一层Hidden Layer的参数，$\theta_{ij}$表示从节点`i`到节点`j`的权重值，$\theta^{(l)}$表示该权重位于第`l`层。如果单独看每一个`a`节点的值，会发现它和上述单层神经网络的计算方式一样，需要一个bias unit和$\theta$权重。 如上图中的$\theta$矩阵是`3x4`的，输入的feature矩阵是`4x1`的，这样相乘得出的第一层输出矩阵是`3x1`的，对应每个`a`节点的值。而整个神经网络最终输出结果是神经元`a`矩阵再乘以第二层Hidden Layer的参数矩阵$\theta^{(2)}$。由此我们可以推测出$\theta$矩阵的维度的计算方式为:
@@ -157,309 +167,52 @@ $$
 其中，上角标用来表示第几层layer，下角标表示该层的第几个节点。例如第2层的第k个节点的z值为：
 
 $$
-z_k^{(2)} = 
+z_k^{(2)} = \Theta_{k,0}^{(1)} x_0 + \Theta_{k,1}^{(1)} x_1 + \dots + \Theta_{k,n}^{(1)} x_n
 $$
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <msubsup>
-    <mi>z</mi>
-    <mi>k</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mn>2</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msubsup>
-  <mo>=</mo>
-  <msubsup>
-    <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>k</mi>
-      <mo>,</mo>
-      <mn>0</mn>
-    </mrow>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mn>1</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msubsup>
-  <msub>
-    <mi>x</mi>
-    <mn>0</mn>
-  </msub>
-  <mo>+</mo>
-  <msubsup>
-    <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>k</mi>
-      <mo>,</mo>
-      <mn>1</mn>
-    </mrow>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mn>1</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msubsup>
-  <msub>
-    <mi>x</mi>
-    <mn>1</mn>
-  </msub>
-  <mo>+</mo>
-  <mo>&#x22EF;<!-- ⋯ --></mo>
-  <mo>+</mo>
-  <msubsup>
-    <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>k</mi>
-      <mo>,</mo>
-      <mi>n</mi>
-    </mrow>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mn>1</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msubsup>
-  <msub>
-    <mi>x</mi>
-    <mi>n</mi>
-  </msub>
-</math>
+用向量表示 $x$ 和 $z^j$ 如下：
 
-用向量表示x和<math><msup><mi>z</mi><mrow><mi>j</mi></mrow></msup></math>如下：
+$$
+x =
+\begin{bmatrix}
+x_0 \\
+x_1 \\
+\vdots \\
+x_n
+\end{bmatrix}
+\quad
+z^{(j)} =
+\begin{bmatrix}
+z_1^{(j)} \\
+z_2^{(j)} \\
+\vdots \\
+z_n^{(j)}
+\end{bmatrix}
+$$
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd>
-        <mi>x</mi>
-        <mo>=</mo>
-        <mfenced open="[" close="]">
-          <mtable rowspacing="4pt" columnspacing="1em">
-            <mtr>
-              <mtd>
-                <msub>
-                  <mi>x</mi>
-                  <mn>0</mn>
-                </msub>
-              </mtd>
-            </mtr>
-            <mtr>
-              <mtd>
-                <msub>
-                  <mi>x</mi>
-                  <mn>1</mn>
-                </msub>
-              </mtd>
-            </mtr>
-            <mtr>
-              <mtd>
-                <mo>&#x22EF;<!-- ⋯ --></mo>
-              </mtd>
-            </mtr>
-            <mtr>
-              <mtd>
-                <msub>
-                  <mi>x</mi>
-                  <mi>n</mi>
-                </msub>
-              </mtd>
-            </mtr>
-          </mtable>
-        </mfenced>
-      </mtd>
-      <mtd>
-        <msup>
-          <mi>z</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>j</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo>=</mo>
-        <mfenced open="[" close="]">
-          <mtable rowspacing="4pt" columnspacing="1em">
-            <mtr>
-              <mtd>
-                <msubsup>
-                  <mi>z</mi>
-                  <mn>1</mn>
-                  <mrow class="MJX-TeXAtom-ORD">
-                    <mo stretchy="false">(</mo>
-                    <mi>j</mi>
-                    <mo stretchy="false">)</mo>
-                  </mrow>
-                </msubsup>
-              </mtd>
-            </mtr>
-            <mtr>
-              <mtd>
-                <msubsup>
-                  <mi>z</mi>
-                  <mn>2</mn>
-                  <mrow class="MJX-TeXAtom-ORD">
-                    <mo stretchy="false">(</mo>
-                    <mi>j</mi>
-                    <mo stretchy="false">)</mo>
-                  </mrow>
-                </msubsup>
-              </mtd>
-            </mtr>
-            <mtr>
-              <mtd>
-                <mo>&#x22EF;<!-- ⋯ --></mo>
-              </mtd>
-            </mtr>
-            <mtr>
-              <mtd>
-                <msubsup>
-                  <mi>z</mi>
-                  <mi>n</mi>
-                  <mrow class="MJX-TeXAtom-ORD">
-                    <mo stretchy="false">(</mo>
-                    <mi>j</mi>
-                    <mo stretchy="false">)</mo>
-                  </mrow>
-                </msubsup>
-              </mtd>
-            </mtr>
-          </mtable>
-        </mfenced>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+令 $x$ 为第一层节点，即 $x = a^{(1)}$，则每层的向量化表示为：
 
-令x为第一层节点<math><mi>x</mi><mo>=</mo><msup><mi>a</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msup></math>，则每层的向量化表示为：
+$$
+z^{(j)} = \Theta^{(j-1)} a^{(j-1)}
+$$
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <msup>
-    <mi>z</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>j</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo>=</mo>
-  <msup>
-    <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>j</mi>
-      <mo>&#x2212;<!-- − --></mo>
-      <mn>1</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <msup>
-    <mi>a</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>j</mi>
-      <mo>&#x2212;<!-- − --></mo>
-      <mn>1</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-</math>
+其中，$\Theta^{(j-1)}$ 是 $j \times (j+1)$ 的，$a^{(j-1)}$ 是 $(j+1) \times 1$ 的，因此 $z^{(j)}$ 是 $j \times 1$ 的，即：
 
-其中，<math><msup><mi>Θ</mi><mi>(j-1)</mi></msup></math>是 jx(j+1) 的，<math><msup><mi>a</mi><mi>(j-1)</mi></msup></math>是(j+1)x1的，因此<math><msup><mi>z</mi><mi>j</mi></msup></math>是jx1的，即
+$$
+a^{(j)} = g(z^{(j)})
+$$
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <msup>
-    <mi>a</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>j</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo>=</mo>
-  <mi>g</mi>
-  <mo stretchy="false">(</mo>
-  <msup>
-    <mi>z</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>j</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-</math>
+当我们计算完 $a^{(j)}$ 后，我们可以给 $a^{(j)}$ 增加一个 bias unit，即 $a_0^{(j)} = 1$，则 $a$ 变成了 $(j+1) \times 1$ 的。以此类推：
 
-当我们计算完<math><msup><mi>a</mi><mi>(j)</mi></msup></math>后，我们可以给<math><msup><mi>a</mi><mi>(j)</mi></msup></math>增加一个bias unit，即<math><msubsup><mi>a</mi><mn>0</mn><mi>(j)</mi></msubsup><mo>=</mo><mn>1</mn></math>，则a变成了(j+1)x1的。以此类推：
-
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <msup>
-    <mi>z</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>j</mi>
-      <mo>+</mo>
-      <mn>1</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo>=</mo>
-  <msup>
-    <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>j</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <msup>
-    <mi>a</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>j</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-</math>
+$$
+z^{(j+1)} = \Theta^{(j)} a^{(j)}
+$$
 
 最终的预测函数h表示为：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <msub>
-    <mi>h</mi>
-    <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <msup>
-    <mi>a</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>j</mi>
-      <mo>+</mo>
-      <mn>1</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo>=</mo>
-  <mi>g</mi>
-  <mo stretchy="false">(</mo>
-  <msup>
-    <mi>z</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>j</mi>
-      <mo>+</mo>
-      <mn>1</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-</math>
+$$
+h_{\Theta}(x) = a^{(j+1)} = g(z^{(j+1)})
+$$
 
 注意到在每层的计算上，我们的预测函数和逻辑回归基本相同。我们增加了这么多层，即神经网络是为了更好的得到非线性函数的预测结果，这个算法也叫做**Forward Propagation**，后面简称**FB**算法，Octave实现为：
 
@@ -494,80 +247,32 @@ end
 
 ```
 
-
-
 ### Neural Network Example
 
 - 单层神经网络实现与或门
 
-神经网络的一个简单应用是预测<math><msub><mi>x</mi><mn>1</mn></msub></math> AND <math><msub><mi>x</mi><mn>2</mn></msub></math>，当<math><msub><mi>x</mi><mn>1</mn></msub></math>和<math><msub><mi>x</mi><mn>2</mn></msub></math>都为1的时候，结果是true，预测函数如下：
+神经网络的一个简单应用是预测 $x_1$ AND $x_2$，当 $x_1$ 和 $x_2$ 都为 1 的时候，结果是 true，预测函数如下：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd>
-        <mfenced open="[" close="]">
-          <mtable rowspacing="4pt" columnspacing="1em">
-            <mtr>
-              <mtd>
-                <msub>
-                  <mi>x</mi>
-                  <mn>0</mn>
-                </msub>
-              </mtd>
-            </mtr>
-            <mtr>
-              <mtd>
-                <msub>
-                  <mi>x</mi>
-                  <mn>1</mn>
-                </msub>
-              </mtd>
-            </mtr>
-            <mtr>
-              <mtd>
-                <msub>
-                  <mi>x</mi>
-                  <mn>2</mn>
-                </msub>
-              </mtd>
-            </mtr>
-          </mtable>
-        </mfenced>
-        <mo stretchy="false">&#x2192;<!-- → --></mo>
-        <mfenced open="[" close="]">
-          <mtable rowspacing="4pt" columnspacing="1em">
-            <mtr>
-              <mtd>
-                <mi>g</mi>
-                <mo stretchy="false">(</mo>
-                <msup>
-                  <mi>z</mi>
-                  <mrow class="MJX-TeXAtom-ORD">
-                    <mo stretchy="false">(</mo>
-                    <mn>2</mn>
-                    <mo stretchy="false">)</mo>
-                  </mrow>
-                </msup>
-                <mo stretchy="false">)</mo>
-              </mtd>
-            </mtr>
-          </mtable>
-        </mfenced>
-        <mo stretchy="false">&#x2192;<!-- → --></mo>
-        <msub>
-          <mi>h</mi>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <mi>x</mi>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+$$
+\begin{bmatrix}
+x_0 \\
+x_1 \\
+x_2
+\end{bmatrix}
+\quad \rightarrow \quad
+\begin{bmatrix}
+g(z^{(2)})
+\end{bmatrix}
+\quad \rightarrow \quad
+h_{\Theta}(x)
+$$
 
-<math><msub><mi>x</mi><mn>0</mn></msub></math>为1，我们假设 <math><msup><mi>θ</mi><mi>(1)</mi></msup></math>的值如下：<math><msup><mi>Θ</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msup><mo>=</mo><mo stretchy="false">[</mo><mtable rowspacing="4pt" columnspacing="1em"><mtr><mtd><mo>−</mo><mn>30</mn></mtd><mtd><mn>20</mn></mtd><mtd><mn>20</mn></mtd></mtr></mtable><mo stretchy="false">]</mo></math>
+$$
+x_0 = 1，\quad \text{我们假设} \quad \Theta^{(1)} =
+\begin{bmatrix}
+-30 & 20 & 20
+\end{bmatrix}
+$$
 
 
 ![](/assets/images/2017/09/ml-6-7.png)
@@ -579,392 +284,81 @@ end
 
 - 二级神经网络构建同或门
 
-上面我们实现了与或非(非的推导忽略)，对应的theta矩阵如下：
+上面我们实现了与或非(非的推导忽略)，对应的$\Theta$矩阵如下：
 
-<br></br>
+$$
+\begin{aligned}
+\text{AND:} \quad & \Theta^{(1)} =
+\begin{bmatrix}
+-30 & 20 & 20
+\end{bmatrix} \\[8pt]
+\text{NOR:} \quad & \Theta^{(1)} =
+\begin{bmatrix}
+10 & -20 & -20
+\end{bmatrix} \\[8pt]
+\text{OR:} \quad & \Theta^{(1)} =
+\begin{bmatrix}
+-10 & 20 & 20
+\end{bmatrix}
+\end{aligned}
+$$
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd>
-        <mi>A</mi>
-        <mi>N</mi>
-        <mi>D</mi>
-        <mo>:</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <msup>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-      </mtd>
-      <mtd>
-        <mo>=</mo>
-        <mfenced open="[" close="]">
-          <mtable rowspacing="4pt" columnspacing="1em">
-            <mtr>
-              <mtd>
-                <mo>&#x2212;<!-- − --></mo>
-                <mn>30</mn>
-              </mtd>
-              <mtd>
-                <mn>20</mn>
-              </mtd>
-              <mtd>
-                <mn>20</mn>
-              </mtd>
-            </mtr>
-          </mtable>
-        </mfenced>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mi>N</mi>
-        <mi>O</mi>
-        <mi>R</mi>
-        <mo>:</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <msup>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-      </mtd>
-      <mtd>
-        <mo>=</mo>
-        <mfenced open="[" close="]">
-          <mtable rowspacing="4pt" columnspacing="1em">
-            <mtr>
-              <mtd>
-                <mn>10</mn>
-              </mtd>
-              <mtd>
-                <mo>&#x2212;<!-- − --></mo>
-                <mn>20</mn>
-              </mtd>
-              <mtd>
-                <mo>&#x2212;<!-- − --></mo>
-                <mn>20</mn>
-              </mtd>
-            </mtr>
-          </mtable>
-        </mfenced>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mi>O</mi>
-        <mi>R</mi>
-        <mo>:</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <msup>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-      </mtd>
-      <mtd>
-        <mo>=</mo>
-        <mfenced open="[" close="]">
-          <mtable rowspacing="4pt" columnspacing="1em">
-            <mtr>
-              <mtd>
-                <mo>&#x2212;<!-- − --></mo>
-                <mn>10</mn>
-              </mtd>
-              <mtd>
-                <mn>20</mn>
-              </mtd>
-              <mtd>
-                <mn>20</mn>
-              </mtd>
-            </mtr>
-          </mtable>
-        </mfenced>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
 
 我们可以通过上面的矩阵来构建XNOR门：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd>
-        <mfenced open="[" close="]">
-          <mtable rowspacing="4pt" columnspacing="1em">
-            <mtr>
-              <mtd>
-                <msub>
-                  <mi>x</mi>
-                  <mn>0</mn>
-                </msub>
-              </mtd>
-            </mtr>
-            <mtr>
-              <mtd>
-                <msub>
-                  <mi>x</mi>
-                  <mn>1</mn>
-                </msub>
-              </mtd>
-            </mtr>
-            <mtr>
-              <mtd>
-                <msub>
-                  <mi>x</mi>
-                  <mn>2</mn>
-                </msub>
-              </mtd>
-            </mtr>
-          </mtable>
-        </mfenced>
-        <mo stretchy="false">&#x2192;<!-- → --></mo>
-        <mfenced open="[" close="]">
-          <mtable rowspacing="4pt" columnspacing="1em">
-            <mtr>
-              <mtd>
-                <msubsup>
-                  <mi>a</mi>
-                  <mn>1</mn>
-                  <mrow class="MJX-TeXAtom-ORD">
-                    <mo stretchy="false">(</mo>
-                    <mn>2</mn>
-                    <mo stretchy="false">)</mo>
-                  </mrow>
-                </msubsup>
-              </mtd>
-            </mtr>
-            <mtr>
-              <mtd>
-                <msubsup>
-                  <mi>a</mi>
-                  <mn>2</mn>
-                  <mrow class="MJX-TeXAtom-ORD">
-                    <mo stretchy="false">(</mo>
-                    <mn>2</mn>
-                    <mo stretchy="false">)</mo>
-                  </mrow>
-                </msubsup>
-              </mtd>
-            </mtr>
-          </mtable>
-        </mfenced>
-        <mo stretchy="false">&#x2192;<!-- → --></mo>
-        <mfenced open="[" close="]">
-          <mtable rowspacing="4pt" columnspacing="1em">
-            <mtr>
-              <mtd>
-                <msup>
-                  <mi>a</mi>
-                  <mrow class="MJX-TeXAtom-ORD">
-                    <mo stretchy="false">(</mo>
-                    <mn>3</mn>
-                    <mo stretchy="false">)</mo>
-                  </mrow>
-                </msup>
-              </mtd>
-            </mtr>
-          </mtable>
-        </mfenced>
-        <mo stretchy="false">&#x2192;<!-- → --></mo>
-        <msub>
-          <mi>h</mi>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <mi>x</mi>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+$$
+\begin{bmatrix}
+x_0 \\
+x_1 \\
+x_2
+\end{bmatrix}
+\quad \rightarrow \quad
+\begin{bmatrix}
+a_1^{(2)} \\
+a_2^{(2)}
+\end{bmatrix}
+\quad \rightarrow \quad
+\begin{bmatrix}
+a^{(3)}
+\end{bmatrix}
+\quad \rightarrow \quad
+h_{\Theta}(x)
+$$
 
 第一层节点的θ矩阵为：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <msup>
-    <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mn>1</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo>=</mo>
-  <mfenced open="[" close="]">
-    <mtable rowspacing="4pt" columnspacing="1em">
-      <mtr>
-        <mtd>
-          <mo>&#x2212;<!-- − --></mo>
-          <mn>30</mn>
-        </mtd>
-        <mtd>
-          <mn>20</mn>
-        </mtd>
-        <mtd>
-          <mn>20</mn>
-        </mtd>
-      </mtr>
-      <mtr>
-        <mtd>
-          <mn>10</mn>
-        </mtd>
-        <mtd>
-          <mo>&#x2212;<!-- − --></mo>
-          <mn>20</mn>
-        </mtd>
-        <mtd>
-          <mo>&#x2212;<!-- − --></mo>
-          <mn>20</mn>
-        </mtd>
-      </mtr>
-    </mtable>
-  </mfenced>
-</math>
+$$
+\Theta^{(1)} =
+\begin{bmatrix}
+-30 & 20 & 20 \\
+10  & -20 & -20
+\end{bmatrix}
+$$
 
-第二层节点的θ矩阵为:
+第二层节点的$\Theta$矩阵为:
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <msup>
-    <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mn>2</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo>=</mo>
-  <mfenced open="[" close="]">
-    <mtable rowspacing="4pt" columnspacing="1em">
-      <mtr>
-        <mtd>
-          <mo>&#x2212;<!-- − --></mo>
-          <mn>10</mn>
-        </mtd>
-        <mtd>
-          <mn>20</mn>
-        </mtd>
-        <mtd>
-          <mn>20</mn>
-        </mtd>
-      </mtr>
-    </mtable>
-  </mfenced>
-</math>
+$$
+\Theta^{(2)} =
+\begin{bmatrix}
+-10 & 20 & 20
+\end{bmatrix}
+$$
 
 每层节点的计算用向量化表示为：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd />
-      <mtd>
-        <msup>
-          <mi>a</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo>=</mo>
-        <mi>g</mi>
-        <mo stretchy="false">(</mo>
-        <msup>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo>&#x22C5;<!-- ⋅ --></mo>
-        <mi>x</mi>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <msup>
-          <mi>a</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>3</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo>=</mo>
-        <mi>g</mi>
-        <mo stretchy="false">(</mo>
-        <msup>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo>&#x22C5;<!-- ⋅ --></mo>
-        <msup>
-          <mi>a</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>2</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <msub>
-          <mi>h</mi>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <mi>x</mi>
-        <mo stretchy="false">)</mo>
-        <mo>=</mo>
-        <msup>
-          <mi>a</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>3</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+$$
+a^{(2)} = g(\Theta^{(1)} \cdot x)
+$$
 
+$$
+a^{(3)} = g(\Theta^{(2)} \cdot a^{(2)})
+$$
+
+$$
+h_{\Theta}(x) = a^{(3)}
+$$
 
 ![](/assets/images/2017/09/ml-6-9.png)
-
 
 ### Multiclass Classification
 
@@ -976,7 +370,7 @@ end
 
 ![](/assets/images/2017/09/ml-6-11.png)
 
-每一个<math><msup><mi>y</mi><mi>(i)</mi></msup></math>向量代表一中分类结果，抽象来看，多级神经网络分类可如下表示：
+每一个 $y^{(i)}$ 向量代表一种分类结果，抽象来看，多级神经网络分类可如下表示：
 
 ![](/assets/images/2017/09/ml-6-12.png)
 
@@ -984,310 +378,51 @@ end
 ### Cost Function
 
 - 先定义一些变量:
-	- L = 神经网络的层数
-	- <math><msub><mi>S</mi><mi>l</mi></msub></math> = 第l层的节点数
-	- K = 输出层的节点数，即输出结果的种类。
-		- 对0和1的场景，K=1， <math><msub><mi>S</mi><mi>l</mi></msub><mo>=</mo><mn>1</mn></math>
-		- 对于多种分类的场景，K>=3， <math><msub><mi>S</mi><mi>l</mi></msub><mo>=</mo><mi>K</mi></math>
-		- 用<math><msub><mi>h</mi><mi>Θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><msub><mo stretchy="false">)</mo><mi>k</mi></msub></math>表示第K个分类的计算结果
+  - $L$ = 神经网络的层数
+  - $S_l$ = 第 $l$ 层的节点数
+  - $K$ = 输出层的节点数，即输出结果的种类。
+    - 对 0 和 1 的场景，$K=1$，$S_l = 1$
+    - 对于多种分类的场景，$K \geq 3$，$S_l = K$
+    - 用 $h_{\Theta}^{(k)}(x)$ 表示第 $k$ 个分类的计算结果
+
 
 - Cost Function
 
 参考之前的逻辑回归cost函数：
 
-<math display="block">
-  <mi>J</mi>
-  <mo stretchy="false">(</mo>
-  <mi>&#x03B8;<!-- θ --></mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <mo>&#x2212;<!-- − --></mo>
-  <mfrac>
-    <mn>1</mn>
-    <mi>m</mi>
-  </mfrac>
-  <munderover>
-    <mo>&#x2211;<!-- ∑ --></mo>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>i</mi>
-      <mo>=</mo>
-      <mn>1</mn>
-    </mrow>
-    <mi>m</mi>
-  </munderover>
-  <mo stretchy="false">[</mo>
-  <msup>
-    <mi>y</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mtext>&#xA0;</mtext>
-  <mi>log</mi>
-  <mo>&#x2061;<!-- ⁡ --></mo>
-  <mo stretchy="false">(</mo>
-  <msub>
-    <mi>h</mi>
-    <mi>&#x03B8;<!-- θ --></mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <msup>
-    <mi>x</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-  <mo stretchy="false">)</mo>
-  <mo>+</mo>
-  <mo stretchy="false">(</mo>
-  <mn>1</mn>
-  <mo>&#x2212;<!-- − --></mo>
-  <msup>
-    <mi>y</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-  <mtext>&#xA0;</mtext>
-  <mi>log</mi>
-  <mo>&#x2061;<!-- ⁡ --></mo>
-  <mo stretchy="false">(</mo>
-  <mn>1</mn>
-  <mo>&#x2212;<!-- − --></mo>
-  <msub>
-    <mi>h</mi>
-    <mi>&#x03B8;<!-- θ --></mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <msup>
-    <mi>x</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-  <mo stretchy="false">)</mo>
-  <mo stretchy="false">]</mo>
-  <mo>+</mo>
-  <mfrac>
-    <mi>&#x03BB;<!-- λ --></mi>
-    <mrow>
-      <mn>2</mn>
-      <mi>m</mi>
-    </mrow>
-  </mfrac>
-  <munderover>
-    <mo>&#x2211;<!-- ∑ --></mo>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>j</mi>
-      <mo>=</mo>
-      <mn>1</mn>
-    </mrow>
-    <mi>n</mi>
-  </munderover>
-  <msubsup>
-    <mi>&#x03B8;<!-- θ --></mi>
-    <mi>j</mi>
-    <mn>2</mn>
-  </msubsup>
-</math>
+$$
+J(\theta) =
+-\frac{1}{m} \sum_{i=1}^{m} 
+\left[ 
+y^{(i)} \log h_{\theta}(x^{(i)}) +
+(1 - y^{(i)}) \log (1 - h_{\theta}(x^{(i)}))
+\right] 
++ \frac{\lambda}{2m} \sum_{j=1}^{n} \theta_j^2
+$$
 
 对神经网络来说，输出结果不再只有两种类型，而是有K种分类，cost函数也更加抽象和复杂：
 
-<math display="block">
-  <mtable rowspacing="3pt" columnspacing="1em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd>
-        <mi>J</mi>
-        <mo stretchy="false">(</mo>
-        <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-        <mo stretchy="false">)</mo>
-        <mo>=</mo>
-        <mo>&#x2212;<!-- − --></mo>
-        <mfrac>
-          <mn>1</mn>
-          <mi>m</mi>
-        </mfrac>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mi>m</mi>
-        </munderover>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>k</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mi>K</mi>
-        </munderover>
-        <mfenced open="[" close="]">
-          <mrow>
-            <msubsup>
-              <mi>y</mi>
-              <mi>k</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mo stretchy="false">(</mo>
-                <mi>i</mi>
-                <mo stretchy="false">)</mo>
-              </mrow>
-            </msubsup>
-            <mi>log</mi>
-            <mo>&#x2061;<!-- ⁡ --></mo>
-            <mo stretchy="false">(</mo>
-            <mo stretchy="false">(</mo>
-            <msub>
-              <mi>h</mi>
-              <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-            </msub>
-            <mo stretchy="false">(</mo>
-            <msup>
-              <mi>x</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mo stretchy="false">(</mo>
-                <mi>i</mi>
-                <mo stretchy="false">)</mo>
-              </mrow>
-            </msup>
-            <mo stretchy="false">)</mo>
-            <msub>
-              <mo stretchy="false">)</mo>
-              <mi>k</mi>
-            </msub>
-            <mo stretchy="false">)</mo>
-            <mo>+</mo>
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo>&#x2212;<!-- − --></mo>
-            <msubsup>
-              <mi>y</mi>
-              <mi>k</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mo stretchy="false">(</mo>
-                <mi>i</mi>
-                <mo stretchy="false">)</mo>
-              </mrow>
-            </msubsup>
-            <mo stretchy="false">)</mo>
-            <mi>log</mi>
-            <mo>&#x2061;<!-- ⁡ --></mo>
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo>&#x2212;<!-- − --></mo>
-            <mo stretchy="false">(</mo>
-            <msub>
-              <mi>h</mi>
-              <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-            </msub>
-            <mo stretchy="false">(</mo>
-            <msup>
-              <mi>x</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mo stretchy="false">(</mo>
-                <mi>i</mi>
-                <mo stretchy="false">)</mo>
-              </mrow>
-            </msup>
-            <mo stretchy="false">)</mo>
-            <msub>
-              <mo stretchy="false">)</mo>
-              <mi>k</mi>
-            </msub>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </mfenced>
-        <mo>+</mo>
-        <mfrac>
-          <mi>&#x03BB;<!-- λ --></mi>
-          <mrow>
-            <mn>2</mn>
-            <mi>m</mi>
-          </mrow>
-        </mfrac>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>l</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>L</mi>
-            <mo>&#x2212;<!-- − --></mo>
-            <mn>1</mn>
-          </mrow>
-        </munderover>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <msub>
-              <mi>s</mi>
-              <mi>l</mi>
-            </msub>
-          </mrow>
-        </munderover>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>j</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <msub>
-              <mi>s</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mi>l</mi>
-                <mo>+</mo>
-                <mn>1</mn>
-              </mrow>
-            </msub>
-          </mrow>
-        </munderover>
-        <mo stretchy="false">(</mo>
-        <msubsup>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>j</mi>
-            <mo>,</mo>
-            <mi>i</mi>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>l</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msup>
-          <mo stretchy="false">)</mo>
-          <mn>2</mn>
-        </msup>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+$$
+J(\theta) = 
+-\frac{1}{m} \sum_{i=1}^{m} \sum_{k=1}^{K} \left[ y_k^{(i)} \log h_{\theta}(x^{(i)})_k + (1 - y_k^{(i)}) \log (1 - h_{\theta}(x^{(i)})_k) \right] 
++ \frac{\lambda}{2m} \sum_{l=1}^{L-1} \sum_{i=1}^{S_l} \sum_{j=1}^{S_{l+1}} \left( \theta_{j,i}^{(l)} \right)^2
+$$
 
-为了计算多个输出结果，括号前的求和表示对K层分别进行计算后再累加计算结果。中括号后面是regularization项，是每层θ矩阵元素的平方和累加，公式里各层θ矩阵的列数等同于对应层的节点数，行数等它对应层的节点数+1，其中<math><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mrow><msub><mi>s</mi><mi>l</mi></msub></mrow></munderover><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mrow><msub><mi>s</mi><mrow><mi>l</mi><mo>+</mo><mn>1</mn></mrow></msub></mrow></munderover><mo stretchy="false">(</mo><msubsup><mi>Θ</mi><mrow><mi>j</mi><mo>,</mo><mi>i</mi></mrow><mrow><mo stretchy="false">(</mo><mi>l</mi><mo stretchy="false">)</mo></mrow></msubsup><msup><mo stretchy="false">)</mo><mn>2</mn></msup></math>是每个θ矩阵项的平方和，<math><munderover><mo>∑</mo><mrow><mi>l</mi><mo>=</mo><mn>1</mn></mrow><mrow><mi>L</mi><mo>-</mo><mn>1</mn></mrow></munderover></math>代表各个层θ矩阵的平方和累加。理解了这两部分就不难理解regularization项了，它和之前逻辑回归的regularization项概念是一致的。
+
+为了计算多个输出结果，括号前的求和表示对$K$层分别进行计算后再累加计算结果。中括号后面是regularization项，是每层$\theta$矩阵元素的平方和累加，公式里各层$\theta$矩阵的列数等同于对应层的节点数，行数等它对应层的节点数+1，其中
+
+$$
+\sum_{i=1}^{S_l} \sum_{j=1}^{S_{l+1}} (\theta_{j,i}^{(l)})^2
+$$
+
+是每个$\theta$矩阵项的平方和， 
+
+$$
+\sum_{l=1}^{L-1}
+$$
+
+代表各个层$\theta$矩阵的平方和累加。理解了这两部分就不难理解regularization项了，它和之前逻辑回归的regularization项概念是一致的。
+
 
 理解上述式子着重记住以下三点：
 
@@ -1337,46 +472,16 @@ end
 
 "Backpropagation"是神经网络用来求解**Cost Function**最小值的算法，类似之前线性回归和逻辑回归中的梯度下降法。上一节我们已经了解了**Cost Function**的定义，我们的目标是求解：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <munder>
-    <mo movablelimits="true">min</mo>
-    <mi mathvariant="normal">Θ</mi>
-  </munder>
-  <mi>J</mi>
-  <mo stretchy="false">(</mo>
-  <mi mathvariant="normal">Θ</mi>
-  <mo stretchy="false">)</mo>
-</math>
+$$
+\min_{\Theta} J(\Theta)
+$$
+
 
 即找到合适的θ值使**Cost Function**的值最小，即通过一个合适的算法来求解对θ的偏导
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mstyle displaystyle="true">
-    <mfrac>
-      <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi>
-      <mrow>
-        <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi>
-        <msubsup>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>,</mo>
-            <mi>j</mi>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>l</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-      </mrow>
-    </mfrac>
-  </mstyle>
-  <mi>J</mi>
-  <mo stretchy="false">(</mo>
-  <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-  <mo stretchy="false">)</mo>
-</math>
+$$
+\frac{\partial}{\partial \Theta_{i,j}^{(l)}} J(\Theta)
+$$
 
 我们先假设神经网络只有一个训练样本(x,y)，我们使用**"Forward Propagation"**的向量化方式来逐层计算求解出最后的结果
 
@@ -1384,197 +489,66 @@ end
 
 接下来我们要求θ矩阵的值，用到的算法叫做**"Backpropagation"**，我们定义：
 
-<math display="block"><msubsup><mi>δ</mi><mi>j</mi><mi>(l)</mi></msubsup><mo>=</mo><mtext>"error" of node j in layer l </mtext></math>
+$$
+\delta_j^{(l)} = \text{"error" of node } j \text{ in layer } l
+$$
 
 假设 **Layer L=4** 那么有：
 
-<math display="block"><msubsup><mi>δ</mi><mi>j</mi><mi>(4)</mi></msubsup><mo>=</mo><msubsup><mi>a</mi><mi>j</mi><mi>(4)</mi></msubsup><mo>-</mo><msub><mi>y</mi><mi>j</mi></msub></math>
+$$
+\delta_j^{(4)} = a_j^{(4)} - y_j
+$$
 
 向量化表示为：
 
-<math display="block"><msup><mi>δ</mi><mi>(4)</mi></msup><mo>=</mo><msup><mi>a</mi><mi>(4)</mi></msup><mo>-</mo><mi>y</mi></math>
+$$
+\delta^{(4)} = a^{(4)} - y
+$$
 
 其中，δ，a，y向量行数等于最后一层节点的个数，这样我们首先得到了最后一层的δ值，接下来我们要根据最后一层的δ值来向前计算前面各层的δ值，第三层的公式如下：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <msup>
-    <mi>δ</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mn>3</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo>=</mo>
-  <mo stretchy="false">(</mo>
-  <mo stretchy="false">(</mo>
-  <msup>
-    <mi mathvariant="normal">Θ</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mn>3</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <msup>
-    <mo stretchy="false">)</mo>
-    <mi>T</mi>
-  </msup>
-  <msup>
-    <mi>δ</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mn>4</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-  <mtext>&#xA0;</mtext>
-  <mo>.</mo>
-  <mo>∗</mo>
-  <mtext>&#xA0;</mtext>
- <msup>
-    <mi>g</mi>
-    <mo>'</mo>
-  </msup>
-  <mo stretchy="false">(</mo>
-  <msup>
-    <mi>z</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mn>3</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
- </math>
- 
- 第二层的计算公式如下：
- 
- <math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <msup>
-    <mi>δ</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mn>2</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo>=</mo>
-  <mo stretchy="false">(</mo>
-  <mo stretchy="false">(</mo>
-  <msup>
-    <mi mathvariant="normal">Θ</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mn>2</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <msup>
-    <mo stretchy="false">)</mo>
-    <mi>T</mi>
-  </msup>
-  <msup>
-    <mi>δ</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mn>3</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-  <mtext>&#xA0;</mtext>
-  <mo>.</mo>
-  <mo>∗</mo>
-  <mtext>&#xA0;</mtext>
- <msup>
-    <mi>g</mi>
-    <mo>'</mo>
-  </msup>
-  <mo stretchy="false">(</mo>
-  <msup>
-    <mi>z</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mn>2</mn>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
- </math>
- 
- <br></br>
- 第一层是输入层，是样本数据，没有错误，因此不存在<math><msup><mi>δ</mi><mi>(1)</mi></msup></math>
-<br></br>
+$$
+\delta^{(3)} = \left( \Theta^{(3)} \right)^T \delta^{(4)} \cdot g'(z^{(3)})
+$$
 
-在上述的式子中，<math><msup><mi>g</mi><mo>'</mo></msup></math>对<math xmlns="http://www.w3.org/1998/Math/MathML"> <msup> <mi>z</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msup> </math>的求导等价于下面式子：
+第二层的计算公式如下：
+ 
+$$
+\delta^{(2)} = \left( \Theta^{(2)} \right)^T \delta^{(3)} \cdot g'(z^{(2)})
+$$
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <msup>
-    <mi>g</mi>
-    <mo>'</mo>
-  </msup>
-  <mo stretchy="false">(</mo>
-  <msup>
-    <mi>z</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>l</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <msup>
-    <mi>a</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>l</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mtext>&#xA0;</mtext>
-  <mo>.</mo>
-  <mo> ∗ </mo>
-  <mtext>&#xA0;</mtext>
-  <mo stretchy="false">(</mo>
-  <mn>1</mn>
-  <mo>-</mo>
-  <msup>
-    <mi>a</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>l</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-</math>
+第一层是输入层，是样本数据，没有错误，因此不存在$\delta^{(1)}$
+
+在上述的式子中，$g'(z^{(l)})$ 对 $z^{(l)}$ 的求导等价于下面式子：
+
+$$
+g'(z^{(l)}) = g(z^{(l)}) \cdot (1 - g(z^{(l)}))
+$$
+
+$$
+g'(z^{(l)}) = a^{(l)} \cdot (1 - a^{(l)})
+$$
 
 因此我们可以看到所谓的**Backpropagation Algorithm**即是先计算最后一层的δ值，然后依次向前计算各层的δ值。
 
-如果忽略regularization项，即<math><mi>λ</mi><mo>=</mo><mn>0</mn></math>，我们能够发现如下式子:
+如果忽略regularization项，即$\lambda = 0$，我们能够发现如下式子:
 
-<math display="block"><mstyle displaystyle="true"><mfrac><mi>∂</mi><mrow><mi>∂</mi><msubsup><mi>Θ</mi><mrow class="MJX-TeXAtom-ORD"><mi>i</mi><mo>,</mo><mi>j</mi></mrow><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>l</mi><mo stretchy="false">)</mo></mrow></msubsup></mrow></mfrac></mstyle><mi>J</mi><mo stretchy="false">(</mo><mi>Θ</mi><mo stretchy="false">)</mo><mo>=</mo><msubsup><mi>a</mi><mi>j</mi><mi>(l)</mi></msubsup><msubsup><mi>δ</mi><mi>i</mi><mi>(l+1)</mi></msubsup></math> 
+$$
+\frac{\partial}{\partial \Theta_{i,j}^{(l)}} J(\Theta) = a_j^{(l)} \cdot \delta_i^{(l+1)}
+$$
 
 上面是**Layer L=4**的例子，让我们对Backpropagation Algorithm先有了一个直观的感受，接下来从通用的角度给出Backpropagation Algorithm的计算步骤
 
-假设有训练集 <math><mo fence="false" stretchy="false">{</mo><mo stretchy="false">(</mo><msup><mi>x</mi><mrow  class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msup><mo>,</mo><msup><mi>y</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msup><mo stretchy="false">)</mo><mo>⋯</mo><mo stretchy="false">(</mo><msup><mi>x</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>m</mi><mo stretchy="false">)</mo></mrow></msup><mo>,</mo><msup><mi>y</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>m</mi><mo stretchy="false">)</mo></mrow></msup><mo stretchy="false">)</mo><mo fence="false" stretchy="false">}</mo></math>，令
+假设有训练集 $\{(x^{(1)}, y^{(1)}), \dots, (x^{(m)}, y^{(m)})\}$，令
 
-- 对所有<math><mi>i</mi><mo>,</mo><mi>j</mi><mo>,</mo><mi>l</mi></math> ，令 <math xmlns="http://www.w3.org/1998/Math/MathML"><msubsup><mi mathvariant="normal">Δ</mi><mrow class="MJX-TeXAtom-ORD"><mi>i</mi><mo>,</mo><mi>j</mi></mrow><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>l</mi><mo stretchy="false">)</mo></mrow></msubsup></math> = 0，得到一个全零矩阵
+- 对所有 $i$, $j$, $l$ ，令 $\Delta_{i,j}^{(l)} = 0$，得到一个全零矩阵
 
 - For i=1 to m 做循环，每个循环体执行下面操作
-
-	1. <math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>a</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msup><mo>:=</mo><msup><mi>x</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow></msup></math> 让神经网络第一层等于输入的训练数据
-	2. 对 <math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>a</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>l</mi><mo stretchy="false">)</mo></mrow></msup></math> 进行**"Forward Propagation"**计算，其中 `l=2,3,…,L` 计算过程如上文图示
-
-	3. 使用 <math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>y</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow></msup></math>来计算 <math><msup><mi>δ</mi><mi>(L)</mi></msup><mo>=</mo><msup><mi>a</mi><mi>(L)</mi></msup><mo>-</mo><msup><mi>y</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow></msup></math>
-
-	4. 根据 <math><msup><mi>δ</mi><mi>(L)</mi></msup></math> 向前计算 <math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>δ</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>L</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msup><mo>,</mo><msup><mi>δ</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>L</mi><mo>−</mo><mn>2</mn><mo stretchy="false">)</mo></mrow></msup><mo>,</mo><mo>…</mo><mo>,</mo><msup><mi>δ</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mn>2</mn><mo stretchy="false">)</mo></mrow></msup></math>，公式为：<math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>&#x03B4;<!--δ--></mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>l</mi><mo stretchy="false">)</mo></mrow></msup><mo>=</mo><mo stretchy="false">(</mo><mo stretchy="false">(</mo><msup><mi mathvariant="normal">&#x0398;<!--Θ--></mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>l</mi><mo stretchy="false">)</mo></mrow></msup><msup><mo stretchy="false">)</mo><mi>T</mi></msup><msup><mi>&#x03B4;<!--δ--></mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>l</mi><mo>+</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msup><mo stretchy="false">)</mo><mtext>&#xA0;</mtext><mo>.</mo><mo>&#x2217;<!--∗--></mo><mtext>&#xA0;</mtext><msup><mi>a</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>l</mi><mo stretchy="false">)</mo></mrow></msup><mtext>&#xA0;</mtext><mo>.</mo><mo>&#x2217;<!--∗--></mo><mtext>&#xA0;</mtext><mo stretchy="false">(</mo><mn>1</mn><mo>&#x2212;<!--−--></mo><msup><mi>a</mi><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>l</mi><mo stretchy="false">)</mo></mrow></msup><mo stretchy="false">)</mo></math> 这个过程涉及到了链式法则，在下一节会介绍
-
-	5. <math xmlns="http://www.w3.org/1998/Math/MathML"> <msubsup> <mi mathvariant="normal">&#x0394;<!-- Δ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> <mo>,</mo> <mi>j</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo>:=</mo> <msubsup> <mi mathvariant="normal">&#x0394;<!-- Δ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> <mo>,</mo> <mi>j</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo>+</mo> <msubsup> <mi>a</mi> <mi>j</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <msubsup> <mi>&#x03B4;<!-- δ --></mi> <mi>i</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo>+</mo> <mn>1</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </math> 对每层的θ矩阵偏导不断叠加，进行梯度下降，前面的式子也可以用向量化表示 <math xmlns="http://www.w3.org/1998/Math/MathML"> <msup> <mi mathvariant="normal">&#x0394;<!-- Δ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo>:=</mo> <msup> <mi mathvariant="normal">&#x0394;<!-- Δ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo>+</mo> <msup> <mi>&#x03B4;<!-- δ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo>+</mo> <mn>1</mn> <mo stretchy="false">)</mo> </mrow> </msup> <mo stretchy="false">(</mo> <msup> <mi>a</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msup> <msup> <mo stretchy="false">)</mo> <mi>T</mi> </msup> </math>
-
+  - $a^{(1)} := x^{(t)}$ 让神经网络第一层等于输入的训练数据
+  - 对 $a^{(l)}$ 进行**"Forward Propagation"**计算，其中 l=2,3,…,L 计算过程如上文图示
+  - 使用 $y^{(t)}$ 来计算 $\delta^{(L)} = a^{(L)} - y^{(t)}$
+  - 根据 $\delta^{(L)}$ 向前计算 $\delta^{(L-1)}, \delta^{(L-2)}, \dots, \delta^{(2)}$，公式为：$\delta^{(l)} = ((\Theta^{(l)})^T \delta^{(l+1)}) \cdot a^{(l)} \cdot (1 - a^{(l)})$ 这个过程涉及到了链式法则，在下一节会介绍
+  - $\Delta_{i,j}^{(l)} := \Delta_{i,j}^{(l)} + a_j^{(l)} \delta_i^{(l+1)}$ 对每层的θ矩阵偏导不断叠加，进行梯度下降，前面的式子也可以用向量化表示 $\Delta^{(l)} := \Delta^{(l)} + \delta^{(l+1)} (a^{(l)})^T$
 
 - 加上Regularization项得到最终的θ矩阵
   - 当 j≠0 时，$ D_{i,j}^{(l)} \thinspace := \thinspace \frac{1}{m}(\Delta_{i,j}^{(l)} + \lambda \Theta_{i,j}^{(l)}), \thinspace if \thinspace $
@@ -1588,7 +562,7 @@ $$
 
 ### Backpropagation Intuition
 
-这一小节对上面提到的Backpropagation(后面简称BP算法)做一个简单的数学推到，来搞清楚<math> <msubsup> <mi>δ </mi> <mi>j</mi> <mrow> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> </math>的计算过程。
+这一小节对上面提到的Backpropagation(后面简称BP算法)做一个简单的数学推到，来搞清楚 $\delta_j^{(l)}$ 的计算过程。
 
 还是先看Forward Propagation，我们还是拿前面的图距离，假设神经网络如下图
 
@@ -1596,116 +570,13 @@ $$
 
 他只有一个输出节点，由之前提到的Forward Propagation得到的预测函数为：
 
-<math display="block">
-<msub>
-  <mi>h</mi>
-	<mi mathvariant="normal">Θ</mi>
-</msub>
-<mo stretchy="false">(</mo>
-<mi>x</mi>
-<mo stretchy="false">)</mo>
-<mo>=</mo>
-<msubsup>
-  <mi>a</mi>
-  <mn>1</mn>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mo stretchy="false">(</mo>
-    <mn>3</mn>
-    <mo stretchy="false">)</mo>
-  </mrow>
-</msubsup>
-<mo>=</mo>
-<mi>g</mi>
-<mo stretchy="false">(</mo>
-<msubsup>
-  <mi mathvariant="normal">Θ</mi>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mn>10</mn>
-  </mrow>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mo stretchy="false">(</mo>
-    <mn>2</mn>
-    <mo stretchy="false">)</mo>
-  </mrow>
-</msubsup>
-<msubsup>
-  <mi>a</mi>
-  <mn>0</mn>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mo stretchy="false">(</mo>
-    <mn>2</mn>
-    <mo stretchy="false">)</mo>
-  </mrow>
-</msubsup>
-<mo>+</mo>
-<msubsup>
-  <mi mathvariant="normal">Θ</mi>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mn>11</mn>
-  </mrow>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mo stretchy="false">(</mo>
-    <mn>2</mn>
-    <mo stretchy="false">)</mo>
-  </mrow>
-</msubsup>
-<msubsup>
-  <mi>a</mi>
-  <mn>1</mn>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mo stretchy="false">(</mo>
-    <mn>2</mn>
-    <mo stretchy="false">)</mo>
-  </mrow>
-</msubsup>
-<mo>+</mo>
-<msubsup>
-  <mi mathvariant="normal">Θ</mi>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mn>12</mn>
-  </mrow>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mo stretchy="false">(</mo>
-    <mn>2</mn>
-    <mo stretchy="false">)</mo>
-  </mrow>
-</msubsup>
-<msubsup>
-  <mi>a</mi>
-  <mn>2</mn>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mo stretchy="false">(</mo>
-    <mn>2</mn>
-    <mo stretchy="false">)</mo>
-  </mrow>
-</msubsup>
-<mo>+</mo>
-<msubsup>
-  <mi mathvariant="normal">Θ</mi>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mn>13</mn>
-  </mrow>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mo stretchy="false">(</mo>
-    <mn>2</mn>
-    <mo stretchy="false">)</mo>
-  </mrow>
-</msubsup>
-<msubsup>
-  <mi>a</mi>
-  <mn>3</mn>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mo stretchy="false">(</mo>
-    <mn>2</mn>
-    <mo stretchy="false">)</mo>
-  </mrow>
-</msubsup>
-<mo stretchy="false">)</mo>
-</math>
+$$
+h_\Theta(x) = a_1^{(3)} = g\left(\Theta_{10}^{(2)} a_0^{(2)} + \Theta_{11}^{(2)} a_1^{(2)} + \Theta_{12}^{(2)} a_2^{(2)} + \Theta_{13}^{(2)} a_3^{(2)}\right)
+$$
 
 这个函数中：
 
-1. <math> <msub> <mi>h</mi> <mi mathvariant="normal">Θ</mi> </msub> <mo stretchy="false">(</mo> <mi>x</mi> <mo stretchy="false">)</mo> </math> 是以Θ为变量的函数
+1. $h_\Theta(x)$ 是以Θ为变量的函数
 2. 它的计算过程是从第一层开始向最后一层逐层计算，每一层每个节点的值是由它后一层的节点乘以权重矩阵Θ
 
 BP的计算和推导不如Forward容易理解，也不直观，它的特点类和FB类似
@@ -1716,298 +587,23 @@ BP的计算和推导不如Forward容易理解，也不直观，它的特点类�
 
 先说第一部分求梯度，由上节给出的代价函数为：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mtable rowspacing="3pt" columnspacing="1em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd>
-        <mi>J</mi>
-        <mo stretchy="false">(</mo>
-        <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-        <mo stretchy="false">)</mo>
-        <mo>=</mo>
-        <mo>&#x2212;<!-- − --></mo>
-        <mfrac>
-          <mn>1</mn>
-          <mi>m</mi>
-        </mfrac>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mi>m</mi>
-        </munderover>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>k</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mi>K</mi>
-        </munderover>
-        <mfenced open="[" close="]">
-          <mrow>
-            <msubsup>
-              <mi>y</mi>
-              <mi>k</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mo stretchy="false">(</mo>
-                <mi>i</mi>
-                <mo stretchy="false">)</mo>
-              </mrow>
-            </msubsup>
-            <mtext>&#xA0;</mtext>
-            <mi>log</mi>
-            <mo>&#x2061;<!-- ⁡ --></mo>
-            <mo stretchy="false">(</mo>
-            <msub>
-              <mi>h</mi>
-              <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-            </msub>
-            <mo stretchy="false">(</mo>
-            <msup>
-              <mi>x</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mo stretchy="false">(</mo>
-                <mi>i</mi>
-                <mo stretchy="false">)</mo>
-              </mrow>
-            </msup>
-            <mo stretchy="false">)</mo>
-            <msub>
-              <mo stretchy="false">)</mo>
-              <mi>k</mi>
-            </msub>
-            <mo>+</mo>
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo>&#x2212;<!-- − --></mo>
-            <msubsup>
-              <mi>y</mi>
-              <mi>k</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mo stretchy="false">(</mo>
-                <mi>i</mi>
-                <mo stretchy="false">)</mo>
-              </mrow>
-            </msubsup>
-            <mo stretchy="false">)</mo>
-            <mtext>&#xA0;</mtext>
-            <mi>log</mi>
-            <mo>&#x2061;<!-- ⁡ --></mo>
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo>&#x2212;<!-- − --></mo>
-            <msub>
-              <mi>h</mi>
-              <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-            </msub>
-            <mo stretchy="false">(</mo>
-            <msup>
-              <mi>x</mi>
-              <mrow class="MJX-TeXAtom-ORD">
-                <mo stretchy="false">(</mo>
-                <mi>i</mi>
-                <mo stretchy="false">)</mo>
-              </mrow>
-            </msup>
-            <msub>
-              <mo stretchy="false">)</mo>
-              <mi>k</mi>
-            </msub>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </mfenced>
-        <mo>+</mo>
-        <mfrac>
-          <mi>&#x03BB;<!-- λ --></mi>
-          <mrow>
-            <mn>2</mn>
-            <mi>m</mi>
-          </mrow>
-        </mfrac>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>l</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>L</mi>
-            <mo>&#x2212;<!-- − --></mo>
-            <mn>1</mn>
-          </mrow>
-        </munderover>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <msub>
-              <mi>s</mi>
-              <mi>l</mi>
-            </msub>
-          </mrow>
-        </munderover>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>j</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <msub>
-              <mi>s</mi>
-              <mi>l</mi>
-            </msub>
-            <mo>+</mo>
-            <mn>1</mn>
-          </mrow>
-        </munderover>
-        <mo stretchy="false">(</mo>
-        <msubsup>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>j</mi>
-            <mo>,</mo>
-            <mi>i</mi>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>l</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <msup>
-          <mo stretchy="false">)</mo>
-          <mn>2</mn>
-        </msup>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+$$
+J(\Theta) = -\frac{1}{m} \sum_{i=1}^{m} \sum_{k=1}^{K} \left[ y_k^{(i)} \log(h_\Theta(x^{(i)})_k + (1 - y_k^{(i)}) \log(1 - h_\Theta(x^{(i)})_k) \right] + \frac{\lambda}{2m} \sum_{l=1}^{L-1} \sum_{i=1}^{s_l} \sum_{j=1}^{s_l+1} (\Theta_{j,i}^{(l)})^2
+$$
 
+如果将regularization项忽略，令K=1,对于单一节点$x^{(i)}$, $y^{(i)}$的代价函数简化为：
 
-如果将regularization项忽略，令K=1,对于单一节点<math><msup><mi>x</mi><mi>(i)</mi></msup></math>,<math><msup><mi>y</mi><mi>(i)</mi></msup></math>的代价函数简化为：
-
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-	<mi>J</mi>
-    <mo stretchy="false">(</mo>
-    <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-    <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <mo>-</mo>
-  <msup>
-    <mi>y</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mtext>&#xA0;</mtext>
-  <mi>log</mi>
-  <mo>&#x2061;<!-- ⁡ --></mo>
-  <mo stretchy="false">(</mo>
-  <msub>
-    <mi>h</mi>
-    <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <msup>
-    <mi>x</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-  <mo stretchy="false">)</mo>
-  <mo>+</mo>
-  <mo stretchy="false">(</mo>
-  <mn>1</mn>
-  <mo>&#x2212;<!-- − --></mo>
-  <msup>
-    <mi>y</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-  <mtext>&#xA0;</mtext>
-  <mi>log</mi>
-  <mo>&#x2061;<!-- ⁡ --></mo>
-  <mo stretchy="false">(</mo>
-  <mn>1</mn>
-  <mo>−</mo>
-  <msub>
-    <mi>h</mi>
-    <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <msup>
-    <mi>x</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-  <mo stretchy="false">)</mo>
-</math>
+$$
+J(\Theta) = -y^{(i)} \log(h_\Theta(x^{(i)})) + (1 - y^{(i)}) \log(1 - h_\Theta(x^{(i)}))
+$$
 
 上面函数近似约等于:
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-	<mi>J</mi>
-    <mo stretchy="false">(</mo>
-    <mi mathvariant="normal">Θ</mi>
-    <mo stretchy="false">)</mo>
-  <mo>≈</mo>
-  <mo>(</mo>
-  <msub>
-    <mi>h</mi>
-    <mi mathvariant="normal">Θ</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <msup>
-    <mi>x</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-	  <mo>-</mo>
-	<msup>
-	<mi>y</mi>
-	<mrow class="MJX-TeXAtom-ORD">
-	  <mo stretchy="false">(</mo>
-	  <mi>i</mi>
-	  <mo stretchy="false">)</mo>
-	</mrow>
-	</msup>
-	<msup>
-	<mo>)</mo>
-	<mn>2</mn>
-	</msup>
-</math>
+$$
+J(\Theta) \approx (h_\Theta(x^{(i)}) - y^{(i)})^2
+$$
 
-
-其中`l`代表神经网络layer的index，回忆这个函数的含义是计算样本 <math xmlns="http://www.w3.org/1998/Math/MathML"> <mo stretchy="false">(</mo> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo>,</mo> <msup> <mi>y</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo stretchy="false">)</mo> </math> 和预测结果的误差值，接下来的任务就是找到使这个函数的达到最小值的Θ，找到的办法是通过梯度下降的方式，使<math><mi>J(Θ)</mi></math>沿梯度下降最快的方向达到极值（注意：<math><mi>J(Θ)</mi></math>不是convex函数，不一定有最小值，很可能收敛到了极值点），梯度下降需要用到 <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi mathvariant="normal">∂</mi> <mi>J(Θ)</mi><mrow class="MJX-TeXAtom-ORD"> <mo>/</mo> </mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msubsup> <mi>Θ</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>j</mi> <mi>i</mi> </mrow> <mi>(l)</mi> </msubsup> </math> ，并将计算结果保存到<math xmlns="http://www.w3.org/1998/Math/MathML"> <msup> <mi mathvariant="normal">&#x0394;<!-- Δ --></mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msup> </math> 中。
+其中 `l` 代表神经网络 layer 的 index，回忆这个函数的含义是计算样本 $(x^{(i)}, y^{(i)})$ 和预测结果的误差值，接下来的任务就是找到使这个函数的达到最小值的 Θ，找到的办法是通过梯度下降的方式，使 $J(\Theta)$ 沿梯度下降最快的方向达到极值（注意：$J(\Theta)$ 不是 convex 函数，不一定有最小值，很可能收敛到了极值点），梯度下降需要用到 $\frac{\partial J(\Theta)}{\partial \Theta_{ji}^{(l)}}$，并将计算结果保存到 $\Delta^{(l)}$ 中。
 
 下面我们以3层神经网络为例，分解这个推导过程，神经网络如下图所示
 
@@ -2015,42 +611,101 @@ BP的计算和推导不如Forward容易理解，也不直观，它的特点类�
 
 再来回顾一下各个变量的含义为：
 
-- 另 <math><msub><mi>x</mi><mn>1</mn></msub></math>和<math><msub><mi>x</mi><mn>2</mn></msub></math> 表示神经网络的输入样本，两个特征
-- 另 <math><msubsup><mi>z</mi><mi>j</mi><mi>(l)</mi></msubsup></math>表示第l层的第`j`个节点的输入值
-- 另 <math><msubsup><mi>a</mi><mi>j</mi><mi>(l)</mi></msubsup></math>表示第l层的第`j`个节点的输出值
-- 另 <math><msubsup><mi>Θ</mi><mrow><mi>j</mi><mi>i</mi></mrow><mi>(l)</mi></msubsup></math>表示第`l`层到第`l+1`层的权重矩阵
-- 另 <math> <msubsup> <mi>δ </mi> <mi>j</mi> <mrow> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> </math>表示第`l`层第`j`个节点的预测偏差值，他的数学定义为<math><msubsup> <mi>δ</mi><mi>j</mi><mi>(l)</mi></msubsup> <mo>=</mo> <mfrac> <mi mathvariant="normal">∂</mi> <mrow> <mi mathvariant="normal"> ∂</mi> <msubsup> <mi>z</mi> <mi>j</mi><mi>(l)</mi> </msubsup> </mrow> </mfrac> <mi>J</mi> <mo stretchy="false">(</mo> <mi mathvariant="normal">Θ</mi><mo stretchy="false">)</mo></math>
+- 另 $x_1$ 和 $x_2$ 表示神经网络的输入样本，两个特征
+- 另 $z^{(l)}_j$ 表示第 $l$ 层的第 $j$ 个节点的输入值
+- 另 $a^{(l)}_j$ 表示第 $l$ 层的第 $j$ 个节点的输出值
+- 另 $\Theta^{(l)}_{ji}$ 表示第 $l$ 层到第 $l+1$ 层的权重矩阵
+- 另 $\delta^{(l)}_j$ 表示第 $l$ 层第 $j$ 个节点的预测偏差值，他的数学定义为
+  
+$$
+\delta^{(l)}_j = \frac{\partial}{\partial z^{(l)}_j} J(\Theta)
+$$
 
-我们的目的是求解Θ矩阵的值，以得出最终的预测函数，这个例子中以求解<math><msubsup><mi>Θ</mi><mn>11</mn><mi>(3)</mi></msubsup></math>和<math><msubsup><mi>Θ</mi><mn>11</mn><mi>(2)</mi></msubsup></math>为例
+我们的目的是求解 $\Theta$ 矩阵的值，以得出最终的预测函数，这个例子中以求解 $\Theta^{(3)}_{11}$ 和 $\Theta^{(2)}_{11}$ 为例
 
-1. 参考上面几节，我们令<math><msub> <mi>h</mi> <mi> Θ</mi> </msub> <mo stretchy="false">(</mo> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>t</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo stretchy="false">)</mo> <mo>=</mo> <mi>g</mi> <mo stretchy="false">(</mo> <msup> <mi>z</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>t</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo stretchy="false">)</mo><mo>=</mo><msup><mi>a</mi><mi>(t)</mi></msup></math>，其中<math><mi>g</mi></math>为sigmoid函数<math><mi>g</mi><mi>(z)</mi><mo>=</mo><mstyle><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow class="MJX-TeXAtom-ORD"><mo>−</mo><mi>z</mi></mrow></msup></mrow></mfrac></mstyle></math>
+(1) 参考上面几节，我们令 $h_{\Theta}^{(t)} = g(z^{(t)}) = a^{(t)}$，其中 $g$ 为 sigmoid 函数$g(z) = \frac{1}{1 + e^{-z}}$
 
-2. 先求 <math><msubsup><mi>Θ</mi><mrow><mi>1</mi><mi>1</mi></mrow><mi>(3)</mi></msubsup></math>，由链式规则，可以做如下运算：<math> <mfrac> <mrow> <mi>∂</mi> <mi>J</mi> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </mrow> <mrow> <mi mathvariant="normal">∂ </mi> <msubsup> <mi>Θ</mi> <mrow> <mn>11</mn> </mrow> <mrow> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac> <mo>=</mo> <mfrac> <mrow> <mi mathvariant="normal"> ∂ </mi> <mi>J</mi> <mo stretchy="false">(</mo> <mi mathvariant="normal"> Θ </mi> <mo stretchy="false">)</mo> </mrow> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi>a</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mi>(4)</mi> </mrow> </msubsup> </mrow> </mfrac> <mo> ∗ </mo> <mfrac> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi>a</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msubsup> <mi>z</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac> <mo> ∗ </mo> <mfrac> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi>z</mi> <mn>1</mn> <mrow> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi mathvariant="normal"> Θ </mi> <mrow class="MJX-TeXAtom-ORD"> <mn>11</mn> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac></math>
+(2) 先求 $\Theta_{11}^{(3)}$，由链式规则，可以做如下运算：$ \frac{\partial J(\Theta)}{\partial \Theta_{11}^{(3)}} = \frac{\partial J(\Theta)}{\partial a_1^{(4)}} \cdot \frac{\partial a_1^{(4)}}{\partial z_1^{(4)}} \cdot \frac{\partial z_1^{(4)}}{\partial \Theta_{11}^{(3)}} $
 
-3. 参考上面δ的定义，可知上面等式后两项为：<math><msubsup><mi>δ</mi><mn>1</mn><mi>(4)</mi></msubsup><mo>=</mo> <mfrac> <mrow> <mi mathvariant="normal"> ∂ </mi> <mi>J</mi> <mo stretchy="false">(</mo> <mi mathvariant="normal"> Θ </mi> <mo stretchy="false">)</mo> </mrow> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi>a</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mi>(4)</mi> </mrow> </msubsup> </mrow> </mfrac> <mo> ∗ </mo> <mfrac> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi>a</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msubsup> <mi>z</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac></math>， 即输出层第一个节点的误差值，展开计算如下：
 
-	<math display="block"><msubsup><mi>δ</mi><mn>1</mn><mi>(4)</mi></msubsup><mo>=</mo> <mfrac> <mrow> <mi mathvariant="normal"> ∂ </mi> <mi>J</mi> <mo stretchy="false">(</mo> <mi mathvariant="normal"> Θ </mi> <mo stretchy="false">)</mo> </mrow> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi>a</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mi>(4)</mi> </mrow> </msubsup> </mrow> </mfrac> <mo> ∗ </mo> <mfrac> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi>a</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msubsup> <mi>z</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac><mo>=</mo><mo>&#x2212;<!-- − --></mo> <mo stretchy="false">[</mo> <mi>y</mi> <mo>&#x2217;<!-- ∗ --></mo> <mo stretchy="false">(</mo> <mn>1</mn> <mo>&#x2212;<!-- − --></mo> <mi>g</mi> <mo stretchy="false">(</mo> <mi>z</mi> <mo stretchy="false">)</mo> <mo stretchy="false">)</mo> <mo>+</mo> <mo stretchy="false">(</mo> <mi>y</mi> <mo>&#x2212;<!-- − --></mo> <mn>1</mn> <mo stretchy="false">)</mo> <mo>&#x2217;<!-- ∗ --></mo> <mi>g</mi> <mo stretchy="false">(</mo> <mi>z</mi> <mo stretchy="false">)</mo> <mo stretchy="false">]</mo><mo>=</mo> <mo>&#x2212;<!-- − --></mo> <mo stretchy="false">[</mo> <mi>y</mi> <mo>&#x2217;<!-- ∗ --></mo> <mo stretchy="false">(</mo> <mn>1</mn> <mo>&#x2212;<!-- − --></mo> <mi>g</mi> <mo stretchy="false">(</mo> <mi>z</mi> <mo stretchy="false">)</mo> <mo stretchy="false">)</mo> <mo>+</mo> <mo stretchy="false">(</mo> <mi>y</mi> <mo>&#x2212;<!-- − --></mo> <mn>1</mn> <mo stretchy="false">)</mo> <mo>&#x2217;<!-- ∗ --></mo> <mi>g</mi> <mo stretchy="false">(</mo> <mi>z</mi> <mo stretchy="false">)</mo> <mo stretchy="false">]</mo> <mo>=</mo> <mi>g</mi> <mo stretchy="false">(</mo> <mi>z</mi> <mo stretchy="false">)</mo> <mo>&#x2212;<!-- − --></mo> <mi>y</mi> <mo>=</mo> <msup> <mi>a</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msup> <mo>&#x2212;<!-- − --></mo> <mi>y</mi></math>，其中用到了sigmoid函数一个特性：<math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>g</mi> <mi class="MJX-variant" mathvariant="normal">&#x2032;<!-- ′ --></mi> <mo stretchy="false">(</mo> <mi>z</mi> <mo stretchy="false">)</mo> <mo>=</mo> <mi>g</mi> <mo stretchy="false">(</mo> <mi>z</mi> <mo stretchy="false">)</mo> <mo>&#x2217;<!-- ∗ --></mo> <mo stretchy="false">(</mo> <mn>1</mn> <mo>&#x2212;<!-- − --></mo> <mi>g</mi> <mo stretchy="false">(</mo> <mi>z</mi> <mo stretchy="false">)</mo> <mo stretchy="false">)</mo></math>
+(3) 参考上面 $\delta$ 的定义，可知上面等式后两项为：$ \delta_1^{(4)} = \frac{\partial J(\Theta)}{\partial a_1^{(4)}} \cdot \frac{\partial a_1^{(4)}}{\partial z_1^{(4)}} $
+即输出层第一个节点的误差值，展开计算如下：
+
+$$
+\delta_1^{(4)} = \frac{\partial J(\Theta)}{\partial a_1^{(4)}} \cdot \frac{\partial a_1^{(4)}}{\partial z_1^{(4)}} 
+$$
+
+$$
+= - \left[ y \cdot (1 - g(z)) + (y - 1) \cdot g(z) \right]
+$$
+
+$$
+= - \left[ y \cdot (1 - g(z)) + (y - 1) \cdot g(z) \right]
+$$
+
+$$
+= g(z) - y
+$$
+
+其中用到了 sigmoid 函数的一个特性： $g'(z) = g(z) \cdot (1 - g(z))$
 	
-4. 这样我们得到了<math><msubsup><mi>δ</mi><mn>1</mn><mi>(4)</mi></msubsup></math>（参考上一节BP算法的步骤(3)），接下来继续求解<math><mfrac><mrow> <mi>∂</mi> <mi>J</mi> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </mrow><mrow> <mi>∂ </mi> <msubsup> <mi mathvariant="normal">Θ</mi> <mrow> <mn>11</mn> </mrow> <mrow> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow></mfrac></math>，前面第二步等号后的最有一项<math><mfrac> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi>z</mi> <mn>1</mn> <mrow> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi mathvariant="normal"> Θ </mi> <mrow class="MJX-TeXAtom-ORD"> <mn>11</mn> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac></math>，将<math><msubsup> <mi>z</mi> <mn>1</mn> <mrow> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo></mrow></msubsup></math>展开有：<math><msubsup> <mi>z</mi> <mn>1</mn> <mrow> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo></mrow></msubsup><mo>=</mo><msubsup><mi>Θ</mi><mrow><mi>1</mi><mi>0</mi></mrow><mi>(3)</mi></msubsup><mo> * </mo><msubsup><mi>a</mi><mn>0</mn><mi>(3)</mi></msubsup><mo>+</mo><msubsup><mi>Θ</mi><mrow><mi>1</mi><mi>1</mi></mrow><mi>(3)</mi></msubsup><mo> * </mo><msubsup><mi>a</mi><mn>1</mn><mi>(3)</mi></msubsup><mo>+</mo><msubsup><mi>Θ</mi><mrow><mi>1</mi><mi>2</mi></mrow><mi>(3)</mi></msubsup><mo> * </mo><msubsup><mi>a</mi><mn>2</mn><mi>(3)</mi></msubsup></math>，对<math><msubsup><mi>Θ</mi><mrow><mi>1</mi><mi>1</mi></mrow><mi>(3)</mi></msubsup></math>求偏导的结果为<math><msubsup><mi>a</mi><mn>1</mn><mi>(3)</mi></msubsup></math>
+(4) 这样我们得到了 $\delta_1^{(4)}$（参考上一节 BP 算法的步骤 (3)），接下来继续求解$\frac{\partial J(\Theta)}{\partial \Theta_{11}^{(3)}}$, 前面第二步等号后的最后一项$\frac{\partial z_1^{(4)}}{\partial \Theta_{11}^{(3)}}$, 将 $z_1^{(4)}$ 展开有：
 
-5. 将第4步与第三步的式子合并，即得出 <math><mfrac><mrow> <mi>∂</mi> <mi>J</mi> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </mrow><mrow> <mi>∂ </mi> <msubsup> <mi mathvariant="normal">Θ</mi> <mrow> <mn>11</mn> </mrow> <mrow> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow></mfrac><mo>=</mo><msubsup><mi>δ</mi><mn>1</mn><mi>(4)</mi></msubsup><mo> * </mo><msubsup><mi>a</mi><mn>1</mn><mi>(3)</mi></msubsup></math> 与上一节BP算法步骤(5)一致
+$$
+z_1^{(4)} = \Theta_{10}^{(3)} \cdot a_0^{(3)} + \Theta_{11}^{(3)} \cdot a_1^{(3)} + \Theta_{12}^{(3)} \cdot a_2^{(3)}
+$$
 
-6. 接下来计算<math><msubsup><mi>Θ</mi><mrow><mi>1</mi><mi>1</mi></mrow><mi>(2)</mi></msubsup></math>，链式规则可做如下运算<math> <mfrac> <mrow> <mi>∂</mi> <mi>J</mi> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </mrow> <mrow> <mi mathvariant="normal">∂ </mi> <msubsup> <mi>Θ</mi> <mrow> <mn>11</mn> </mrow> <mrow> <mo stretchy="false">(</mo> <mn>2</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac> <mo>=</mo> <mfrac> <mrow> <mi mathvariant="normal"> ∂ </mi> <mi>J</mi> <mo stretchy="false">(</mo> <mi mathvariant="normal"> Θ </mi> <mo stretchy="false">)</mo> </mrow> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi>a</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mi>(4)</mi> </mrow> </msubsup> </mrow> </mfrac> <mo> ∗ </mo> <mfrac> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi>a</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msubsup> <mi>z</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac> <mo> ∗ </mo> <mfrac> <mrow> <mi> ∂ </mi> <msubsup> <mi>z</mi> <mn>1</mn> <mrow> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> <mrow> <mi >∂</mi> <msubsup> <mi>a</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac><mo> * </mo><mfrac> <mrow> <mi> ∂ </mi> <msubsup> <mi>a</mi> <mn>1</mn> <mrow> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> <mrow> <mi >∂</mi> <msubsup> <mi>z</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac><mo> * </mo><mfrac> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi>z</mi> <mn>1</mn> <mrow> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi mathvariant="normal"> Θ </mi> <mrow class="MJX-TeXAtom-ORD"> <mn>11</mn> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>2</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac></math>
+对$\Theta_{11}^{(3)}$ 求偏导的结果为 $a_1^{(3)}$
 
-7. 参考上面δ的定义，可知<math> <msubsup> <mi>δ </mi> <mi>1</mi> <mrow> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo>=</mo> <mfrac> <mrow> <mi mathvariant="normal"> ∂ </mi> <mi>J</mi> <mo stretchy="false">(</mo> <mi mathvariant="normal"> Θ </mi> <mo stretchy="false">)</mo> </mrow> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi>a</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mi>(4)</mi> </mrow> </msubsup> </mrow> </mfrac> <mo> ∗ </mo> <mfrac> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi>a</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> <mrow> <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi> <msubsup> <mi>z</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac> <mo> ∗ </mo> <mfrac> <mrow> <mi> ∂ </mi> <msubsup> <mi>z</mi> <mn>1</mn> <mrow> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> <mrow> <mi >∂</mi> <msubsup> <mi>a</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac><mo> * </mo><mfrac> <mrow> <mi> ∂ </mi> <msubsup> <mi>a</mi> <mn>1</mn> <mrow> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> <mrow> <mi >∂</mi> <msubsup> <mi>z</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac></math>，由上面的步骤3可知，等式的前两项为<math><msubsup> <mi>δ </mi> <mi>1</mi> <mrow> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup></math>。这里可以看出对δ值的计算和之前的FB算法类似，如果将神经网络反向来看，当前层的<math><msup> <mi>δ </mi> <mi>1</mi></msup></math>值是根据后一层的<math><msup> <mi>δ </mi> <mi>(1-1)</mi></msup></math>计算得来。等式的第三项，将<math><msubsup><mi>z</mi><mn>1</mn><mi>(4)</mi></msubsup></math>展开后对<math><msubsup><mi>a</mi><mn>1</mn><mi>(3)</mi></msubsup></math>求导后得到<math><msubsup><mi>Θ</mi><mn>11</mn><mi>(3)</mi></msubsup></math>，等式最后一项为<math> <mi>g</mi> <mi class="MJX-variant" mathvariant="normal">&#x2032;<!-- ′ --></mi> <mo stretchy="false">(</mo> <msubsup> <mi>z</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo stretchy="false">)</mo></math>
+(5) 将第 4 步与第三步的式子合并，即得出 $\frac{\partial J(\Theta)}{\partial \Theta_{11}^{(3)}} = \delta_1^{(4)} \cdot a_1^{(3)}$, 与上一节 BP 算法步骤 (5) 一致
 
-8. 将上一步的结果进行整理得到: <math><msubsup> <mi>δ </mi> <mi>1</mi> <mrow> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup><mo>=</mo><msubsup> <mi>δ </mi> <mi>1</mi> <mrow> <mo stretchy="false">(</mo> <mn>4</mn> <mo stretchy="false">)</mo> </mrow> </msubsup><mo> * </mo><msubsup><mi>Θ</mi><mn>11</mn><mi>(3)</mi></msubsup> <mo> * </mo> <mi>g</mi> <mi class="MJX-variant" mathvariant="normal">&#x2032;<!-- ′ --></mi> <mo stretchy="false">(</mo> <msubsup> <mi>z</mi> <mn>1</mn> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo stretchy="false">)</mo></math> 和上一节BP算步骤(4)一致
 
-9. 将8的结果带入第6步，可得出<math> <mfrac> <mrow> <mi>∂</mi> <mi>J</mi> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </mrow> <mrow> <mi mathvariant="normal">∂ </mi> <msubsup> <mi>Θ</mi> <mrow> <mn>11</mn> </mrow> <mrow> <mo stretchy="false">(</mo> <mn>2</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac> <mo>=</mo> <msubsup> <mi>δ </mi> <mi>1</mi> <mrow> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup>  <mo> * </mo><mfrac> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi>z</mi> <mn>1</mn> <mrow> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> <mrow> <mi mathvariant="normal"> ∂ </mi> <msubsup> <mi mathvariant="normal"> Θ </mi> <mrow class="MJX-TeXAtom-ORD"> <mn>11</mn> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>2</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac></math>，将<math><msubsup><mi>z</mi><mn>1</mn><mi>(3)</mi></msubsup></math>展开后对<math><msubsup> <mi mathvariant="normal"> Θ </mi> <mrow class="MJX-TeXAtom-ORD"> <mn>11</mn> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mn>2</mn> <mo stretchy="false">)</mo> </mrow> </msubsup></math>求导得到<math><msubsup><mi>a</mi><mn>1</mn><mi>(2)</mi></msubsup></math>
+(6) 接下来计算 $\Theta_{11}^{(2)}$，链式规则可做如下运算：
 
-10. 整理第9步结果可知 <math> <mfrac> <mrow> <mi>∂</mi> <mi>J</mi> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </mrow> <mrow> <mi mathvariant="normal">∂ </mi> <msubsup> <mi>Θ</mi> <mrow> <mn>11</mn> </mrow> <mrow> <mo stretchy="false">(</mo> <mn>2</mn> <mo stretchy="false">)</mo> </mrow> </msubsup> </mrow> </mfrac> <mo>=</mo> <msubsup> <mi>δ </mi> <mi>1</mi> <mrow> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup>  <mo> * </mo> <msubsup><mi>a</mi><mn>1</mn><mi>(2)</mi></msubsup></math>，与上一节步骤（5）一致
+$$
+\frac{\partial J(\Theta)}{\partial \Theta_{11}^{(2)}} = \frac{\partial J(\Theta)}{\partial a_1^{(4)}} \cdot \frac{\partial a_1^{(4)}}{\partial z_1^{(4)}} \cdot \frac{\partial z_1^{(4)}}{\partial a_1^{(3)}} \cdot \frac{\partial a_1^{(3)}}{\partial z_1^{(3)}} \cdot \frac{\partial z_1^{(3)}}{\partial \Theta_{11}^{(2)}}
+$$
+
+
+(7) 参考上面 $\delta$ 的定义，可知
+
+$$
+\delta_1^{(3)} = \frac{\partial J(\Theta)}{\partial a_1^{(4)}} \cdot \frac{\partial a_1^{(4)}}{\partial z_1^{(4)}} \cdot \frac{\partial z_1^{(4)}}{\partial a_1^{(3)}} \cdot \frac{\partial a_1^{(3)}}{\partial z_1^{(3)}}
+$$
+
+由上面的步骤 3 可知，等式的前两项为 $\delta_1^{(4)}$。这里可以看出对 $\delta$ 值的计算和之前的 FB 算法类似，如果将神经网络反向来看，当前层的 $\delta_1$ 值是根据后一层的 $\delta_{(1-1)}$ 计算得来。等式的第三项，将 $z_1^{(4)}$ 展开后对 $a_1^{(3)}$ 求导后得到 $\Theta_{11}^{(3)}$，等式最后一项为
+$$
+g'(z_1^{(3)})
+$$
+
+
+(8) 将上一步的结果进行整理得到：
+$$
+\delta_1^{(3)} = \delta_1^{(4)} \cdot \Theta_{11}^{(3)} \cdot g'(z_1^{(3)})
+$$
+和上一节 BP 算步骤 (4) 一致
+
+(9) 将 8 的结果带入第 6 步，可得出：
+$$
+\frac{\partial J(\Theta)}{\partial \Theta_{11}^{(2)}} = \delta_1^{(3)} \cdot \frac{\partial z_1^{(3)}}{\partial \Theta_{11}^{(2)}}
+$$
+将 $z_1^{(3)}$ 展开后对 $\Theta_{11}^{(2)}$ 求导得到 $a_1^{(2)}$。
+
+
+(10) 整理第 9 步结果可知：
+$$
+\frac{\partial J(\Theta)}{\partial \Theta_{11}^{(2)}} = \delta_1^{(3)} \cdot a_1^{(2)}
+$$
+与上一节步骤（5）一致。
+
 
 通过上面的推导，大概可以印证上一节的结论：
 
-<math display="block"><mstyle displaystyle="true"><mfrac><mi>∂</mi><mrow><mi>∂</mi><msubsup><mi>Θ</mi><mrow class="MJX-TeXAtom-ORD"><mi>i</mi><mo>,</mo><mi>j</mi></mrow><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>l</mi><mo stretchy="false">)</mo></mrow></msubsup></mrow></mfrac></mstyle><mi>J</mi><mo stretchy="false">(</mo><mi>Θ</mi><mo stretchy="false">)</mo><mo>=</mo><msubsup><mi>a</mi><mi>j</mi><mi>(l)</mi></msubsup><msubsup><mi>δ</mi><mi>i</mi><mi>(l+1)</mi></msubsup></math>
+$$
+\frac{\partial J(\Theta)}{\partial \Theta_{ij}^{(l)}} = a_j^{(l)} \cdot \delta_i^{(l+1)}
+$$
 
-
-而关于对<math> <msubsup> <mi>δ </mi> <mi>j</mi> <mrow> <mo stretchy="false">(</mo> <mi>l</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> </math>的计算则是BP算法的核心，继续上面的例子，计算<math><msubsup> <mi>δ </mi> <mi>2</mi> <mrow> <mo stretchy="false">(</mo> <mn>3</mn> <mo stretchy="false">)</mo> </mrow> </msubsup></math>和<math><msubsup> <mi>δ </mi> <mi>2</mi> <mrow> <mo stretchy="false">(</mo> <mn>2</mn> <mo stretchy="false">)</mo> </mrow> </msubsup></math>：
+而关于对 $\delta_j^{(l)}$ 的计算则是 BP 算法的核心，继续上面的例子，计算 $\delta_2^{(3)}$ 和 $\delta_2^{(2)}$：
 
 ![](/assets/images/2017/09/ml-6-15.png)
 
@@ -2077,8 +732,8 @@ optTheta = fminunc(@costFunction, initialTheta, options)
 
 `fminunc`的第二个参数initialTheta需要传入一个vector，而我们之前推导的神经网络权重矩阵Θ显然不是一维的向量，对于一个四层的神经网络来说：
 
-- Θ矩阵：<math><msup><mi>Θ</mi><mi>(1)</mi></msup></math>，<math><msup><mi>Θ</mi><mi>(2)</mi></msup></math>，<math><msup><mi>Θ</mi><mi>(3)</mi></msup></math> - matrices(Theta1, Theta2, Theta3)
-- 梯度矩阵：<math><msup><mi>D</mi><mi>(1)</mi></msup></math>，<math><msup><mi>D</mi><mi>(2)</mi></msup></math>，<math><msup><mi>D</mi><mi>(3)</mi></msup></math> - matrices(D1, D2, D3)
+- Θ 矩阵：$\Theta^{(1)}$, $\Theta^{(2)}$, $\Theta^{(3)}$ - matrices ($\Theta_1$, $\Theta_2$, $\Theta_3$)
+- 梯度矩阵：$D^{(1)}$, $D^{(2)}$, $D^{(3)}$ - matrices ($D_1$, $D_2$, $D_3$)
 
 因此我们需要将矩阵转换为向量，在Octave中，可用如下命令
 
@@ -2087,7 +742,7 @@ thetaVector = [ Theta1(:); Theta2(:); Theta3(:); ]
 deltaVector = [ D1(:); D2(:); D3(:) ]
 
 ```
-这种写法会将3个Θ矩阵排成一维向量，假设<math><msup><mi>Θ</mi><mi>(1)</mi></msup></math>是10x11的，<math><msup><mi>Θ</mi><mi>(2)</mi></msup></math>是10x11的，<math><msup><mi>Θ</mi><mi>(3)</mi></msup></math>是1x11的，也可以从`thetaVector`取出原始矩阵
+这种写法会将 3 个 $\Theta$ 矩阵排成一维向量，假设 $\Theta^{(1)}$ 是 $10 \times 11$ 的，$\Theta^{(2)}$ 是 $10 \times 11$ 的，$\Theta^{(3)}$ 是 $1 \times 11$ 的，也可以从 `thetaVector` 取出原始矩阵。
 
 ```matlab
 Theta1 = reshape(thetaVector(1:110),10,11)
@@ -2103,134 +758,24 @@ Theta3 = reshape(thetaVector(221:231),1,11)
 	```matlab
 	function[jVal,gradientVec] = costFunction(thetaVec)
 	```
-	在`costFunction`中，我们需要使用`reshape`命令从`theVec`取出<math><msup><mi>Θ</mi><mi>(1)</mi></msup></math>，<math><msup><mi>Θ</mi><mi>(2)</mi></msup></math>，<math><msup><mi>Θ</mi><mi>(3)</mi></msup></math> 用来计算FB和BP算法，得到<math><msup><mi>D</mi><mi>(1)</mi></msup></math>，<math><msup><mi>D</mi><mi>(2)</mi></msup></math>，<math><msup><mi>D</mi><mi>(3)</mi></msup></math> 梯度矩阵和<math><mi>J</mi><mi>(Θ)</mi></math>，然后再unroll <math><msup><mi>D</mi><mi>(1)</mi></msup></math>，<math><msup><mi>D</mi><mi>(2)</mi></msup></math>，<math><msup><mi>D</mi><mi>(3)</mi></msup></math>得到`gradientVec`
+  在 `costFunction` 中，我们需要使用 `reshape` 命令从 `theVec` 取出 $\Theta^{(1)}$, $\Theta^{(2)}$, $\Theta^{(3)}$ 用来计算 FB 和 BP 算法，得到 $D^{(1)}$, $D^{(2)}$, $D^{(3)}$ 梯度矩阵和 $J(\Theta)$，然后再 unroll $D^{(1)}$, $D^{(2)}$, $D^{(3)}$ 得到 `gradientVec`。
 
 
 ### Gradient Checking
 
 在计算神经网络的梯度时，要确保梯度计算正确，最好在计算过程中进行Gradient Checking。对于代价函数在某个点导数可近似为:
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mstyle displaystyle="true">
-    <mfrac>
-      <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi>
-      <mrow>
-        <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi>
-        <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-      </mrow>
-    </mfrac>
-  </mstyle>
-  <mi>J</mi>
-  <mo stretchy="false">(</mo>
-  <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-  <mo stretchy="false">)</mo>
-  <mo>&#x2248;<!-- ≈ --></mo>
-  <mstyle displaystyle="true">
-    <mfrac>
-      <mrow>
-        <mi>J</mi>
-        <mo stretchy="false">(</mo>
-        <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-        <mo>+</mo>
-        <mi>&#x03F5;<!-- ϵ --></mi>
-        <mo stretchy="false">)</mo>
-        <mo>&#x2212;<!-- − --></mo>
-        <mi>J</mi>
-        <mo stretchy="false">(</mo>
-        <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-        <mo>&#x2212;<!-- − --></mo>
-        <mi>&#x03F5;<!-- ϵ --></mi>
-        <mo stretchy="false">)</mo>
-      </mrow>
-      <mrow>
-        <mn>2</mn>
-        <mi>&#x03F5;<!-- ϵ --></mi>
-      </mrow>
-    </mfrac>
-  </mstyle>
-</math>
-
+$$
+\frac{\partial}{\partial \Theta} J(\Theta) \approx \frac{J(\Theta + \epsilon) - J(\Theta - \epsilon)}{2\epsilon}
+$$
 
 上面式子是单个Θ矩阵的梯度近似，对于过个Θ矩阵的梯度近似，计算方法相同:
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mstyle displaystyle="true">
-    <mfrac>
-      <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi>
-      <mrow>
-        <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi>
-        <msub>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mi>j</mi>
-        </msub>
-      </mrow>
-    </mfrac>
-  </mstyle>
-  <mi>J</mi>
-  <mo stretchy="false">(</mo>
-  <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-  <mo stretchy="false">)</mo>
-  <mo>&#x2248;<!-- ≈ --></mo>
-  <mstyle displaystyle="true">
-    <mfrac>
-      <mrow>
-        <mi>J</mi>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mn>1</mn>
-        </msub>
-        <mo>,</mo>
-        <mo>&#x2026;<!-- … --></mo>
-        <mo>,</mo>
-        <msub>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mi>j</mi>
-        </msub>
-        <mo>+</mo>
-        <mi>&#x03F5;<!-- ϵ --></mi>
-        <mo>,</mo>
-        <mo>&#x2026;<!-- … --></mo>
-        <mo>,</mo>
-        <msub>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mi>n</mi>
-        </msub>
-        <mo stretchy="false">)</mo>
-        <mo>&#x2212;<!-- − --></mo>
-        <mi>J</mi>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mn>1</mn>
-        </msub>
-        <mo>,</mo>
-        <mo>&#x2026;<!-- … --></mo>
-        <mo>,</mo>
-        <msub>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mi>j</mi>
-        </msub>
-        <mo>&#x2212;<!-- − --></mo>
-        <mi>&#x03F5;<!-- ϵ --></mi>
-        <mo>,</mo>
-        <mo>&#x2026;<!-- … --></mo>
-        <mo>,</mo>
-        <msub>
-          <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-          <mi>n</mi>
-        </msub>
-        <mo stretchy="false">)</mo>
-      </mrow>
-      <mrow>
-        <mn>2</mn>
-        <mi>&#x03F5;<!-- ϵ --></mi>
-      </mrow>
-    </mfrac>
-  </mstyle>
-</math>
+$$
+\frac{\partial}{\partial \Theta_j} J(\Theta) \approx \frac{J(\Theta_1, \dots, \Theta_j + \epsilon, \dots, \Theta_n) - J(\Theta_1, \dots, \Theta_j - \epsilon, \dots, \Theta_n)}{2\epsilon}
+$$
 
-为了保证计算结果相近，其中<math><mi>ϵ</mi><mo>=</mo><msup><mn>10</mn><mi>(-4)</mi></msup></math>，注意过小的ϵ会导致计算问题，由于我们只能对一个Θ矩阵进行ϵ的加减，对于多个Θ矩阵，在Octave中需要使用循环计算
+为了保证计算结果相近，其中 $\epsilon = 10^{-4}$，注意过小的ϵ会导致计算问题，由于我们只能对一个Θ矩阵进行ϵ的加减，对于多个Θ矩阵，在Octave中需要使用循环计算
 
 ```matlab
 epsilon = 1e-4;
@@ -2247,7 +792,7 @@ end;
 
 结合前一节做一个简单的总结:
 
-1. 通过实现BP算法得到δ矩阵`DVec`（Unrolled <math><msup><mi>D</mi><mi>(1)</mi></msup></math>，<math><msup><mi>D</mi><mi>(2)</mi></msup></math>，<math><msup><mi>D</mi><mi>(3)</mi></msup></math>）
+1. 通过实现 BP 算法得到 $\delta$ 矩阵 `DVec`（Unrolled $D^{(1)}$, $D^{(2)}$, $D^{(3)}$）
 2. 进行梯度检查，计算`gradApprox`
 3. 确保计算结果足够相近
 4. 停止梯度检查，使用BP得到的结果
@@ -2255,7 +800,7 @@ end;
 
 ###Random Initialization
 
-计算神经网络，将theta初始值设为0不合适，这会导致在计算BP算法的过程中所有节点计算出的值相同。我们可以使用随机的方式产生Θ矩阵，比如将<math><msubsup><mi>Θ</mi><mi>ij</mi><mi>(l)</mi></msubsup></math>初始化范围控制在[-ϵ,ϵ]：
+计算神经网络，将 $\theta$ 初始值设为 0 不合适，这会导致在计算 BP 算法的过程中所有节点计算出的值相同。我们可以使用随机的方式产生 $\Theta$ 矩阵，比如将 $\Theta_{ij}^{(l)}$ 初始化范围控制在 $[-\epsilon, \epsilon]$：
 
 ```matlab
 Theta1=rand(10,11)*(2*INIT_EPSILON)-INIT_EPSILON #初始化10x11的矩阵
@@ -2268,16 +813,20 @@ rand(x,y)函数会为矩阵初始化一个0到1之间的实数，上面的INIT_E
 
 这一章先介绍了如何构建一个神经网络，包含如下几个步骤
 
-- 第一层输入单元的个数 = 样本<math xmlns="http://www.w3.org/1998/Math/MathML"> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> </math>的维度
+- 第一层输入单元的个数 = 样本 $x^{(i)}$ 的维度
 - 最后一层输出单元的个数 = 预测结果分类的个数
 - Hidden Layer的个数= 默认为1个，如果有多余1个的hidden layer，通常每层的unit个数相同，理论上层数越多越好
 
 接下来介绍了如何训练一个神经网络，包含如下几步
 
 1. 随机初始化Θ矩阵
-2. 实现FP算法，对任意<math xmlns="http://www.w3.org/1998/Math/MathML"> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> </math>得出预测函数<math xmlns="http://www.w3.org/1998/Math/MathML"> <msub> <mi>h</mi> <mi mathvariant="normal">&#x0398;<!-- Θ --></mi> </msub> <mo stretchy="false">(</mo> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo stretchy="false">)</mo> </math>
+2. 实现 FP 算法，对任意样本 $x^{(i)}$ 得出预测函数 $h_{\Theta}(x^{(i)})$
 3. 实现代价函数
-4. 使用BP算法对代价函数求偏导，得到<math><mstyle displaystyle="true"><mfrac><mi>∂</mi><mrow><mi>∂</mi><msubsup><mi>Θ</mi><mrow class="MJX-TeXAtom-ORD"><mi>i</mi><mo>,</mo><mi>j</mi></mrow><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">(</mo><mi>l</mi><mo stretchy="false">)</mo></mrow></msubsup></mrow></mfrac></mstyle><mi>J</mi><mo stretchy="false">(</mo><mi>Θ</mi><mo stretchy="false">)</mo></math>的算式
+4. 使用 BP 算法对代价函数求偏导，得到：
+$$
+\frac{\partial}{\partial \Theta_{ij}^{(l)}} J(\Theta)
+$$
+
 5. 使用梯度检查，确保BP算出的Θ矩阵结果正确，然后停止梯度检查
 6. 使用梯度下降或者其它高级优化算法求解权重矩阵Θ，使代价函数的值最小
 
@@ -2286,7 +835,7 @@ rand(x,y)函数会为矩阵初始化一个0到1之间的实数，上面的INIT_E
 ```matlab
 for i = 1:m,
    Perform forward propagation and backpropagation using example (x(i),y(i))
-   (Get activations a(l) and delta terms d(l) for l = 2,...,L
+   (Get activations a(l) and delta terms d(l) for l = 2,...,L)
 ```
 
 BP梯度下降的过程如下图所示：

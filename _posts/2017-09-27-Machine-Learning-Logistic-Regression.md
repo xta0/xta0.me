@@ -121,188 +121,43 @@ $$
 
 前面可知梯度下降公式为:
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-<mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd />
-      <mtd>
-        <mi>R</mi>
-        <mi>e</mi>
-        <mi>p</mi>
-        <mi>e</mi>
-        <mi>a</mi>
-        <mi>t</mi>
-        <mspace width="thickmathspace" />
-        <mo fence="false" stretchy="false">{</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <mspace width="thickmathspace" />
-        <msub>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mi>j</mi>
-        </msub>
-        <mo>:=</mo>
-        <msub>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mi>j</mi>
-        </msub>
-        <mo>&#x2212;<!-- − --></mo>
-        <mi>&#x03B1;<!-- α --></mi>
-        <mstyle>
-          <mfrac>
-            <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi>
-            <mrow>
-              <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi>
-              <msub>
-                <mi>&#x03B8;<!-- θ --></mi>
-                <mi>j</mi>
-              </msub>
-            </mrow>
-          </mfrac>
-        </mstyle>
-        <mi>J</mi>
-        <mo stretchy="false">(</mo>
-        <mi>&#x03B8;<!-- θ --></mi>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <mo fence="false" stretchy="false">}</mo>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+$$
+\text{Repeat} \quad \{ 
+$$
 
-对<math><msub><mi>J</mi><mo>(θ)</mo></msub></math>求偏导，得到梯度下降公式：
+$$
+\quad \theta_j := \theta_j - \alpha \frac{\partial J(\theta)}{\partial \theta_j}
+$$
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-<mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd />
-      <mtd>
-        <mi>R</mi>
-        <mi>e</mi>
-        <mi>p</mi>
-        <mi>e</mi>
-        <mi>a</mi>
-        <mi>t</mi>
-        <mspace width="thickmathspace" />
-        <mo fence="false" stretchy="false">{</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <mspace width="thickmathspace" />
-        <msub>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mi>j</mi>
-        </msub>
-        <mo>:=</mo>
-        <msub>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mi>j</mi>
-        </msub>
-        <mo>&#x2212;<!-- − --></mo>
-        <mfrac>
-          <mi>&#x03B1;<!-- α --></mi>
-          <mi>m</mi>
-        </mfrac>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mi>m</mi>
-        </munderover>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi>h</mi>
-          <mi>&#x03B8;<!-- θ --></mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <msup>
-          <mi>x</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <mo>&#x2212;<!-- − --></mo>
-        <msup>
-          <mi>y</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <msubsup>
-          <mi>x</mi>
-          <mi>j</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <mo fence="false" stretchy="false">}</mo>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+$$
+\}
+$$
+
+
+对 $J(\theta)$ 求偏导，得到梯度下降公式：
+
+$$
+\text{Repeat} \quad \{
+$$
+
+$$
+\quad \theta_j := \theta_j - \frac{\alpha}{m} \sum_{i=1}^{m} \left( h_{\theta}(x^{(i)}) - y^{(i)} \right) x_j^{(i)}
+$$
+
+$$
+\}
+$$
 
 注意到上述公式和线性回归使用的梯度下降公式相同，不同的是`h(θ)`，上述公式向量化表示为：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>&#x03B8;<!-- θ --></mi>
-  <mo>:=</mo>
-  <mi>&#x03B8;<!-- θ --></mi>
-  <mo>&#x2212;<!-- − --></mo>
-  <mfrac>
-    <mi>&#x03B1;<!-- α --></mi>
-    <mi>m</mi>
-  </mfrac>
-  <msup>
-    <mi>X</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>T</mi>
-    </mrow>
-  </msup>
-  <mo stretchy="false">(</mo>
-  <mi>g</mi>
-  <mo stretchy="false">(</mo>
-  <mi>X</mi>
-  <mi>&#x03B8;<!-- θ --></mi>
-  <mo stretchy="false">)</mo>
-  <mo>&#x2212;<!-- − --></mo>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mover>
-      <mi>y</mi>
-      <mo stretchy="false">&#x2192;<!-- → --></mo>
-    </mover>
-  </mrow>
-  <mo stretchy="false">)</mo>
-</math>
+$$
+\theta := \theta - \frac{\alpha}{m} X^T \left( g(X\theta) - \vec{y} \right)
+$$
+
 
 ### Advanced Optimization
 
-对于求解<math><msub><mi>J</mi><mo>(θ)</mo></msub></math>的最小值，目前的做法是使用梯度下降法，对`θ`求偏导，除了梯度下降之外，还有其它几种优化算法：
+对于求解 $J(\theta)$ 的最小值，目前的做法是使用梯度下降法，对`θ`求偏导，除了梯度下降之外，还有其它几种优化算法：
 
 * Conjugate gradient
 * BFGS
@@ -317,40 +172,14 @@ $$
 
 开发者不需要自己实现这些算法，在一般的数值计算库里都有相应的实现，例如 python，Octave 等。我们只需要关心两个问题，如何给出:
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd />
-      <mtd>
-        <mi>J</mi>
-        <mo stretchy="false">(</mo>
-        <mi>&#x03B8;<!-- θ --></mi>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <mstyle>
-          <mfrac>
-            <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi>
-            <mrow>
-              <mi mathvariant="normal">&#x2202;<!-- ∂ --></mi>
-              <msub>
-                <mi>&#x03B8;<!-- θ --></mi>
-                <mi>j</mi>
-              </msub>
-            </mrow>
-          </mfrac>
-        </mstyle>
-        <mi>J</mi>
-        <mo stretchy="false">(</mo>
-        <mi>&#x03B8;<!-- θ --></mi>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+$$
+J(\theta)
+$$
+
+$$
+\frac{\partial J(\theta)}{\partial \theta_j}
+$$
+
 
 我们可以使用 Octave 写这样一个函数:
 
@@ -384,166 +213,35 @@ initialTheta = zeros(2,1);
 
 上图可知我们先取一个 class 进行计算，将其他的归类为另一个 class，这样就可以使用前面提到的 binary regression model 进行计算，即
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-<mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd />
-      <mtd>
-        <mi>y</mi>
-        <mo>&#x2208;<!-- ∈ --></mo>
-        <mo fence="false" stretchy="false">{</mo>
-        <mn>0</mn>
-        <mo>,</mo>
-        <mn>1</mn>
-        <mo>.</mo>
-        <mo>.</mo>
-        <mo>.</mo>
-        <mi>n</mi>
-        <mo fence="false" stretchy="false">}</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <msubsup>
-          <mi>h</mi>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>0</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo stretchy="false">(</mo>
-        <mi>x</mi>
-        <mo stretchy="false">)</mo>
-        <mo>=</mo>
-        <mi>P</mi>
-        <mo stretchy="false">(</mo>
-        <mi>y</mi>
-        <mo>=</mo>
-        <mn>0</mn>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mo stretchy="false">|</mo>
-        </mrow>
-        <mi>x</mi>
-        <mo>;</mo>
-        <mi>&#x03B8;<!-- θ --></mi>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <msubsup>
-          <mi>h</mi>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mn>1</mn>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo stretchy="false">(</mo>
-        <mi>x</mi>
-        <mo stretchy="false">)</mo>
-        <mo>=</mo>
-        <mi>P</mi>
-        <mo stretchy="false">(</mo>
-        <mi>y</mi>
-        <mo>=</mo>
-        <mn>1</mn>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mo stretchy="false">|</mo>
-        </mrow>
-        <mi>x</mi>
-        <mo>;</mo>
-        <mi>&#x03B8;<!-- θ --></mi>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <mo>&#x22EF;<!-- ⋯ --></mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <msubsup>
-          <mi>h</mi>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>n</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo stretchy="false">(</mo>
-        <mi>x</mi>
-        <mo stretchy="false">)</mo>
-        <mo>=</mo>
-        <mi>P</mi>
-        <mo stretchy="false">(</mo>
-        <mi>y</mi>
-        <mo>=</mo>
-        <mi>n</mi>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mo stretchy="false">|</mo>
-        </mrow>
-        <mi>x</mi>
-        <mo>;</mo>
-        <mi>&#x03B8;<!-- θ --></mi>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi mathvariant="normal">p</mi>
-          <mi mathvariant="normal">r</mi>
-          <mi mathvariant="normal">e</mi>
-          <mi mathvariant="normal">d</mi>
-          <mi mathvariant="normal">i</mi>
-          <mi mathvariant="normal">c</mi>
-          <mi mathvariant="normal">t</mi>
-          <mi mathvariant="normal">i</mi>
-          <mi mathvariant="normal">o</mi>
-          <mi mathvariant="normal">n</mi>
-        </mrow>
-        <mo>=</mo>
-        <munder>
-          <mo movablelimits="true">max</mo>
-          <mi>i</mi>
-        </munder>
-        <mo stretchy="false">(</mo>
-        <msubsup>
-          <mi>h</mi>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-        <mo stretchy="false">(</mo>
-        <mi>x</mi>
-        <mo stretchy="false">)</mo>
-        <mo stretchy="false">)</mo>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+$$
+y \in \{0, 1, \dots, n\}
+$$
+
+$$
+h_{\theta}^{(0)}(x) = P(y = 0 \mid x; \theta)
+$$
+
+$$
+h_{\theta}^{(1)}(x) = P(y = 1 \mid x; \theta)
+$$
+
+$$
+\vdots
+$$
+
+$$
+h_{\theta}^{(n)}(x) = P(y = n \mid x; \theta)
+$$
+
+$$
+\text{prediction} = \arg\max_i \, h_{\theta}^{(i)}(x)
+$$
 
 * One-vs-all(one-vs-rest):
 
-Train a logistic regression classifier<math><msubsup><mi>h</mi><mi>θ</mi><mi>(i)</mi></msubsup><mi>(x)</mi></math> for each class <math><mi>i</mi></math> to predict the probability that <math><mi>y</mi><mo>=</mo><mi>i</mi></math>.
+Train a logistic regression classifier $h_{\theta}^{(i)}(x)$ for each class $i$ to predict the probability that $y = i$. On a new input $x$, to make a prediction, pick the class $i$ that maximizes
 
-On a new input <math><mi>x</mi></math>, to make a prediction, pick the class <math><mi>i</mi></math> that maximizes
-
-* 总结一下就是对每种分类先计算他的<math><msub><mi>h</mi><mi>θ</mi></msub><mi>(x)</mi></math>，当有一个新的`x`需要分类时，选一个让<math><msub><mi>h</mi><mi>θ</mi></msub><mi>(x)</mi></math>值最大的分类器。
+总结一下，就是对每种分类先计算它的 $h_{\theta}(x)$，当有一个新的 `x` 需要分类时，选择使 $h_{\theta}(x)$ 值最大的分类器。
 
 ### 附录：Regularization
 
@@ -559,588 +257,111 @@ On a new input <math><mi>x</mi></math>, to make a prediction, pick the class <ma
 * 通过二次函数拟合出来的曲线刚好可以贯穿大部分数据样本，术语叫做"Just Right"
 * 通过四阶多项式拟合出来的曲线虽然能贯穿所有数据样本，但是曲线本身不够规则，当有新样本出现时不能很好的预测。这种情况我们叫做**Over Fitting（过度拟合）**，术语叫做"High variance"。If we have too many features, the learned hypothesis may fit the training set very well（`J(θ)=0`）, but fail to generalize to new examples(predict prices on new examples) Over Fitting 的问题在样本少，feature 多的时候很明显
 
-* Addressing overfitting: - Reduce number of features - Manually select which features to keep. - Model selection algorithm - Regularization - Keep all features, but reduce magnitude/values of parameters <math><msub><mi>θ</mi><mi>j</mi></msub></math> - Works well when we have a lot of features, each of which contributes a bit to predicting<math><mi>y</mi></math>
+* **Addressing overfitting:**
+  - Reduce number of features  
+    - Manually select which features to keep  
+    - Model selection algorithm  
+  - **Regularization**  
+    - Keep all features, but reduce magnitude/values of parameters $ \theta_j $  
+    - Works well when we have a lot of features, each of which contributes a bit to predicting $ y $  
 
 
 ### Regularization Cost Function
 
 如果要减少 overfitting 的情况，我们可以降低一些参数的权重，假设我们想要让下面的函数变成二次方程：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <msub>
-    <mi>&#x03B8;<!-- θ --></mi>
-    <mn>0</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>&#x03B8;<!-- θ --></mi>
-    <mn>1</mn>
-  </msub>
-  <mi>x</mi>
-  <mo>+</mo>
-  <msub>
-    <mi>&#x03B8;<!-- θ --></mi>
-    <mn>2</mn>
-  </msub>
-  <msup>
-    <mi>x</mi>
-    <mn>2</mn>
-  </msup>
-  <mo>+</mo>
-  <msub>
-    <mi>&#x03B8;<!-- θ --></mi>
-    <mn>3</mn>
-  </msub>
-  <msup>
-    <mi>x</mi>
-    <mn>3</mn>
-  </msup>
-  <mo>+</mo>
-  <msub>
-    <mi>&#x03B8;<!-- θ --></mi>
-    <mn>4</mn>
-  </msub>
-  <msup>
-    <mi>x</mi>
-    <mn>4</mn>
-  </msup>
-</math>
+$$
+\theta_0 + \theta_1 x + \theta_2 x^2 + \theta_3 x^3 + \theta_4 x^4
+$$
 
-我们想要在不去掉 θ3 和 θ4 的前提下，降低<math><msub><mi>θ</mi><mn>3</mn></msub><msup><mi>x</mi><mn>3</mn></msup></math>和<math><msub><mi>θ</mi><mn>4</mn></msub><msup><mi>x</mi><mn>4</mn></msup></math>的影响，我们可以修改 cost function 为：
+我们想要在不去掉 $\theta_3$ 和 $\theta_4$ 的前提下，降低 $\theta_3 x^3$ 和 $\theta_4 x^4$ 的影响，我们可以修改 cost function 为：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>m</mi>
-  <mi>i</mi>
-  <msub>
-    <mi>n</mi>
-    <mi>&#x03B8;<!-- θ --></mi>
-  </msub>
-  <mtext>&#xA0;</mtext>
-  <mstyle displaystyle="true">
-    <mfrac>
-      <mn>1</mn>
-      <mrow>
-        <mn>2</mn>
-        <mi>m</mi>
-      </mrow>
-    </mfrac>
-  </mstyle>
-  <munderover>
-    <mo>&#x2211;<!-- ∑ --></mo>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>i</mi>
-      <mo>=</mo>
-      <mn>1</mn>
-    </mrow>
-    <mi>m</mi>
-  </munderover>
-  <mo stretchy="false">(</mo>
-  <msub>
-    <mi>h</mi>
-    <mi>&#x03B8;<!-- θ --></mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <msup>
-    <mi>x</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-  <mo>&#x2212;<!-- − --></mo>
-  <msup>
-    <mi>y</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <msup>
-    <mo stretchy="false">)</mo>
-    <mn>2</mn>
-  </msup>
-  <mo>+</mo>
-  <mn>1000</mn>
-  <mo>&#x22C5;<!-- ⋅ --></mo>
-  <msubsup>
-    <mi>&#x03B8;<!-- θ --></mi>
-    <mn>3</mn>
-    <mn>2</mn>
-  </msubsup>
-  <mo>+</mo>
-  <mn>1000</mn>
-  <mo>&#x22C5;<!-- ⋅ --></mo>
-  <msubsup>
-    <mi>&#x03B8;<!-- θ --></mi>
-    <mn>4</mn>
-    <mn>2</mn>
-  </msubsup>
-</math>
+$$
+\min_{\theta} \frac{1}{2m} \sum_{i=1}^{m} \left( h_{\theta}(x^{(i)}) - y^{(i)} \right)^2
++ 1000 \cdot \theta_3^2 + 1000 \cdot \theta_4^2
+$$
 
-我们在原来的 cost function 后面增加了两项，为了让 cost function 接近 0，我们需要让<math><msub><mi>θ</mi><mn>3</mn></msub></math>,<math><msub><mi>θ</mi><mn>4</mn></msub></math>近似为 0，这样即会极大的减少<math><msub><mi>θ</mi><mn>3</mn></msub><msup><mi>x</mi><mn>3</mn></msup></math>和<math><msub><mi>θ</mi><mn>4</mn></msub><msup><mi>x</mi><mn>4</mn></msup></math>的值，减少后的曲线如下图粉色曲线，更接近二次函数：
+
+我们在原来的 cost function 后面增加了两项，为了让 cost function 接近 0，我们需要让 $\theta_3, \theta_4$ 近似为 0，这样即会极大地减少 $\theta_3 x^3$ 和 $\theta_4 x^4$ 的值，减少后的曲线如下图粉色曲线，更接近二次函数：
+
 
 ![](/assets/images/2017/09/ml-5-6.png)
 
-Small values for parameters <math><msub><mi>θ</mi><mn>0</mn></msub><mo>,</mo><msub><mi>θ</mi><mn>1</mn></msub><mo>,...,</mo><msub><mi>θ</mi><mn>n</mn></msub></math>
+Small values for parameters $\theta_0, \theta_1, \dots, \theta_n$
 
-* "Simpler" hypothesis，选取更小的`θ`值能得到更简单的预测函数，例如上面的例子，如果将 <math><msub><mi>θ</mi><mn>3</mn></msub><mo>,</mo><msub><mi>θ</mi><mn>4</mn></msub></math>近似为 0 的话，那么上述函数将变为二次方程，更贴近合理的假设函数
-* Housing example: - Feature: <math><msub><mi>x</mi><mn>0</mn></msub><mo>,</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,...,</mo><msub><mi>θ</mi><mn>100</mn></msub></math> - Parameters: <math><msub><mi>θ</mi><mn>0</mn></msub><mo>,</mo><msub><mi>θ</mi><mn>1</mn></msub><mo>,...,</mo><msub><mi>θ</mi><mn>100</mn></msub></math>
+- **"Simpler" hypothesis**，选取更小的 `θ` 值能得到更简单的预测函数，例如上面的例子，如果将 $\theta_3, \theta_4$ 近似为 0 的话，那么上述函数将变为二次方程，更贴近合理的假设函数。
+- **Housing example:**
+  - **Feature:** $x_0, x_1, \dots, x_{100}$
+  - **Parameters:** $\theta_0, \theta_1, \dots, \theta_{100}$
 
 100 个 feature，如何有效的选取这些`θ`呢，改变 cost function：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mstyle displaystyle="true">
-    <mi>J</mi>
-    <mo stretchy="false">(</mo>
-    <mi>&#x03B8;<!-- θ --></mi>
-    <mo stretchy="false">)</mo>
-    <mo>=</mo>
-    <mfrac>
-      <mn>1</mn>
-      <mrow>
-        <mn>2</mn>
-        <mi>m</mi>
-      </mrow>
-    </mfrac>
-    <mfenced open="[" close="]">
-      <mrow>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mi>m</mi>
-        </munderover>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi>h</mi>
-          <mi>&#x03B8;<!-- θ --></mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <msup>
-          <mi>x</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <mo>&#x2212;<!-- − --></mo>
-        <msup>
-          <mi>y</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <msup>
-          <mo stretchy="false">)</mo>
-          <mn>2</mn>
-        </msup>
-        <mo>+</mo>
-        <mi>&#x03BB;<!-- λ --></mi>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>j</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mi>n</mi>
-        </munderover>
-        <msubsup>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mi>j</mi>
-          <mn>2</mn>
-        </msubsup>
-      </mrow>
-    </mfenced>
-  </mstyle>
-</math>
+$$
+J(\theta) =
+\frac{1}{2m} \left[
+\sum_{i=1}^{m} \left( h_{\theta}(x^{(i)}) - y^{(i)} \right)^2
++ \lambda \sum_{j=1}^{n} \theta_j^2
+\right]
+$$
 
-参数 λ 叫做**regularization parameter**，它的作用是既要保证曲线的拟合程度够高同时又要确保 θ 的值尽量小。如果 λ 的值选取过大，例如<math><mi>λ</mi><mo>=</mo><msup><mi>10</mi><mi>10</mi></msup></math>，会导致计算出的所有的 θ 值都接近 0，从而使<math><msub><mi>h</mi><mi>θ</mi></msub><mi>(x)</mi><mo>=</mo><msub><mi>θ</mi><mi>0</mi></msub></math> 即产生"Under fitting"
+参数 $\lambda$ 叫做 **regularization parameter**，它的作用是既要保证曲线的拟合程度够高，同时又要确保 $\theta$ 的值尽量小。如果 $\lambda$ 的值选取过大，例如 $\lambda = 10^{10}$，会导致计算出的所有 $\theta$ 值都接近 0，从而使 $h_{\theta}(x) = \theta_0$，即产生 "Underfitting"。
+
 
 ### Regularized linear regression
 
 有了上面的式子，我们可以将它应用到线性回归：
 
-* 修改梯度下降公式为：
+- 修改梯度下降公式为：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd />
-      <mtd>
-        <mtext>Repeat</mtext>
-        <mtext>&#xA0;</mtext>
-        <mo fence="false" stretchy="false">{</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <msub>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mn>0</mn>
-        </msub>
-        <mo>:=</mo>
-        <msub>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mn>0</mn>
-        </msub>
-        <mo>&#x2212;<!-- − --></mo>
-        <mi>&#x03B1;<!-- α --></mi>
-        <mtext>&#xA0;</mtext>
-        <mfrac>
-          <mn>1</mn>
-          <mi>m</mi>
-        </mfrac>
-        <mtext>&#xA0;</mtext>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mi>m</mi>
-        </munderover>
-        <mo stretchy="false">(</mo>
-        <msub>
-          <mi>h</mi>
-          <mi>&#x03B8;<!-- θ --></mi>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <msup>
-          <mi>x</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <mo>&#x2212;<!-- − --></mo>
-        <msup>
-          <mi>y</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <msubsup>
-          <mi>x</mi>
-          <mn>0</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msubsup>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <msub>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mi>j</mi>
-        </msub>
-        <mo>:=</mo>
-        <msub>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mi>j</mi>
-        </msub>
-        <mo>&#x2212;<!-- − --></mo>
-        <mi>&#x03B1;<!-- α --></mi>
-        <mtext>&#xA0;</mtext>
-        <mfenced open="[" close="]">
-          <mrow>
-            <mfenced open="(" close=")">
-              <mrow>
-                <mfrac>
-                  <mn>1</mn>
-                  <mi>m</mi>
-                </mfrac>
-                <mtext>&#xA0;</mtext>
-                <munderover>
-                  <mo>&#x2211;<!-- ∑ --></mo>
-                  <mrow class="MJX-TeXAtom-ORD">
-                    <mi>i</mi>
-                    <mo>=</mo>
-                    <mn>1</mn>
-                  </mrow>
-                  <mi>m</mi>
-                </munderover>
-                <mo stretchy="false">(</mo>
-                <msub>
-                  <mi>h</mi>
-                  <mi>&#x03B8;<!-- θ --></mi>
-                </msub>
-                <mo stretchy="false">(</mo>
-                <msup>
-                  <mi>x</mi>
-                  <mrow class="MJX-TeXAtom-ORD">
-                    <mo stretchy="false">(</mo>
-                    <mi>i</mi>
-                    <mo stretchy="false">)</mo>
-                  </mrow>
-                </msup>
-                <mo stretchy="false">)</mo>
-                <mo>&#x2212;<!-- − --></mo>
-                <msup>
-                  <mi>y</mi>
-                  <mrow class="MJX-TeXAtom-ORD">
-                    <mo stretchy="false">(</mo>
-                    <mi>i</mi>
-                    <mo stretchy="false">)</mo>
-                  </mrow>
-                </msup>
-                <mo stretchy="false">)</mo>
-                <msubsup>
-                  <mi>x</mi>
-                  <mi>j</mi>
-                  <mrow class="MJX-TeXAtom-ORD">
-                    <mo stretchy="false">(</mo>
-                    <mi>i</mi>
-                    <mo stretchy="false">)</mo>
-                  </mrow>
-                </msubsup>
-              </mrow>
-            </mfenced>
-            <mo>+</mo>
-            <mfrac>
-              <mi>&#x03BB;<!-- λ --></mi>
-              <mi>m</mi>
-            </mfrac>
-            <msub>
-              <mi>&#x03B8;<!-- θ --></mi>
-              <mi>j</mi>
-            </msub>
-          </mrow>
-        </mfenced>
-      </mtd>
-      <mtd>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <mi>j</mi>
-        <mo>&#x2208;<!-- ∈ --></mo>
-        <mo fence="false" stretchy="false">{</mo>
-        <mn>1</mn>
-        <mo>,</mo>
-        <mn>2...</mn>
-        <mi>n</mi>
-        <mo fence="false" stretchy="false">}</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <mo fence="false" stretchy="false">}</mo>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+$$
+\text{Repeat} \quad \{
+$$
 
-将<math xmlns="http://www.w3.org/1998/Math/MathML"><mfrac><mi>λ</mi><mi>m</mi></mfrac><msub><mi>θ</mi><mi>j</mi></msub></math>提出来，得到:
+$$
+\quad \theta_0 := \theta_0 - \alpha \frac{1}{m} \sum_{i=1}^{m} \left( h_{\theta}(x^{(i)}) - y^{(i)} \right)
+$$
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <msub>
-    <mi>θ</mi>
-    <mi>j</mi>
-  </msub>
-  <mo>:=</mo>
-  <msub>
-    <mi>θ</mi>
-    <mi>j</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mn>1</mn>
-  <mo>−</mo>
-  <mi>α</mi>
-  <mfrac>
-    <mi>λ</mi>
-    <mi>m</mi>
-  </mfrac>
-  <mo stretchy="false">)</mo>
-  <mo>−</mo>
-  <mi>α</mi>
-  <mfrac>
-    <mn>1</mn>
-    <mi>m</mi>
-  </mfrac>
-  <munderover>
-    <mo>∑</mo>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>i</mi>
-      <mo>=</mo>
-      <mn>1</mn>
-    </mrow>
-    <mi>m</mi>
-  </munderover>
-  <mo stretchy="false">(</mo>
-  <msub>
-    <mi>h</mi>
-    <mi>θ</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <msup>
-    <mi>x</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-  <mo>−</mo>
-  <msup>
-    <mi>y</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msup>
-  <mo stretchy="false">)</mo>
-  <msubsup>
-    <mi>x</mi>
-    <mi>j</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msubsup>
-</math>
+$$
+\quad \theta_j := \theta_j - \alpha \left[ \frac{1}{m} \sum_{i=1}^{m} \left( h_{\theta}(x^{(i)}) - y^{(i)} \right) x_j^{(i)} + \frac{\lambda}{m} \theta_j \right], \quad j \in \{1, 2, \dots, n\}
+$$
 
-上述式子中<math xmlns="http://www.w3.org/1998/Math/MathML"><mn>1</mn><mo>−</mo><mi>α</mi><mfrac><mi>λ</mi><mi>m</mi></mfrac></math>必须小于 1，这样就减小了<math><msub><mi>θ</mi><mi>j</mi></msub></math>的值，后面的式子和之前梯度下降的式子相同
+$$
+\}
+$$
 
-* 应用到 Normal Equation
+将 $\frac{\lambda}{m} \theta_j$ 提出来，得到:
+
+$$
+\theta_j := \theta_j \left( 1 - \alpha \frac{\lambda}{m} \right) 
+- \alpha \frac{1}{m} \sum_{i=1}^{m} \left( h_{\theta}(x^{(i)}) - y^{(i)} \right) x_j^{(i)}
+$$
+
+
+上述式子中 $1 - \alpha \frac{\lambda}{m}$ 必须小于 1，这样就减小了 $\theta_j$ 的值，后面的式子和之前梯度下降的式子相同。
+
+- 应用到 Normal Equation
 
 和之前的公式相比，增加了一项：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mtable columnalign="right left right left right left right left right left right left" rowspacing="3pt" columnspacing="0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em 2em 0.278em" displaystyle="true" minlabelspacing=".8em">
-    <mtr>
-      <mtd />
-      <mtd>
-        <mi>&#x03B8;<!-- θ --></mi>
-        <mo>=</mo>
-        <msup>
-          <mfenced open="(" close=")">
-            <mrow>
-              <msup>
-                <mi>X</mi>
-                <mi>T</mi>
-              </msup>
-              <mi>X</mi>
-              <mo>+</mo>
-              <mi>&#x03BB;<!-- λ --></mi>
-              <mo>&#x22C5;<!-- ⋅ --></mo>
-              <mi>L</mi>
-            </mrow>
-          </mfenced>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo>&#x2212;<!-- − --></mo>
-            <mn>1</mn>
-          </mrow>
-        </msup>
-        <msup>
-          <mi>X</mi>
-          <mi>T</mi>
-        </msup>
-        <mi>y</mi>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd />
-      <mtd>
-        <mtext>where</mtext>
-        <mtext>&#xA0;</mtext>
-        <mtext>&#xA0;</mtext>
-        <mi>L</mi>
-        <mo>=</mo>
-        <mfenced open="[" close="]">
-          <mtable rowspacing="4pt" columnspacing="1em">
-            <mtr>
-              <mtd>
-                <mn>0</mn>
-              </mtd>
-              <mtd />
-              <mtd />
-              <mtd />
-              <mtd />
-            </mtr>
-            <mtr>
-              <mtd />
-              <mtd>
-                <mn>1</mn>
-              </mtd>
-              <mtd />
-              <mtd />
-              <mtd />
-            </mtr>
-            <mtr>
-              <mtd />
-              <mtd />
-              <mtd>
-                <mn>1</mn>
-              </mtd>
-              <mtd />
-              <mtd />
-            </mtr>
-            <mtr>
-              <mtd />
-              <mtd />
-              <mtd />
-              <mtd>
-                <mo>&#x22F1;<!-- ⋱ --></mo>
-              </mtd>
-              <mtd />
-            </mtr>
-            <mtr>
-              <mtd />
-              <mtd />
-              <mtd />
-              <mtd />
-              <mtd>
-                <mn>1</mn>
-              </mtd>
-            </mtr>
-          </mtable>
-        </mfenced>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
+$$
+\theta = \left( X^T X + \lambda \cdot L \right)^{-1} X^T y
+$$
 
-L 是一个（n+1)x(n+1)的对单位阵，第一项是 0。在引入 λ.L 之后<math xmlns="http://www.w3.org/1998/Math/MathML"><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi><mo>+</mo><mi>λ</mi><mi>L</mi></math>保证可逆
+where
+
+$$
+L =
+\begin{bmatrix}
+0 &   &   &   &   \\
+  & 1 &   &   &   \\
+  &   & 1 &   &   \\
+  &   &   & \ddots &   \\
+  &   &   &   & 1
+\end{bmatrix}
+$$
+
+
+$L$ 是一个 $(n+1) \times (n+1)$ 的单位矩阵，第一项是 $0$。在引入 $\lambda L$ 之后，$X^T X + \lambda L$ 保证可逆。
 
 ### Regularized logistic regression
 
@@ -1150,209 +371,26 @@ L 是一个（n+1)x(n+1)的对单位阵，第一项是 0。在引入 λ.L 之后
 
 处理方式和线性回归相同，之前知道逻辑回归的 cost function 如下：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>J</mi>
-  <mo stretchy="false">(</mo>
-  <mi>&#x03B8;<!-- θ --></mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <mo>&#x2212;<!-- − --></mo>
-  <mfrac>
-    <mn>1</mn>
-    <mi>m</mi>
-  </mfrac>
-  <munderover>
-    <mo>&#x2211;<!-- ∑ --></mo>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>i</mi>
-      <mo>=</mo>
-      <mn>1</mn>
-    </mrow>
-    <mi>m</mi>
-  </munderover>
-  <mstyle mathsize="1.2em">
-    <mo stretchy="false">[</mo>
-    <msup>
-      <mi>y</mi>
-      <mrow class="MJX-TeXAtom-ORD">
-        <mo stretchy="false">(</mo>
-        <mi>i</mi>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </msup>
-    <mtext>&#xA0;</mtext>
-    <mi>log</mi>
-    <mo>&#x2061;<!-- ⁡ --></mo>
-    <mo stretchy="false">(</mo>
-    <msub>
-      <mi>h</mi>
-      <mi>&#x03B8;<!-- θ --></mi>
-    </msub>
-    <mo stretchy="false">(</mo>
-    <msup>
-      <mi>x</mi>
-      <mrow class="MJX-TeXAtom-ORD">
-        <mo stretchy="false">(</mo>
-        <mi>i</mi>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </msup>
-    <mo stretchy="false">)</mo>
-    <mo stretchy="false">)</mo>
-    <mo>+</mo>
-    <mo stretchy="false">(</mo>
-    <mn>1</mn>
-    <mo>&#x2212;<!-- − --></mo>
-    <msup>
-      <mi>y</mi>
-      <mrow class="MJX-TeXAtom-ORD">
-        <mo stretchy="false">(</mo>
-        <mi>i</mi>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </msup>
-    <mo stretchy="false">)</mo>
-    <mtext>&#xA0;</mtext>
-    <mi>log</mi>
-    <mo>&#x2061;<!-- ⁡ --></mo>
-    <mo stretchy="false">(</mo>
-    <mn>1</mn>
-    <mo>&#x2212;<!-- − --></mo>
-    <msub>
-      <mi>h</mi>
-      <mi>&#x03B8;<!-- θ --></mi>
-    </msub>
-    <mo stretchy="false">(</mo>
-    <msup>
-      <mi>x</mi>
-      <mrow class="MJX-TeXAtom-ORD">
-        <mo stretchy="false">(</mo>
-        <mi>i</mi>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </msup>
-    <mo stretchy="false">)</mo>
-    <mo stretchy="false">)</mo>
-    <mstyle>
-      <mo stretchy="false">]</mo>
-    </mstyle>
-  </mstyle>
-</math>
+$$
+J(\theta) =
+- \frac{1}{m} \sum_{i=1}^{m} \left[
+y^{(i)} \log h_{\theta}(x^{(i)}) 
++ (1 - y^{(i)}) \log (1 - h_{\theta}(x^{(i)}))
+\right]
+$$
 
 我们可以在最后加一项来 regularize 这个函数：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>J</mi>
-  <mo stretchy="false">(</mo>
-  <mi>&#x03B8;<!-- θ --></mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <mo>&#x2212;<!-- − --></mo>
-  <mfrac>
-    <mn>1</mn>
-    <mi>m</mi>
-  </mfrac>
-  <munderover>
-    <mo>&#x2211;<!-- ∑ --></mo>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>i</mi>
-      <mo>=</mo>
-      <mn>1</mn>
-    </mrow>
-    <mi>m</mi>
-  </munderover>
-  <mstyle mathsize="1.2em">
-    <mo stretchy="false">[</mo>
-    <msup>
-      <mi>y</mi>
-      <mrow class="MJX-TeXAtom-ORD">
-        <mo stretchy="false">(</mo>
-        <mi>i</mi>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </msup>
-    <mtext>&#xA0;</mtext>
-    <mi>log</mi>
-    <mo>&#x2061;<!-- ⁡ --></mo>
-    <mo stretchy="false">(</mo>
-    <msub>
-      <mi>h</mi>
-      <mi>&#x03B8;<!-- θ --></mi>
-    </msub>
-    <mo stretchy="false">(</mo>
-    <msup>
-      <mi>x</mi>
-      <mrow class="MJX-TeXAtom-ORD">
-        <mo stretchy="false">(</mo>
-        <mi>i</mi>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </msup>
-    <mo stretchy="false">)</mo>
-    <mo stretchy="false">)</mo>
-    <mo>+</mo>
-    <mo stretchy="false">(</mo>
-    <mn>1</mn>
-    <mo>&#x2212;<!-- − --></mo>
-    <msup>
-      <mi>y</mi>
-      <mrow class="MJX-TeXAtom-ORD">
-        <mo stretchy="false">(</mo>
-        <mi>i</mi>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </msup>
-    <mo stretchy="false">)</mo>
-    <mtext>&#xA0;</mtext>
-    <mi>log</mi>
-    <mo>&#x2061;<!-- ⁡ --></mo>
-    <mo stretchy="false">(</mo>
-    <mn>1</mn>
-    <mo>&#x2212;<!-- − --></mo>
-    <msub>
-      <mi>h</mi>
-      <mi>&#x03B8;<!-- θ --></mi>
-    </msub>
-    <mo stretchy="false">(</mo>
-    <msup>
-      <mi>x</mi>
-      <mrow class="MJX-TeXAtom-ORD">
-        <mo stretchy="false">(</mo>
-        <mi>i</mi>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </msup>
-    <mo stretchy="false">)</mo>
-    <mo stretchy="false">)</mo>
-    <mstyle>
-      <mo stretchy="false">]</mo>
-      <mo>+</mo>
-      <mfrac>
-        <mi>λ</mi>
-        <mrow>
-          <mn>2</mn>
-          <mi>m</mi>
-        </mrow>
-      </mfrac>
-      <munderover>
-        <mo>∑</mo>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi>j</mi>
-          <mo>=</mo>
-          <mn>1</mn>
-        </mrow>
-        <mi>n</mi>
-      </munderover>
-      <msubsup>
-        <mi>θ</mi>
-        <mi>j</mi>
-        <mn>2</mn>
-      </msubsup>
-    </mstyle>
-  </mstyle>
-</math>
+$$
+J(\theta) =
+- \frac{1}{m} \sum_{i=1}^{m} \left[
+y^{(i)} \log h_{\theta}(x^{(i)}) 
++ (1 - y^{(i)}) \log (1 - h_{\theta}(x^{(i)}))
+\right]
++ \frac{\lambda}{2m} \sum_{j=1}^{n} \theta_j^2
+$$
 
-第二项：<math xmlns="http://www.w3.org/1998/Math/MathML"><munderover><mo>∑</mo><mrow class="MJX-TeXAtom-ORD"><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msubsup><mi>θ</mi><mi>j</mi><mn>2</mn></msubsup></math>是排除了<math><msub><mi>θ</mi><mi>0</mi></msub></math>的，因此，计算梯度下降要对<math><msub><mi>θ</mi><mi>0</mi></msub></math>单独计算:
+第二项：$\sum_{j=1}^{n} \theta_j^2$ 是排除了 $\theta_0$ 的，因此，计算梯度下降要对 $\theta_0$ 单独计算：
 
 ![](/assets/images/2017/09/ml-5-8.png)
 
