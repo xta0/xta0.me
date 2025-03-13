@@ -142,17 +142,23 @@ To actually translate the words to English, we use another RNN denoted by $s^{<t
 
 If we don't look at the whole sentence, then what part of the input French sentence should you be looking at when trying to generate this first word? <mark>What the Attention Model would be computing is a set of attention weights</mark>. 
 
-We're going to use $\alpha^{<1,1>}$ to denote when we're generating the first words, how much should we be paying attention to this first piece of information here. Then we'll also come up with a second weight $\alpha^{<1,2>}$ which tells us how much attention we're paying to this second word when computing the first word. from the inputs and so on.
-And together this will tell us what is exactly the context($C$) we should be paying attention to when trying to generate the first word. We repeat the same process to generate the second, third and the rest of the words.
+We're going to use $\alpha^{<1,1>}$ to denote the weight for the first word. This means how much attention should we be pay when generating the word. Then we'll also come up with a second weight $\alpha^{<1,2>}$ which tells us how much attention we're paying to this second word when computing the first word, so on and so forth.
+
+And once we gather all weights information for the first word, we then feed it into the other RNN network as context for translating the first word. We then repeat the same process to generate the second, third and the rest of the words. The high-level process can be illustrated using the following diagram:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-7.png">
 
 ### Attention model in detail
 
-Now let's have a formal definition of $\alpha^{<t, t^{'}>}$
+Let's now formalize that intuition into the exact details of how you would implement an attention model. Since we have a bidirectional RNN, we use $\mathbf{a}^{(t)} = (\mathbf{a}^{(t-1)}, \mathbf{a}^{(t)})$ to denote the activation of each RNN block.
 
 
 
  
 
+
+
+## Resources
+
+- [Deep Learning Specialization](https://www.coursera.org/learn/nlp-sequence-models)
 
