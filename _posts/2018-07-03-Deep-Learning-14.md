@@ -150,7 +150,7 @@ And once we gather all weights information for the first word, we then feed it i
 
 ### Attention model in detail
 
-Let's now formalize that intuition into the exact details of how you would implement an attention model. Since we have a bidirectional RNN, we use $\mathbf{a}^{(t)} = (\mathbf{a}^{(t-1)}, \mathbf{a}^{(t)})$ to denote the activation of each RNN block.
+Let's now formalize that intuition into the exact details of how you would implement an attention model. Since we have a bidirectional RNN, we use $\hat{a} = (\overset{\leftarrow}{a}^{<t>}, \overset{\rightarrow}{a^{<t>}}$ to denote the activation of each RNN block.
 
 
 
