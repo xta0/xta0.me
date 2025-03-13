@@ -8,8 +8,6 @@ categories: [Machine Learning,AI]
 mathjax: true
 ---
 
-> 文中部分内容来自和图片来自Andrew Ng在[Cousera上的课程](https://www.coursera.org/learn/machine-learning)
-
 ### 回归问题
 
 回归分析(Regression Analysis)是一种**统计学**上分析数据的方法，目的在于了解两个或多个变数间是否相关、相关方向与强度，并建立数学模型以便观察特定变数来预测研究者感兴趣的变数。更具体的来说，回归分析可以帮助人们了解在只有一个自变量变化时因变量的变化量，因此可以用来做数据预测。
@@ -59,8 +57,10 @@ $$
 对上述例子，我们只需要分别对$\theta_0$,和$\theta_1$进行梯度下降，直至它们收敛
 
 $$
-\theta_0 := \theta_0 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_i) - y_i) \\
-\theta_1 := \theta_1 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_i) - y_i) ⋅ x_i 
+\begin{align}
+\theta_0 &:= \theta_0 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_i) - y_i) \\
+\theta_1 &:= \theta_1 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_i) - y_i) \cdot x_i
+\end{align}
 $$
 
 > 注意，上述例子中我们的cost函数是凸函数(convex function)，因此上述两个式子没有局部极值点，只有全局唯一的一个极值点。梯度下降法通常在离极值点远的地方下降很快，但在极值点附近时会收敛速度很慢。因此，梯度下降法的解是全局最优解。而在一般情况下，梯度下降法不保证求得全局最优解。
@@ -124,14 +124,15 @@ $$
 参考前面二维梯度下降的求法，多维梯度下降的求法相同
 
 $$
-\theta_0 := \theta_0 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_0^{(i)}) - y^{(i)}) ⋅ x_0^{(i)} \\
-\theta_1 := \theta_1 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_1^{(i)}) - y^{(i)}) ⋅ x_1^{(i)} \\
-\theta_2 := \theta_2 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_2^{(i)}) - y^{(i)}) ⋅ x_2^{(i)} \\
-\\
-... \\
-\\
-\theta_n := \theta_n - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_n^{(i)}) - y^{(i)}) ⋅ x_n^{(i)} 
+\begin{align}
+\theta_0 &:= \theta_0 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_0^{(i)}) - y^{(i)}) \cdot x_0^{(i)} \\
+\theta_1 &:= \theta_1 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_1^{(i)}) - y^{(i)}) \cdot x_1^{(i)} \\
+\theta_2 &:= \theta_2 - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_2^{(i)}) - y^{(i)}) \cdot x_2^{(i)} \\
+&\vdots \\
+\theta_n &:= \theta_n - \alpha \frac {1}{m} \sum_{i=1}^{m}(h_\theta(x_n^{(i)}) - y^{(i)}) \cdot x_n^{(i)}
+\end{align}
 $$
+
 
 线性回归梯度计算的 Ocatave Demo
 
@@ -167,90 +168,60 @@ end
 
 ## Feature Scaling
 
-Idea: Make sure features are on a similar scale.
+Idea: Make sure features are on a similar scale, e.g.,
 
-E.g.:`x1 = size(0-200 feet)`,`x2=number of bedrooms(1-5)`
+```
+x1 = size(0-200 feet)
+x2=number of bedrooms(1-5)
+```
 
-这种情况 contour 图是一个瘦长的椭圆，如图：
+这种情况 contour 图是一个瘦长的椭圆, 在不优化的情况下，这类梯度下降速度很慢。如果我们将`x1`和`x2`做如下调整：
 
-在不优化的情况下，这类梯度下降速度很慢。如果我们将`x1,x2`做如下调整：
+- `x1 = size(0-200 feet)/5`
+- `x2=(number of bedrooms)/5`
 
-`x1 = size(0-200 feet)/5`,`x2=(number of bedrooms)/5`,则 contour 图会变为接近圆形，梯度下降收敛的速度会加快。通常为了加速收敛，会将每个 feature 值(每个`xi`)统一到某个区间里，比如 <math><mn>0</mn><mo>≤</mo><msub><mi>x</mi><mi>1</mi></msub><mo>≤</mo><mn>3</mn></math>，<math><mn>-2</mn><mo>≤</mo><msub><mi>x</mi><mi>2</mi></msub><mo>≤</mo><mn>0.5</mn></math>等等
+则 contour 图会变为接近圆形，梯度下降收敛的速度会加快。通常为了加速收敛，会将每个 feature 值(每个`xi`)统一到某个区间里，比如 
+
+$$
+0 \leq x_1 \leq 3, \quad -2 \leq x_2 \leq 0.5
+$$
 
 ## Mean normalization
 
-Replace <math><msub><mi>x</mi><mi>i</mi></msub></math>with <math><msub><mi>x</mi><mi>i</mi></msub><mo>-</mo><msub><mi>μ</mi><mi>i</mi></msub></math> to make features have approximately zero mean.实际上就是将 feature 归一化，
+Replace $x_i$ with $x_i - \mu_i$ to make features have approximately zero mean.
 
-例如`x1=(size-1000)/2000 x2=(#bedrooms-2)/5`
+实际上就是将 feature 归一化，例如
 
-则有：<math><mn>-0.5</mn><mo>≤</mo><msub><mi>x</mi><mi>1</mi></msub><mo>≤</mo><mn>0.5</mn></math>，<math><mn>-0.5</mn><mo>≤</mo><msub><mi>x</mi><mi>2</mi></msub><mo>≤</mo><mn>0.5</mn></math>
+- `x1=(size-1000)/2000`
+- `x2=(#bedrooms-2)/5`
 
-* <math><msub><mi>μ</mi><mi>i</mi></msub></math> 是所有 <math><msub><mi>x</mi><mi>i</mi></msub></math>
+则有
 
-* <math><msub><mi>μ</mi><mi>i</mi></msub></math> 是`xi`的区间范围，(max-min)
+$$
+-0.5 \leq x_1 \leq 0.5, \quad -0.5 \leq x_2 \leq 0.5
+$$
 
-Note that dividing by the range, or dividing by the standard deviation, give different results. The quizzes in this course use range - the programming exercises use standard deviation.
 
-For example, if xi represents housing prices with a range of 100 to 2000 and a mean value of 1000, then
+- $\mu_i$ 是所有 $x_i$
+- $\mu_i$ 是 `x_i` 的区间范围，即 $(\max - \min)$
 
-<math display="block">
-  <msub>
-    <mi>x</mi>
-    <mi>i</mi>
-  </msub>
-  <mo>:=</mo>
-  <mstyle displaystyle="true">
-    <mfrac>
-      <mrow>
-        <mi>p</mi>
-        <mi>r</mi>
-        <mi>i</mi>
-        <mi>c</mi>
-        <mi>e</mi>
-        <mo>−</mo>
-        <mn>1000</mn>
-      </mrow>
-      <mn>1900</mn>
-    </mfrac>
-  </mstyle>
-</math>
 
-* `μ`表示所有 feature 的平均值
-* `s = max - min`
+Note that dividing by the range, or dividing by the standard deviation, give different results. For example, if $x_i$ represents housing prices with a range of `100` to `2000` and a mean value of `1000`, then
+
+$$
+x_i := \frac{\text{price} - 1000}{1900}
+$$
+
+- `μ`表示所有 feature 的平均值
+- `s = max - min`
 
 ## Learning Rate
 
-<math display="block">
-  <msub>
-    <mi>θ</mi>
-    <mi>j</mi>
-  </msub>
-  <mo>:=</mo>
-  <msub>
-	<mi>θ</mi>
-    <mi>j</mi>
-  </msub>
-  <mo>-</mo>
-  <mi>α</mi>
-  <mfrac>
-    <mi mathvariant="normal">∂</mi>
-    <mrow>
-      <mi mathvariant="normal">∂</mi>
-      <msub>
-        <mi>θ</mi>
-        <mi>j</mi>
-      </msub>
-    </mrow>
-  </mfrac>
-  <mi>J</mi>
-  <mo stretchy="false">(</mo>
-  <mi>θ</mi>
-  <mo stretchy="false">)</mo>
-</math>
+$$
+\theta_j := \theta_j - \alpha \frac{\partial J(\theta)}{\partial \theta_j}
+$$
 
-这节讨论如何选取`α`。
-
-为了求解`J(θ)`的最小值，梯度下降会不断的迭代找出最小值，理论上来说随着迭代次数的增加，`J(θ)`将逐渐减小，如图：
+这节讨论如何选取`α`。为了求解`J(θ)`的最小值，梯度下降会不断的迭代找出最小值，理论上来说随着迭代次数的增加，`J(θ)`将逐渐减小，如图：
 
 ![Altext](/assets/images/2017/09/ml-4-3.png)
 
@@ -260,66 +231,21 @@ For example, if xi represents housing prices with a range of 100 to 2000 and a m
 
 解决办法都是选取较小的`α`值
 
-* Summary: - if `α` is too small: slow convergence - if `α` is too large: `J(θ)`may not decrease on every iteration; may not converge - To choose `α` , try: ..., 0.001, 0.003, 0.01,0.03, 0.1,0.3, 1, ...
+- if `α` is too small -> slow convergence 
+- if `α` is too large -> `J(θ)`may not decrease on every iteration; may not converge 
+- To choose `α` , try: ..., 0.001, 0.003, 0.01,0.03, 0.1,0.3, 1, ...
 
 ## Polynomial regression
 
 对于线性回归函数:
 
-<math display="block">
-  <msub>
-    <mi>h</mi>
-    <mi>θ</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>0</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>1</mn>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mn>1</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>2</mn>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mn>2</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>3</mn>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mn>3</mn>
-  </msub>
-  <mo>+</mo>
-  <mo>⋯</mo>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mi>n</mi>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mi>n</mi>
-  </msub>
-</math>
+$$
+h_{\theta}(x) =
+\theta_0 + \theta_1 x_1 + \theta_2 x_2 + \theta_3 x_3 + \dots + \theta_n x_n
+$$
 
-其中<math><msub><mi>x</mi><mi>i</mi></msub></math>代表 feature 种类，有些情况下使用这些 feature 制作目标函数不方便，因此可以考虑重新定义 feature 的值
+
+其中 $x_i$ 代表 feature 种类，有些情况下使用这些 feature 制作目标函数不方便，因此可以考虑重新定义 feature 的值。
 
 We can improve our features and the form of our hypothesis function in a couple different ways.
 We can **combine** multiple features into one. For example, we can combine x1 and x2 into a new feature x3 by taking x1⋅x2.
@@ -328,86 +254,22 @@ We can **combine** multiple features into one. For example, we can combine x1 an
 
 另外，如果只有一个 feature，而使用线性函数又不适合描述完整的数据集，可以考虑多项式函数，比如使用二次函数或者三次函数：
 
-<math display="block">
-  <msub>
-    <mi>h</mi>
-    <mi>θ</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>0</mn>
-  </msub>
-  <mo>+</mo>
-  <msub>
-    <mi>θ</mi>
-    <mn>1</mn>
-  </msub>
-  <msub>
-    <mi>x</mi>
-    <mn>1</mn>
-  </msub>
+$$
+h_{\theta}(x) =
+\theta_0 + \theta_1 x_1 + \theta_2 x_1^2
+$$
 
-<mo>+</mo>
-<msub>
-<mi>θ</mi>
-<mn>2</mn>
-</msub>
-<msubsup>
-<mi>x</mi>
-<mn>1</mn>
-<mn>2</mn>
-</msubsup>
-<mspace width="1em"></mspace>
-<mi>or</mi>
-<mspace width="1em"></mspace>
-<msub>
-<mi>h</mi>
-<mi>θ</mi>
-</msub>
-<mo stretchy="false">(</mo>
-<mi>x</mi>
-<mo stretchy="false">)</mo>
-<mo>=</mo>
-<msub>
-<mi>θ</mi>
-<mn>0</mn>
-</msub>
-<mo>+</mo>
-<msub>
-<mi>θ</mi>
-<mn>1</mn>
-</msub>
-<msub>
-<mi>x</mi>
-<mn>1</mn>
-</msub>
-<mo>+</mo>
-<msub>
-<mi>θ</mi>
-<mn>2</mn>
-</msub>
-<msubsup>
-<mi>x</mi>
-<mn>1</mn>
-<mn>2</mn>
-</msubsup>
-<mo>+</mo>
-<msub>
-<mi>θ</mi>
-<mn>3</mn>
-</msub>
-<msubsup>
-<mi>x</mi>
-<mn>1</mn>
-<mn>3</mn>
-</msubsup>
-</math>
+$$
+\text{or}
+$$
 
-可以令 <math><msub><mi>x</mi><mn>2</mn></msub><mo>=</mo><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>,</mo><msub><mi>x</mi><mn>3</mn></msub><mo>=</mo><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup></math> 但是这么选择的一个问题在于 feature scaling 会比较重要，如果 x1 的 range 是[1,1000]，那么 x2 的 range 就会变成[1,1000000]等
+$$
+h_{\theta}(x) =
+\theta_0 + \theta_1 x_1 + \theta_2 x_1^2 + \theta_3 x_1^3
+$$
+
+
+可以令 $x_2 = x_1^2, x_3 = x_1^3$，但是这么选择的一个问题在于 feature scaling 会比较重要，如果 $x_1$ 的 range 是 $[1,1000]$，那么 $x_2$ 的 range 就会变成 $[1,1000000]$ 等。
 
 ## Normal Equation
 

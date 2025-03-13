@@ -125,3 +125,6 @@ We look at outputs of the `softmax` layer from our RNN model, and find the value
 - Case 2: $P(y^{*} \mid x)$ <= $P(\hat{y} \mid x)$
     - RNN predicted $P(y^{*} \mid x)$ < $P(\hat{y} \mid x)$
     - Conclusion: RNN model is at fault
+
+## Attention model intuition
+
