@@ -157,8 +157,8 @@ Let's now formalize that intuition into the exact details of how you would imple
  
 
 
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-8.png">
 
 ## Resources
 
 - [Deep Learning Specialization](https://www.coursera.org/learn/nlp-sequence-models)
-
