@@ -14,9 +14,9 @@ mathjax: true
 * 增加训练样本
 * 减少样本特征集合
 * 增加 feature
-* 在已有 feature 基础上，增加多项式作为新的 feature 项(<math><msubsup><mi>x</mi><mn>1</mn><mn>2</mn></msubsup><mo>,</mo><msubsup><mi>x</mi><mn>2</mn><mn>2</mn></msubsup><mo>,</mo><msub><mi>x</mi><mn>1</mn></msub><msub><mi>x</mi><mn>2</mn></msub><mo>,</mo></math>etc.)
-* 尝试减小<math><mi>λ</mi></math>
-* 尝试增大<math><mi>λ</mi></math>
+* 在已有 feature 基础上，增加多项式作为新的 feature 项 ($x_1^2, x_2^2, x_1 x_2, \dots$)
+* 尝试减小 $\lambda$
+* 尝试增大 $\lambda$
 
 具体该怎么做呢？显然满目的随机选取一种方法去优化是不合理的，一种合理的办法是实现 diagnostic 机制帮助我们找到出错点或者排除一些无效的优化方法
 
@@ -24,204 +24,44 @@ mathjax: true
 
 当我们拿到训练样本时，可以把它分为两部分，一部分是训练集(70%)，一部分是测试集(30%)
 
-* 训练集用<math><mo stretchy="false">(</mo><msup><mi>x</mi><mi>(1)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(1)</mi></msup><mo stretchy="false">)</mo><mo>,</mo><mo stretchy="false">(</mo><msup><mi>x</mi><mi>(2)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(2)</mi></msup><mo stretchy="false">)</mo><mo>...</mo><mo stretchy="false">(</mo><msup><mi>x</mi><mi>(m)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(m)</mi></msup><mo stretchy="false">)</mo></math>表示
-* 测试集用<math> <mo stretchy="false">(</mo> <msubsup><mi>x</mi><mi>test</mi><mi>(1)</mi></msubsup> <mo>,</mo> <msubsup><mi>y</mi><mi>test</mi><mi>(1)</mi></msubsup> <mo stretchy="false">)</mo> <mo>,</mo> <mo stretchy="false">(</mo> <msubsup><mi>x</mi><mi>test</mi><mi>(2)</mi></msubsup><mo>,</mo><msubsup><mi>y</mi><mi>test</mi><mi>(2)</mi></msubsup><mo stretchy="false">)</mo><mo>...</mo><mo stretchy="false">(</mo><msubsup><mi>x</mi><mi>test</mi><mi>(mtest)</mi></msubsup><mo>,</mo><msubsup><mi>y</mi><mi>test</mi><mi>(mtest)</mi></msubsup><mo stretchy="false">)</mo></math>表示
+* 训练集用 $(x^{(1)}, y^{(1)}), (x^{(2)}, y^{(2)}), \dots, (x^{(m)}, y^{(m)})$ 表示
+* 测试集用 $(x_{\text{test}}^{(1)}, y_{\text{test}}^{(1)}), (x_{\text{test}}^{(2)}, y_{\text{test}}^{(2)}), \dots, (x_{\text{test}}^{(m_{\text{test}})}, y_{\text{test}}^{(m_{\text{test}})})$ 表示
 
 使用这部分数据集的方法是：
 
-1. 使用训练集，求<math> <msub> <mi>J</mi> <mrow> <mi>t</mi> <mi>r</mi> <mi>a</mi> <mi>i</mi> <mi>n</mi> </mrow> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>的最小值，得到<math><mi>Θ</mi></math>
+(1) 使用训练集，求 $J_{\text{train}}(\Theta)$ 的最小值，得到 $\Theta$
 
-2. 使用测试集，计算<math> <msub> <mi>J</mi><mi>test</mi></msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>
+(2) 使用测试集，计算 $J_{\text{test}}(\Theta)$
 
-* 对于**线性回归**函数，计算<math> <msub> <mi>J</mi><mi>test</mi></msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>的公式为：
+(3) 对于 **线性回归** 函数，计算 $J_{\text{test}}(\Theta)$ 的公式为：
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-  <msub>
-    <mi>J</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>t</mi>
-      <mi>e</mi>
-      <mi>s</mi>
-      <mi>t</mi>
-    </mrow>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-  <mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <mstyle displaystyle="true">
-    <mfrac>
-      <mn>1</mn>
-      <mrow>
-        <mn>2</mn>
-        <msub>
-          <mi>m</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>t</mi>
-            <mi>e</mi>
-            <mi>s</mi>
-            <mi>t</mi>
-          </mrow>
-        </msub>
-      </mrow>
-    </mfrac>
-  </mstyle>
-  <munderover>
-    <mo>&#x2211;<!-- ∑ --></mo>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>i</mi>
-      <mo>=</mo>
-      <mn>1</mn>
-    </mrow>
-    <mrow class="MJX-TeXAtom-ORD">
-      <msub>
-        <mi>m</mi>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi>t</mi>
-          <mi>e</mi>
-          <mi>s</mi>
-          <mi>t</mi>
-        </mrow>
-      </msub>
-    </mrow>
-  </munderover>
-  <mo stretchy="false">(</mo>
-  <msub>
-    <mi>h</mi>
-    <mi mathvariant="normal">&#x0398;<!-- Θ --></mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <msubsup>
-    <mi>x</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>t</mi>
-      <mi>e</mi>
-      <mi>s</mi>
-      <mi>t</mi>
-    </mrow>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msubsup>
-  <mo stretchy="false">)</mo>
-  <mo>&#x2212;<!-- − --></mo>
-  <msubsup>
-    <mi>y</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>t</mi>
-      <mi>e</mi>
-      <mi>s</mi>
-      <mi>t</mi>
-    </mrow>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo stretchy="false">(</mo>
-      <mi>i</mi>
-      <mo stretchy="false">)</mo>
-    </mrow>
-  </msubsup>
-  <msup>
-    <mo stretchy="false">)</mo>
-    <mn>2</mn>
-  </msup>
-</math>
+$$
+J_{\text{test}}(\Theta) = \frac{1}{2m_{\text{test}}} \sum_{i=1}^{m_{\text{test}}} \left( h_{\Theta}(x_{\text{test}}^{(i)}) - y_{\text{test}}^{(i)} \right)^2
+$$
 
-* 对于**逻辑回归**函数，计算<math> <msub> <mi>J</mi><mi>test</mi></msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>
+(4) 对于 **逻辑回归** 函数，计算 $J_{\text{test}}(\Theta)$
 
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML">
-	<msub>
-    <mi>J</mi>
-	<mi>test</mi>
-  </msub>
-  <mo stretchy="false">(</mo><mi>Θ</mi><mo stretchy="false">)</mo>
-  <mo>=</mo>
-  <mo>−</mo>
-  <mfrac>
-    <mn>1</mn>
-    <msub><mi>m</mi><mi>test</mi></msub>
-  </mfrac>
-  <mstyle displaystyle="true">
-    <munderover>
-      <mo>∑</mo>
-      <mrow>
-        <mi>i</mi>
-        <mo>=</mo>
-        <mn>1</mn>
-      </mrow>
-      <mi>m</mi>
-    </munderover>
-    <mo stretchy="false">[</mo>
-    <msubsup>
-      <mi>y</mi>
-      <mi>test</mi>
-  		<mi>(i)</mi>
-    </msubsup>
-    <mi>log</mi>
-    <mo>&#x2061;<!-- ⁡ --></mo>
-    <mo stretchy="false">(</mo>
-    <msub>
-      <mi>h</mi>
-      <mi>&#x03B8;<!-- θ --></mi>
-    </msub>
-    <mo stretchy="false">(</mo>
-    <msubsup>
-      <mi>x</mi>
-      <mi>test</mi>
-      <mrow>
-        <mo stretchy="false">(</mo>
-        <mi>i</mi>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </msubsup>
-    <mo stretchy="false">)</mo>
-    <mo stretchy="false">)</mo>
-    <mo>+</mo>
-    <mo stretchy="false">(</mo>
-    <mn>1</mn>
-    <mo>&#x2212;<!-- − --></mo>
-    <msubsup>
-      <mi>y</mi>
-      <mi>test</mi>
-      <mrow class="MJX-TeXAtom-ORD">
-        <mo stretchy="false">(</mo>
-        <mi>i</mi>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </msubsup>
-    <mo stretchy="false">)</mo>
-    <mi>log</mi>
-    <mo>&#x2061;<!-- ⁡ --></mo>
-    <mo stretchy="false">(</mo>
-    <mn>1</mn>
-    <mo>&#x2212;<!-- − --></mo>
-    <msub>
-      <mi>h</mi>
-      <mi>&#x03B8;<!-- θ --></mi>
-    </msub>
-    <mo stretchy="false">(</mo>
-    <msubsup>
-      <mi>x</mi>
-      <mi>test</mi>
-      <mrow>
-        <mo stretchy="false">(</mo>
-        <mi>i</mi>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </msubsup>
-    <mo stretchy="false">)</mo>
-    <mo stretchy="false">)</mo>
-    <mo stretchy="false">]</mo>
-  </mstyle>
-</math>
+$$
+J_{\text{test}}(\Theta) = -\frac{1}{m_{\text{test}}} \sum_{i=1}^{m_{\text{test}}} \left[ y_{\text{test}}^{(i)} \log(h_{\Theta}(x_{\text{test}}^{(i)})) + (1 - y_{\text{test}}^{(i)}) \log(1 - h_{\Theta}(x_{\text{test}}^{(i)})) \right]
+$$
 
-* 对于**分类/多重分类**问题，先给出错误分类的预测结果为
+(5) 对于**分类/多重分类**问题，先给出错误分类的预测结果为
 
-  <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"> <mi>e</mi> <mi>r</mi> <mi>r</mi> <mo stretchy="false">(</mo> <msub> <mi>h</mi> <mi mathvariant="normal">&#x0398;<!-- Θ --></mi> </msub> <mo stretchy="false">(</mo> <mi>x</mi> <mo stretchy="false">)</mo> <mo>,</mo> <mi>y</mi> <mo stretchy="false">)</mo> <mo>=</mo> <mtable rowspacing="4pt" columnspacing="1em"> <mtr> <mtd> <mn>1</mn> </mtd> <mtd> <mtext>if&#xA0;</mtext> <msub> <mi>h</mi> <mi mathvariant="normal">&#x0398;<!-- Θ --></mi> </msub> <mo stretchy="false">(</mo> <mi>x</mi> <mo stretchy="false">)</mo> <mo>&#x2265;<!-- ≥ --></mo> <mn>0.5</mn> <mtext>&#xA0;</mtext> <mi>a</mi> <mi>n</mi> <mi>d</mi> <mtext>&#xA0;</mtext> <mi>y</mi> <mo>=</mo> <mn>0</mn> <mtext>&#xA0;</mtext> <mi>o</mi> <mi>r</mi> <mtext>&#xA0;</mtext> <msub> <mi>h</mi> <mi mathvariant="normal">&#x0398;<!-- Θ --></mi> </msub> <mo stretchy="false">(</mo> <mi>x</mi> <mo stretchy="false">)</mo> <mo>&lt;</mo> <mn>0.5</mn> <mtext>&#xA0;</mtext> <mi>a</mi> <mi>n</mi> <mi>d</mi> <mtext>&#xA0;</mtext> <mi>y</mi> <mo>=</mo> <mn>1</mn> </mtd> </mtr> <mtr> <mtd> <mn>0</mn> </mtd> <mtd> <mtext>o</mtext> <mi>t</mi> <mi>h</mi> <mi>e</mi> <mi>r</mi> <mi>w</mi> <mi>i</mi> <mi>s</mi> <mi>e</mi> </mtd> </mtr> </mtable> </math>
+$$
+\text{err}(h_{\Theta}(x), y) = 
+\begin{cases} 
+1 & \text{if } h_{\Theta}(x) \geq 0.5 \text{ and } y = 0 \\
+1 & \text{if } h_{\Theta}(x) < 0.5 \text{ and } y = 1 \\
+0 & \text{otherwise}
+\end{cases}
+$$
 
-  计算<math> <msub> <mi>J</mi><mi>test</mi></msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>的公式为：
+计算 $J_{\text{test}}(\Theta)$ 的公式为：
 
-  <math display="block" xmlns="http://www.w3.org/1998/Math/MathML"> <mtext>Test Error</mtext> <mo>=</mo> <mstyle displaystyle="true"> <mfrac> <mn>1</mn> <msub> <mi>m</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>t</mi> <mi>e</mi> <mi>s</mi> <mi>t</mi> </mrow> </msub> </mfrac> </mstyle> <munderover> <mo>&#x2211;<!-- ∑ --></mo> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> <mo>=</mo> <mn>1</mn> </mrow> <mrow class="MJX-TeXAtom-ORD"> <msub> <mi>m</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>t</mi> <mi>e</mi> <mi>s</mi> <mi>t</mi> </mrow> </msub> </mrow> </munderover> <mi>e</mi> <mi>r</mi> <mi>r</mi> <mo stretchy="false">(</mo> <msub> <mi>h</mi> <mi mathvariant="normal">&#x0398;<!-- Θ --></mi> </msub> <mo stretchy="false">(</mo> <msubsup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>t</mi> <mi>e</mi> <mi>s</mi> <mi>t</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo stretchy="false">)</mo> <mo>,</mo> <msubsup> <mi>y</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>t</mi> <mi>e</mi> <mi>s</mi> <mi>t</mi> </mrow> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo stretchy="false">)</mo> </math>
+$$
+\text{Test Error} = \frac{1}{m_{\text{test}}} \sum_{i=1}^{m_{\text{test}}} \text{err}(h_{\Theta}(x_{\text{test}}^{(i)}), y_{\text{test}}^{(i)})
+$$
+
 
 ### 模型选择和训练样本重新划分
 
@@ -229,11 +69,16 @@ mathjax: true
 
 在模型选择上，我们可能会纠结于如下几种模型：
 
-1. <math><msub><mi>h</mi><mi>(θ)</mi></msub><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><msub><mi>θ</mi><mn>0</mi></mn></msub><mo>+</mo><msub><mi>θ</mi><mn>1</mi></mn></msub><mi>x</mi></math> （d=1）
-2. <math><msub><mi>h</mi><mi>(θ)</mi></msub><mo>(</mo><mi>x</mi><mo>)</mo><mo>=</mo><msub><mi>θ</mi><mn>0</mi></mn></msub><mo>+</mo><msub><mi>θ</mi><mn>1</mi></mn></msub><mi>x</mi><mo>+</mo><msub><mi>θ</mi><mn>2</mi></mn></msub><msup><mi>x</mi><mn>2</mn></msup></math>
-3. <math> <msub><mi>h</mi><mi>(θ)</mi></msub> <mo>(</mo> <mi>x</mi> <mo>)</mo> <mo>=</mo> <msub><mi>θ</mi><mn>0</mn></msub> <mo>+</mo> <msub><mi>θ</mi><mn>1</mn></msub> <mi>x</mi><mo>+</mo> <msub><mi>θ</mi><mn>2</mn></msub> <msup><mi>x</mi><mn>2</mn></msup> <mo>+</mo> <msub><mi>θ</mi><mn></mn></msub> <msup><mi>x</mi><mn>3</mn></msup></math>
+1. $h(\theta)(x) = \theta_0 + \theta_1 x \quad \text{(d=1)}$
+
+2. $h(\theta)(x) = \theta_0 + \theta_1 x + \theta_2 x^2$
+
+3. $h(\theta)(x) = \theta_0 + \theta_1 x + \theta_2 x^2 + \theta_3 x^3$
+
 4. ...
-5. <math><msub><mi>h</mi><mi>(θ)</mi></msub> <mo>(</mo> <mi>x</mi> <mo>)</mo> <mo>=</mo> <msub><mi>θ</mi><mn>0</mn></msub> <mo>+</mo><msub><mi>θ</mi><mn>1</mn></msub> <mi>x</mi><mo>+</mo> <msub><mi>θ</mi><mn>2</mn></msub> <msup><mi>x</mi><mn>2</mn></msup> <mo>+</mo> <msub><mi>θ</mi><mn>3</mn></msub> <msup><mi>x</mi><mn>3</mn></msup> <mo>+</mo> <mo>...</mo> <mo>+</mo> <msub><mi>θ</mi><mn>10</mn></msub> <msup><mi>x</mi><mn>10</mn></msup></math>
+
+5. $h(\theta)(x) = \theta_0 + \theta_1 x + \theta_2 x^2 + \theta_3 x^3 + \dots + \theta_{10} x^{10}$
+
 
 因此我们在选模型的时候需要考虑多项式的维度，即<math><mi>d</mi></math>为多少，此外我们还需要对原始的训练样本做进一步划分：
 
