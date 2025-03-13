@@ -134,7 +134,7 @@ The way our encoder works so far is to read in the whole sentence and then memor
 
 It turns out our RNN based Encoder-Decoder architecture does not perform very well when translating a long sentence. The Bleu score drops quickly after translating 20 or 30 words. This is because our RNN network has difficulty to memorize a super long sentence.
 
-Before we introduce the attention mechanism, let's first setup our architecture. Let's say we use a bidirectional RNN for the translation job. Instead of doing a word to word translation (outputs a $\hat{y}$ for each RNN block), we are going to output the features for each word, which will be used later to compute the attention values.
+Before we introduce the attention mechanism, let's first setup our new network architecture. Let's say we use a bidirectional RNN for the translation job. Instead of doing a word to word translation (outputs a $\hat{y}$ for each RNN block), we are going to output the features for each word, which will be used later to compute the attention values.
 
 To actually translate the words to English, we use another RNN denoted by $s^{<t>}$ as the hidden states. Later we will show how to connect these two RNN networks together
 
@@ -142,7 +142,7 @@ To actually translate the words to English, we use another RNN denoted by $s^{<t
 
 If we don't look at the whole sentence, then what part of the input French sentence should you be looking at when trying to generate this first word? <mark>What the Attention Model would be computing is a set of attention weights</mark>. 
 
-We're going to use $\alpha^<1,1>$ to denote when we're generating the first words, how much should we be paying attention to this first piece of information here. Then we'll also come up with a second weight $\alpha^<1,2>$ which tells us how much attention we're paying to this second word when computing the first word. from the inputs and so on.
+We're going to use $\alpha^{<1,1>}$ to denote when we're generating the first words, how much should we be paying attention to this first piece of information here. Then we'll also come up with a second weight $\alpha^{<1,2>}$ which tells us how much attention we're paying to this second word when computing the first word. from the inputs and so on.
 And together this will tell us what is exactly the context($C$) we should be paying attention to when trying to generate the first word. We repeat the same process to generate the second, third and the rest of the words.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-7.png">
