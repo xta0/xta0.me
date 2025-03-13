@@ -150,11 +150,10 @@ And once we gather all weights information for the first word, we then feed it i
 
 ### Attention model in detail
 
-Let's now formalize that intuition into the exact details of how you would implement an attention model. Since we have a bidirectional RNN, we use $\hat{a} = (\overset{\leftarrow}{a}^{<t>}, \overset{\rightarrow}{a^{<t>}}$ to denote the activation of each RNN block.
+Let's now formalize that intuition into the exact details of how you would implement an attention model. Since we have a bidirectional RNN, we use $a^{\langle t \rangle} = [\overrightarrow{a}^{\langle t \rangle}, \overleftarrow{a}^{\langle t \rangle}]$  to denote the activation of each RNN block at time $t$.
 
-
-
- 
+- $\overrightarrow{a}^{\langle t \rangle}$ : hidden state of the forward-direction, pre-attention LSTM.
+- $\overleftarrow{a}^{\langle t \rangle}$: hidden state of the backward-direction, pre-attention LSTM.
 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-8.png">
