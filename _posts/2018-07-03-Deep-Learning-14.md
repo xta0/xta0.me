@@ -157,6 +157,13 @@ Let's now formalize that intuition into the exact details of how you would imple
 
 Next, we have our forward only, a single direction RNN with state $s^{\langle t \rangle}$ to generate the translation. We use $y^{\langle t \rangle}$ to denote the translated word at timestamp $t$, and we use $c^{\langle t \rangle}$ to denote the input context at each timestamp. The context is a <mark>weighted sum</mark> of the features from the different time steps weighted by these attention weights $\alpha$. 
 
+We use the following formula to compute the amount of attention $y^{\langle t \rangle}$ should pay to $a^{\langle t \rangle}$
+
+$$
+\alpha^{\langle t,t' \rangle} = \frac{\exp(e^{\langle t,t' \rangle})}{\sum_{t'=1}^{T_x} \exp(e^{\langle t,t' \rangle})}
+$$
+
+
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-8.png">
 
 
