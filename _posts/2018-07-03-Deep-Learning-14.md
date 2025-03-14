@@ -155,7 +155,7 @@ Let's now formalize that intuition into the exact details of how you would imple
 - $\overrightarrow{a}^{\langle t \rangle}$ : hidden state of the forward-direction, pre-attention LSTM.
 - $\overleftarrow{a}^{\langle t \rangle}$: hidden state of the backward-direction, pre-attention LSTM.
 
-Next, we have our forward only, a single direction RNN with state $s^{(t)}$ to generate the translation. We use $y^{<t>}$ to denote the translated word at timestamp $t$, and we use $c^{(t)}$ to denote the input context at each timestamp. <mark>The context is a weighted sum of the features from the different time steps weighted by these attention weights $\alpha$ </mark>. 
+Next, we have our forward only, a single direction RNN with state $s^{(t)}$ to generate the translation. We use $y^{<t>}$ to denote the translated word at timestamp $t$, and we use $c^{(t)}$ to denote the input context at each timestamp. The context is a <mark>weighted sum</mark> of the features from the different time steps weighted by these attention weights $\alpha$. 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-8.png">
 
