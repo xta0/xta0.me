@@ -225,3 +225,8 @@ F_1 \text{ Score} : 2 \times \frac{P R}{P + R}
 $$
 
 F 分数越大说明 threshold 计算出的值越合理，通常我们使用交叉验证样本集算出一个较好的 threshold 再使用测试集验证结果
+
+## Resources
+
+- [Machine Learning](https://www.coursera.org/learn/machine-learning)
+- [Deep Learning with PyTorch](https://classroom.udacity.com/courses/ud188)

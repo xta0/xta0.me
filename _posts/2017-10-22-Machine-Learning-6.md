@@ -10,428 +10,67 @@ mathjax: true
 
 支持向量机 SVM（support vector machine）是另一种监督学习的算法，它主要用解决**分类**问题（二分类）和**回归分析**中。SVM 和前面几种机器学习算法相比，在处理复杂的非线性方程（不规则分类问题）时效果很好。在介绍 SVM 之前，先回顾一下 logistic regression，在逻辑回归中，我们的预测函数为：
 
-<math display="block"><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="fal1se">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>g</mi><mo>(</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi><mo>)</mo><mspace width="2em"></mspace><mi>g</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>=</mo><mstyle><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><mi>z</mi></mrow></msup></mrow></mfrac></mstyle></math>
+$$
+h_{\theta}(x) = g(\theta^T x) \quad g(z) = \frac{1}{1 + e^{-z}}
+$$
 
-* 如果要<math><mi>y</mi><mo>=</mo><mn>1</mn></math>，需要<math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>≈</mo><mn>1</mn></math>，即<math><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi> <mo>>></mo><mn>0</mn></math>
-
-* 如果要<math><mi>y</mi><mo>=</mo><mn>0</mn></math>，需要<math><msub><mi>h</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>≈</mo><mn>0</mn></math>，即<math><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi> <mo><<</mo><mn>0</mn></math>
+- 如果要 $y = 1$，需要 $h_{\theta}(x) \approx 1$，即 $\theta^T x \gg 0$。
+- 如果要 $y = 0$，需要 $h_{\theta}(x) \approx 0$，即 $\theta^T x \ll 0$。
 
 ![](/assets/images/2017/09/ml-8-1.png)
 
 预测函数在某点的代价函数为
 
-<math display="block">
-  <mrow class="MJX-TeXAtom-ORD">
-	<mi> Cost of example </mi>
-  </mrow>
-  <mo>:</mo>
-  <mo>−</mo>
-  <mi>y</mi>
-  <mspace width="thickmathspace" />
-  <mi>log</mi>
-  <mo> ⁡ </mo>
-  <mo stretchy="false">(</mo>
-  <msub>
-    <mi>h</mi>
-    <mi>θ</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-  <mo stretchy="false">)</mo>
-  <mo>−</mo>
-  <mo stretchy="false">(</mo>
-  <mn>1</mn>
-  <mo>−</mo>
-  <mi>y</mi>
-  <mo stretchy="false">)</mo>
-  <mi>log</mi>
-  <mo> ⁡ </mo>
-  <mo stretchy="false">(</mo>
-  <mn>1</mn>
-  <mo>−</mo>
-  <msub>
-    <mi>h</mi>
-    <mi>θ</mi>
-  </msub>
-  <mo stretchy="false">(</mo>
-  <mi>x</mi>
-  <mo stretchy="false">)</mo>
-  <mo stretchy="false">)</mo>
-</math>
+$$
+\text{Cost of example}: -y \log(h_{\theta}(x)) - (1 - y) \log(1 - h_{\theta}(x))
+$$
 
-另<math><mi>z</mi><mo>=</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi></math>, 带入上面式子得到
+另 $z = \theta^T x$，带入上面式子得到
 
-<math display="block">
-  <mrow class="MJX-TeXAtom-ORD">
-	<mi> Cost of example </mi>
-  </mrow>
-  <mo>:</mo>
-  <mo>-</mo>
-  <mi>y</mi>
-  <mi>log</mi>
-  <mo stretchy="false">(</mo>
-  <mfrac>
-  	<mn>1</mn>
-  	<mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi></mrow></msup></mrow>
-  </mfrac>
-  <mo stretchy="false">)</mo>
-  <mo>-</mo>
-  <mo stretchy="false">(</mo>
-  <mn>1</mn><mo>-</mo><mi>y</mi>
-  <mo stretchy="false">)</mo>
-  <mi>log</mi>
-  <mo stretchy="false">(</mo>
-  <mn>1</mn>
-  <mo>-</mo>
-  <mfrac>
-  	<mn>1</mn>
-  	<mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi></mrow></msup></mrow>
-  </mfrac>
-  <mo stretchy="false">)</mo>
-</math>
+$$
+\text{Cost of example}: -y \log \left( \frac{1}{1 + e^{-\theta^T x}} \right) - (1 - y) \log \left( 1 - \frac{1}{1 + e^{-\theta^T x}} \right)
+$$
 
-* 当<math><mi>y</mi><mo>=</mo><mn>1</mn></math>时，后一项为零，上述式子为：<math><mo>-</mo><mi>log</mi> <mo stretchy="false">(</mo> <mfrac> <mn>1</mn> <mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi></mrow></msup></mrow> </mfrac> <mo stretchy="false">)</mo></math>
-
-* 当<math><mi>y</mi><mo>=</mo><mn>0</mn></math>时，后一项为零，上述式子为： <math><mo>-</mo><mi>log</mi> <mo stretchy="false">(</mo> <mn>1</mn> <mo>-</mo> <mfrac> <mn>1</mn> <mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mo>−</mo><msup><mi>θ</mi><mi>T</mi></msup><mi>x</mi></mrow></msup></mrow> </mfrac> <mo stretchy="false">)</mo></math>
+- 当 $y = 1$ 时，后一项为零，上述式子为: $-\log \left( \frac{1}{1 + e^{-\theta^T x}} \right)$
+- 当 $y = 0$ 时，后一项为零，上述式子为：$-\log \left( 1 - \frac{1}{1 + e^{-\theta^T x}} \right)$
 
 对应的函数曲线为：
 
 ![](/assets/images/2017/09/ml-8-2.png)
 
-对于 SVM，我们使用粉色的函数来近似 cost function，分别表示为<math><msub><mi>cost</mi><mn>1</mn></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></math>和<math><msub><mi>cost</mi><mn>0</mn></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></math>，有了这两项，我们再回头看一下逻辑回归完整的代价函数：
+对于 SVM，我们使用粉色的函数来近似 cost function，分别表示为 $cost_1(z)$ 和 $cost_0(z)$，有了这两项，我们再回头看一下逻辑回归完整的代价函数：
 
-<math display="block">
-    <munder>
-      <mrow class="MJX-TeXAtom-OP">
-        <mtext>min</mtext>
-      </mrow>
-      <mi>θ</mi>
-    </munder>
-  <mfrac>
-    <mn>1</mn>
-    <mi>m</mi>
-  </mfrac>
-  <mo>[</mo>
-  <munderover>
-    <mo>∑</mo>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mi>i</mi>
-      <mo>=</mo>
-      <mn>1</mn>
-    </mrow>
-    <mi>m</mi>
-  </munderover>
-  <mstyle>
-    <msup>
-      <mi>y</mi>
-       <mi>(i)</mi>
-    </msup>
-    <mo stretchy="false">(</mo>
-    <mo>-</mo>
-    <mi>log</mi>
-    <mo stretchy="false">(</mo>
-    <msub>
-      <mi>h</mi>
-      <mi>θ</mi>
-    </msub>
-    <mo stretchy="false">(</mo>
-    <msup>
-      <mi>x</mi>
-      <mrow class="MJX-TeXAtom-ORD">
-        <mo stretchy="false">(</mo>
-        <mi>i</mi>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </msup>
-    <mo stretchy="false">)</mo>
-    <mo stretchy="false">)</mo>
-    <mo stretchy="false">)</mo>
-    <mo>+</mo>
-    <mo stretchy="false">(</mo>
-    <mn>1</mn>
-    <mo>−</mo>
-    <msup>
-      <mi>y</mi>
-      <mi>(i)</mi>
-    </msup>
-    <mo stretchy="false">)</mo>
-    <mo stretchy="false">(</mo>
-    <mo stretchy="false">(</mo>
-    <mo>-</mo>
-    <mi>log</mi>
-    <mo stretchy="false">(</mo>
-    <mn>1</mn>
-    <mo>−</mo>
-    <msub>
-      <mi>h</mi>
-      <mi>θ</mi>
-    </msub>
-    <mo stretchy="false">(</mo>
-    <msup>
-      <mi>x</mi>
-      <mrow class="MJX-TeXAtom-ORD">
-        <mo stretchy="false">(</mo>
-        <mi>i</mi>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </msup>
-    <mo stretchy="false">)</mo>
-    <mo stretchy="false">)</mo>
-    <mo stretchy="false">)</mo>
-    <mstyle>
-      <mo>]</mo>
-      <mo>+</mo>
-      <mfrac>
-        <mi>λ</mi>
-        <mrow>
-          <mn>2</mn>
-          <mi>m</mi>
-        </mrow>
-      </mfrac>
-      <munderover>
-        <mo>∑</mo>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mi>j</mi>
-          <mo>=</mo>
-          <mn>1</mn>
-        </mrow>
-        <mi>n</mi>
-      </munderover>
-      <msubsup>
-        <mi>θ</mi>
-        <mi>j</mi>
-        <mn>2</mn>
-      </msubsup>
-    </mstyle>
-  </mstyle>
-</math>
+$$
+\min_{\theta} \frac{1}{m} \left[
+\sum_{i=1}^{m} \left( y^{(i)} (-\log(h_{\theta}(x^{(i)}))) + (1 - y^{(i)}) (-\log(1 - h_{\theta}(x^{(i)}))) \right)
+\right] + \frac{\lambda}{2m} \sum_{j=1}^{n} \theta_j^2
+$$
 
-用<math><msub><mi>cost</mi><mn>1</mn></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></math>和<math><msub><mi>cost</mi><mn>0</mn></msub><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></math> 替换中括号中的第一项和第二项，得到：
 
-<math display="block">
-  <mstyle displaystyle="true">
-    <munder>
-      <mrow class="MJX-TeXAtom-OP">
-        <mtext>min</mtext>
-      </mrow>
-      <mi>θ</mi>
-    </munder>
-    <mo>&#x2061;<!-- ⁡ --></mo>
-    <mtext>&#xA0;</mtext>
-    <mfrac>
-      <mn>1</mn>
-      <mi>m</mi>
-    </mfrac>
-    <mfenced open="[" close="]">
-      <mrow>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>m</mi>
-          </mrow>
-        </munderover>
-        <msup>
-          <mi>y</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <msub>
-          <mtext>cost</mtext>
-          <mn>1</mn>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <msup>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mi>T</mi>
-        </msup>
-        <msup>
-          <mi>x</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <mo>+</mo>
-        <mo stretchy="false">(</mo>
-        <mn>1</mn>
-        <mo>&#x2212;<!-- − --></mo>
-        <msup>
-          <mi>y</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <msub>
-          <mtext>cost</mtext>
-          <mn>0</mn>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <msup>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mi>T</mi>
-        </msup>
-        <msup>
-          <mi>x</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </mfenced>
-    <mo>+</mo>
-    <mfrac>
-      <mi>&#x03BB;<!-- λ --></mi>
-      <mrow>
-        <mn>2</mn>
-        <mi>m</mi>
-      </mrow>
-    </mfrac>
-    <munderover>
-      <mo>&#x2211;<!-- ∑ --></mo>
-      <mrow class="MJX-TeXAtom-ORD">
-        <mi>j</mi>
-        <mo>=</mo>
-        <mn>1</mn>
-      </mrow>
-      <mi>n</mi>
-    </munderover>
-    <msubsup>
-      <mi>&#x03B8;<!-- θ --></mi>
-      <mi>j</mi>
-      <mn>2</mn>
-    </msubsup>
-  </mstyle>
-</math>
+用 $cost_1(z)$ 和 $cost_0(z)$ 替换中括号中的第一项和第二项，得到：
+
+$$
+\min_{\theta} \frac{1}{m} \left[
+\sum_{i=1}^{m} \left( y^{(i)} \cdot cost_1(\theta^T x^{(i)}) + (1 - y^{(i)}) \cdot cost_0(\theta^T x^{(i)}) \right)
+\right] + \frac{\lambda}{2m} \sum_{j=1}^{n} \theta_j^2
+$$
 
 去掉常量 m，将上述式子的表现形式上作如下变换
 
-<math display="block"><mi>A</mi><mo>+</mo><mi>λB</mi><mo>-></mo> <mi>CA</mi><mo>+</mo><mi>B</mi></math>
+$$
+A + \lambda B \rightarrow CA + B
+$$
 
-对于逻辑回归，可以通过增大 λ 值来达到提升 B 的权重，从而控制过度拟合。在 SVM 中，可以通过减小 C 的值来提升 B 的权重，可以认为 <math><mi>C</mi><mo>=</mo><mfrac><mrow><mn>1</mn></mrow><mrow><mi>λ</mi></mrow></mfrac></math>，但是过大的 C 可能也会带来过度拟合的问题
+对于逻辑回归，可以通过增大 $\lambda$ 值来提升 B 的权重，从而控制过度拟合。  
+在 SVM 中，可以通过减小 C 的值来提升 B 的权重，可以认为 $C = \frac{1}{\lambda}$，但是过大的 C 可能也会带来过度拟合的问题。
 
 SVM 的 Cost 函数为:
 
-<math display="block">
-  <mstyle displaystyle="true">
-    <munder>
-      <mrow class="MJX-TeXAtom-OP">
-        <mtext>min</mtext>
-      </mrow>
-      <mi>&#x03B8;<!-- θ --></mi>
-    </munder>
-    <mo>&#x2061;<!-- ⁡ --></mo>
-    <mtext>&#xA0;</mtext>
-    <mi>C</mi>
-    <mfenced open="[" close="]">
-      <mrow>
-        <munderover>
-          <mo>&#x2211;<!-- ∑ --></mo>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>i</mi>
-            <mo>=</mo>
-            <mn>1</mn>
-          </mrow>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mi>m</mi>
-          </mrow>
-        </munderover>
-        <msup>
-          <mi>y</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <msub>
-          <mtext>cost</mtext>
-          <mn>1</mn>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <msup>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mi>T</mi>
-        </msup>
-        <msup>
-          <mi>x</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <mo>+</mo>
-        <mo stretchy="false">(</mo>
-        <mn>1</mn>
-        <mo>&#x2212;<!-- − --></mo>
-        <msup>
-          <mi>y</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-        <msub>
-          <mtext>cost</mtext>
-          <mn>0</mn>
-        </msub>
-        <mo stretchy="false">(</mo>
-        <msup>
-          <mi>&#x03B8;<!-- θ --></mi>
-          <mi>T</mi>
-        </msup>
-        <msup>
-          <mi>x</mi>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo stretchy="false">(</mo>
-            <mi>i</mi>
-            <mo stretchy="false">)</mo>
-          </mrow>
-        </msup>
-        <mo stretchy="false">)</mo>
-      </mrow>
-    </mfenced>
-    <mo>+</mo>
-    <mfrac>
-      <mn>1</mn>
-      <mn>2</mn>
-    </mfrac>
-    <munderover>
-      <mo>&#x2211;<!-- ∑ --></mo>
-      <mrow class="MJX-TeXAtom-ORD">
-        <mi>j</mi>
-        <mo>=</mo>
-        <mn>1</mn>
-      </mrow>
-      <mi>n</mi>
-    </munderover>
-    <msubsup>
-      <mi>&#x03B8;<!-- θ --></mi>
-      <mi>j</mi>
-      <mn>2</mn>
-    </msubsup>
-  </mstyle>
-</math>
+$$
+\min_{\theta} C \left[
+\sum_{i=1}^{m} \left( y^{(i)} \cdot cost_1(\theta^T x^{(i)}) + (1 - y^{(i)}) \cdot cost_0(\theta^T x^{(i)}) \right)
+\right] + \frac{1}{2} \sum_{j=1}^{n} \theta_j^2
+$$
 
 SVM 的预测函数为
 
