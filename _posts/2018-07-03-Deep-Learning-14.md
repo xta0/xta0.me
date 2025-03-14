@@ -155,13 +155,28 @@ Let's now formalize that intuition into the exact details of how you would imple
 - $\overrightarrow{a}^{\langle t \rangle}$ : hidden state of the forward-direction, pre-attention LSTM.
 - $\overleftarrow{a}^{\langle t \rangle}$: hidden state of the backward-direction, pre-attention LSTM.
 
-Next, we have our forward only, a single direction RNN with state $s^{\langle t \rangle}$ to generate the translation. We use $y^{\langle t \rangle}$ to denote the translated word at timestamp $t$, and we use $c^{\langle t \rangle}$ to denote the input context at each timestamp. The context is a <mark>weighted sum</mark> of the features from the different time steps weighted by these attention weights $\alpha$. 
+Next, we have our forward only, a single direction RNN with state $s^{\langle t \rangle}$ to generate the translation. We use 
 
-We use the following formula to compute the amount of attention $y^{\langle t \rangle}$ should pay to $a^{\langle t \rangle}$
+- $y^{\langle t \rangle}$ to denote the translated word at timestamp $t$
+- $conext^{\langle t \rangle}$ to denote the input context at each timestamp $t$
+
+We use the following formula to evaluate the amount of attention $y^{\langle t \rangle}$ should pay to $a^{\langle t \rangle}$
 
 $$
 \alpha^{\langle t,t' \rangle} = \frac{\exp(e^{\langle t,t' \rangle})}{\sum_{t'=1}^{T_x} \exp(e^{\langle t,t' \rangle})}
 $$
+
+Then how do we compute this $e^{\langle t,t' \rangle}$? we could use the following network
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-9.png">
+
+The context is a <mark>weighted sum</mark> of the features from the different time steps weighted by these attention weights $\alpha$
+
+$$
+context^{<t>} = \sum_{t' = 1}^{T_x} \alpha^{<t,t'>}a^{<t'>}\tag{1}
+$$
+
+
 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-8.png">
