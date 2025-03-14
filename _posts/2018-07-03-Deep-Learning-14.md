@@ -138,11 +138,11 @@ Before we introduce the attention mechanism, let's first setup our new network a
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-6.png">
 
-If we don't look at the whole sentence, then what part of the input French sentence should you be looking at when trying to generate this first word? <mark>What the Attention Model would be computing is a set of attention weights</mark>. 
+Now, the question is, If we don't look at the whole sentence, then what part of the input French sentence should you be looking at when trying to generate this first word? For each French word, we will be looking at the words before and after it, and <mark>our Attention Model will compute set of attention weights for the nearby words</mark>, representing how much attention we should be paying for those words.
 
-We're going to use $\alpha^{<1,1>}$ to denote the weight for the first word. This means how much attention should we be pay when generating the word. Then we'll also come up with a second weight $\alpha^{<1,2>}$ which tells us how much attention we're paying to this second word when computing the first word, so on and so forth.
+For example, we're going to use $\alpha^{<1,1>}$ to denote the weight for the first word. This means how much attention should we be pay when generating the word. Then we'll also come up with a second weight $\alpha^{<1,2>}$ which tells us how much attention we're paying to this second word when translating the first word, so on and so forth.
 
-And once we gather all weights information for the first word, we then feed it into the other RNN network as context for translating the first word. We then repeat the same process to generate the second, third and the rest of the words. The high-level process can be illustrated using the following diagram:
+And once we gather all weights information for the nearby words, we then feed it into the other RNN network as <mark>context</mark> for translating the first word. We then repeat the same process to generate the second, third and the rest of the words. The high-level process can be illustrated using the following diagram:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-7.png">
 
@@ -156,7 +156,7 @@ Let's now formalize that intuition into the exact details of how you would imple
 Next, we have our forward only, a single direction RNN with state $s^{\langle t \rangle}$ to generate the translation. We use 
 
 - $y^{\langle t \rangle}$ to denote the translated word at timestamp $t$
-- $conext^{\langle t \rangle}$ to denote the input context at each timestamp $t$
+- $context^{\langle t \rangle}$ to denote the input context at each timestamp $t$
 
 We use the following formula to evaluate the amount of attention $y^{\langle t \rangle}$ should pay to $a^{\langle t \rangle}$
 
@@ -164,15 +164,24 @@ $$
 \alpha^{\langle t,t' \rangle} = \frac{\exp(e^{\langle t,t' \rangle})}{\sum_{t'=1}^{T_x} \exp(e^{\langle t,t' \rangle})}
 $$
 
-Then how do we compute this $e^{\langle t,t' \rangle}$? we could use the following network
+$s^{\langle t-1 \rangle}$ was the neural network state from the previous time step. 
+
+The intuition is, if you want to decide how much attention to pay to the activation of $a^{\langle t' \rangle}$, it should depend the most on its own hidden state activation from the previous time step.
+
+Next, how do we compute this $e^{\langle t,t' \rangle}$? We could use the following network
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-9.png">
 
-The context is a <mark>weighted sum</mark> of the features from the different time steps weighted by these attention weights $\alpha$
+Next, the $context^{\langle t \rangle}$ is a <mark>weighted sum</mark> of the features from the different time steps weighted by these attention weights $\alpha$
 
 $$
 context^{<t>} = \sum_{t' = 1}^{T_x} \alpha^{<t,t'>}a^{<t'>}\tag{1}
 $$
+
+To piece everything together, here is a diagram that visualize the computation process of the context vector:
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-8.png">
+
 
 
 
