@@ -136,7 +136,7 @@ It turns out our RNN based Encoder-Decoder architecture does not perform very we
 
 Before we introduce the attention mechanism, let's first setup our new network architecture. Let's say we use a bidirectional RNN for the translation job. Instead of doing a word to word translation (outputs a $\hat{y}$ for each RNN block), we are going to output the features for each word, which will be used later to compute the attention values.
 
-To actually translate the words to English, we use another single direction RNN denoted by $s^{(t)}$ as the hidden states. Later we will show how to connect these two RNN networks together
+To actually translate the words to English, we use another single direction RNN denoted by $s^{{\langle t \rangle}}$ as the hidden states. Later we will show how to connect these two RNN networks together
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-6.png">
 
@@ -155,7 +155,7 @@ Let's now formalize that intuition into the exact details of how you would imple
 - $\overrightarrow{a}^{\langle t \rangle}$ : hidden state of the forward-direction, pre-attention LSTM.
 - $\overleftarrow{a}^{\langle t \rangle}$: hidden state of the backward-direction, pre-attention LSTM.
 
-Next, we have our forward only, a single direction RNN with state $s^{(t)}$ to generate the translation. We use $y^{<t>}$ to denote the translated word at timestamp $t$, and we use $c^{(t)}$ to denote the input context at each timestamp. The context is a <mark>weighted sum</mark> of the features from the different time steps weighted by these attention weights $\alpha$. 
+Next, we have our forward only, a single direction RNN with state $s^{\langle t \rangle}$ to generate the translation. We use $y^{\langle t \rangle}$ to denote the translated word at timestamp $t$, and we use $c^{\langle t \rangle}$ to denote the input context at each timestamp. The context is a <mark>weighted sum</mark> of the features from the different time steps weighted by these attention weights $\alpha$. 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-8.png">
 
