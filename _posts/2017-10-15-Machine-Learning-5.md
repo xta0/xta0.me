@@ -80,34 +80,38 @@ $$
 5. $h(\theta)(x) = \theta_0 + \theta_1 x + \theta_2 x^2 + \theta_3 x^3 + \dots + \theta_{10} x^{10}$
 
 
-因此我们在选模型的时候需要考虑多项式的维度，即<math><mi>d</mi></math>为多少，此外我们还需要对原始的训练样本做进一步划分：
+因此我们在选模型的时候需要考虑多项式的维度，即 $d$ 为多少，此外我们还需要对原始的训练样本做进一步划分：
 
-* 训练样本<math><mo stretchy="false">(</mo><msup><mi>x</mi><mi>(1)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(1)</mi></msup><mo stretchy="false">)</mo><mo>,</mo><mo stretchy="false">(</mo><msup><mi>x</mi><mi>(2)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(2)</mi></msup><mo stretchy="false">)</mo><mo>...</mo><mo stretchy="false">(</mo><msup><mi>x</mi><mi>(m)</mi></msup><mo>,</mo><msup><mi>y</mi><mi>(m)</mi></msup><mo stretchy="false">)</mo></math> 占 60%
-* 交叉验证样本<math><mo stretchy="false">(</mo> <msubsup><mi>x</mi><mi>cv</mi><mi>(1)</mi></msubsup><mo>,</mo><msubsup><mi>y</mi><mi>cv</mi><mi>(1)</mi></msubsup><mo stretchy="false">)</mo><mo>,</mo><mo stretchy="false">(</mo> <msubsup><mi>x</mi><mi>cv</mi><mi>(2)</mi></msubsup> <mo>,</mo><msubsup><mi>y</mi><mi>cv</mi><mi>(2)</mi></msubsup> <mo stretchy="false">)</mo> <mo>...</mo> <mo stretchy="false">(</mo> <msubsup><mi>x</mi><mi>cv</mi><mi>(mvc)</mi></msubsup> <mo>,</mo><msubsup><mi>y</mi><mi>cv</mi><mi>(mcv)</mi></msubsup><mo stretchy="false">)</mo></math>占比 20%
-* 测试集<math><mo stretchy="false">(</mo><msubsup><mi>x</mi><mi>test</mi><mi>(1)</mi></msubsup><mo>,</mo><msubsup><mi>y</mi><mi>test</mi><mi>(1)</mi></msubsup><mo stretchy="false">)</mo><mo>,</mo><mo stretchy="false">(</mo><msubsup><mi>x</mi><mi>test</mi><mi>(2)</mi></msubsup><mo>,</mo><msubsup><mi>y</mi><mi>test</mi><mi>(2)</mi></msubsup><mo stretchy="false">)</mo><mo>...</mo><mo stretchy="false">(</mo><msubsup><mi>x</mi><mi>test</mi><mi>(mtest)</mi></msubsup><mo>,</mo><msubsup><mi>y</mi><mi>test</mi><mi>(mtest)</mi></msubsup><mo stretchy="false">)</mo></math>占 20%
+- 训练样本 $(x^{(1)}, y^{(1)}), (x^{(2)}, y^{(2)}), \dots, (x^{(m)}, y^{(m)})$ 占 60%
+- 交叉验证样本 $(x_{cv}^{(1)}, y_{cv}^{(1)}), (x_{cv}^{(2)}, y_{cv}^{(2)}), \dots, (x_{cv}^{(m_{cv})}, y_{cv}^{(m_{cv})})$ 占比 20%
+- 测试集 $(x_{test}^{(1)}, y_{test}^{(1)}), (x_{test}^{(2)}, y_{test}^{(2)}), \dots, (x_{test}^{(m_{test})}, y_{test}^{(m_{test})})$ 占 20%
 
 然后我们可以按照下面步骤来对上面几种 model 进行评估：
 
-1. 使用训练集，计算各自的<math><mi>Θ</mi></math>值，用<math><msup><mi>Θ</mi><mi>(d)</mi></msup></math>表示
-2. 使用验证集，计算各自的<math> <msub> <mi>J</mi><mi>cv</mi></msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>值，用<math> <msub> <mi>J</mi><mi>cv</mi></msub> <mo stretchy="false">(</mo> <msup><mi>Θ</mi><mi>(d)</mi></msup> <mo stretchy="false">)</mo> </math>，找到最小值
-3. 将上一步得到最小值的 Θ 用测试集验证，得到通用的错误估计值<math> <msub> <mi>J</mi><mi>test</mi> </msub> <mo stretchy="false">(</mo> <msup> <mi mathvariant="normal">Θ</mi> <mrow> <mo stretchy="false">(</mo> <mi>d</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo stretchy="false">)</mo> </math>
+1. 使用训练集，计算各自的 $\Theta$ 值，用 $\Theta^{(d)}$ 表示
+2. 使用验证集，计算各自的 $J_{cv}(\Theta)$ 值，用 $J_{cv}(\Theta^{(d)})$，找到最小值
+3. 将上一步得到最小值的 $\Theta$ 用测试集验证，得到通用的错误估计值 $J_{test}(\Theta^{(d)})$
 
 ### 观察 Bias 和 Variance
 
 这一小节讨论模型多项式的维度 d 和 Bias 以及 Variance 的关系，用来观察模型是否有 overfitting 的问题。回一下 bias 和 variance 的概念, High bias 会造成模型的 Underfit，原因往往是多项式维度 d 过低，High variance 会造成模型的 Overfit，原因可能是多项式维度 d 过高。我们需要在两者间找到一个合适的 d 值。
 
-* Training error,也就是<math><mi>J</mi><mi>(θ)</mi></math>,由前面可知，公式为
+- Training error, 也就是 $J(\theta)$,由前面可知，公式为
 
-<math display="block"> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi>θ</mi> <mo stretchy="false">)</mo> <mo>=</mo> <mstyle> <mfrac> <mn>1</mn> <mrow> <mn>2</mn> <mi>m</mi> </mrow> </mfrac> </mstyle> <mstyle> <munderover> <mo>∑</mo> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> <mo>=</mo> <mn>1</mn> </mrow> <mi>m</mi> </munderover> <msup> <mfenced open="(" close=")"> <mrow> <msub> <mi>h</mi> <mi>θ</mi> </msub> <mo stretchy="false">(</mo> <msub> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> </mrow> </msub> <mo stretchy="false">)</mo> <mo>−</mo> <msub> <mi>y</mi> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> </mrow> </msub> </mrow> </mfenced> <mn>2</mn> </msup> </mstyle> </math>
+$$
+J_{train}(\theta) = \frac{1}{2m} \sum_{i=1}^{m} \left( h_{\theta}(x_i) - y_i \right)^2
+$$
 
-* Cross Validation error 的公式为
+- Cross Validation error 的公式为
 
-<math display="block"> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>θ</mi> <mo stretchy="false">)</mo> <mo>=</mo> <mstyle displaystyle="true"> <mfrac> <mn>1</mn> <mrow> <mn>2</mn> <msub> <mi>m</mi> <mi>cv</mi> </msub> </mrow> </mfrac> </mstyle> <munderover> <mo>&#x2211;<!-- ∑ --></mo> <mrow class="MJX-TeXAtom-ORD"> <mi>i</mi> <mo>=</mo> <mn>1</mn> </mrow> <mrow class="MJX-TeXAtom-ORD"> <msub> <mi>m</mi> <mi>cv</mi> </msub> </mrow> </munderover> <mo stretchy="false">(</mo> <msub> <mi>h</mi> <mi mathvariant="normal">θ</mi> </msub> <mo stretchy="false">(</mo> <msubsup> <mi>x</mi> <mi>cv</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <mo stretchy="false">)</mo> <mo>−</mo> <msubsup> <mi>y</mi> <mi>cv</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msubsup> <msup> <mo stretchy="false">)</mo> <mn>2</mn> </msup> </math>
+$$
+J_{cv}(\theta) = \frac{1}{2m_{cv}} \sum_{i=1}^{m_{cv}} \left( h_{\theta}(x_{cv}^{(i)}) - y_{cv}^{(i)} \right)^2
+$$
 
-二者的区别在于输入的数据集不同，以及<math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>θ</mi> <mo stretchy="false">)</mo></math>输入样本少。我们建立一个坐标系，横轴是多项式维度 d 的值，从 0 到无穷大，纵轴是预测函数的错误率 cost of J(θ)，二者的关系是：
+二者的区别在于输入的数据集不同，以及 $J_{cv}(\theta)$ 输入样本少。我们建立一个坐标系，横轴是多项式维度 $d$ 的值，从 0 到无穷大，纵轴是预测函数的错误率 cost of $J(\theta)$，二者的关系是：
 
-* 对于<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi mathvariant="normal">θ</mi> <mo stretchy="false">)</mo> </math>（Training Error），当多项式维度 d 增大的时候，错误率逐渐降低
-* 对于<math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>θ</mi> <mo stretchy="false">)</mo></math>（Cross Validation Error），当多项式维度 d 增大到某个值的时候<math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>θ</mi> <mo stretchy="false">)</mo></math>的值将逐渐偏离并大于<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi mathvariant="normal">θ</mi> <mo stretchy="false">)</mo> </math>
+- 对于 $J_{train}(\theta)$（Training Error），当多项式维度 $d$ 增大的时候，错误率逐渐降低。
+- 对于 $J_{cv}(\theta)$（Cross Validation Error），当多项式维度 $d$ 增大到某个值的时候，$J_{cv}(\theta)$ 的值将逐渐偏离并大于 $J_{train}(\theta)$。
 
 如下图所示：
 
@@ -115,8 +119,8 @@ $$
 
 总结一下：
 
-* **High bias(Underfitting)**：<math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>θ</mi> <mo stretchy="false">)</mo></math>的值和<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi mathvariant="normal">θ</mi> <mo stretchy="false">)</mo> </math>的值都很大，有<math> <msub> <mi>J</mi> <mi>cv</mi></msub> <mo stretchy="false">(</mo> <mi mathvariant="normal">θ</mi> <mo stretchy="false">)</mo> <mo>≈</mo> <msub> <mi>J</mi> <mi>train</mi></msub> <mo stretchy="false">(</mo> <mi mathvariant="normal">θ</mi> <mo stretchy="false">)</mo> </math>
-* **High variance(Overfitting)**：<math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>θ</mi> <mo stretchy="false">)</mo></math>的值会小于<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi mathvariant="normal">θ</mi> <mo stretchy="false">)</mo> </math>，在超过某个 d 值后会大于<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi mathvariant="normal">θ</mi> <mo stretchy="false">)</mo> </math>的值
+- **High bias (Underfitting)**：$J_{cv}(\theta)$ 的值和 $J_{train}(\theta)$ 的值都很大，有 $J_{cv}(\theta) \approx J_{train}(\theta)$。
+- **High variance (Overfitting)**：$J_{cv}(\theta)$ 的值会小于 $J_{train}(\theta)$，在超过某个 $d$ 值后会大于 $J_{train}(\theta)$ 的值。
 
 ### Regularization 项
 
@@ -128,20 +132,31 @@ $$
 
 1. 先列出一个 λ 数组： (i.e. λ∈{ 0, 0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28, 2.56, 5.12, 10.24 })
 2. 创建一系列不同 degree 的预测函数
-3. 遍历 λ 数组，对每一个 λ 带入所有 model，求出<math> <mi>Θ</mi></math>
-4. 将上一步得到的<math> <mi>Θ</mi></math>，使用交叉验正数据集计算<math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>，注意<math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>是不带 regularization 项的，或者 λ=0
-5. 选出上面步骤中使<math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>得到最小值的<math> <mi>Θ</mi></math>和 λ
-6. 将上一步选出的<math> <mi>Θ</mi></math>和 λ 使用 test 数据集进行验证，看预测结果是否符合预期
+3. 遍历 λ 数组，对每一个 λ 带入所有 model，求出$\theta$
+4. 将上一步得到的 $\theta$，使用交叉验证数据集计算 $J_{cv}(\theta)$，注意 $J_{cv}(\theta)$ 是不带 regularization 项的，或者 $\lambda=0$。
+5. 选出上面步骤中使 $J_{cv}(\theta)$ 得到最小值的 $\theta$ 和 $\lambda$。
+
+6. 将上一步选出的$\theta$和 λ 使用 test 数据集进行验证，看预测结果是否符合预期
 
 ### 绘制学习曲线
 
 学习曲线是指横坐标为训练样本个数，纵坐标为错误率的曲线。错误率会随着训练样本变大，当样本数量超过某个值后，错误率增长会变慢，类似 log 曲线
 
-* High bias - 样本数少：<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> 值很低，<math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>值很高 - 样本数大：<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> 和 <math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>都很高，当样本数超过某个值时，有<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> ≈ <math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> - 如果某个学习算法有较高的 bias，仅通过增加训练样本是没用的 - 学习曲线图如下所示
+- High bias 
+  - 样本数少：$J_{train}(\theta)$ 值很低，$J_{cv}(\theta)$ 值很高  
+  - 样本数大：$J_{train}(\theta)$ 和 $J_{cv}(\theta)$ 都很高，当样本数超过某个值时，有 $J_{train}(\theta) \approx J_{cv}(\theta)$  
+  - 如果某个学习算法有较高的 bias，仅通过增加训练样本是没用的  
+  - 学习曲线图如下所示
+
 
 <img src="{{site.baseurl}}/assets/images/2017/09/ml-7-3.png" class="md-img-center">
 
-* high variance - 样本数少：<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> 值很低，<math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>值很高 - 样本数大：<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> 升高，但还是保持在一个较低的水平。 <math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>则持续降低，但还是保持在一个较高的水平，因此有<math> <msub> <mi>J</mi> <mi>train</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math> < <math> <msub> <mi>J</mi> <mi>cv</mi> </msub> <mo stretchy="false">(</mo> <mi>Θ</mi> <mo stretchy="false">)</mo> </math>。两者的差值很大 - 如果某个学习算法有较高的 variance，通过增加训练样本有可能有帮助 - 学习曲线图如下所示
+- High variance 
+  - 样本数少：$J_{train}(\theta)$ 值很低，$J_{cv}(\theta)$ 值很高  
+  - 样本数大：$J_{train}(\theta)$ 升高，但还是保持在一个较低的水平。$J_{cv}(\theta)$ 则持续降低，但还是保持在一个较高的水平，因此有 $J_{train}(\theta) < J_{cv}(\theta)$。两者的差值很大  
+  - 如果某个学习算法有较高的 variance，通过增加训练样本有可能有帮助  
+  - 学习曲线图如下所示
+
 
 <img src="{{site.baseurl}}/assets/images/2017/09/ml-7-4.png" class="md-img-center">
   
@@ -195,20 +210,18 @@ $$
 
 有时候准确率和召回率两者是矛盾的，较高的准确率可能会带来较低的召回率，反之亦然。
 
-回忆之前逻辑回归的 sigmoid 公式，如果想要 y=1，需要<math><msub><mi>h</mi><mi>θ</mi></msub><mi>(x)</mi> <mo> >= </mo> <mn>0.5</mn></math>，如果要追求较高的预测准确率，则需要调高阈值，比如我们希望在预测足够准确的情况下再通知病人他是否患有癌症，这时阈值就要设的较高，比如<math><msub><mi>h</mi><mi>θ</mi></msub><mi>(x)</mi> <mo> >= </mo> <mn>0.9</mn></math>，但这会带来较低的召回率。同理，如果我们追求较高的召回率，则需要降低阈值，还是癌症的例子，我们希望尽量遗漏癌症的 case，哪怕有 30%的可能性也要提早通知病人治疗，这时阈值就要设的低一些，比如<math><msub><mi>h</mi><mi>θ</mi></msub><mi>(x)</mi> <mo> >= </mo> <mn>0.3</mn></math>，但这又会带来较低的预测准确率
+回忆之前逻辑回归的 sigmoid 公式，如果想要 $y=1$，需要 $h_{\theta}(x) \geq 0.5$。  
+如果要追求较高的预测准确率，则需要调高阈值，比如我们希望在预测足够准确的情况下再通知病人他是否患有癌症，这时阈值就要设得较高，比如 $h_{\theta}(x) \geq 0.9$，但这会带来较低的召回率。  
+同理，如果我们追求较高的召回率，则需要降低阈值，还是癌症的例子，我们希望尽量不遗漏癌症的 case，哪怕有 30% 的可能性也要提早通知病人治疗，这时阈值就要设得低一些，比如 $h_{\theta}(x) \geq 0.3$，但这又会带来较低的预测准确率。
 
-<math display="block"><msub><mi>h</mi><mi>θ</mi></msub><mi>(x)</mi> <mo> >= </mo> <mi>threshold</mi></math>
+$$
+h_{\theta}(x) \geq \text{threshold}
+$$
 
 有什么办法可以帮助我们判断 threshold 的值到底好不好呢，可以使用 F 分数
 
-<math display="block">
-	<msub><mi>F</mi><mn>1</mn></msub><mi> Score</mi>
-	<mo>:</mo>
-	<mn>2</mn>
-	<mfrac>
-		<mrow><mi>P</mi><mi>R</mi></mrow>
-		<mrow><mi>P</mi><mo>+</mo><mi>R</mi></mrow>
-	</mfrac>
-</math>
+$$
+F_1 \text{ Score} : 2 \times \frac{P R}{P + R}
+$$
 
 F 分数越大说明 threshold 计算出的值越合理，通常我们使用交叉验证样本集算出一个较好的 threshold 再使用测试集验证结果
