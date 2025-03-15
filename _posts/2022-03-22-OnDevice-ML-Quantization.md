@@ -29,7 +29,9 @@ Advantages of quantization includes:
 
 **Linear Quantization** uses a linear mapping to map a higher precision range(e.g. float32) to a lower precision range(e.g. int8) using <mark>a fixed scaling factor and zero point</mark>. This ensures that floating-point numbers are effectively represented in a lower precision format with minimal information loss.
 
+<div style="display: block; width: 50%;">
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2022/03/quant-3.png">
+</div>
 
 The linear mapping formula can be described as:
 
@@ -39,4 +41,6 @@ $$
 
 Where $r$ is the original value(e.g. `fp32`), $q$ is the quantized value(e.g. `int8`), $s$ is scale and $z$ is the zero point. For example, with $s=2$ and $z=0$, we get $r = 2(q-0) = 2q$. If $q = 10$, then we have $r = 2 \times 10 = 20$.
 
+<div style="display: block; width: 50%;">
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2022/03/quant-4.png">
+</div>
