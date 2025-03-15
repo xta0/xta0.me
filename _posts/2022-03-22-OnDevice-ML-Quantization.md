@@ -44,3 +44,15 @@ Where $r$ is the original value(e.g. `fp32`), $q$ is the quantized value(e.g. `i
 <div style="display: block; width: 50%;">
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2022/03/quant-4.png">
 </div>
+
+The way we calculate $q$ is as follows
+
+$$
+\begin{align*}
+    r &= s(q - z) \\
+    \frac{r}{s} &= q - z \\
+    \frac{r}{s} + z &= q \quad &7.4 \\
+    q &= \text{round} \left( \frac{r}{s} + z \right) \quad &7.0 \\
+    q &= \text{int} \left( \text{round} \left( \frac{r}{s} + z \right) \right) \quad &7
+\end{align*}
+$$
