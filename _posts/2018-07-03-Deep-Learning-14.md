@@ -148,7 +148,7 @@ And once we gather all weights information for the nearby words, we then feed it
 
 ### Attention model in detail
 
-Let's now formalize that intuition into the exact details of how you would implement an attention model. Since we have a bidirectional RNN, we use $a^{\langle t' \rangle} = [\overrightarrow{a}^{\langle t' \rangle}, \overleftarrow{a}^{\langle t' \rangle}]$ to denote the feature vectors of each RNN block at timestamp $t$.
+Let's now formalize that intuition into the exact details of how you would implement an attention model. Since we have a bidirectional RNN, we use $a^{\langle t \rangle} = [\overrightarrow{a}^{\langle t \rangle}, \overleftarrow{a}^{\langle t \rangle}]$ to denote the feature vectors of each RNN block at timestamp $t$.
 
 - $\overrightarrow{a}^{\langle t' \rangle}$ : hidden state of the forward-direction(e.g.,pre-attention LSTM).
 - $\overleftarrow{a}^{\langle t' \rangle}$: hidden state of the backward-direction(e.g.,pre-attention LSTM).
@@ -165,7 +165,7 @@ $$
 $$
 
 
-Next, how do we compute this $e^{\langle t,t' \rangle}$? We could use the following network
+Next, how do we compute this $e^{\langle t,t' \rangle}$? We could use a simple fully connected network:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-9.png">
 
@@ -185,6 +185,18 @@ To piece everything together, here is a diagram that visualize the computation p
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-8.png">
 
+1. First, we use a RepeatVector node to copy 𝑠⟨𝑡−1⟩ 𝑇𝑥 times
+2. Then we use `Concatenation` to concatenate 𝑠⟨𝑡−1⟩ and 𝑎⟨𝑡'⟩
+3. The concatenation of 𝑠⟨𝑡−1⟩ and 𝑎⟨𝑡'⟩ is fed into a "Dense" layer, which computes 𝑒⟨𝑡, 𝑡′⟩
+4. 𝑒⟨𝑡,𝑡′⟩ is then passed through a `softmax` to compute 𝛼⟨𝑡, 𝑡′⟩
+
+> Note that the diagram doesn't explicitly show variable 𝑒⟨𝑡, 𝑡′⟩, but 𝑒⟨𝑡, 𝑡′⟩ is above the Dense layer and below the Softmax layer in the diagram.
+
 ## Resources
 
 - [Deep Learning Specialization](https://www.coursera.org/learn/nlp-sequence-models)
+
+
+## Appendix #1: Attention Model Architecture
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/07/dl-nlp-w3-10.png">

@@ -159,7 +159,7 @@ $$
 - $dW^{[1]} = \frac{1}{m}dZ^{[1]}X^{T}$
 - $db^{[1]} = \frac{1}{m}np.sum(dz^{[1]}, axis=1, keepdims=True)$
 
-> 其中$g^{[1]^{'}}(Z^{[1]})$取决于 Activation 函数的选取，如果使用$tanh$，则$g^{[1]'}(Z^{[1]}) = 1-A^{[1]^2}$
+> 其中$g^{[1]'}(Z^{[1]})$取决于 Activation 函数的选取，如果使用$tanh$，则$g^{[1]'}(Z^{[1]}) = 1-A^{[1]^2}$
 
 ### Gradient Descent
 
