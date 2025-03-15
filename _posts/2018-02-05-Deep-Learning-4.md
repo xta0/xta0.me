@@ -1,6 +1,6 @@
 ---
-list_title:   Deep Learning | Regularization
-title: Hperparameters | Regularization
+list_title:   Deep Learning | Hyperparameter Tuning and Regularization
+title: Hyperparameter Tuning and Regularization
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning", "Deep Learning"]
@@ -8,9 +8,9 @@ categories: ["AI", "Machine Learning", "Deep Learning"]
 
 ## Bias and Variance
 
-- 如果我们在 train data 上面的 error 很低，但是在 Dev set 上的 error 很高，说明我们的模型出现 over fitting，这种情况下我们说模型的**Variance**很高。解决办法是需要更多的数据或者使用 Regularization
+- 如果我们在 train data set 上面的 error 很低，但是在 Dev set 上的 error 很高，这时我们称为**high variance**。此时我们的模型问题是 **over fitting**。解决办法是需要更多的数据或者使用 Regularization
 
-- 如果二者错误率接近，且都很高，这是我们称为**high bias**，此时我们的模型的问题是 under fitting。解决办法是引入更多的 hidden layer 来增加 training 的时间，或者使用一些的优化方法，后面会提到
+- 如果我们在 train data set 上面的 error 和 Dev set 上的 error 都很高，这时我们称为**high bias**。此时我们的模型的问题是 **under fitting**。解决办法是引入更多的 hidden layer 来增加 training 的时间，或者使用一些的优化方法，后面会提到
 
 ## Regularization
 

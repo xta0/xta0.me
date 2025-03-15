@@ -1,6 +1,6 @@
 ---
-list_title:   Deep Learning | Optimization Algorithms
-title: Optimization Algorithms
+list_title:   Deep Learning | Hyperparameter Tuning and Optimization Algorithms
+title: Hyperparameter Tuning and Optimization Algorithms
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]

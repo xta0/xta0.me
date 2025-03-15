@@ -1,5 +1,5 @@
 ---
-list_title: GenAI | How Stable Diffusion Model Works
+list_title: GenAI | How Stable Diffusion Models Work
 title: How Stable Diffusion Model Works
 layout: post
 mathjax: true

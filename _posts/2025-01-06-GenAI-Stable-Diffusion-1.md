@@ -265,7 +265,8 @@ def sample_ddpm(n_sample, save_rate=20):
 
 ## Resources
 
+- [How Diffusion Models Work](https://www.coursera.org/projects/how-diffusion-models-work-project)
 - [Denoising Diffusion Probabilities Models](https://arxiv.org/abs/2006.11239)
 - [CLIP](https://arxiv.org/pdf/2103.00020)
 - [Using Stable Diffusion with Python](https://www.amazon.com/Using-Stable-Diffusion-Python-Generation/dp/1835086373/)
-- [How Diffusion Models Work](https://www.coursera.org/projects/how-diffusion-models-work-project)
+
