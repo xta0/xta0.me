@@ -8,24 +8,38 @@ categories: ["AI", "Deep Learning", "On-Device ML"]
 
 ## Introduction
 
-Quantization is a widely used model compression technique that reduces the memory footprint and computational costs of deep learning models by storing numerical parameters in lower precision, such as 8-bit integers (`INT8`) instead of 32-bit floating points (`FP32`). This process enables faster inference, lower power consumption, and reduced storage requirements, making it particularly useful for deployment on edge devices, mobile phones, and embedded systems.
+Quantization refers to the process of mapping a large set to a smaller set of values. It is a widely used model compression technique that reduces the memory footprint and computational costs of deep learning models. For example, in an 8-bit quantization process, a 32-bit float number(`torch.float32`) will be mapped to an 8-bit integer (`torch.int8`) in the memory.
 
-Quantization can be categorized based on its granularity, which determines how the model's parameters are quantized. One common approach is **linear quantization**, where values are mapped to discrete levels using a fixed scaling factor and zero point. This ensures that floating-point numbers are effectively represented in a lower precision format with minimal information loss.
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2022/03/quant-2.png" style="width: 80%;">
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2022/03/quant-1.png">
+In a typical neural network, Quantization can be applied to
 
-On top of the linear quantization, there are several options for determining the granularity of quantization, based on how much of the model you want to quantize at a time. These options include:
+- **quantize the weights**: neural network parameters
+- **quantize the activations**: values that propagate through the layers of the network
 
-**Per-tensor quantization**: A single scaling factor and zero point are used for the entire tensor, making it simple and efficient but potentially less precise for models with varying parameter distributions across channels.
+When quantization is applied after the model has been fully trained, it is referred to as **post-training quantization (PTQ)**.
 
-**Per-channel quantization**: Each channel (e.g., convolutional filter) is assigned a unique scaling factor and zero point, allowing for better accuracy by accounting for variations in parameter distributions across channels.
+Advantages of quantization includes:
 
-**Per-group quantization**: Parameters are divided into smaller groups, and each group has its own scaling factor and zero point. This method balances efficiency and precision, providing more flexibility than per-tensor quantization while reducing the computational overhead compared to per-channel quantization.
-
-Each of these quantization methods serves different purposes depending on the model’s structure and deployment constraints. While per-tensor quantization is the fastest and simplest to implement, per-channel and per-group quantization generally offer higher accuracy by preserving more information about the original parameter distribution.
+- Smaller model
+- Speed gains
+    - Memory bandwidth
+    - Faster operations
+        - GEMM: matrix to matrix multiplication
+        - GEMV: matrix to vector multiplication
 
 ### Linear Quantization
 
-Quantization refers to the process of mapping a large set to a smaller set of values. For example, in an 8-bit quantization, a float number(`torch.float32`) will be mapped to an 8-bit integer (`torch.int8`) in the memory.
+**Linear Quantization** maps values to discrete levels using a fixed scaling factor and zero point. This ensures that floating-point numbers are effectively represented in a lower precision format with minimal information loss.
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2022/03/quant-2.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2022/03/quant-1.png">
+
+The linear mapping formula can be described as:
+
+$$
+r = s(q - z)
+$$
+
+where $r$ is the original value(e.g. `fp32`), and $q$ is the quantized value(e.g. `int8`)
+
+
