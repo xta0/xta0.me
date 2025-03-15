@@ -8,7 +8,9 @@ categories: ["AI", "Machine Learning", "Deep Learning"]
 
 ## Bias and Variance
 
-如果我们在 train data 上面的 error 很低，但是在 Dev set 上的 error 很高，说明我们的模型出现 over fitting，这种情况下我们说模型的**Variance**很高。如果二者错误率接近，且都很高，这是我们称为**high bias**，此时我们的模型的问题是 under fitting。解决 high bias 可以引入更多的 hidden layer 来增加 training 的时间，或者使用一些的优化方法，后面会提到。如果要解决 over fitting 的问题，我们则需要更多的数据或者使用 Regularization。
+- 如果我们在 train data 上面的 error 很低，但是在 Dev set 上的 error 很高，说明我们的模型出现 over fitting，这种情况下我们说模型的**Variance**很高。解决办法是需要更多的数据或者使用 Regularization
+
+- 如果二者错误率接近，且都很高，这是我们称为**high bias**，此时我们的模型的问题是 under fitting。解决办法是引入更多的 hidden layer 来增加 training 的时间，或者使用一些的优化方法，后面会提到
 
 ## Regularization
 
@@ -18,7 +20,7 @@ $$
 J(w,b) = \frac{1}{m}\sum_{i=1}^{m}L(\hat{y}^{(i)}, y^{(i)})
 $$
 
-为了解决 Overfitting，我们可以在上面式子的末尾增加一个 Regularization 项
+<mark>为了解决 Overfitting，我们可以在上面式子的末尾增加一个 Regularization 项</mark>
 
 $$
 J(w,b) = \frac{1}{m}\sum_{i=1}^{m}L(\hat{y}^{(i)}, y^{(i)}) + \frac{\lambda}{2m}||{w}||{^2}
@@ -74,7 +76,7 @@ $$
 \omega^{[l]} := \omega^{[l]} - \alpha[(from \ backprop) + \frac{\lambda}{m}\omega] = (1-\frac{\alpha\lambda}{m})\omega^{[l]} - \alpha(from \ backprop)
 $$
 
-可以看到，在引入正则项后，$\omega^{[l]}$实际上是减小了，因此，L2 正则也称作**weight decay**。
+<mark>可以看到，在引入正则项后，$\omega^{[l]}$实际上是减小了，因此，L2 正则也称作**weight decay** </mark>
 
 引入正则项为什么能减少 overfitting 呢？我们可以从两方面来考虑。首先通过上面的式子可以看出，如果$\lambda$很大，则$\omega$会变小，极端情况下，会有一部分 weights 变成 0，那么我们 hidden units 会减少，模型将变得简单。另一个思考的方式是看 activation results，我们知道
 

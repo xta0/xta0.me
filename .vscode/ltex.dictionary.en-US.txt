@@ -6,3 +6,8 @@ denoising
 autoencoder
 UNet
 vector，vector中的每个值代表一个dimenson。我们可以用一个很大的
+Overfitting，我们可以在上面式子的末尾增加一个
+fitting，这种情况下我们说模型的Variance很高。解决办法是需要更多的数据或者使用
+bias，此时我们的模型的问题是
+如果二者错误率接近，且都很高，这是我们称为high
+fitting。解决办法是引入更多的

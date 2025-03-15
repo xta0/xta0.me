@@ -150,8 +150,8 @@ And once we gather all weights information for the nearby words, we then feed it
 
 Let's now formalize that intuition into the exact details of how you would implement an attention model. Since we have a bidirectional RNN, we use $a^{\langle t' \rangle} = [\overrightarrow{a}^{\langle t' \rangle}, \overleftarrow{a}^{\langle t' \rangle}]$ to denote the feature vectors of each RNN block at timestamp $t$.
 
-- $\overrightarrow{a}^{\langle t' \rangle}$ : hidden state of the forward-direction, pre-attention LSTM.
-- $\overleftarrow{a}^{\langle t' \rangle}$: hidden state of the backward-direction, pre-attention LSTM.
+- $\overrightarrow{a}^{\langle t' \rangle}$ : hidden state of the forward-direction(e.g.,pre-attention LSTM).
+- $\overleftarrow{a}^{\langle t' \rangle}$: hidden state of the backward-direction(e.g.,pre-attention LSTM).
 
 Next, we have our forward only, a single direction RNN with state $s^{\langle t \rangle}$ to generate the translation. We use 
 
@@ -173,13 +173,13 @@ $s^{\langle t-1 \rangle}$ was the neural network state from the previous time st
 
 The intuition is, if you want to decide how much attention to pay to the activation of $a^{\langle t' \rangle}$, it should depend the most on its own hidden state activation from the previous time step.
 
-Now we can compute the context vector. The $context^{\langle t \rangle}$ is a <mark>weighted sum</mark> of the features from the different time steps weighted by these attention weights $\alpha$
+Now we should have everything to compute the context vector. The $context^{\langle t \rangle}$ is a <mark>weighted sum</mark> of the features from the different time steps weighted by these attention weights $\alpha$
 
 $$
-context^{<t>} = \sum_{t' = 1}^{T_x} \alpha^{<t,t'>}a^{<t'>}\tag{1}
+context^{<t>} = \sum_{t' = 1}^{T_x} \alpha^{<t,t'>}a^{<t'>}
 $$
 
-Note that one downside to this algorithm is that it does take quadratic time or quadratic cost to run this algorithm.
+> Note that one downside to this approach is that it does take quadratic time or quadratic cost to run this algorithm.
 
 To piece everything together, here is a diagram that visualize the computation process of the context vector:
 
