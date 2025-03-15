@@ -11,11 +11,10 @@ categories: ["AI", "Deep Learning", "On-Device ML"]
 Quantization refers to the process of mapping a large set to a smaller set of values. It is a widely used model compression technique that reduces the memory footprint and computational costs of deep learning models. For example, in an 8-bit quantization process, a 32-bit float number(`torch.float32`) will be mapped to an 8-bit integer (`torch.int8`) in the memory.
 
 <div style="display: block; width: 50%;">
-<a style="display: block; float: left;" href="/assets/images/2020/03/quant-2.png"><img src="{{site.baseurl}}/assets/images/2020/03/quant-2.png"/></a>
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2022/03/quant-2.png">
 </div>
 
 In a typical neural network, Quantization can be applied to
-
 - **quantize the weights**: neural network parameters
 - **quantize the activations**: values that propagate through the layers of the network
 
