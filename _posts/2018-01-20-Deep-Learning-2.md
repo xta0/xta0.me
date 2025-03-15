@@ -151,11 +151,11 @@ J(w,b) = \frac{1}{m}\sum_{i=1}^{m}L(\hat{y}^{(i)}, y^{(i)}) = -\frac{1}{m}\sum_{
 $$
 
 $$
-J(W^{[1]}, b^{[1]}, W^{[2]}, b^{[2]}) = \frac {1}{m} \sum\_{i=1}^{m}L(\hat{y}, y) =
+J(W^{[1]}, b^{[1]}, W^{[2]}, b^{[2]}) = \frac {1}{m} \sum_{i=1}^{m}L(\hat{y}, y) =
 $$
 
 $$
--\frac{1}{m} \sum\limits\_{i = 1}^{m} \large{(} \small y^{(i)}\log\left(A^{[2] (i)}\right) + (1-y^{(i)})\log\left(1- A^{[2] (i)}\right) \large{)} \small
+-\frac{1}{m} \sum_{i = 1}^{m} ( y^{(i)}\log\left(A^{[2] (i)}\right) + (1-y^{(i)})\log\left(1- A^{[2] (i)}\right))
 $$
 
 其中$Y$为`1xm`的行向量 $Y = [y^{[1]},y^{[2]},...,y^{[m]}]$。按照上一节介绍的链式求导法则，对上述 Cost 函数求导，可以得出下面结论(推导过程省略)
