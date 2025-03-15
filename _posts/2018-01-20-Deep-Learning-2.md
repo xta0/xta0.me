@@ -138,7 +138,7 @@ $$
 
 1. 必须是非线性的
 2. 需要可微分，可计算梯度
-3. 需要有一个变化 sensitive 的区域和一个非 senstive 的区域
+3. 需要有一个变化 sensitive 的区域和一个非 sensitive 的区域
 
 总的来说 Activation 函数的作用在于通过非线性变换，让神经网络易于训练，可以更好的适应梯度下降
 
@@ -147,11 +147,15 @@ $$
 上述神经网络的 Cost 函数和前文一样
 
 $$
-J(W^{[1]}, b^{[1]}, W^{[2]}, b^{[2]}) = \frac {1}{m} \sum\_{i=1}^mL(\hat{y}, y)
+J(w,b) = \frac{1}{m}\sum_{i=1}^{m}L(\hat{y}^{(i)}, y^{(i)}) = -\frac{1}{m}\sum_{i=1}^{m}[(y^{(i)}\log{\hat{y}^{(i)}}) + (1-y^{(i)})\log{(1-\hat{y}^{(i)})} ]
 $$
 
 $$
-= \frac{1}{m} \sum\limits\_{i = 1}^{m} \large{(} \small y^{(i)}\log\left(A^{[2] (i)}\right) + (1-y^{(i)})\log\left(1- A^{[2] (i)}\right) \large{)} \small\tag{13}
+J(W^{[1]}, b^{[1]}, W^{[2]}, b^{[2]}) = \frac {1}{m} \sum\_{i=1}^{m}L(\hat{y}, y) =
+$$
+
+$$
+-\frac{1}{m} \sum\limits\_{i = 1}^{m} \large{(} \small y^{(i)}\log\left(A^{[2] (i)}\right) + (1-y^{(i)})\log\left(1- A^{[2] (i)}\right) \large{)} \small
 $$
 
 其中$Y$为`1xm`的行向量 $Y = [y^{[1]},y^{[2]},...,y^{[m]}]$。按照上一节介绍的链式求导法则，对上述 Cost 函数求导，可以得出下面结论(推导过程省略)
@@ -171,7 +175,7 @@ $$
 
 <img src="{{site.baseurl}}/assets/images/2018/01/dp-w4-2.png" class="md-img-center" width="80%">
 
-在每次 BP 完成后，我们需要对$dw$h 和$db$进行梯度下降
+在每次 BP 完成后，我们需要对$dw$和$db$进行梯度下降
 
 $$
 \begin{align*}
@@ -294,7 +298,7 @@ def linear_activation_forward(A_prev, W, b, activation):
 回顾计算 Cost 函数的公式如下
 
 $$
--\frac{1}{m} \sum\limits_{i = 1}^{m} (y^{(i)}\log\left(a^{[L] (i)}\right) + (1-y^{(i)})\log\left(1- a^{[L](i)}\right)) \tag{7}
+-\frac{1}{m} \sum\limits_{i = 1}^{m} (y^{(i)}\log\left(a^{[L] (i)}\right) + (1-y^{(i)})\log\left(1- a^{[L](i)}\right))
 $$
 
 ```python
