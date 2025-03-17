@@ -1,5 +1,5 @@
 ---
-list_title: On-Device ML | Quantization in PyTorch
+list_title: On-Device ML | Quantization in PyTorch | Part 1
 title: Quantization in PyTorch
 layout: post
 mathjax: true
@@ -178,3 +178,5 @@ The trade-off between symmetric and asymmetric mode of quantization are:
     - When symmetric mode, if the float range is biased towards one side, this will result in a quantized range where a part of the range is dedicated to values that we'll never see. (e.g., ReLU where the output is positive).
 - **Simplicity**: Symmetric mode is much simpler compared to asymmetric mode.
 - **Memory**: We don’t store the zero-point for symmetric quantization.
+
+In practice, when quantizing to 8 bits, we often use symmetric quantization. However, when quantizing to fewer bits (e.g., 4 bits, 2 bits), we prefer to use asymmetric quantization.
