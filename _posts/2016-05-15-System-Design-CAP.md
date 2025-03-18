@@ -1,8 +1,8 @@
 ---
 updated: "2018-08-23"
 layout: post
-title: CAP 理论
-list_title: CAP理论 | CAP Theorem
+title: 浅谈CAP理论
+list_title: 浅谈CAP理论 | CAP Theorem
 categories: [backend, System Design]
 ---
 

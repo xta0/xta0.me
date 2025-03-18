@@ -1,8 +1,8 @@
 ---
 updated: "2018-08-23"
 layout: post
-title: 分布式系统特征
-list_title: 分布式系统的特征 | Characteristics of Distributed Systems
+title: 浅谈分布式系统特征
+list_title: 浅谈分布式系统的特征 | Characteristics of Distributed Systems
 categories: [backend]
 ---
 
