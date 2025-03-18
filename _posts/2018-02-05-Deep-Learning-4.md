@@ -14,6 +14,8 @@ categories: ["AI", "Machine Learning", "Deep Learning"]
 
 ## Regularization
 
+如果我们怀疑我们模型出现overfitting的情况， 我们可以尝试引入Regularization来解决。
+
 我们还是用 Logistic Regression 来举例。在 LR 中，Cost Function 定义为
 
 $$
@@ -32,20 +34,18 @@ $$
 ||{w}||{^2} = \sum_{j=1}^{n_x}\omega^{2}_{j} = \omega^T\omega
 $$
 
-除了使用 L2 范数外，也有些 model 使用 L1 范数，即$\frac{\lambda}{2m}\|\|\omega\|\|_1$。
-
-如果使用 L1 范数，得到的$\omega$矩阵会较为稀疏（0 很多），不常用。
+除了使用 L2 范数外，也有些 model 使用 L1 范数，即$\frac{\lambda}{2m}\|\|\omega\|\|_1$。但是L1 范数的$\omega$矩阵会较为稀疏（0 很多），不常用。
 
 对于一般的 Neural Network，Cost Function 定义为
 
 $$
-J(\omega^{[1]}, b^{[1]},...,\omega^{[l]}, b^{[l]}) = \frac{1}{m}\sum_{i=1}^{m}L(\hat{y^{(i)}}, y^{(i)}) + \frac{\lambda}{2m}||{\omega}||{^2}
+J(\omega^{[1]}, b^{[1]},...,\omega^{[l]}, b^{[l]}) = \frac{1}{m}\sum_{i=1}^{m}L(\hat{y^{(i)}}, y^{(i)}) + \frac{\lambda}{2m} \sum_{l=1}^{L} \|w^{[l]}\|^2
 $$
 
 其中对于某$l$层的 L2 范数计算方法为
 
 $$
-||\omega^{[l]}||^{(2)} = \sum_{i=1}^{n^{l}}\sum_{j=1}^{n^{(l-1)}}(\omega_{i,j}^{[l]})^2
+\|w^{[l]}\|^2 = \sum_{i=1}^{n^{[l]}} \sum_{j=1}^{n^{[l-1]}} \left( w_{i,j}^{[l]} \right)^2
 $$
 
 其中$i$表示 row，$n^{l}$表示当前层有多少 neuron(输出)，$j$表示 column，$n^{(l-1)}$为前一层的输入有多少个 neuron。简单理解，上面的 L2 范数就是对权重矩阵中的每个元素平方后求和。
@@ -76,7 +76,9 @@ $$
 \omega^{[l]} := \omega^{[l]} - \alpha[(from \ backprop) + \frac{\lambda}{m}\omega] = (1-\frac{\alpha\lambda}{m})\omega^{[l]} - \alpha(from \ backprop)
 $$
 
-<mark>可以看到，在引入正则项后，$\omega^{[l]}$实际上是减小了，因此，L2 正则也称作**weight decay** </mark>
+<mark>可以看到，在引入正则项后，$\omega^{[l]}$实际上是减小了，因此，L2 正则也称作weight decay</mark>
+
+### Why Regularization Reduces Overfitting?
 
 引入正则项为什么能减少 overfitting 呢？我们可以从两方面来考虑。首先通过上面的式子可以看出，如果$\lambda$很大，则$\omega$会变小，极端情况下，会有一部分 weights 变成 0，那么我们 hidden units 会减少，模型将变得简单。另一个思考的方式是看 activation results，我们知道
 
@@ -84,9 +86,9 @@ $$
 z^{[l]} = \omega^{[l]}\alpha^{[l-1]} + b^{[l]}
 $$
 
-当$\omega$变小后，$z$会变小，那么输出的结果将趋于于线性
+当$\omega$变小后，$z$会变小，那么输出的结果将趋于线性
 
-### Dropout
+## Dropout Regularization
 
 除了通过引入正则项来减少 overfitting 外，Dropout 也是一种常用的手段。Dropout 的思路很简单，每个 hidden units 将会以一定概率被去掉，去掉后的模型将变得更简单，从而减少 overfitting。如下图所示
 
@@ -98,7 +100,7 @@ Dropout 使 Activation units 不依赖前面 layer 某些具体的 unit，从而
    - `d3 = (np.random.rand(a3.shape[0], a3.shape[1]) < keep_prob).astype(int)`
    - 其中`keep_prob`表示保留某个 hidden unit 的概率。则`d3`是一个 0 和 1 的 bool 矩阵
 2. 更新`a3`，根据 keep_prob 去掉某些 units
-   - `a3 = a3 * d3`
+   - `a3 = np.multiply(a3, d3)`
 3. Invert `a3`中的值。这么做相当于抵消掉去掉 hidden units 带来的影响
    - `a3 /= keep_prob`
 
@@ -113,17 +115,30 @@ A1 = A1*D1  # shut down some units in A1
 A1 = A1/keep_prob  # scale the value of neurons that haven't been shut down
 ```
 
-神经网络中每层的 hidden units 数量可能不同，keep_prob 的值也可以根据其数量进行调整。Dropout 表面上看起来很简单，但实际上它也属于 Regularization 的一种，具体证明就不展开了。需要注意的是，Dropout 会影响 back prop，由于 hidden units 会被随机 cut off，Gradient Descent 的收敛曲线也将会变得不规则。因此常用的手段一般是先另 keep_prop=1，确保曲线收敛，然后再逐层调整 keep_prop 的值，重新训练。
+神经网络中每层的 hidden units 意义和数量都可能不同，`keep_prob` 的值可以根据每层神经网络的情况进行调整。如果我们怀疑某一层上出现over fitting，我们可以降低该层的`keep_prob`的值。
+
+Dropout 表面上看起来很简单，但实际上它也属于 Regularization 的一种，具体证明就不展开了。需要注意的是，Dropout 会影响 back prop，由于 hidden units 会被随机 cut off，Gradient Descent 的收敛曲线也将会变得不规则。因此常用的手段一般是先另 keep_prop=1，确保曲线收敛，然后再逐层调整 keep_prop 的值，重新训练。
 
 ## Normalizing Training Sets
 
-对 training 数据 $X = [x_1, x_2]$，计算均值和方差
+对 training 数据 $X = [x_1, x_2]$，我们分别计算它们的均值和方差
+
+- 均值
 
 $$
-\mu = \frac{1}{m}\sum_1^{m}x^{(i)} \\
-x:=x-\mu \\
-\sigma^2 = \frac{1}{m}\sum_1^{m}x^{(i)} ** 2 \\
-x:=x / {\sigma^{2}} \\
+\begin{align*}
+\mu &= \frac{1}{m} \sum_{i=1}^{m} x^{(i)} \\
+x &:= x - \mu
+\end{align*}
+$$
+
+- 方差 (normalize variance)
+
+$$
+\begin{align*}
+\sigma^2 &= \frac{1}{m} \sum_{i=1}^{m} x^{(i) 2} \quad &\text{(element-wise squaring)} \\
+x &:= \frac{x}{\sigma^2} &
+\end{align*}
 $$
 
 归一化前后的$x_1, x_2$分布如下图所示
@@ -134,7 +149,7 @@ $$
 
 <img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-03.png">
 
-如果不同的 feature 数据之间 scale 比较大，比如`0<x1<1000`, `0<x2<1`，此时将它们归一化将有更好的效果
+如果不同的 feature 数据之间 scale 比较大，比如`0<x1<1000`, `0<x2<1`，此时将它们归一化将有更好的效果。另外需要注意的是，如果我们有test set，我们也需要用相同的$\mu$和$\sigma$来处理test set中的数据
 
 ## Vanishing / Exploding gradients
 
@@ -162,17 +177,15 @@ or
 \end{bmatrix}
 $$
 
-则左边的矩阵，$a^{[l]}$将指数级增长。而对于右边矩阵，$\hat{y}$将指数级减小，这也会直接影响 gradient descent 的值（迭代很久，梯度只下降了一点点）。
+当我们network层数非常多的时候，如果我们用左边的矩阵作为$\omega$，那么$\hat{y}$将会指数级增长($1.5^{l-1}$)。而对于右边矩阵，$\hat{y}$将指数级减小($0.5^{l-1}$)。这两者都会直接影响梯度下降的过程，求导过程中的导数值会同样的指数级增长和减小(当导数值很小的时候，梯度下降会很慢，降低收敛速度)
 
-### Weight Initialization for deep networks
-
-解决梯度爆炸或者消失的一种解决方法是对 weight 进行随机初始化。我们先看只有一个 neuron 的情况，如下图所示
+<mark>缓解梯度爆炸或者消失的一种解决方法是对 weight 进行随机初始化</mark>。我们先看只有一个 neuron 的情况，如下图所示
 
 <img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-05.png" width="50%">
 
 我们暂时忽略 bias，则$z=\omega_{1}x_{1}+\omega_{2}x_{2}+...+\omega_{n}x_{n}$
 
-为了避免$z$过大或过小，我们一般用下面的方法对 weight 进行归一化
+为了避免$z$过大或过小，我们一般用下面的方法对 weight 进行归一化，控制它们之间的variant值为$2/n^{l-1}$, $n$为输入features的数量, $l$为network的层级
 
 ```python
 W[l] = np.random.rand(layers_dims[l]) * np.sqrt(2/(n**(l-1)))
@@ -180,12 +193,14 @@ W[l] = np.random.rand(layers_dims[l]) * np.sqrt(2/(n**(l-1)))
 
 上述式子会将 weight 的均值归一化到 0 左右，not too bigger than 1 and not too much less than 1。当 activation 函数为`Relu`的时候，这个方法比较有效。如果用`tanh`，则可以将`np.sqrt(2/(n**(l-1)))` 替换为`np.sqrt(1/(n**(l-1)))`。
 
-### Gradient checking
+对weight值的随机初始化，虽然不能完全解决梯度爆炸或者缩小的问题，但是能够一定程度的缓解
+
+## Gradient checking
 
 在 bacKprop 的过程中，如果我们不确定梯度计算的值是否准确，我们可以通过求导公式来验证
 
 $$
-\frac{\partial J}{\partial \theta} = \lim_{\varepsilon \to 0} \frac{J(\theta + \varepsilon) - J(\theta - \varepsilon)}{2 \varepsilon} \tag{1}
+\frac{\partial J}{\partial \theta} = \lim_{\varepsilon \to 0} \frac{J(\theta + \varepsilon) - J(\theta - \varepsilon)}{2 \varepsilon}
 $$
 
 具体做法是，将 backprop 过程中得到梯度值$\frac{\partial J}{\partial \theta}$和上述公式求出的梯度值进行比较。比较方法是根据下面公式计算误差值
@@ -221,7 +236,7 @@ def gradient_check(x, theta, epsilon = 1e-7):
 
 ```
 
-假设我们有下面的 network
+具体实现如下，假设我们有下面的 network:
 
 <img src="{{site.baseurl}}/assets/images/2018/02/dp-ht-06.png">
 
@@ -246,11 +261,13 @@ $$
 2. 重复上面步骤计算$\theta^{-}$和`J_minus[i]`
 3. 计算导数值 $gradapprox[i] = \frac{J^{+}_i - J^{-}_i}{2 \varepsilon}[i] = \frac{J^{+}_i - J^{-}_i}{2 \varepsilon}$
 
-上述步骤完成后我们将得到一个`gradapprox`的 vector，其中`gradapprox[i]`代表对`parameter_values[i]`的导数。接下来我们就可用上述误差函数来计算误差
+上述步骤完成后我们将得到一个`gradapprox`的 vector，其中`gradapprox[i]`代表对`parameter_values[i]`的导数。接下来我们需要将`gradapprox[i]`中的每一个导数值和$d\theta$中真正的导数值进行比较，具体做法是用前面提到的误差计算公式来计算其误差并和阈值$\epsilon=10^{-7}$进行比较。
 
-- Note
-  - Gradient Checking is slow! Approximating the gradient with $\frac{\partial J}{\partial \theta} \approx  \frac{J(\theta + \varepsilon) - J(\theta - \varepsilon)}{2 \varepsilon}$ is computationally costly. For this reason, we don't run gradient checking at every iteration during training. Just a few times to check if the gradient is correct.
-  - Gradient Checking, at least as we've presented it, doesn't work with dropout. You would usually run the gradient check algorithm without dropout to make sure your backprop is correct, then add dropout.
+**Important notes**:
+
+- Gradient Checking is slow! Approximating the gradient with $\frac{\partial J}{\partial \theta} \approx  \frac{J(\theta + \varepsilon) - J(\theta - \varepsilon)}{2 \varepsilon}$ is computationally costly. For this reason, <mark>we don't run gradient checking at every iteration during training</mark>. Just a few times to check if the gradient is correct.
+
+- Gradient Checking, at least as we've presented it, doesn't work with dropout. You would usually run the gradient check algorithm without dropout to make sure your backprop is correct, then add dropout.
 
 ## Resource
 

@@ -1,9 +1,9 @@
 ---
 list_title: On-Device ML | Quantization in PyTorch | Part 1
-title: Quantization in PyTorch
+title: Basic Concepts of Quantization
 layout: post
 mathjax: true
-categories: ["AI", "Deep Learning", "On-Device ML"]
+categories: ["AI", "Deep Learning", "Quantization", "On-Device ML"]
 ---
 
 ## Introduction
@@ -14,9 +14,9 @@ Quantization refers to the process of mapping a large set to a smaller set of va
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2022/03/quant-2.png">
 </div>
 
-In a typical neural network, Quantization can be applied to quantize the **model weights** and the **activations**. When quantization is applied after the model has been fully trained, it is referred to as **post-training quantization (PTQ)**.
+In a typical neural network, quantization can be applied to quantize the **model weights** and the **activations**. When quantization is applied after the model has been fully trained, it is referred to as **post-training quantization (PTQ)**.
 
-Advantages of quantization includes:
+The advantages of quantization include:
 
 - Smaller model
 - Speed gains
@@ -27,7 +27,7 @@ Advantages of quantization includes:
 
 ## Linear Quantization
 
-**Linear Quantization** uses a linear mapping to map a higher precision range(e.g. float32) to a lower precision range(e.g. int8) using <mark>a fixed scaling factor and zero point</mark>. This ensures that floating-point numbers are effectively represented in a lower precision format with minimal information loss.
+**Linear Quantization** uses a linear mapping to map a higher precision range(e.g. float32) to a lower precision range(e.g. int8) with <mark>a fixed scaling factor and zero point</mark>. This ensures that floating-point numbers are effectively represented in a lower precision format with minimal information loss.
 
 <div style="display: block; width: 50%;">
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2022/03/quant-3.png">
@@ -180,3 +180,111 @@ The trade-off between symmetric and asymmetric mode of quantization are:
 - **Memory**: We don’t store the zero-point for symmetric quantization.
 
 In practice, when quantizing to 8 bits, we often use symmetric quantization. However, when quantizing to fewer bits (e.g., 4 bits, 2 bits), we prefer to use asymmetric quantization.
+
+## Finer Granularity for more Precision
+
+In addition to per-tensor quantization, we can also do **per-channel** and **per-group** quantization, as shown below
+
+<img class="md-img-left" src="{{site.baseurl}}/assets/images/2022/03/quant-6.png">
+
+The idea is that we don't have to use the same `scale` and `zero-point` for every tensor. Instead, we can divide tensor in multiple group and apply different `scale` and `zero-point` to each group. 
+
+### Per-Channel Quantization
+
+We usually use per-channel quantization when quantizing models in 8 bits. In PyTorch, we can use `tensor.shape[dim]` to grab the channel we want to quantize. For example, for a `torch.Size([2, 3])` tensor, if we set the `dim = 0`, we will get `2` from the shape value, meaning we will quantize the two rows of the tensor. In symmetric quantization, this also means we need two `scale`s, one for each row.
+
+```python
+def linear_q_symmetric_per_channel(r_tensor, dim, dtype=torch.int8):
+    # r_tensor is [2,3]
+    output_dim = r_tensor.shape[dim]
+    # store the scales
+    scale = torch.zeros(output_dim)
+
+    for index in range(output_dim):
+        sub_tensor = r_tensor.select(dim, index) # this gives you a [1, 3] tensor
+        scale[index] = get_q_scale_symmetric(sub_tensor, dtype=dtype)
+
+    # scale is a 1x2 tensor, [s1, s2], to let each row divided by s[i], we need to reshape
+    # the scale tensor in a column order (a 2x1 tensor):
+    # [s1,
+    #  s2]
+    #
+    scale_shape = [1] * r_tensor.dim()
+    scale_shape[dim] = -1
+    # reshape the scale
+    scale = scale.view(scale_shape)
+    quantized_tensor = linear_q_with_scale_and_zero_point(
+        r_tensor,
+        scale=scale,
+        zero_point=0,
+        dtype=dtype)
+   
+    return quantized_tensor, scale
+```
+
+### Per-Group Quantization
+
+In per-group quantization, we perform group quantization in a group of `N` elements. The common values for `N` are `32`, `64` or `128`. 
+
+Per-group quantization can require a lot more memory. Let's say we want to quantize a tensor in **4-bit**, and we choose `group_size = 32`, symmetric mode (z=0), and we store the scales in FP16.
+
+It means that we're actually quantizing the tensor in **4.5 bits** since we have:
+- 4 bit (each element is stored in 4 bit)
+- 16/32 bit (scale in 16 bits for every 32 elements)
+
+
+```python
+def linear_q_symmetric_per_group(
+    tensor, 
+    group_size,
+    dtype=torch.int8):
+    
+    t_shape = tensor.shape
+    assert t_shape[1] % group_size == 0
+    assert tensor.dim() == 2
+    
+    # reshape the tensor to [n, group_size]
+    tensor = tensor.view(-1, group_size)
+    
+    # quantize the tensor per-row
+    quantized_tensor, scale = linear_q_symmetric_per_channel(
+                                tensor, 
+                                dim=0, 
+                                dtype=dtype)
+    
+    # restore the shape of the quantized tensor
+    quantized_tensor = quantized_tensor.view(t_shape)
+    
+    return quantized_tensor, scale
+```
+
+### Quantizing weights & activation for inference
+
+Quantization can be applied to both weights and activations. When both are quantized, inference is performed using integers (e.g., int8, int4). Currently, this is not supported by all hardware products.
+
+If only the weights are quantized, inference remains in floating-point precision (e.g., fp32, fp16, bf16). However, we need to quantize the weights first before performing the floating point computation.
+
+```python
+def quantized_linear_W8A32_without_bias(input, q_w, s_w, z_w):
+    assert input.dtype == torch.float32
+    assert q_w.dtype == torch.int8
+
+    # w = scale * (q_w - zero_point)
+    dequantized_weight = s_w * (q_w.to(torch.float32)  - z_w)
+    output = torch.nn.functional.linear(input, dequantized_weight)
+    
+    return output
+
+def main():
+    x = torch.tensor([[1, 2, 3]], dtype=torch.float32) # [1,3]
+    weight = torch.rand(3, 3) #[3, 3]
+    q_w,s_w = linear_quantization(weight)
+    y = quantized_linear_W8A32_without_bias(x, q_w, s_w, 0)
+    print(y)
+```
+
+Now we are familiar with the basic concepts of quantization. In the next article, we are going to use everything we learned here to build a custom 8-bit quantizer.
+
+## Resource
+
+- [Quantization in Depth](https://learn.deeplearning.ai/courses/quantization-in-depth)

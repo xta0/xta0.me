@@ -1,8 +1,8 @@
 ---
 updated: "2018-08-20"
 layout: post
-title: 学一点系统设计
-list_title: 学一点系统设计 | System Design Overview
+title: 浅谈系统设计
+list_title: 浅谈系统设计 | System Design Overview
 categories: [backend, System Design]
 ---
 
@@ -117,11 +117,15 @@ Server集群的另一个问题是，这些server节点该如何管理，如何�
 
 ### Database
 
-上一节提到App Server可以做到“无状态”，无状态的好处在于彼此没有耦合，可以做到完全的并行化；而数据库成为瓶颈的原因在于数据库是有“状态”的，其状态表现为彼此之间要维持数据一致性，当有一条数据写入时，备份DB都要lock，等待数据同步完成。对于数据库的扩展可以选择两种方式，一种方式是使用Master-Slave的架构来复制出多份数据库，如上图中所示，让所有读请求打到Slave上，写请求路由到Master上。这种方式会随着业务不断的变复杂，数据表字段不断增加，查询速度也会变得越来越复杂，尤其是JOIN操作将会非常耗时，这时可能需要一个DBA要对数据库进行sharding（分库分表），做SQL语句调优等一系列优化，但这些优化并不解决根本问题。
+上一节提到App Server可以做到“无状态”，无状态的好处在于彼此没有耦合，可以做到完全的并行化；而数据库成为瓶颈的原因在于数据库是有“状态”的，其状态表现为彼此之间要维持数据一致性，当有一条数据写入时，备份DB都要lock，等待数据同步完成。对于数据库的扩展可以选择两种方式，一种方式是使用Master-Slave的架构来复制出多份数据库，如上图中所示，让所有读请求路由到Slave上，写请求路由到Master上。这种方式会随着业务不断的变复杂，数据表字段不断增加，查询速度也会变得越来越复杂，尤其是JOIN操作将会非常耗时，这时可能需要一个DBA要对数据库进行sharding（分库分表），做SQL语句调优等一系列优化，但这些优化并不解决根本问题。
 
-第二种方式是在开始的时候就使用NoSQL数据库，比如MongoDB，CouchDB。使用这类数据库，JOIN操作可以在应用层代码中实现，从而减少DB操作的时间。但是无论哪种方式，随着数据量增多，业务不断复杂化，对DB的查询依旧会变得越来越慢，这时候就要考虑使用缓存。
+第二种方式是在开始的时候就使用NoSQL数据库，比如MongoDB，CouchDB。使用这类数据库，<mark>JOIN操作可以在应用层代码中实现</mark>，从而减少DB操作的时间。使用NoSQL如果我们的系统需要:
+- super-low latency
+- data is unstructured, or there is no relational data
+- need to serialize and deserialize data (JSON, XML, YAML, etc)
+- store a massive amount of data (e.g. telemetry logs)
 
-对于更多分布式数据库存储的问题，后面还会做详细的讨论。
+但是无论哪种方式，随着数据量增多，业务不断复杂化，对DB的查询依旧会变得越来越慢，这时候就要考虑使用缓存
 
 ## Caching
 
