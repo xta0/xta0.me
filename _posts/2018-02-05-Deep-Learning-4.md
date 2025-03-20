@@ -1,6 +1,6 @@
 ---
-list_title:   Deep Learning | Hyperparameter Tuning and Regularization
-title: Hyperparameter Tuning and Regularization
+list_title:   Deep Learning | Hyperparameter Tuning | Regularization
+title: Regularization
 layout: post
 mathjax: true
 categories: ["AI", "Machine Learning", "Deep Learning"]
