@@ -137,7 +137,7 @@ $$
 $$
 \begin{align*}
 \sigma^2 &= \frac{1}{m} \sum_{i=1}^{m} x^{(i) 2} \quad &\text{(element-wise squaring)} \\
-x &:= \frac{x}{\sigma^2} &
+x &:= \frac{x}{\sigma} &
 \end{align*}
 $$
 
@@ -271,4 +271,5 @@ $$
 
 ## Resource
 
+- [Deep Learning Specialization](https://www.coursera.org/specializations/deep-learning)
 - [Improving Deep Neural Networks: Hyperparameter tuning, Regularization and Optimization](https://www.coursera.org/learn/deep-neural-network)

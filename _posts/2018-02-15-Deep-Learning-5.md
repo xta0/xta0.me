@@ -195,6 +195,7 @@ def schedule_lr_decay(learning_rate0, epoch_num, decay_rate, time_interval=1000)
 
 ## Resources 
 
+- [Deep Learning Specialization](https://www.coursera.org/specializations/deep-learning)
 - [An overview of gradient descent optimization algorithms](https://ruder.io/optimizing-gradient-descent/)
 - [Adam paper](https://arxiv.org/pdf/1412.6980.pdf)
 
