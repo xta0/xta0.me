@@ -6,6 +6,23 @@ mathjax: true
 categories: ["AI", "Machine Learning","Deep Learning"]
 ---
 
+
+
+上一篇文章我们介绍了不同的优化算法，同时我们也引入了一系列可调节参数，包括
+
+- Gradient Descent Momentum: $\beta$
+- Adam: $\beta_1$, $\beta_2$
+- Learning Rate Decay
+- Mini-batch size
+
+加上之前文章中提到的关于神经网络的各种参数包括:
+
+- Learning Rate: $\alpha$
+- number of layers: $L$
+- number of hidden units for each layer
+
+这些参数中有一些比其它的重要，一般来说，$\alpha$是最重要的参数
+
 ## Batch Normalization
 
 [前面文章](https://xta0.me/2018/02/05/Deep-Learning-4.html)我们曾提到对训练数据进行归一化处理可以加快训练速度：
@@ -90,6 +107,12 @@ $$
 ### Why does Batch Norm work
 
 一个简单的intuition是BN减少了前面layer的weights对后面layer的weights的影响。具体来说，在训练的时候，由于输入的训练数据不断变化，它会影响每一个layer的activation的值分布，进而<mark>可能出现covariant shift的情况</mark>。而由上面可以，通过控制$\gamma$和$\beta$，BN可以做到对任意两层hidden units($z^{[l]}$, $z^{[l-1]})$的均值和方差保持不变，来抵消掉activation在分布上的偏移，从而使模型更加的泛化。此外，由于BN对activation的修正，它还起到了regularization的作用。
+
+### Batch Norm at inference time
+
+前面提到，在training的时候，BN通常和mini-batch一起使用，具体来说，BN一次处理一个mini batch的数据。但是当model训练完成后，$\beta$和$\gamma$的值也相应的确定，并且是基于mini batch的batch size训练得到的，此时，如果我们对某一条数据做inference时，该如何处理？
+
+此时我们需要对$\mu$和$\sigma$做一些处理，具体做法是在training的时候计算$\mu$和$\sigma$的exponential weighted average，在inference时候用这个结果做近似。实际应用中。大部分Deep Learning Framework内部会实现这个过程，所以不需要特别担心。
 
 ## Resources
 
