@@ -379,5 +379,6 @@ pipe.to("mps")
 
 ## Resource
 
+- [The Illustrated Stable Diffusion](https://jalammar.github.io/illustrated-stable-diffusion/)
 - [SDXL: Improving Latent Diffusion Models for High-Resolution Image Synthesis](https://arxiv.org/abs/2307.01952)
 - [Using Stable Diffusion with Python](https://www.amazon.com/Using-Stable-Diffusion-Python-Generation/dp/1835086373/)
