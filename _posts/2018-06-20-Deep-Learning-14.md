@@ -60,6 +60,9 @@ Cosine Similarity 的值取决于$u$, $v$之间的夹角。如果$u$, $v$相似�
 
 > Appendix #1 展示了如何用Python计算两个vector的相似度。除了使用余弦相似度以外，也可以使用L2范数(欧几里得距离)，这里不展开讨论
 
+由之前的[Computer Graphic文章可知](https://xta0.me/2011/11/30/Computer-Graphics-1.html)，Cosine Similarity的代数表达为两个vector的点积(Dot Product)。因此，我们通常用点积来描述两个embedding vector在
+多维空间的相似度，如果点积的值越大，则表示它们在语义上越接近，反之则越疏远，这点和cosine的表达是类似的。
+
 ## Embedding Matrix
 
 假设我们的字典有`10,000`个单词，每个单词的 feature vector 是`[300, 1]`，那么整个 embedding matrix 为`[300, 10,000]`，每一个列向量代表一个词所有的 feature，我们的目标就是 train 我们的 network 来找到这个 embedding matrix
@@ -67,8 +70,6 @@ Cosine Similarity 的值取决于$u$, $v$之间的夹角。如果$u$, $v$相似�
 如果我们用这个 embedding matrix `E` (300, 10,000) 去和一个 one-hot vector `O`(10,000, 1)相乘，结果是一个`(300, 1)`的 vector `e`
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/06/dl-nlp-w2-2.png">
-
-
 
 ## Word2Vec
 
