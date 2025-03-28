@@ -180,9 +180,15 @@ Note that another commonly used way to reduce the number of outputs is to modify
 ## PyTorch Implementation
 
 ```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+EmbeddingDims = 256
+
 class SelfAttention(nn.Module): 
                             
-    def __init__(self, d_model=2,  
+    def __init__(self, d_model=EmbeddingDims,  
                  row_dim=0, 
                  col_dim=1):
         ## d_model = the number of embedding values per token.
@@ -195,9 +201,9 @@ class SelfAttention(nn.Module):
         
         ## Initialize the Weights (W) that we'll use to create the
         ## query (q), key (k) and value (v) for each token
-        self.W_q = nn.Linear(in_features=d_model, out_features=d_model, bias=False)
-        self.W_k = nn.Linear(in_features=d_model, out_features=d_model, bias=False)
-        self.W_v = nn.Linear(in_features=d_model, out_features=d_model, bias=False)
+        self.W_q = nn.Linear(in_features=EmbeddingDims, out_features=128, bias=False)
+        self.W_k = nn.Linear(in_features=EmbeddingDims, out_features=128, bias=False)
+        self.W_v = nn.Linear(in_features=EmbeddingDims, out_features=EmbeddingDims, bias=False)
         
         self.row_dim = row_dim
         self.col_dim = col_dim
@@ -214,6 +220,7 @@ class SelfAttention(nn.Module):
         ## Compute similarities scores: (q * k^T)
         ## transpose swap the two dimensions: dim0, dim1 = dim1, dim0
         sims = torch.matmul(q, k.transpose(dim0=self.row_dim, dim1=self.col_dim))
+        print(sims.shape)
 
         ## Scale the similarities by dividing by sqrt(k.col_dim)
         scaled_sims = sims / torch.tensor(k.size(self.col_dim)**0.5)
@@ -221,11 +228,25 @@ class SelfAttention(nn.Module):
         ## Apply softmax to determine what percent of each tokens' value to
         ## use in the final attention values.
         attention_percents = F.softmax(scaled_sims, dim=self.col_dim)
+        print(attention_percents.shape)
 
         ## Scale the values by their associated percentages and add them up.
         attention_scores = torch.matmul(attention_percents, v)
 
         return attention_scores
+
+def main():
+    # 8 words, 256 embedding values per word
+    encodings_matrix = torch.randn(8, EmbeddingDims)
+    print("Encoding Matrix:", encodings_matrix.shape)
+
+    selfAttention = SelfAttention(d_model=EmbeddingDims)
+    attention_values = selfAttention(encodings_matrix)
+    print("Attention values:", attention_scores.shape)
+
+
+if __name__ == "__main__":
+    main()
 ```
 
 ## Resources
