@@ -1,15 +1,10 @@
 ---
-list_title: GenAI | LLM Training
-title:  An Overview of LLM Training
+list_title: GenAI | LLM Pre-Training
+title:  An Overview of LLM Pre-Training
 layout: post
 categories: ["GenAI", "Transformer", "LLM"]
 ---
 
-## GenAI project lifecycle
-
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm-20.png">
-
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm3-15.png">
 
 ## LLM pre-training at high level
 

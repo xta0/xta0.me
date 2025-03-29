@@ -1,0 +1,17 @@
+// _responsive.scss
+
+// Responsive styles for devices with a maximum width of 768px  
+  @media (max-width: 768px) {
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    .container {
+      padding: 0 15px;
+    }
+    
+    header, footer {
+      text-align: center;
+    }
+  }
+  

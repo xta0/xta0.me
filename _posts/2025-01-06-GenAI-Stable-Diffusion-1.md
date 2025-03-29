@@ -22,7 +22,7 @@ In this post, we will explore the theory behind diffusion models and dive deeper
 
 These concepts will help us build a strong foundation for understanding diffusion models, which will later be applied to learning stable diffusion models.
 
-## The image-to-noise process
+## The image-to-noise training process
 
 At a high-level, the image to noise process is quite straightforward: 
 
@@ -139,8 +139,6 @@ plt.show()
 For simplicity, we perform 16 iterations and select 8 images for display:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-05.png">
-
-## The noise-to-image training process
 
 We have shown the approach to add noise to the image, which is known as forward diffusion. To recover the image from the noise, we need to find the way to recover $x_0$ from $x_t$. However, this revert process is uncomputable without additional information.
 

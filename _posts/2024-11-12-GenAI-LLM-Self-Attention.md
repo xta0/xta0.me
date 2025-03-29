@@ -147,9 +147,7 @@ $$
 \end{array}
 $$
 
-Zooming out, this whole process is described as a <mark>single head of self-attention</mark>. This process is parameterized by three distinct matrices, all filled with tunable parameters, the key, the query, and the value.
-
-In summary, the overall computation process can be described using the following diagram:
+Zooming out, this whole process is described as a <mark>single head of self-attention</mark>. This process is parameterized by three distinct matrices, all filled with tunable parameters, the key, the query, and the value. The overall computation process of a single head of self-attention layer can be described using the following diagram:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-3.png">
 

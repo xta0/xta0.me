@@ -90,3 +90,9 @@ The outputs are normalized into a probability score for each word. <mark>This ou
 - [BLOOM: BigScience 176B Model](https://arxiv.org/abs/2211.05100)
 - [Vector Space Models](https://www.coursera.org/learn/classification-vector-spaces-in-nlp/home/week/3)
 - [The Transformer Architecture](https://xta0.me/2018/07/20/Deep-Learning-14.html)
+
+## Appendix #1: GenAI project lifecycle
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm-20.png">
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm3-15.png">
