@@ -23,6 +23,8 @@ Semantically, This means changing the position of `l'Afrique`'s embedding vector
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-5.jpg">
 
+## Formal Definition
+
 Mathematically, We use the following <mark>softmax function to calculate the attention representation for each word</mark>:
 
 $$
