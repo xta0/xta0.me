@@ -156,11 +156,15 @@ Zooming out, this whole process is described as a <mark>single head of self-atte
 Before wrapping up the single self-attention unit, there is one more thing that can help us understand how it works as a black box. Let's look at the PyTorch code below:
 
 ```python
+# define the emebdding dimension
+EmbeddingDims = 256
+
 encodings_matrix = torch.randn(8, EmbeddingDims)
 print("Encoding Matrix:", encodings_matrix.shape) # torch.Size([8, 256])
 
 selfAttention = SelfAttention(d_model=EmbeddingDims)
-attention_values = selfAttention(encodings_matrix)
+# forward pass
+attention_values = selfAttention.forward(encodings_matrix)
 print("Attention values:", attention_scores.shape) # torch.Size([8, 256])
 ```
 If we treat the attention unit as a module(`SelfAttention`), the input is a `(N, D1)` tensor, and the output is a `(N, D2)`. In most of the cases, we have `D1 == D2`, this means, we just transform the original embedding vector to a new embedding vector in the same dimension space.
