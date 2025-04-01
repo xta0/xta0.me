@@ -25,7 +25,7 @@ Semantically, This means changing the position of `l'Afrique`'s embedding vector
 
 ## Formal Definition
 
-Mathematically, We use the following <mark>softmax function to calculate the attention representation for each word</mark>:
+Mathematically, We use the following formula to calculate the attention representation for each word:
 
 $$
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{Q K^\top}{\sqrt{d_k}}\right) V
@@ -33,7 +33,7 @@ $$
 
 In the formula, `A(q, K, V)` is the attention-based vector representation of a word. We have $q^{\langle i \rangle}$, $k^{\langle i \rangle}$ and $v^{\langle i \rangle}$, representing `query`, `key` and `value`.  $\sqrt{d_k}$ is added for numerical stability, doesn't carry specific meanings.
 
-## Visualize the Computation Process
+## Computation Process Visualization
 
 To best understand what the formula means, let's take a look at another sentence:
 
