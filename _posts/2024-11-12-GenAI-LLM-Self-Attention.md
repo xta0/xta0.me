@@ -185,8 +185,9 @@ In Meta's recent paper - [The Llama 3 Herd of Models](https://arxiv.org/pdf/2407
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-20.png">
 
-Note that the number of attention heads is `32` and the number of key/value heads is `8`. The paper also mentions that they use grouped query attention with 8 key-value heads to improve inference speed and to reduce the size of key-value caches during decoding. So this means, the `n_groups = 8` and the `n_attention_heads = 32`, resulting in `4` attention heads per group.
+Note that the number of attention heads is `32` and the number of key/value heads is `8`. The paper also mentions that they use grouped query attention with 8 key-value heads to improve inference speed and to reduce the size of key-value caches during decoding. So this means, the `n_groups = 8` and the `n_attention_heads = 32`, resulting in `4` attention heads per group. 
 
+> We will talk more about other parameters in this paper in the second part of the transformer block in the next post.
 
 ## Summary
 
