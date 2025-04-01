@@ -21,3 +21,5 @@ bias。此时我们的模型的问题是
 如果我们怀疑我们模型出现overfitting的情况，
 我们可以尝试引入Regularization来解决。
 quantizer
+logits
+logits

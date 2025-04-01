@@ -147,35 +147,66 @@ $$
 \end{array}
 $$
 
-Zooming out, this whole process is described as a <mark>single head of self-attention</mark>. This process is parameterized by three distinct matrices, all filled with tunable parameters, the key, the query, and the value. The overall computation process of a single head of self-attention layer can be described using the following diagram:
+Zooming out, this whole process is described as a <mark>single head of self-attention</mark>. This process is parameterized by three distinct matrices, all filled with tunable parameters, the key, the query, and the value:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-3.png">
 
+Before wrapping up the single self-attention unit, there is one more thing that can help us understand how it works as a black box. Let's look at the PyTorch code below:
+
+```python
+encodings_matrix = torch.randn(8, EmbeddingDims)
+print("Encoding Matrix:", encodings_matrix.shape) # torch.Size([8, 256])
+
+selfAttention = SelfAttention(d_model=EmbeddingDims)
+attention_values = selfAttention(encodings_matrix)
+print("Attention values:", attention_scores.shape) # torch.Size([8, 256])
+```
+If we treat the attention unit as a module(`SelfAttention`), the input is a `(N, D1)` tensor, and the output is a `(N, D2)`. In most of the cases, we have `D1 == D2`, this means, we just transform the original embedding vector to a new embedding vector in the same dimension space.
+
 ## Multi-Head Attention
 
-In the above discussion, we have explained the single head self-attention in great detail. However, in order to correctly establish how words are related in longer more complicated sentences and paragraphs, we can apply the single self-attention block multiple times simultaneously.
+In the above discussion, we have explained the single head self-attention in great detail. However, in order to correctly establish how words are related in longer more complicated sentences and paragraphs, we can apply the single self-attention block multiple times <mark>simultaneously</mark>.
 
 > GPT3 for example uses 96 attention heads inside each block
 
-Each attention unit is called a head and has its own sets of weights for calculating the queries, keys and values. In the example below, we have two embedding vectors as inputs, and we have three self-attention heads:
+<mark>Each attention unit is called a head</mark> and <mark>has its own sets of weights for calculating the queries, keys and values</mark>. In the example below, we have two embedding vectors as inputs, and we have three self-attention heads:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-16.png">
 
-We can imagine that each attention head will nudge the words embedding to desired positions in a high dimensional space. The multi-head attention is simply repeating this process multiple times, nudging the words embeddings from different contextual perspectives until they find their best meaning in the context. 
+We can imagine that each attention head will nudge the words embedding to desired positions in a high dimensional space. The multi-head attention is simply repeating this process multiple times, nudging the words embeddings from different contextual perspectives <mark>in parallel</mark>.
 
-For every different type of contextual updating that we might imagine, the parameters of these key and query matrices would be different to capture the different attention pattern, and the parameters of our value map would be different based on what should be added to the embeddings.
+More recently, <mark>grouped query attention</mark> is proposed to allow us to use multiple Keys and Values are that shared by different attention heads (Query is not shared). This reduces that number of parameters that model needs to train while preserve the accuracy of the prediction.
 
-### Combine Multi-Head Attention Scores
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-19.png">
 
-Note that each attention head outputs its own attention representations for the input embedding words (two in our example), how do we merge or handle those outputs from different heads? 
+In Meta's recent paper - [The Llama 3 Herd of Models](https://arxiv.org/pdf/2407.21783), they outline their model architecture as follows:
 
-In this example, we have `3` attention heads and `2` attention values per head. We end up with `6` attention values. In order to get back down to the original number (`2`) of encoded values that started with, we simply connect all the attention scores to a fully connected layer that has 2 outputs, as shown below:
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-20.png">
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-17.png">
+Note that the number of attention heads is `32` and the number of key/value heads is `8`. The paper also mentions that they use grouped query attention with 8 key-value heads to improve inference speed and to reduce the size of key-value caches during decoding. So this means, the `n_groups = 8` and the `n_attention_heads = 32`, resulting in `4` attention heads per group.
 
-Note that another commonly used way to reduce the number of outputs is to modify the shape of $W_v$ matrix, which is out of the scope of this post.
 
-## PyTorch Implementation
+## Summary
+
+In summary, the self-attention head does two things:
+
+1. **Relevant scoring**: Assigning a score to how relevant each of the input are to the token we're currently processing.
+
+2. **Combining information**: combine the scores to produce an attention representation(a new embedding vector) for each word in the sentence.
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-22.png">
+
+Now we have the attention representation for each word in our sentence, how do we use with them to predict the next word? In the next post, we will discuss the second part of the transformer block, and we will see how the embeddings get used in the downstream of the network.
+
+## Resources
+
+- [Deep Learning Specialization](https://www.coursera.org/learn/nlp-sequence-models)
+- [How Transformer LLMs work](https://learn.deeplearning.ai/courses/how-transformer-llms-work)
+- [Attention in Transformers: Concept and Code in PyTorch](https://learn.deeplearning.ai/courses/attention-in-transformers-concepts-and-code-in-pytorch)
+- [3 blues 1 brown: Attention in Transformers](https://www.youtube.com/watch?v=eMlx5fFNoYc)
+
+
+## Appendix #1: PyTorch implementation of a single self-attention head
 
 ```python
 import torch
@@ -186,7 +217,8 @@ EmbeddingDims = 256
 
 class SelfAttention(nn.Module): 
                             
-    def __init__(self, d_model=EmbeddingDims,  
+    def __init__(self, 
+                d_model=EmbeddingDims,  
                  row_dim=0, 
                  col_dim=1):
         ## d_model = the number of embedding values per token.
@@ -247,8 +279,34 @@ if __name__ == "__main__":
     main()
 ```
 
-## Resources
+### Appendix #2: PyTorch implementation of a multi-head self-attention
 
-- [Deep Learning Specialization](https://www.coursera.org/learn/nlp-sequence-models)
-- [3 blues 1 brown: Attention in Transformers](https://www.youtube.com/watch?v=eMlx5fFNoYc)
-- [Attention in Transformers: Concept and Code in PyTorch](https://learn.deeplearning.ai/courses/attention-in-transformers-concepts-and-code-in-pytorch)
+```python
+class MultiHeadAttention(nn.Module):
+    def __init__(self, 
+                 d_model=2,  
+                 row_dim=0, 
+                 col_dim=1, 
+                 num_heads=1):
+        
+        super().__init__()
+
+        ## create a bunch of attention heads
+        self.heads = nn.ModuleList(
+            [SelfAttention(d_model, row_dim, col_dim) 
+             for _ in range(num_heads)]
+        )
+
+        self.col_dim = col_dim
+        
+    def forward(self, 
+                encodings_for_q, 
+                encodings_for_k,
+                encodings_for_v):
+
+        ## run the data through all of the attention heads
+        return torch.cat([head(encodings_for_q, 
+                               encodings_for_k,
+                               encodings_for_v) 
+                          for head in self.heads], dim=self.col_dim)
+```
