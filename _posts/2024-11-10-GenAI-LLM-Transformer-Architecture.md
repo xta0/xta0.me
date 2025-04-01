@@ -108,7 +108,7 @@ Once we have the generated word, we simply append it back to the original senten
 ```python
 for i in range(max_new_tokens):
     # Forward pass
-    logits = torch_model(input_ids=generated_ids, attention_mask=torch.ones_like(generated_ids))
+    logits = model(input_ids=generated_ids, attention_mask=torch.ones_like(generated_ids))
     # torch.Size([1, 6, 32000])
     # (batch, The sequence length of the input, vocab size)
 

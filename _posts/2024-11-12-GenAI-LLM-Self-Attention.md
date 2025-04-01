@@ -175,7 +175,9 @@ In the above discussion, we have explained the single head self-attention in gre
 
 We can imagine that each attention head will nudge the words embedding to desired positions in a high dimensional space. The multi-head attention is simply repeating this process multiple times, nudging the words embeddings from different contextual perspectives <mark>in parallel</mark>.
 
-More recently, <mark>grouped query attention</mark> is proposed to allow us to use multiple Keys and Values are that shared by different attention heads (Query is not shared). This reduces that number of parameters that model needs to train while preserve the accuracy of the prediction.
+### Grouped Query Attention Head
+
+More recently, <mark>grouped query attention</mark> is proposed to allow us to share the same Keys and Values by a group of attention heads (Query is not shared). This can help reduce the number of parameters that the model needs to train while preserve the accuracy of the prediction.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-19.png">
 
