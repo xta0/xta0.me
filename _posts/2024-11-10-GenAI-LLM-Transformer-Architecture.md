@@ -17,11 +17,9 @@ In 2017, after the publication of this paper, "Attention is All You Need", from 
 
 <mark>The power of the attention mechanism lies in its ability to learn the relevance and context of all of the words in a sentence, not just the words next to its neighbors, but every other word in a sentence</mark>.
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm-1.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm-2.png">
 
 We apply attention weights to those relationships so that the model learns the relevance of each word to each other words no matter where they are in the input. This gives the algorithm the ability to learn "who has the book", "who could have the book", and if it's even relevant to the wider context of the document.
-
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm-2.png">
 
 These attention weights are learned during LLM training. In the end, we will learn something called "attention map", which can be useful to illustrate the attention weights between each word and every other words.
 
