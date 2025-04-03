@@ -227,8 +227,7 @@ The following diagram illustrates the sampling process:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-08.png">
 
-The added $\sqrt{1 - \alpha_t} \times z$ is found to be useful by searchers that will significantly improve the generated image quality.
-
+Note that we add a noise($\sqrt{1 - \alpha_t} \times z$) to the end of the formula to stabilize the model. This is found to be useful by searchers that will significantly improve the generated image quality.
 
 ## PyTorch's implementation of the sampling process
 
@@ -268,6 +267,5 @@ def sample_ddpm(n_sample, save_rate=20):
 
 - [How Diffusion Models Work](https://www.coursera.org/projects/how-diffusion-models-work-project)
 - [Denoising Diffusion Probabilities Models](https://arxiv.org/abs/2006.11239)
-- [CLIP](https://arxiv.org/pdf/2103.00020)
 - [Using Stable Diffusion with Python](https://www.amazon.com/Using-Stable-Diffusion-Python-Generation/dp/1835086373/)
 

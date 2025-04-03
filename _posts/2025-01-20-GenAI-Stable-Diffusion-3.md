@@ -6,7 +6,7 @@ mathjax: true
 categories: ["GenAI", "Stable Diffusion"]
 ---
 
-## The Stable Diffusion XL (SDXL) model pipeline
+## SDXL
 
 SDXL is a latent diffusion model that has the same overall architecture used in Stable Diffusion v1.5. The UNet backbone is three times larger, there are two text encoders in the SDXL base model, and a separate diffusion-based refinement model is included. The overall architecture is shown as follows:
 
