@@ -164,7 +164,7 @@ $$
 
 In the previous section, we learned that an image at any time step $x_t$ can be considered as being directly derived from adding noise to an original image $x_0$. As long as we know the noise `ϵ` added from $x_0$ to $x_t$, we can determine the probability distribution of the previous time step $x_{t-1}$. 
 
-<mark>Therefore, how to obtain <code>ϵ</code> becomes the focus of our discussion.</mark>
+<mark>Therefore, <code>ϵ</code> is the additional information we're looking for. How to obtain <code>ϵ</code> becomes the next focus in our discussion.</mark>
 
 Here, we can train a neural network model that takes the image at time step $x_t$ as input, and predicts the noise `ϵ` added to this image relative to the original image $x_0$. The predicted the noise should be close to the Gaussian distribution.
 
@@ -180,14 +180,20 @@ For any normal probability distribution, there are two key parameters: the mean 
 At high-level, the training loop can be described like this:
 
 ```python
+# helper function: perturbs an image to a specified noise level
+def perturb_input(x, t, noise):
+    return ab_t.sqrt()[t, None, None, None] * x + (1 - ab_t[t, None, None, None]) * noise
+
 for ep in range(n_epoch):
     # code for setup setup learning rate, etc...
     
     # noise is the ϵ ~ N(0,1) with the shape of x_t
     noise = torch.randn_like(x_t)
-    # x_t is the nosed image at step "t"
-    pred_noise = nn_model(x_t, t)
-    # 
+    # grab the x_t. 
+    x_pert = perturb_input(x, t, noise)
+    # x_pert is the noised image at step "t"
+    pred_noise = nn_model(x_pert, t)
+    # loss is mean squared error between the predicted and true noise
     loss = F.mse_loss(pred_noise, noise)
     loss.backward()
 ```
