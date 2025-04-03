@@ -168,7 +168,7 @@ In the previous section, we learned that an image at any time step $x_t$ can be 
 
 Here, we can train a neural network model that takes the image at time step $x_t$ as input, and predicts the noise `ϵ` added to this image relative to the original image $x_0$. The predicted the noise should be close to the Gaussian distribution.
 
-Let's just treat the neural network as a black box for now, and only focus on the input and output of the model. <mark>The neural network's output is the noise <code>ϵ</code>, and we compare the noise against the Gaussian distribution</mark>:
+Let's just treat the neural network as a black box for now, and only focus on the input and output of the model. <mark>The neural network's output is the noise <code>ϵ</code>, and we compare the predicted noise against the standard Gaussian distribution</mark> to calculate the loss:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-06.png">
 
@@ -197,6 +197,13 @@ for ep in range(n_epoch):
     loss = F.mse_loss(pred_noise, noise)
     loss.backward()
 ```
+
+The key step here is the `perturb_input` function. This function gives noised image at the time step $t$, which <mark>simulates the image-to-noise process</mark> we discussed in the previous section. Essentially, the code computes $x_t$ following this formula:
+
+$$
+x_t = \sqrt{1-\alpha_t} \times \epsilon_{t-1} + \sqrt{\alpha_t} \times x_{t-1}
+$$
+
 ## The sampling process
 
 Once we have this neural network trained, we can start the sampling process to generate our image. At any time step $t$, we can obtain the predicted noise $\epsilon$ from the input noisy image $x_t$. We then pass $\epsilon$ and $x_t$ to a sampling process to produce $x_{t-1}$. Next, we feed $x_{t-1}$ into the model again and repeat this process iteratively until we eventually obtain $x_0$
