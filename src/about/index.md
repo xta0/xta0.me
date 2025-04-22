@@ -9,7 +9,7 @@ layout: about
   <li>
     <div class="md-flex-space-between">
       <span><strong>Apple</strong> | <i>ML Engineer</i></span>
-      <span>2025/04 - Present</span>
+      <span>04/2025 - Present</span>
     </div>
     <ul>
       <li>Image Generation, Stale Diffusion models, on-device ML</li>
@@ -20,7 +20,7 @@ layout: about
   <li>
     <div class="md-flex-space-between">
       <span><strong>Facebook</strong> | <i>Staff Software Engineer</i></span>
-      <span>2019/04 - 2025/01</span>
+      <span>04/2019 - 01/2025</span>
     </div>
     <ul>
       <li>Monetization, Ads signal, iOS SDK</li>
@@ -31,7 +31,7 @@ layout: about
   <li>
     <div class="md-flex-space-between">
       <span><strong>Alibaba Group</strong> | <i>Senior Staff Software Engineer | Engineer Manager </i></span>
-      <span>2012/02 - 2017/09</span>
+      <span>02/2012 - 09/2017</span>
     </div>
     <ul>
       <li>Alipay iOS, O2O, Server-side driven UI framework</li>
@@ -39,6 +39,8 @@ layout: about
     </ul>
   </li>
 </ul>
+
+<h2 class="about-h2 md-p-center">About Me</h2>
 
 <div class="md-flex-v about-contact">
     <div><i class="fas fa-envelope"></i> | taoxu.dev@gmail.com </div>
