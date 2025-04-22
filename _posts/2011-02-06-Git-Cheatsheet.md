@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Git简明操作
+title: Git | Git简明操作
 list_title: Git简明操作 | Git Quick Reference
 categories: [Git,Cheatsheet]
 ---
@@ -34,7 +34,7 @@ categories: [Git,Cheatsheet]
 
 ### File Operations
 
--Add
+- Add
     - `git add -u`, 将工作空间新增和被修改的文件添加的暂存区
     - `git add .`, 将工作空间被修改和被删除的文件添加到暂存区(不包含没有纳入Git管理的新增文件)
     - `git add -A`, stash所有修改

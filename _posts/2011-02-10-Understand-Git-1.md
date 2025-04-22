@@ -1,7 +1,7 @@
 ---
 updated: '2019-01-09'
 layout: post
-title: Git中的一些重要概念
+title: Git | Git中的一些重要概念
 list_title: Git中的一些重要概念 | Understand Git Concept
 categories: [Git]
 ---

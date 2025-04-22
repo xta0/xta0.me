@@ -1,7 +1,7 @@
 ---
 updated: '2019-01-09'
 layout: post
-title: Git的内部结构
+title: Git | Git的内部结构
 list_title: Git的内部结构 | Git Internals
 categories: [Git]
 ---
