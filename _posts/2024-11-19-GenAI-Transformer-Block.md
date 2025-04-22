@@ -8,9 +8,7 @@ categories: ["GenAI", "Transformer", "LLM"]
 
 ## The Transformer Block
 
-In the previous post, we took a deep dive into the self-attention mechanism. Interestingly, <mark>the attention modules contribute only about <code>1/3</code> of the model’s total parameters. The remaining <code>2/3</code> reside in the feed-forward network layers</mark>, also known as the **ML**P. In this post, we’ll explore the MLP component in detail.
-
-Beyond the MLP, other key elements play essential roles within each transformer block — most notably, layer normalization and skip connections, both of which are critical to the model’s stability and performance.
+In the previous post, we took a deep dive into the self-attention mechanism. Interestingly, <mark>the attention modules contribute only about <code>1/3</code> of the model’s total parameters. The remaining <code>2/3</code> reside in the feed-forward network layers</mark>, also known as the **MLP**. Besides MLP, other key elements play essential roles within each transformer block — most notably, layer normalization and skip connections, both of which are critical to the model’s stability and performance. In this post, we’ll explore these components in detail.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm-tb-2.png">
  
@@ -26,10 +24,10 @@ Previously, we saw that the output of an attention head is an attention-enhanced
 - The second linear layer is a "down project" matrix: $W_{\downarrow}$, projecting the activation back to the `3072` dimensions.
 - There is a residual connection at the end that adds the input embeddings to the transformed embeddings
 
-But why MLP works? It is hard to say. The original paper - [Attention is All You Need](https://arxiv.org/abs/1706.03762) does not explain the reason in detail. However, since MLP is just two linear layers stacked together, we could gain some high-level intuition:
+As you can see, the MLP architecture looks quite straightforward. It is just a plain neural network. You may wonder how does it work? Frankly speaking, it is hard to say. The original paper - [Attention is All You Need](https://arxiv.org/abs/1706.03762) does not explain the reason in detail. However, since MLP is just two linear layers stacked together, we could gain some high-level intuition:
 
 - **Non-Linear Feature Transformation**: After the self-attention mechanism captures contextual relationships between tokens, the MLP applies a non-linear transformation to each token's representation independently. This allows the model to learn complex patterns within individual token embeddings that aren’t captured by attention alone.
-- **Complementing Self-Attention**: Self-attention focuses on <i>inter-token relationships</i> (e.g., how words relate to each other in a sentence). Whereas, MLP focuses on <i>intra-token relationships</i> (e.g., transforming the features of a single token into a richer representation). Together, they create a balance between global context and local feature processing.
+- **Complementing Self-Attention**: Self-attention focuses on <i>inter-token relationships</i> (e.g., how words relate to each other in a sentence). Whereas, MLP focuses on <i>outer-token relationships</i> (e.g., transforming the features of a single token into a richer representation). Together, they create a balance between global context and local feature processing.
 
 ### Layer Normalization
 

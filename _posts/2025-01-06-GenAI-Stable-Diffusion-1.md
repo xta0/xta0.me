@@ -198,7 +198,7 @@ for ep in range(n_epoch):
     loss.backward()
 ```
 
-The key step here is the `perturb_input` function. This function gives the noised image at the time step $t$, which <mark>simulates the image-to-noise process</mark>, as we discussed in the previous section. Essentially, the code computes $x_t$ using the following formula:
+The key step here is the `perturb_input` function. This function produces the noised image at the time step $t$ <mark>following the image-to-noise process</mark> discussed in the previous section. To recall the process, the code essentially just computes $x_t$ using the following formula:
 
 $$
 x_t = \sqrt{1 - \bar{\alpha}_t} \times \epsilon + \sqrt{\bar{\alpha}_t} \times x_0

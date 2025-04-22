@@ -71,6 +71,7 @@
     flex-wrap: wrap;
 }
 .md-flex-space-between{
+    display: flex;
     justify-content: space-between;
 }
 .md-flex-space-around{

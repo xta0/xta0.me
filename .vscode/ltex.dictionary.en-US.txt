@@ -23,3 +23,6 @@ bias。此时我们的模型的问题是
 quantizer
 logits
 logits
+Autoencoder
+self-superviesd
+cross-attension
