@@ -40,7 +40,7 @@ layout: about
   </li>
 </ul>
 
-<h2 class="about-h2 md-p-center">About Me</h2>
+<br>
 
 <div class="md-flex-v about-contact">
     <div><i class="fas fa-envelope"></i> | taoxu.dev@gmail.com </div>
