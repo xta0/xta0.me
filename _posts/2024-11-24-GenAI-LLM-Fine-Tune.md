@@ -1,6 +1,6 @@
 ---
-list_title: GenAI | LLM Fine-tuning and evaluation
-title: LLM Fine-tuning and evaluation
+list_title: GenAI | LLM Fine-Tuning
+title: LLM Fine-Tuning
 layout: post
 mathjax: true
 categories: ["GenAI", "Transformer", "LLM"]
