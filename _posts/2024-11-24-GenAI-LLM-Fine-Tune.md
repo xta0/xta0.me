@@ -6,12 +6,7 @@ mathjax: true
 categories: ["GenAI", "Transformer", "LLM"]
 ---
 
-## Limitations of in-context learning
-
-- May not work for smaller models
-- Examples take up space in the context window
-
-## LLM fine-tuning at a high level
+## LLM Fine-Tuning at a high level
 
 In contrast to pre-training, where you train the LLM using vast amounts of unstructured textual data via self-supervised learning, <mark>fine-tuning is a supervised learning process where you use a data set of labeled examples to update the weights of the LLM</mark>. The labeled examples are <mark>prompt completion pairs</mark>, the fine-tuning process extends the training of the model to improve its ability to generate good completions for a specific task.
 
@@ -19,7 +14,7 @@ In contrast to pre-training, where you train the LLM using vast amounts of unstr
 
 One strategy, known as <mark>instruction fine-tuning</mark>, is particularly good at improving a model's performance on a variety of tasks.
 
-## Fine Tuning using prompts
+## Instruction Fine-Tuning
 
 Instruction fine-tuning trains the model using examples that demonstrate how it should respond to a specific instruction
 
@@ -33,7 +28,7 @@ These prompt completion examples allow the model to learn to generate responses 
 
 Instruction fine-tuning, where all of the model's weights are updated is known as <mark>full fine-tuning</mark>. The process results in a new version of the model with updated weights
 
-### The fine-tuning process
+### The Fine-Tuning Process
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-4.png">
 
@@ -46,13 +41,11 @@ Instruction fine-tuning, where all of the model's weights are updated is known a
 
 Fine-tuning with instruction prompts is the most common way to fine-tune LLMs these days. From this point on, when you hear or see the term fine-tuning, you can assume that it always means instruction fine tuning.
 
-### Catastrophic forgetting
+### Catastrophic Forgetting
 
 While the fine-tuning process allows the model to have a better performance on a single task, it can degrade performance on other tasks. This is called `catastrophic forgetting`.
 
-Catastrophic forgetting happens because the full fine-tuning process modifies the weights of the original LLM.
-
-For example, while fine-tuning can improve the ability of a model to perform sentiment analysis on a review and result in a quality completion, the model may forget how to carry out named entity recognition.
+Catastrophic forgetting happens because the full fine-tuning process modifies the weights of the original LLM. For example, while fine-tuning can improve the ability of a model to perform sentiment analysis on a review and result in a quality completion, the model may forget how to carry out named entity recognition.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-6.png">
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-7.png">
@@ -62,9 +55,9 @@ How to avoid catastrophic forgetting
 - First note that you might not have to!
 - Fine-tune on <mark>multiple tasks</mark> at the same time
 - Consider <mark>Parameter Efficient Fine-tuning</mark>(PEFT)
-  - PEFT is a set of techniques that preserves the weights of the original LLM and trains only a small number of task-specific adapter layers and parameters.
+  - PEFT is a set of techniques that preserves the weights of the original LLM and trains only a few task-specific adapter layers and parameters.
 
-## Multi-task, instruction fine-tuning
+## Multitask Fine-Tuning
 
 Multitask fine-tuning is an extension of single task fine-tuning, where the training dataset is a composed of example inputs and outputs for multiple tasks.
 
@@ -74,79 +67,8 @@ Here, the dataset contains examples that instruct the model to carry out a varie
 
 One drawback to multitask fine-tuning is that it requires a lot of data. You may need as many as 50-100,000 examples in your training set.
 
-## Model Evaluation metrics
 
-In traditional machine learning, you can assess how well a model is doing by looking at its prediction accuracy because the models are deterministic.
-
-$$
-\text{Accuracy} = \frac{\text{Correct Predictions}}{\text{Total Predictions}}
-$$
-
-But with large language models where the output is non-deterministic and language-based evaluation is much more challenging. We need an automated, structured way to make measurements. `ROUGE` and `BLEU`, are two widely used evaluation metrics for different tasks.
-
-- ROUGE(Recall Oriented Under Study For jesting Evaluation)
-  - Used for text summarization
-  - Compares a summary to one or more reference summaries
-- BLEU SCORE (bilingual evaluation understudy)
-  - Used for text translation
-  - Compares to human-generated translations
-
-### Terminology
-
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-9.png">
-
-- A unigram is equivalent to a single word
-- A bigram is two words
-- A n-gram is a group of n-words
-
-### ROUGE-1
-
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-10.png">
-
-- The recall metric measures the number of words or unigrams that are matched between the reference and the generated output divided by the number of words or unigrams in the reference.
-- Precision measures the unigram matches divided by the output size.
-- The F1 score is the harmonic mean of both of these values.
-
-Similarly, `ROUGE-2`, `ROUGE-3` simply uses bigram and n-gram to calculate the corresponding results.
-
-### ROUGE-L
-
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-11.png">
-
-An alternative way is to use the longest common subsequence present in both the generated output and the reference output.
-In this case, the longest matching sub-sequences are, `it is` and `cold outside`, each with a length of two. You can now use the LCS value to calculate the recall precision and F1 score.
-
-### BLEU
-
-```
-BLEU metric = Avg(precision across range of n-gram sizes)
-```
-
-The BLEU score quantifies the quality of a translation by checking how many n-grams in the machine-generated translation match those in the reference translation. To calculate the score, you average precision across a range of different n-gram sizes.
-
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-12.png">
-
-## Benchmarks
-
-As you can see, LLMs are complex, and simple evaluation metrics like the ROUGE and BLEU scores, can only tell you so much about the capabilities of your model.
-
-In order to measure and compare LLMs more holistically, you can make use of pre-existing datasets, and associated benchmarks that have been established by LLM researchers specifically for this purpose.
-
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-13.png">
-
-### MMLU (Massive Multitask Language Understanding)
-
-Massive Multitask Language Understanding, or MMLU, is designed specifically for modern LLMs. To perform well models must possess extensive world knowledge and problem-solving ability. Models are tested on elementary mathematics, US history, computer science, law, and more. In other words, tasks that extend way beyond basic language understanding
-
-### BIG-bench
-
-BIG-bench currently consists of 204 tasks, ranging through linguistics, childhood development, math, common sense reasoning, biology, physics, social bias, software development and more. BIG-bench comes in three different sizes, and part of the reason for this is to keep costs achievable, as running these large benchmarks can incur large inference costs.
-
-### HELM (Holistic Evaluation of Language Models)
-
-The HELM framework aims to improve the transparency of models, and to offer guidance on which models perform well for specific tasks. HELM takes a multimetric approach, measuring seven metrics across 16 core scenarios, ensuring that trade-offs between models and metrics are clearly exposed.
-
-## Parameter efficient fine-tuning (PEFT)
+## Parameter Efficient Fine-Tuning (PEFT)
 
 Full fine-tuning requires memory not just to store the model, but various other parameters that are required during the training process. Even if your computer can hold the model weights, which are now on the order of hundreds of gigabytes for the largest models, you must also be able to allocate memory for optimizer states, gradients, forward activations, and temporary memory throughout the training process. These additional components can be many times larger than the model and can quickly become too large to handle on consumer hardware
 
@@ -286,3 +208,75 @@ where:
 
 - `B` is a matrix of size `m×r`.
 - `C` is a matrix of size `r×n`.
+
+## Appendix B: Model Evaluation metrics
+
+In traditional machine learning, you can assess how well a model is doing by looking at its prediction accuracy because the models are deterministic.
+
+$$
+\text{Accuracy} = \frac{\text{Correct Predictions}}{\text{Total Predictions}}
+$$
+
+But with large language models where the output is non-deterministic and language-based evaluation is much more challenging. We need an automated, structured way to make measurements. `ROUGE` and `BLEU`, are two widely used evaluation metrics for different tasks.
+
+- ROUGE(Recall Oriented Under Study For jesting Evaluation)
+  - Used for text summarization
+  - Compares a summary to one or more reference summaries
+- BLEU SCORE (bilingual evaluation understudy)
+  - Used for text translation
+  - Compares to human-generated translations
+
+### Terminology
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-9.png">
+
+- A unigram is equivalent to a single word
+- A bigram is two words
+- A n-gram is a group of n-words
+
+### ROUGE-1
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-10.png">
+
+- The recall metric measures the number of words or unigrams that are matched between the reference and the generated output divided by the number of words or unigrams in the reference.
+- Precision measures the unigram matches divided by the output size.
+- The F1 score is the harmonic mean of both of these values.
+
+Similarly, `ROUGE-2`, `ROUGE-3` simply uses bigram and n-gram to calculate the corresponding results.
+
+### ROUGE-L
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-11.png">
+
+An alternative way is to use the longest common subsequence present in both the generated output and the reference output.
+In this case, the longest matching sub-sequences are, `it is` and `cold outside`, each with a length of two. You can now use the LCS value to calculate the recall precision and F1 score.
+
+### BLEU
+
+```
+BLEU metric = Avg(precision across range of n-gram sizes)
+```
+
+The BLEU score quantifies the quality of a translation by checking how many n-grams in the machine-generated translation match those in the reference translation. To calculate the score, you average precision across a range of different n-gram sizes.
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-12.png">
+
+## Benchmarks
+
+As you can see, LLMs are complex, and simple evaluation metrics like the ROUGE and BLEU scores, can only tell you so much about the capabilities of your model.
+
+In order to measure and compare LLMs more holistically, you can make use of pre-existing datasets, and associated benchmarks that have been established by LLM researchers specifically for this purpose.
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-13.png">
+
+### MMLU (Massive Multitask Language Understanding)
+
+Massive Multitask Language Understanding, or MMLU, is designed specifically for modern LLMs. To perform well models must possess extensive world knowledge and problem-solving ability. Models are tested on elementary mathematics, US history, computer science, law, and more. In other words, tasks that extend way beyond basic language understanding
+
+### BIG-bench
+
+BIG-bench currently consists of 204 tasks, ranging through linguistics, childhood development, math, common sense reasoning, biology, physics, social bias, software development and more. BIG-bench comes in three different sizes, and part of the reason for this is to keep costs achievable, as running these large benchmarks can incur large inference costs.
+
+### HELM (Holistic Evaluation of Language Models)
+
+The HELM framework aims to improve the transparency of models, and to offer guidance on which models perform well for specific tasks. HELM takes a multimetric approach, measuring seven metrics across 16 core scenarios, ensuring that trade-offs between models and metrics are clearly exposed.

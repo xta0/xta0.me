@@ -1,2 +1,3 @@
 {"rule":"ENGLISH_WORD_REPEAT_BEGINNING_RULE","sentence":"^\\QHow to exit from a process?\\E$"}
 {"rule":"ENGLISH_WORD_REPEAT_BEGINNING_RULE","sentence":"^\\QIn Jan 2020, a paper titled \"Denoising Diffusion Probabilities Models\"\\E$"}
+{"rule":"ARTICLE_ADJECTIVE_OF","sentence":"^\\QMultitask fine-tuning is an extension of single task fine-tuning, where the training dataset is a composed of example inputs and outputs for multiple tasks.\\E$"}
