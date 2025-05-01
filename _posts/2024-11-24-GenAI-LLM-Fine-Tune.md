@@ -20,13 +20,13 @@ Instruction fine-tuning trains the model using examples that demonstrate how it 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-2.png">
 
-For example, if you want to fine tune your model to improve its summarization ability, you'd build up a data set of examples that begin with the instruction summarize, the following text or a similar phrase. And if you are improving the model's translation skills, your examples would include instructions like translate this sentence.
+For example, if you want to fine tune your model to improve its summarization ability, you'd build up a data set of examples that begin with the instruction **"Summarize the following text"** or a similar phrase. And if you are improving the model's translation skills, your examples would include instructions like **"Translate this sentence"**.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-3.png">
 
 These prompt completion examples allow the model to learn to generate responses that follow the given instructions.
 
-Instruction fine-tuning, where all of the model's weights are updated is known as <mark>full fine-tuning</mark>. The process results in a new version of the model with updated weights
+<mark>Instruction fine-tuning, where all of the model's weights are updated is known as full fine-tuning. The process results in a new version of the model with updated weights</mark>.
 
 ### The Fine-Tuning Process
 
@@ -36,6 +36,7 @@ Instruction fine-tuning, where all of the model's weights are updated is known a
 - Next, you compare the LLM completion with the response specified in the training data. You can see here that the model didn't do a great job, it classified the review as neutral, which is a bit of an understatement. The review is clearly very positive. Remember that the output of an LLM is a probability distribution across tokens. So you can compare the distribution of the completion and that of the training label and use the standard cross entropy function to calculate loss between the two token distributions.
 - Then use the calculated loss to update your model weights in standard back propagation. You'll do this for many batches of prompt completion pairs and over several epochs, update the weights so that the model's performance on the task improves
 - After you've completed your fine tuning, you can perform a final performance evaluation using the holdout test data set. This will give you the test accuracy.
+
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-5.png">
 
@@ -80,38 +81,36 @@ With PEFT, most if not all of the LLM weights are kept frozen. As a result, the 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-14.png">
 
-### PEFT Trade-offs
+- **PEFT Trade-offs**
+  - Parameter Efficiency
+  - Memory Efficiency
+  - Model Performance
+  - Training Speed
+  - Inference Costs
 
-- Parameter Efficiency
-- Memory Efficiency
-- Model Performance
-- Training Speed
-- Inference Costs
+- **PEFT methods**
+  - Selective
+    - Select subset of initial LLM parameters to fine-tune
+    - You have the option to train only certain components of the model or specific layers, or even individual parameter types.
+    - Researchers have found that the performance of these methods is mixed and there are significant trade-offs between parameter efficiency and compute efficiency
 
-### PEFT methods
+  - Reparameterization
+    - Reparameterize model weights using a low-rank representation
+    - Reduce the number of parameters to train by creating new low rank transformations of the original network weights
+    - LoRA
 
-- Selective
+  - Additive
+    - Add trainable layers or parameters to model
+    - Keep all the original LLM weights frozen and introducing new trainable components
+    - Adapters
+      - add new trainable layers to the architecture of the model, typically inside the encoder or decoder components after the attention or feed-forward layers
+    - Soft Prompts
+      - keep the model architecture fixed and frozen, and focus on manipulating the input to achieve better performance.
+      - This can be done by adding trainable parameters to the prompt embeddings or keeping the input fixed and retraining the embedding weights
 
-  - Select subset of initial LLM params to fine-tune
-  - You have the option to train only certain components of the model or specific layers, or even individual parameter types.
-  - Researchers have found that the performance of these methods is mixed and there are significant trade-offs between parameter efficiency and compute efficiency
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-25.png">
 
-- Reparameterization
-
-  - Reparameterize mdoel weights using a low-rank representation
-  - Reduce the number of parameters to train by creating new low rank transformations of the original network weights
-  - LoRA
-
-- Additive
-  - Add trainable layers or parameters to model
-  - Keep all of the original LLM weights frozen and introducing new trainable components
-  - Adapters
-    - add new trainable layers to the architecture of the model, typically inside the encoder or decoder components after the attention or feed-forward layers
-  - Soft Prompts
-    - keep the model architecture fixed and frozen, and focus on manipulating the input to achieve better performance.
-    - This can be done by adding trainable parameters to the prompt embeddings or keeping the input fixed and retraining the embedding weights
-
-## LoRA (Low-Rank Adaptation of LLM)
+### LoRA (Low-Rank Adaptation of LLM)
 
 LoRA is a strategy that reduces the number of parameters to be trained during fine-tuning by freezing all of the original model parameters and then injecting a pair of rank decomposition matrices alongside the original weights.
 
@@ -166,7 +165,7 @@ In contrast with prompt tuning, the weights of the large language model are froz
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-22.png">
 
-### Performance of prompt tuning
+## Performance of prompt tuning
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm2-23.png">
 
@@ -280,3 +279,14 @@ BIG-bench currently consists of 204 tasks, ranging through linguistics, childhoo
 ### HELM (Holistic Evaluation of Language Models)
 
 The HELM framework aims to improve the transparency of models, and to offer guidance on which models perform well for specific tasks. HELM takes a multimetric approach, measuring seven metrics across 16 core scenarios, ensuring that trade-offs between models and metrics are clearly exposed.
+
+
+### Appendix 3: Instruction Fine-Tuning Steps
+
+- Steps to prepare your data
+  - Collection (instruction, response) pairs
+  - Concatenate pairs (add prompt template, if applicable)
+  - Tokenize: Pad, Truncate
+  - Split into train/dev/test sets
+
+- 
