@@ -1,5 +1,5 @@
 ---
-list_title: GenAI | Fine-tuning Stable Diffusion Models | Textual Inversion
+list_title: Stable Diffusion | Fine-Tuning | Textual Inversion
 title: Textual Inversion
 layout: post
 mathjax: true

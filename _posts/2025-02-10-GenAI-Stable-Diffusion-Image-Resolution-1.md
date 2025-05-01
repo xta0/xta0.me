@@ -1,5 +1,5 @@
 ---
-list_title: GenAI | Stable Diffusion Models | Image Super-Resolution
+list_title: Stable Diffusion Models | Image Super-Resolution
 title:  Image Super-Resolution
 layout: post
 mathjax: true

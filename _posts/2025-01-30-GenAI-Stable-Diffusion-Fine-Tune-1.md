@@ -1,6 +1,6 @@
 ---
-list_title: GenAI | Stable Diffusion Models | Fine-tuning | LoRA
-title: LoRA Fine-tuning
+list_title: Stable Diffusion | Fine-Tuning | LoRA
+title: LoRA Fine-Tuning
 layout: post
 mathjax: true
 categories: ["GenAI", "LoRA", "Stable Diffusion"]
