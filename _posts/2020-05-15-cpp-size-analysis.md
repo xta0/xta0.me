@@ -1,6 +1,6 @@
 ---
-list_title:  C++ Performance | Code size matter
-title: Code size matter
+list_title:  C++ Performance | Code Size Analysis
+title: Code Size Analysis
 layout: post
 categories: ["C++", "C", "Assembly"]
 ---
