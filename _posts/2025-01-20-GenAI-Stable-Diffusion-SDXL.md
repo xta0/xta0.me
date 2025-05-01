@@ -1,6 +1,6 @@
 ---
-list_title: GenAI | The Stable Diffusion Model Pipeline
-title: The SDXL model pipeline
+list_title: GenAI | The SDXL Model Pipeline
+title: The SDXL Model Pipeline
 layout: post
 mathjax: true
 categories: ["GenAI", "Stable Diffusion"]
