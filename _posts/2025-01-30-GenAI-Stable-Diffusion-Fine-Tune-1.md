@@ -1,12 +1,12 @@
 ---
-list_title: GenAI | Fine-tuning Stable Diffusion Models | LoRA
-title: Fine-tunning Stable Diffusion Models using LoRA
+list_title: GenAI | Stable Diffusion Models | Fine-tuning | LoRA
+title: LoRA Fine-tuning
 layout: post
 mathjax: true
-categories: ["GenAI", "Stable Diffusion"]
+categories: ["GenAI", "LoRA", "Stable Diffusion"]
 ---
 
-## LoRA Fine-tuning
+## How LoRA Works
 
 [In previous articles](https://xta0.me/2024/11/24/GenAI-LLM-2.html), we briefly discussed LoRA as a method for fine-tuning LLMs. With LoRA, the original model remains unchanged and frozen, while the fine-tuned weight adjustments are stored separately in what is known as a LoRA file.
 
@@ -41,9 +41,20 @@ So, the overall idea of merging LoRA weights to the checkpoint model works like 
 3. Produce $\Delta W = AB^T$
 4. Update the model weights
 
+### The benefits of LoRA
+
+- **Reduced resource consumption**. Fine-tuning deep learning models typically requires substantial computational resources, which can be expensive and time-consuming. LoRA reduces the demand for resources while maintaining high performance.
+
+- **Faster iterations**. LoRA enables rapid iterations, making it easier to experiment with different fine-tuning tasks and adapt models quickly.
+
+- **Improved transfer learning**. LoRA enhances the effectiveness of transfer learning, as models with LoRA adapters can be fine-tuned with fewer data. This is particularly valuable in situations where labeled data are scarce.
+
 ### LoRA in practice
 
-To utilize LoRA, we can leverage the `load_lora_weights` method from `StableDiffusionPipeline`. The example below demonstrates how to apply two LoRA filters. The `adapter_weights` parameter determines the extent to which the LoRA model's "style" influences the output.
+
+### LoRA in Stable Diffusion
+
+To utilize LoRA, we can leverage the `StableDiffusionPipeline` method from [HuggingFace's diffuser package](https://huggingface.co/docs/diffusers/index). The example below demonstrates how to apply two LoRA filters. The `adapter_weights` parameter determines the extent to which the LoRA model's "style" influences the output.
 
 ```python
 # LoRA fine tuning

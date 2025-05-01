@@ -1,12 +1,10 @@
 ---
 list_title: GenAI | Fine-tuning Stable Diffusion Models | Textual Inversion
-title: Fine-tunning Stable Diffusion Models using Textual Inversion
+title: Textual Inversion
 layout: post
 mathjax: true
-categories: ["GenAI", "Stable Diffusion"]
+categories: ["GenAI", "Textual Inversion", "Fine-Tune", "Stable Diffusion"]
 ---
-
-## Textual Inversion
 
 Textual Inversion(TI) is another way to fine tune the pretrained model. Unlike LoRA, <mark>TI is a technique to add new embedding space based on the trained data</mark>. Simply put, TI is a text embedding that matches the target image the best, such as its style, object, or face. The key is to find the new embedding that does not exist in the current text encoder.
 
