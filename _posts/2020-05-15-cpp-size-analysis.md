@@ -103,7 +103,7 @@ LBB2_2:
 - `b.hs`是conditional jump，如果越界，则jump到`LBB2_2`，进而throw exception
 - `add	x0, x8, x1, lsl #2` 上面提到`x8`保存的是`v.begin`，`lsl`是左移，因此这里计算的是 `x0 <- x8 + x1<<2`，左移相当于乘法，继续展开相当于 `x0 <- v.begin() + index*sizeof(int)`实际上就是`this->beign[index]`
 
-由此，我们可以推测`vector`的实现大概为
+由此，我们可以推测`at`的实现大概为
 
 ```cpp
 template<typename T>
