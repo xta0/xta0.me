@@ -184,25 +184,59 @@ However, if we look closely, in each `Transformer2DModel`, we actually have two 
 Training the attention U-Net model is similar to training the diffusion model outlined in the previous post. <mark>The major difference is that we now have (text, image) pairs as our training data</mark>.
 
 - Start with an image and caption, e.g. "a cat wearing sunglasses on a beach"
-  - Convert the image to a latent representation using the VAE encoder → `z₀`
+  - Convert the image to a latent representation using the VAE encoder → $z_{\theta}$
   - Encode the text prompt using CLIP → text_embedding
 - Add noise to latent
-  - Sample a time step `t` from the noise schedule.
-  - Add Gaussian noise to `z₀` to get `z_t` using the same following formula, Where `ε` is standard Gaussian noise:
+  - Sample a time step $t$ from the noise schedule.
+  - Add Gaussian noise to $z_{\theta}$ to get $z_t$ using the same following formula, Where $\epsilon$ is standard Gaussian noise:
 
-  ```python
-  z_t = √α_t * z₀ + √(1 - α_t) * ε
-  ```
+  $$
+  z_t = \sqrt{\alpha_t} \cdot z_0 + \sqrt{1 - \alpha_t} \cdot \varepsilon
+  $$
+
 - Predict the noise with U-Net
-  - The noisy latent `z_t` is passed into the U-Net
+  - The noisy latent $z_t$ is passed into the U-Net
   - The U-Net is conditioned on the text embedding (via cross-attention)
-  - The U-Net tries to predict the noise `ε_theta`
+  - The U-Net tries to predict the noise $\varepsilon_\theta$
 - Compute the loss as follows
 
-  ```python
-  L = || ε_theta - ε ||²
-  ```
+  $$
+  \mathcal{L} = \left\| \varepsilon_\theta - \varepsilon \right\|^2
+  $$
+  
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-02-01.png">
+
+### Img2img Diffusion
+
+As previously discussed, Stable Diffusion models do not rely solely on text for initial guidance; they can also use an image as a starting point. The idea here involves leveraging the text-to-image pipeline to generate a small image (e.g., 256x256) and then applying an image-to-image model to upscale it, achieving a higher resolution.
+
+```python
+# img2img pipeline
+img2img_pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
+    "stablediffusionapi/deliberate-v2",
+    torch_dtype = torch.float32,
+    cache_dir = "/Volumes/ai-1t/diffuser"
+).to("mps")
+
+# upscale the image to 768 x 768
+img2image_3x = img2img_pipe(
+    prompt = prompt,
+    negative_prompt = neg_prompt,
+    image = resized_raw_image, # the original low-res image
+    strength = 0.3,
+    number_of_inference_steps = 80,
+    guidance_scale = 8,
+    generator = torch.Generator("mps").manual_seed(3)
+).images[0]
+```
+
+Below is a comparison between the raw image and the enhanced image. The model nearly enhanced every aspect of the image - from the eyebrows and eyelashes to the pupils and the mouth.
+
+<div class="md-flex-h md-flex-no-wrap">
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-upscale-base.png"></div>
+<div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-upscale-img2img.png"></div>
+</div>
+
 
 ## Resources
 
