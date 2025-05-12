@@ -8,13 +8,13 @@ categories: ["GenAI", "Textual Inversion", "Fine-Tune", "Stable Diffusion"]
 
 Textual Inversion(TI) is another way to fine tune the pretrained model. Unlike LoRA, <mark>TI is a technique to add new embedding space based on the trained data</mark>. Simply put, TI is a text embedding that matches the target image the best, such as its style, object, or face. The key is to find the new embedding that does not exist in the current text encoder.
 
-### How does TI works
+### How TI works
 
 A latent diffusion model can use images as guidance during training. For training a TI model, we will follow the same pipeline from the previous article, using a minimal set of three to five images, though larger datasets often yield better results.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-03-01.png">
 
-The goal of training is to find a new embedding represented by $v_*$. We use $S_*$ as the token string placeholder to represent the new concepts we wish to learn. We aim to find a single word embedding, such that sentences of the form "A photo of S*" will lead to the reconstruction of images from our small training set. This embedding is found through an optimization process shown in the above figure, which we refer to as <mark>"Textual Inversion"</mark>. 
+The goal of training is to find a new embedding represented by $v_{*}$. We use $S_{*}$ as the token string placeholder to represent the new concepts we wish to learn. We aim to find a single word embedding, such that sentences of the form "A photo of S*" will lead to the reconstruction of images from our small training set. This embedding is found through an optimization process shown in the above figure, which we refer to as <mark>"Textual Inversion"</mark>. 
 
 For example, let's say we have 5-7 images of a new object, like a custom teddy bear. We want the model to learn what this plush toy looks like. Instead of describing the object in words (e.g., "a teddy bear"), we use `S*` in the prompt:
 
@@ -76,7 +76,7 @@ for key in keys:
     print(key, ": ", loaded_leared_embeds[key].shape) # <midjourney-style> :  torch.Size([768])
 ```
 
-### TI in practice
+### TI in Stable Diffusion
 
 To use TI models, we could just leverage the `load_textual_inversion` method from the `StableDiffusionPipeline`
 
