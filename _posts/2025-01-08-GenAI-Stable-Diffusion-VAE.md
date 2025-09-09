@@ -6,21 +6,6 @@ mathjax: true
 categories: ["GenAI", "Stable Diffusion"]
 ---
 
-## Introduction
-
-In the previous post, we explored the theory behind diffusion models. While the original diffusion model serves as more of a proof of concept, it highlights the immense potential of multi-step diffusion models compared to one-pass neural networks. However, <mark>it comes with a significant drawback: the pre-trained model operates in pixel space, which is computationally intensive</mark>. In 2022, researchers introduced [Latent Diffusion Models](https://arxiv.org/abs/2112.10752), which effectively addressed the performance limitations of earlier diffusion models. <mark>This approach later became widely known as Stable Diffusion</mark>.
-
-At its core, Stable Diffusion contains a collection of models that work together to produce the output image
-
-- <strong>Tokenizer</strong>: Converts a text prompt into a sequence of tokens.
-- <strong>Text Encoder</strong>: A specialized Transformer-based language model(CLIP), converting tokens into text embeddings.
-- <strong>Variational Autoencoder (VAE)</strong>: Encodes images into a latent space and reconstructs them back into images.
-- <strong>U-Net</strong>: The core of the denoising process. This architecture models the noise removal steps by taking inputs such as noise, time-step data, and a conditional signal (e.g., a text representation). It then predicts noise residuals, which guide the image reconstruction process.
-
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-02-02.png">
-
-The power of stable diffusion models comes from the ability to generate images through text. So how does the text prompt affects the image generation process? This turns out to be a complex process involving the coordination of several models. Let’s walk through it step by step.
-
 ## Variational Autoencoder (VAE)
 
 The VAE in Stable Diffusion doesn’t control the image generation process. Instead, it compresses images into a lower-dimensional latent representation before diffusion, and decompresses the final latent back into an image after the diffusion model has finished sampling.
