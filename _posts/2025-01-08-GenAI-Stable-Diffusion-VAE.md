@@ -6,6 +6,21 @@ mathjax: true
 categories: ["GenAI", "Stable Diffusion"]
 ---
 
+## Introduction
+
+In the previous post, we explored the theory behind diffusion models. While the original diffusion model serves as more of a proof of concept, it highlights the immense potential of multi-step diffusion models compared to one-pass neural networks. However, <mark>it comes with a significant drawback: the pre-trained model operates in pixel space, which is computationally intensive</mark>. In 2022, researchers introduced [Latent Diffusion Models](https://arxiv.org/abs/2112.10752), which effectively addressed the performance limitations of earlier diffusion models. <mark>This approach later became widely known as Stable Diffusion</mark>.
+
+At its core, Stable Diffusion contains a collection of models that work together to produce the output image
+
+- <strong>Tokenizer</strong>: Converts a text prompt into a sequence of tokens.
+- <strong>Text Encoder</strong>: A specialized Transformer-based language model(CLIP), converting tokens into text embeddings.
+- <strong>Variational Autoencoder (VAE)</strong>: Encodes images into a latent space and reconstructs them back into images.
+- <strong>U-Net</strong>: The core of the denoising process. This architecture models the noise removal steps by taking inputs such as noise, time-step data, and a conditional signal (e.g., a text representation). It then predicts noise residuals, which guide the image reconstruction process.
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-02-02.png">
+
+The power of stable diffusion models comes from the ability to generate images through text. So how does the text prompt affects the image generation process? This turns out to be a complex process involving the coordination of several models. Let’s walk through it step by step.
+
 ## Variational Autoencoder (VAE)
 
 The VAE in Stable Diffusion doesn’t control the image generation process. Instead, it compresses images into a lower-dimensional latent representation before diffusion, and decompresses the final latent back into an image after the diffusion model has finished sampling.
@@ -78,3 +93,87 @@ In summary, VAE maintains a compact and smooth latent space, ensuring that <mark
 - [Denoising Diffusion Probabilities Models](https://arxiv.org/abs/2006.11239)
 - [Using Stable Diffusion with Python](https://www.amazon.com/Using-Stable-Diffusion-Python-Generation/dp/1835086373/)
 
+
+## Appendix: VAE in Stable Diffusion
+
+The VAE architecture used in Stable Diffusion 1.5 can be found [here](https://gist.github.com/xta0/c928805a004d5b6bd822c7cc79a66387). The following code shows how to use VAE to encode and decode an image:
+
+```pythnon
+# Encoding
+
+# the image has to conform to the shape of (N,C,H,W)
+print(image.shape) # [1, 3, 300, 300]
+
+vae_model = AutoencoderKL.from_pretrained(
+    "runwayml/stable-diffusion-v1-5",
+    subfolder = "vae",
+    torch_dtype=torch.float16,
+    cached_dir = CACHE_DIR
+)
+
+# encode the image into a laten distribution and sample it randomly
+latents = vae_model.encode(image).latent_dist.sample()
+print(latents[0].shape) #[4, 37, 37]
+
+# Decoding
+
+with torch.no_grad():
+    decode_image = vae_model.decode(
+        latents,
+        return_dict = False
+    )[0][0].to("cpu")
+
+# from [-1, 1] to [0, 1]
+decode_image = (decode_image / 2 + 0.5).clamp(0, 1)
+
+print(decode_image.shape) # [3, 296, 296]
+```
+Let's first take a look at the encoding process. As mentioned earlier, the output of encoder is a Gaussian distribution. `latents = vae_model.encode(image).latent_dist.sample()` does three things:
+
+- `vae_model.encode(image)` returns an object that contains a distribution(`DiagonalGaussianDistribution`) over latent vectors.
+- `.latent_dist` is an instance of a Gaussian (Normal) distribution, parameterized by $\mu$ and $\sigma$
+- `sample()` draws a random sample from this distribution
+
+The `DiagonalGaussianDistribution` is defined as follows:
+
+```python
+class DiagonalGaussianDistribution:
+    def __init__(self, parameters):
+        self.mean, self.logvar = torch.chunk(parameters, 2, dim=1)
+        self.std = torch.exp(0.5 * self.logvar)
+    
+    def sample(self):
+        noise = torch.randn_like(self.mean)
+        return self.mean + self.std * noise
+```
+
+The shape of encoded latent vector is `[4, 37, 37]`. This is because
+
+- `4` is latent channels (Stable Diffusion uses 4D latent space instead of RGB’s 3)
+- `37x37` is the spatial resolution (input image was 300x300). 
+
+**How is `37` calculated**?
+
+If we examine the [VAE architecture](https://gist.github.com/xta0/c928805a004d5b6bd822c7cc79a66387), the output of the encoder in our example from this layer:
+
+```python
+(conv_out): Conv2d(512, 8, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+```
+Since we have three conv2d layers in the encoder, each layer does a `stride=1` convolution, thus the size of the image shrinks by half after each layer: `300 -> 150 -> 75 -> 37`
+
+Let's say the output of the `conv_out` layer is a `[1, 8, H, W]` latent vector, the next thing we do is to split this tensor to two `[1, 4, H, W]` tensors for $\mu$ and $\sigma$ respectively:
+
+```python
+mu, logvar = torch.chunk(tensor, 2, dim=1)
+mu # [1, 4, H, W]
+logvar #[1,4, H, W]
+```
+Then we do the sampling using $\mu$ and $\sigma$:
+
+```python
+std = torch.exp(0.5 * logvar)              # [1, 4, H, W]
+eps = torch.randn_like(std)               # [1, 4, H, W]
+z = mu + std * eps                        # [1, 4, H, W]
+```
+ 
+ Finally, `z` is the latent vector that gets passed to the denoising U-Net.
