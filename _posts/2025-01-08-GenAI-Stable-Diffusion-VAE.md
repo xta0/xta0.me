@@ -1,6 +1,6 @@
 ---
-list_title: Stable Diffusion | Theory Behind the Diffusion Models
-title: Theory Behind the Diffusion Models
+list_title: Stable Diffusion | Variational Autoencoder
+title: Variational Autoencoder
 layout: post
 mathjax: true
 categories: ["GenAI", "Stable Diffusion"]

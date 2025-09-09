@@ -1,6 +1,6 @@
 ---
-list_title: Stable Diffusion | How It Works
-title: How Stable Diffusion Work
+list_title: Stable Diffusion | CLIP Encoders
+title: CLIP Encoders
 layout: post
 mathjax: true
 categories: ["GenAI", "Stable Diffusion"]
