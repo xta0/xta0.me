@@ -8,7 +8,7 @@ categories: ["GenAI", "Stable Diffusion"]
 
 ## Variational Autoencoder (VAE)
 
-The VAE in Stable Diffusion doesn’t control the image generation process. Instead, it compresses images into a lower-dimensional latent representation before diffusion, and decompresses the final latent back into an image after the diffusion model has finished sampling.
+The VAE in Stable Diffusion doesn’t control the image generation process directly. Instead, it compresses images into a lower-dimensional latent representation before diffusion, and decompresses the final latent back into an image after the diffusion model has finished sampling.
 
 ### The Autoencoder Architecture
 

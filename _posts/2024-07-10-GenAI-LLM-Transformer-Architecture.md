@@ -1,6 +1,6 @@
 ---
-list_title: GenAI | The Transformer Architecture
-title:  The Transformer Architecture
+list_title: GenAI | The Transformer Architecture Overview
+title:  The Transformer Architecture Overview
 layout: post
 categories: ["GenAI", "Transformer", "LLM"]
 ---

@@ -1,5 +1,5 @@
 ---
-list_title: Stable Diffusion | Theory Behind the Diffusion Models
+list_title: Stable Diffusion | DDPM
 title: Theory Behind the Diffusion Models
 layout: post
 mathjax: true
