@@ -170,6 +170,31 @@ $$
 
 $x_0$ is our training images. $p_{\theta}$ is the probability given by the model of parameter $\theta$. Our goal is to find parameters $\theta$ that maximizes the quantity. $log$ is introduced to stable the computation.
 
+Suppose we have two variables $x_1$, $x_2$ drawn from two different probability density functions: $p(x_1)$ and $p(x_2)$. The joint probability distribution is calculated as follows:
+
+$$
+P(x_1, x_2) = p(x_1) x p(x_2 | x_1)
+$$
+
+One way to visualize the probability distribution is using heat maps:
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-05.png">
+
+The color represents the density value of the joint probability distribution. 
+
+<div class="md-flex-h md-flex-no-wrap">
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-07.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-06.png"></div>
+</div>
+
+For a given $x_1$ and $_x2$, 
+
+- The **joint probability** $p(x_1, x_2)$ is the probability we have $x_1$ **and** $x_2$
+- The **conditional probability** $p(x_2 | x_1)$ is the probability that we have $x_2$ **knowing that** we have $x_1$. In other words, it is the portion of the joint probility $p(x_1, x_2)$ over the sum of all the squares give the value of $x_1$
+
+$$
+p(x_1) = \int p(x_1, x_2)\, dx_2
+$$
 
 The conditional probability can be described using Bayes' theorem:
 
