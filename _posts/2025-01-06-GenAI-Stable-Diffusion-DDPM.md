@@ -160,7 +160,7 @@ For simplicity, we perform 16 iterations and select 8 images for display:
 
 To recover the image from a noise, we need to find a way to recover $x_0$ from $x_t$. From probability perspective, we aim to compute the conditional probability $p_{\theta}(x_{t-1}\|x_t)$. However, this revert process is uncomputable because $\theta$ is unknown.
 
-### Maxium Likelyhood and Joint Probabilty Distribution
+### Maxium Likelyhood
 
 Typically, when we have a large image training data set, we can try finding a parameter $\theta$ that maximizes the probality of the model seeing the training data:
 
@@ -170,13 +170,15 @@ $$
 
 $x_0$ is our training images. $p_{\theta}$ is the probability given by the model of parameter $\theta$. Our goal is to find parameters $\theta$ that maximizes the quantity. $log$ is introduced to stable the computation.
 
+### Joint Probabilty Distribution
+
 Suppose we have two variables $x_1$, $x_2$ drawn from two different probability density functions: $p(x_1)$ and $p(x_2)$. The joint probability distribution is calculated as follows:
 
 $$
 P(x_1, x_2) = p(x_1) \times p(x_2 | x_1)
 $$
 
-One way to visualize the probability distribution is using heat maps:
+One way to visualize the joint probability distribution is using heat maps:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-05.png" width="60%">
 
@@ -190,11 +192,24 @@ The color represents the density value of the joint probability distribution.
 For a given $x_1$ and $_x2$, 
 
 - The **joint probability** $p(x_1, x_2)$ is the probability we have $x_1$ **and** $x_2$
-- The **conditional probability** $p(x_2 | x_1)$ is the probability that we have $x_2$ **knowing that** we have $x_1$. In other words, it is the portion of the joint probility $p(x_1, x_2)$ over the sum of all the squares give the value of $x_1$
+- The **conditional probability** $p(x_2 | x_1)$ is the probability that we have $x_2$ **knowing that** we have $x_1$. In other words, it is the portion of the joint probility $p(x_1, x_2)$ over the sum of all the squares give the value of $x_1$.
+
+### Marginalization
+
+Say if we just want to obtain the probability of a random variable $x_1$, we could sum all the joint probability $p(x_1, x_2)$ across all $x_2$ 
 
 $$
 p(x_1) = \int p(x_1, x_2)\, dx_2
 $$
+
+This is called **marginalization**. If we compute all the values for $p(x_1)$, we can reconstruct the probability dense function of $p(x_1)$
+
+<div class="md-flex-h md-flex-no-wrap">
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-09.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-08.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-10.png"></div>
+</div>
+
 
 The conditional probability can be described using Bayes' theorem:
 
