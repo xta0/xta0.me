@@ -173,7 +173,7 @@ $x_0$ is our training images. $p_{\theta}$ is the probability given by the model
 Suppose we have two variables $x_1$, $x_2$ drawn from two different probability density functions: $p(x_1)$ and $p(x_2)$. The joint probability distribution is calculated as follows:
 
 $$
-P(x_1, x_2) = p(x_1) x p(x_2 | x_1)
+P(x_1, x_2) = p(x_1) \times p(x_2 | x_1)
 $$
 
 One way to visualize the probability distribution is using heat maps:
