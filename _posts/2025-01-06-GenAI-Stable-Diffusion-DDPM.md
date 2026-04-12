@@ -178,7 +178,7 @@ $$
 
 One way to visualize the probability distribution is using heat maps:
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-05.png" width=60%>
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-05.png" width="60%">
 
 The color represents the density value of the joint probability distribution. 
 
