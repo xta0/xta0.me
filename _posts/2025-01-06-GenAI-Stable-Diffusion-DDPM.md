@@ -8,9 +8,13 @@ categories: ["GenAI", "Stable Diffusion"]
 
 ## Introduction
 
-In previous [articles](https://xta0.me/2019/08/03/Learn-PyTorch-3.html), we have explored an image generation technique using the GAN network. However, in the world of generative models, utilizing diffusion models to generate images has now become a new trend. In Jan 2020, a paper titled [Denoising Diffusion Probabilities Models](https://arxiv.org/abs/2006.11239) introduced a diffusion-based probability model for image generation. The term <strong>diffusion</strong> is borrowed from thermodynamics. The original meaning is the movement of particles from a region of high concentration to a region of low concentration.
+In previous [articles](https://xta0.me/2019/08/03/Learn-PyTorch-3.html), we have explored an image generation technique using the GAN network. However, in the world of generative models, utilizing diffusion models to generate images has now become a new trend. In Jan 2020, a paper titled [Denoising Diffusion Probabilities Models](https://arxiv.org/abs/2006.11239) introduced a diffusion-based probability model for image generation: 
 
-This idea of diffusion inspired machine learning researchers to apply it to <mark>denoising and sampling process</mark>. In other words, <mark>we can start with a noisy image and gradually transform an image with high levels of noise into a clear version of the original image</mark>. Therefore, this generative model, is referred to as a denoising diffusion probability model.
+Suppose we are given a **sample** of observations from $p_{data}$. Our job is to generate a new image that comes from the $p_{data}$ distribution
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-01.png">
+
+To achieve this process, <mark>we can start with a noisy image and gradually transforms an image with high-levels of noise into a clear version of the original image</mark>. Therefore, this generative model, is referred to as a denoising diffusion probability model.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-09.gif">
 
@@ -21,12 +25,6 @@ In this post, we will explore the theory behind diffusion models and dive deeper
 - The sampling process
 
 Understanding these concepts will give us a solid foundation to grasp how diffusion models work, paving the way for a deeper dive into Stable Diffusion later on.
-
-## Image Generation is a probability game
-
-Suppose we are given a **sample** of observations from $p_{data}$. Our job is to generate a new image that comes from the $p_{data}$ distribution
-
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-01.png">
 
 ## The image-to-noise transformation
 
@@ -61,10 +59,10 @@ $$
 \epsilon_t ~ N(0,1)
 $$
 
-Additionally, the value of $\beta_t$ keeps increasing at each step:
+$\beta_t$ is called noise schedule. The value of $\beta_t$ keeps increasing at each step:
 
 $$
-0 < \beta_1 < \beta_2 < \beta_3 < \beta_{t-1} < \beta_t < 1 
+0 <= \beta_1 < \beta_2 < \beta_3 < \beta_{t-1} < \beta_t <= 1 
 $$
 
 Let us define:
@@ -78,6 +76,18 @@ Then the above formula can be rewritten as:
 $$
 x_t = \sqrt{1-\alpha_t} \times \epsilon_{t-1} + \sqrt{\alpha_t} \times x_{t-1}
 $$
+
+To describe this process from probability perspective, the noiser image is a sample from a normal distirbution 
+
+$$
+q(x_{t-1}|x_{t})
+$$
+
+where, $\mu$ is the previous noise image, and the covariant $\epsilon$ is the added noise.
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-02.png">
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-02.png">
 
 Next, we can consider whether it is possible to <mark>directly derive $x_t$ from $x_0$</mark>, which would eliminate the need for intermediate iterative steps (from $x_1$ to $x_{t-1}$). 
 
@@ -97,7 +107,13 @@ $$
 \bar{\alpha}_t = \alpha_t \alpha_{t-1} \alpha_{t-2} \alpha_{t-3} \cdots \alpha_2 \alpha_1
 $$
 
-This means that, we can create a list of $\beta_t$, for each moment $t$, we can directly derive $x_t$ from the original image $x_0$. The following code simulates the above process
+This means that, we can create a list of $\beta_t$, for each moment $t$, we can directly derive $x_t$ from the original image $x_0$. 
+
+$$
+q(x_t \mid x_0) = \mathcal{N}\left(\sqrt{\bar{\alpha}_t}\, x_0,\; (1 - \bar{\alpha}_t)\, I\right)
+$$
+
+The following code simulates the above process
 
 ```python
 # --- Step 1: Read and Normalize the Image ---
@@ -142,7 +158,7 @@ For simplicity, we perform 16 iterations and select 8 images for display:
 
 ## The noise-to-image reconstruction
 
-To recover the image from noise, we need to find a way to recover $x_0$ from $x_t$. However, this revert process is uncomputable without additional information.
+To recover the image from a noise, we need to find the way to recover $x_0$ from $x_t$. However, this revert process is uncomputable without additional information.
 
 From the perspective of probability theory, we aim to compute the conditional probability $p(x_{t-1}\|x_t)$. This conditional probability can be described using Bayes' theorem:
 
@@ -181,7 +197,7 @@ Let's just treat the neural network as a black box for now, and only focus on th
 > Why take timestamp $t$ as input? Because all the denoising process share the same neural network weights, the input $t$ will help train a UNet with a time step in mind.
 
 
-For any normal probability distribution, there are two key parameters: the mean `µ` and the variance `σ`. In the original DDPM paper, the model uses a fixed variance, and the mean `µ` is the only parameter that needs to be learned through a neural network.
+For any normal probability distribution, there are two key parameters: the mean `µ` and the variance `θ`. In the original DDRM paper, the model uses a fixed variance, and the mean `µ` is the only parameter that needs to be learned through a neural network.
 
 At high-level, the training loop can be described like this:
 
@@ -246,13 +262,13 @@ The following diagram illustrates the sampling process:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-08.png">
 
-Note that we add noise ($\sqrt{1 - \alpha_t} \times z$) to the end of the formula to stabilize the model. This is found to be useful by researchers and will significantly improve the generated image quality.
+Note that we add a noise($\sqrt{1 - \alpha_t} \times z$) to the end of the formula to stabilize the model. This is found to be useful by searchers that will significantly improve the generated image quality.
 
 ## Stable Diffusion
 
 Now that we have explored the theory behind diffusion models. While the original diffusion model serves as more of a proof of concept, it highlights the immense potential of multi-step diffusion models compared to one-pass neural networks. However, <mark>it comes with a significant drawback: the pre-trained model operates in pixel space, which is computationally intensive</mark>. In 2022, researchers introduced [Latent Diffusion Models](https://arxiv.org/abs/2112.10752), which effectively addressed the performance limitations of earlier diffusion models. <mark>This approach later became widely known as Stable Diffusion</mark>.
 
-At its core, Stable Diffusion contains a collection of models that work together to produce the output image.
+At its core, Stable Diffusion contains a collection of models that work together to produce the output image
 
 - <strong>Tokenizer</strong>: Converts a text prompt into a sequence of tokens.
 - <strong>Text Encoder</strong>: A specialized Transformer-based language model(CLIP), converting tokens into text embeddings.
@@ -261,7 +277,7 @@ At its core, Stable Diffusion contains a collection of models that work together
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-02-02.png">
 
-The power of stable diffusion models comes from the ability to generate images through text. So how does the text prompt affect the image generation process? This turns out to be a complex process involving the coordination of several models. Let’s walk through it step by step in the following articles.
+The power of stable diffusion models comes from the ability to generate images through text. So how does the text prompt affects the image generation process? This turns out to be a complex process involving the coordination of several models. Let’s walk through it step by step in the following articles.
 
 ## Resources
 
