@@ -192,7 +192,7 @@ The color represents the density value of the joint probability distribution.
 For a given $x_1$ and $_x2$, 
 
 - The **joint probability** $p(x_1, x_2)$ is the probability we have $x_1$ **and** $x_2$
-- The **conditional probability** $p(x_2 | x_1)$ is the probability that we have $x_2$ **knowing that** we have $x_1$. In other words, it is the portion of the joint probility $p(x_1, x_2)$ over the sum of all the squares give the value of $x_1$.
+- The **conditional probability** $p(x_2 \| x_1)$ is the probability that we have $x_2$ **knowing that** we have $x_1$. In other words, it is the portion of the joint probility $p(x_1, x_2)$ over the sum of all the squares give the value of $x_1$.
 
 ### Marginalization
 
@@ -202,13 +202,25 @@ $$
 p(x_1) = \int p(x_1, x_2)\, dx_2
 $$
 
-This is called **marginalization**. If we compute all the values for $p(x_1)$, we can reconstruct the probability dense function of $p(x_1)$
+This is called **marginalization**. If we compute all the values for $p(x_1)$, eventually, we can reconstruct the probability dense function of $p(x_1)$
 
 <div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-09.png"></div>
 <div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-08.png"></div>
 <div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-10.png"></div>
 </div>
+
+If we have $t$ variables, the join probability can be calculatd as follows:
+
+$$
+p(x_1, x_2, \ldots, x_T) = p(x_1) \times p(x_2 \mid x_1) \times \cdots \times p(x_T \mid x_1, \ldots, x_{T-1})
+$$
+
+This is usually noted as:
+
+$$
+p(x_1, x_2, \ldots, x_T) = p(x_{1:T})
+$$
 
 
 The conditional probability can be described using Bayes' theorem:
