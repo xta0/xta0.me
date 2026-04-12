@@ -158,9 +158,20 @@ For simplicity, we perform 16 iterations and select 8 images for display:
 
 ## The noise-to-image reconstruction
 
-To recover the image from a noise, we need to find the way to recover $x_0$ from $x_t$. However, this revert process is uncomputable without additional information.
+To recover the image from a noise, we need to find a way to recover $x_0$ from $x_t$. From probability perspective, we aim to compute the conditional probability $p_{\theta}(x_{t-1}\|x_t)$. However, this revert process is uncomputable because $\theta$ is unknown.
 
-From the perspective of probability theory, we aim to compute the conditional probability $p(x_{t-1}\|x_t)$. This conditional probability can be described using Bayes' theorem:
+### Maxium Likelyhood and Joint Probabilty Distribution
+
+Typically, when we have a large image training data set, we can try finding a parameter $\theta$ that maximizes the probality of the model seeing the training data:
+
+$$
+\max_{\theta} \log p_{\theta}(x_0)
+$$
+
+$x_0$ is our training images. $p_{\theta}$ is the probability given by the model of parameter $\theta$. Our goal is to find parameters $\theta$ that maximizes the quantity. $log$ is introduced to stable the computation.
+
+
+The conditional probability can be described using Bayes' theorem:
 
 $$
 P(A|B) = \frac{P(B|A)P(A)}{P(B)}
