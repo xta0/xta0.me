@@ -5,7 +5,7 @@ title: 线程管理
 categories: [C++, Concurrency, Thread]
 ---
 
-### Lunching Thread
+### Launching Thread
 
 C++ 11中对线程的管理集中在`std::thread`这个类中，创建线程的方式包括：
 
@@ -110,7 +110,7 @@ td.joinable(); //return false
 4. 确保`join()`只被调用一次
 
 
-如果使用`td.detach()`则`workder_thread`在创建后立刻和`launch_thread`分离，`launch_thread`不会等待`workder thread`执行完成。即两条线程没有同步点，各自独立执行
+如果使用`td.detach()`则`worker_thread`在创建后立刻和`launch_thread`分离，`launch_thread`不会等待`worker thread`执行完成。即两条线程没有同步点，各自独立执行
 
 ```cpp
 void runCode()
@@ -125,7 +125,7 @@ void runCode()
     cout << "lanched thread is ending" << endl;
 }
 ```
-上述代码中令`workder thread`暂停5s，则`launch_thread`继续执行，不会等待`worker_thread`执行完，如果将`detach()`改为`join()`则`launch_thread`会阻塞等待
+上述代码中令`worker thread`暂停5s，则`launch_thread`继续执行，不会等待`worker_thread`执行完，如果将`detach()`改为`join()`则`launch_thread`会阻塞等待
 
 ```
 //detach
@@ -145,7 +145,7 @@ lanched thread is ending
 1. 第一个参数为函数指针，可以是functor或者lambda表达式，在第一节中已经介绍
 2. 后面参数为该函数指针需要用到的参数
 
-观察前面的`std::thread`的构造函数可知，传递的参数均是拷贝到线程自己stack中，但是有某些场景，需要修改`lauch_thread`所在线程的局部变量，这是需要将该变量的引用传递给`worker_thread`。例如下面的例子中需要在`worker_thread`中修改`data`变量
+观察前面的`std::thread`的构造函数可知，传递的参数均是拷贝到线程自己stack中，但是有某些场景，需要修改`launch_thread`所在线程的局部变量，这是需要将该变量的引用传递给`worker_thread`。例如下面的例子中需要在`worker_thread`中修改`data`变量
 
 ```cpp
 void updateData(widget_data& data);
@@ -163,7 +163,7 @@ std::thread t(updateData, std::ref(data))
 ```
 > 如果传引用或者指针要特别注意变量的生命周期，如果该变量的内存在线程还未结束时被释放则会引`undefined behavior`
 
-为了进一步加深对`std::thread`构造函数的理解，继续参考`bind`函数不难发现，`std::thread`的构造函数和`bind`的传参机制是相同的，这意味者只要第一个函数时一个函数指针，后面是该函数的参数即可，因此可以不局限于使用第一小节介绍的三种构建线程的方式，比如：
+为了进一步加深对`std::thread`构造函数的理解，继续参考`bind`函数不难发现，`std::thread`的构造函数和`bind`的传参机制是相同的，这意味着只要第一个函数是一个函数指针，后面是该函数的参数即可，因此可以不局限于使用第一小节介绍的三种构建线程的方式，比如：
 
 ```cpp
 class X{

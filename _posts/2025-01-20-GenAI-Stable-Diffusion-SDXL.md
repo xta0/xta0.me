@@ -56,7 +56,7 @@ Note that a `[1, 3, 296, 296]` image is encoded into a smaller `[1, 4, 37, 37]` 
 
 ### The UNet of SDXL
 
-UNet is the backbone of SDXL. The UNet backbone in SDXL is almost three times larger, which 2.6G billion trained parameters, while the SD v1.5 has only 860 million parameters. For SDXL, the minimum 15GB of VRAM is the commonly required; otherwise, we'll need to reduce the image resolution. 
+UNet is the backbone of SDXL. The UNet backbone in SDXL is almost three times larger, with 2.6 billion trained parameters, while SD v1.5 has only 860 million parameters. For SDXL, a minimum of 15GB of VRAM is commonly required; otherwise, we'll need to reduce the image resolution.
 
 Additionally, the SDXL integrates Transformer block within the UNet architecture, making it more expressive and capable of understanding complex text-image relationships. The U-Net still has CNNs, but each downsampled feature map passes through a Transformer-based attention module before being processed further.
 
@@ -64,9 +64,9 @@ Additionally, the SDXL integrates Transformer block within the UNet architecture
 
 ### Text Encoders
 
-One of the most significant changes in SDXL is the text encoder. SDXL uses two text encoders together, CLIP ViT-L and OpenCLIP Vit-bigG(aka openCLIP G/14). 
+One of the most significant changes in SDXL is the text encoder. SDXL uses two text encoders together: CLIP ViT-L and OpenCLIP ViT-bigG (aka OpenCLIP G/14). 
 
-The OpenCLIP ViT-bigG model is the largest and the best OpenClip model trained on the LAION-2B dataset, a 100 TB dataset containing 2 billion images. While the OpenAI CLIP model generates a 768 dimensional embedding vector, OpenClip G14 outputs a 1,280-dimensional embedding. By concatenating the two embeddings(of the same prompt length), a 2048-dimension embedding is output concat. This is much larger than previous 768-dimensional embedding from Stable Diffusion v1.5.
+The OpenCLIP ViT-bigG model is the largest and the best OpenClip model trained on the LAION-2B dataset, a 100 TB dataset containing 2 billion images. While the OpenAI CLIP model generates a 768-dimensional embedding vector, OpenCLIP G/14 outputs a 1,280-dimensional embedding. By concatenating the two embeddings (of the same prompt length), a 2048-dimensional embedding is produced. This is much larger than the previous 768-dimensional embedding from Stable Diffusion v1.5.
 
 ```python
 import torch
@@ -88,7 +88,7 @@ input_tokens = clip_tokenizer_1(
 print(input_tokens_1) # [49406, 320, 2761, 7251, 49407]
 ```
 
-We extract the token_ids from our prompt, resulting in a `[1, 5]` tensor. Note that `49406` and `49407` represent the beginning and ending symbols, respectively.
+We extract the token IDs from our prompt, resulting in a `[1, 5]` tensor. Note that `49406` and `49407` represent the beginning and ending symbols, respectively.
 
 ```python
 clip_text_encoder_1 = CLIPTextModel.from_pretrained(
@@ -115,7 +115,7 @@ with torch.no_grad():
 
 prompt_embedding = torch.cat((prompt_embed_1, prompt_embed_2), dim = 2) ##[1, 5, 2048]
 ```
-The code above produces an embedding vector with the shape `[1, 5, 768]`, which is expected because it transforms one-dimensional token IDs into 768-dimensional vectors. We then switch to the OpenCLIP ViT-bigG encoder to encode the same input tokens, resulting a `[1, 5, 1280]` embedding tenor. Finally, we concatenate these two tensors as the final embedding.
+The code above produces an embedding vector with the shape `[1, 5, 768]`, which is expected because it transforms one-dimensional token IDs into 768-dimensional vectors. We then switch to the OpenCLIP ViT-bigG encoder to encode the same input tokens, resulting in a `[1, 5, 1280]` embedding tensor. Finally, we concatenate these two tensors as the final embedding.
 
 In real world, SDXL uses something called **pooled embeddings** from OpenCLIP ViT-bigG. Embedding pooling is the process of converting a sequence of tokens into one embedding vector. In other words, pooling embedding is a lossy compression of information.
 
@@ -141,14 +141,14 @@ The encoder will produce a `[1, 1280]` embedding tensor, as <mark>the maximum to
 
 ### The two-stage design
 
-The refiner model is just another image-to-image model used to enhance an image by quality adding more details, especially during the last 10 steps. <mark>It may not be necessary if the base model can already produce high quality images</mark>.
+The refiner model is just another image-to-image model used to enhance an image by adding more details, especially during the last 10 steps. <mark>It may not be necessary if the base model can already produce high quality images</mark>.
 
 <div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2025/01/sd-02-base.png"></div>
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-02-refined.png"></div>
 </div>
 
-The photo on the left was created using the SDXL base model, while the one on the right was enhanced by a refined model based on the original. At first glance, the differences may be subtle, upon a closer look, you will notice more details (the cat's hair) were added by the refine model to make the image appear more realistic.
+The photo on the left was created using the SDXL base model, while the one on the right was enhanced by a refiner model based on the original. At first glance, the differences may be subtle, but upon a closer look, you will notice more details (the cat's hair) were added by the refiner model to make the image appear more realistic.
 
 ## Use SDXL Pipelines
 
@@ -190,11 +190,11 @@ image = sd_pipe(
     num_inference_steps = 20
 ).images[0]
 ```
-The diffusers package provides multiple scheduler to choose. Each scheduler has advantages and disadvantages. You may need to try out the schedulers to find out which one fits the best.
+The diffusers package provides multiple schedulers to choose from. Each scheduler has advantages and disadvantages. You may need to try out the schedulers to find out which one fits best.
 
 ### Guidance scale
 
-Guidance scale or **Classifier-Free Guidance(CFG)** is a parameter that controls the adherence of the generate image to the text prompt. A higher guidance scale will force the image to be more aligned with the prompt, while a lower guidance scale will give more space for the model to decide what to put into the image.
+Guidance scale, or **Classifier-Free Guidance (CFG)**, is a parameter that controls the adherence of the generated image to the text prompt. A higher guidance scale will force the image to be more aligned with the prompt, while a lower guidance scale will give more space for the model to decide what to put into the image.
 
 ```python
 image = sd_pipe(
@@ -210,7 +210,7 @@ In practice, besides prompt adherence, a high guidance scale also has the follow
 - Increases the contrast
 - May lead to a blurred image if set too high
 
-The `guidance_scale` parameter is typically set between `7` and `8.5`. A value of `7.5` is good default value.
+The `guidance_scale` parameter is typically set between `7` and `8.5`. A value of `7.5` is a good default value.
 
 ### Overcoming the 77 Token Limitations
 
@@ -240,11 +240,11 @@ image = pipe(
     generator = torch.Generator("mps").manual_seed(1)
 ).images[0]
 ```
-Here, we duplicated our prompt `20` times to create a `[1, 166, 768]` embedding tensor. Since the number of tokens is `166`, exceeding the `77` token limit, thus the prompt cannot be used directly in the pipeline. As previously mentioned, we need to manually compute the embeddings for our long prompts and feed the embedding tensors directly into the pipeline. Note that we set the prompt to None, preventing the encoder from processing our prompts. As a result, the UNet model utilizes our precomputed embeddings to generate images.
+Here, we duplicated our prompt `20` times to create a `[1, 166, 768]` embedding tensor. Since the number of tokens is `166`, exceeding the `77` token limit, the prompt cannot be used directly in the pipeline. As previously mentioned, we need to manually compute the embeddings for our long prompts and feed the embedding tensors directly into the pipeline. Note that we set the prompt to None, preventing the encoder from processing our prompts. As a result, the UNet model utilizes our precomputed embeddings to generate images.
 
 ### Long prompts with weighting
 
-A weighted prompt refers to the practice of assigning different levels of important to specific words or phrases within a text prompt used for generating images. By adjusting these weights, we can control the degree to which certain concepts influence the generated output.
+A weighted prompt refers to the practice of assigning different levels of importance to specific words or phrases within a text prompt used for generating images. By adjusting these weights, we can control the degree to which certain concepts influence the generated output.
 
 The core of adding weight to the prompt is simply vector multiplication:
 

@@ -8,7 +8,7 @@ categories: ["GenAI", "Stable Diffusion"]
 
 ## How ControlNet works
 
-ControlNet is a neural network architecture designed to enhance diffusion models through the incorporation of additional conditions. It employs one or more supplementary UNet models that work alongside the Stable Diffusion model. These UNet models process both input prompt and the image concurrently, with results being merged back in each step of the UNet up-stage.
+ControlNet is a neural network architecture designed to enhance diffusion models through the incorporation of additional conditions. It employs one or more supplementary UNet models that work alongside the Stable Diffusion model. These UNet models process both the input prompt and the image concurrently, with results being merged back in at each step of the UNet up-stage.
 
 
 
@@ -16,7 +16,7 @@ TBD
 
 ## Position Control using the ControlNet
 
-ControlNet provides finer control for precise adjustments. For example, it is possible for ControlNet generate an image that replicates a specific pose from another image that the out-of-the-box Stable Diffusion model cannot achieve:
+ControlNet provides finer control for precise adjustments. For example, it is possible for ControlNet to generate an image that replicates a specific pose from another image that the out-of-the-box Stable Diffusion model cannot achieve:
 
 
 <div class="md-flex-h md-flex-no-wrap">
@@ -62,7 +62,7 @@ cn_tile_upscale_img = pipeline(
     num_inference_steps = 50
 ).images[0]
 ```
-Here we use the raw resized image to both the initial diffusion image and the ControlNet start image (`control_image`). The strength controls the influence of ControlNet on the denoising process.
+Here we use the raw resized image as both the initial diffusion image and the ControlNet start image (`control_image`). The strength controls the influence of ControlNet on the denoising process.
 
 Let's use this prompt to compare the results between the generated raw image and the refined the image:
 
@@ -78,7 +78,7 @@ As you can see in the photos below, The ControlNet produces remarkable results
 <div class="md-margin-left-12"><img src="{{site.baseurl}}/assets/images/2025/01/sd-upscale-cn-tile.png"></div>
 </div>
 
-In the above example, the image-to-image approach would require multiple steps to achieve a desirable outcome. In contrast, the ControlNet Tile accomplishes the same outcome with a single round of upscaling. Additionally, ControlNet Tile consumes relatively lower VRAM usage compared to the image-to-image solution.
+In the above example, the image-to-image approach would require multiple steps to achieve a desirable outcome. In contrast, ControlNet Tile accomplishes the same outcome with a single round of upscaling. Additionally, ControlNet Tile consumes relatively lower VRAM usage compared to the image-to-image solution.
 
 If your goal is to preserve as many aspects of the original image as possible during the upscaling, the image-to-image approach would be a better option. Conversely, if you prefer an AI-driven, or a creative approach that generates new rich details, ControlNet Tile is a more preferable option.
 
@@ -88,7 +88,7 @@ If your goal is to preserve as many aspects of the original image as possible du
 | Control Method  | Functioning Stage | Usage Scenario
 | --------------- | ----------------- | --------------
 | Textual Embedding  | Text encoder   | Add a new style, a new concept or a new face|
-| LoRA | Merge LoRA weights to the UNet model (and the CLIP text encoder, optional)   | Add a set of styles, concepts, and generate content
+| LoRA | Merge LoRA weights into the UNet model (and the CLIP text encoder, optional)   | Add a set of styles, concepts, and generate content |
 | Image to Image |   Provide the initial latent image | Fix images, or add styles and concepts to images |
 | ControlNet | Participant denoising together with a checkpoint model UNet | Control shape, pose, content detail |
 

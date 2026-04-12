@@ -168,7 +168,7 @@ Note that the leading 6 `0`s are unnecessary, we can pack all these tensors into
 packad_tensor = torch.tensor([177], dtype = torch.uint8)
 ```
 
-Obviously, storing the weights in a lower bit representation could save memory and space. The downside is
+Obviously, storing the weights in a lower-bit representation could save memory and space. The downside is
 
 - The unpacked weight tensors need to be a shape with a multiple of 8 // nbits
 - The weights need to be unpacked before performing an inference operation

@@ -1,7 +1,7 @@
 ---
 layout: post
-list_title: CS143 Compilers | Lexical Analysis & Finate Automata
-title: Lexical Analysis & Finate Automata
+list_title: CS143 Compilers | Lexical Analysis & Finite Automata
+title: Lexical Analysis & Finite Automata
 mathjax: true
 categories: [Compiler]
 ---
@@ -51,7 +51,7 @@ categories: [Compiler]
 	- each one of the token classes contains a set of strings
 - We must say what set of strings is in a token class
 	- 当拿到了n多个token之后，需要用正则式匹配出该token属于那种类型(token class)
-	- 寻找token class的方法一般是使用<em>regular langauages</em>
+	- 寻找token class的方法一般是使用<em>regular languages</em>
 - 什么是Regular Language:
 	- [正则语言](https://zh.wikipedia.org/wiki/%E6%AD%A3%E5%88%99%E8%AF%AD%E8%A8%80)
 	- 定义Regular Language是通过一系列正则表达式来构成的(Regular Expression):
@@ -96,7 +96,7 @@ categories: [Compiler]
 
 ## Formal Languages
 
-- Formal language是计算机编程语言理论的基础，上一节提到的Regular Language也是是Formal Language的一种
+- Formal language是计算机编程语言理论的基础，上一节提到的Regular Language也是Formal Language的一种
 - 定义
 	- 假设 $\sum$ 是一个字符集，Formal Languages是指建立在这个字符集之上的语言
 		- Not well-defined Formal Languages
@@ -148,7 +148,7 @@ categories: [Compiler]
 	- 字符: `'a'+'b'+'c'+...+'z'+'A'+'B'+...+'Z'`
 		- 简化上面的正则，使用`range:[]`符号:`[a-zA-Z]`
 		- 总的正则`letter(letter + digit)* = [a-z][A-Z]*` 
-- whitespace: a non-empty sequence of blanks, newlinke, and tabs
+- whitespace: a non-empty sequence of blanks, newline, and tabs
 	- blanks : `' ' `
 	- new line: `\n`
 	- tabs: `\t`

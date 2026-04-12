@@ -717,7 +717,7 @@ $$
 2. 在反向传播过程中，使用 δ(l)δ(l) 保存了部分结果，避免了大量的重复运算，因而该算法性能优异。
 
 
-### Implementation Nodte: Unrolling parameters
+### Implementation Note: Unrolling parameters
 
 这一小节介绍如何使用Advanced optimization来计算神经网络，对于优化函数，前面有讲过，的定义如下:
 

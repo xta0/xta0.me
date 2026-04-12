@@ -96,7 +96,7 @@ import MyLoggerInternal
 private var objc_logger = MyLoggerInternal()
 
 @objc public func objc_log(object: String) {
-    let messasge = prefix + "[OBJC]" + " \(object as NSString)";
+    let message = prefix + "[OBJC]" + " \(object as NSString)";
     self.objc_logger.log(messasge);
 }
 ```
@@ -191,7 +191,7 @@ Now replacing the old `libMyLogger.a` with the new one. Everything should now wo
 
 1. A swift module file
 2. A static library file
-3. A `moduel.modulemap` file (this may or may not be needed, depending on what we intend to expose to the outside)
+3. A `module.modulemap` file (this may or may not be needed, depending on what we intend to expose to the outside)
 
 As you can see, this process is not quite elegant and error-prone, as users have to manually create those files and put them in the right location. The additional steps needed to configure the Xcode project are also quite complicated. In the next section, we will explore how to use XCFramework to bundle the static libraries, which is the Apple recommended way of distributing prebuilt binaries.
 
@@ -234,7 +234,7 @@ xcodebuild \
 -output xcframework-static/MyDummyLogger.xcframework
 ```
 
-The script creates two static libraries for different architectures, then zip them into a `.xcframeworkk` file. Now let's take a look at the structure of generated `.xcframework`
+The script creates two static libraries for different architectures, then zips them into a `.xcframework` file. Now let's take a look at the structure of the generated `.xcframework`
 
 ```shell
 └── MyDummyLogger.xcframework

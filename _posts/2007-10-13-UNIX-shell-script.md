@@ -1135,9 +1135,9 @@ exit0
 
 ###  Syslog
 
-- The syslog standard uses facilities and serverities to categorize messages
+- The syslog standard uses facilities and severities to categorize messages
 	- Facilities: kern, user, mail, daemon, auth, local0, local7
-	- Serverities: emerg, alert, crit, err, warning, notice, info,debug
+	- Severities: emerg, alert, crit, err, warning, notice, info,debug
 
 - Log file locations are configurable
 	- /var/log/messages

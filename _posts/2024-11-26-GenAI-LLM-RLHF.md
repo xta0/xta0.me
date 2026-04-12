@@ -51,7 +51,7 @@ You'll start with a smaller number of human examples to train the secondary mode
 
 ## Collecting human feedback
 
-Starting with a fine-tuned LLM to generate some completions. Then we need to use human workforce to hand-pick the ones that we think meets the criteria.
+Starting with a fine-tuned LLM to generate some completions, we then need to use a human workforce to hand-pick the ones that we think meet the criteria.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm3-5.png">
 
@@ -59,7 +59,7 @@ This process then gets repeated for many prompt completion sets, building up a d
 
 ### Prepare labeled data for training
 
-Once your human labelers have completed their assessments off the Prom completion sets, you have all the data you need to train the reward model
+Once your human labelers have completed their assessments of the prompt completion sets, you have all the data you need to train the reward model.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm3-6.png">
 
@@ -74,11 +74,11 @@ This reward model is usually also a language model. For example, a BERT that is 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm3-7.png">
 
-For a given prompt `X`, the reward model learns to favor the human-preferred completion $y_{j}$, while minimizing the loss sigmoid off the reward difference, $r_{j} - r_{k}$.
+For a given prompt `X`, the reward model learns to favor the human-preferred completion $y_{j}$, while minimizing the loss sigmoid of the reward difference, $r_{j} - r_{k}$.
 
 ### Use the reward model
 
-Once the model has been trained, you can use the reward model as a binary classifier to provide a set of logics across the positive and negative classes
+Once the model has been trained, you can use the reward model as a binary classifier to provide a set of logits across the positive and negative classes.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm3-8.png">
 
@@ -89,11 +89,11 @@ Let's bring everything together, and look at how you will use the reward model i
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm3-9.png">
 
 - First, you'll pass a prompt from your prompt dataset. In this case, `a dog is`, to the instruct LLM, which then generates a completion, in this case `a furry animal`.
-- Next, you sent this completion, and the original prompt to the reward model as <mark>the prompt completion pair</mark>
+- Next, you send this completion, and the original prompt to the reward model as <mark>the prompt completion pair</mark>.
 - The reward model evaluates the pair based on the human feedback it was trained on, and returns a reward value. A higher value such as `0.24` as shown here represents a more aligned response
-- You'll then pass this reward value for the prom completion pair to the reinforcement learning algorithm to update the weights of the LLM, and move it towards generating more aligned, higher reward responses. Let's call this intermediate version of the model the <mark>RL updated LLM</mark>
+- You'll then pass this reward value for the prompt completion pair to the reinforcement learning algorithm to update the weights of the LLM, and move it towards generating more aligned, higher reward responses. Let's call this intermediate version of the model the <mark>RL updated LLM</mark>.
 
-These iterations continue for a given number of epics, similar to other types of fine tuning.
+These iterations continue for a given number of epochs, similar to other types of fine tuning.
 
 If the process is working well, you'll see <mark>the reward improving</mark> after each iteration as the model produces text that is increasingly aligned with human preferences. You will continue this iterative process until your model is aligned based on some evaluation criteria.
 
@@ -111,7 +111,7 @@ There are several RL algorithms that you can use for this part of the RLHF proce
 
 Model Distillation is a technique that focuses on having a larger teacher model train a smaller student model. <mark>The student model learns to statistically mimic the behavior of the teacher model</mark>, either just in the final prediction layer or in the model's hidden layers as well.
 
-- You start with your fine tune LLM as your teacher model and create a smaller LLM for your student model.
+- You start with your fine-tuned LLM as your teacher model and create a smaller LLM for your student model.
 - You freeze the teacher model's weights and use it to generate completions for your training data
 - At the same time, you generate completions for the training data using your student model.
 - <mark>The knowledge distillation between teacher and student model is achieved by minimizing a loss function called the distillation loss</mark>. To calculate this loss, distillation uses the probability distribution over tokens that is produced by the teacher model's softmax layer

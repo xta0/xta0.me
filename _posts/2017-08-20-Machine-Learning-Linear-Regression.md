@@ -134,7 +134,7 @@ $$
 $$
 
 
-线性回归梯度计算的 Ocatave Demo
+线性回归梯度计算的 Octave Demo
 
 ```matlab
 function [theta, J_history] = gradientDescentMulti(X, y, theta, alpha, num_iters)

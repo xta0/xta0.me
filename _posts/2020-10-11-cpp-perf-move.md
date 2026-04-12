@@ -5,7 +5,7 @@ layout: post
 categories: ["C++"]
 ---
 
-### Definination of `std::move`
+### Definition of `std::move`
 
 ```cpp
 template<class T>

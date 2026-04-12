@@ -47,25 +47,25 @@ The AST result could look like this
     ]
 ]]
 ```
-This AST result is handled to a AST interpreter.
+This AST result is handed to an AST interpreter.
 
-> You can find the AST definitation for different languages in [astexplorer.net](https://astexplorer.net/).
+> You can find the AST definition for different languages in [astexplorer.net](https://astexplorer.net/).
 
 ### Bytecode interpreter
 
-Bytecode interpreter is also knowns virtual machine. It has one more step for generating bytecode instructions compared to the AST interpreter.
+Bytecode interpreter is also known as a virtual machine. It has one more step for generating bytecode instructions compared to the AST interpreter.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2022/02/inter-2.png">
 
-The reason we need this type of interpreter is that it produces memory/space efficient data structures (array of bytes) and faster to traverse in constrat to tree-like data structures.
+The reason we need this type of interpreter is that it produces memory/space efficient data structures (array of bytes) and is faster to traverse in contrast to tree-like data structures.
 
 - Stack-based Machines
     - **Stack** for operands and operators
     - Result is **"on top of the stack"**
 
 - Register-based machines
-    - Set of **virual reigisters**
-    - Result is in **"acuumulator" register**
+    - Set of **virtual registers**
+    - Result is in **"accumulator" register**
     - Mapped to real via **register allocation**
 
 For Stack-based machines, take the following source code example, the produced bytecode can look something like this:
@@ -85,7 +85,7 @@ stack pointer(sp) and instruction pointer(ip) are the two most important pointer
 
 ### S-Expressions
 
-We will build a small toy language called Eva whose lauguage rule can be outlined as follows:
+We will build a small toy language called Eva whose language rule can be outlined as follows:
 
 ```
 //Expression format:
@@ -129,8 +129,8 @@ We will build a small toy language called Eva whose lauguage rule can be outline
     - lambda functions, IILEs
 - Everything is an expression
     - Functional programming
-- No explicit return, last evaludated expression is the result
-    - Impreative programming
+- No explicit return; last evaluated expression is the result
+    - Imperative programming
 - First-class functions: assgin to variables, pass as arguments, return as values
     - Namespaces and modules
 - Static scope: all functions are closures
@@ -162,7 +162,7 @@ ListEntries
 
 ### Environment
 
-Evironment is just a repository of variables and functions defined in the scope.
+Environment is just a repository of variables and functions defined in the scope.
 
 - Environment Record (actual storage)
 - Optional reference to Parent Environment
@@ -222,7 +222,7 @@ It turns out that once we have the activation environment, if we don't need to t
 
 - `switch`
 
-The switch expression can be a syntax suger of nested if-else expressions.
+The switch expression can be a syntax sugar of nested if-else expressions.
 
 ```
 //Expression:
@@ -254,7 +254,7 @@ The switch expression can be a syntax suger of nested if-else expressions.
 
 - `for`
 
-For loop is a syntax suger of the while loop
+For loop is a syntax sugar of the while loop
 
 ```
 // Expressions:
@@ -285,7 +285,7 @@ For loop is a syntax suger of the while loop
 
 ### OOP
 
-There are general two approaches to implement OOP: Class-based OOP and Prototype-based OOP.
+There are generally two approaches to implement OOP: Class-based OOP and Prototype-based OOP.
 
 - Classes and Instances (Inheritance chains)
 
@@ -328,7 +328,7 @@ There are general two approaches to implement OOP: Class-based OOP and Prototype
 (prop child z) //30
 ```
 
-From the implementation perspective, a class is just a named environment which can be instantiated and create objects. Since it is an envrionment, it has envrionment record (actual storage) and a optional reference to the parent environment.
+From the implementation perspective, a class is just a named environment which can be instantiated to create objects. Since it is an environment, it has an environment record (actual storage) and an optional reference to the parent environment.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2022/02/inter-4.png">
 

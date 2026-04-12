@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
     exit(0);
 }
 ```
-The code above runs in a single process. To following example demonstrates how two process communicate using a pipe:
+The code above runs in a single process. The following example demonstrates how two process communicate using a pipe:
 
 ``` c
 int main() {

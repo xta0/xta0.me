@@ -8,11 +8,11 @@ categories: [System Programming, Operating System]
 ## Four Fundamental OS Concepts
 
 - Thread: Execution context
-    - Full describes program state
+    - Fully describes program state
     - Program Counter, Registers, Execution Flags, Stack
 - Address space (with or w/o translation)
     - Set of memory addresses accessible to program(for read or write)
-    - May be distance from memory space of the physical machine (in which case programs operate in a virtual address space)
+    - May be distinct from memory space of the physical machine (in which case programs operate in a virtual address space)
 - Process: an instance of a running program
     - Protected Address Space + One or more threads
 - Dual mode operation / protection
@@ -135,7 +135,7 @@ memory
 - Application program executes as a process
     - Complex applications can fork/exec child processes
 - Why processes
-    - Protected applications from each other
+    - Protects applications from each other
     - OS protected from them
     - Processes provides memory protection
 - Fundamental trade off between protection and efficiency
@@ -154,7 +154,7 @@ memory
 
 ### Protection and Isolation
 
-- Why do need processes?
+- Why do we need processes?
     - Reliability: Bugs can only overwrite memory of process they are in
     - Security and privacy: malicious or compromised process can't read or write other process' data
 - Mechanisms:

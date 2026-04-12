@@ -6,7 +6,7 @@ mathjax: true
 categories: [Parser,Compiler]
 ---
 
-### Prerequist Knowledge
+### Prerequisite Knowledge
 
 - Automata Theory
     - Finite State Machine
@@ -14,7 +14,7 @@ categories: [Parser,Compiler]
     - Regular Language
     - Context Free Grammar
     - DFA / NFA
-- [Lexcial Analysis]()
+- [Lexical Analysis]()
 - Algorithms
     - Recursion
 - Tools
@@ -201,7 +201,7 @@ print "Test case 5 passed: " + str(nfsmsim("", 1, edges, accepting) == False)
 
 了解了正则表达式的计算原理，我们就可以用它来实现词法分析器。关于什么是Lexer，可以参考之前编译原理的文章，Python提供了一个Lexer的类库`ply`，可以方便的将句子切分成token，但有几点需要注意：
 1. 首先是匹配token的顺序和优先级，比如匹配WORD的正则式为`r'[^ <>]+'`，匹配string的正则式为`r'"[^"]+"'`，对于下字符`hello "world"`,如果WORD的正则在前，则匹配的结果为 [WORD, WORD]，如果STRING在前，则匹配的结果为[WORD, STRING]。
-2. 另一问题是不同状态机的互斥，例如，代码注释可以穿插在代码中，对注释的解析需要令一个的状态机，和解析HTML Token的状态机互斥，例如下面的代码
+2. 另一问题是不同状态机的互斥，例如，代码注释可以穿插在代码中，对注释的解析需要另一个状态机，和解析HTML Token的状态机互斥，例如下面的代码
 
 ```HTML
  webpage = '''Welcome to <b>my <!-- careful </b> --> webpage</b>'''
@@ -225,7 +225,7 @@ tokens = (
     'WORD' #welcome!
 )
 ```
-然后对每个token，我们可以按照`ply`的规则给出匹配的正则式，这里特比要注意前面提到的第二点，`ply`默认由上到下匹配，一旦命中匹配规则，则会立即返回，不会继续向下匹配。由于篇幅原因，这里不会列出所有的token
+然后对每个token，我们可以按照`ply`的规则给出匹配的正则式，这里特别要注意前面提到的第二点，`ply`默认由上到下匹配，一旦命中匹配规则，则会立即返回，不会继续向下匹配。由于篇幅原因，这里不会列出所有的token
 
 ```python
 # HTML Tokens

@@ -12,7 +12,7 @@ categories: [backend]
 
 ## 基于轮询的分配策略（Round-Robin）
 
-Round-Robin是一种简单高效的策略，我们熟悉的DNS服务，P2P网络均适用这种策略。简单的说Roound-Robin算法就是维护一个机器列表，当请求过来时，对当前的列表进行轮询，找到下一个可投递的机器进行路由。
+Round-Robin是一种简单高效的策略，我们熟悉的DNS服务，P2P网络均适用这种策略。简单的说Round-Robin算法就是维护一个机器列表，当请求过来时，对当前的列表进行轮询，找到下一个可投递的机器进行路由。
 
 > Round-Robin通常用于"single-point-of-entry to multiple servers in the background"的场景
 
@@ -55,7 +55,7 @@ http{
 
 {% include _partials/components/lightbox-center.html param='/assets/images/2015/05/lb-2.png' param2='1' %}
 
-我们看到Load Balancer会依次将request投递到三台服务器上，从输出来看，Ngixn默认的策略为**Round-Robin**。
+我们看到Load Balancer会依次将request投递到三台服务器上，从输出来看，Nginx默认的策略为**Round-Robin**。
 
 ### 小结
 
@@ -83,7 +83,7 @@ upstream php_servers{
 ### 小结
 
 1. 这种策略的优点是能较好地把同一个客户端的多次请求分配到同一台服务器处理，避免了轮询无法适用会话保持的需求。
-2. 缺点是当某个时刻来自某个IP地址的请求特别多，那么将导致某台后端服务器的压力可能非常大，而其他后端服务器却空闲的不均衡情况、
+2. 缺点是当某个时刻来自某个IP地址的请求特别多，那么将导致某台后端服务器的压力可能非常大，而其他后端服务器却空闲的不均衡情况。
 
 ## 基于负载的分配策略
 

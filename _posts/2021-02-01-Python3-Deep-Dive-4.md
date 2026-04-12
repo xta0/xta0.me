@@ -14,7 +14,7 @@ Python中的sequence type有两类，mutable和immutable
 在Python中，Tuple的定义是被`,`分割的value而不是`()`，`()`的作用是为了让Tuple看起来更容易理解
 
 ```shell
->>> 1,2,3  #declaure a tuple
+>>> 1,2,3  #declare a tuple
 (1, 2, 3)
 ```
 比如我们想定义一个Tuple，该Tuple只有一个元素`1`，我们可能最先想到的写法是`(1)`，但实际上这并不是Tuple（这是一个`int`值），根据上面的介绍可知，定义Tuple需要使用`,`，因此正确的定义方式是`1,`：

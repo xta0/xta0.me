@@ -9,9 +9,9 @@ categories: ["GenAI", "Stable Diffusion"]
 
 ## CLIP (Contrastive Language-Image Pre-training)
 
-Contrastive learning is a family of self-supervised learning methods that help models learn meaningful representations from data that don't have labels. The key idea is images that show similar objects should have similar representations
+Contrastive learning is a family of self-supervised learning methods that help models learn meaningful representations from data that don't have labels. The key idea is that images showing similar objects should have similar representations.
 
-CLIP is one of the Contrastive models. [It was first introduced by openAI](https://arxiv.org/pdf/2103.00020). The goal is to <mark>learn a shared embedding space where text descriptions and images are mapped to vectors that are semantically aligned</mark>. 
+CLIP is one of the contrastive models. [It was first introduced by OpenAI](https://arxiv.org/pdf/2103.00020). The goal is to <mark>learn a shared embedding space where text descriptions and images are mapped to vectors that are semantically aligned</mark>. 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-clip-02.png">
 
@@ -19,10 +19,10 @@ The CLIP model is trained using 400 million (image, text) pairs, where the text 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-clip-01.png">
 
-Here is the high-level steps of the training process:
+Here are the high-level steps of the training process:
 
-1. Let a batch of images goes through an image encoder(a ResNet50/ViT model) to produce the feature embeddings $I_e$. 
-2. Let a batch of the corresponding text caption go through a text encoder([a Transformer model](#appendix-1-clip-text-encoder-model-architecture)) to produce the text embedding $T_e$. 
+1. Let a batch of images go through an image encoder (a ResNet50/ViT model) to produce the feature embeddings $I_e$. 
+2. Let a batch of the corresponding text captions go through a text encoder ([a Transformer model](#appendix-1-clip-text-encoder-model-architecture)) to produce the text embedding $T_e$. 
 3. Calculate the embedding cosine similarities between $I_e$ and $T_e$
 4. Update both encoders' weights to maximize the similarity for the correct pairs (the blue squares along the diagonal direction in the diagram)
 5. Update both encoders' weights to minimize the similarity for the incorrect pairs (white squares in the diagram)
@@ -55,7 +55,7 @@ text_embeds = clip_text_encoder(input_tokens)[0]
 print(text_embeds) # ([1, 5, 768])
 ```
 
-For Stable Diffusion 1.5, each token will be encoded as a `768` dimensional vector in the CLIP embedding space. They will be used later in the downstream of the network.
+For Stable Diffusion 1.5, each token will be encoded as a `768`-dimensional vector in the CLIP embedding space. They will be used later in the downstream of the network.
 
 
 ## Resources

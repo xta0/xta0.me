@@ -19,13 +19,13 @@ Our goal will be computing an attention-based representation for each word $A^{\
 
 <mark>Self-Attention will look at the surrounding words to try to figure out what does "l'Afrique" really mean in this sentence, and find the most appropriate representation for this</mark>.
 
-Semantically, This means changing the position of `l'Afrique`'s embedding vector in the high dimensional space, moving the vector to the place where it can best represent its meaning in the sentence.
+Semantically, this means changing the position of `l'Afrique`'s embedding vector in the high dimensional space, moving the vector to the place where it can best represent its meaning in the sentence.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-5.jpg">
 
 ## Formal Definition
 
-Mathematically, We use the following formula to calculate the attention representation for each word:
+Mathematically, we use the following formula to calculate the attention representation for each word:
 
 $$
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{Q K^\top}{\sqrt{d_k}}\right) V
@@ -65,7 +65,7 @@ $$
 
 Note that, the $W_Q$ has a much smaller dimension than the embedding vector. If the embedding vector size is `[8, 122888]` (8 words, each word is 122888 dimension), then the $W_Q$ could be `[12288, 128]`, so the $\vec{Q_i}$ is a `[8, 128]` vector.
 
-Similarly, to create a key vector for the words, we need a matrix $W_K$ multiply the embedding vector:
+Similarly, to create a key vector for the words, we need a matrix $W_K$ to multiply the embedding vector:
 
 $$
 \vec{K_i}  = \vec{E_i}W_K
@@ -73,7 +73,7 @@ $$
 
 The $W_K$ has the same dimension as $W_Q$ (`[12288, 128]`). The $\vec{Q_i}$ is also a `[8, 128]` vector. Thus, when multiplying $QK^T$, we will get a `[8, 8]` matrix as shown above.
 
-Note that The results of the dot products between the query and key vectors range from $-\infty$ to $\infty$ However, what we want is a probability distribution that tells us how much attention should be paid to each key vector. To achieve this, we apply the `softmax` function, which turns the raw scores into positive values and scales them, so they add up to 1, forming a valid probability distribution.
+Note that the results of the dot products between the query and key vectors range from $-\infty$ to $\infty$. However, what we want is a probability distribution that tells us how much attention should be paid to each key vector. To achieve this, we apply the `softmax` function, which turns the raw scores into positive values and scales them, so they add up to 1, forming a valid probability distribution.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-8.png">
 
@@ -81,17 +81,17 @@ At this point, we have explained the meaning of $\text{softmax}\left(\frac{Q K^\
 
 ### Masking
 
-Another important note is that the Self-Attention can look at words before and after the word of interest. However, in a decoder-only model(GPT), you never want to allow later words to influence earlier words, since otherwise they could give away the answer for what comes next.
+Another important note is that the Self-Attention can look at words before and after the word of interest. However, in a decoder-only model (GPT), you never want to allow later words to influence earlier words, since otherwise they could give away the answer for what comes next.
 
 The **Masked Self-Attention** ignores anything that comes after the word of interest. This means in our attention pattern table, <mark>the ones representing later tokens influencing earlier ones need to be zero</mark>. 
 
-To calculate mask self-attention, we just need to add the mask matrix to the scaled similarities:
+To calculate masked self-attention, we just need to add the mask matrix to the scaled similarities:
 
 $$
 \text{Masked Attention}(Q, K, V, M) = \text{softmax}\left(\frac{Q K^\top}{\sqrt{d_k}} + M \right) V
 $$
 
-At a high level, the way this works is that we apply masking before the `softmax` function by replacing certain dot product values (the words that comes after the current word) with $-\infty$. 
+At a high level, the way this works is that we apply masking before the `softmax` function by replacing certain dot product values (the words that come after the current word) with $-\infty$. 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-14.png">
 
@@ -122,7 +122,7 @@ To generalize this process, let's go back to the attention pattern diagram:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-11.png">
 
-For each row in the diagram, we multiply the embedding each of the embedding vector by the value matrix $W_v$. Let's say the embedding vector size is `[8, 12288]`, then the size of $W_v$ is `[12288, 12288]`. This gives us a `[8, 12288]` value vector. 
+For each row in the diagram, we multiply each of the embedding vectors by the value matrix $W_v$. Let's say the embedding vector size is `[8, 12288]`, then the size of $W_v$ is `[12288, 12288]`. This gives us a `[8, 12288]` value vector. 
 
 $$
 \vec{V_i}  = \vec{E_i}W_V
@@ -130,7 +130,7 @@ $$
 
 Note that the number column for $W_V$ determines the number of dimensions in the final attention representation of the word. In practice, this number is usually the same as the embedding dimension. We can think of it as repositioning the original word in embedding space so that it reflects what’s important in context.
 
-For each column in the diagram, we multiply each value vectors by the corresponding weight in that column. Recall that the weight is just the `softmax` result of the dot product. The weighted sum produces a $\vec{\Delta E_{\text{creature}}}$
+For each column in the diagram, we multiply each value vector by the corresponding weight in that column. Recall that the weight is just the `softmax` result of the dot product. The weighted sum produces a $\vec{\Delta E_{\text{creature}}}$
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-12.png">
 
@@ -167,11 +167,11 @@ selfAttention = SelfAttention(d_model=EmbeddingDims)
 attention_values = selfAttention.forward(encodings_matrix)
 print("Attention values:", attention_scores.shape) # torch.Size([8, 256])
 ```
-If we treat the attention unit as a module(`SelfAttention`), the input is a `(N, D1)` tensor, and the output is a `(N, D2)`. In most of the cases, we have `D1 == D2`, this means, we just transform the original embedding vector to a new embedding vector in the same dimension space.
+If we treat the attention unit as a module (`SelfAttention`), the input is a `(N, D1)` tensor, and the output is a `(N, D2)`. In most cases, we have `D1 == D2`, which means we just transform the original embedding vector to a new embedding vector in the same dimension space.
 
 ## Multi-Head Attention
 
-In the above discussion, we have explained the single head self-attention in great detail. However, in order to correctly establish how words are related in longer more complicated sentences and paragraphs, we can apply the single self-attention block multiple times <mark>simultaneously</mark>.
+In the above discussion, we have explained the single head self-attention in great detail. However, in order to correctly establish how words are related in longer, more complicated sentences and paragraphs, we can apply the single self-attention block multiple times <mark>simultaneously</mark>.
 
 > GPT3 for example uses 96 attention heads inside each block
 
@@ -183,7 +183,7 @@ We can imagine that each attention head will nudge the words embedding to desire
 
 ### Grouped Query Attention Head
 
-More recently, <mark>grouped query attention</mark> is proposed to allow us to share the same Keys and Values by a group of attention heads (Query is not shared). This can help reduce the number of parameters that the model needs to train while preserve the accuracy of the prediction.
+More recently, <mark>grouped query attention</mark> is proposed to allow us to share the same Keys and Values among a group of attention heads (Query is not shared). This can help reduce the number of parameters that the model needs to train while preserve the accuracy of the prediction.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-19.png">
 
@@ -205,7 +205,7 @@ In summary, the self-attention head does two things:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-22.png">
 
-Now we have the attention representation for each word in our sentence, how do we use with them to predict the next word? In the next post, we will discuss the second part of the transformer block, and we will see how the embeddings get used in the downstream of the network.
+Now we have the attention representation for each word in our sentence. How do we use them to predict the next word? In the next post, we will discuss the second part of the transformer block, and we will see how the embeddings get used in the downstream of the network.
 
 ## Resources
 

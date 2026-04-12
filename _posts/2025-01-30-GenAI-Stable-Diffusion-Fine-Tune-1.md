@@ -32,7 +32,7 @@ $$
 \Delta W = AB^T
 $$
 
-Where $A$ is a `n x d` matrix, and $B$ is a `m x d` matrix. For example, if $\Delta W$ is a `6x8` matrix, there a total of 48 weight numbers. Now, in the LoRA file, the `6x8` matrix can be divided by simply two small matrices - a `6x2` matrix, `12` numbers in total, and another `2x8` matrix, making it `16` numbers. The total trained parameters have been reduced from `48` to `28`. This is why the LoRA file can be so small.
+Where $A$ is a `n x d` matrix, and $B$ is a `m x d` matrix. For example, if $\Delta W$ is a `6x8` matrix, there are a total of 48 weight numbers. Now, in the LoRA file, the `6x8` matrix can be decomposed into simply two small matrices — a `6x2` matrix (`12` numbers in total) and another `2x8` matrix (`16` numbers). The total trained parameters have been reduced from `48` to `28`. This is why the LoRA file can be so small.
 
 So, the overall idea of merging LoRA weights to the checkpoint model works like this:
 
@@ -47,7 +47,7 @@ So, the overall idea of merging LoRA weights to the checkpoint model works like 
 
 - **Faster iterations**. LoRA enables rapid iterations, making it easier to experiment with different fine-tuning tasks and adapt models quickly.
 
-- **Improved transfer learning**. LoRA enhances the effectiveness of transfer learning, as models with LoRA adapters can be fine-tuned with fewer data. This is particularly valuable in situations where labeled data are scarce.
+- **Improved transfer learning**. LoRA enhances the effectiveness of transfer learning, as models with LoRA adapters can be fine-tuned with less data. This is particularly valuable in situations where labeled data is scarce.
 
 ## LoRA in Practice
 
@@ -70,7 +70,7 @@ class Classifier(nn.Module):
         x = fc3(x)
         return x
 ```
-Next, we train the model for only **2  epoch**s and have a quick test. Given 8 random images in the dataset, the model predicts only 2 images correctly.
+Next, we train the model for only **2 epochs** and have a quick test. Given 8 random images in the dataset, the model predicts only 2 images correctly.
 
 ```python
 Ground truth labels:  cat  ship  ship     airplane  frog frog automobile frog

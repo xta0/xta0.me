@@ -1,6 +1,6 @@
 ---
-list_title: Stable Diffusion | Cross Attension Unet
-title: Cross Attension Unet
+list_title: Stable Diffusion | Cross Attention UNet
+title: Cross Attention UNet
 layout: post
 mathjax: true
 categories: ["GenAI", "Stable Diffusion"]
@@ -8,7 +8,7 @@ categories: ["GenAI", "Stable Diffusion"]
 
 ## Attention U-Net (Conditioning via Cross-Attention)
 
-From the last two sections we know that the CLIP model encodes the prompts into text embeddings in the CLIP space, and the VAE encodes the noise image into latent vectors in the latent space. Since these two lives in different higher dimensional space, how does the text embedding affect the latent vectors? To answer this question, we are going to dive deep into the U-Net architecture.
+From the last two sections we know that the CLIP model encodes the prompts into text embeddings in the CLIP space, and the VAE encodes the noise image into latent vectors in the latent space. Since these two live in different higher-dimensional spaces, how does the text embedding affect the latent vectors? To answer this question, we are going to dive deep into the U-Net architecture.
 
 The traditional U-Net is a U shape architecture [commonly used in image semantic segmentation tasks](https://xta0.me/2018/05/04/Deep-Learning-11.html). <mark>To support the conditional image generation, Stable Diffusion adds cross-attention modules, which is effective for learning attention-based models of various input modalities</mark>.
 
@@ -43,9 +43,8 @@ However, if we look closely, in each `Transformer2DModel`, we actually have two 
 )
 ```
 
-- The self-attention module lets the image patches (latent vectors) learn context from its neighbors(similar to LLM
-'s). This is important because it helps generate patches that stay consistent with nearby regions
-- The cross-attention module shifts the latent vectors to the desired location in the latent space by attending the text embedding from the input tokens.
+- The self-attention module lets the image patches (latent vectors) learn context from their neighbors (similar to LLM's). This is important because it helps generate patches that stay consistent with nearby regions.
+- The cross-attention module shifts the latent vectors to the desired location in the latent space by attending to the text embedding from the input tokens.
 
 [Appendix #3](#appendix-3-cross-attention-u-net) demonstrates the computation process inside `attn1` and `attn2`.
 

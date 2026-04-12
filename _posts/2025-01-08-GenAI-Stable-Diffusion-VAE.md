@@ -16,7 +16,7 @@ Before we dive into VAEs, it's important to first understand the architecture of
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-ae-02.png">
 
-- The **encoder** compress the input data into a "latent-space" representation, which is a low-dimensional space that captures the essential features of the input data.
+- The **encoder** compresses the input data into a "latent-space" representation, which is a low-dimensional space that captures the essential features of the input data.
 - The **bottleneck** layer is the smallest layer that holds the compressed representation
 - The **decoder** reconstructs the input data from the compressed representation
 
@@ -41,7 +41,7 @@ That is why most of modern implementation of Autoencoders regularize the latent 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-ae-04.png">
 
-VAE was first introduced in 2013 in this paper named [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114). The idea is that, in order to reconstruct an image from a latent vector, we need to calculate the conditional probability $p(x\|z)$, where $p(z)$ is a latent distribution that capture the core features of the images. To make this process computable, we assume $p(z)$ follows the standard Gaussian distribution: $p(z) = N(0, 1)$. This allows us to compute the likelyhood $p(x\|z)$. 
+VAE was first introduced in 2013 in the paper named [Auto-Encoding Variational Bayes](https://arxiv.org/abs/1312.6114). The idea is that, in order to reconstruct an image from a latent vector, we need to calculate the conditional probability $p(x\|z)$, where $p(z)$ is a latent distribution that captures the core features of the images. To make this process computable, we assume $p(z)$ follows the standard Gaussian distribution: $p(z) = N(0, 1)$. This allows us to compute the likelihood $p(x\|z)$. 
 
 Then the question is how do we produce this Gaussian Distribution? That's where VAE kicks in, it learns the parameter $\mu$ and $\sigma$, which is an optimization process usually known as <mark>variational Bayes</mark>. Here is the process:
 
@@ -51,9 +51,9 @@ Then the question is how do we produce this Gaussian Distribution? That's where 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-ae-05.png">
 
-The first part of the equation simply measures how well our model can reconstruct an image $x$ from its encoded latent variable $z$. The $log$ likelyhood term reduces to a simple $L_2$ reconstruction loss, also known as mean square error. It just measures the loss between the reconstructed image and the original image. 
+The first part of the equation simply measures how well our model can reconstruct an image $x$ from its encoded latent variable $z$. The $\log$ likelihood term reduces to a simple $L_2$ reconstruction loss, also known as mean squared error. It just measures the loss between the reconstructed image and the original image. 
 
-The second part of the equation is the KL divergence that measures the distant between two probability distributions. In our case, it measures the distance between $p(z)$ and the normal distribution. While minimizing the loss, $p(z)$ will take shape of the normal distribution as well.
+The second part of the equation is the KL divergence that measures the distance between two probability distributions. In our case, it measures the distance between $p(z)$ and the normal distribution. While minimizing the loss, $p(z)$ will also take the shape of the normal distribution.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-ae-03.png">
 

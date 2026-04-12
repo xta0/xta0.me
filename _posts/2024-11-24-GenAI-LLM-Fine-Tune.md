@@ -60,7 +60,7 @@ How to avoid catastrophic forgetting
 
 ## Multitask Fine-Tuning
 
-Multitask fine-tuning is an extension of single task fine-tuning, where the training dataset is a composed of example inputs and outputs for multiple tasks.
+Multitask fine-tuning is an extension of single task fine-tuning, where the training dataset is composed of example inputs and outputs for multiple tasks.
 
 Here, the dataset contains examples that instruct the model to carry out a variety of tasks, including summarization, review rating, code translation, and entity recognition. You train the model on this mixed dataset so that it can improve the performance of the model on all the tasks simultaneously, thus avoiding the issue of catastrophic forgetting
 
@@ -73,7 +73,7 @@ One drawback to multitask fine-tuning is that it requires a lot of data. You may
 
 Full fine-tuning requires memory not just to store the model, but various other parameters that are required during the training process. Even if your computer can hold the model weights, which are now on the order of hundreds of gigabytes for the largest models, you must also be able to allocate memory for optimizer states, gradients, forward activations, and temporary memory throughout the training process. These additional components can be many times larger than the model and can quickly become too large to handle on consumer hardware
 
-In contrast to full fine-tuning where every model weight is updated during supervised learning, <mark>parameter efficient fine tuning methods only update a small subset of parameters</mark>. Some path techniques <mark>freeze most of the model weights</mark> and focus on fine tuning a subset of existing model parameters, for example, particular layers or components.
+In contrast to full fine-tuning where every model weight is updated during supervised learning, <mark>parameter efficient fine tuning methods only update a small subset of parameters</mark>. Some PEFT techniques <mark>freeze most of the model weights</mark> and focus on fine tuning a subset of existing model parameters, for example, particular layers or components.
 
 Other techniques don't touch the original model weights at all, and instead <mark>add a small number of new parameters or layers</mark> and fine-tune only the new components. With PEFT, most if not all of the LLM weights are kept frozen. As a result, the number of trained parameters is much smaller than the number of parameters in the original LLM.
 
@@ -101,7 +101,7 @@ With PEFT, most if not all of the LLM weights are kept frozen. As a result, the 
 
   - Additive
     - Add trainable layers or parameters to model
-    - Keep all the original LLM weights frozen and introducing new trainable components
+    - Keep all the original LLM weights frozen and introduce new trainable components
     - Adapters
       - add new trainable layers to the architecture of the model, typically inside the encoder or decoder components after the attention or feed-forward layers
     - Soft Prompts
@@ -218,7 +218,7 @@ $$
 
 But with large language models where the output is non-deterministic and language-based evaluation is much more challenging. We need an automated, structured way to make measurements. `ROUGE` and `BLEU`, are two widely used evaluation metrics for different tasks.
 
-- ROUGE(Recall Oriented Under Study For jesting Evaluation)
+- ROUGE (Recall-Oriented Understudy for Gisting Evaluation)
   - Used for text summarization
   - Compares a summary to one or more reference summaries
 - BLEU SCORE (bilingual evaluation understudy)
@@ -231,7 +231,7 @@ But with large language models where the output is non-deterministic and languag
 
 - A unigram is equivalent to a single word
 - A bigram is two words
-- A n-gram is a group of n-words
+- A n-gram is a group of n words
 
 ### ROUGE-1
 
@@ -284,7 +284,7 @@ The HELM framework aims to improve the transparency of models, and to offer guid
 ### Appendix 3: Instruction Fine-Tuning Steps
 
 - Steps to prepare your data
-  - Collection (instruction, response) pairs
+  - Collect (instruction, response) pairs
   - Concatenate pairs (add prompt template, if applicable)
   - Tokenize: Pad, Truncate
   - Split into train/dev/test sets

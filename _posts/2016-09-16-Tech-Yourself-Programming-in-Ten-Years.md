@@ -17,9 +17,9 @@ categories: [Life,Translation]
 
 ### 为什么大家都急于求成
 
-每当走进各大书店总能看到一些诸如《24小时自学Java开发》之类的书籍，类似的还有几小时内学会C,Ruby,SQL,Algorthms等等。如果使用亚马逊的高级索索功能[title: teach, yourself, hours, since: 2000](http://www.amazon.com/gp/search/ref=sr_adv_b/?search-alias=stripbooks&unfiltered=1&field-keywords=&field-author=&field-title=teach+yourself+hours&field-isbn=&field-publisher=&node=&field-p_n_condition-type=&field-feature_browse-bin=&field-subject=&field-language=&field-dateop=After&field-datemod=&field-dateyear=2000&sort=relevanceexprank&Adv-Srch-Books-Submit.x=16&Adv-Srch-Books-Submit.y=5) 可以找到512种这类书籍，在搜索结果的前十名中有九本是编程类书籍（其它的是关于记账类书籍）。如果把搜索词"yourself"换成"learn"，或者把"days"换成"hours"，搜索结果也是类似的。
+每当走进各大书店总能看到一些诸如《24小时自学Java开发》之类的书籍，类似的还有几小时内学会C,Ruby,SQL,Algorithms等等。如果使用亚马逊的高级搜索功能[title: teach, yourself, hours, since: 2000](http://www.amazon.com/gp/search/ref=sr_adv_b/?search-alias=stripbooks&unfiltered=1&field-keywords=&field-author=&field-title=teach+yourself+hours&field-isbn=&field-publisher=&node=&field-p_n_condition-type=&field-feature_browse-bin=&field-subject=&field-language=&field-dateop=After&field-datemod=&field-dateyear=2000&sort=relevanceexprank&Adv-Srch-Books-Submit.x=16&Adv-Srch-Books-Submit.y=5) 可以找到512种这类书籍，在搜索结果的前十名中有九本是编程类书籍（其它的是关于记账类书籍）。如果把搜索词"yourself"换成"learn"，或者把"days"换成"hours"，搜索结果也是类似的。
 
-从上面的案例中我们能出的结论是，要么大家都非常着急的想学编程，要么学习编程和其它事情相比是一件很容易的完成的事。Felleisen et al.在它的[《How to Design Programs》](http://felleisen.org/matthias/)一书中也提到了这个问题，当然他也是不认同这种思路的，他们的原话是："编写糟糕的程序很简单，傻瓜也可以在21天内学会，哪怕他们傻到家"。风靡网络的漫画公司[Abtruse Goose](https://abstrusegoose.com/249)也对此冷嘲热讽了一把，漫画如下
+从上面的案例中我们能得出的结论是，要么大家都非常着急的想学编程，要么学习编程和其它事情相比是一件很容易的完成的事。Felleisen et al.在它的[《How to Design Programs》](http://felleisen.org/matthias/)一书中也提到了这个问题，当然他也是不认同这种思路的，他们的原话是："编写糟糕的程序很简单，傻瓜也可以在21天内学会，哪怕他们傻到家"。风靡网络的漫画公司[Abtruse Goose](https://abstrusegoose.com/249)也对此冷嘲热讽了一把，漫画如下
 
 <img class="md-img-center" src="/assets/images/2018/03/ars_longa_vita_brevis.png">
 
@@ -60,7 +60,7 @@ Fred Brooks 在他的散文[No Silver Bullet](http://worrydream.com/refs/Brooks-
 2. 给有潜力的工程师指派一名职业规划导师，并仔细规划并记录他们的职业档案
 3. 为处在职业上升期中的软件设计师提供和互动交流的机会
 
-上面的讨论是假设某个人已经具备足够的能力成为一名软件设计师，那么他只需要一份工作去督促他。Alan Perlis更简洁地指出，“每个人都可以被教会如何雕刻，但是对于米开朗基罗来说，则不应该被'教会'，伟大程序员也是如此”。Perli认为所有伟大的人其内心都有一种内在的特质(自我驱动的能力)，这种特质往往可以超越训练，达到更高的高度。但是这些特质是从哪里来的呢？是天生的吗？还是他们通过后天的勤奋习得的？就像Auguste Gusteau（动画片《料理鼠王》里的大厨）所说的，“每个人都能成为厨师，但只有那些内心“无所畏惧”的人才能成为伟大的厨师。" 我认为伟大更多的是来自与愿意将自己全身心的投入到某项事业中，并保不断持刻意练习。也许“无所畏惧”可以概括这种精神。或者像 Gusteau's critic, Anton Ego所说的，“不是每个人都能成为伟大的艺术家，但是伟大的艺术家可以来自任何地方。”
+上面的讨论是假设某个人已经具备足够的能力成为一名软件设计师，那么他只需要一份工作去督促他。Alan Perlis更简洁地指出，“每个人都可以被教会如何雕刻，但是对于米开朗基罗来说，则不应该被'教会'，伟大程序员也是如此”。Perli认为所有伟大的人其内心都有一种内在的特质(自我驱动的能力)，这种特质往往可以超越训练，达到更高的高度。但是这些特质是从哪里来的呢？是天生的吗？还是他们通过后天的勤奋习得的？就像Auguste Gusteau（动画片《料理鼠王》里的大厨）所说的，“每个人都能成为厨师，但只有那些内心“无所畏惧”的人才能成为伟大的厨师。" 我认为伟大更多的是来自于愿意将自己全身心的投入到某项事业中，并保持不断刻意练习。也许“无所畏惧”可以概括这种精神。或者像 Gusteau's critic, Anton Ego所说的，“不是每个人都能成为伟大的艺术家，但是伟大的艺术家可以来自任何地方。”
 
 所以尽管去买 Java/Ruby/Javascript/PHP 这类的书吧；你可能会从中学到点儿东西。但作为一个程序员，你并不会在21天内或24小时内改变自己的人生，或你的综合水平。你是否想过努力不间断的学习超过24个月？如果是的话，那么恭喜你，你已经在路上了...
 

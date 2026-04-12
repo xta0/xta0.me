@@ -88,7 +88,7 @@ P(y^{<1>} | x) P(y^{<2>} | x, y^{<1>}) \dots P(y^{<T_y>} | x, y^{<1>}, \dots, y^
 \end{multline}
 $$
 
-Note that these probabilities are all numbers less than one, and multiplying a lot of these numbers result in a tiny number, which can result in numerical under-floor, meaning that is too small for the floating point of representation in your computer to store accurately.
+Note that these probabilities are all numbers less than one, and multiplying a lot of these numbers result in a tiny number, which can result in numerical underflow, meaning that is too small for the floating point of representation in your computer to store accurately.
 
 In practice, instead of maximizing this product, we will take logs:
 

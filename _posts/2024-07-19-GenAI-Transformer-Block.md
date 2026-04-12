@@ -14,7 +14,7 @@ In the previous post, we took a deep dive into the self-attention mechanism. Int
  
 ### Multi-Layer Perceptron (MLP)
 
-In the last section of the [transformer architecture post](https://xta0.me/2024/11/10/GenAI-LLM-Transformer-Architecture.html), we examined the Microsoft's `Phi-3-mini-4k-instruct` model. In this section, we will continue using this model as our running example to illustrate how `mlp` works.
+In the last section of the [transformer architecture post](https://xta0.me/2024/11/10/GenAI-LLM-Transformer-Architecture.html), we examined Microsoft's `Phi-3-mini-4k-instruct` model. In this section, we will continue using this model as our running example to illustrate how `mlp` works.
 
 Previously, we saw that the output of an attention head is an attention-enhanced embedding, denoted as $\vec{E_i}$(`3072` dimensions). Our next step is to pass $\vec{E_i}$ through a sequence of linear transformations:
 
@@ -27,13 +27,13 @@ Previously, we saw that the output of an attention head is an attention-enhanced
 As you can see, the MLP architecture looks quite straightforward. It is just a plain neural network. You may wonder how does it work? Frankly speaking, it is hard to say. The original paper - [Attention is All You Need](https://arxiv.org/abs/1706.03762) does not explain the reason in detail. However, since MLP is just two linear layers stacked together, we could gain some high-level intuition:
 
 - **Non-Linear Feature Transformation**: After the self-attention mechanism captures contextual relationships between tokens, the MLP applies a non-linear transformation to each token's representation independently. This allows the model to learn complex patterns within individual token embeddings that aren’t captured by attention alone.
-- **Complementing Self-Attention**: Self-attention focuses on <i>inter-token relationships</i> (e.g., how words relate to each other in a sentence). Whereas, MLP focuses on <i>outer-token relationships</i> (e.g., transforming the features of a single token into a richer representation). Together, they create a balance between global context and local feature processing.
+- **Complementing Self-Attention**: Self-attention focuses on <i>inter-token relationships</i> (e.g., how words relate to each other in a sentence). Whereas, MLP focuses on <i>intra-token relationships</i> (e.g., transforming the features of a single token into a richer representation). Together, they create a balance between global context and local feature processing.
 
 ### Layer Normalization
 
 We've previously explored the role of [BatchNorm](https://xta0.me/2018/02/22/Deep-Learning-6.html) in regular neural networks, where its main purpose is to stabilize training. In the transformer blocks, Layer Normalization serves a similar purpose - <mark>it scales and shifts the activations of a layer to have zero mean and unit variance (or similar properties) for each token independently</mark>. 
 
-In other words, Without normalization, small changes in input distributions across layers can amplify (a problem called internal covariate shift), leading to unstable gradients and slower training. Normalization ensures activations stay in a stable range. 
+In other words, without normalization, small changes in input distributions across layers can amplify (a problem called internal covariate shift), leading to unstable gradients and slower training. Normalization ensures activations stay in a stable range. 
 
 In the Phi3 model, `Phi3RMSNorm` is used, which normalizes by the root mean square (**RMS**) instead of the standard mean/variance (simplifying computation while retaining benefits).
 
@@ -77,7 +77,7 @@ x = x + resid_attn_dropout(attn_output)   # Residual connection
 mlp_output = mlp(post_attention_layernorm(x))  # Apply MLP to normalized post-attention output
 x = x + resid_mlp_dropout(mlp_output)          # Residual connection
 ```
-Note that, in practice, we add dropout to the residual path acts as a [regularization item](https://xta0.me/2018/02/05/Deep-Learning-4.html). It randomly zeros out parts of the sub-layer’s output during training, forcing the model to:
+Note that, in practice, we add dropout to the residual path, which acts as a [regularization term](https://xta0.me/2018/02/05/Deep-Learning-4.html). It randomly zeros out parts of the sub-layer’s output during training, forcing the model to:
 
 - Avoid over-relying on specific neurons
 - Learn redundant/robust features
@@ -86,13 +86,13 @@ Note that, in practice, we add dropout to the residual path acts as a [regulariz
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/10/trans-21.png">
 
-Now, let's continue our discussion on the [Meta's Llama3 architecture](https://arxiv.org/pdf/2407.21783). In the previous post, we analyzed the attention modules. Now that we understand what the transformer block means, we can piece everything together.
+Now, let's continue our discussion on [Meta's Llama3 architecture](https://arxiv.org/pdf/2407.21783). In the previous post, we analyzed the attention modules. Now that we understand what the transformer block means, we can piece everything together.
 
 Based on the numbers in the paper, the 8B model contains:
 
 - `32` transformer blocks/layers
 - Each transformer block contains
-    - 32 attention heads grouped by 8 key/value heads (8 groups, 8 different key/value matrices, 32 query metrics)
+    - 32 attention heads grouped by 8 key/value heads (8 groups, 8 different key/value matrices, 32 query matrices)
     - A MLP layer that project the embedding to `14,336` dimension
 - The vocabulary dictionary size is `128,000`
 - Each embedding vector has `4096` dimensions

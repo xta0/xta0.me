@@ -6,7 +6,7 @@ mathjax: true
 categories: [DataStructure]
 ---
 
-## 倒排索引(Invered Index)
+## 倒排索引(Inverted Index)
 
 倒排索引主要用来处理对非主码信息（属性）检索的场景，对于这些属性的信息，如果要进行检索，同样也要对其建立索引。对属性建索引分为两大类
 

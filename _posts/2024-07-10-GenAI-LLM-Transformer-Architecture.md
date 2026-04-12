@@ -9,7 +9,7 @@ categories: ["GenAI", "Transformer", "LLM"]
 
 Previous generations of language models made use of an architecture called [RNN](https://xta0.me/2018/05/14/Deep-Learning-12.html). RNNs while powerful for their time, were limited by the amount of compute and memory needed to perform well at generative tasks.
 
-<mark>To successfully predict the next word, models need to see more than just the previous few words. Models needs to have an understanding of the whole sentence or even the whole document</mark>.
+<mark>To successfully predict the next word, models need to see more than just the previous few words. Models need to have an understanding of the whole sentence or even the whole document</mark>.
 
 ## Attention is all you need
 
@@ -19,9 +19,9 @@ In 2017, after the publication of this paper, "Attention is All You Need", from 
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm-2.png">
 
-We apply attention weights to those relationships so that the model learns the relevance of each word to each other words no matter where they are in the input. This gives the algorithm the ability to learn "who has the book", "who could have the book", and if it's even relevant to the wider context of the document.
+We apply attention weights to those relationships so that the model learns the relevance of each word to every other word no matter where they are in the input. This gives the algorithm the ability to learn "who has the book", "who could have the book", and if it's even relevant to the wider context of the document.
 
-These attention weights are learned during LLM training. In the end, we will learn something called "attention map", which can be useful to illustrate the attention weights between each word and every other words.
+These attention weights are learned during LLM training. In the end, we will learn something called an "attention map", which can be useful to illustrate the attention weights between each word and every other word.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm-3.png">
 
@@ -35,7 +35,7 @@ This is called self-attention and the ability to learn attention in this way acr
 
 ### Tokenizer
 
-The inputs are first converted to tokens(one-hot vectors), with each number representing a position in a dictionary of all the possible words that the model can work with.
+The inputs are first converted to tokens (one-hot vectors), with each number representing a position in a dictionary of all the possible words that the model can work with.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm-27.png">
 
@@ -127,7 +127,7 @@ for i in range(max_new_tokens):
 
 ## Model Example
 
-To piece everything together, we will be using the Microsoft's `Phi-3-mini-4k-instruct`
+To piece everything together, we will be using Microsoft's `Phi-3-mini-4k-instruct`
 
 ```python
 # get the model
@@ -192,13 +192,13 @@ Phi3DecoderLayer(
 
 The model has two main components - `model` and `lm_head`. 
 
-- The `model` consists an embedding layer and 32 transformer blocks. 
+- The `model` consists of an embedding layer and 32 transformer blocks. 
     - The embedding vector size is `(32064, 3072)`, meaning the vocabulary size is `32064` and each embedding vector has `3072` dimensions
     - There are 32 transformer layers(blocks).
         - The self attention module (`self_atten`) has three parts:
             - `o_proj` the output of the attention head. It is a **linear layer**. <mark>The goal is to project the attention output back to the original hidden size (3072 in this case)</mark>.
             - `rotary_emb` is the positional encoding module
-            - `qkv_proj` is the self-attention ahead
+            - `qkv_proj` is the self-attention head
                 - The `9216` output is then split into 3 equal parts:
                     - Q: shape (batch_size, seq_len, `3072`)
                     - K: shape (batch_size, seq_len, `3072`)
@@ -219,13 +219,13 @@ The model has two main components - `model` and `lm_head`.
 
 ### Examine individual components
 
-We could also inspect the individual components of the model using a test prompt. Let's say we have a five-word text prompt shown as below, and we expect the predicted word to be `Pairs`:
+We could also inspect the individual components of the model using a test prompt. Let's say we have a five-word text prompt shown below, and we expect the predicted word to be `Paris`:
 
 ```python
 prompt = "The capital of France is"
 ```
 
-Let analyze the model's components step by step:
+Let's analyze the model's components step by step:
 
 - Check the input's token_ids:
 

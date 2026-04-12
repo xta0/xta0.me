@@ -1,6 +1,6 @@
 ---
 layout: post
-list_title: CS143 Compilers | Overviwe
+list_title: CS143 Compilers | Overview
 title: Overview
 mathjax: true
 categories: [Compiler]
@@ -36,7 +36,7 @@ categories: [Compiler]
 	- 现代的编译器保留了FORTRAN 1的一些框架：
 		 - Lexical Analysis
 		 - Parsing
-		 - Sementic Analysis
+		 - Semantic Analysis
 		 - Optimization
 		 - Code Generation
 
@@ -128,7 +128,7 @@ else
 
 "Jack said Jack left his assignment at home?"
 
-编译器不理解，到底有几个人，两个Jack是不是同一个人，his只谁？
+编译器不理解，到底有几个人，两个Jack是不是同一个人，his指谁？
 
 这种问题对于编译器来说，是**variable binding**，编译器在处理这类变量名称模糊的情况，是由严格语法规定的：
 

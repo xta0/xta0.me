@@ -108,7 +108,7 @@ mathjax: true
            	</mfrac>
         	</math>
 		
-        - seudo code
+        - pseudo code
 				
             ```
             metric = k * mean(daily_rets)/stdev(daily_rets)

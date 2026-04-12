@@ -41,7 +41,7 @@ Explicit module importing passes no search paths, instead, it passes the paths o
 
 - While `.swiftmodule` files are cacheable by build system, Clang module compilation works differently. When using implicit modules, you do not directly import a `pcm` file. Instead, you import a <mark>modulemap</mark> file, which describes the headers that form the module. Clang will then search a global module cache folder to see if there exists a precompiled module(pcm) for this modulemap and the set of flags being used, if not, it compiles one and writes to the module cache.
 - It is impossible to cache the implicit module output as it is built as a side effect and untracked by build system. The produced modules are also not relocatable or deterministic
-- This means for every build some amount of Clang modules needs to be recompiled, depending on the local state of the module cache on the users’s machine.
+- This means for every build some amount of Clang modules needs to be recompiled, depending on the local state of the module cache on the user’s machine.
 
 ### Debugging
 
@@ -54,7 +54,7 @@ Explicit module importing passes no search paths, instead, it passes the paths o
 ### Remote Execution
 
 - Another significant issue is remote execution, as all actions are remotely executed by default.
-- As each action is isolated and transient, they cannot rely on a shared module cahce. This would cause build errors as the cached modules would refer to inputs no longer present
+- As each action is isolated and transient, they cannot rely on a shared module cache. This would cause build errors as the cached modules would refer to inputs no longer present.
 - This means every remotely executed Swift compilation has to compile its entire set of dependent Clang modules every time, including the SDK modules.
 - Google saw a 60 - 80% reduction in build time when migrating their remote builds to use explicit modules by avoiding this step.
 - So until we have this in place, Swift can only be efficiently built locally.
@@ -68,7 +68,7 @@ Explicit module importing passes no search paths, instead, it passes the paths o
 ### How to enable Explicit modules
 
 - The complexity arises from a couple of issues, but primarily the hard part is working out which modules you need to provide for each compilation
-- There a few categories of modules we have to worry about
+- There are a few categories of modules we have to worry about
     - First party Swift modules (ie from targets containing Swift)
     - First party Clang modules (ie from modular library dependencies in fbobjc)
     - SDK Swift modules, eg from SDK frameworks or Swift overlays in `usr/lib.swift`
@@ -78,7 +78,7 @@ Explicit module importing passes no search paths, instead, it passes the paths o
 
 - First party Swift code is the simplest case. Every target already specifies its deps in its BUCK/Bazel file.
 - For each compile action then we traverse the deps collecting all the SwiftCompile rules and collecting the paths to their output.
-- These paths are collected in JSON file which is passed to the compiler using `-explicit-swift-module-map-file`
+- These paths are collected in a JSON file which is passed to the compiler using `-explicit-swift-module-map-file`
 - We need the transitive dependencies at each step as each Swift module embeds references to its own dependencies.
 - The size of this set can be reduced by adopting `@_implementationOnly` imports, which allow for private deps in Swift code. Only the exported_deps need to be traversed.
 
@@ -120,7 +120,7 @@ Explicit module importing passes no search paths, instead, it passes the paths o
     - Fortunately the compiler has a mode designed for exactly this: `-scan-dependencies`
     - When run against a Swift file it will output a JSON file that lists all the imported modules and their dependencies.
     - A script was developed to scan the SDK folder, create an empty Swift file that imports all the available modules for each platform and to run it through the compiler using the `-scan-dependencies` flag.
-    - After some massaging to relativize paths we output this JSON into fbsource. Its connected to a new build attribute on swift_toolchain called sdk_dependencies_path.
+    - After some massaging to relativize paths, we output this JSON into fbsource. It is connected to a new build attribute on swift_toolchain called sdk_dependencies_path.
 - Build SDK dependencies
     - Given a JSON file describing the dependencies of the SDK modules, we added a slightly unconventional class to parse this, create a graph and to build SDK modules on demand.
     - By creating flavours for each module, with a hash of the flags used for Clang modules, it is possible to leverage build system to handle the caching and recursion for us.

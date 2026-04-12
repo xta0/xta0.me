@@ -454,7 +454,7 @@ Lloh3:
 
 ## Literals
 
-Objective-C有很方便的literal syntax用来创建NSString, NSNumber, NSArray以及NSDictionary。其中大部分都是syntax sugar，会简介调用这些类的构造函数，但是这里有一个例外是NSString
+Objective-C有很方便的literal syntax用来创建NSString, NSNumber, NSArray以及NSDictionary。其中大部分都是syntax sugar，会间接调用这些类的构造函数，但是这里有一个例外是NSString
 
 <div class="md-flex-h md-margin-bottom-24">
 <div>

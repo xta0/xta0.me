@@ -41,7 +41,7 @@ $$
 
 ### Recurrent Neural Network
 
-RNN的输入是一组sequence data，seguence中的每个$x^{\langle i \rangle}$会通过某一系列运算产生一个输出$y^{\langle i \rangle}$，并且该时间片上的输入除了有$x^{\langle i \rangle}$之外，还有可能来自前一个时间片的输出$a^{\langle i-1 \rangle}$，如下图所示
+RNN的输入是一组sequence data，sequence中的每个$x^{\langle i \rangle}$会通过某一系列运算产生一个输出$y^{\langle i \rangle}$，并且该时间片上的输入除了有$x^{\langle i \rangle}$之外，还有可能来自前一个时间片的输出$a^{\langle i-1 \rangle}$，如下图所示
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2018/04/dl-rnn-1-nn-1.png">
 
@@ -139,7 +139,7 @@ The cats, which already ate ..., were full
 
 ### GRU
 
-GRU(Gated Recurrent Uinit)被设计用来解决上述问题，其核心思想是为每个token引入一个GRU unit - $c^{\langle t \rangle}$，计算方式如下
+GRU(Gated Recurrent Unit)被设计用来解决上述问题，其核心思想是为每个token引入一个GRU unit - $c^{\langle t \rangle}$，计算方式如下
 
 $$
 \hat c^{\langle t \rangle} = tanh (W_c[c^{\langle {t-1} \rangle}, x^{\langle t \rangle}] + b_c) \\

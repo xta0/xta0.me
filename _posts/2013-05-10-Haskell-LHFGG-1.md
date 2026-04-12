@@ -46,7 +46,7 @@ sum[1...10]
 
 ### A Taste of Haskell
 
-qucik sort:
+quick sort:
 
 ```haskell
 f[] = []

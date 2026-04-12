@@ -196,7 +196,7 @@ Symbol table '.symtab' contains 11 entries:
 
 1. 每个符号都有自己的类型。比如在`main.o`中，由于`add_and_multiply`是定义在另一个目标文件中，因此对于`main.o`来说，编译器并不知道这个符号在哪里，因此用`U`表示。`nCompletionStatus`同理。而对于`function.o`来说，这两个函数就定义在自身的目标文件中，编译器是知道它们的位置的，因此用`T`和`B`表示。更多关于符号的含义可参考文末的附录。
 
-2. 每个符号都有自己的地址。它们的地址都是相对的都是相对于该目标文件的偏移，并不是虚拟内存中的地址。我们可以通过观察汇编代码来进一步验证，使用 `objdump -d function.o`得到`function.o`的汇编代码如下
+2. 每个符号都有自己的地址。它们的地址都是相对于该目标文件的偏移，并不是虚拟内存中的地址。我们可以通过观察汇编代码来进一步验证，使用 `objdump -d function.o`得到`function.o`的汇编代码如下
 
 ```shell
 Disassembly of section .text:
@@ -365,7 +365,7 @@ getconf PAGE_SIZE #4096
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2015/01/loader-2.png">
 
-总的来说loader可以将程序和物理内存隔离开，然程序不需要考虑实际的物理内存地址，大小和分配方案，大大降低了程序编写复杂度。
+总的来说loader可以将程序和物理内存隔离开，让程序不需要考虑实际的物理内存地址，大小和分配方案，大大降低了程序编写复杂度。
 
 ### Executable
 

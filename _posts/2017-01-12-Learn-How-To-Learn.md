@@ -26,7 +26,7 @@ categories: [Learning, Note]
 ## Overview
 
 - Focused Thinking
-	- Solving problmes
+	- Solving problems
 	- Logic, criticism, calculating, 
 - 对于已知的问题
 	- 大脑中会有某种现成的pattern可以follow，思维活动像是从某个起点开始，沿着某条明确的path，经过已有的知识点，进行思考
@@ -69,7 +69,7 @@ categories: [Learning, Note]
 - 回忆过去的事情，以前学的知识等，使用的是**长期记忆**（long term memory）
 	- 不同的长期记忆存储在大脑不同的位置
 	- 短期记忆需要经过长时间的反复强化才能转化为长期记忆 
-		- 要促进这一过程，有种技巧叫做间隔重复（Spaced Repitition），隔天记忆 
+		- 要促进这一过程，有种技巧叫做间隔重复（Spaced Repetition），隔天记忆 
 			- 一晚上重复记忆某个概念20次，比不上隔几天记忆一次的效果。原理是大脑需要Diffused Mode来消化吸收新的记忆
 - 当把各种记忆结合起来去解决问题时，使用的是**工作记忆**（work term memory）
 	- 需要即时处理信息时动用的记忆，使用的是大脑的前额叶皮质
@@ -207,7 +207,7 @@ Chunk是一个让多个神经元共同运作的神经网络，是用来解决具
 	- 声音，触觉，味觉均能增加记忆效果
 
 - 海马体对记忆的形成有重要的作用
-	- 当回忆某件事情的时候，记忆会变化，这一过程成为再巩固，因此想要记住某事，就要不断回忆
+	- 当回忆某件事情的时候，记忆会变化，这一过程称为再巩固，因此想要记住某事，就要不断回忆
 
 ![](/assets/images/2016/11/learning-memory-1.png)
 
@@ -232,12 +232,12 @@ Chunk是一个让多个神经元共同运作的神经网络，是用来解决具
 - 坚持比聪明更重要
 - 不要盲目自信
 	- 大脑左半球负责focus模式思考，右半球负责质疑与批判
-	- 团队合作有主意发现自己思维的盲区，所谓旁观者清
+	- 团队合作有助于发现自己思维的盲区，所谓旁观者清
 	- 解决某个问题之后，跳出来，站在全局视角看看，答案是否真的合理并且符合逻辑
 - 使用<mark>考试清单</mark>来准备各种考试
 	- Did you make a serious effort to understand the text?
 	- Did you work with classmates on homework problems?
-	- Did you attemp to ouline every homework problem solution?
+	- Did you attempt to outline every homework problem solution?
 	- Did you participate actively in homework group discussions?
 	- Did you consult with the instructor?
 	- Did you understand all of your homework problem solutions?

@@ -6,7 +6,7 @@ mathjax: true
 categories: ["GenAI", "Textual Inversion", "Fine-Tune", "Stable Diffusion"]
 ---
 
-Textual Inversion(TI) is another way to fine tune the pretrained model. Unlike LoRA, <mark>TI is a technique to add new embedding space based on the trained data</mark>. Simply put, TI is a text embedding that matches the target image the best, such as its style, object, or face. The key is to find the new embedding that does not exist in the current text encoder.
+Textual Inversion (TI) is another way to fine-tune the pretrained model. Unlike LoRA, <mark>TI is a technique to add a new embedding space based on the training data</mark>. Simply put, TI is a text embedding that best matches the target image, such as its style, object, or face. The key is to find the new embedding that does not exist in the current text encoder.
 
 ### How TI works
 
@@ -28,7 +28,7 @@ Here, `S*` starts as a meaningless embedding, but during training, it gradually 
 - "A cartoon drawing of S*"
 - "S* as a superhero"
 
-Now, let talk about the `v*`. First, recall that the loss function we use to train a latent diffusion model:
+Now, let's talk about `v*`. First, recall the loss function we use to train a latent diffusion model:
 
 $$
 L_{LDM} := \mathbb{E}_{z \sim \mathcal{E}(x), y, \epsilon \sim \mathcal{N}(0,1), t} 
@@ -40,7 +40,7 @@ The right-hand side is an optimization objective, meaning we are minimizing a lo
 - $\epsilon$: The actual noise that was added to the latent representation.
 - $\epsilon_{\theta}(z_t, t, c_{\theta}(y))$: The model’s predicted noise at time $t$.
 
-The loss term measures the difference between two noise:
+The loss term measures the difference between two noise values:
 
 $$
 \left[ \left\| \epsilon - \epsilon_{\theta}(z_t, t, c_{\theta}(y)) \right\|_2^2 \right]
@@ -50,7 +50,7 @@ So, the right-hand side ensures the model learns to predict the noise accurately
 
 TI reuses the same training scheme as the original LDM model, while keeping both $c_{\theta}$ and $e_{\theta}$ fixed. Our optimization objective is to find the optimal $v_{*}$ that minimizes the loss above.
 
-Since we are learning a new embedding $𝑣_{∗}$, we do not have a predefined text embedding, that's why the loss function for TI looks like this:
+Since we are learning a new embedding $v_{*}$, we do not have a predefined text embedding; that's why the loss function for TI looks like this:
 
 $$
 v_* = \arg\min_v \mathbb{E}_{z \sim \mathcal{E}(x), y, \epsilon \sim \mathcal{N}(0,1), t} \left[ \left\| \epsilon - \epsilon_{\theta}(z_t, t, c_{\theta}(y)) \right\|_2^2 \right]
@@ -64,7 +64,7 @@ What This Means is that
 - We find the best embedding $v_{*}$ that minimizes the LDM loss by optimizing $v$ over multiple training images.
 - The `argmin` notation means we are searching for the best $v$ that minimizes the noise prediction error.
 
-Once the new corresponding embedding vector is found, the training is done. The output of the training is usually a vector with `768` numbers in the format of `pt` or `bin` file. The files are typically just a few kilobytes in size. This makes TI a highly efficient method for incorporating new elements or styles into the image. 
+Once the new corresponding embedding vector is found, the training is done. The output of the training is usually a vector with `768` numbers in the format of a `pt` or `bin` file. The files are typically just a few kilobytes in size. This makes TI a highly efficient method for incorporating new elements or styles into the image.
 
 For example, the code below loads a TI model(a `bin` file) from the Hugging Face concepts library. The `bin` structure is just a key-value pair:
 
@@ -78,7 +78,7 @@ for key in keys:
 
 ### TI in Stable Diffusion
 
-To use TI models, we could just leverage the `load_textual_inversion` method from the `StableDiffusionPipeline`
+To use TI models, we can leverage the `load_textual_inversion` method from the `StableDiffusionPipeline`.
 
 ```python
 pipe.load_textual_inversion(

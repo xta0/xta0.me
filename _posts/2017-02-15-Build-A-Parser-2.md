@@ -8,9 +8,9 @@ categories: [Parser,Compiler]
 
 上一篇文章中我们使用正则表达式可以将一段文本(代码)变成一个token list，但是我们如何能确定这个token list是否符合有效的语法规则呢？这就是语法分析所要解决的问题。
 
-### Syntatical Analysis
+### Syntactical Analysis
 
-Noam Chomsky在1955年提出了一个Syntatic Structure的概念，即utterances have rules(Formal Grammars)。Formal Grmmar将token分成**non-terminals**和**terminals**。所谓terminal是指不能被继续替换的token，而non-termninal则可以被某种语法继续分解，比如下面例子
+Noam Chomsky在1955年提出了一个Syntactic Structure的概念，即utterances have rules(Formal Grammars)。Formal Grammar将token分成**non-terminals**和**terminals**。所谓terminal是指不能被继续替换的token，而non-terminal则可以被某种语法继续分解，比如下面例子
 
 ```shell
 Sentence -> Subject Verb
@@ -90,7 +90,7 @@ pplus -> 'p'
 iopt -> 'i'
 iopt -> ϵ
 ```
-我们称能用正则表达式解析的语言成为Regular Languages，而能用上述Grammar Rule解析的语言称为Context-Free Languages。而所谓的Context-Free指的是不论上下文的context如何，都不影响替换规则。
+我们将能用正则表达式解析的语言称为Regular Languages，而能用上述Grammar Rule解析的语言称为Context-Free Languages。而所谓的Context-Free指的是不论上下文的context如何，都不影响替换规则。
 
 几种常见的正则表达式对应的Grammar如下
 
@@ -168,7 +168,7 @@ exp -> (exp)
 
 ### HTML Grammars
 
-正如前面小节提到的，使用这则表达式不能帮助我们解析HTML文本，因此我们可以为HTML定义一个语法规则
+正如前面小节提到的，使用正则表达式不能帮助我们解析HTML文本，因此我们可以为HTML定义一个语法规则
 ```shell
 html -> element html
 html -> ϵ
@@ -202,7 +202,7 @@ tag-close -> '</word>'
 
 ### Javascript Grammar
 
-接下来我们来顶一个JavaScript的Grammar，我们先focus在一个简单函数
+接下来我们来定义一个JavaScript的Grammar，我们先focus在一个简单函数
 
 ```javascript
 function up_to_ten(x){
@@ -237,7 +237,7 @@ compound_stmt -> '{' stmts '}'
 stmts -> stmt ';' stmts
 stmts -> ϵ
 ```
-有了这些规则，我们可以顺利的解析一些expression，但是对于像JavaScript或者Python这类高级语言，除了expression之外，还有function，因此我们需要顶一个关于解析函数的Grammar Rule
+有了这些规则，我们可以顺利的解析一些expression，但是对于像JavaScript或者Python这类高级语言，除了expression之外，还有function，因此我们需要定义一个关于解析函数的Grammar Rule
 
 ```shell
 js -> element js
@@ -318,7 +318,7 @@ def addtochart(chart, index, state):
         return False
 ```
 
-我们python的tuple来代码来表示一条state
+我们用Python的tuple来表示一条state
 
 ```python
 # x -> ab . cd from j

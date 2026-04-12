@@ -16,7 +16,7 @@ Encoder-only models are also known as Autoencoding models, and they are pre-trai
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm-24.png">
 
-Here, <mark>tokens in the input sequence are randomly masked, and the training objective is to predict the mask tokens in order to reconstruct the original sentence</mark>. This is also called a denoising objective. <mark>Autoencoding models spilled bi-directional representations of the input sequence</mark>, meaning that the model has an understanding of the full context of a token and not just of the words that come before.
+Here, <mark>tokens in the input sequence are randomly masked, and the training objective is to predict the mask tokens in order to reconstruct the original sentence</mark>. This is also called a denoising objective. <mark>Autoencoding models build bi-directional representations of the input sequence</mark>, meaning that the model has an understanding of the full context of a token and not just of the words that come before.
 
 Good use cases:
 
@@ -52,7 +52,7 @@ Example models:
 
 ### Sequence-to-Sequence Model
 
-The final variation of the transformer model is the sequence-to-sequence model that uses both the encoder and decoder parts off the original transformer architecture.
+The final variation of the transformer model is the sequence-to-sequence model that uses both the encoder and decoder parts of the original transformer architecture.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm-25.png">
 
@@ -103,7 +103,7 @@ Example models:
 - Summary
   - Reduce required memory to store and train models
   - Projects original 32-bit float numbers into lower precision spaces
-  - Quantization-aware training(QAT) learns the quantizataion scaling factors during training
+  - Quantization-aware training (QAT) learns the quantization scaling factors during training
   - `bfloat16` is a popular choice
 
 ### Multi-GPU Compute Strategies
@@ -114,7 +114,7 @@ Example models:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm-11.png">
 
-DDP copyists your model onto each GPU and sends batches of data to each of the GPUs in parallel. Each data-set is processed in parallel and then a synchronization step combines the results of each GPU, which in turn updates the model on each GPU, which is always identical across chips. This implementation allows parallel computations across all GPUs that results in faster training.
+DDP copies your model onto each GPU and sends batches of data to each of the GPUs in parallel. Each data-set is processed in parallel and then a synchronization step combines the results of each GPU, which in turn updates the model on each GPU, which is always identical across chips. This implementation allows parallel computations across all GPUs that results in faster training.
 
 - Fully sharded data parallel (FSDP)
   - Motivated by the "ZeRO" paper - zero data overlap between GPUs
@@ -126,7 +126,7 @@ DDP copyists your model onto each GPU and sends batches of data to each of the G
 
 In contrast to DDP, where each GPU has all of the model states required for processing each batch of data available locally, FSDP requires you to collect this data from all of the GPUs before the forward and backward pass
 
-Each CPU requests data from the other GPUs on-demand to materialize the sharded data into uncharted data for the duration of the operation. After the operation, you release the uncharted non-local data back to the other GPUs as original sharded data You can also choose to keep it for future operations during backward pass for example. Note, this requires more GPU RAM again, this is a typical performance versus memory trade-off decision. In the final step after the backward pass, FSDP is synchronizes the gradients across the GPUs in the same way they were for DDP.
+Each GPU requests data from the other GPUs on-demand to materialize the sharded data into unsharded data for the duration of the operation. After the operation, you release the unsharded non-local data back to the other GPUs as original sharded data. You can also choose to keep it for future operations during the backward pass, for example. Note, this requires more GPU RAM; again, this is a typical performance versus memory trade-off decision. In the final step after the backward pass, FSDP synchronizes the gradients across the GPUs in the same way as DDP.
 
 ## Scaling laws and compute-optimal models
 
@@ -158,7 +158,7 @@ This suggests that you can just increase your compute budget to achieve better m
 
 - Dataset size and model size vs. performance
 
-If we give a fixed value for compute budget. The increase of data size and model size can all lead to a better model performance
+If we give a fixed value for the compute budget, an increase of data size and model size can both lead to better model performance.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2024/llm-18.png">
 
@@ -177,7 +177,7 @@ The `BloombergGPT` was trained in a compute optimal way following the Chinchilla
 
 ## Pre-training for domain adaptation
 
-So far, we've emphasized that you'll generally start with an existing LLM as you develop your application. However, there are domain specific situation where you may find it necessary to pretrain your own model from scratch. For example, legal languages, medical languages.
+So far, we've emphasized that you'll generally start with an existing LLM as you develop your application. However, there are domain-specific situations where you may find it necessary to pretrain your own model from scratch. For example, legal language and medical language.
 
 > "sig: 1 tab po qid pc & hs" meaning Take one tablet by mouth four times a day, after meal and at bedtime
 
