@@ -219,7 +219,13 @@ $$
 This is usually noted as:
 
 $$
-p(x_1, x_2, \ldots, x_T) = p(x_{1:T})
+p(x_1, x_2, \ldots, x_T) = p(x_{1:T}) = p(x_1) \prod_{t=2}^{T} p(x_t \mid x_{1:t-1})
+$$
+
+Marginalization:
+
+$$
+p(x_1) = \int p(x_1, x_2, \ldots, x_T)\, dx_2 \cdots dx_T = \int p(x_{1:T}) \, dx_{2:T}
 $$
 
 
