@@ -85,9 +85,9 @@ $$
 
 where, $\mu$ is the previous noise image, and the covariant $\epsilon$ is the added noise.
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-02.png">
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-03.png">
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-02.png">
+<!-- <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-02.png"> -->
 
 Next, we can consider whether it is possible to <mark>directly derive $x_t$ from $x_0$</mark>, which would eliminate the need for intermediate iterative steps (from $x_1$ to $x_{t-1}$). 
 
