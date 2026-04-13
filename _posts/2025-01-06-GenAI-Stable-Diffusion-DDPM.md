@@ -14,7 +14,9 @@ Suppose we are given a **sample** of observations from $p_{data}$. Our job is to
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-01.png">
 
-To achieve this process, <mark>we can start with a noisy image and gradually transforms an image with high-levels of noise into a clear version of the original image</mark>. Therefore, this generative model, is referred to as a denoising diffusion probability model.
+However, this $p_{data}$ distribution is so complicated that it cannot be describted using any probility density function. So the challenge is to find a way to create new samples without actually having a comprehensive way of describing the distribution. 
+
+Diffusion models tackle this problem by removing gaussian noise from images. <mark>we can start with a noisy image and gradually transforms an image with high-levels of noise into a clear version of the original image</mark>. Therefore, this generative model, is referred to as a denoising diffusion probability model.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-09.gif">
 
@@ -77,13 +79,7 @@ $$
 x_t = \sqrt{1-\alpha_t} \times \epsilon_{t-1} + \sqrt{\alpha_t} \times x_{t-1}
 $$
 
-To describe this process from probability perspective, the noiser image is a sample from a normal distirbution 
-
-$$
-q(x_{t-1}|x_{t})
-$$
-
-where, $\mu$ is the previous noise image, and the covariant $\epsilon$ is the added noise.
+To describe this process from probability perspective, the noiser image is a sample from a normal distirbution $q(x_{t-1}|x_{t})$ where, $\mu$ is the previous noise image, and the covariant $\epsilon$ is the added noise.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-03.png">
 
