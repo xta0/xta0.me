@@ -158,7 +158,7 @@ For simplicity, we perform 16 iterations and select 8 images for display:
 
 ## The noise-to-image reconstruction
 
-To recover the image from a noise, we need to find a way to recover $x_0$ from $x_t$. From probability perspective, we aim to compute the conditional probability $p_{\theta}(x_{t-1}\|x_t)$. However, this revert process is uncomputable because $\theta$ is unknown.
+To recover the image from a noise, we need to find a way to recover $x_0$ from $x_t$. From probability perspective, we aim to compute the conditional probability $p_{\theta}(x_{t-1}\|x_t)$. However, this revert process is uncomputable because $p_{\theta}$ is unknown.
 
 ### Maxium Likelyhood
 
@@ -170,63 +170,15 @@ $$
 
 $x_0$ is our training images. $p_{\theta}$ is the probability given by the model of parameter $\theta$. Our goal is to find parameters $\theta$ that maximizes the quantity. $log$ is introduced to stable the computation.
 
-### Joint Probabilty Distribution
-
-Suppose we have two variables $x_1$, $x_2$ drawn from two different probability density functions: $p(x_1)$ and $p(x_2)$. The joint probability distribution is calculated as follows:
+With marginalization, the $\log p_{\theta}(x_0)$ can be calcualated as follows:
 
 $$
-P(x_1, x_2) = p(x_1) \times p(x_2 | x_1)
+\log p_{\theta}(x_0) = \log \int p_{\theta}(x_0,x_{1:T}) dx_{1: T}
 $$
 
-One way to visualize the joint probability distribution is using heat maps:
 
-<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-05.png" width="60%">
 
-The color represents the density value of the joint probability distribution. 
 
-<div class="md-flex-h md-flex-no-wrap">
-<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-07.png"></div>
-<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-06.png"></div>
-</div>
-
-For a given $x_1$ and $_x2$, 
-
-- The **joint probability** $p(x_1, x_2)$ is the probability we have $x_1$ **and** $x_2$
-- The **conditional probability** $p(x_2 \| x_1)$ is the probability that we have $x_2$ **knowing that** we have $x_1$. In other words, it is the portion of the joint probility $p(x_1, x_2)$ over the sum of all the squares give the value of $x_1$.
-
-### Marginalization
-
-Say if we just want to obtain the probability of a random variable $x_1$, we could sum all the joint probability $p(x_1, x_2)$ across all $x_2$ 
-
-$$
-p(x_1) = \int p(x_1, x_2)\, dx_2
-$$
-
-This is called **marginalization**. If we compute all the values for $p(x_1)$, eventually, we can reconstruct the probability dense function of $p(x_1)$
-
-<div class="md-flex-h md-flex-no-wrap">
-<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-09.png"></div>
-<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-08.png"></div>
-<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-10.png"></div>
-</div>
-
-If we have $t$ variables, the join probability can be calculatd as follows:
-
-$$
-p(x_1, x_2, \ldots, x_T) = p(x_1) \times p(x_2 \mid x_1) \times \cdots \times p(x_T \mid x_1, \ldots, x_{T-1})
-$$
-
-This is usually noted as:
-
-$$
-p(x_1, x_2, \ldots, x_T) = p(x_{1:T}) = p(x_1) \prod_{t=2}^{T} p(x_t \mid x_{1:t-1})
-$$
-
-Marginalization:
-
-$$
-p(x_1) = \int p(x_1, x_2, \ldots, x_T)\, dx_2 \cdots dx_T = \int p(x_{1:T}) \, dx_{2:T}
-$$
 
 
 The conditional probability can be described using Bayes' theorem:
@@ -353,6 +305,77 @@ The power of stable diffusion models comes from the ability to generate images t
 - [How Diffusion Models Work](https://www.coursera.org/projects/how-diffusion-models-work-project)
 - [Denoising Diffusion Probabilities Models](https://arxiv.org/abs/2006.11239)
 - [Using Stable Diffusion with Python](https://www.amazon.com/Using-Stable-Diffusion-Python-Generation/dp/1835086373/)
+
+
+## Appdenix: Joint Probability Refresher
+
+### Maxium Likelyhood
+
+Typically, when we have a large image training data set, we can try finding a parameter $\theta$ that maximizes the probality of the model seeing the training data:
+
+$$
+\max_{\theta} \log p_{\theta}(x_0)
+$$
+
+$x_0$ is our training images. $p_{\theta}$ is the probability given by the model of parameter $\theta$. Our goal is to find parameters $\theta$ that maximizes the quantity. $log$ is introduced to stable the computation.
+
+### Joint Probabilty Distribution
+
+Suppose we have two variables $x_1$, $x_2$ drawn from two different probability density functions: $p(x_1)$ and $p(x_2)$. The joint probability distribution is calculated as follows:
+
+$$
+P(x_1, x_2) = p(x_1) \times p(x_2 | x_1)
+$$
+
+One way to visualize the joint probability distribution is using heat maps:
+
+<img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-05.png" width="60%">
+
+The color represents the density value of the joint probability distribution. 
+
+<div class="md-flex-h md-flex-no-wrap">
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-07.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-06.png"></div>
+</div>
+
+For a given $x_1$ and $_x2$, 
+
+- The **joint probability** $p(x_1, x_2)$ is the probability we have $x_1$ **and** $x_2$
+- The **conditional probability** $p(x_2 \| x_1)$ is the probability that we have $x_2$ **knowing that** we have $x_1$. In other words, it is the portion of the joint probility $p(x_1, x_2)$ over the sum of all the squares give the value of $x_1$.
+
+### Marginalization
+
+Say if we just want to obtain the probability of a random variable $x_1$, we could sum all the joint probability $p(x_1, x_2)$ across all $x_2$ 
+
+$$
+p(x_1) = \int p(x_1, x_2)\, dx_2
+$$
+
+This is called **marginalization**. If we compute all the values for $p(x_1)$, eventually, we can reconstruct the probability dense function of $p(x_1)$
+
+<div class="md-flex-h md-flex-no-wrap">
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-09.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-08.png"></div>
+<div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-10.png"></div>
+</div>
+
+If we have $t$ variables, the join probability can be calculatd as follows:
+
+$$
+p(x_1, x_2, \ldots, x_T) = p(x_1) \times p(x_2 \mid x_1) \times \cdots \times p(x_T \mid x_1, \ldots, x_{T-1})
+$$
+
+This is usually noted as:
+
+$$
+p(x_1, x_2, \ldots, x_T) = p(x_{1:T}) = p(x_1) \prod_{t=2}^{T} p(x_t \mid x_{1:t-1})
+$$
+
+Similarly, for marginalization, a simple denotion is:
+
+$$
+p(x_1) = \int p(x_1, x_2, \ldots, x_T)\, dx_2 \cdots dx_T = \int p(x_{1:T}) \, dx_{2:T}
+$$
 
 
 ## Appendix: PyTorch's implementation of the sampling process
