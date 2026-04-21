@@ -154,13 +154,13 @@ For simplicity, we perform 16 iterations and select 8 images for display:
 
 ## The noise-to-image reconstruction
 
-Recall our goal is to generate an image from an unknown probability distribution $p_{\theta}$, where $\theta$ represents the parameter that we wanted to learn. When dealing with this problem, a typical approach is to do maximum likelihood estimation:
+Recall our goal is to generate an image from an unknown probability distribution $p_{\theta}$, where $\theta$ represents the parameter that we wanted to learn. When dealing with this problem, a typical approach is to do a maximum likelihood estimation:
 
 $$
 \max_{\theta} \log p_{\theta}(x_0)
 $$
 
-Where we try finding a parameter $\theta$ that maximizes the probability of the model seeing the data from training set. In practice, we usually minimize the negative log likelihood:
+We will a parameter $\theta$ that maximizes the probability of the model seeing the data from training set. In practice, we usually minimize the negative log likelihood:
 
 $$
 -\log p_{\theta}(x_0)
@@ -179,7 +179,15 @@ $$
 p_{\theta}(x_{0:T}) = p_{\theta}(x_T) \prod_{t=1}^{T} p_{\theta}(x_{t-1} \mid x_t)
 $$
 
-However, this integration is intractable as because there are too many paths from $x_T$ to $x_0$.
+However, this integral is intractable because it requires marginalizing over all possible high-dimensional latent paths $x_{1:T}$ from noise $x_T$ back to the data point $x_0$.
+
+Here, each $x_t$ is not a probability distribution by itself. It is a concrete latent variable, or one possible noisy image state at timestep $t$. For example, if $x_t$ has shape $64 \times 64 \times 3$, then it is a point in a $12{,}288$ dimensional continuous space. The notation $dx_{1:T}$ is shorthand for integrating over all of the intermediate variables:
+
+$$
+dx_{1:T} = dx_1 dx_2 \cdots dx_T
+$$
+
+So even if $T$ is only `10`, the marginalization is over $10 \times 12{,}288 = 122{,}880$ continuous dimensions. Each complete choice of $(x_1, x_2, \ldots, x_T)$ represents one possible trajectory, and exact integration over all such trajectories is computationally infeasible.
 
 It turns out that although it is impossible to compute the quantity, it does not mean we can't compute the negative log likelihood at all. 
 
