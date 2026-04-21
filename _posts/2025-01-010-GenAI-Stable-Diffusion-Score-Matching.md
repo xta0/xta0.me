@@ -1,6 +1,6 @@
 ---
-list_title: Stable Diffusion | DDPM
-title: Theory Behind the Diffusion Models
+list_title: Stable Diffusion | Score Matching
+title: Score Matching
 layout: post
 mathjax: true
 categories: ["GenAI", "Stable Diffusion"]
@@ -154,59 +154,28 @@ For simplicity, we perform 16 iterations and select 8 images for display:
 
 ## The noise-to-image reconstruction
 
-Recall our goal is to generate an image from an unknown probability distribution $p_{\theta}$, where $\theta$ represents the parameter that we wanted to learn. When dealing with this problem, a typical approach is to do maximum likelihood estimation:
+To recover the image from a noise, we need to find a way to recover $x_0$ from $x_t$. From probability perspective, we aim to compute the conditional probability $p_{\theta}(x_{t-1}\|x_t)$. However, this revert process is uncomputable because $p_{\theta}$ is unknown.
+
+### Maxium Likelyhood
+
+Typically, when we have a large image training data set, we can try finding a parameter $\theta$ that maximizes the probality of the model seeing the training data:
 
 $$
 \max_{\theta} \log p_{\theta}(x_0)
 $$
 
-Where we try finding a parameter $\theta$ that maximizes the probability of the model seeing the data from training set. In practice, we usually minimize the negative log likelihood:
+$x_0$ is our training images. $p_{\theta}$ is the probability given by the model of parameter $\theta$. Our goal is to find parameters $\theta$ that maximizes the quantity. $log$ is introduced to stable the computation.
+
+With marginalization, the $\log p_{\theta}(x_0)$ can be calcualated as follows:
 
 $$
--\log p_{\theta}(x_0)
-$$
-
-
-With marginalization, the $p_{\theta}(x_0)$ can be calculated as follows:
-
-$$
-p_{\theta}(x_0) = \int p_{\theta}(x_{0:T}) dx_{1:T}
-$$
-
-$p_{\theta}(x_{0:T})$ is a joint probability distribution from $x_0$ to $x_T$ (noise):
-
-$$
-p_{\theta}(x_{0:T}) = p_{\theta}(x_T) \prod_{t=1}^{T} p_{\theta}(x_{t-1} \mid x_t)
-$$
-
-However, this integration is intractable as because there are too many paths from $x_T$ to $x_0$.
-
-It turns out that although it is impossible to compute the quantity, it does not mean we can't compute the negative log likelihood at all. 
-
-Recall our forward pass is a fixed process:
-
-$$
-q(x_{1:T} \mid x_0) = \prod_{t=1}^{T} q(x_t \mid x_{t-1})
-$$
-
-Let's multiply and divide $q(x_{1:T} \mid x_0)$
-
-$$
-p_\theta(x_0) = \int q(x_{1:T} \mid x_0)\, \frac{p_\theta(x_{0:T})}{q(x_{1:T} \mid x_0)} \, dx_{1:T}
-$$
-
-We can rewrite the integral as expectation:
-
-$$
-p_\theta(x_0) = \mathbb{E}_{q(x_{1:T} \mid x_0)} \left[ \frac{p_\theta(x_{0:T})}{q(x_{1:T} \mid x_0)} \right]
+\log p_{\theta}(x_0) = \log \int p_{\theta}(x_0,x_{1:T}) dx_{1: T}
 $$
 
 
 
 
 
-
-To recover the image from a noise, we need to find a way to recover $x_0$ from $x_t$. From probability perspective, we aim to compute the conditional probability $p_{\theta}(x_{t-1}\|x_t)$. However, this revert process is computable because $p_{\theta}$ is unknown.
 
 The conditional probability can be described using Bayes' theorem:
 
@@ -338,7 +307,7 @@ The power of stable diffusion models comes from the ability to generate images t
 
 ### Maxium Likelyhood
 
-Typically, when we have a large image training data set, we can try finding a parameter $\theta$ that maximizes the probability of the model seeing the training data:
+Typically, when we have a large image training data set, we can try finding a parameter $\theta$ that maximizes the probality of the model seeing the training data:
 
 $$
 \max_{\theta} \log p_{\theta}(x_0)
@@ -346,7 +315,7 @@ $$
 
 $x_0$ is our training images. $p_{\theta}$ is the probability given by the model of parameter $\theta$. Our goal is to find parameters $\theta$ that maximizes the quantity. $log$ is introduced to stable the computation.
 
-### Joint Probability Distribution
+### Joint Probabilty Distribution
 
 Suppose we have two variables $x_1$, $x_2$ drawn from two different probability density functions: $p(x_1)$ and $p(x_2)$. The joint probability distribution is calculated as follows:
 
@@ -365,7 +334,7 @@ The color represents the density value of the joint probability distribution.
 <div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-06.png"></div>
 </div>
 
-For a given $x_1$ and $_x_2$, 
+For a given $x_1$ and $_x2$, 
 
 - The **joint probability** $p(x_1, x_2)$ is the probability we have $x_1$ **and** $x_2$
 - The **conditional probability** $p(x_2 \| x_1)$ is the probability that we have $x_2$ **knowing that** we have $x_1$. In other words, it is the portion of the joint probility $p(x_1, x_2)$ over the sum of all the squares give the value of $x_1$.
