@@ -35,7 +35,7 @@ mathjax: true
 
 - 算法渐进分析
 
-如果一个段程序分为几个步骤，时间复杂度分别为: $n^2 $, $100n $, $\log^{(n)}和 $1000 $，那么该程序总的时间复杂度为：
+如果一个段程序分为几个步骤，时间复杂度分别为: $n^2 $, $100n $, $\log^{(n)}$ 和 $1000 $，那么该程序总的时间复杂度为：
 
  $$	
 	f(n) = n^2 + 100n + \log^{(n)} + 1000
@@ -110,12 +110,12 @@ mathjax: true
 #### 函数渐进界定理
 
 - 定理1： 设 $f $和 $g $是定义域为自然数集合的函数
-	1. 如果<math><munderover><mo>limit</mo><mo>n→∞</mo></munderover><mi>f(n)</mi><mo>/</mo><mi>g(n)</mi></math>存在，并且等于某个常数 $c>0 $，那么<math><mi>f(n)</mi><mo>=</mo><mi>Θ</mi><mo stretchy="false">(</mo><mi>g(n)</mi><mo stretchy="false">)</mo></math>
-	2. 如果<math><munderover><mo>limit</mo><mo>n→∞</mo></munderover><mi>f(n)</mi><mo>/</mo><mi>g(n)</mi><mo>=</mo><mn>0</mn></math>存在，那么<math><mi>f(n)</mi><mo>=</mo><mi>o</mi><mo stretchy="false">(</mo><mi>g(n)</mi><mo stretchy="false">)</mo></math>
-	3. 如果<math><munderover><mo>limit</mo><mo>n→∞</mo></munderover><mi>f(n)</mi><mo>/</mo><mi>g(n)</mi><mo>=</mo><mo>+∞</mo></math>存在，那么<math><mi>f(n)</mi><mo>=</mo><mi>ω</mi><mo stretchy="false">(</mo><mi>g(n)</mi><mo stretchy="false">)</mo></math>
+	1. 如果$\lim_{n \to \infty} f(n)/g(n)$存在，并且等于某个常数 $c>0 $，那么$f(n)=\Theta(g(n))$
+	2. 如果$\lim_{n \to \infty} f(n)/g(n)=0$存在，那么$f(n)=o(g(n))$
+	3. 如果$\lim_{n \to \infty} f(n)/g(n)=+\infty$存在，那么$f(n)=\omega(g(n))$
 
 - 定理2：
-- 定理3：设 $f $和 $g $是定义域为自然数集合的函数，若对某个其它函数 $h $，有<math><mi>f</mi><mo>=</mo><mi>O(h)</mi></math>和<math><mi>g</mi><mo>=</mo><mi>O(h)</mi></math>，那么<math><mi>f</mi><mo>+</mo><mi>g</mi><mo>=</mo><mi>O(h)</mi></math>
+- 定理3：设 $f $和 $g $是定义域为自然数集合的函数，若对某个其它函数 $h $，有$f=O(h)$和$g=O(h)$，那么$f+g=O(h)$
 
 - 函数增长率的界限通常不止一个，尽量找到最<mark>紧</mark>的
 
@@ -129,18 +129,17 @@ mathjax: true
 
 ## 几类重要的渐进函数
 
-1. 至少指数级：<math><msup><mn>2</mn><mi>n</mi></msup></math>, <math><msup><mn>3</mn><mi>n</mi></msup></math>,<math><mi>n</mi><mo>!</mo></math> ...
-2. 多项式级：<math><mi>n</mi></math>, <math><msup><mi>n</mi><mn>2</mn></msup></math>, <math><msup><mi>n</mi><mn>1/2</mn></msup></math>, ...
-3. 对数多项式级别：<math><mi>nlogn</mi></math>, <math><msup><mi>log</mi><mn>2</mn></msup><mi>n</mi></math>, <math><mi>nloglogn</mi></math>, ...
+1. 至少指数级：$2^{n}$, $3^{n}$,$n!$ ...
+2. 多项式级：$n$, $n^{2}$, $n^{1/2}$, ...
+3. 对数多项式级别：$nlogn$, $\log^{2} n$, $nloglogn$, ...
 4. 指数与阶乘
-	- <math><mi>n</mi><mo>!</mo><mo>=</mo><mi>o</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mi>n</mi></msup><mo stretchy="false">)</mo></math>
-	- <math><mi>n</mi><mo>!</mo><mo>=</mo><mi>ω</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mi>n</mi></msup><mo stretchy="false">)</mo></math>
-	- <math><mi>log(n!)</mi><mo>=</mo><mi>Θ</mi><mo stretchy="false">(</mo><mi>nlogn</mi><mo stretchy="false">)</mo></math>
+	- $n!=o(n^{n})$
+	- $n!=\omega(n^{n})$
+	- $\log(n!)=\Theta(n\log n)$
 
 <img src="{{site.baseurl}}/assets/images/2007/08/bigo.png" width="60%"/>
 
-上图是上述几种函数的增长率曲线，由此不难看出：<math display="inline"><msup><mi>2</mi><mi>n</mi></msup><mo>></mo><msup><mi>n</mi><mi>2</mi></msup><mo>></mo><msubsup><mi>nlog</mi> <mi>2</mi> <mi>n</mi></msubsup> <mo>></mo><msubsup><mi>n</mi> <mi></mi> <mi></mi></msubsup><mo>></mo><msubsup><mi>log</mi> <mi>2</mi> <mi>n</mi></msubsup>     
-</math>
+上图是上述几种函数的增长率曲线，由此不难看出：$2^{n}>n^{2}>n\log_{2}{n}>n>\log_{2}{n}$
 
 为了直观的了解$O(1)$和$O(n^2)$的差别，假设数据样本的规模为`2000`
 

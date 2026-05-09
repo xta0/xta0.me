@@ -8,15 +8,15 @@ categories: ["GenAI", "Stable Diffusion"]
 
 ## Introduction
 
-In previous [articles](https://xta0.me/2019/08/03/Learn-PyTorch-3.html), we have explored an image generation technique using the GAN network. However, in the world of generative models, utilizing diffusion models to generate images has now become a new trend. In Jan 2020, a paper titled [Denoising Diffusion Probabilities Models](https://arxiv.org/abs/2006.11239) introduced a diffusion-based probability model for image generation: 
+In previous [articles](https://xta0.me/2019/08/03/Learn-PyTorch-3.html), we have explored an image generation technique using the GAN network. However, in the world of generative models, utilizing diffusion models to generate images has now become a new trend. In Jan 2020, a paper titled [Denoising Diffusion Probabilities Models](https://arxiv.org/abs/2006.11239) introduced a diffusion-based probability model for image generation:
 
 Suppose we are given a **sample** of observations from $p_{data}$. Our job is to generate a new image that comes from the $p_{data}$ distribution
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-01.png">
 
-However, this $p_{data}$ distribution is so complicated that it cannot be describted using any probility density function. So the challenge is to find a way to create new samples without actually having a comprehensive way of describing the distribution. 
+However, this $p_{data}$ distribution is so complicated that it cannot be described using any probability density function. So the challenge is to find a way to create new samples without actually having a comprehensive way of describing the distribution.
 
-Diffusion models tackle this problem by removing gaussian noise from images. <mark>we can start with a noisy image and gradually transforms an image with high-levels of noise into a clear version of the original image</mark>. Therefore, this generative model, is referred to as a denoising diffusion probability model.
+Diffusion models tackle this problem by removing Gaussian noise from images. <mark>We can start with a noisy image and gradually transform an image with high levels of noise into a clear version of the original image</mark>. Therefore, this generative model is referred to as a denoising diffusion probability model.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-09.gif">
 
@@ -30,10 +30,10 @@ Understanding these concepts will give us a solid foundation to grasp how diffus
 
 ## The image-to-noise transformation
 
-At a high-level, the image to noise process is quite straightforward: 
+At a high-level, the image to noise process is quite straightforward:
 
-1. Normalize the pixels in the image so that their values are within the range `[-1,1]`. 
-2. Generate a noise image of the same size as the original image. 
+1. Normalize the pixels in the image so that their values are within the range `[-1,1]`.
+2. Generate a noise image of the same size as the original image.
     - The noise should follow a Gaussian distribution (standard normal distribution).
 3. Mix the noise image and the original image channel by channel (R, G, B) using the following formula:
 
@@ -41,9 +41,9 @@ $$
 \sqrt{\beta} \times \epsilon + \sqrt{1 - \beta} \times x
 $$
 
- where $\epsilon$ represents Gaussian noise, $x$ represents the pixel values of the image, and $\beta$ is a float number between `[0,1]`. 
- 
- The squares of $\sqrt{\beta}$ and $\sqrt{1 - \beta}$ sum to `1`, satisfying the Pythagorean theorem. This means that <mark>as $\beta$ changes, the proportion of noise in the original image will also change</mark>. 
+ where $\epsilon$ represents Gaussian noise, $x$ represents the pixel values of the image, and $\beta$ is a float number between `[0,1]`.
+
+ The squares of $\sqrt{\beta}$ and $\sqrt{1 - \beta}$ sum to `1`, satisfying the Pythagorean theorem. This means that <mark>as $\beta$ changes, the proportion of noise in the original image will also change</mark>.
 
 For example, as $\beta$ increases, the proportion of the original image gradually decreases:
 
@@ -64,7 +64,7 @@ $$
 $\beta_t$ is called noise schedule. The value of $\beta_t$ keeps increasing at each step:
 
 $$
-0 <= \beta_1 < \beta_2 < \beta_3 < \beta_{t-1} < \beta_t <= 1 
+0 <= \beta_1 < \beta_2 < \beta_3 < \beta_{t-1} < \beta_t <= 1
 $$
 
 Let us define:
@@ -79,13 +79,13 @@ $$
 x_t = \sqrt{1-\alpha_t} \times \epsilon_{t-1} + \sqrt{\alpha_t} \times x_{t-1}
 $$
 
-To describe this process from probability perspective, the noiser image is a sample from a normal distirbution $q(x_{t-1}|x_{t})$ where, $\mu$ is the previous noise image, and the covariant $\epsilon$ is the added noise.
+To describe this process from a probability perspective, the noisier image is a sample from a normal distribution $q(x_{t-1} \mid x_t)$, where $\mu$ is the previous noisy image, and the covariance $\epsilon$ is the added noise.
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-03.png">
 
 <!-- <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-02.png"> -->
 
-Next, we can consider whether it is possible to <mark>directly derive $x_t$ from $x_0$</mark>, which would eliminate the need for intermediate iterative steps (from $x_1$ to $x_{t-1}$). 
+Next, we can consider whether it is possible to <mark>directly derive $x_t$ from $x_0$</mark>, which would eliminate the need for intermediate iterative steps (from $x_1$ to $x_{t-1}$).
 
 It turns out that we can achieve this using the **reparameterization** trick. By applying mathematical induction (the detailed derivation is omitted here), we can have the following equation:
 
@@ -103,7 +103,7 @@ $$
 \bar{\alpha}_t = \alpha_t \alpha_{t-1} \alpha_{t-2} \alpha_{t-3} \cdots \alpha_2 \alpha_1
 $$
 
-This means that, we can create a list of $\beta_t$, for each moment $t$, we can directly derive $x_t$ from the original image $x_0$. 
+This means that we can create a list of $\beta_t$ values, and for each moment $t$, we can directly derive $x_t$ from the original image $x_0$.
 
 $$
 q(x_t \mid x_0) = \mathcal{N}\left(\sqrt{\bar{\alpha}_t}\, x_0,\; (1 - \bar{\alpha}_t)\, I\right)
@@ -137,7 +137,7 @@ for t in selected_indices:
     # Compute the noisy image at timestep t:
     x_t = (np.sqrt(1 - alpha_bar_list[t]) * np.random.normal(0, 1, img.shape) +
                 np.sqrt(alpha_bar_list[t]) * img)
-    
+
     # Restore x_t from [-1,1] back to [0,1]
     x_t = (x_t + 1) / 2
     # Convert to uint8 ([0,255]) for display
@@ -157,7 +157,11 @@ For simplicity, we perform 16 iterations and select 8 images for display:
 Recall our goal is to generate an image from an unknown probability distribution $p_{\theta}$, where $\theta$ represents the parameter that we wanted to learn. When dealing with this problem, a typical approach is to do a maximum likelihood estimation:
 
 $$
-\max_{\theta} \log p_{\theta}(x_0)
+\begin{aligned}
+p_\theta(x_0) &= \int p_\theta(x_{0:T}) \, dx_{1:T} \\
+p_\theta(x_{0:T}) &= p(x_T)\prod_{t=1}^{T} p_\theta(x_{t-1} \mid x_t) \\
+\Rightarrow \quad p_\theta(x_0) &= \int p(x_T)\prod_{t=1}^{T} p_\theta(x_{t-1} \mid x_t)\, dx_1 \cdots dx_T
+\end{aligned}
 $$
 
 We will a parameter $\theta$ that maximizes the probability of the model seeing the data from training set. In practice, we usually minimize the negative log likelihood:
@@ -228,23 +232,23 @@ $$
 P(x_{t-1}|x_t) = \frac{P(x_t|x_{t-1})P(x_{t-1})}{P(x_t)}
 $$
 
-For simplicity, we omit the mathematical derivation. Eventually, we can describe $p(x_{t-1}\|x_t)$ using the following formula:
+For simplicity, we omit the mathematical derivation. Eventually, we can describe $p(x_{t-1} \mid x_t)$ using the following formula:
 
 $$
-P(x_{t-1} | x_t, x_0) \sim N \left( 
-    \frac{\sqrt{a_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t} x_t 
-    + \frac{\sqrt{\bar{\alpha}_{t-1}}(1 - a_t)}{1 - \bar{\alpha}_t} 
+P(x_{t-1} | x_t, x_0) \sim N \left(
+    \frac{\sqrt{a_t}(1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t} x_t
+    + \frac{\sqrt{\bar{\alpha}_{t-1}}(1 - a_t)}{1 - \bar{\alpha}_t}
     \left( x_t - \frac{\sqrt{1 - \bar{\alpha}_t} \, \epsilon}{\sqrt{\bar{\alpha}_t}} \right),
     \left( \sqrt{\frac{\beta_t (1 - \bar{\alpha}_{t-1})}{1 - \bar{\alpha}_t}} \right)^2
 \right)
 $$
 
 
-In the previous section, we learned that an image at any time step $x_t$ can be considered as being directly derived from adding noise to an original image $x_0$. As long as we know the noise `ϵ` added from $x_0$ to $x_t$, we can determine the probability distribution of the previous time step $x_{t-1}$. 
+In the previous section, we learned that an image at any time step $x_t$ can be considered as being directly derived from adding noise to an original image $x_0$. As long as we know the noise `ϵ` added from $x_0$ to $x_t$, we can determine the probability distribution of the previous time step $x_{t-1}$.
 
 <mark>Therefore, <code>ϵ</code> is the additional information we're looking for. How to obtain <code>ϵ</code> becomes the next focus in our discussion.</mark>
 
-Here, we can train a neural network model that takes the image at time step $x_t$ as input, and predicts the noise `ϵ` added to this image relative to the original image $x_0$. The predicted the noise should be close to the Gaussian distribution.
+Here, we can train a neural network model that takes the image at time step $x_t$ as input and predicts the noise `ϵ` added to this image relative to the original image $x_0$. The predicted noise should be close to the Gaussian distribution.
 
 Let's just treat the neural network as a black box for now, and only focus on the input and output of the model. <mark>The neural network's output is the noise <code>ϵ</code>, and we compare the predicted noise against the standard Gaussian distribution</mark> to calculate the loss:
 
@@ -253,7 +257,7 @@ Let's just treat the neural network as a black box for now, and only focus on th
 > Why take timestamp $t$ as input? Because all the denoising process share the same neural network weights, the input $t$ will help train a UNet with a time step in mind.
 
 
-For any normal probability distribution, there are two key parameters: the mean `µ` and the variance `θ`. In the original DDRM paper, the model uses a fixed variance, and the mean `µ` is the only parameter that needs to be learned through a neural network.
+For any normal probability distribution, there are two key parameters: the mean `µ` and the variance `θ`. In the original DDPM paper, the model uses a fixed variance, and the mean `µ` is the only parameter that needs to be learned through a neural network.
 
 At high-level, the training loop can be described like this:
 
@@ -263,11 +267,11 @@ def perturb_input(x, t, noise):
     return ab_t.sqrt()[t, None, None, None] * x + (1 - ab_t[t, None, None, None]) * noise
 
 for ep in range(n_epoch):
-    # code for setup setup learning rate, etc...
-    
+    # code for setting up the learning rate, etc...
+
     # noise is the ϵ ~ N(0,1) with the shape of x_t
     noise = torch.randn_like(x_t)
-    # grab the x_t. 
+    # grab the x_t.
     x_pert = perturb_input(x, t, noise)
     # x_pert is the noised image at step "t"
     pred_noise = nn_model(x_pert, t)
@@ -318,11 +322,11 @@ The following diagram illustrates the sampling process:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-08.png">
 
-Note that we add a noise($\sqrt{1 - \alpha_t} \times z$) to the end of the formula to stabilize the model. This is found to be useful by searchers that will significantly improve the generated image quality.
+Note that we add noise ($\sqrt{1 - \alpha_t} \times z$) to the end of the formula to stabilize the model. Researchers found that this significantly improves the generated image quality.
 
 ## Stable Diffusion
 
-Now that we have explored the theory behind diffusion models. While the original diffusion model serves as more of a proof of concept, it highlights the immense potential of multi-step diffusion models compared to one-pass neural networks. However, <mark>it comes with a significant drawback: the pre-trained model operates in pixel space, which is computationally intensive</mark>. In 2022, researchers introduced [Latent Diffusion Models](https://arxiv.org/abs/2112.10752), which effectively addressed the performance limitations of earlier diffusion models. <mark>This approach later became widely known as Stable Diffusion</mark>.
+Now that we have explored the theory behind diffusion models, the original diffusion model serves more as a proof of concept. It highlights the immense potential of multi-step diffusion models compared to one-pass neural networks. However, <mark>it comes with a significant drawback: the pre-trained model operates in pixel space, which is computationally intensive</mark>. In 2022, researchers introduced [Latent Diffusion Models](https://arxiv.org/abs/2112.10752), which effectively addressed the performance limitations of earlier diffusion models. <mark>This approach later became widely known as Stable Diffusion</mark>.
 
 At its core, Stable Diffusion contains a collection of models that work together to produce the output image
 
@@ -333,7 +337,7 @@ At its core, Stable Diffusion contains a collection of models that work together
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-02-02.png">
 
-The power of stable diffusion models comes from the ability to generate images through text. So how does the text prompt affects the image generation process? This turns out to be a complex process involving the coordination of several models. Let’s walk through it step by step in the following articles.
+The power of Stable Diffusion models comes from the ability to generate images from text. So how does the text prompt affect the image generation process? This turns out to be a complex process involving the coordination of several models. Let’s walk through it step by step in the following articles.
 
 ## Resources
 
@@ -342,9 +346,9 @@ The power of stable diffusion models comes from the ability to generate images t
 - [Using Stable Diffusion with Python](https://www.amazon.com/Using-Stable-Diffusion-Python-Generation/dp/1835086373/)
 
 
-## Appdenix: Joint Probability Refresher
+## Appendix: Probability Refresher
 
-### Maxium Likelyhood
+### Maximum Likelihood
 
 Typically, when we have a large image training data set, we can try finding a parameter $\theta$ that maximizes the probability of the model seeing the training data:
 
@@ -352,7 +356,7 @@ $$
 \max_{\theta} \log p_{\theta}(x_0)
 $$
 
-$x_0$ is our training images. $p_{\theta}$ is the probability given by the model of parameter $\theta$. Our goal is to find parameters $\theta$ that maximizes the quantity. $log$ is introduced to stable the computation.
+$x_0$ is our training image. $p_{\theta}$ is the probability given by the model with parameter $\theta$. Our goal is to find parameters $\theta$ that maximize this quantity. $\log$ is introduced to stabilize the computation.
 
 ### Joint Probability Distribution
 
@@ -366,7 +370,7 @@ One way to visualize the joint probability distribution is using heat maps:
 
 <img class="md-img-center" src="{{site.baseurl}}/assets/images/2025/01/sd-01-05.png" width="60%">
 
-The color represents the density value of the joint probability distribution. 
+The color represents the density value of the joint probability distribution.
 
 <div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-07.png"></div>
@@ -376,17 +380,17 @@ The color represents the density value of the joint probability distribution.
 For a given $x_1$ and $_x_2$, 
 
 - The **joint probability** $p(x_1, x_2)$ is the probability we have $x_1$ **and** $x_2$
-- The **conditional probability** $p(x_2 \| x_1)$ is the probability that we have $x_2$ **knowing that** we have $x_1$. In other words, it is the portion of the joint probility $p(x_1, x_2)$ over the sum of all the squares give the value of $x_1$.
+- The **conditional probability** $p(x_2 \mid x_1)$ is the probability that we have $x_2$ **knowing that** we have $x_1$. In other words, it is the portion of the joint probability $p(x_1, x_2)$ over the sum of all squares given the value of $x_1$.
 
 ### Marginalization
 
-Say if we just want to obtain the probability of a random variable $x_1$, we could sum all the joint probability $p(x_1, x_2)$ across all $x_2$ 
+Say if we just want to obtain the probability of a random variable $x_1$, we could sum all the joint probability $p(x_1, x_2)$ across all $x_2$
 
 $$
 p(x_1) = \int p(x_1, x_2)\, dx_2
 $$
 
-This is called **marginalization**. If we compute all the values for $p(x_1)$, eventually, we can reconstruct the probability dense function of $p(x_1)$
+This is called **marginalization**. If we compute all the values for $p(x_1)$, eventually, we can reconstruct the probability density function of $p(x_1)$
 
 <div class="md-flex-h md-flex-no-wrap">
 <div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-09.png"></div>
@@ -394,7 +398,7 @@ This is called **marginalization**. If we compute all the values for $p(x_1)$, e
 <div><img src="{{site.baseurl}}/assets/images/2025/01/sd-01-10.png"></div>
 </div>
 
-If we have $t$ variables, the join probability can be calculatd as follows:
+If we have $t$ variables, the joint probability can be calculated as follows:
 
 $$
 p(x_1, x_2, \ldots, x_T) = p(x_1) \times p(x_2 \mid x_1) \times \cdots \times p(x_T \mid x_1, \ldots, x_{T-1})
@@ -406,7 +410,7 @@ $$
 p(x_1, x_2, \ldots, x_T) = p(x_{1:T}) = p(x_1) \prod_{t=2}^{T} p(x_t \mid x_{1:t-1})
 $$
 
-Similarly, for marginalization, a simple denotion is:
+Similarly, for marginalization, a simple notation is:
 
 $$
 p(x_1) = \int p(x_1, x_2, \ldots, x_T)\, dx_2 \cdots dx_T = \int p(x_{1:T}) \, dx_{2:T}
@@ -425,10 +429,10 @@ def denoise_add_noise(x, t, pred_noise, z=None):
 
 def sample_ddpm(n_sample, save_rate=20):
     # x_T ~ N(0, 1), sample initial noise - [N, C, H, W]
-    samples = torch.randn(n_sample, 3, height, height).to(device)  
+    samples = torch.randn(n_sample, 3, height, height).to(device)
 
     # array to keep track of generated steps for plotting
-    intermediate = [] 
+    intermediate = []
     for i in range(timesteps, 0, -1):
         print(f'sampling timestep {i:3d}', end='\r')
 

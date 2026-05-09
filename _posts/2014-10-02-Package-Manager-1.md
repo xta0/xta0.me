@@ -249,9 +249,9 @@ LuaRock的用法和gem相同:
 ```
 #install using pip
 pip3 install virtualenv
-#create enviroment
+#create environment
 > virtualen proj
-#create enviroment with python path
+#create environment with python path
 > virutalen proj -p python_path
 #activate & deactive
 > source bin/activate

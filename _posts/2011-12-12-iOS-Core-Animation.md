@@ -165,7 +165,7 @@ self.myLayer.shadowPath = shadowPath;
 
 ### GPU Performance Model
 
-- What are teh costs?
+- What are the costs?
 	- How many destination pixels? 一次最多能渲染多少pixels?
 	- How many source pixels? 一次最多能读取多少pixels?
 	- How many times do we switch buffers? 渲染过程中需要多少次switch buffer？

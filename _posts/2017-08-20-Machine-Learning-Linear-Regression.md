@@ -370,7 +370,7 @@ $$
 | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Need to choose alpha                                                                   | No need to choose alpha                                                                                                                                             |
 | Needs many iterations                                                                  | No need to iterate                                                                                                                                                  |
-| <math><mi>O</mi><mo>(</mo><mi>k</mi><msup><mi>n</mi><mn>2</mn></msup><mo>)</mo></math> | <math><mi>O</mi><mo> (</mo><msup><mi>n</mi><mn>3</mn></msup><mo>)</mo></math> need to calculate inverse of <math><msup><mi>X</mi><mi>T</mi></msup><mi>X</mi></math> |
+| $O(k n^{2})$ | $O(n^{3})$ need to calculate inverse of $X^{T} X$ |
 | Works well when n is large                                                             | Slow if n is very large                                                                                                                                             |
 
 当样本数量 $n \geq 1000$ 时，使用梯度下降，小于这个数量时，使用 Normal Equation 更方便。当 $n$ 太大时，计算 $X^T X$ 会非常慢。

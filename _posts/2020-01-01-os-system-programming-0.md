@@ -49,7 +49,7 @@ categories: [System Programming, Operating System]
 
 - ISA
     - Application's "machine" is the process abstraction provided by the OS
-    - Each running programing runs in its own process
+    - Each running programming runs in its own process
     - Processes provide nicer interfaces than raw hardware
 - Process
     - Address Space

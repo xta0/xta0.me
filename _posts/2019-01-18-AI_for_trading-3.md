@@ -68,45 +68,7 @@ mathjax: true
         - <mark>The higher the Sharpe ratio the better.</mark>
         - When comparing two assets each with the same return, higher ratio gives more return for the same risk.
         
-        <math display = "block">
-            <mi>S</mi>
-            <mo>=</mo>
-            <mfrac>
-                <mrow>
-                    <mi>E</mi>
-                    <mo stretchy="false">[</mo>
-                    <mi>R</mi><mo>-</mo><msub><mi>R</mi><mi>f</mi></msub>
-                    <mo stretchy="false">]</mo>
-                </mrow>
-                <mrow>
-                    <mi>σ</mi>
-                </mrow>
-            </mfrac>
-            <mo>=</mo>
-            <mfrac>
-                <mrow>
-                    <mi>E</mi>
-                    <mo stretchy="false">[</mo>
-                    <mi>R</mi><mo>-</mo><msub><mi>R</mi><mi>f</mi></msub>
-                    <mo stretchy="false">]</mo>
-                </mrow>
-                <mrow>
-                    <msqrt>
-                        <mi>var</mi>
-                        <mi>E</mi>
-                        <mo stretchy="false">[</mo>
-                        <mi>R</mi><mo>-</mo><msub><mi>R</mi><mi>f</mi></msub>
-                        <mo stretchy="false">]</mo>
-                    </msqrt>
-                </mrow>
-           	</mfrac>
-           	<mo>=</mo>
-           	<mi>K</mi><mo>*</mo>
-           	<mfrac>
-           		<mtext>dailyRet</mtext>
-           		<mtext>std(dailyret)</mtext>
-           	</mfrac>
-        	</math>
+        $S=\frac{E[R-R_{f}]}{\sigma}=\frac{E[R-R_{f}]}{\sqrt{var E[R-R_{f}]}}=K \cdot \frac{\text{dailyRet}}{\text{std(dailyret)}}$
 		
         - pseudo code
 				

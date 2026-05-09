@@ -10,7 +10,7 @@ layout: post
 
 - Essential concepts relevant in any programming language
 - Use ML,Racket,Ruby
-- Big Focus on Functional Programming 
+- Big Focus on Functional Programming
 - **3 parts (100-200 hours),11 weeks**
 	- Part A
 		- Syntax vs. semantics vs. idioms vs. libraries vs. tools
@@ -55,8 +55,8 @@ layout: post
 	- [Commandline reference](http://pages.cs.wisc.edu/~fischer/cs538.s08/sml/sml.html)
 - Code Editor
 	- [VSCode](https://code.visualstudio.com/)
-	- [Standard ML extension](https://github.com/freebroccolo/vscode-sml) 
-	
+	- [Standard ML extension](https://github.com/freebroccolo/vscode-sml)
+
 # Week 1
 
 ## Variable Bindings and Expressions
@@ -64,29 +64,29 @@ layout: post
 - "Let go" of all programming languages you already know"
 - <mark>Treat "ML" as a "totally new thing"</mark>
 	- Time later to compare / contrast to what you konw
-- Start from a blank file 
+- Start from a blank file
 
 ```Haskell
 (* This is a comment. This is our first program. *)
-val x = 34; 
+val x = 34;
 
-(* static enviroment: x : int *)
-(* dynamic enviroment: x --> 34 *)
+(* static environment: x : int *)
+(* dynamic environment: x --> 34 *)
 val y = 17;
 
-(* static enviroment: x:int, y:int *)
-(* dynamic enviroment: x --> 34, y --> 17 *)
+(* static environment: x:int, y:int *)
+(* dynamic environment: x --> 34, y --> 17 *)
 val z = (x+y) + (y+2);
 
-(* static enviroment: x:int, y:int, z:int *)
-(* dynamic enviroment: x--> 34, y-->17, z --> 70 *)
+(* static environment: x:int, y:int, z:int *)
+(* dynamic environment: x--> 34, y-->17, z --> 70 *)
 val q = z+1
 
-(* static enviroment: x:int, y:int, z:int, q:int *)
-(* dynamic enviroment: x--> 34, y-->17, q --> 71 *)
+(* static environment: x:int, y:int, z:int, q:int *)
+(* dynamic environment: x--> 34, y-->17, q --> 71 *)
 val abs_of_z = if z<0 then 0-z else z;(* bool *)(* int *)
 
-(* dynamic enviroment: ..., abs_of_z --> 70 *)
+(* dynamic environment: ..., abs_of_z --> 70 *)
 val abs_of_z_simpler = abs(z)
 ```
 
@@ -100,7 +100,7 @@ val abs_of_z_simpler = abs(z)
 
 - Syntax(语法):
 	- **Syntax** is just how you write something
-	- `val`, `=` , `;` 
+	- `val`, `=` , `;`
 	- variable `x`
 	- Expression `e`
 
@@ -109,13 +109,13 @@ val abs_of_z_simpler = abs(z)
 	- **Semantics** is what that something means
 		- **Type Checking** (before program runs)
 		- **Evaluation** (as program runs)
-	
+
 	- For variable bindings:
 		- Type-check expresson and extend **static environment**
-		- Evaluate expression and extend **dynamic environment** 
-		
+		- Evaluate expression and extend **dynamic environment**
+
 > 在函数型语言里，没有赋值(assign)的概念，而是叫做binding。一个变量(符号)被bind一个value后，这个变量是不允许再去bind其它的value。
-		
+
 ## Rules for Expressions
 
 ### Expressions
@@ -123,16 +123,16 @@ val abs_of_z_simpler = abs(z)
 - We have seen many kinds of expressions:
 	- `34 true false x e1+e2 e1>e2`
 	- `if e1 then e2 else e3`
-	
+
 - <mark>Every kind of expression has</mark>
-	- **Syntax** 
+	- **Syntax**
 		- 语法
-	- **Type-checking rules** 
+	- **Type-checking rules**
 		- 类型检查
 		- Produces a type or fails(with a bad error message)
 		- types so far: `int` `bool` `unit`
-		
-	- **Evaluation rules**(used only on things that type-check) 
+
+	- **Evaluation rules**(used only on things that type-check)
 		- 求值规则
 		- Produces a value(or exception or infinite-loop)
 
@@ -142,10 +142,10 @@ val abs_of_z_simpler = abs(z)
 	- Syntax:
 		- sequence of letters,digits,_,not starting with digit
 	- Type-checking:
-		- Look up type in current **static enviroment**. if not there, fail
+		- Look up type in current **static environment**. if not there, fail
 	- Evaluation:
-		- look up value in current **dynamic enviroment**
-	
+		- look up value in current **dynamic environment**
+
 - `+`
 	- Syntax:
 		`e1+e2` where `e1` and `e2` are expressions
@@ -157,12 +157,12 @@ val abs_of_z_simpler = abs(z)
 		- then `e1+e2` evaluates to sum of `v1` and `v2`
 
 - `if-else`
-	- Syntax: 
+	- Syntax:
 		- if `e1` then `e2` else `e3`
 		- where `if`,`then`,`else` are keywords and `e1`,`e2`,`e3` are subexpressions
 	- Type-checking:
 		- first `e1` must have type `bool`.
-		- `e2` and `e3` can have any type `t`, but they must have the same type `t`.     
+		- `e2` and `e3` can have any type `t`, but they must have the same type `t`.
 		- the type of the entire expression is also `t`
 	- Evaluation rules:
 		- first evaluate `e1` to a value call it `v1`, if the result is ture, then evaluate `e2` as the result of whole expression. else, evaluate `e3` and that result is the whole expression's result.
@@ -180,7 +180,7 @@ val abs_of_z_simpler = abs(z)
 ### The REPL and Erros
 
 - 使用命令行解释执行单条语句要加`;`
-	- `val x=1;` 
+	- `val x=1;`
 - 读文件`use "foo.sml";`
 
 - Error
@@ -188,7 +188,7 @@ val abs_of_z_simpler = abs(z)
 		- what you wrote means nothing or not the construct you intended.
 	- Type-checking:
 		- What you wrote does not type-checked
-	- Evaluation: 
+	- Evaluation:
 		- It runs but produces wrong answer, or an exception, or an infinite loop
 	- common error:
 		- `if` - `then` - `else`
@@ -214,7 +214,7 @@ val a = 5 (*  this is not an assignment statement *)
 (* a -> 5, b-> 20 *)
 ```
 
-上面代码中，`a=5`并没有改变原来的`a`值，在ML中是没有办法修改原先内存中的值的。因此这里得到的`a`是一个新的environment中的`a`,后面的变量都注册到这个enviroment中，因此原来的a被shadow掉了。
+上面代码中，`a=5`并没有改变原来的`a`值，在ML中是没有办法修改原先内存中的值的。因此这里得到的`a`是一个新的environment中的`a`,后面的变量都注册到这个environment中，因此原来的a被shadow掉了。
 
 
 ```haskell
@@ -226,10 +226,10 @@ val c = b
 
 ```haskell
 val d = a
-(* ...,in the current envrioment a -> 5, d->5 *)
+(* ...,in the current environment a -> 5, d->5 *)
 
 val a = a + 1
-(*create a new envrioment, a -> 6*)
+(*create a new environment, a -> 6*)
 ```
 和上面原理相同，在当前的envrionment中`a+1 = 6`，此时需要增加一个variable，也叫`a`，又产生了shadowing。系统会再创建一个新的environment保存新的`a`。
 
@@ -254,9 +254,9 @@ val it = () : unit
 
 ```haskell
 (* val pow = fn : int * int -> int *)
-fun pow(x:int, y:int) = 
-	if y=0 
-	then 1 
+fun pow(x:int, y:int) =
+	if y=0
+	then 1
 	else x*pow(x,y-1)
 ```
 
@@ -268,16 +268,16 @@ fun pow(x:int, y:int) =
 	- That's simply ML's rule
 	- Helper functions must come before their uses
 	- Need spection construct for mutual recursion(later)
-	
+
 > 上面例子可知ML中Function是first-class object, 函数的类型就是它的签名
 
-### Recursion 
+### Recursion
 
 - “Makes sense” because calls to same function solve "simpler problems"
 - Recursion more powerful than loops
 	- We won't use a single loop in ML
 	- Loops ofter(not always)obscure simple, elegant solutions
-	
+
 <mark>Everything you can do in loop, you can do it in recursion</mark>，使用递归可以取代循环，简化代码
 
 > 由于`for`或`while`是一种过程性的表达式，它表达的是如何完成循环，还需要引入一些状态变量。在函数型语言中，这种做法不直观，是一种过程式的风格
@@ -290,17 +290,17 @@ fun pow(x:int, y:int) =
 - Syntax : `fun x0（x1:t1,...,xn:tn）= e`
 	- `x0`是函数名
 	- (will generalize in later lecture)
-		
-- Type-Checking: 
+
+- Type-Checking:
 	- 首先将`x0`的类型绑定为`(t1 *...* tn)->t`
 	- 对函数的body`e`进行type-checking, 使用static environment中已有的信息，比如之前创建的binding（函数body中可能使用以前的binding）
 	- 对函数的参数类型检查和函数自身的类型检查
 		- 函数body中可能出现递归，因此对函数自身也要进行type-checking
 
-- Evaluation : 
+- Evaluation :
 	- 运行时求值，对函数的body不进行提前Evaluation
-	- Add `x0` to dynamic enviroment so later expression can call it. 
-	- Funcation call semantics will also allow recursion		
+	- Add `x0` to dynamic environment so later expression can call it.
+	- Funcation call semantics will also allow recursion
 
 ### More on type-checking
 
@@ -313,7 +313,7 @@ fun pow(x:int, y:int) =
 	- 在static environment中，只有函数对象`x0`的类型。ML函数也是在运行时求值的，因此函数体中使用的binding是在dynamic environment中寻找的
 	- 参数只能在函数体内部`e`中使用
 	- `x0`的返回值类型是函数体`e`的类型，Type-checker可以根据`e`推断出返回值类型`t`
-		
+
 ### Function Calls
 
 A new kind of expression:
@@ -326,21 +326,21 @@ A new kind of expression:
 		- Example:`pow(x,y-1)` in previouse example has type `int`
 	- `e1` has type `t1`, ... , `en` has type `tn`
 - Evaluation:
-	1. 在当前运行时环境(<mark>current dynamic enviroment</mark>)中对`e0`进行求值
+	1. 在当前运行时环境(<mark>current dynamic environment</mark>)中对`e0`进行求值
 		- `e0`求值之后是一个函数，类型为 :`(t1 *...* tn ) -> t`
 	2. 在当前运行时环境中求解参数 `v1,...,vn`
 		- 比如参数中有`2+2`，这种情况下需要对其进行求值后再继续evaluate function
-	3. Result is evaluation of `e` in an enviroment extended to map `x1` to `v1`, ... `xn` to `vn`
-	 	- ("An envrioment" is actually the enviroment where the function was defined, and includes `x0` for recursion)
-	
-	
+	3. Result is evaluation of `e` in an environment extended to map `x1` to `v1`, ... `xn` to `vn`
+		- ("An environment" is actually the environment where the function was defined, and includes `x0` for recursion)
+
+
 ## Tuples and Pairs
 
 ### Paris
 
-- Syntax : 
+- Syntax :
 	- `(e1,e2)`
-- Type-checking: 
+- Type-checking:
 	- if `e1` has type `ta` and `e2` has type `tb` then the expression has type `ta * tb`
 	- A new kind of type
 - Evaluation:
@@ -351,24 +351,24 @@ A new kind of expression:
 
 - Syntax：
 	- `#1 e` and `#2 e`
-- Evaluation: 
+- Evaluation:
 	- Evaluate e to a pair of values and return first or section piece
-	- Example: if `e` is a variable x then look up x in enviroment
+	- Example: if `e` is a variable x then look up x in environment
 - Type-checking:
 	- if `e` has type `ta * tb` then `#1 e` has type `ta` and `#2 e` has type `tb`
 
 ```haskell
 fun swap(pr : int*bool) = (#2 pr, #1 pr)
 
-(* (int*int) * (int*int) -> int *) 
+(* (int*int) * (int*int) -> int *)
 fun sum_two_pairs (pr1 : int * int, pr2 : int * int) = (#1 pr1)+(#2 pr1)+(#1 pr2)+ (#2 pr2)
 
 (* int*int -> int *int *)
 fun div_mod (x:int,y:int) = (x div y , x mod y)
 
-fun sort_pair(pr:int*int) = 
+fun sort_pair(pr:int*int) =
     if (#1 pr) < (#2 pr)
-    then pr 
+    then pr
     else (#2 pr, #1 pr)
 ```
 
@@ -394,7 +394,7 @@ val x2 = #1 (#2 x1) (* bool *)
 
 ## Lists
 
-- Despite nested tuples, tye type of variable still "commits" to a particular "amount" of data 
+- Despite nested tuples, tye type of variable still "commits" to a particular "amount" of data
 
 In contrast, a list:
 
@@ -434,11 +434,11 @@ val it = false : bool
 
 - if `e` evaluates to `[v1,v2,...,vn]` then `hd e` evaluates to `v1`
 	- raise exception if e evaluates to []
-	
+
 - if `e` evaluates to `[v1,v2,...,vn]` then `tl e` evaluates to `[v2,...,vn]`
 	- raise exception if e evaluates to []
 	- Notice result is a list
-	
+
 
 ### Type-checking list operations
 
@@ -453,12 +453,12 @@ val it = [1,2,3] : int list
 ```
 
 Examples:
-	
+
 `int list` `bool list` `int list list` `(int * int) list` `(int list*int) list`
 
 - So [] can have type t list of any type
 	- SML uses type `·a list` to indicate this("quote a" or "alpha")
-	
+
 - For `e1::e2` to type-check, we need a `t` such that `e1` has type `t` and `e2` has type `t list`. Then the result type is `t list`
 
 - null : `.a list -> bool`
@@ -478,15 +478,15 @@ Gain experience with lists and recursion by writing several functions that proce
 example:
 
 ```
-fun sum_list (xs:int list) = 
+fun sum_list (xs:int list) =
 	if null xs then 0
 	else hd xs + sum_list(tl xs)
-	
-	
-fun countdown(x:int) = 
+
+
+fun countdown(x:int) =
 	if x=0 then []
 	else x::countdown(x-1)
-	
+
 fun append(xs : int list, ys : int list) =
 	if null xs then ys
     else (hd xs) :: append((tl xs),ys)
@@ -501,8 +501,8 @@ Functions over lists are usually recursive
 - what should the answer be for a non-empty list?
 
 	- Typically in terms of the answer for the tail of the list !
-	
-	
+
+
 Similarly, functions that produce lists of potentially any size will be recursive
 
 - You create a list out of smaller list
@@ -519,25 +519,25 @@ Huge progress already on the core pieces of ML:
 - Types: `int bool unit t1...tn t list t1...tn->t`
 
 	- Types are "nest"(each t above can be itself a compound type)
-	
+
 - Variables, environments, and basic expressions
 
 - Functions
 
 	- Build: `fun x0(x1:t1,....,xn:tn) = e`
-	
+
 	- Use: e0(e1,e2...en)
-	
+
 - Tuples
 
 	- Build: `(e1,...,en)`
-	 
+
 	- Use: `#1 e, #2 e, ....`
-	
+
 - Lists
 
 	- Build: `[]`, `e1::e2`
-	
+
 	- Use: `null e`, `hd e`, `tl e`
 
 
@@ -570,7 +570,7 @@ so we can use it anywhere an expression can go.
 - Syntax: `let b1 b2...bn in e end`
 
 	- Each `bi` is any *binding* and **e** is any expression
-	
+
 - Type-checking: Type-check each `bi` and `e` in a static environment that includes the previous bindings.Type of whole let-expression is the type of `e`.
 
 - Evaluation: Evaluate each `bi` and `e` in a dynamic environment that includes the previous binding.Result of whole let-expression is result of evaluating `e`.
@@ -578,48 +578,48 @@ so we can use it anywhere an expression can go.
 example:
 
 ```
-fun silly1(z:int) = 
+fun silly1(z:int) =
 
-	let 
+	let
 		val x = if z>0 then z else 34
 		val y = x + z + 9
 	in
 		if x>y then x*2 else y*y
 	end
-	
+
 ```
 
 ```
-func silly2() = 
+func silly2() =
 
-	let 
+	let
 		val x = 1
-	in 
+	in
 		//这里的x是在新的environment里面，上面的x会被shadow掉
-		(let val x = 2 in x+1 end) + 
-		
+		(let val x = 2 in x+1 end) +
+
 		//这里的x值为1
 		(let val y=x+2 in y+1 end)
 	end
-	
+
 ```
 
 ###What's new
 
 上面`let in end`语法实际上是对***scope***的描述：
 
-- What's new is scope: where a binding is in the enviroment
+- What's new is scope: where a binding is in the environment
 
 	- In later bindings and body of the let-expression
-	
+
 		- (Unless a later or nested binding shadows it)
-		
+
 	- Only in later bindings and body of the let-expression
 
 - Nothing else is new:
 
 	- Can put any binding we want, event function bindings
-	
+
 	- type-check and evaluate just like at "top-level"
 
 
@@ -639,17 +639,17 @@ example:
 
 ```
 
-fun countup_from1(x:int) = 
+fun countup_from1(x:int) =
     let
-	fun count (from: int) = 
+	fun count (from: int) =
 	    if from = x
 	    then x::[]
 	    else from :: count(from+1)
-    in 
+    in
 	count(1)
     end
-    
-    
+
+
 ```
 
 由于函数是first class的，可以在函数中定义函数，并且在scope中生效。
@@ -657,24 +657,24 @@ fun countup_from1(x:int) =
 - Functions can use bindings in the environment where they are defined:
 
 	- Bindings from "outer" environments
-	
+
 		- Such as parameters to the outer function
-		
+
 	- Earlier bindings in the let-expression
-	
+
 - Unnecessary parameters are usually bad style
 
 	- Like to in previous example
-	
+
 ###Nested functions: style
 
 - Good style to define helper functions inside the functions they help if they are:
-	
+
 	- Unlikely to be useful elsewhere
 	- Likely to be misued if available elsewhere
 	- Likely to be changed or removed later
-	
-	
+
+
 - A fundamental trade-off in code design:reusing code saves effort and avoids bugs, but makes the reused code harder to change later.
 
 ## 1-12 Let Expressions to Avoid Repeated Comupatation
@@ -682,14 +682,14 @@ fun countup_from1(x:int) =
 example:
 
 ```
-fun bad_max(xs:int list) = 
+fun bad_max(xs:int list) =
     if null xs then 0
     else if null (tl xs) then (hd xs)
     else if hd xs > bad_max(tl xs) then hd xs
     else bad_max(tl xs)
-    
+
 let x = bad_max [50,49,...,1]
-let y = bad_max [1,2,...,59]  
+let y = bad_max [1,2,...,59]
 
 ```
 Consider this code and the recursive calls it makes
@@ -706,7 +706,7 @@ Consider this code and the recursive calls it makes
 一种解法是缓存bad_max的结果：
 
 ```
-fun good_max(xs: int list) = 
+fun good_max(xs: int list) =
     if null xs then 0
     else if null (tl xs) then hd xs
     else
@@ -724,14 +724,14 @@ fun good_max(xs: int list) =
 The key is not to do repeated work that might do repeated work that do ...
 
 - Saving recursive results in local bindings is essential.
-         
-  
+
+
 ##Options
 
 Motived：
 
 ```
-fun get_ max(xs: int list) = 
+fun get_ max(xs: int list) =
     if null xs then 0
     else if null (tl xs) then hd xs
     else
@@ -750,7 +750,7 @@ Having `max` return 0 for the empty list is really awful
 
 - Could return a zero-element or one-element list
 
-	- That works but is poor style because the built-in support for options expresses this situation directly  
+	- That works but is poor style because the built-in support for options expresses this situation directly
 
 ###Options
 
@@ -759,23 +759,23 @@ Having `max` return 0 for the empty list is really awful
 - `t option` is a type for any type t
 
 	- (much like `t list`，but a different type, not a list)
-	
+
 - Building:
 
 	- `NONE` has type `.a option` (much like[] has type `.a list`)
-	
+
 	- `SOME e` has type `t option` if `e` has type `t`(much like `e::[]`)
-	
+
 - Accessing:
 
 	- `isSome`  has type `.a option -> bool`
-	
+
 	- `valOf` has type `.a option -> .a ` (exception if given NONE)
- 
+
 改写后的max方法
 
 ```
-fun max1(xs:int list) = 
+fun max1(xs:int list) =
     if null xs then NONE
     else
 	let val tl_ans = max1(tl xs)
@@ -786,7 +786,7 @@ fun max1(xs:int list) =
 
 ```
 
- 
+
 
 
 ## 1-13 More Boolean and Comparison Expressions
@@ -798,7 +798,7 @@ SOme "odds and ends" that haven't come up much yet:
 - Comparison operations
 
 ###Boolean operations
- 
+
 `e1 andalso e2` => "&&"
 
 `e1 orelse e2` => "||"
@@ -819,14 +819,14 @@ Have now covered all the features you need.
 Now learn a very important *non-feature*:
 
 - Huh??How could the lock of a feature be important?
-	
+
 - When it lets you know things other code will not do with your code and the results your code produces
 
 A major aspect and contribution of functional programming:
 
 Not being able to assign to (a.k.a. mutate) variables or parts of tuples and lists
 
-***This is a Big Deal***	
+***This is a Big Deal***
 
 意思是SML或者函数型语言在设计的时对数据的操作就是immutable的,这种看似的缺陷反而成了它的优点。
 
@@ -835,7 +835,7 @@ Not being able to assign to (a.k.a. mutate) variables or parts of tuples and lis
 比较下面两个方法:
 
 ```
-fun sort_pair (pr: int * int) = 
+fun sort_pair (pr: int * int) =
 
 	if #1 pr < #2 pr then pr
 	else (#2 pr, #1 pr)
@@ -844,9 +844,9 @@ fun sort_pair (pr: int * int) =
 
 
 ```
-fun sort_pair (pr: int * int) = 
+fun sort_pair (pr: int * int) =
 
-	if #1 pr < #2 pr 
+	if #1 pr < #2 pr
 	then (#1 pr, #2 pr)
 	else (#2 pr, #1 pr)
 
@@ -885,8 +885,8 @@ val y = x
 ```
 
 //假如p中的value可以被修改，变为(5，4)
- #1 p = 5 
- 
+ #1 p = 5
+
  val z = #1 y
 
 ```

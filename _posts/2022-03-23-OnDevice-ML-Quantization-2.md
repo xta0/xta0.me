@@ -178,7 +178,7 @@ Let's take a look at the PyTorch implementation
 ```python
 def pack_weights(uint8tensor, bits):
     if uint8tensor.shape[0] * bits % 8 != 0:
-        raise ValueError(f"The input shape needs to be a mutiple \
+        raise ValueError(f"The input shape needs to be a multiple \
         of {8 / bits} - got {uint8tensor.shape[0]}")
 
     num_values = uint8tensor.shape[0] * bits // 8

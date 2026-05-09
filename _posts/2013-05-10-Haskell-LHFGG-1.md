@@ -33,8 +33,8 @@ sum[1...10]
 
 ### Functional Programming background
 
-- 1930s: Alonzo Church develops the ***lamda calculus***, a simple but powerful theory of functions
-- 1950s: John McCarthy develops ***Lisp***, the first functional language, with some influences from the lamda calculus, but retaining variable assignments .
+- 1930s: Alonzo Church develops the ***lambda calculus***, a simple but powerful theory of functions
+- 1950s: John McCarthy develops ***Lisp***, the first functional language, with some influences from the lambda calculus, but retaining variable assignments .
 
 > 注：使用assignment是非常诱人的，因为CPU决定了计算过程就是不断向寄存器写入的过程，也就是不断更新寄存器中值的过程，编译器也是为这个过程而设计，因此允许直接赋值是许多编程语言都支持的，但是它却违背了Pure Functional的思路，这种直接赋值也被称为为<em>side effect</em>
 

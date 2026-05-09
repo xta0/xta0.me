@@ -36,8 +36,8 @@ mathjax: true
 
 为了后面课程使用方便，我们先来定义一些术语：
 
-* 我们使用<math xmlns="http://www.w3.org/1998/Math/MathML"> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> </math> 来表示输入的特征样本，使用 <math xmlns="http://www.w3.org/1998/Math/MathML"> <msup> <mi>y</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> </math> 表示我们想要得到的预测结果
-* 我们使用 <math xmlns="http://www.w3.org/1998/Math/MathML"> <mo stretchy="false">(</mo> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo>,</mo> <msup> <mi>y</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo stretchy="false">)</mo> </math> 来表示一组训练样本，通常我们的数据集中有多个训练样本，数据集用<math xmlns="http://www.w3.org/1998/Math/MathML"> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <msup> <mi>x</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo>,</mo> <msup> <mi>y</mi> <mrow class="MJX-TeXAtom-ORD"> <mo stretchy="false">(</mo> <mi>i</mi> <mo stretchy="false">)</mo> </mrow> </msup> <mo stretchy="false">)</mo> <mo>;</mo> <mi>i</mi> <mo>=</mo> <mn>1</mn> <mo>,</mo> <mo>.</mo> <mo>.</mo> <mo>.</mo> <mo>,</mo> <mi>m</mi> </mrow> </math> 表示，注意上角标`(i)`表示数据样本的 index
+* 我们使用$x^{(i)}$ 来表示输入的特征样本，使用 $y^{(i)}$ 表示我们想要得到的预测结果
+* 我们使用 $(x^{(i)},y^{(i)})$ 来表示一组训练样本，通常我们的数据集中有多个训练样本，数据集用$(x^{(i)},y^{(i)});i=1,...,m$ 表示，注意上角标`(i)`表示数据样本的 index
 * 我们使用`X`表示输入样本空间，也可以理解为输入矩阵，`Y`表示输出样本空间或者输出矩阵，有 X = Y = ℝ.
 
 在监督学习中，对输入的样本`X`我们使用预测函数（hypothesis）`h(x)` 来求解预测结果`y`，即`h : X → Y`，如下图所示

@@ -105,7 +105,7 @@ int main(void) {
     while(length > 0) {
         fwrite(buffer, length, sizeof(char), output);
         // update the length, util reaching the end of the file
-        length = fread(buffer, BUFFER_SIZE, sizeof(char), intput);
+        length = fread(buffer, BUFFER_SIZE, sizeof(char), input);
     }
     fclose(input);
     fclose(output);
