@@ -38,6 +38,9 @@ table {
   padding: 0;
   border-collapse: collapse;
   margin: 0 0 12px 0;
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 table tr {

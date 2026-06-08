@@ -6,6 +6,10 @@
     // tricky, don't know why
     flex-grow: 1;
     width: 0;
+    min-width: 0;
+
+    @include mobile() {
+        width: 100%;
+    }
     
 }
-

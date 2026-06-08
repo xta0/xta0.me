@@ -73,6 +73,11 @@
 .md-flex-space-between{
     display: flex;
     justify-content: space-between;
+
+    @include mobile() {
+        flex-direction: column;
+        gap: 2px;
+    }
 }
 .md-flex-space-around{
     justify-content: space-around;

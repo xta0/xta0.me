@@ -9,6 +9,8 @@
 
 html, body {
     height: 100%;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 body {
@@ -80,6 +82,7 @@ a {
 
 img {
     max-width: 100%;
+    height: auto;
 }
 
 hr {
@@ -131,4 +134,9 @@ pre code {
     white-space: pre;
     border: none;
     background: transparent;
+}
+
+pre {
+    max-width: 100%;
+    overflow-x: auto;
 }

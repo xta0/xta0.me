@@ -3,4 +3,8 @@
     margin-left: auto;
     margin-right: auto;
     display: block;
+
+    @include mobile() {
+        width: 100%;
+    }
 }

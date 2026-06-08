@@ -1,10 +1,19 @@
 .page-home {
     padding: 80px 40px 0 40px;
+
+    @include mobile() {
+        padding: 36px 20px 0;
+    }
+
     &__title{
         text-align: center;
         margin: 0px 0;
         font-size: 36px;
         font-weight: $font-weight-normal;
+
+        @include mobile() {
+            font-size: 28px;
+        }
     }
     &__inner {
         flex-grow: 1;
@@ -14,6 +23,11 @@
         align-items: center;
         font-size: $font-size-large;
         margin-top: 80px;
+
+        @include mobile() {
+            align-items: stretch;
+            margin-top: 40px;
+        }
     }
 }
 

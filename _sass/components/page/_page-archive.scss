@@ -1,5 +1,10 @@
 .page-archive {
     padding: 0 25px;
+
+    @include mobile() {
+        padding: 24px 20px 0;
+    }
+
     &__main {
         ul {
             margin: 0;

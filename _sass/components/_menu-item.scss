@@ -1,5 +1,10 @@
 .menu-item{
     margin-bottom: 12px;
+
+    @include mobile() {
+        margin-bottom: 0;
+    }
+
     a{
         font-size: $font-family-base;
         text-decoration: none;        
