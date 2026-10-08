@@ -14,7 +14,7 @@ In the previous post, we took a deep dive into the self-attention mechanism. Int
  
 ### Multi-Layer Perceptron (MLP)
 
-In the last section of the [transformer architecture post](https://xta0.me/2024/11/10/GenAI-LLM-Transformer-Architecture.html), we examined Microsoft's `Phi-3-mini-4k-instruct` model. In this section, we will continue using this model as our running example to illustrate how `mlp` works.
+In the last section of the [transformer architecture post](https://xta0.me/2024/07/10/GenAI-LLM-Transformer-Architecture.html), we examined Microsoft's `Phi-3-mini-4k-instruct` model. In this section, we will continue using this model as our running example to illustrate how `mlp` works.
 
 Previously, we saw that the output of an attention head is an attention-enhanced embedding, denoted as $\vec{E_i}$(`3072` dimensions). Our next step is to pass $\vec{E_i}$ through a sequence of linear transformations:
 
