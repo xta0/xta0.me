@@ -1,11 +1,11 @@
 ---
-title: Concurrency with asyncio
-list_title: Python Deep Dive | Concurrency with asyncio
+title: Concurrency with asyncio | Concepts
+list_title: Python Deep Dive | Concurrency with asyncio | Part 1
 layout: post
 categories: [Python]
 ---
 
-## `asyncio`
+## Concurrency in Python
 
 There are several ways to achieve this concurrency in Python. One of the most recent additions to the Python ecosystem is the `asyncio` library. `asyncio` is a concurrency framework built around three important concepts:
 
@@ -15,19 +15,20 @@ There are several ways to achieve this concurrency in Python. One of the most re
 
 While the name of `asyncio` may make us think that this library is only good for I/O operations, it has functionality to handle other types of operations as well by interoperating with multithreading and multiprocessing. With this interoperability, we can use `async` and `await` syntax with threads and processes making these workflows easier to understand.
 
-### Non-blocking I/O vs Blocking I/O
+### Preempting vs Cooperative multitask
 
-Let's take a look at the following two code examples:
+- **Preempting**: We let the operating system decide how to switch between which work. How this mechanism works under the hood is up to the operating system itself. It is primarily achieved through using either multiple threads or multiple processes.
 
-<div class="md-flex-h md-margin-bottom-24">
-<div>
-<pre class="highlight language-python md-no-padding-v md-height-full">
-<code class="language-python">
+- **Cooperative**: Instead of relying on the operating system to decide when to switch between which work is currently being executed, we explicitly code points in our application where we can let other tasks run. The tasks in our application operate in a model where they cooperate, explicitly saying, “I’m pausing my task for a while; go ahead and run other tasks.”
+
+### Non-blocking I/O
+
+Let's take a look at the following code example:
+
+```
 async def fetch(name):
     print(f"{name}: start")
-
     await asyncio.sleep(2)
-
     print(f"{name}: done")
 
 async def main():
@@ -46,20 +47,30 @@ C: start
 A: done
 B: done
 C: done
-</code>
-</pre>
-</div>
-<div class="md-margin-left-12">
-<pre class="highlight md-no-padding-v md-height-full">
-<code class="language-python">
+```
+
+In the example above, all three tasks finish in approximately 2 seconds, rather than 6 seconds. `asyncio.sleep(2)` simulates waiting without blocking the event-loop thread. When Task A encounters await asyncio.sleep(2), the event loop can execute Task B and then Task C. The event loop doesn't have to wait for Task A to finish. 
+
+Conceptually, when dealing with non-blocking I/O:
+
+- The coroutine attempts to read from a non-blocking object.
+- If data isn't available, the coroutine suspends.
+- The event loop monitors the object through an OS readiness mechanism.
+- Meanwhile, the event loop runs other ready tasks.
+
+Once the object becomes readable, the event loop schedules the suspended coroutine to resume.
+
+### Blocking I/O
+
+Now let's look at another example:
+
+```
 import asyncio
 import time
 
 async def task(name):
     print(f"{name}: start")
-
     time.sleep(2)  # Blocking!
-
     print(f"{name}: done")
 
 async def main():
@@ -77,21 +88,7 @@ B: start
 B: done
 C: start
 C: done
-</code>
-</pre>
-</div>
-</div>
-
-In the first example, all three tasks finish in approximately 2 seconds, rather than 6 seconds. `asyncio.sleep(2)` simulates waiting without blocking the event-loop thread. When Task A encounters await asyncio.sleep(2), the event loop can execute Task B and then Task C. The event loop doesn't have to wait for Task A to finish. 
-
-Conceptually, when dealing with non-blocking I/O:
-
-- The coroutine attempts to read from a non-blocking object.
-- If data isn't available, the coroutine suspends.
-- The event loop monitors the object through an OS readiness mechanism.
-- Meanwhile, the event loop runs other ready tasks.
-
-Once the object becomes readable, the event loop schedules the suspended coroutine to resume.
+```
 
 In the second example, all three tasks finish in approximately 6 seconds. This is because `time.sleep()` blocks the event-loop thread. The coroutine cannot suspend cooperatively while that call executes.
 
@@ -116,11 +113,6 @@ This coroutine can block the event loop for its entire computation. Adding async
 
 `await` means the coroutine may suspend and allow other tasks to run. It does not automatically mean the function is non-blocking, nor does it guarantee that the underlying operation is performed asynchronously.
 
-### Preemptive multitasking vs Cooperative multitasking
-
-- **Preempting**: We let the operating system decide how to switch between which work. How this mechanism works under the hood is up to the operating system itself. It is primarily achieved through using either multiple threads or multiple processes.
-
-- **Cooperative**: Instead of relying on the operating system to decide when to switch between which work is currently being executed, we explicitly code points in our application where we can let other tasks run. The tasks in our application operate in a model where they cooperate, explicitly saying, “I’m pausing my task for a while; go ahead and run other tasks.”
 
 
 
